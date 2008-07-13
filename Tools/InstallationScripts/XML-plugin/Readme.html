@@ -1,0 +1,1750 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
+<title>XML NSIS plugin</title>
+
+<style type="text/css">
+<!-- doxygen.css -->
+H1 {
+	text-align: center;
+	font-family: Arial, Helvetica, sans-serif;
+}
+H2 {
+	font-family: Geneva, Arial, Helvetica, sans-serif;
+}
+CAPTION { font-weight: bold }
+DIV.qindex {
+	width: 100%;
+	background-color: #eeeeff;
+	border: 1px solid #B0B0B0;
+	text-align: center;
+	margin: 2px;
+	padding: 2px;
+}
+A.qindex {
+       text-decoration: none;
+       font-weight: bold;
+       color: #1A419D;
+       padding: 2px;
+}
+A.qindex:visited {
+       text-decoration: none;
+       font-weight: bold;
+       color: #1A419D
+       padding: 2px;
+}
+A.qindex:hover {
+	text-decoration: none;
+	background-color: #ddddff;
+	padding: 2px;
+}
+A.qindexHL {
+	text-decoration: none;
+	font-weight: bold;
+	background-color: #6666cc;
+	color: #ffffff;
+	padding: 2 6px;
+	border: 1px double #9295C2;
+           }
+A.qindexHL:hover {
+	text-decoration: none;
+	background-color: #6666cc;
+	color: #ffffff;
+	padding: 2px 6px;
+}
+A.qindexHL:visited { text-decoration: none; background-color: #6666cc; color: #ffffff }
+A.el { text-decoration: none; font-weight: bold }
+A.elRef { font-weight: bold }
+A.code { text-decoration: none; font-weight: normal; color: #1A419D}
+A.codeRef { font-weight: normal; color: #1A419D}
+A:hover { text-decoration: none; background-color: #f2f2ff }
+DL.el { margin-left: -1cm }
+PRE.fragment {
+	border: 1px solid #CCCCCC;
+	background-color: #f5f5f5;
+	margin-top: 4px;
+	margin-bottom: 4px;
+	margin-left: 2px;
+	margin-right: 8px;
+	padding-left: 6px;
+	padding-right: 6px;
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+DIV.fragment {
+	border: 1px solid #CCCCCC;
+	background-color: #f5f5f5;
+	padding: 6px;
+}
+DIV.ah { background-color: black; font-weight: bold; color: #ffffff; margin-bottom: 3px; margin-top: 3px }
+TD.md { background-color: #F4F4FB; font-weight: bold; }
+TD.mdname1 { background-color: #F4F4FB; font-weight: bold; color: #602020; }
+TD.mdname { background-color: #F4F4FB; font-weight: bold; color: #602020; width: 600px; }
+DIV.groupHeader { margin-left: 16px; margin-top: 12px; margin-bottom: 6px; font-weight: bold }
+DIV.groupText { margin-left: 16px; font-style: italic; font-size: smaller }
+BODY {
+	background: white;
+	color: black;
+	margin-right: 20px;
+	margin-left: 20px;
+}
+TD.indexkey {
+	background-color: #eeeeff;
+	font-weight: bold;
+	padding-right  : 10px;
+	padding-top    : 2px;
+	padding-left   : 10px;
+	padding-bottom : 2px;
+	margin-left    : 0px;
+	margin-right   : 0px;
+	margin-top     : 2px;
+	margin-bottom  : 2px;
+	border: 1px solid #CCCCCC;
+}
+TD.indexvalue {
+	background-color: #eeeeff;
+	font-style: italic;
+	padding-right  : 10px;
+	padding-top    : 2px;
+	padding-left   : 10px;
+	padding-bottom : 2px;
+	margin-left    : 0px;
+	margin-right   : 0px;
+	margin-top     : 2px;
+	margin-bottom  : 2px;
+	border: 1px solid #CCCCCC;
+}
+TR.memlist {
+   background-color: #f0f0f0; 
+}
+P.formulaDsp { text-align: center; }
+IMG.formulaDsp { }
+IMG.formulaInl { vertical-align: middle; }
+SPAN.keyword       { color: #008000 }
+SPAN.keywordtype   { color: #604020 }
+SPAN.keywordflow   { color: #e08000 }
+SPAN.comment       { color: #800000 }
+SPAN.preprocessor  { color: #806020 }
+SPAN.stringliteral { color: #002080 }
+SPAN.charliteral   { color: #008080 }
+.mdTable {
+	border: 1px solid #868686;
+	background-color: #F4F4FB;
+}
+.mdRow {
+	padding: 8px 10px;
+}
+.mdescLeft {
+	font-size: smaller;
+	font-family: Arial, Helvetica, sans-serif;
+	background-color: #FAFAFA;
+	padding-left: 8px;
+	border-top: 1px none #E0E0E0;
+	border-right: 1px none #E0E0E0;
+	border-bottom: 1px none #E0E0E0;
+	border-left: 1px none #E0E0E0;
+	margin: 0px;
+}
+.mdescRight {
+	font-size: smaller;
+	font-family: Arial, Helvetica, sans-serif;
+	font-style: italic;
+	background-color: #FAFAFA;
+	padding-left: 4px;
+	border-top: 1px none #E0E0E0;
+	border-right: 1px none #E0E0E0;
+	border-bottom: 1px none #E0E0E0;
+	border-left: 1px none #E0E0E0;
+	margin: 0px;
+	padding-bottom: 0px;
+	padding-right: 8px;
+}
+.memItemLeft {
+	padding: 1px 0px 0px 8px;
+	margin: 4px;
+	border-top-width: 1px;
+	border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-left-width: 1px;
+	border-top-style: solid;
+	border-top-color: #E0E0E0;
+	border-right-color: #E0E0E0;
+	border-bottom-color: #E0E0E0;
+	border-left-color: #E0E0E0;
+	border-right-style: none;
+	border-bottom-style: none;
+	border-left-style: none;
+	background-color: #FAFAFA;
+	font-family: Geneva, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+.memItemRight {
+	padding: 1px 0px 0px 8px;
+	margin: 4px;
+	border-top-width: 1px;
+	border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-left-width: 1px;
+	border-top-style: solid;
+	border-top-color: #E0E0E0;
+	border-right-color: #E0E0E0;
+	border-bottom-color: #E0E0E0;
+	border-left-color: #E0E0E0;
+	border-right-style: none;
+	border-bottom-style: none;
+	border-left-style: none;
+	background-color: #FAFAFA;
+	font-family: Geneva, Arial, Helvetica, sans-serif;
+	font-size: 13px;
+}
+.search     { color: #003399;
+              font-weight: bold;
+}
+FORM.search {
+              margin-bottom: 0px;
+              margin-top: 0px;
+}
+INPUT.search { font-size: 75%;
+               color: #000080;
+               font-weight: normal;
+               background-color: #eeeeff;
+}
+TD.tiny      { font-size: 75%;
+}
+a {
+	color: #252E78;
+}
+a:visited {
+	color: #3D2185;
+}
+</style>
+</head>
+
+<body>
+<h1>XML NSIS plugin v2.0</h1>
+2008 Shengalts Aleksander aka Instructor (<a href="mailto:Shengalts@mail.ru">Shengalts@mail.ru</a>)
+<br>
+<br>
+
+<h2>Contents</h2>
+
+<table border=0 cellpadding=0 cellspacing=0>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#0">1. Introduction</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#1">2. Features</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#2">3. Entities</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#3">4. XML file example</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#4">5. Functions</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><br>Document format</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#5">${xml::SetCondenseWhiteSpace} "[1|0]"</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#6">${xml::SetEncoding} "[encoding]"</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><br>Document file</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#7">${xml::LoadFile} "[file]" $var</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#8">${xml::SaveFile} "[file]" $var</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><br>Declaration node</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#9">${xml::DeclarationVersion} $var1 $var2</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#10">${xml::DeclarationEncoding} $var1 $var2</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#11">${xml::DeclarationStandalone} $var1 $var2</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><br>Text node</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#12">${xml::GetText} $var1 $var2</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#13">${xml::SetText} "[value]" $var</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#14">${xml::SetCDATA} "[0|1]" $var</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#15">${xml::IsCDATA} $var</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><br>Node value</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#16">${xml::GetNodeValue} $var</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#17">${xml::SetNodeValue} "[value]"</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><br>Level searching</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#18">${xml::FindNextElement} "[name]" $var1 $var2</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#19">${xml::FindCloseElement}</a></td></tr>
+
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><br>Levels moving</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#20">${xml::RootElement} $var1 $var2</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#21">${xml::FirstChildElement} "[name]" $var1 $var2</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#22">${xml::FirstChild} "[name]" $var1 $var2</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#23">${xml::LastChild} "[name]" $var1 $var2</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#24">${xml::Parent} $var1 $var2</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#25">${xml::NoChildren} $var</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><br>One level moving</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#26">${xml::NextSiblingElement} "[name]" $var1 $var2</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#27">${xml::NextSibling} "[name]" $var1 $var2</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#28">${xml::PreviousSibling} "[name]" $var1 $var2</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><br>Level modification</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#29">${xml::InsertAfterNode} "[handle]" $var</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#30">${xml::InsertBeforeNode} "[handle]" $var</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#31">${xml::InsertEndChild} "[handle]" $var</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#32">${xml::ReplaceNode} "[handle]" $var</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#33">${xml::RemoveNode} $var</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#34">${xml::RemoveAllChild}</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><br>Nodes and Memory</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#35">${xml::CreateText} "[text]" $var</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#36">${xml::CreateNode} "&lt;a&gt;text&lt;/a&gt;" $var</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#37">${xml::CloneNode} $var</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#38">${xml::FreeNode} "[handle]" $var</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><br>XPath</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#39">${xml::XPathString} "[expression]" $var1 $var2</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#40">${xml::XPathNode} "[expression]" $var</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#41">${xml::XPathAttribute} "[expression]" $var</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><br>Other node functions</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#42">${xml::NodeHandle} $var</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#43">${xml::GotoHandle} "[handle]" $var</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#44">${xml::ElementPath} $var</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#45">${xml::GotoPath} "[path]" $var</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#46">${xml::NodeType} $var</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#47">${xml::Coordinate} $var1 $var2 $var3</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><br>Attributes</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#48">${xml::GetAttribute} "[name]" $var1 $var2</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#49">${xml::SetAttribute} "[name]" "[value]" $var</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#50">${xml::RemoveAttribute} "[name]" $var</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#51">${xml::FirstAttribute} $var1 $var2 $var3</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#52">${xml::LastAttribute} $var1 $var2 $var3</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#53">${xml::NextAttribute} $var1 $var2 $var3</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#54">${xml::PreviousAttribute} $var1 $var2 $var3</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#55">${xml::CurrentAttribute} $var1 $var2 $var3</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#56">${xml::SetAttributeName} "[name]"</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#57">${xml::SetAttributeValue} "[value]"</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><br>Unload plugin</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="Readme.html#57">${xml::Unload}</a></td></tr>
+
+</table>
+
+<a class="anchor" name="0" ></a>
+<hr>
+<br>
+<h2>Introduction</h2>
+XML plugin parses an XML document, and builds from that a Document Object Model (DOM) that can be read, modified and saved.
+XML plugin and documentation are based on <a href="http://www.sourceforge.net/projects/tinyxml">TinyXml</a> (2.5.3) and  <a href="http://www.sourceforge.net/projects/tinyxpath">TinyXPath</a> (1.3.1).
+
+<a class="anchor" name="1" ></a>
+<h3>Features</h3>
+- Read and/or modified xml files
+<br>- XPath expressions support
+<br>- Unicode UTF-8 support
+<br>- "MSXML.DLL" independent
+<br>- Support for condense and non-condense white spaces
+<br>- Row and Column tracking
+
+<a class="anchor" name="2" ></a>
+<h3>Entities</h3>
+<p>
+Plugin recognizes the pre-defined "character entities", meaning special characters. Namely:<p>
+<pre class="fragment">
+<div>	&amp;amp;	&amp;
+	&amp;lt;	&lt;
+	&amp;gt;	&gt;
+	&amp;quot;	"
+	&amp;apos;	'
+</div></pre><p>
+These are recognized when the XML document is read, and translated to there UTF-8 equivalents. For instance, text with the XML of:<p>
+<pre class="fragment">
+<div>	Far &amp;amp; Away
+</div></pre><p>
+will have the value of "Far &amp; Away" when queried and will be written back to the XML file as an ampersand.
+<br>Additionally, any character can be specified by its Unicode code point: The syntax "&amp;#xA0;" or "&amp;#160;" are both to the non-breaking space characher.<p>
+
+
+<a class="anchor" name="3" ></a>
+<h3>XML file example</h3>
+<p>
+<pre class="fragment">
+<div>&lt;?xml version="1.0" encoding="utf-8" standalone="no"?&gt;
+&lt;!-- COMMENT1 --&gt;
+&lt;ELEMENT&gt;
+    &lt;ELEMENT2&gt;TEXT&lt;/ELEMENT2&gt;
+    &lt;!-- COMMENT2 --&gt;
+    &lt;empty_ELEMENT /&gt;
+    &lt;empty_ELEMENT2 NAME="VALUE" NAME2="VALUE2" /&gt;
+&lt;/ELEMENT&gt;
+</div></pre>
+
+<table cellpadding="0" cellspacing="10" border="0">
+  <tr>
+    <td valign="top" nowrap>
+         Declaration:
+         <br>Root:
+         <br>Node:
+         <br>Text:
+         <br>Comment:
+         <br>Attribute:
+         <br>Child:
+         <br>Parent:
+    </td>
+    <td valign="top" nowrap>
+         &lt;?xml version="1.0" encoding="utf-8" standalone="no"?&gt;
+         <br>&lt;ELEMENT&gt;
+         <br>it is ELEMENT, TEXT, COMMENT, DECLARATION
+         <br>TEXT
+         <br>COMMENT1 and COMMENT2
+         <br>NAME="VALUE" and NAME2="VALUE2"
+         <br>&lt;ELEMENT2> is child for &lt;ELEMENT&gt;
+         <br>&lt;ELEMENT> is parent for &lt;ELEMENT2&gt;
+    </td>
+  </tr>
+</table>
+
+
+<a class="anchor" name="4" ></a>
+<hr>
+<h2>Functions</h2>
+<p>
+
+<a class="anchor" name="5"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap> ${xml::SetCondenseWhiteSpace} "[1|0]" </td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Condenses all white space into a single space or not.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">"[1|0]"</td>
+        <td valign="top"><br>"1"
+                         <br>"0"</td>
+        <td valign="top"><br>-condense all white space into a single space (default)
+                         <br>-don't condense all white space into a single space</td>
+  </tr>
+</table>
+
+<a class="anchor" name="6"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::SetEncoding} "[encoding]"</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Sets document encoding.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">"[encoding]"</td>
+        <td valign="top"><br>""
+                         <br>"UTF8"
+                         <br>"LEGACY"</td>
+        <td valign="top"><br>-auto detect encoding UTF-8 or ANSI (default)
+                         <br>-force encoding as unicode UTF-8
+                         <br>-force encoding as ANSI</td>
+  </tr>
+</table>
+
+<a class="anchor" name="7"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::LoadFile} "[file]" $var</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Loads document.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">"[file]"</td>
+        <td valign="top"><br>- Load this file</td>
+  </tr>
+  <tr>
+    <td valign="top">$var</td>
+        <td valign="top"><br>"0" &nbsp;success
+                         <br>"-1" error</td>
+  </tr>
+</table>
+
+<a class="anchor" name="8"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::SaveFile} "[file]" $var</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Saves document.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">"[file]"</td>
+        <td valign="top"><br>- Save this file, if empty save current loaded file</td>
+  </tr>
+  <tr>
+    <td valign="top">$var</td>
+        <td valign="top"><br>"0" &nbsp;success
+                         <br>"-1" error</td>
+  </tr>
+</table>
+
+<a class="anchor" name="9"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::DeclarationVersion} $var1 $var2</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Returns value of the version attribute of the declaration node.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">$var1</td>
+        <td valign="top"><br>Version (e.g. "1.0")</td>
+  </tr>
+  <tr>
+    <td valign="top">$var2</td>
+        <td valign="top"><br>"0" &nbsp;success
+                         <br>"-1" error</td>
+  </tr>
+</table>
+
+<a class="anchor" name="10"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::DeclarationEncoding} $var1 $var2</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Returns value of the encoding attribute of the declaration node.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">$var1</td>
+        <td valign="top"><br>Encoding (e.g. "utf-8")</td>
+  </tr>
+  <tr>
+    <td valign="top">$var2</td>
+        <td valign="top"><br>"0" &nbsp;success
+                         <br>"-1" error</td>
+  </tr>
+</table>
+
+<a class="anchor" name="11"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::DeclarationStandalone} $var1 $var2</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Returns value of the standalone attribute of the declaration node.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">$var1</td>
+        <td valign="top"><br>Standalone (e.g. "yes")</td>
+  </tr>
+  <tr>
+    <td valign="top">$var2</td>
+        <td valign="top"><br>"0" &nbsp;success
+                         <br>"-1" error</td>
+  </tr>
+</table>
+
+<a class="anchor" name="12"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::GetText} $var1 $var2</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Convenience function for easy access to the text inside current element.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">$var1</td>
+        <td valign="top"><br>Element text</td>
+  </tr>
+  <tr>
+    <td valign="top">$var2</td>
+        <td valign="top"><br>"0" &nbsp;success
+                         <br>"-1" error</td>
+  </tr>
+</table>
+
+<a class="anchor" name="13"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::SetText} "[value]" $var</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Convenience function for easy set the text of the current element.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">"[value]"</td>
+        <td valign="top"><br>- Set this text</td>
+  </tr>
+  <tr>
+    <td valign="top">$var</td>
+        <td valign="top"><br>"0" &nbsp;success
+                         <br>"-1" error</td>
+  </tr>
+</table>
+
+<a class="anchor" name="14"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::SetCDATA} "[0|1]" $var</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Turns on or off a CDATA representation of the current element text.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">"[0|1]"</td>
+        <td valign="top"><br>"0" &nbsp;-turns off (default)
+                         <br>"1" &nbsp;-turns on</td>
+  </tr>
+  <tr>
+    <td valign="top">$var</td>
+        <td valign="top"><br>"0" &nbsp;success
+                         <br>"-1" error</td>
+  </tr>
+</table>
+
+<a class="anchor" name="15"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::IsCDATA} $var</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Queries whether this represents text using a CDATA section.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">$var</td>
+        <td valign="top"><br>"1" &nbsp;current node using CDATA
+                         <br>"0" &nbsp;current node not using CDATA
+                         <br>"-1" current node is not text</td>
+  </tr>
+</table>
+
+<a class="anchor" name="16"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::GetNodeValue} $var</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Gets the value of the current node.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">$var</td>
+        <td valign="top"><br>Node value</td>
+  </tr>
+</table>
+
+<a class="anchor" name="17"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::SetNodeValue} "[value]"</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Sets the value of the current node.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">"[value]"</td>
+        <td valign="top"><br>- Set this value</td>
+  </tr>
+</table>
+
+<a class="anchor" name="18"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::FindNextElement} "[name]" $var1 $var2</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Search for element (recursive), returns the element name and goes to it.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">"[name]"</td>
+        <td valign="top"><br>- Element specified by name, if empty returns all founded elements</td>
+  </tr>
+  <tr>
+    <td valign="top">$var1</td>
+        <td valign="top"><br>name</td>
+  </tr>
+  <tr>
+    <td valign="top">$var2</td>
+        <td valign="top"><br>"0" &nbsp;success
+                         <br>"-1" error</td>
+  </tr>
+</table>
+
+<a class="anchor" name="19"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::FindCloseElement}</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Closes search opened by <a href="Readme.html#18">xml::FindNextElement.</a></em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+
+<br>
+<a class="anchor" name="20"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::RootElement} $var1 $var2</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Returns the root element name and goes to it.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">$var1</td>
+        <td valign="top"><br>Root element name (the only top level element)</td>
+  </tr>
+  <tr>
+    <td valign="top">$var2</td>
+        <td valign="top"><br>"0" &nbsp;success
+                         <br>"-1" error</td>
+  </tr>
+</table>
+
+<a class="anchor" name="21"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::FirstChildElement} "[name]" $var1 $var2</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Returns the first child element name and goes to it.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">"[name]"</td>
+        <td valign="top"><br>- Find first child element specified by name, if empty returns first founded</td>
+  </tr>
+  <tr>
+    <td valign="top">$var1</td>
+        <td valign="top"><br>name</td>
+  </tr>
+  <tr>
+    <td valign="top">$var2</td>
+        <td valign="top"><br>"0" &nbsp;success
+                         <br>"-1" error</td>
+  </tr>
+</table>
+
+<a class="anchor" name="22"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::FirstChild} "[name]" $var1 $var2</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Returns the first child node name and goes to it.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">"[name]"</td>
+        <td valign="top"><br>- Find first child node specified by name, if empty returns first founded</td>
+  </tr>
+  <tr>
+    <td valign="top">$var1</td>
+        <td valign="top"><br>name</td>
+  </tr>
+  <tr>
+    <td valign="top">$var2</td>
+        <td valign="top"><br>"0" &nbsp;success
+                         <br>"-1" error</td>
+  </tr>
+</table>
+
+<a class="anchor" name="23"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::LastChild} "[name]" $var1 $var2</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Returns the last child node name and goes to it.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">"[name]"</td>
+        <td valign="top"><br>- Find last child node specified by name, if empty returns first founded</td>
+  </tr>
+  <tr>
+    <td valign="top">$var1</td>
+        <td valign="top"><br>name</td>
+  </tr>
+  <tr>
+    <td valign="top">$var2</td>
+        <td valign="top"><br>"0" &nbsp;success
+                         <br>"-1" error</td>
+  </tr>
+</table>
+
+<a class="anchor" name="24"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::Parent} $var1 $var2</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Returns the parent element name and goes to it.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">$var1</td>
+        <td valign="top"><br>name</td>
+  </tr>
+  <tr>
+    <td valign="top">$var2</td>
+        <td valign="top"><br>"0" &nbsp;success
+                         <br>"-1" error</td>
+  </tr>
+</table>
+
+<a class="anchor" name="25"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::NoChildren} $var</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Checks if the current node has any children.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">$var</td>
+        <td valign="top"><br>"1" current node has no children
+                         <br>"0" current node has children</td>
+  </tr>
+</table>
+
+<a class="anchor" name="26"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::NextSiblingElement} "[name]" $var1 $var2</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Returns the next sibling element name and goes to it.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">"[name]"</td>
+        <td valign="top"><br>- Find next sibling element specified by name, if empty returns first founded</td>
+  </tr>
+  <tr>
+    <td valign="top">$var1</td>
+        <td valign="top"><br>name</td>
+  </tr>
+  <tr>
+    <td valign="top">$var2</td>
+        <td valign="top"><br>"0" &nbsp;success
+                         <br>"-1" error</td>
+  </tr>
+</table>
+
+<a class="anchor" name="27"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::NextSibling} "[name]" $var1 $var2</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Returns the next sibling node name and goes to it.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">"[name]"</td>
+        <td valign="top"><br>- Find next sibling node specified by name, if empty returns first founded</td>
+  </tr>
+  <tr>
+    <td valign="top">$var1</td>
+        <td valign="top"><br>name</td>
+  </tr>
+  <tr>
+    <td valign="top">$var2</td>
+        <td valign="top"><br>"0" &nbsp;success
+                         <br>"-1" error</td>
+  </tr>
+</table>
+
+<a class="anchor" name="28"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::PreviousSibling} "[name]" $var1 $var2</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Returns the previous sibling node name and goes to it.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">"[name]"</td>
+        <td valign="top"><br>- Find previous sibling node specified by name, if empty returns first founded</td>
+  </tr>
+  <tr>
+    <td valign="top">$var1</td>
+        <td valign="top"><br>name</td>
+  </tr>
+  <tr>
+    <td valign="top">$var2</td>
+        <td valign="top"><br>"0" &nbsp;success
+                         <br>"-1" error</td>
+  </tr>
+</table>
+
+<a class="anchor" name="29"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::InsertAfterNode} "[handle]" $var</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Adds new node after current and goes to it.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">"[handle]"</td>
+        <td valign="top"><br>- Insert this node
+                         <br>(handle returned by <a href="Readme.html#42">xml::NodeHandle</a>, <a href="Readme.html#35">xml::CreateText</a>, <a href="Readme.html#36">xml::CreateNode</a>, <a href="Readme.html#37">xml::CloneNode</a>)</td>
+  </tr>
+  <tr>
+    <td valign="top">$var</td>
+        <td valign="top"><br>"0" &nbsp;success
+                         <br>"-1" error</td>
+  </tr>
+</table>
+
+<a class="anchor" name="30"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::InsertBeforeNode} "[handle]" $var</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Adds new node before current and goes to it.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">"[handle]"</td>
+        <td valign="top"><br>- Insert this node
+                         <br>(handle returned by <a href="Readme.html#42">xml::NodeHandle</a>, <a href="Readme.html#35">xml::CreateText</a>, <a href="Readme.html#36">xml::CreateNode</a>, <a href="Readme.html#37">xml::CloneNode</a>)</td>
+  </tr>
+  <tr>
+    <td valign="top">$var</td>
+        <td valign="top"><br>"0" &nbsp;success
+                         <br>"-1" error</td>
+  </tr>
+</table>
+
+<a class="anchor" name="31"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::InsertEndChild} "[handle]" $var</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Adds new node to the end of the current node children and goes to it.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">"[handle]"</td>
+        <td valign="top"><br>- Insert this node
+                         <br>(handle returned by <a href="Readme.html#42">xml::NodeHandle</a>, <a href="Readme.html#35">xml::CreateText</a>, <a href="Readme.html#36">xml::CreateNode</a>, <a href="Readme.html#37">xml::CloneNode</a>)</td>
+  </tr>
+  <tr>
+    <td valign="top">$var</td>
+        <td valign="top"><br>"0" &nbsp;success
+                         <br>"-1" error</td>
+  </tr>
+</table>
+
+<a class="anchor" name="32"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::ReplaceNode} "[handle]" $var</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Replaces the current node.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">"[handle]"</td>
+        <td valign="top"><br>- Replace with this node
+                         <br>(handle returned by <a href="Readme.html#42">xml::NodeHandle</a>, <a href="Readme.html#35">xml::CreateText</a>, <a href="Readme.html#36">xml::CreateNode</a>, <a href="Readme.html#37">xml::CloneNode</a>)</td>
+  </tr>
+  <tr>
+    <td valign="top">$var</td>
+        <td valign="top"><br>"0" &nbsp;success
+                         <br>"-1" error</td>
+  </tr>
+</table>
+
+<a class="anchor" name="33"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::RemoveNode} $var</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Deletes the current node and goes to the parent element.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">$var</td>
+        <td valign="top"><br>"0" &nbsp;success
+                         <br>"-1" error</td>
+  </tr>
+</table>
+
+<a class="anchor" name="34"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::RemoveAllChild}</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Deletes all children of the current node (it will be empty).</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+
+<br>
+<a class="anchor" name="35"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::CreateText} "[text]" $var</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Creates the text node in memory and returns it handle.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">"[text]"</td>
+        <td valign="top"><br>- Create this text in memory</td>
+  </tr>
+  <tr>
+    <td valign="top">$var</td>
+        <td valign="top"><br>handle to text node
+                         <br>"0"  error</td>
+  </tr>
+</table>
+
+<a class="anchor" name="36"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::CreateNode} "&lt;a&gt;text&lt;/a&gt;" $var</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Creates the node in memory and returns it handle.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">"&lt;a&gt;text&lt;/a&gt;"</td>
+        <td valign="top"><br>- Create this node in memory</td>
+  </tr>
+  <tr>
+    <td valign="top">$var</td>
+        <td valign="top"><br>handle to node
+                         <br>"0"  error</td>
+  </tr>
+</table>
+
+<a class="anchor" name="37"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::CloneNode} $var</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Copies the current node to the memory and returns it handle.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">$var</td>
+        <td valign="top"><br>handle to node
+                         <br>"0"  error</td>
+  </tr>
+</table>
+
+<a class="anchor" name="38"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::FreeNode} "[handle]" $var</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Free memory from node.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">"[handle]"</td>
+        <td valign="top"><br>- Free this node
+                         <br>(handle returned by <a href="Readme.html#35">xml::CreateText</a>, <a href="Readme.html#36">xml::CreateNode</a>, <a href="Readme.html#37">xml::CloneNode</a>)</td>
+  </tr>
+  <tr>
+    <td valign="top">$var</td>
+        <td valign="top"><br>"0" &nbsp;success
+                         <br>"-1" error</td>
+  </tr>
+</table>
+
+<a class="anchor" name="39"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::XPathString} "[expression]" $var1 $var2</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Compute a string XPath expression.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">"[expression]"</td>
+        <td valign="top"><br>- XPath expression (e.g. "count(//@*)")</td>
+  </tr>
+  <tr>
+    <td valign="top">$var1</td>
+        <td valign="top"><br>result string</td>
+  </tr>
+  <tr>
+    <td valign="top">$var2</td>
+        <td valign="top"><br>"0" &nbsp;success
+                         <br>"-1" error</td>
+  </tr>
+</table>
+
+<a class="anchor" name="40"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::XPathNode} "[expression]" $var</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Compute a node XPath expression and goes to it.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">"[expression]"</td>
+        <td valign="top"><br>- XPath expression (e.g. "/a/b")</td>
+  </tr>
+  <tr>
+    <td valign="top">$var</td>
+        <td valign="top"><br>"0" &nbsp;success
+                         <br>"-1" error</td>
+  </tr>
+</table>
+
+<a class="anchor" name="41"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::XPathAttribute} "[expression]" $var</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Compute an attribute XPath expression and goes to it.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">"[expression]"</td>
+        <td valign="top"><br>- XPath expression (e.g. "/a/b/@attr")</td>
+  </tr>
+  <tr>
+    <td valign="top">$var</td>
+        <td valign="top"><br>"0" &nbsp;success
+                         <br>"-1" error</td>
+  </tr>
+</table>
+
+<a class="anchor" name="42"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::NodeHandle} $var</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Returns the current node handle.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">$var</td>
+        <td valign="top"><br>current node handle
+                         <br>"0"  error</td>
+  </tr>
+</table>
+
+<a class="anchor" name="43"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::GotoHandle} "[handle]" $var</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Goes to the specified node.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">"[handle]"</td>
+        <td valign="top"><br>- Go to this node
+                         <br>(handle returned by <a href="Readme.html#42">xml::NodeHandle</a>)</td>
+  </tr>
+  <tr>
+    <td valign="top">$var</td>
+        <td valign="top"><br>"0" &nbsp;success
+                         <br>"-1" error</td>
+  </tr>
+</table>
+
+<a class="anchor" name="44"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::ElementPath} $var</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Returns the current element path.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">$var</td>
+        <td valign="top"><br>current element path (e.g. "/a/b/c[3]/d")
+  </tr>
+</table>
+
+<a class="anchor" name="45"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::GotoPath} "[path]" $var</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Goes to the specified path.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">"[path]"</td>
+        <td valign="top"><br>- Go to this path
+                         <br>(e.g. from root "/a/b[2]/c/d", from currect element "a/b[2]/c/d",
+                         <br>&nbsp;&nbsp;using last element 'b' "a/b[-1]/c/d", using any last element "a/[-1]/c/d",
+                         <br>&nbsp;&nbsp;go to the document beginning "")</td>
+  </tr>
+  <tr>
+    <td valign="top">$var</td>
+        <td valign="top"><br>"0" &nbsp;success
+                         <br>"-1" error</td>
+  </tr>
+</table>
+
+<a class="anchor" name="46"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::NodeType} $var</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Returns the type of the current node.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">$var</td>
+        <td valign="top"><br>"ELEMENT" 
+                         <br>"COMMENT"
+                         <br>"DOCUMENT"
+                         <br>"TEXT"
+                         <br>"DECLARATION"
+                         <br>"UNKNOWN"</td>
+  </tr>
+</table>
+
+<a class="anchor" name="47"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::Coordinate} $var1 $var2 $var3</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Returns the current node coordinates in document.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">$var1</td>
+        <td valign="top"><br>Row</td>
+  </tr>
+  <tr>
+    <td valign="top">$var2</td>
+        <td valign="top"><br>Column</td>
+  </tr>
+  <tr>
+    <td valign="top">$var3</td>
+        <td valign="top"><br>"0" &nbsp;success
+                         <br>"-1" error</td>
+  </tr>
+</table>
+
+<a class="anchor" name="48"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::GetAttribute} "[name]" $var1 $var2</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Returns value of the attribute of the current element and goes to it.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">"[name]"</td>
+        <td valign="top"><br>- Find attribute specified by name</td>
+  </tr>
+  <tr>
+    <td valign="top">$var1</td>
+        <td valign="top"><br>attribute value</td>
+  </tr>
+  <tr>
+    <td valign="top">$var2</td>
+        <td valign="top"><br>"0" &nbsp;success
+                         <br>"-1" error</td>
+  </tr>
+</table>
+
+<a class="anchor" name="49"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::SetAttribute} "[name]" "[value]" $var</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Sets attribute of the current element.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">"[name]"</td>
+        <td valign="top"><br>- Attribute name</td>
+  </tr>
+  <tr>
+    <td valign="top">"[value]"</td>
+        <td valign="top"><br>- Attribute value</td>
+  </tr>
+  <tr>
+    <td valign="top">$var</td>
+        <td valign="top"><br>"0" &nbsp;success
+                         <br>"-1" error</td>
+  </tr>
+</table>
+
+<a class="anchor" name="50"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::RemoveAttribute} "[name]" $var</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Deletes attribute with the specified name of the current element.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">"[name]"</td>
+        <td valign="top"><br>- Attribute name</td>
+  </tr>
+  <tr>
+    <td valign="top">$var</td>
+        <td valign="top"><br>"0" &nbsp;success
+                         <br>"-1" error</td>
+  </tr>
+</table>
+
+<a class="anchor" name="51"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::FirstAttribute} $var1 $var2 $var3</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Returns name and value of the first attribute of the current element and goes to it.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">$var1</td>
+        <td valign="top"><br>attribute name</td>
+  </tr>
+  <tr>
+    <td valign="top">$var2</td>
+        <td valign="top"><br>attribute value</td>
+  </tr>
+  <tr>
+    <td valign="top">$var3</td>
+        <td valign="top"><br>"0" &nbsp;success
+                         <br>"-1" error</td>
+  </tr>
+</table>
+
+<a class="anchor" name="52"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::LastAttribute} $var1 $var2 $var3</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Returns name and value of the last attribute of the current element and goes to it.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">$var1</td>
+        <td valign="top"><br>attribute name</td>
+  </tr>
+  <tr>
+    <td valign="top">$var2</td>
+        <td valign="top"><br>attribute value</td>
+  </tr>
+  <tr>
+    <td valign="top">$var3</td>
+        <td valign="top"><br>"0" &nbsp;success
+                         <br>"-1" error</td>
+  </tr>
+</table>
+
+<a class="anchor" name="53"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::NextAttribute} $var1 $var2 $var3</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Returns name and value of the next attribute and goes to it.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">$var1</td>
+        <td valign="top"><br>attribute name</td>
+  </tr>
+  <tr>
+    <td valign="top">$var2</td>
+        <td valign="top"><br>attribute value</td>
+  </tr>
+  <tr>
+    <td valign="top">$var3</td>
+        <td valign="top"><br>"0" &nbsp;success
+                         <br>"-1" error</td>
+  </tr>
+</table>
+
+<a class="anchor" name="54"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::PreviousAttribute} $var1 $var2 $var3</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Returns name and value of the previous attribute and goes to it.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">$var1</td>
+        <td valign="top"><br>attribute name</td>
+  </tr>
+  <tr>
+    <td valign="top">$var2</td>
+        <td valign="top"><br>attribute value</td>
+  </tr>
+  <tr>
+    <td valign="top">$var3</td>
+        <td valign="top"><br>"0" &nbsp;success
+                         <br>"-1" error</td>
+  </tr>
+</table>
+
+<a class="anchor" name="55"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::CurrentAttribute} $var1 $var2 $var3</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Returns name and value of the current attribute.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">$var1</td>
+        <td valign="top"><br>attribute name</td>
+  </tr>
+  <tr>
+    <td valign="top">$var2</td>
+        <td valign="top"><br>attribute value</td>
+  </tr>
+  <tr>
+    <td valign="top">$var3</td>
+        <td valign="top"><br>"0" &nbsp;success
+                         <br>"-1" error</td>
+  </tr>
+</table>
+
+<a class="anchor" name="56"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::SetAttributeName} "[name]"</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Sets name of the current attribute.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">"[name]"</td>
+        <td valign="top"><br>- Attribute name</td>
+  </tr>
+</table>
+
+<a class="anchor" name="57"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::SetAttributeValue} "[value]"</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Sets value of the current attribute.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=10 cellpadding=0 border=0>
+  <tr>
+    <td valign="top">"[value]"</td>
+        <td valign="top"><br>- Attribute value</td>
+  </tr>
+</table>
+
+<a class="anchor" name="58"></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="md" valign="top" nowrap>${xml::Unload}</td></tr>
+        <tr><td class="mdname1" valign="top" nowrap><em>Unload plugin.</em></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+
+
+<hr>
+</body>
+</html>

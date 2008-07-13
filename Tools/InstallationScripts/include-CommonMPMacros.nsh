@@ -23,10 +23,14 @@
 
 #endregion
 
-!include /nonFatal "XML.nsh"
-!ifndef xml::SetCondenseWhiteSpace
-  !error "$\r$\n$\r$\nYou need the xml plugin to compile this script. Look at$\r$\n$\r$\n     http://nsis.sourceforge.net/XML_plug-in$\r$\n$\r$\ndownload and install it!$\r$\n$\r$\n"
-!endif
+
+# references to additional plugins, if not used, these won't be included
+!AddPluginDir "${svn_InstallScripts}\GetVersion-plugin\Plugins"
+!AddPluginDir "${svn_InstallScripts}\XML-plugin\Plugin"
+!include "${svn_InstallScripts}\XML-plugin\Include\XML.nsh"
+
+
+
 
 !include FileFunc.nsh
 !insertmacro GetRoot
@@ -736,8 +740,6 @@ FunctionEnd
 !ifdef WINVER++
   !include "${svn_InstallScripts}\include-WinVerEx.nsh"
 !else
-
-!AddPluginDir "${svn_InstallScripts}\GetVersion-plugin\Plugins"
 
 !macro GetServicePack _major _minor
   Push $0
