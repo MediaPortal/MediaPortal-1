@@ -85,7 +85,7 @@ Icon "${svn_DeployTool}\Install.ico"
 OutFile "MediaPortal Setup 1.0preRC2 (SVN${SVN_REVISION}).exe"
 InstallDir "$TEMP\MediaPortal Installation"
 
-Page directory
+;Page directory
 Page instfiles
 
 CRCCheck on
@@ -93,6 +93,9 @@ XPStyle on
 RequestExecutionLevel admin
 ShowInstDetails show
 AutoCloseWindow true
+
+;if we want to make it fully silent we can uncomment this
+;SilentInstall silent
 
 Section
   SetOutPath $INSTDIR
