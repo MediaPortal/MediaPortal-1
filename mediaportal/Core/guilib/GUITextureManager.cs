@@ -84,7 +84,17 @@ namespace MediaPortal.GUI.Library
       }
       _cacheDownload.Clear();
 
-      string[] files = System.IO.Directory.GetFiles(Config.GetFolder(Config.Dir.Thumbs), "MPTemp*.*");
+      string[] files = null;
+
+      try
+      {
+        files = System.IO.Directory.GetFiles(Config.GetFolder(Config.Dir.Thumbs), "MPTemp*.*");
+      }
+      catch
+      { 
+        //ignore
+      }
+
       if (files != null)
       {
         foreach (string file in files)

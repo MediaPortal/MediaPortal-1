@@ -421,6 +421,10 @@ namespace MediaPortal.Player
       {
         Log.Info("g_Player.doStop() keepTimeShifting = {0} keepExclusiveModeOn = {1}", keepTimeShifting, keepExclusiveModeOn);
         OnStopped();
+
+        //since plugins could stop playback, we need to make sure that _player is not null.
+        if (_player == null) return;
+
         GUIGraphicsContext.ShowBackground = true;
         if (!keepTimeShifting && !keepExclusiveModeOn)
         {
