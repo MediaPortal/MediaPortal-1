@@ -1021,10 +1021,12 @@ FunctionEnd
 Function InstFilePre
   ReadRegDWORD $R1 HKLM "${REG_UNINSTALL}" "VersionMajor"
   ReadRegDWORD $R2 HKLM "${REG_UNINSTALL}" "VersionMinor"
+  ReadRegDWORD $R3 HKLM "${REG_UNINSTALL}" "VersionRevision"
 
   ${IfNot} ${MPIsInstalled}
     ${If} $R1 != ${VER_MAJOR}
     ${OrIf} $R2 != ${VER_MINOR}
+    ${OrIf} $R3 != ${VER_REVISION}
 
       !insertmacro GET_BACKUP_POSTFIX $R0
 
