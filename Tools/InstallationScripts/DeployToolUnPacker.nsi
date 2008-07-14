@@ -42,10 +42,14 @@
 
 
 # BUILD sources  , comment to disable the preBuild
-#!define BUILD_MediaPortal
-#!define BUILD_TVServer
-#!define BUILD_DeployTool
+!define BUILD_MediaPortal
+!define BUILD_TVServer
+!define BUILD_DeployTool
 !define BUILD_Installer
+
+!system '"$%ProgramFiles%\TortoiseSVN\bin\SubWCRev.exe" "${svn_ROOT}" RevisionInfoTemplate.nsh version.txt' = 0
+;!define SVN_REVISION "$WCREV$"    ; that's the string in version txt, after SubWCRev has been launched
+!include "version.txt"
 
 !ifdef BUILD_MediaPortal
 !system '"$%ProgramFiles%\Microsoft Visual Studio 8\Common7\IDE\devenv.com" /rebuild Release "${svn_MP}\DeployVersionSVN\DeployVersionSVN.sln"' = 0
@@ -79,7 +83,7 @@ Name "MediaPortal Unpacker"
 ;SetCompressor /SOLID lzma
 Icon "${svn_DeployTool}\Install.ico"
 
-OutFile "MediaPortal Setup 1.0preRC2 (SVN_test).exe"
+OutFile "MediaPortal Setup 1.0preRC2 (SVN${svn_DeployTool}).exe"
 InstallDir "$TEMP\MediaPortal Installation"
 
 Page directory
