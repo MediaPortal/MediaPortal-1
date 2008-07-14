@@ -684,7 +684,7 @@ namespace TvPlugin
 
       if (type == g_Player.MediaType.Radio || type == g_Player.MediaType.TV)
       {
-        UpdateGUIonPlaybackStateChange();
+        UpdateGUIonPlaybackStateChange(true);
       }
 
       if (currentWindow.IsTv) return;
@@ -712,7 +712,7 @@ namespace TvPlugin
       if (type == g_Player.MediaType.Radio || type == g_Player.MediaType.TV)
       {
        // doProcess();
-        UpdateGUIonPlaybackStateChange();
+        UpdateGUIonPlaybackStateChange(false);
       }
 
       _playbackStopped = true;      
@@ -1413,6 +1413,19 @@ namespace TvPlugin
     }
 
     #endregion
+
+    private void UpdateGUIonPlaybackStateChange(bool playbackStarted)
+    {
+      if (btnTvOnOff.Selected != playbackStarted)
+      {
+        btnTvOnOff.Selected = playbackStarted;
+      }
+
+      UpdateProgressPercentageBar();
+
+      bool hasTeletext = (!TVHome.Connected || TVHome.Card.HasTeletext) && (playbackStarted);
+      btnTeletext.IsVisible = hasTeletext;                    
+    }
 
     private void UpdateGUIonPlaybackStateChange()
     {
