@@ -181,7 +181,9 @@ Page custom PageReinstall PageLeaveReinstall
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_STARTMENU Application $StartMenuGroup
 
-!define MUI_PAGE_CUSTOMFUNCTION_PRE InstFilePre
+
+# OBSOLETE - old code to rename existing dirs
+#!define MUI_PAGE_CUSTOMFUNCTION_PRE InstFilePre
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_PAGE_FINISH
 ; UnInstaller Interface
@@ -236,6 +238,7 @@ ShowUninstDetails show
 #---------------------------------------------------------------------------
 Section "-prepare" SecPrepare
   DetailPrint "Prepare installation..."
+  ${ReadMediaPortalDirs} "$INSTDIR"
 
   DetailPrint "Terminating processes..."
   ${KILLPROCESS} "MediaPortal.exe"
@@ -252,7 +255,25 @@ Section "-prepare" SecPrepare
   RMDir /r "$MPdir.Cache"
 SectionEnd
 
-!ifdef SVN_BUILD     # optional Section which could create a backup
+!if ${VER_BUILD} == 0       # it's an official release (stable or release candidate)
+Section "-rename existing dirs" SecBackup
+
+  !insertmacro GET_BACKUP_POSTFIX $R0
+
+  ${If} ${FileExists} "$MPdir.Base\*.*"
+    Rename "$MPdir.Base" "$MPdir.Base_$R0"
+  ${EndIf}
+
+  ${If} ${FileExists} "$MPdir.Config\*.*"
+    Rename "$MPdir.Config" "$MPdir.Config_$R0"
+  ${EndIf}
+
+  ${If} ${FileExists} "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml"
+    Rename "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml" "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml_$R0"
+  ${EndIf}
+
+SectionEnd
+!else                       # it's a svn reöease
 Section "Backup current installation status" SecBackup
 
   !insertmacro GET_BACKUP_POSTFIX $R0
@@ -964,16 +985,20 @@ Function .onInit
     Abort
   ${EndIf}
 
+/* OBSOLETE, not sure why i added this in the past
 !ifdef SVN_BUILD
   ${IfNot} ${MPIsInstalled}
     MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_SVN_NOMP)"
     Abort
   ${EndIf}
 !endif
+*/
 
+/* OBSOLETE - old code to rename existing dirs
   ${If} ${Silent}
     Call InstFilePre
   ${EndIf}
+*/
 
   SetShellVarContext all
 FunctionEnd
@@ -1018,6 +1043,8 @@ Function un.onUninstSuccess
   ${EndIf}
 FunctionEnd
 
+
+/* OBSOLETE - old code to rename existing dirs
 Function InstFilePre
   ReadRegDWORD $R1 HKLM "${REG_UNINSTALL}" "VersionMajor"
   ReadRegDWORD $R2 HKLM "${REG_UNINSTALL}" "VersionMinor"
@@ -1043,6 +1070,7 @@ Function InstFilePre
 
   ${ReadMediaPortalDirs} "$INSTDIR"
 FunctionEnd
+*/
 
 Function un.WelcomeLeave
     ; This function is called, before the uninstallation process is startet

@@ -220,6 +220,20 @@ ShowUninstDetails show
 #---------------------------------------------------------------------------
 # SECTIONS and REMOVEMACROS
 #---------------------------------------------------------------------------
+!if ${VER_BUILD} == 0       # it's an official release (stable or release candidate)
+Section "-prepare" SecPrepare
+  DetailPrint "Prepare installation..."
+  SetShellVarContext all
+
+  !insertmacro GET_BACKUP_POSTFIX $R0
+
+  ${If} ${FileExists} "${COMMON_APPDATA}\*.*"
+    Rename "${COMMON_APPDATA}" "${COMMON_APPDATA}_$R0"
+  ${EndIf}
+
+SectionEnd
+!endif
+
 ${MementoSection} "MediaPortal TV Server" SecServer
   DetailPrint "Installing MediaPortal TV Server..."
 
