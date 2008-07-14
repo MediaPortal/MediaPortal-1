@@ -401,7 +401,7 @@ namespace TvService
           {
             _cardHandler.StopCard(user);
           }
-          return result;
+          return true;
         }
       }
       catch (Exception ex)
