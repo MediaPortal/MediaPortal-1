@@ -30,6 +30,7 @@
 !define svn_TVServer "${svn_ROOT}\TvEngine3\TVLibrary"
 !define svn_DeployTool "${svn_ROOT}\Tools\MediaPortal.DeployTool"
 !define svn_InstallScripts "${svn_ROOT}\Tools\InstallationScripts"
+!define svn_DeployVersionSVN "${svn_ROOT}\Tools\Script & Batch tools\DeployVersionSVN"
 
 
 !define MIN_FRA_MAJOR "2"
@@ -51,21 +52,19 @@
 ;!define SVN_REVISION "$WCREV$"    ; that's the string in version txt, after SubWCRev has been launched
 !include "version.txt"
 
-!ifdef BUILD_MediaPortal
-!system '"$%ProgramFiles%\Microsoft Visual Studio 8\Common7\IDE\devenv.com" /rebuild Release "${svn_MP}\DeployVersionSVN\DeployVersionSVN.sln"' = 0
+!system '"$%ProgramFiles%\Microsoft Visual Studio 8\Common7\IDE\devenv.com" /rebuild Release "${svn_DeployVersionSVN}\DeployVersionSVN.sln"' = 0
 
-!system '"${svn_MP}\DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe" /svn="${svn_MP}"' = 0
+!ifdef BUILD_MediaPortal
+!system '"${svn_DeployVersionSVN}\DeployVersionSVN\bin\Release\DeployVersionSVN.exe" /svn="${svn_MP}"' = 0
 !system '"$%ProgramFiles%\Microsoft Visual Studio 8\Common7\IDE\devenv.com" /rebuild "Release|x86" "${svn_MP}\MediaPortal.sln"' = 0
-!system '"${svn_MP}\DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe" /svn="${svn_MP}"  /revert' = 0
+!system '"${svn_DeployVersionSVN}\DeployVersionSVN\bin\Release\DeployVersionSVN.exe" /svn="${svn_MP}"  /revert' = 0
 !endif
 
 !ifdef BUILD_TVServer
-!system '"$%ProgramFiles%\Microsoft Visual Studio 8\Common7\IDE\devenv.com" /rebuild Release "${svn_TVServer}\DeployVersionSVN\DeployVersionSVN.sln"' = 0
-
-!system '"${svn_MP}\DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe" /svn="${svn_TVServer}"' = 0
+!system '"${svn_DeployVersionSVN}\DeployVersionSVN\bin\Release\DeployVersionSVN.exe" /svn="${svn_TVServer}"' = 0
 !system '"$%ProgramFiles%\Microsoft Visual Studio 8\Common7\IDE\devenv.com" /rebuild "Release|x86" "${svn_TVServer}\TvLibrary.sln"' = 0
 !system '"$%ProgramFiles%\Microsoft Visual Studio 8\Common7\IDE\devenv.com" /rebuild "Release|x86" "${svn_TVServer}\TvPlugin\TvPlugin.sln"' = 0
-!system '"${svn_MP}\DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe" /svn="${svn_TVServer}"  /revert' = 0
+!system '"${svn_DeployVersionSVN}\DeployVersionSVN\bin\Release\DeployVersionSVN.exe" /svn="${svn_TVServer}"  /revert' = 0
 !endif
 
 !ifdef BUILD_DeployTool
