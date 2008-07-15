@@ -40,7 +40,7 @@
 Name "test-helpmacros"
 
 ; The file to write
-OutFile "test-helpmacros.exe"
+OutFile "${__FILE__}.exe"
 
 ; The default installation directory
 InstallDir $DESKTOP\Example1
