@@ -524,6 +524,7 @@ namespace TvLibrary.Implementations.DVB
       if (((uint)hr) == (uint)0x90010115)
       {
         Log.Log.Info("ss2:could not lock tuner");
+        return null;
       }
       if (hr != 0)
       {

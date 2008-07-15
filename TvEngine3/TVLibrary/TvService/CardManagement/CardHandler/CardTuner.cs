@@ -151,9 +151,8 @@ namespace TvService
             Log.Debug("card: tuned user: {0} subchannel: {1}", user.Name, result.SubChannelId);
             user.SubChannel = result.SubChannelId;
             user.IdChannel = idChannel;
-          }
-
-          context.Add(user);
+            context.Add(user);
+          }          
 
           Log.Debug("card: Tuner locked: {0}", _cardHandler.Card.IsTunerLocked);
 
