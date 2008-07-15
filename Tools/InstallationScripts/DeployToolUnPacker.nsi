@@ -82,7 +82,7 @@ Name "MediaPortal Unpacker"
 ;SetCompressor /SOLID lzma
 Icon "${svn_DeployTool}\Install.ico"
 
-OutFile "MediaPortal Setup 1.0preRC2 (SVN${SVN_REVISION}).exe"
+OutFile "MediaPortalSetup_1.0preRC2_SVN${SVN_REVISION}.exe"
 InstallDir "$TEMP\MediaPortal Installation"
 
 ;Page directory
