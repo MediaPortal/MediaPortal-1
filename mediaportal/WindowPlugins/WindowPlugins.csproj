@@ -328,20 +328,6 @@
     <Compile Include="GUIMSNPlugin\MessengerSetup.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="GUIMusicVideos\GUIMusicVideo.cs" />
-    <Compile Include="GUIMusicVideos\GUIMusicVideoSetupFavoritesForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="GUIMusicVideos\GUIMusicVideoSetupFavoritesForm.designer.cs">
-      <DependentUpon>GUIMusicVideoSetupFavoritesForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="GUIMusicVideos\GUIMusicVideoSetupForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="GUIMusicVideos\GUIMusicVideoSetupForm.designer.cs">
-      <DependentUpon>GUIMusicVideoSetupForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="GUIMusicVideos\GUIMusicVideoPlaylist.cs" />
     <Compile Include="GUIMusic\GUICoverArtGrabberProgress.cs" />
     <Compile Include="GUIMusic\GUICoverArtGrabberResults.cs" />
     <Compile Include="GUIMusic\GUIMusicFullscreen.cs" />
@@ -619,19 +605,6 @@
     <Compile Include="GUITopbar\TopBarSetupForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="GUITrailers\GermanTrailers.cs" />
-    <Compile Include="GUITrailers\GUITrailers.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUITrailers\GUITrailersPlugin.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUITrailers\GUITrailersSetupForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="GUITrailers\TrailersUtility.cs" />
-    <Compile Include="GUITrailers\TSRVodTrailers.cs" />
-    <Compile Include="GUITrailers\YahooTrailers.cs" />
     <Compile Include="GUITV\GUIFullscreenTeletext.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -800,14 +773,6 @@
     <EmbeddedResource Include="GUIMSNPlugin\MessengerSetup.resx">
       <DependentUpon>MessengerSetup.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="GUIMusicVideos\GUIMusicVideoSetupFavoritesForm.resx">
-      <DependentUpon>GUIMusicVideoSetupFavoritesForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="GUIMusicVideos\GUIMusicVideoSetupForm.resx">
-      <DependentUpon>GUIMusicVideoSetupForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="GUIRadioLastFM\PluginSetupForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>PluginSetupForm.cs</DependentUpon>
@@ -822,9 +787,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="GUITopbar\TopBarSetupForm.resx">
       <DependentUpon>TopBarSetupForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="GUITrailers\GUITrailersSetupForm.resx">
-      <DependentUpon>GUITrailersSetupForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Home\resources\folder.png" />
     <EmbeddedResource Include="Home\resources\node.png" />
