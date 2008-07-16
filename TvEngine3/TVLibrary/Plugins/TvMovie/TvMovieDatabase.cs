@@ -129,12 +129,14 @@ namespace TvEngine
     {
       private string _mpChannel;
       private string _tvmEpgChannel;
+      private int _mpIdChannel;
       private TimeSpan _start;
       private TimeSpan _end;
 
-      public Mapping(string mpChannel, string tvmChannel, string start, string end)
+      public Mapping(string mpChannel, int mpIdChannel, string tvmChannel, string start, string end)
       {
         _mpChannel = mpChannel;
+        _mpIdChannel = mpIdChannel;
         _tvmEpgChannel = tvmChannel;
         _start = CleanInput(start);
         _end = CleanInput(end);
@@ -144,6 +146,11 @@ namespace TvEngine
       public string Channel
       {
         get { return _mpChannel; }
+      }
+      
+      public int IdChannel
+      {
+        get { return _mpIdChannel; }
       }
 
       public string TvmEpgChannel
@@ -782,7 +789,7 @@ namespace TvEngine
           Channel progChannel = null;
           foreach (Channel MpChannel in allChannels)
           {
-            if (MpChannel.Name == channelMap.Channel)
+            if (MpChannel.IdChannel == channelMap.IdChannel) 
             {
               progChannel = MpChannel;
               break;
@@ -877,9 +884,10 @@ namespace TvEngine
             string newStart = mapping.TimeSharingStart;
             string newEnd = mapping.TimeSharingEnd;
             string newStation = mapping.StationName;
-            string newChannel = Channel.Retrieve(mapping.IdChannel).Name;            
+            string newChannel = Channel.Retrieve(mapping.IdChannel).Name;
+            int newIdChannel = mapping.IdChannel;
 
-            mappingList.Add(new TvMovieDatabase.Mapping(newChannel, newStation, newStart, newEnd));
+            mappingList.Add(new TvMovieDatabase.Mapping(newChannel, newIdChannel, newStation, newStart, newEnd));
           }
           catch (Exception)
           {
