@@ -765,8 +765,6 @@ namespace TvPlugin
       while (_running && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
       {
         GUIWindowManager.Process();
-        if (!GUIGraphicsContext.Vmr9Active)
-          System.Threading.Thread.Sleep(50);
       }
 
       Close();

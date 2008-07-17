@@ -28,7 +28,8 @@ using System.Threading;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-
+using System.Security;
+using System.Runtime.InteropServices;
 
 namespace MediaPortal.GUI.Library
 {
@@ -44,6 +45,38 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class GUIWindowManager
   {
+    private static long startFrame = 0;
+    private static long endFrame = 0;
+    
+    [System.Security.SuppressUnmanagedCodeSecurity] // We won't use this maliciously
+    [DllImport("kernel32")]
+    private static extern bool QueryPerformanceCounter(ref long PerformanceCount);
+
+    #region Frame limiting code
+    private static void WaitForFrameClock()
+    {
+      long milliSecondsLeft;
+      long timeElapsed = 0;
+
+      // frame limiting code.
+      // sleep as long as there are ticks left for this frame
+      QueryPerformanceCounter(ref endFrame);
+      timeElapsed = endFrame - startFrame;
+      if (timeElapsed < GUIGraphicsContext.DesiredFrameTime)
+      {
+        milliSecondsLeft = (((GUIGraphicsContext.DesiredFrameTime - timeElapsed) * 1000) / DXUtil.TicksPerSecond);
+        if (milliSecondsLeft > 0)
+        {
+          Thread.Sleep((int)milliSecondsLeft);
+        }
+      }
+    }
+    private static void StartFrameClock()
+    {
+      QueryPerformanceCounter(ref startFrame);
+    }
+    #endregion  
+    
     public enum FocusState
     {
       NOT_FOCUSED = 0,
@@ -1132,12 +1165,12 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static void Process()
     {
+      StartFrameClock();
       if (null != Callbacks)
       {
         Callbacks();
       }
-      if (!GUIGraphicsContext.Vmr9Active)
-        System.Threading.Thread.Sleep(50);
+      WaitForFrameClock();
     }
 
     #endregion
