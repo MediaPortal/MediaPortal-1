@@ -309,6 +309,14 @@ namespace MediaPortal
       showCursorWhenFullscreen = false;
       bool debugChangeDeviceHack = false;
 
+      OsDetection.OSVersionInfo os = new OsDetection.OperatingSystemVersion();
+      int ver = (os.OSMajorVersion * 10) + os.OSMinorVersion;
+      if (ver >= 60)
+      {
+        Log.Debug("Disabling process window ghosting");
+        NativeMethods.DisableProcessWindowsGhosting();
+      }
+
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         useExclusiveDirectXMode = xmlreader.GetValueAsBool("general", "exclusivemode", true);
@@ -2991,6 +2999,10 @@ namespace MediaPortal
 
     #region Windows API calls
 
+    [SuppressUnmanagedCodeSecurity] // We won't use this maliciously
+    [DllImport("User32.dll", CharSet = CharSet.Auto)]
+    public static extern void DisableProcessWindowsGhosting();
+    
     [SuppressUnmanagedCodeSecurity] // We won't use this maliciously
     [DllImport("winmm.dll")]
     public static extern IntPtr timeBeginPeriod(uint period);
