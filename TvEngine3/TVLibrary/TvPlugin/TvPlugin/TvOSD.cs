@@ -115,6 +115,7 @@ namespace TvPlugin
     int m_iActiveMenuButtonID = 0;
     bool m_bNeedRefresh = false;
     DateTime m_dateTime = DateTime.Now;
+    private DateTime _RecIconLastCheck = DateTime.Now;
     Program previousProgram = null;
 
     IList listTvChannels;
@@ -158,6 +159,7 @@ namespace TvPlugin
       UpdateProgressBar();
       SetVideoProgress();	  // get the percentage of playback complete so far
       Get_TimeInfo();       // show the time elapsed/total playing time
+      SetRecorderStatus();  // BAV: fixing bug 1429: OSD is not updated with recording status 
       base.Render(timePassed);        // render our controls to the screen
     }
     void HideControl(int dwSenderId, int dwControlID)
@@ -1332,13 +1334,7 @@ namespace TvPlugin
         tbOnTvNext.Clear();
       }
 
-      // Set recorder status
-      if (imgRecIcon != null)
-      {
-        VirtualCard card;
-        TvServer server = new TvServer();
-        imgRecIcon.Visible=server.IsRecording(GetChannelName(), out card);
-      }
+      SetRecorderStatus();
 
       // Channel icon
       if (imgTvChannelLogo != null)
@@ -1438,6 +1434,22 @@ namespace TvPlugin
       
       
       UpdateProgressBar();
+    }
+
+    private void SetRecorderStatus()
+    {
+      if (imgRecIcon != null)
+      {
+        TimeSpan ts = DateTime.Now - _RecIconLastCheck;
+        if (ts.TotalSeconds > 15)
+        {
+          VirtualCard card;
+          TvServer server = new TvServer();
+          imgRecIcon.Visible = server.IsRecording(GetChannelName(), out card);
+          _RecIconLastCheck = DateTime.Now;
+          Log.Info("OSD.SetRecorderStatus = {0}", imgRecIcon.Visible);
+        }
+      }
     }
 
     void UpdateProgressBar()
