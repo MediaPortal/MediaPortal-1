@@ -96,6 +96,11 @@ namespace TvDatabase
       get { return dayOfWeek; }
       set { isChanged |= dayOfWeek != value; dayOfWeek = value; }
     }
+    
+    public int IdKeyword
+    {
+      get { return idKeyword; }
+    }
     #endregion
 
     #region Storage and Retrieval
@@ -118,8 +123,15 @@ namespace TvDatabase
       {
         return null;
       }
-      Key key = new Key(typeof(Timespan), true, "idTimespan", id);
-      return Broker.RetrieveInstance(typeof(Timespan), key) as Timespan;
+      try
+      {
+        Key key = new Key(typeof (Timespan), true, "idTimespan", id);
+        return Broker.RetrieveInstance(typeof (Timespan), key) as Timespan;
+      }
+      catch (Exception ex)
+      {
+        return null;
+      }
     }
 
     /// <summary>
@@ -140,9 +152,16 @@ namespace TvDatabase
       {
         return null;
       }
-      Key key = new Key(typeof(Timespan), true, "idKeyword", KeywordID);
-      IList list = Broker.RetrieveList(typeof(Timespan), key);
-      return list as List<Timespan>;
+      try
+      {
+        Key key = new Key(typeof (Timespan), true, "idKeyword", KeywordID);
+        IList list = Broker.RetrieveList(typeof (Timespan), key);
+        return list as List<Timespan>;
+      }
+      catch (Exception ex)
+      {
+        return null;
+      }
     }
 
     /// <summary>
