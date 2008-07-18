@@ -319,15 +319,6 @@
     <Compile Include="Home\GUIHomeSetupForm.Designer.cs">
       <DependentUpon>GUIHomeSetupForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="GUIMSNPlugin\GUIMSNChatWindow.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUIMSNPlugin\GUIMSNPlugin.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUIMSNPlugin\MessengerSetup.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="GUIMusic\GUICoverArtGrabberProgress.cs" />
     <Compile Include="GUIMusic\GUICoverArtGrabberResults.cs" />
     <Compile Include="GUIMusic\GUIMusicFullscreen.cs" />
@@ -649,9 +640,6 @@
     <Compile Include="GUITV\GUITVHome.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="GUITV\GUITVMSNOSD.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="GUITV\GUITVNoSignal.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -695,9 +683,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="GUIVideoFiles\GUIVideoInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUIVideoFiles\GUIVideoMSNOSD.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="GUIVideoFiles\GUIVideoOSD.cs">
@@ -769,9 +754,6 @@
     <EmbeddedResource Include="Home\GUIHomeSetupForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>GUIHomeSetupForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="GUIMSNPlugin\MessengerSetup.resx">
-      <DependentUpon>MessengerSetup.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GUIRadioLastFM\PluginSetupForm.resx">
       <SubType>Designer</SubType>

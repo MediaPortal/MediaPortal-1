@@ -83,7 +83,7 @@ namespace MediaPortal.GUI.TV
     DateTime _statusTimeOutTimer = DateTime.Now;
     GUITVZAPOSD _zapWindow = null;
     GUITVOSD _osdWindow = null;
-    GUITVMSNOSD _msnWindow = null;
+    //GUITVMSNOSD _msnWindow = null;  OBSOLETE when MSN plugin has been removed
     DateTime _osdTimeoutTimer;
     DateTime _zapTimeOutTimer;
     DateTime _groupTimeOutTimer;
@@ -381,27 +381,27 @@ namespace MediaPortal.GUI.TV
           return;
         }
       }
-      else if (_msnWindowVisible)
-      {
-        if (((action.wID == Action.ActionType.ACTION_SHOW_OSD) || (action.wID == Action.ActionType.ACTION_SHOW_GUI))) // hide the OSD
-        {
-          lock (this)
-          {
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _msnWindow.GetID, 0, 0, GetID, 0, null);
-            _msnWindow.OnMessage(msg);	// Send a de-init msg to the OSD
-            _msnWindowVisible = false;
-            GUIWindowManager.IsOsdVisible = false;
-          }
-          return;
-        }
-        if (action.wID == Action.ActionType.ACTION_KEY_PRESSED)
-        {
-          _msnWindow.OnAction(action);
+      ////OBSOLETE when MSN plugin has been removed
+      //else if (_msnWindowVisible)
+      //{
+      //  if (((action.wID == Action.ActionType.ACTION_SHOW_OSD) || (action.wID == Action.ActionType.ACTION_SHOW_GUI))) // hide the OSD
+      //  {
+      //    lock (this)
+      //    {
+      //      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _msnWindow.GetID, 0, 0, GetID, 0, null);
+      //      _msnWindow.OnMessage(msg);	// Send a de-init msg to the OSD
+      //      _msnWindowVisible = false;
+      //      GUIWindowManager.IsOsdVisible = false;
+      //    }
+      //    return;
+      //  }
+      //  if (action.wID == Action.ActionType.ACTION_KEY_PRESSED)
+      //  {
+      //    _msnWindow.OnAction(action);
 
-          return;
-        }
-      }
-
+      //    return;
+      //  }
+      //}
       else if (action.wID == Action.ActionType.ACTION_MOUSE_MOVE && GUIGraphicsContext.MouseSupport)
       {
         int y = (int)action.fAmount2;
@@ -483,18 +483,19 @@ namespace MediaPortal.GUI.TV
             }
           }
           break;
-        case Action.ActionType.ACTION_SHOW_MSN_OSD:
-          if (_isMsnChatPopup)
-          {
-            Log.Info("MSN CHAT:ON");
+        ////OBSOLETE when MSN plugin has been removed
+        //case Action.ActionType.ACTION_SHOW_MSN_OSD:
+        //  if (_isMsnChatPopup)
+        //  {
+        //    Log.Info("MSN CHAT:ON");
 
-            _msnWindowVisible = true;
-            GUIWindowManager.VisibleOsd = GUIWindow.Window.WINDOW_TVMSNOSD;
-            _msnWindow.DoModal(GetID, null);
-            _msnWindowVisible = false;
-            GUIWindowManager.IsOsdVisible = false;
-          }
-          break;
+        //    _msnWindowVisible = true;
+        //    GUIWindowManager.VisibleOsd = GUIWindow.Window.WINDOW_TVMSNOSD;
+        //    _msnWindow.DoModal(GetID, null);
+        //    _msnWindowVisible = false;
+        //    GUIWindowManager.IsOsdVisible = false;
+        //  }
+        //  break;
       case Action.ActionType.ACTION_AUTOCROP:
           {
               Log.Debug("ACTION_AUTOCROP");
@@ -1096,13 +1097,14 @@ namespace MediaPortal.GUI.TV
           _isOsdVisible = false;
           GUIWindowManager.IsOsdVisible = false;
         }
-        if (_msnWindowVisible)
-        {
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _msnWindow.GetID, 0, 0, GetID, 0, null);
-          _msnWindow.OnMessage(msg);	// Send a de-init msg to the OSD
-          _msnWindowVisible = false;
-          GUIWindowManager.IsOsdVisible = false;
-        }
+        ////OBSOLETE when MSN plugin has been removed
+        //if (_msnWindowVisible)
+        //{
+        //  GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _msnWindow.GetID, 0, 0, GetID, 0, null);
+        //  _msnWindow.OnMessage(msg);	// Send a de-init msg to the OSD
+        //  _msnWindowVisible = false;
+        //  GUIWindowManager.IsOsdVisible = false;
+        //}
         if (_isDialogVisible && dlg != null)
         {
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, dlg.GetID, 0, 0, GetID, 0, null);
@@ -1218,6 +1220,8 @@ namespace MediaPortal.GUI.TV
           break;
         #endregion
 
+        #region OBSOLETE when MSN plugin has been removed
+          /*
         #region case GUI_MSG_MSN_CLOSECONVERSATION
 
         case GUIMessage.MessageType.GUI_MSG_MSN_CLOSECONVERSATION:
@@ -1261,6 +1265,8 @@ namespace MediaPortal.GUI.TV
           }
           break;
         #endregion
+           */
+        #endregion
 
         #region case GUI_MSG_WINDOW_DEINIT
 
@@ -1275,11 +1281,12 @@ namespace MediaPortal.GUI.TV
             _isOsdVisible = false;
             GUIWindowManager.IsOsdVisible = false;
 
-            if (_msnWindowVisible)
-            {
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _msnWindow.GetID, 0, 0, GetID, 0, null);
-              _msnWindow.OnMessage(msg);	// Send a de-init msg to the OSD
-            }
+            ////OBSOLETE when MSN plugin has been removed
+            //if (_msnWindowVisible)
+            //{
+            //  GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _msnWindow.GetID, 0, 0, GetID, 0, null);
+            //  _msnWindow.OnMessage(msg);	// Send a de-init msg to the OSD
+            //}
 
             _isOsdVisible = false;
             GUIWindowManager.IsOsdVisible = false;
@@ -1349,7 +1356,7 @@ namespace MediaPortal.GUI.TV
             GUIGraphicsContext.VideoWindow = new Rectangle(GUIGraphicsContext.OverScanLeft, GUIGraphicsContext.OverScanTop, GUIGraphicsContext.OverScanWidth, GUIGraphicsContext.OverScanHeight);
             _osdWindow = (GUITVOSD)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVOSD);
             _zapWindow = (GUITVZAPOSD)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVZAPOSD);
-            _msnWindow = (GUITVMSNOSD)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVMSNOSD);
+            //_msnWindow = (GUITVMSNOSD)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVMSNOSD); OBSOLETE when MSN plugin has been removed
 
             _lastPause = g_Player.Paused;
             _lastSpeed = g_Player.Speed;
@@ -1411,10 +1418,11 @@ namespace MediaPortal.GUI.TV
 
       }
 
-      if (_msnWindowVisible)
-      {
-        _msnWindow.OnMessage(message);	// route messages to MSNChat window
-      }
+      ////OBSOLETE when MSN plugin has been removed
+      //if (_msnWindowVisible)
+      //{
+      //  _msnWindow.OnMessage(message);	// route messages to MSNChat window
+      //}
       return base.OnMessage(message);
     }
 
@@ -1549,18 +1557,19 @@ namespace MediaPortal.GUI.TV
           ShowAudioLanguageMenu();
           break;
 
-        case 12902: // MSN Messenger
-          Log.Info("MSN CHAT:ON");
-          _msnWindowVisible = true;
-          GUIWindowManager.VisibleOsd = GUIWindow.Window.WINDOW_TVMSNOSD;
-          _msnWindow.DoModal(GetID, null);
-          _msnWindowVisible = false;
-          GUIWindowManager.IsOsdVisible = false;
-          break;
+        ////OBSOLETE when MSN plugin has been removed
+        //case 12902: // MSN Messenger
+        //  Log.Info("MSN CHAT:ON");
+        //  _msnWindowVisible = true;
+        //  GUIWindowManager.VisibleOsd = GUIWindow.Window.WINDOW_TVMSNOSD;
+        //  _msnWindow.DoModal(GetID, null);
+        //  _msnWindowVisible = false;
+        //  GUIWindowManager.IsOsdVisible = false;
+        //  break;
 
-        case 902: // Online contacts
-          GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MSN);
-          break;
+        //case 902: // Online contacts
+        //  GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MSN);
+        //  break;
 
         case 1441: // Fullscreen teletext
           GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT);
@@ -1569,7 +1578,7 @@ namespace MediaPortal.GUI.TV
         case 970:
           // switch back to previous window
           _isOsdVisible = false;
-          _msnWindowVisible = false;
+          //_msnWindowVisible = false;
           GUIWindowManager.IsOsdVisible = false;
           GUIGraphicsContext.IsFullScreenVideo = false;
           GUIWindowManager.ShowPreviousWindow();
@@ -2155,12 +2164,14 @@ namespace MediaPortal.GUI.TV
       _isOsdVisible = false;
       GUIWindowManager.IsOsdVisible = false;
 
-      //close window
-      msg2 = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _msnWindow.GetID, 0, 0, GetID, 0, null);
-      _msnWindow.OnMessage(msg2);	// Send a de-init msg to the OSD
-      msg2 = null;
-      _msnWindowVisible = false;
-      GUIWindowManager.IsOsdVisible = false;
+      ////OBSOLETE when MSN plugin has been removed
+      ////close window
+      //msg2 = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _msnWindow.GetID, 0, 0, GetID, 0, null);
+      //_msnWindow.OnMessage(msg2);	// Send a de-init msg to the OSD
+      //msg2 = null;
+      //_msnWindowVisible = false;
+      //GUIWindowManager.IsOsdVisible = false;
+      
       Log.Info("fullscreentv:not viewing anymore");
       GUIWindowManager.ShowPreviousWindow();
     }
@@ -2200,8 +2211,9 @@ namespace MediaPortal.GUI.TV
         if (_isDialogVisible)
           dlg.Render(timePassed);
 
-        if (_msnWindowVisible)
-          _msnWindow.Render(timePassed);
+        ////OBSOLETE when MSN plugin has been removed
+        //if (_msnWindowVisible)
+        //  _msnWindow.Render(timePassed);
       }
       // do we need 2 render the OSD?
       if (_isOsdVisible)
@@ -2453,10 +2465,11 @@ namespace MediaPortal.GUI.TV
       {
         return _osdWindow.GetFocusControlId();
       }
-      if (_msnWindowVisible)
-      {
-        return _msnWindow.GetFocusControlId();
-      }
+      ////OBSOLETE when MSN plugin has been removed
+      //if (_msnWindowVisible)
+      //{
+      //  return _msnWindow.GetFocusControlId();
+      //}
 
       return base.GetFocusControlId();
     }
@@ -2467,10 +2480,11 @@ namespace MediaPortal.GUI.TV
       {
         return _osdWindow.GetControl(iControlId);
       }
-      if (_msnWindowVisible)
-      {
-        return _msnWindow.GetControl(iControlId);
-      }
+      ////OBSOLETE when MSN plugin has been removed
+      //if (_msnWindowVisible)
+      //{
+      //  return _msnWindow.GetControl(iControlId);
+      //}
 
       return base.GetControl(iControlId);
     }
