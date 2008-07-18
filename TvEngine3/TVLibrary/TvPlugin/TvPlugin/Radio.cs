@@ -540,6 +540,7 @@ namespace TvPlugin
 
     void SelectCurrentItem()
     {
+      if (facadeView == null) return;
       int iItem = facadeView.SelectedListItemIndex;
       if (iItem > -1)
       {
