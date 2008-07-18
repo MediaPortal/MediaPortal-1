@@ -53,19 +53,23 @@ namespace TvPlugin
   public class TvMiniGuide : GUIWindow, IRenderLayer
   {
     // Member variables                                  
-    [SkinControlAttribute(34)]    protected GUIButtonControl cmdExit = null;
-    [SkinControlAttribute(35)]    protected GUIListControl lstChannelsNoStateIcons = null;
-    [SkinControlAttribute(36)]    protected GUISpinControl spinGroup = null;
-    [SkinControlAttribute(37)]    protected GUIListControl lstChannelsWithStateIcons = null;
+    [SkinControlAttribute(34)]
+    protected GUIButtonControl cmdExit = null;
+    [SkinControlAttribute(35)]
+    protected GUIListControl lstChannelsNoStateIcons = null;
+    [SkinControlAttribute(36)]
+    protected GUISpinControl spinGroup = null;
+    [SkinControlAttribute(37)]
+    protected GUIListControl lstChannelsWithStateIcons = null;
 
     protected GUIListControl lstChannels = null;
 
     bool _canceled = false;
     bool _running = false;
     int _parentWindowID = 0;
-    GUIWindow _parentWindow = null;    
+    GUIWindow _parentWindow = null;
     Dictionary<int, List<Channel>> _tvGroupChannelListCache = null;
-    
+
     List<ChannelGroup> _channelGroupList = null;
     Channel _selectedChannel;
     bool _zap = true;
@@ -101,7 +105,7 @@ namespace TvPlugin
       GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_MINI_GUIDE, this);
       Restore();
       PreInit();
-      ResetAllControls();      
+      ResetAllControls();
     }
 
     public override bool SupportsDelayedLoad
@@ -219,7 +223,7 @@ namespace TvPlugin
         if (_channelList.Count == 0)
         {
           Channel newChannel = new Channel(GUILocalizeStrings.Get(911), false, true, 0, DateTime.MinValue, false, DateTime.MinValue, 0, true, "", true, GUILocalizeStrings.Get(911));
-          for (int i = 0 ; i < 10 ; ++i)
+          for (int i = 0; i < 10; ++i)
             _channelList.Add(newChannel);
         }
       }
@@ -359,7 +363,7 @@ namespace TvPlugin
     {
       benchClock = Stopwatch.StartNew();
       Log.Debug("miniguide: onpageload");
-     
+
 
       // following line should stay. Problems with OSD not
       // appearing are already fixed elsewhere
@@ -368,7 +372,7 @@ namespace TvPlugin
       ResetAllControls();							// make sure the controls are positioned relevant to the OSD Y offset
       benchClock.Stop();
       Log.Debug("miniguide: all controls are reset after {0}ms", benchClock.ElapsedMilliseconds.ToString());
-      
+
       lstChannels = getChannelList();
 
       if (lstChannelsWithStateIcons != null)
@@ -397,7 +401,7 @@ namespace TvPlugin
 
       return lstChannels;
     }
-   
+
     private void OnGroupChanged()
     {
       GUIWaitCursor.Show();
@@ -420,7 +424,7 @@ namespace TvPlugin
       // spin control
       spinGroup.Reset();
       // start to fill them up again
-      for (int i = 0 ; i < _channelGroupList.Count ; i++)
+      for (int i = 0; i < _channelGroupList.Count; i++)
       {
         current = _channelGroupList[i];
         spinGroup.AddLabel(current.GroupName, i);
@@ -444,13 +448,13 @@ namespace TvPlugin
 
       if (_tvGroupChannelListCache == null)
       {
-        _tvGroupChannelListCache = new Dictionary<int,List<Channel>>();
+        _tvGroupChannelListCache = new Dictionary<int, List<Channel>>();
       }
 
       if (_tvGroupChannelListCache.ContainsKey(idGroup)) //already in cache ? then return it.
       {
-        Log.Debug("miniguide: GetChannelListByGroup returning cached version of channels.");        
-        return _tvGroupChannelListCache[idGroup];        
+        Log.Debug("miniguide: GetChannelListByGroup returning cached version of channels.");
+        return _tvGroupChannelListCache[idGroup];
       }
       else //not in cache, fetch it and update cache, then return.
       {
@@ -481,7 +485,7 @@ namespace TvPlugin
       }*/
 
       benchClock.Reset();
-      benchClock.Start();      
+      benchClock.Start();
       ///_tvChannelList = (List<Channel>)TVHome.Navigator.CurrentGroup.ReferringTvGuideChannels();      
       //_tvChannelList = layer.GetTVGuideChannelsForGroup(TVHome.Navigator.CurrentGroup.IdGroup);
 
@@ -490,7 +494,7 @@ namespace TvPlugin
       benchClock.Stop();
       string BenchGroupChannels = benchClock.ElapsedMilliseconds.ToString();
       benchClock.Reset();
-      benchClock.Start();      
+      benchClock.Start();
       Dictionary<int, NowAndNext> listNowNext = layer.GetNowAndNext(tvChannelList);
       benchClock.Stop();
       string BenchNowNext = benchClock.ElapsedMilliseconds.ToString();
@@ -519,7 +523,7 @@ namespace TvPlugin
       bool isUserTS = false;
       bool isAnyUserTS = false;
       bool isRec = false;
-     
+
       RECorTS = TVHome.TvServer.IsAnyCardRecordingOrTimeshifting(TVHome.Card.User, out isUserTS, out isAnyUserTS, out isRec);
 
       if (RECorTS) // someone is timeshifting or recording, lets find out the details.
@@ -532,23 +536,44 @@ namespace TvPlugin
         {
           Log.Debug("miniguide: assume we're the only current timeshifting user - switching to fast channel check mode");
           CheckChannelState = false;
-        }        
+        }
       }
       else //no TS-rec activity at all.
       {
         CheckChannelState = false;
       }
-                 
+
       benchClock.Reset();
       benchClock.Start();
 
-      Dictionary<int, ChannelState> tvChannelStatesList = null;                    
+      Dictionary<int, ChannelState> tvChannelStatesList = null;
 
       if (CheckChannelState)
       {
         benchClock.Reset();
         benchClock.Start();
-        tvChannelStatesList = TVHome.TvServer.GetAllChannelStatesForGroup(TVHome.Navigator.CurrentGroup.IdGroup, TVHome.Card.User);
+
+        if (TVHome.Navigator.CurrentGroup.GroupName.Equals("All Channels") || (!g_Player.IsTV && !g_Player.Playing))
+        {
+          //we have no way of using the cached channelstates on the server in the following situations.
+          // 1) when the "all channels" group is selected - too many channels.
+          // 2) when user is not timeshifting - no user object on the server.
+          tvChannelStatesList = TVHome.TvServer.GetAllChannelStatesForGroup(TVHome.Navigator.CurrentGroup.IdGroup, TVHome.Card.User);
+        }
+        else
+        {
+          // use the more speedy approach
+          // ask the server of the cached list of channel states corresponding to the user.
+          tvChannelStatesList = TVHome.TvServer.GetAllChannelStatesCached(TVHome.Card.User);
+
+          if (tvChannelStatesList == null)
+          {
+            //slow approach.
+            tvChannelStatesList = TVHome.TvServer.GetAllChannelStatesForGroup(TVHome.Navigator.CurrentGroup.IdGroup, TVHome.Card.User);
+          }
+        }
+
+
         benchClock.Stop();
         if (tvChannelStatesList != null)
         {
@@ -560,9 +585,9 @@ namespace TvPlugin
         Log.Debug("miniguide: not checking channel state");
       }
 
-      for (int i = 0 ; i < tvChannelList.Count ; i++)
+      for (int i = 0; i < tvChannelList.Count; i++)
       {
-        CurrentChan = tvChannelList[i];        
+        CurrentChan = tvChannelList[i];
         CurrentId = CurrentChan.IdChannel;
 
         if (tvChannelStatesList != null && tvChannelStatesList.ContainsKey(CurrentId))
@@ -573,7 +598,7 @@ namespace TvPlugin
         {
           CurrentChanState = (int)ChannelState.tunable;
         }
-      
+
         if (CurrentChan.VisibleInGuide)
         {
           StringBuilder sb = new StringBuilder();
@@ -607,10 +632,10 @@ namespace TvPlugin
           {
             item.IconImageBig = string.Empty;
             item.IconImage = string.Empty;
-          }          
+          }
 
           if (DisplayStatusInfo)
-          {          
+          {
             bool showChannelStateIcons = (TVHome.ShowChannelStateIcons() && lstChannelsWithStateIcons != null);
 
             switch (CurrentChanState)
@@ -705,7 +730,7 @@ namespace TvPlugin
       }
       benchClock.Stop();
       Log.Debug("miniguide: state check + filling completed after {0}ms", benchClock.ElapsedMilliseconds.ToString());
-      lstChannels.SelectedListItemIndex = SelectedID;      
+      lstChannels.SelectedListItemIndex = SelectedID;
 
       if (lstChannels.GetID == 37)
       {
