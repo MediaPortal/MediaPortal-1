@@ -91,6 +91,11 @@ namespace TvService
     /// </summary>
     PluginLoader _plugins = null;
     List<ITvServerPlugin> _pluginsStarted = new List<ITvServerPlugin>();
+
+    // contains a cached copy of all the channels in the user defined groups (excl. the all channels group)
+    // used to speedup "mini EPG" channel state creation.
+    List<Channel> _tvChannelListGroups = null; 
+
     #endregion
 
     #region events
@@ -983,7 +988,7 @@ namespace TvService
     /// 	<c>true</c> if a card is recording or timeshifting; otherwise, <c>false</c>.
     /// </returns>
     public bool IsAnyCardRecordingOrTimeshifting(User userTS, out bool isUserTS, out bool isAnyUserTS, out bool isRec)
-    {     
+    {
       isUserTS = false;
       isAnyUserTS = false;
       isRec = false;
@@ -1023,7 +1028,7 @@ namespace TvService
               break;
             }
           }
-        }       
+        }
       }
 
       if (isRec || isUserTS || isAnyUserTS)
@@ -1110,7 +1115,7 @@ namespace TvService
             if (!isTS)
             {
               isTS = tvcard.TimeShifter.IsTimeShifting(ref user);
-            }            
+            }
           }
         }
       }
@@ -1274,11 +1279,11 @@ namespace TvService
         cardId = user.CardId;
         if (_cards[cardId].DataBaseCard.Enabled == false) return TvResult.CardIsDisabled;
         //if (!CardPresent(cardId)) return TvResult.CardIsDisabled;
-        
+
         Fire(this, new TvServerEventArgs(TvServerEventType.StartZapChannel, GetVirtualCard(user), user, channel));
         TvResult res = _cards[cardId].Tuner.Tune(ref user, channel, idChannel);
-        
-        
+
+
         /*if (res == TvResult.Succeeded)
         {
           RemoveUserFromOtherCards(cardId, user);
@@ -1289,7 +1294,7 @@ namespace TvService
       }
       finally
       {
-        Fire(this, new TvServerEventArgs(TvServerEventType.EndZapChannel, GetVirtualCard(user), user, channel));        
+        Fire(this, new TvServerEventArgs(TvServerEventType.EndZapChannel, GetVirtualCard(user), user, channel));
       }
     }
 
@@ -1451,9 +1456,9 @@ namespace TvService
 
     public bool StopTimeShifting(ref User user, TvStoppedReason reason)
     {
-      if (ValidateTvControllerParams(user)) return false;          										
-			_cards[user.CardId].Users.SetTvStoppedReason(user, reason);			
-			return this.StopTimeShifting(ref user);		
+      if (ValidateTvControllerParams(user)) return false;
+      _cards[user.CardId].Users.SetTvStoppedReason(user, reason);
+      return this.StopTimeShifting(ref user);
     }
 
     public TvStoppedReason GetTvStoppedReason(User user)
@@ -1555,6 +1560,12 @@ namespace TvService
               _epgGrabber.Start();
             }
           }
+
+          if (result)
+          {            
+            UpdateChannelStatesForUsers();
+          }
+
           return result;
         }
       }
@@ -1576,7 +1587,14 @@ namespace TvService
     public bool StartRecording(ref User user, ref string fileName, bool contentRecording, long startTime)
     {
       if (ValidateTvControllerParams(user)) return false;
-      return _cards[user.CardId].Recorder.Start(ref user, ref  fileName, contentRecording, startTime);
+      bool result = _cards[user.CardId].Recorder.Start(ref user, ref  fileName, contentRecording, startTime);
+
+      if (result)
+      {        
+        UpdateChannelStatesForUsers();
+      }
+
+      return result;
     }
 
     /// <summary>
@@ -1587,7 +1605,14 @@ namespace TvService
     public bool StopRecording(ref User user)
     {
       if (ValidateTvControllerParams(user)) return false;
-      return _cards[user.CardId].Recorder.Stop(ref user);
+      bool result = _cards[user.CardId].Recorder.Stop(ref user);
+
+      if (result)
+      {        
+        UpdateChannelStatesForUsers();
+      }
+
+      return result;      
     }
 
     /// <summary>
@@ -2085,6 +2110,9 @@ namespace TvService
         Log.Write("Controller: StartTimeShifting started on card:{0} to {1}", user.CardId, timeshiftFileName);
         card = GetVirtualCard(user);
         RemoveUserFromOtherCards(card.Id, user); //only remove user from other cards if new tuning was a success
+
+        UpdateChannelStatesForUsers();
+
         return TvResult.Succeeded;
       }
       catch (Exception ex)
@@ -2516,11 +2544,11 @@ namespace TvService
             }
             else if (tvcard.TimeShifter.IsTimeShifting(ref user))
             {
-                currentTSChannels.Add(tvcard.CurrentDbChannel(ref user));
+              currentTSChannels.Add(tvcard.CurrentDbChannel(ref user));
             }
-            else 
+            else
             {
-              ChannelState cState = GetChannelState (tvcard.CurrentDbChannel(ref user),user);
+              ChannelState cState = GetChannelState(tvcard.CurrentDbChannel(ref user), user);
               if (cState == ChannelState.tunable)
               {
                 currentAvailChannels.Add(tvcard.CurrentDbChannel(ref user));
@@ -2535,6 +2563,35 @@ namespace TvService
       }
     }
 
+    /// <summary>
+    /// Fetches all channel states for a specific user (cached - faster)
+    /// </summary>    
+    /// <param name="user"></param>      
+    public Dictionary<int, ChannelState> GetAllChannelStatesCached(User user)
+    {      
+      if (user == null)
+      {
+        return null;
+      }
+
+      User[] users = _cards[user.CardId].Users.GetUsers();
+
+      if (users != null)
+      {
+        for (int i = 0; i < users.Length; i++)
+        {
+          User u = users[i];
+
+          if (u.Name.Equals(user.Name))
+          {
+            return u.ChannelStates;
+          }
+        }
+      }
+                  
+      return null;
+    }
+    
 
     /// <summary>
     /// Fetches all channel states for a specific group
@@ -2542,12 +2599,17 @@ namespace TvService
     /// <param name="idGroup"></param>    
     /// <param name="user"></param>        
     public Dictionary<int, ChannelState> GetAllChannelStatesForGroup(int idGroup, User user)
-    {            
+    {
       if (idGroup < 1)
-      {        
+      {
         return null;
       }
 
+      if (user == null)
+      {
+        return null;
+      }
+      
       TvBusinessLayer layer = new TvBusinessLayer();
       List<Channel> tvChannelList = layer.GetTVGuideChannelsForGroup(idGroup);
 
@@ -2556,15 +2618,16 @@ namespace TvService
       Dictionary<int, ChannelState> channelStates;
 
       channelStates = new Dictionary<int, ChannelState>();
-      ICardAllocation allocation = CardAllocationFactory.Create(true);
+      SimpleCardAllocation allocation = (SimpleCardAllocation)CardAllocationFactory.Create(true);
 
       if (allocation != null)
       {
         channelStates = allocation.GetChannelStates(_cards, tvChannelList, ref user, true);
-      }
-      return channelStates;      
+      }            
+
+      return channelStates;
     }
-    
+
 
 
     /// <summary>
@@ -2590,7 +2653,7 @@ namespace TvService
         chanState = ChannelState.tunable;
       else
         chanState = ChannelState.nottunable;
-      
+
       return chanState;
     }
     #endregion
@@ -2759,6 +2822,50 @@ namespace TvService
 
     #region private members
 
+    private void UpdateChannelStatesForUsers()
+    {
+      //System.Diagnostics.Debugger.Launch();
+      // this section makes sure that all users are updated in regards to channel states.      
+      SimpleCardAllocation allocation = (SimpleCardAllocation)CardAllocationFactory.Create(true);
+
+      if (allocation != null)
+      {
+        TvBusinessLayer layer = new TvBusinessLayer();
+        IList groups = ChannelGroup.ListAll();
+
+        if (_tvChannelListGroups == null)
+        {
+          foreach (ChannelGroup group in groups)
+          {
+            // we will only update user created groups, since it will often have fewer channels than "all channels"
+            // going into "all channels" group in mini EPG will always be slower.
+            if (group.GroupName.Equals("All Channels")) continue;
+
+            if (_tvChannelListGroups == null)
+            {
+              _tvChannelListGroups = layer.GetTVGuideChannelsForGroup(group.IdGroup);
+            }
+            else
+            {
+              List<Channel> tvChannelList = layer.GetTVGuideChannelsForGroup(group.IdGroup);
+
+              foreach (Channel ch in tvChannelList)
+              {
+                bool exists = _tvChannelListGroups.Exists(delegate(Channel c) { return c.IdChannel == ch.IdChannel; });
+
+                if (!exists)
+                {
+                  _tvChannelListGroups.Add(ch);
+                }
+              }
+            }
+          }
+        }
+
+        allocation.SetChannelStates(_cards, _tvChannelListGroups, true);
+      }
+    }
+
     private void HeartBeatMonitor()
     {
       Log.Info("Controller: Heartbeat Monitor initiated, max timeout allowed is {0} sec.", HEARTBEAT_MAX_SECS_EXCEED_ALLOWED);
@@ -2821,7 +2928,7 @@ namespace TvService
     /// <param name="cardId">The card id.</param>
     /// <param name="user">The user.</param>
     public void RemoveUserFromOtherCards(int cardId, User user)
-    {      
+    {
       if (ValidateTvControllerParams(user) || ValidateTvControllerParams(cardId))
       {
         return;
@@ -2876,9 +2983,9 @@ namespace TvService
         if (_cards[user.CardId].DataBaseCard.Enabled == false) return TvResult.CardIsDisabled;
         //if (!CardPresent(user.CardId)) return TvResult.CardIsDisabled;
         Fire(this, new TvServerEventArgs(TvServerEventType.StartZapChannel, GetVirtualCard(user), user, channel));
-        TvResult result = _cards[user.CardId].Tuner.CardTune(ref user, channel, dbChannel);        
+        TvResult result = _cards[user.CardId].Tuner.CardTune(ref user, channel, dbChannel);
         Log.Info("Controller: {0} {1} {2}", user.Name, user.CardId, user.SubChannel);
-        
+
         /*
         if (result == TvResult.Succeeded)
         {
@@ -2889,7 +2996,7 @@ namespace TvService
       }
       finally
       {
-        Fire(this, new TvServerEventArgs(TvServerEventType.EndZapChannel, GetVirtualCard(user), user, channel));        
+        Fire(this, new TvServerEventArgs(TvServerEventType.EndZapChannel, GetVirtualCard(user), user, channel));
       }
     }
 

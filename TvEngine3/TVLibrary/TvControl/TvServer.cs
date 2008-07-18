@@ -112,6 +112,24 @@ namespace TvControl
     }
 
     /// <summary>
+    /// Gets the user for card.
+    /// </summary>
+    /// <param name="cardId">The card id.</param>
+    /// <returns></returns>
+    public User GetUserForCard(int cardId)
+    {
+      try
+      {
+        return RemoteControl.Instance.GetUserForCard(cardId);
+      }
+      catch (Exception ex)
+      {
+        HandleFailure(ex);
+      }
+      return null;
+    }
+
+    /// <summary>
     /// returns a virtual card for the specified index
     /// which can be used to control the card
     /// </summary>

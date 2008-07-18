@@ -428,7 +428,11 @@ namespace TvControl
     /// </returns>
     bool IsCardInUse(int cardId, out User user);
 
-
+    /// <summary>
+    /// Fetches all channel states for a specific user (cached - faster)
+    /// </summary>    
+    /// <param name="user"></param>      
+    Dictionary<int, ChannelState> GetAllChannelStatesCached(User user);
 
     /// <summary>
     /// Fetches all channel states for a specific group
@@ -789,6 +793,13 @@ namespace TvControl
     /// 	<c>true</c> if card is tuned to the transponder; otherwise, <c>false</c>.
     /// </returns>
     bool IsTunedToTransponder(int cardId,IChannel transponder);
+
+    /// <summary>
+    /// Gets the user for card.
+    /// </summary>
+    /// <param name="cardId">The card id.</param>
+    /// <returns></returns>
+    User GetUserForCard(int cardId);
 
     /// <summary>
     /// Gets the users for card.

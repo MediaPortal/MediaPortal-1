@@ -45,14 +45,7 @@ using TvEngine.Events;
 namespace TvService
 {
   public interface ICardAllocation
-  {
-
-    /// <summary>
-    /// Gets a list of all channel states    
-    /// </summary>    
-    /// <returns>dictionary containing all channel states of the channels supplied</returns>
-    Dictionary<int, ChannelState> GetChannelStates(Dictionary<int, ITvCardHandler> cards, List<Channel> channels, ref User user, bool checkTransponders);
-
+  {    
     /// <summary>
     /// Gets a list of all free cards which can receive the channel specified
     /// List is sorted by priority

@@ -36,10 +36,11 @@ namespace TvControl
     int _cardId;
     int _subChannel;
     int _idChannel;
-		TvStoppedReason _timeshiftStoppedReason;
-		DateTime _lastHeartBeat;
+    TvStoppedReason _timeshiftStoppedReason;
+    DateTime _lastHeartBeat;
     [NonSerialized]
     object _history;
+    private Dictionary<int, ChannelState> _channelStates = null; //used primarily for miniepg.
 
     /// <summary>
     /// Initializes a new instance of the <see cref="User"/> class.
@@ -50,9 +51,10 @@ namespace TvControl
       _isAdmin = false;
       _cardId = -1;
       _idChannel = -1;
-      _subChannel=-1;
-			_lastHeartBeat = DateTime.MinValue;
-			_timeshiftStoppedReason = TvStoppedReason.UnknownReason;
+      _subChannel = -1;
+      _lastHeartBeat = DateTime.MinValue;
+      _timeshiftStoppedReason = TvStoppedReason.UnknownReason;
+      _channelStates = new Dictionary<int, ChannelState>();
     }
 
     /// <summary>
@@ -66,7 +68,7 @@ namespace TvControl
       _isAdmin = isAdmin;
       _cardId = -1;
       _subChannel = -1;
-			_timeshiftStoppedReason = TvStoppedReason.UnknownReason;
+      _timeshiftStoppedReason = TvStoppedReason.UnknownReason;
     }
     /// <summary>
     /// Initializes a new instance of the <see cref="User"/> class.
@@ -80,7 +82,23 @@ namespace TvControl
       _isAdmin = isAdmin;
       _cardId = cardId;
       _subChannel = -1;
-			_timeshiftStoppedReason = TvStoppedReason.UnknownReason;
+      _timeshiftStoppedReason = TvStoppedReason.UnknownReason;
+    }
+
+    /// <summary>
+    /// Gets a list of all channel states    
+    /// </summary>    
+    /// <returns>dictionary containing all channel states of the channels supplied</returns>
+    public Dictionary<int, ChannelState> ChannelStates
+    {
+      get
+      {
+        return _channelStates;
+      }
+      set
+      {
+        _channelStates = value;
+      }
     }
 
     /// <summary>
@@ -177,31 +195,31 @@ namespace TvControl
       }
     }
 
-		public DateTime HeartBeat
-		{
-			get
-			{
-				return _lastHeartBeat;
-			}
-			set
-			{
-				_lastHeartBeat = value;
-			}
-		}
+    public DateTime HeartBeat
+    {
+      get
+      {
+        return _lastHeartBeat;
+      }
+      set
+      {
+        _lastHeartBeat = value;
+      }
+    }
 
-		public TvStoppedReason TvStoppedReason
-		{
-			get
-			{
-				return _timeshiftStoppedReason;
-			}
-			set
-			{
-				_timeshiftStoppedReason = value;
-			}
-		}
+    public TvStoppedReason TvStoppedReason
+    {
+      get
+      {
+        return _timeshiftStoppedReason;
+      }
+      set
+      {
+        _timeshiftStoppedReason = value;
+      }
+    }
 
-		
+
 
     #region ICloneable Members
 
@@ -219,12 +237,12 @@ namespace TvControl
       user._cardId = _cardId;
       user._subChannel = _subChannel;
       user._idChannel = _idChannel;
-			user._timeshiftStoppedReason = _timeshiftStoppedReason;
+      user._timeshiftStoppedReason = _timeshiftStoppedReason;
       return user;
     }
 
     #endregion
 
-    
+
   }
 }
