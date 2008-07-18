@@ -30,7 +30,7 @@ using MediaPortal.Util;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.Video.Database;
-using MediaPortal.MusicVideos.Database;
+//using MediaPortal.MusicVideos.Database;  OBSOLETE needed for MyMusicVideos plugin
 using MediaPortal.Configuration;
 
 namespace MediaPortal.GUI.Video
@@ -679,44 +679,49 @@ namespace MediaPortal.GUI.Video
 
       string currentFile = g_Player.CurrentFile;
       GUIListItem item = facadeView[iItem];
+      
       PlayList loPlayList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_VIDEO);
       string strFileName = string.Empty;
-      MVPlayListItem loItemToDelete = null;
-      foreach (MVPlayListItem loItem in loPlayList)
-      {
-        YahooVideo loVideo = loItem.YahooVideo;
-        //string lsDesc = loVideo.artistName + " - " + loVideo.songName;
-        if (loVideo.songId.Equals(item.Path))
-        {
-          loItemToDelete = loItem;
-        }
-      }
+      
+      ////Obsolete stuff used for MyMusicVideos plugins
+      //MVPlayListItem loItemToDelete = null;
+      //foreach (MVPlayListItem loItem in loPlayList)
+      //{
+      //  YahooVideo loVideo = loItem.YahooVideo;
+      //  //string lsDesc = loVideo.artistName + " - " + loVideo.songName;
+      //  if (loVideo.songId.Equals(item.Path))
+      //  {
+      //    loItemToDelete = loItem;
+      //  }
+      //}
+      
       RemovePlayListItem(iItem);
-      if (loItemToDelete != null)
-      {
-        loItemToDelete.UpdateUrl = false;
-        if (currentFile.Length > 0 && currentFile == item.Path)
-        {
-          string nextTrackPath = PlayListPlayer.SingletonPlayer.GetNext();
+      
+      ////Obsolete stuff used for MyMusicVideos plugins
+      //if (loItemToDelete != null)
+      //{
+      //  loItemToDelete.UpdateUrl = false;
+      //  if (currentFile.Length > 0 && currentFile == item.Path)
+      //  {
+      //    string nextTrackPath = PlayListPlayer.SingletonPlayer.GetNext();
 
-          if (nextTrackPath.Length == 0)
-            g_Player.Stop();
+      //    if (nextTrackPath.Length == 0)
+      //      g_Player.Stop();
 
-          else
-          {
-            if (iItem == facadeView.Count)
-              playlistPlayer.Play(iItem - 1);
+      //    else
+      //    {
+      //      if (iItem == facadeView.Count)
+      //        playlistPlayer.Play(iItem - 1);
 
-            else
-              playlistPlayer.PlayNext();
-          }
-        }
-        loItemToDelete.UpdateUrl = true;
-      }
-
+      //      else
+      //        playlistPlayer.PlayNext();
+      //    }
+      //  }
+      //  loItemToDelete.UpdateUrl = true;
+      //}
+      
       if (facadeView.Count == 0)
         g_Player.Stop();
-
       else
         facadeView.PlayListView.SelectedListItemIndex = iItem;
 
