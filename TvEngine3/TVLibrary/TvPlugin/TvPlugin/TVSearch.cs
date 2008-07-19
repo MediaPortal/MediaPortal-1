@@ -71,6 +71,8 @@ namespace TvPlugin
     protected GUILabelControl lblProgramTime = null;
     [SkinControlAttribute(15)]
     protected GUITextScrollUpControl lblProgramDescription = null;
+    [SkinControlAttribute(16)]
+    protected GUILabelControl lblChannel = null;
     [SkinControlAttribute(17)]
     protected GUILabelControl lblProgramGenre = null;
     [SkinControlAttribute(18)]
@@ -344,6 +346,7 @@ namespace TvPlugin
         if (lblProgramGenre != null) lblProgramGenre.IsVisible = false;
         lblProgramTime.IsVisible = false;
         lblProgramTitle.IsVisible = false;
+        if (lblChannel!=null) lblChannel.IsVisible = false;
         listView.Height = lblProgramDescription.YPosition - listView.YPosition;
         lblNumberOfItems.YPosition = listView.SpinY;
       }
@@ -361,6 +364,7 @@ namespace TvPlugin
             if (lblProgramGenre != null) lblProgramGenre.IsVisible = false;
             lblProgramTime.IsVisible = false;
             lblProgramTitle.IsVisible = false;
+            if (lblChannel != null) lblChannel.IsVisible = false;
             if (imgTvLogo != null)
               imgTvLogo.IsVisible = false;
             if (titleView.SubItemCount == 2)
@@ -383,6 +387,7 @@ namespace TvPlugin
             if (lblProgramGenre != null) lblProgramGenre.IsVisible = true;
             lblProgramTime.IsVisible = true;
             lblProgramTitle.IsVisible = true;
+            if (lblChannel != null) lblChannel.IsVisible = true;
             if (imgTvLogo != null)
               imgTvLogo.IsVisible = true;
             if (titleView.SubItemCount == 2)
@@ -413,6 +418,7 @@ namespace TvPlugin
           if (lblProgramGenre != null) lblProgramGenre.IsVisible = false;
           lblProgramTime.IsVisible = false;
           lblProgramTitle.IsVisible = false;
+          if (lblChannel != null) lblChannel.IsVisible = false;
           if (imgTvLogo != null)
             imgTvLogo.IsVisible = false;
         }
@@ -1181,6 +1187,11 @@ namespace TvPlugin
         lblProgramGenre.IsVisible = false;
       }
 
+      if (lblChannel != null)
+      {
+        lblChannel.IsVisible = true;
+        lblChannel.Label = prog.ReferencedChannel().DisplayName;
+      }
 
       string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, prog.ReferencedChannel().DisplayName);
       if (System.IO.File.Exists(strLogo))

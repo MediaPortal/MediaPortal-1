@@ -404,7 +404,7 @@ namespace TvPlugin
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
-     
+
       //DiskManagement.ImportDvrMsFiles();
       LoadSettings();
       LoadDirectory();
@@ -872,21 +872,18 @@ namespace TvPlugin
 
       btnSortBy.IsAscending = m_bSortAscending;
 
+      GUIControl.ShowControl(GetID, (int)Controls.LABEL_PROGRAMTITLE);
+      GUIControl.ShowControl(GetID, (int)Controls.LABEL_PROGRAMDESCRIPTION);
+      GUIControl.ShowControl(GetID, (int)Controls.LABEL_PROGRAMGENRE);
+      GUIControl.ShowControl(GetID, (int)Controls.LABEL_PROGRAMTIME);
+
       if (currentViewMethod == ViewAs.List)
       {
-        GUIControl.HideControl(GetID, (int)Controls.LABEL_PROGRAMTITLE);
-        GUIControl.HideControl(GetID, (int)Controls.LABEL_PROGRAMDESCRIPTION);
-        GUIControl.HideControl(GetID, (int)Controls.LABEL_PROGRAMGENRE);
-        GUIControl.HideControl(GetID, (int)Controls.LABEL_PROGRAMTIME);
         listAlbums.IsVisible = false;
         listViews.IsVisible = true;
       }
       else
       {
-        GUIControl.ShowControl(GetID, (int)Controls.LABEL_PROGRAMTITLE);
-        GUIControl.ShowControl(GetID, (int)Controls.LABEL_PROGRAMDESCRIPTION);
-        GUIControl.ShowControl(GetID, (int)Controls.LABEL_PROGRAMGENRE);
-        GUIControl.ShowControl(GetID, (int)Controls.LABEL_PROGRAMTIME);
         listAlbums.IsVisible = true;
         listViews.IsVisible = false;
       }
