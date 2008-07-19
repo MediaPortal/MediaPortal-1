@@ -717,6 +717,15 @@ namespace MediaPortal.Plugins.Process
           LogVerbose("Force system into standby: {0}", boolSetting);
           changed = true;
         }
+        // Check configured PowerScheduler shutdown enabled
+        boolSetting = reader.GetValueAsBool("psclientplugin", "shutdownenabled", false);
+        if (_settings.ShutdownEnabled != boolSetting)
+        {
+          _settings.ShutdownEnabled = boolSetting;
+          LogVerbose("shutdown enabled locally set to: {0}", boolSetting);
+          changed = true;
+        }
+       
         // Check configured PowerScheduler idle timeout
         intSetting = reader.GetValueAsInt("psclientplugin", "idletimeout", 5);
         if (_settings.IdleTimeout != intSetting)

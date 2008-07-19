@@ -48,17 +48,7 @@ namespace MediaPortal.Plugins.Process
         extLogCheckBox.Checked = reader.GetValueAsBool("psclientplugin", "extensivelogging", false);
         shutModeComboBox.SelectedIndex = reader.GetValueAsInt("psclientplugin", "shutdownmode", 1);
         forceCheckBox.Checked = reader.GetValueAsBool("psclientplugin", "forceshutdown", false);
-        int aValue = reader.GetValueAsInt("psclientplugin", "idletimeout", 5);
-        if (aValue < 2)
-        {
-          idleNumericUpDown.Value = 5;
-          enableShutdownCheckBox.Checked = false;
-        }
-        else
-        {
-          idleNumericUpDown.Value = aValue;
-          enableShutdownCheckBox.Checked = true;
-        }
+        enableShutdownCheckBox.Checked = reader.GetValueAsBool("psclientplugin", "shutdownenabled", false);
       }
     }
 
@@ -70,14 +60,8 @@ namespace MediaPortal.Plugins.Process
         writer.SetValueAsBool("psclientplugin", "extensivelogging", extLogCheckBox.Checked);
         writer.SetValue("psclientplugin", "shutdownmode", shutModeComboBox.SelectedIndex.ToString());
         writer.SetValueAsBool("psclientplugin", "forceshutdown", forceCheckBox.Checked);
-        if (enableShutdownCheckBox.Checked)
-        {
-          writer.SetValue("psclientplugin", "idletimeout", idleNumericUpDown.Value);
-        }
-        else
-        {
-          writer.SetValue("psclientplugin", "idletimeout", 0);
-        }
+        writer.SetValueAsBool("psclientplugin", "shutdownenabled", enableShutdownCheckBox.Checked);
+        writer.SetValue("psclientplugin", "idletimeout", idleNumericUpDown.Value);
       }       
     }
 
