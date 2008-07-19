@@ -69,6 +69,13 @@ namespace MediaPortal.TV.Recording
 
     public TvCardCollection()
     {
+      if (System.IO.File.Exists(Config.GetFile(Config.Dir.Plugins, "windows\\tvplugin.dll")))
+      {
+        Log.Info("TvCardCollection: TVPlugin detected -> no TVE2 card setup");
+        _tvcards = new List<TVCaptureDevice>();
+        return;
+      }
+    
       if (System.IO.File.Exists(Config.GetFile(Config.Dir.Config, "capturecards.xml")))
       {
         using (FileStream fileStream = new FileStream(Config.GetFile(Config.Dir.Config, "capturecards.xml"), FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
