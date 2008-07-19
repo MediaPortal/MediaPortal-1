@@ -97,7 +97,7 @@ namespace MediaPortal.Plugins.Process
     }
     public void ShowPlugin()
     {
-      System.Windows.Forms.Form f = new SetupForm();
+      System.Windows.Forms.Form f = new PowerSchedulerClientSetup();
       f.Show();
     }
     #endregion

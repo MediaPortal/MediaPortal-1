@@ -74,13 +74,13 @@
   <ItemGroup>
     <Compile Include="PowerScheduler.cs" />
     <Compile Include="ClientPlugin.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SetupForm.cs">
+    <Compile Include="PowerSchedulerClientSetup.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SetupForm.Designer.cs">
-      <DependentUpon>SetupForm.cs</DependentUpon>
+    <Compile Include="PowerSchedulerClientSetup.designer.cs">
+      <DependentUpon>PowerSchedulerClientSetup.cs</DependentUpon>
     </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnattendedWindow.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -98,9 +98,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="SetupForm.resx">
+    <EmbeddedResource Include="PowerSchedulerClientSetup.resx">
+      <DependentUpon>PowerSchedulerClientSetup.cs</DependentUpon>
       <SubType>Designer</SubType>
-      <DependentUpon>SetupForm.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
 </Project>
