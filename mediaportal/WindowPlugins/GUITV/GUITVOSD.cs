@@ -321,6 +321,7 @@ namespace MediaPortal.GUI.TV
       {
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:	// fired when OSD is hidden
           {
+            Recorder.OnTvRecordingChanged -= new MediaPortal.TV.Recording.Recorder.OnTvRecordingChangedHandler(OSD_OnTvRecordingChanged);
             FreeResources();
             GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + message.Param1));
             return true;
@@ -344,6 +345,7 @@ namespace MediaPortal.GUI.TV
             m_dateTime = DateTime.Now;
             Reset();
             FocusControl(GetID, (int)Controls.OSD_PLAY, 0);	// set focus to play button by default when window is shown
+            Recorder.OnTvRecordingChanged += new MediaPortal.TV.Recording.Recorder.OnTvRecordingChangedHandler(OSD_OnTvRecordingChanged);
             ShowPrograms();
             QueueAnimation(AnimationType.WindowOpen);
             for (int i = (int)Controls.Panel1; i < (int)Controls.Panel2; ++i)
@@ -618,6 +620,16 @@ namespace MediaPortal.GUI.TV
           }
       }
       return base.OnMessage(message);
+    }
+
+    private void OSD_OnTvRecordingChanged()
+    {
+      Log.Info("OSD_OnTvRecordingChanged:");
+      if (imgRecIcon != null) // Set recorder status -> BAV - fixing bug 1429: OSD is not updated with recording status 
+      {
+        imgRecIcon.Visible = Recorder.IsRecordingChannel(GetChannelName());
+        Log.Info("RecIcon = {0}", imgRecIcon.Visible);
+      }
     }
 
     void UpdateGammaContrastBrightness()
@@ -1264,12 +1276,6 @@ namespace MediaPortal.GUI.TV
       {
         tbOnTvNext.EnableUpDown = false;
         tbOnTvNext.Clear();
-      }
-
-      // Set recorder status
-      if (imgRecIcon != null)
-      {
-        imgRecIcon.Visible = Recorder.IsRecordingChannel(GetChannelName());
       }
 
       // Channel icon
