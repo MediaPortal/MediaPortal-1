@@ -36,8 +36,8 @@
       <description>Number of Files Label</description>
       <type>label</type>
       <id>12</id>
-      <posX>660</posX>
-      <posY>425</posY>
+      <posX>440</posX>
+      <posY>430</posY>
       <label>#itemcount</label>
       <font>font13</font>
       <align>left</align>
@@ -171,33 +171,15 @@
         <onup>2</onup>
         <ondown>2</ondown>
         <textcolor>FFFFFFFF</textcolor>
+        <height>370</height>
       </control>
       <control>
         <description>scheduler recordings listcontrol</description>
         <type>listcontrol</type>
-        <id>11</id>
-        <subitems>
-          <subitem>=370</subitem>
-          <subitem>=450</subitem>
-        </subitems>
-        <height>370</height>
-        <textXOff>10</textXOff>
-        <textYOff>2</textYOff>
-        <textXOff2>420</textXOff2>
-        <textYOff2>29</textYOff2>
-        <textXOff3>100</textXOff3>
-        <textYOff3>29</textYOff3>
-        <IconXOff>12</IconXOff>
-        <PinIconXOff>45</PinIconXOff>
-        <PinIconYOff>19</PinIconYOff>
-        <spinPosX>606</spinPosX>
-        <spinPosY>418</spinPosY>
-        <itemWidth>35</itemWidth>
-        <itemHeight>35</itemHeight>
+        <id>11</id>              
+        <height>370</height>        
         <textureFocus>recording_background_focus.png</textureFocus>
-        <textureNoFocus>recording_background_nofocus.png</textureNoFocus>
-        <spaceBetweenItems>5</spaceBetweenItems>
-        <textureHeight>50</textureHeight>
+        <textureNoFocus>recording_background_nofocus.png</textureNoFocus>        
         <keepaspectratio>no</keepaspectratio>
         <font2>font10</font2>
         <font3>font10</font3>
@@ -220,12 +202,27 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
+    
+    <control>
+      <description>Current channel</description>
+      <type>label</type>
+      <id>16</id>
+      <posX>260</posX>
+      <posY>410</posY>
+      <label>#TV.Search.Channel</label>
+      <align>left</align>
+      <font>font13</font>
+      <textcolor>FFB2D4F5</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    
     <control>
       <description>Current program time</description>
       <type>label</type>
       <id>14</id>
       <posX>260</posX>
-      <posY>460</posY>
+      <posY>430</posY>
       <label>#TV.Search.Time</label>
       <align>left</align>
       <font>font13</font>
@@ -238,7 +235,7 @@
       <type>textboxscrollup</type>
       <id>15</id>
       <posX>260</posX>
-      <posY>485</posY>
+      <posY>450</posY>
       <width>430</width>
       <height>65</height>
       <label>#TV.Search.Description</label>
@@ -252,7 +249,7 @@
       <type>label</type>
       <id>17</id>
       <posX>660</posX>
-      <posY>460</posY>
+      <posY>410</posY>
       <label>#TV.Search.Genre</label>
       <align>right</align>
       <font>font13</font>
