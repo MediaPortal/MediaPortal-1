@@ -210,14 +210,15 @@
         <description>listcontrol</description>
         <id>11</id>
         <height>450</height>
-        <posX>493</posX>
+        <width>850</width>
+        <posX>450</posX>
         <onleft>10</onleft>
         <onright>2</onright>
         <onup>2</onup>
         <ondown>2</ondown>
         <textureHeight>42</textureHeight>
-        <textYOff2>5</textYOff2>
-        <PinIconXOff>40</PinIconXOff>
+        <textXOff2>805</textXOff2>
+        <PinIconXOff>810</PinIconXOff>
         <PinIconYOff>10</PinIconYOff>
         <PinIconWidth>20</PinIconWidth>
       	<PinIconHeight>20</PinIconHeight>
