@@ -178,7 +178,7 @@
         <description>scheduler recordings listcontrol</description>
         <id>10</id>
         <posY>92</posY>
-        <height>470</height>
+        <height>440</height>
         <onleft>2</onleft>
         <onright>11</onright>
 <!--         <onup>2</onup>
@@ -204,17 +204,13 @@
         <textureNoFocus>recording_background_nofocus.png</textureNoFocus>
         <textureNoFocus>-</textureNoFocus>
         <spaceBetweenItems>4</spaceBetweenItems>
-        <spinPosX>596</spinPosX>
-        <spinPosY>520</spinPosY>
-        <PinIconXOff>75</PinIconXOff>
-        <PinIconYOff>20</PinIconYOff>
-        <PinIconWidth>50</PinIconWidth>
-      	<PinIconHeight>50</PinIconHeight>
+        
       </control>
       <control>
         <type>listcontrol</type>
         <description>listcontrol</description>
         <id>11</id>
+        <height>350</height>
         <onleft>10</onleft>
         <onright>2</onright>
         <onup>2</onup>
@@ -250,10 +246,10 @@
         <type>textboxscrollup</type>
         <description>Description1</description>
         <id>15</id>
-        <posX>69</posX>
-        <posY>275</posY>
-        <width>182</width>
-        <height>120</height>
+        <posX>265</posX>
+        <posY>428</posY>
+        <width>417</width>
+        <height>100</height>
         <colordiffuse>ffffffff</colordiffuse>
         <font>font12</font>
         <label>#TV.RecordedTV.Description</label>

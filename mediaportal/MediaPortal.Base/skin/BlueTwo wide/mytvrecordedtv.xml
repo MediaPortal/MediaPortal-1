@@ -209,6 +209,7 @@
         <type>listcontrol</type>
         <description>listcontrol</description>
         <id>11</id>
+        <height>450</height>
         <posX>493</posX>
         <onleft>10</onleft>
         <onright>2</onright>
@@ -247,10 +248,10 @@
         <type>textboxscrollup</type>
         <description>Description1</description>
         <id>15</id>
-        <posX>459</posX>
-        <posY>553</posY>
-        <width>850</width>
-        <height>150</height>
+        <posX>450</posX>
+        <posY>558</posY>
+        <width>845</width>
+        <height>145</height>
         <colordiffuse>ffffffff</colordiffuse>
         <font>font13</font>
         <label>#TV.RecordedTV.Description</label>
