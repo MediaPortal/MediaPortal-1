@@ -171,12 +171,9 @@ namespace TvPlugin
       try
       {
         if (TVHome.Card.IsTimeShifting)
-        {
-          if (!TVHome.Card.IsRecording)
-          {
-            TVHome.Card.User.Name = new User().Name;
-            TVHome.Card.StopTimeShifting();
-          }
+        {          
+           TVHome.Card.User.Name = new User().Name;
+           TVHome.Card.StopTimeShifting();          
         }
         stopHeartBeatThread();
       }

@@ -916,7 +916,7 @@ namespace TvControl
       try
       {
         if (User.CardId < 0) return;
-        if (IsRecording) return;
+        //if (IsRecording) return;
         if (IsTimeShifting == false) return;
         RemoteControl.HostName = _server;
         RemoteControl.Instance.StopTimeShifting(ref _user);
