@@ -91,10 +91,8 @@ namespace TvService
       }
     }
 
-    public void DoSetChannelStates(Dictionary<int, ITvCardHandler> cards, List<Channel> channels, bool checkTransponders)
+    private void DoSetChannelStates(Dictionary<int, ITvCardHandler> cards, List<Channel> channels, bool checkTransponders)
     {
-
-
       //construct list of all cards we can use to tune to the new channel
       List<CardDetail> cardsAvailable = new List<CardDetail>();
       Log.Info("Controller: SetChannelStates for {0} channels", channels.Count);
@@ -383,7 +381,7 @@ namespace TvService
       //construct list of all cards we can use to tune to the new channel
       List<CardDetail> cardsAvailable = new List<CardDetail>();
       Log.Info("Controller: GetChannelStates for channels{0}", channels.Count);
-
+      
       TvBusinessLayer layer = new TvBusinessLayer();
       Dictionary<int, ChannelState> channelStates = new Dictionary<int, ChannelState>();
 
@@ -399,17 +397,16 @@ namespace TvService
           //no tuning details??
           Log.Info("Controller:  No tuning details for channel:{0}", ch.Name);
           channelStates.Add(ch.IdChannel, ChannelState.nottunable);
+          continue;
         }
         else
         {
           int number = 0;
 
           foreach (IChannel tuningDetail in tuningDetails)
-          {
-            number++;
+          {            
             Log.Info("Controller:   channel #{0} {1} ", number, tuningDetail.ToString());
             Dictionary<int, ITvCardHandler>.Enumerator enumerator = cards.GetEnumerator();
-
             while (enumerator.MoveNext() && !chTunable)
             {
               KeyValuePair<int, ITvCardHandler> keyPair = enumerator.Current;              
@@ -541,8 +538,9 @@ namespace TvService
                 }
               }
 
-              bool isRec = false;
-              bool isTS = false;
+              bool isChannelRec = false;
+              bool isAnyUserTSchannel = false;
+
 
               User[] users = tvcard.Users.GetUsers();
               if (users == null || users.Length > 0)
@@ -550,40 +548,36 @@ namespace TvService
                 for (int i = 0; i < users.Length; ++i)
                 {
                   User userAny = users[i];
+
                   if (tvcard.CurrentChannelName(ref userAny) == null) continue;
                   if (tvcard.CurrentChannelName(ref userAny) != ch.Name) continue;
 
-                  if (tvcard.Recorder.IsRecording(ref userAny) && !isRec)
+                  if (!isChannelRec && tvcard.Recorder.IsRecording(ref userAny))
                   {
-                    isRec = true;
+                    isChannelRec = true;
                     break;
                   }
 
-                  if (tvcard.TimeShifter.IsTimeShifting(ref userAny) && !isTS)
+                  if (!isAnyUserTSchannel && tvcard.TimeShifter.IsTimeShifting(ref userAny))
                   {
-                    isTS = true;
+                    isAnyUserTSchannel = true;
                   }
                 }
               }
 
-              if (isRec) //recording
+              if (isChannelRec) //recording
               {
                 channelStates.Add(ch.IdChannel, ChannelState.recording);
               }
-
+              else if (isAnyUserTSchannel) //timeshifting               
+              {
+                channelStates.Add(ch.IdChannel, ChannelState.timeshifting);
+              }
               else
               {
-                if (isTS) //timeshifting
-                {
-                  channelStates.Add(ch.IdChannel, ChannelState.timeshifting);
-                }
-                else //just available
-                {
-                  channelStates.Add(ch.IdChannel, ChannelState.tunable);
-                }
+                channelStates.Add(ch.IdChannel, ChannelState.tunable);
               }
-
-              chTunable = true;
+              chTunable = true;              
             } //while end
 
             if (chTunable) break;
