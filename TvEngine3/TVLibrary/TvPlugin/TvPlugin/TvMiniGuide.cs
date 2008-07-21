@@ -534,7 +534,7 @@ namespace TvPlugin
         //we have no way of using the cached channelstates on the server in the following situations.
         // 1) when the "all channels" group is selected - too many channels.
         // 2) when user is not timeshifting - no user object on the server.
-        User currentUser = new User(Environment.MachineName.ToLowerInvariant(), false);
+        User currentUser = new User();
         tvChannelStatesList = TVHome.TvServer.GetAllChannelStatesForGroup(TVHome.Navigator.CurrentGroup.IdGroup, currentUser);
       }
       else
