@@ -267,17 +267,18 @@ namespace TvService
             _eventVideo = new ManualResetEvent(false);
             _eventsReady = true;
           }
-          if (subchannel == null) return TvResult.UnknownChannel;
-          if (WaitForUnScrambledSignal(ref user) == false)
-          {
-            Log.Write("card: channel is scrambled");
-            _cardHandler.Users.RemoveUser(user);
-						this.Stop(ref user);
-            return TvResult.ChannelIsScrambled;
-          }					
+          if (subchannel == null) return TvResult.UnknownChannel;          
 
           if (subchannel.IsTimeShifting)
           {
+            if (WaitForUnScrambledSignal(ref user) == false)
+            {
+              Log.Write("card: channel is scrambled");
+              _cardHandler.Users.RemoveUser(user);
+              this.Stop(ref user);
+              return TvResult.ChannelIsScrambled;
+            }					
+
 						if (!WaitForTimeShiftFile(ref user, fileName + ".tsbuffer"))
 						{
 							_cardHandler.Users.RemoveUser(user);
@@ -311,6 +312,15 @@ namespace TvService
             return TvResult.UnableToStartGraph;
           }
 					fileName += ".tsbuffer";
+
+          if (WaitForUnScrambledSignal(ref user) == false)
+          {
+            Log.Write("card: channel is scrambled");
+            _cardHandler.Users.RemoveUser(user);
+            this.Stop(ref user);
+            return TvResult.ChannelIsScrambled;
+          }					
+
           if (!WaitForTimeShiftFile(ref user, fileName))
           {
 						_cardHandler.Users.RemoveUser(user);
