@@ -22,7 +22,7 @@
 */
 
 #pragma once
-#define MAX_REGIONS 5
+#define MAX_REGIONS 32
 	
 #include "windows.h"
 #include <vector>

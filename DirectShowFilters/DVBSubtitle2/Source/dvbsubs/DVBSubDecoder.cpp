@@ -424,6 +424,12 @@ void CDVBSubDecoder::Process_region_composition_segment()
 	region_2_bit_pixel_code=(buf[i]&0x0c)>>2;
 	i++;
 
+  if( region_id >= MAX_REGIONS)
+  {
+    LogDebug("DVBsubs: MAX_REGIONS reached!");
+    return;
+  }
+
 	if ( regions[region_id].win < 0 ) 
 	{
 		// If the region doesn't exist, then open it.
