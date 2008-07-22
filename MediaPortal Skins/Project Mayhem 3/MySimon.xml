@@ -15,7 +15,7 @@
       <texture>background3.png</texture>
     </control>
     <control>
-      <description>header label</description>
+      <description>plugin title</description>
       <type>label</type>
       <id>1</id>
       <posX>190</posX>
@@ -81,34 +81,16 @@
       <posY>300</posY>
       <animation>FlyInFromLeft</animation>
       <control>
+        <description>Round</description>
         <type>label</type>
-        <description>Round: label</description>
-        <id>201</id>
         <label>#Round</label>
         <font>font14</font>
       </control>
       <control>
+        <description>Player</description>
         <type>label</type>
-        <description>Round</description>
-        <id>202</id>
-        <label></label>
-        <font>font14</font>
-        <align>right</align>
-      </control>
-      <control>
-        <type>label</type>
-        <description>Player: label</description>
-        <id>203</id>
         <label>#Player</label>
         <font>font14</font>
-      </control>
-      <control>
-        <type>label</type>
-        <description>Player</description>
-        <id>204</id>
-        <label></label>
-        <font>font14</font>
-        <align>right</align>
       </control>
     </control>
 

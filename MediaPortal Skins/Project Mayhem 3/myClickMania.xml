@@ -14,8 +14,8 @@
       <texture>background3.png</texture>
     </control>
     <control>
+      <description>plugin title</description>
       <type>label</type>
-      <description>Score</description>
       <id>31</id>
       <posX>56</posX>
       <posY>32</posY>
