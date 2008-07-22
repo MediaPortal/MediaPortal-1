@@ -110,14 +110,14 @@
     <id>4</id>
     <posX>185</posX>
     <posY>167</posY>
-    <width>16</width>
-    <height>16</height>
+    <width>190</width>
+    <height>32</height>
     <textXOff>17</textXOff>
     <textYOff>5</textYOff>
-    <textureFocus>scroll-up-focus.gif</textureFocus>
-    <textureNoFocus>toggle-up.gif</textureNoFocus>
-    <AltTextureFocus>scroll-down-focus.gif</AltTextureFocus>
-    <AltTextureNoFocus>toggle-down.gif</AltTextureNoFocus>
+    <textureFocus>togglebutton-on-focus.png</textureFocus>
+    <textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
+    <AltTextureFocus>togglebutton-off-focus.png</AltTextureFocus>
+    <AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
     <label>-</label>
     <font>font13</font>
     <textcolor>ffffffff</textcolor>
