@@ -397,6 +397,13 @@ namespace TvService
             {
               if (dbsCard.DevicePath == _localCardCollection.Cards[cardNumber].DevicePath)
               {
+                ITVCard unknownCard = _localCardCollection.Cards[cardNumber];
+
+                if (unknownCard is TvCardDvbBase)
+                {
+                  ((TvCardDvbBase)unknownCard).BuildGraph();
+                }
+
                 found = true;
                 break;
               }
