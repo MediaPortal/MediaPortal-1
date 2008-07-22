@@ -39,6 +39,12 @@ namespace TvLibrary.Implementations.DVB
   {
     #region variables
     bool _useCam;
+
+    /// <summary>
+    /// CA decryption limit, 0 for disable CA
+    /// </summary>
+    int _decryptLimit = 0;
+
     DigitalEverywhere _digitalEveryWhere = null;
     TechnoTrend _technoTrend = null;
     Twinhan _twinhan = null;
@@ -68,6 +74,22 @@ namespace TvLibrary.Implementations.DVB
     {
       try
       {
+        //System.Diagnostics.Debugger.Launch();
+        //fetch decrypt limit from DB and apply it.
+        if (card != null && card.DevicePath != null)
+        {
+          IList cardList = TvDatabase.Card.ListAll();
+
+          foreach (TvDatabase.Card c in cardList)
+          {
+            if (c.DevicePath == card.DevicePath)
+            {
+              _decryptLimit = c.DecryptLimit;
+            }
+            break;
+          }
+        }
+
         _useCam = useCAM;
         _mapSubChannels = new Dictionary<int, ConditionalAccessContext>();
         if (tunerFilter == null && analyzerFilter == null) return;
@@ -75,6 +97,7 @@ namespace TvLibrary.Implementations.DVB
         bool isDVBS = (card is TvCardDVBS);
         bool isDVBT = (card is TvCardDVBT);
         bool isDVBC = (card is TvCardDVBC);
+       
         if (isDVBC || isDVBS || isDVBT == true)
         {
           Log.Log.WriteFile("Check for KNC");
@@ -191,7 +214,7 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.WriteFile("Generic ATSC QAM card detected");
             return;
           }
-          _isgenericatsc = null;
+          _isgenericatsc = null;                    
         }
       }
       catch (Exception ex)
@@ -204,11 +227,15 @@ namespace TvLibrary.Implementations.DVB
     /// Adds the sub channel.
     /// </summary>
     /// <param name="id">The id.</param>
-    public void AddSubChannel(int id)
+    public void AddSubChannel(int id, IChannel channel)
     {
       if (!_mapSubChannels.ContainsKey(id))
       {
         _mapSubChannels[id] = new ConditionalAccessContext();
+        if (channel is DVBBaseChannel)
+        {
+          _mapSubChannels[id].Channel = (DVBBaseChannel)channel;
+        }
       }
     }
 
@@ -340,6 +367,19 @@ namespace TvLibrary.Implementations.DVB
         _winTvCiModule.Shutdown();
       }
     }
+
+    /// <summary>
+    /// CA decryption limit, 0 for disable CA
+    /// </summary>
+    /// <value>The number of channels decrypting that are able to decrypt.</value>
+    public int DecryptLimit
+    {
+      get
+      {
+        return _decryptLimit;
+      }
+    }
+
     /// <summary>
     /// Gets the number of channels the card is currently decrypting.
     /// </summary>
@@ -350,6 +390,8 @@ namespace TvLibrary.Implementations.DVB
       {
         if (_mapSubChannels == null) return 0;
         if (_mapSubChannels.Count == 0) return 0;
+        if (_decryptLimit == 0) return 0; //CA disabled, so no channels are decrypting.
+
         List<ConditionalAccessContext> filteredChannels = new List<ConditionalAccessContext>();
 
         Dictionary<int, ConditionalAccessContext>.Enumerator en = _mapSubChannels.GetEnumerator();
@@ -369,7 +411,10 @@ namespace TvLibrary.Implementations.DVB
             }
             if (!exists)
             {
-              filteredChannels.Add(context);
+              if (!context.Channel.FreeToAir)
+              {
+                filteredChannels.Add(context);
+              }
             }
           }
         }
@@ -394,7 +439,7 @@ namespace TvLibrary.Implementations.DVB
         if (!_useCam) return true;
         if (channel.FreeToAir) return true;//no need to descramble this one...
 
-        AddSubChannel(subChannel);
+        AddSubChannel(subChannel, channel);
         ConditionalAccessContext context = _mapSubChannels[subChannel];
         context.CamType = camType;
         context.Channel = channel;

@@ -850,6 +850,12 @@ namespace TvControl
     /// <returns></returns>
     /// <value>The number of channels decrypting.</value>
     int NumberOfChannelsDecrypting(int cardId);
+
+    /// <summary>
+    /// Does the card have a CA module.
+    /// </summary>
+    /// <value>The number of channels decrypting.</value>
+    bool HasCA(int cardId);
     #endregion
 
     #region quality control

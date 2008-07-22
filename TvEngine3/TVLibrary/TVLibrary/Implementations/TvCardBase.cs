@@ -171,6 +171,7 @@ namespace TvLibrary.Implementations
     /// Indicates, if the card is present
     /// </summary>
     protected bool _cardPresent = true;
+    
     #endregion
 
     #region properties
@@ -294,6 +295,32 @@ namespace TvLibrary.Implementations
       }
       set
       {
+      }
+    }
+
+    /// <summary>
+    /// Does the card have a CA module.
+    /// </summary>
+    /// <value>The number of channels decrypting.</value>
+    public bool HasCA
+    {
+      get
+      {
+        if (_conditionalAccess == null) return false;
+        return (_conditionalAccess.DecryptLimit > 0);                
+      }
+    }
+
+    /// <summary>
+    /// CA decryption limit, 0 for disable CA
+    /// </summary>
+    /// <value>The number of channels decrypting that are able to decrypt.</value>
+    public int DecryptLimit
+    {
+      get
+      {
+        if (_conditionalAccess == null) return 0;
+        return _conditionalAccess.DecryptLimit;
       }
     }
 

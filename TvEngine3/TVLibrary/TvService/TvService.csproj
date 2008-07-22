@@ -78,6 +78,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CardManagement\CardAllocation\AdvancedCardAllocation.cs" />
+    <Compile Include="CardManagement\CardAllocation\CardAllocationBase.cs" />
     <Compile Include="CardManagement\CardAllocation\CardAllocationFactory.cs" />
     <Compile Include="CardManagement\CardHandler\AudioStreams.cs" />
     <Compile Include="CardManagement\CardHandler\CardTuner.cs" />

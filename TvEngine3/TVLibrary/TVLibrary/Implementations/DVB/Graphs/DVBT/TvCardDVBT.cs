@@ -218,6 +218,10 @@ namespace TvLibrary.Implementations.DVB
         {
           Log.Log.Info("dvbt: tune: Building graph");
           BuildGraph();
+          if (_mapSubChannels.ContainsKey(subChannelId) == false)
+          {
+            subChannelId = GetNewSubChannel(channel);
+          }
         } else
         { Log.Log.Info("dvbt: tune: Graph is tunning"); }
 

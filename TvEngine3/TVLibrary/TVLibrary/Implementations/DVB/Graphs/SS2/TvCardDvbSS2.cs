@@ -180,8 +180,9 @@ namespace TvLibrary.Implementations.DVB
         Setting setting=layer.GetSetting("dvbs"+card.IdCard.ToString()+"motorEnabled", "no");
         if (setting.Value == "yes")
           _useDISEqCMotor = true;
-      }
-      _conditionalAccess = new ConditionalAccess(null, null, null, null,false);
+      }      
+      _devicePath = device.DevicePath;
+      _conditionalAccess = new ConditionalAccess(null, null, null, this, false);
       _tunerDevice = device;
       _devicePath = _tunerDevice.DevicePath;
       _name = _tunerDevice.Name;

@@ -130,6 +130,12 @@ namespace TvLibrary.Interfaces
     /// </summary>
     /// <value>The number of channels decrypting.</value>
     int NumberOfChannelsDecrypting { get;}
+    
+    /// <summary>
+    /// Does the card have a CA module.
+    /// </summary>
+    /// <value>The number of channels decrypting.</value>
+    bool HasCA { get;}
 
     #endregion
 

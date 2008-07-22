@@ -127,7 +127,7 @@ namespace TvLibrary.Implementations.DVB
       int id = _subChannelId++;
       Log.Log.Info("dvb:GetNewSubChannel:{0} #{1}", _mapSubChannels.Count, id);
 
-      TvDvbChannel subChannel = new TvDvbChannel(_graphBuilder, ref _conditionalAccess, ref _mdplugs, _filterTIF, _filterTsWriter, id);
+      TvDvbChannel subChannel = new TvDvbChannel(_graphBuilder, ref _conditionalAccess, ref _mdplugs, _filterTIF, _filterTsWriter, id, channel);
       subChannel.Parameters = Parameters;
       subChannel.CurrentChannel = channel;
       _mapSubChannels[id] = subChannel;

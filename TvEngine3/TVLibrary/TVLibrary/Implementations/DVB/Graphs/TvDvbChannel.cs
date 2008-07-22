@@ -117,7 +117,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="mdplugs">The mdplugs class.</param>
     /// <param name="tif">The tif filter.</param>
     /// <param name="tsWriter">The ts writer filter.</param>
-    public TvDvbChannel(IFilterGraph2 graphBuilder, ref ConditionalAccess ca, ref MDPlugs mdplugs, IBaseFilter tif, IBaseFilter tsWriter, int subChannelId)
+    public TvDvbChannel(IFilterGraph2 graphBuilder, ref ConditionalAccess ca, ref MDPlugs mdplugs, IBaseFilter tif, IBaseFilter tsWriter, int subChannelId, IChannel channel)
     {
       _graphState = GraphState.Created;
       _graphRunning = false;
@@ -146,7 +146,7 @@ namespace TvLibrary.Implementations.DVB
       _parameters = new ScanParameters();
       _subChannelId = subChannelId;
 
-      _conditionalAccess.AddSubChannel(_subChannelId);
+      _conditionalAccess.AddSubChannel(_subChannelId, channel);
       _timeshiftFileName = "";
       _recordingFileName = "";
       _pmtData = null;

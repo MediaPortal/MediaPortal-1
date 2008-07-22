@@ -67,6 +67,8 @@ namespace TvService
     string CardName { get;}
     string CardDevice();
     int NumberOfChannelsDecrypting { get;}
+    bool HasCA { get;}
+
     bool SupportsSubChannels { get;}
 
     void UpdateSignalSate();

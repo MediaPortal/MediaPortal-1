@@ -260,6 +260,32 @@ namespace TvService
     }
 
     /// <summary>
+    /// Does the card have a CA module.
+    /// </summary>
+    /// <value>The number of channels decrypting.</value>
+    public bool HasCA
+    {
+      get
+      {
+        if (IsLocal == false)
+        {
+          try
+          {
+            RemoteControl.HostName = _dbsCard.ReferencedServer().HostName;
+            return RemoteControl.Instance.HasCA(_dbsCard.IdCard);
+          }
+          catch (Exception)
+          {
+            Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
+            return false;
+          }
+        }
+        return _card.HasCA;
+      }
+    }
+
+
+    /// <summary>
     /// Returns the number of channels the card is currently decrypting
     /// </summary>
     /// <value>The number of channels decrypting.</value>

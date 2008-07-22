@@ -219,6 +219,10 @@ namespace TvLibrary.Implementations.DVB
       if (_graphState == GraphState.Idle)
       {
         BuildGraph();
+        if (_mapSubChannels.ContainsKey(subChannelId) == false)
+        {
+          subChannelId = GetNewSubChannel(channel);
+        }
       }
       //_pmtPid = -1; 
       ILocator locator;

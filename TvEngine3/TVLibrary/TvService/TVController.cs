@@ -1248,6 +1248,16 @@ namespace TvService
       return _cards[cardId].MaxChannel;
     }
 
+     /// <summary>
+    /// Does the card have a CA module.
+    /// </summary>
+    /// <value>The number of channels decrypting.</value>
+    public bool HasCA(int cardId)
+    {
+      if (ValidateTvControllerParams(cardId)) return false;
+      return _cards[cardId].HasCA;
+    }
+
     /// <summary>
     /// Gets the number of channels decrypting.
     /// </summary>
@@ -2055,65 +2065,74 @@ namespace TvService
           return result;
         }
 
-        //get first free card
-        CardDetail cardInfo = freeCards[0];
-        user.CardId = cardInfo.Id;
-        IChannel tuneChannel = cardInfo.TuningDetail;
-
-        //setup folders
-        if (cardInfo.Card.RecordingFolder == String.Empty)
+        //keep tuning each card until we are succesful                
+        for (int i = 0; i < freeCards.Count; i++)
         {
-          cardInfo.Card.RecordingFolder = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\recordings", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
-          if (!Directory.Exists(cardInfo.Card.RecordingFolder))
+          if (i > 0)
           {
-            Log.Write("Controller: creating recording folder {0} for card {0}", cardInfo.Card.RecordingFolder, cardInfo.Card.Name);
-            Directory.CreateDirectory(cardInfo.Card.RecordingFolder);
+            Log.Write("Controller: Timeshifting failed, lets try next available card.");
           }
-        }
-        if (cardInfo.Card.TimeShiftFolder == String.Empty)
-        {
-          cardInfo.Card.TimeShiftFolder = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\timeshiftbuffer", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
-          if (!Directory.Exists(cardInfo.Card.TimeShiftFolder))
+          User userCopy = new User(user.Name, user.IsAdmin);
+
+          CardDetail cardInfo = freeCards[i];
+          userCopy.CardId = cardInfo.Id;
+          IChannel tuneChannel = cardInfo.TuningDetail;
+
+          //setup folders
+          if (cardInfo.Card.RecordingFolder == String.Empty)
           {
-            Log.Write("Controller: creating timeshifting folder {0} for card {0}", cardInfo.Card.TimeShiftFolder, cardInfo.Card.Name);
-            Directory.CreateDirectory(cardInfo.Card.TimeShiftFolder);
+            cardInfo.Card.RecordingFolder = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\recordings", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+            if (!Directory.Exists(cardInfo.Card.RecordingFolder))
+            {
+              Log.Write("Controller: creating recording folder {0} for card {0}", cardInfo.Card.RecordingFolder, cardInfo.Card.Name);
+              Directory.CreateDirectory(cardInfo.Card.RecordingFolder);
+            }
           }
+          if (cardInfo.Card.TimeShiftFolder == String.Empty)
+          {
+            cardInfo.Card.TimeShiftFolder = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\timeshiftbuffer", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+            if (!Directory.Exists(cardInfo.Card.TimeShiftFolder))
+            {
+              Log.Write("Controller: creating timeshifting folder {0} for card {0}", cardInfo.Card.TimeShiftFolder, cardInfo.Card.Name);
+              Directory.CreateDirectory(cardInfo.Card.TimeShiftFolder);
+            }
+          }
+
+          //tune to the new channel                  
+          result = CardTune(ref userCopy, tuneChannel, channel);
+          if (result != TvResult.Succeeded)
+          {           
+            continue; //try next card            
+          }
+          Log.Info("control2:{0} {1} {2}", userCopy.Name, userCopy.CardId, userCopy.SubChannel);
+          if (!IsTimeShifting(ref userCopy))
+          {
+            CleanTimeShiftFiles(cardInfo.Card.TimeShiftFolder, String.Format("live{0}-{1}.ts", userCopy.CardId, userCopy.SubChannel));
+          }
+          string timeshiftFileName = String.Format(@"{0}\live{1}-{2}.ts", cardInfo.Card.TimeShiftFolder, userCopy.CardId, userCopy.SubChannel);
+
+          //start timeshifting
+          result = StartTimeShifting(ref userCopy, ref timeshiftFileName);
+          if (result != TvResult.Succeeded)
+          {            
+            continue; //try next card
+          }
+          Log.Write("Controller: StartTimeShifting started on card:{0} to {1}", userCopy.CardId, timeshiftFileName);
+          card = GetVirtualCard(userCopy);
+          RemoveUserFromOtherCards(card.Id, userCopy); //only remove user from other cards if new tuning was a success
+          UpdateChannelStatesForUsers();
+          break; //if we made it to the bottom, then we have a successful timeshifting.
         }
 
-        //tune to the new channel        
-        result = CardTune(ref user, tuneChannel, channel);
         if (result != TvResult.Succeeded)
         {
           if (_epgGrabber != null)
           {
             _epgGrabber.Start();
           }
-          return result;
         }
-        Log.Info("control2:{0} {1} {2}", user.Name, user.CardId, user.SubChannel);
-        if (!IsTimeShifting(ref user))
-        {
-          CleanTimeShiftFiles(cardInfo.Card.TimeShiftFolder, String.Format("live{0}-{1}.ts", user.CardId, user.SubChannel));
-        }
-        string timeshiftFileName = String.Format(@"{0}\live{1}-{2}.ts", cardInfo.Card.TimeShiftFolder, user.CardId, user.SubChannel);
 
-        //start timeshifting
-        result = StartTimeShifting(ref user, ref timeshiftFileName);
-        if (result != TvResult.Succeeded)
-        {
-          if (_epgGrabber != null)
-          {
-            _epgGrabber.Start();
-          }
-          return result;
-        }
-        Log.Write("Controller: StartTimeShifting started on card:{0} to {1}", user.CardId, timeshiftFileName);
-        card = GetVirtualCard(user);
-        RemoveUserFromOtherCards(card.Id, user); //only remove user from other cards if new tuning was a success
-
-        UpdateChannelStatesForUsers();
-
-        return TvResult.Succeeded;
+        return result;
       }
       catch (Exception ex)
       {

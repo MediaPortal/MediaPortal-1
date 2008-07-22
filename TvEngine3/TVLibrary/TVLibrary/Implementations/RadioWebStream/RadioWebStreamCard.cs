@@ -86,6 +86,18 @@ namespace TvLibrary.Implementations.RadioWebStream
 			}
 		}
 
+    /// <summary>
+    /// Does the card have a CA module.
+    /// </summary>
+    /// <value>The number of channels decrypting.</value>
+    public bool HasCA
+    {
+      get
+      {
+        return false;
+      }
+    }
+
     public ScanParameters Parameters
     {
       get

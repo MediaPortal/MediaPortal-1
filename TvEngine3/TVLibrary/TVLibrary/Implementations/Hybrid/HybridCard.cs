@@ -145,6 +145,18 @@ namespace TvLibrary.Implementations.Hybrid
     }
 
     /// <summary>
+    /// Does the card have a CA module.
+    /// </summary>
+    /// <value>The number of channels decrypting.</value>
+    public bool HasCA
+    {
+      get
+      {
+        return (_cards[_currentCardIndex].HasCA);
+      }
+    }
+
+    /// <summary>
     /// Gets or sets the <see cref="TvLibrary.Interfaces.ITVCard"/> at the specified index.
     /// </summary>
     /// <value></value>
