@@ -59,6 +59,10 @@ namespace MediaPortal.Configuration.Sections
 
     public override void OnSectionActivated()
     {
+      OsDetection.OSVersionInfo os = new OsDetection.OperatingSystemVersion();
+      int ver = (os.OSMajorVersion*10) + os.OSMinorVersion;
+      if (ver >= 60)
+        _useVistaHandler.Select();
       groupBoxVolumeOsd.Visible = SettingsForm.AdvancedMode;
       base.OnSectionActivated();
     }
