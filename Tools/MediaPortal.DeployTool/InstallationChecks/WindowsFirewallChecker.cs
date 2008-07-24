@@ -56,6 +56,8 @@ namespace MediaPortal.DeployTool
       Type type = Type.GetTypeFromProgID(PROGID_AUTHORIZED_APPLICATION);
       INetFwAuthorizedApplication auth = Activator.CreateInstance(type) as INetFwAuthorizedApplication;
       auth.Name = title;
+      if (!File.Exists(applicationPath)) 
+        return false;
       auth.ProcessImageFileName = applicationPath;
       auth.Scope = scope;
       auth.IpVersion = ipVersion;
