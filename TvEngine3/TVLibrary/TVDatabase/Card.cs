@@ -44,6 +44,8 @@ namespace TvDatabase
     private int recordingFormat;
     [TableColumn("decryptLimit", NotNull = true)]
     private int decryptLimit;
+    [TableColumn("preload", NotNull = true)]
+    private bool preloadCard;
     #endregion
 
     #region Constructors
@@ -96,6 +98,15 @@ namespace TvDatabase
     public bool IsChanged
     {
       get { return isChanged; }
+    }
+
+    /// <summary>
+    /// Property relating to database column preload
+    /// </summary>
+    public bool PreloadCard
+    {
+      get { return preloadCard; }
+      set { isChanged |= preloadCard != value; preloadCard = value; }
     }
 
     /// <summary>

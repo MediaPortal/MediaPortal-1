@@ -52,10 +52,7 @@ namespace TvLibrary.Implementations.DVB
     /// holds the current DVB-C tuning request
     /// </summary>
     protected IDVBTuneRequest _tuneRequest = null;
-    /// <summary>
-    /// Device of the card
-    /// </summary>
-    DsDevice _device;
+    
     #endregion
 
     /// <summary>
@@ -63,12 +60,9 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="device">The device.</param>
     public TvCardDVBC(DsDevice device)
-      : base()
+      : base(device)
     {
-      _cardType = CardType.DvbC;
-      _device = device;
-      _name = device.Name;
-      _devicePath = device.DevicePath;
+      _cardType = CardType.DvbC;      
 
       try
       {
@@ -102,7 +96,7 @@ namespace TvLibrary.Implementations.DVB
         AddNetworkProviderFilter(typeof(DVBCNetworkProvider).GUID);
         CreateTuningSpace();
         AddMpeg2DemuxerToGraph();
-        AddAndConnectBDABoardFilters(_device);
+        AddAndConnectBDABoardFilters(_tunerDevice);
         AddBdaTransportFiltersToGraph();
 
         GetTunerSignalStatistics();

@@ -43,6 +43,7 @@ using TvLibrary.Log;
 using TvLibrary.ChannelLinkage;
 using TvLibrary.Helper;
 using MediaPortal.TV.Epg;
+using TvDatabase;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -105,8 +106,12 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Initializes a new instance of the <see cref="TvCardDvbBase"/> class.
     /// </summary>
-    public TvCardDvbBase()
+    public TvCardDvbBase(DsDevice device)
     {
+      //System.Diagnostics.Debugger.Launch();
+      _tunerDevice = device;       
+      _name = device.Name;
+      _devicePath = device.DevicePath;      
       _lastSignalUpdate = DateTime.MinValue;
       _mapSubChannels = new Dictionary<int, BaseSubChannel>();
       _parameters = new ScanParameters();
@@ -114,6 +119,15 @@ namespace TvLibrary.Implementations.DVB
       _minChannel = -1;
       _maxChannel = -1;
       _supportsSubChannels = true;
+
+      //get preload card value
+      if (this._devicePath != null)
+      {                
+        //fetch preload value from db and apply it.
+        TvBusinessLayer layer = new TvBusinessLayer();
+        Card c = layer.GetCardByDevicePath(this._devicePath);
+        _preloadCard = c.PreloadCard;        
+      }
     }
     #endregion
 

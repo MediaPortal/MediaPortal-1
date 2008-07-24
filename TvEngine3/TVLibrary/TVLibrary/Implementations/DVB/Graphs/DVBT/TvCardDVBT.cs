@@ -51,11 +51,7 @@ namespace TvLibrary.Implementations.DVB
     /// holds the current DVB-T tuning request
     /// </summary>
     protected IDVBTuneRequest _tuneRequest = null;
-
-    /// <summary>
-    /// Device of the card
-    /// </summary>
-    DsDevice _device;
+    
     #endregion
 
     #region ctor
@@ -64,12 +60,9 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="device">The device.</param>
     public TvCardDVBT(DsDevice device)
-      : base()
+      : base(device)
     {
-      _cardType = CardType.DvbT;
-      _device = device;
-      _name = device.Name;
-      _devicePath = device.DevicePath;
+      _cardType = CardType.DvbT;      
 
       try
       {
@@ -106,7 +99,7 @@ namespace TvLibrary.Implementations.DVB
         AddNetworkProviderFilter(typeof(DVBTNetworkProvider).GUID);
         CreateTuningSpace();
         AddMpeg2DemuxerToGraph();
-        AddAndConnectBDABoardFilters(_device);
+        AddAndConnectBDABoardFilters(_tunerDevice);
         AddBdaTransportFiltersToGraph();
 
         //                ConnectFilters();

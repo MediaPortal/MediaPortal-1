@@ -83,6 +83,8 @@ namespace TvLibrary.Implementations
     #endregion
 
     #region variables
+
+    protected bool _preloadCard = false;
     /// <summary>
     /// Scanning Paramters
     /// </summary>
@@ -175,6 +177,17 @@ namespace TvLibrary.Implementations
     #endregion
 
     #region properties
+
+     /// <summary>
+    /// returns true if card should be preloaded
+    /// </summary>
+    public bool PreloadCard
+    {
+      get
+      {
+        return _preloadCard;
+      }
+    }
 
     /// <summary>
     /// Gets a value indicating whether card supports subchannels

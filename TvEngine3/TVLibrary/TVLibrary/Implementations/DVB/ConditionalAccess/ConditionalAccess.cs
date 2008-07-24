@@ -28,6 +28,7 @@ using TvLibrary.Implementations.DVB.Structures;
 using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Interfaces;
 using DirectShowLib.BDA;
+using TvDatabase;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -74,20 +75,13 @@ namespace TvLibrary.Implementations.DVB
     {
       try
       {
-        //System.Diagnostics.Debugger.Launch();
-        //fetch decrypt limit from DB and apply it.
+        //System.Diagnostics.Debugger.Launch();        
         if (card != null && card.DevicePath != null)
         {
-          IList cardList = TvDatabase.Card.ListAll();
-
-          foreach (TvDatabase.Card c in cardList)
-          {
-            if (c.DevicePath == card.DevicePath)
-            {
-              _decryptLimit = c.DecryptLimit;
-            }
-            break;
-          }
+          //fetch decrypt limit from DB and apply it.
+          TvBusinessLayer layer = new TvBusinessLayer();
+          Card c = layer.GetCardByDevicePath(card.DevicePath);                    
+          _decryptLimit = c.DecryptLimit;          
         }
 
         _useCam = useCAM;

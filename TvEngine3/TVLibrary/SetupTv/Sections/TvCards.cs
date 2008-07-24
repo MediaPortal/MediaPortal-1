@@ -357,7 +357,7 @@ namespace SetupTv.Sections
       if (indexes.Count == 0) return;
       ListViewItem item = mpListView1.Items[indexes[0]];
       FormEditCard dlg = new FormEditCard();
-      dlg.Card = (Card)item.Tag;
+      dlg.Card = (Card)item.Tag;      
       dlg.ShowDialog();
       dlg.Card.Persist();
       _needRestart = true;

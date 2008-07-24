@@ -170,7 +170,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="device">The device.</param>
     public TvCardDvbSS2(DsDevice device)
-      : base()
+      : base(device)
     {
       _useDISEqCMotor = false;
       TvBusinessLayer layer = new TvBusinessLayer();
@@ -181,11 +181,7 @@ namespace TvLibrary.Implementations.DVB
         if (setting.Value == "yes")
           _useDISEqCMotor = true;
       }      
-      _devicePath = device.DevicePath;
-      _conditionalAccess = new ConditionalAccess(null, null, null, this, false);
-      _tunerDevice = device;
-      _devicePath = _tunerDevice.DevicePath;
-      _name = _tunerDevice.Name;
+      _conditionalAccess = new ConditionalAccess(null, null, null, this, false);                 
       _ptrDisEqc = Marshal.AllocCoTaskMem(20);
       _disEqcMotor = new DiSEqCMotor(this);
       GetTunerCapabilities();

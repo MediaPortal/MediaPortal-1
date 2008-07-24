@@ -53,10 +53,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     protected IDVBTuneRequest _tuneRequest = null;
 
-    /// <summary>
-    /// Device of the card
-    /// </summary>
-    DsDevice _device;
+    
     #endregion
 
     #region ctor
@@ -65,12 +62,9 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="device">The device.</param>
     public TvCardDVBS(DsDevice device)
-      : base()
+      : base(device)
     {
-      _cardType = CardType.DvbS;
-      _device = device;
-      _name = device.Name;
-      _devicePath = device.DevicePath;
+      _cardType = CardType.DvbS;      
 
       try
       {
@@ -104,7 +98,7 @@ namespace TvLibrary.Implementations.DVB
         AddNetworkProviderFilter(typeof(DVBSNetworkProvider).GUID);
         CreateTuningSpace();
         AddMpeg2DemuxerToGraph();
-        AddAndConnectBDABoardFilters(_device);
+        AddAndConnectBDABoardFilters(_tunerDevice);
         AddBdaTransportFiltersToGraph();
         GetTunerSignalStatistics();
         _graphState = GraphState.Created;

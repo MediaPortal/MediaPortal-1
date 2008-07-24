@@ -50,10 +50,7 @@ namespace TvLibrary.Implementations.DVB
     /// Holds the current ATSC tuning request
     /// </summary>
     protected IATSCChannelTuneRequest _tuneRequest = null;
-    /// <summary>
-    /// Holds the card's device moniker
-    /// </summary>
-    DsDevice _device;
+    
     #endregion
 
     /// <summary>
@@ -61,12 +58,10 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="device">The device.</param>
     public TvCardATSC(DsDevice device)
-      : base()
+      : base(device)
     {
       _cardType = CardType.Atsc;
-      _device = device;
-      _name = device.Name;
-      _devicePath = device.DevicePath;
+      
       try
       {
         //BuildGraph();
@@ -99,7 +94,7 @@ namespace TvLibrary.Implementations.DVB
         AddNetworkProviderFilter(typeof(ATSCNetworkProvider).GUID);
         CreateTuningSpace();
         AddMpeg2DemuxerToGraph();
-        AddAndConnectBDABoardFilters(_device);
+        AddAndConnectBDABoardFilters(_tunerDevice);
         AddBdaTransportFiltersToGraph();
         GetTunerSignalStatistics();
         _graphState = GraphState.Created;
