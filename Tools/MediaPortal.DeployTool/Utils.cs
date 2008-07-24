@@ -209,6 +209,18 @@ namespace MediaPortal.DeployTool
       return "Windows NT " + os.OSMajorVersion + "." + os.OSMinorVersion;
     }
 
+    public static void UninstallNSIS(string RegistryFullPathName)
+    {
+      Process setup;
+      string FileName = Path.GetFileName(RegistryFullPathName);
+      string Directory = Path.GetDirectoryName(RegistryFullPathName);
+      string TempFullPathName = Environment.GetEnvironmentVariable("TEMP") + "\\" + FileName;
+      File.Copy(RegistryFullPathName, TempFullPathName);
+      setup = Process.Start(TempFullPathName, " /S _?=" + Directory);
+      setup.WaitForExit();
+      File.Delete(TempFullPathName);
+    }
+
     #region Operation System Version Check
     public static void CheckPrerequisites()
     {

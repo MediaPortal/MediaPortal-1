@@ -48,33 +48,40 @@ namespace MediaPortal.DeployTool
       result = Utils.RetryDownloadFile(FileName, prg);
       return (result == DialogResult.OK);
     }
+
     public bool Install()
     {
-      string exe = Application.StartupPath + "\\Deploy\\" + Utils.GetDownloadString("TvServer", "FILE");
+      string nsis = Application.StartupPath + "\\Deploy\\" + Utils.GetDownloadString("TvServer", "FILE");
+      if (!File.Exists(nsis)) return false;
       //NSIS installed doesn't want " in parameters (chefkoch)
       //Rember that /D must be the last one         (chefkoch)
       string parameters = "/S /noServer /DeployMode";
-      Process setup = Process.Start(exe, parameters);
-      try
-      {
-        setup.WaitForExit();
-      }
-      catch { }
-      return true;
+      Process setup = Process.Start(nsis, parameters);
+      setup.WaitForExit();
+      if (setup.ExitCode == 0) return true;
+      return false;
     }
+
     public bool UnInstall()
     {
+      string RegistryFullPathName;
       RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal TV Server");
-      string exe = (string)key.GetValue("UninstallString");
-      key.Close();
-      Process setup = Process.Start(exe, "/S /RemoveAll");
-      try
+      if (key != null)
       {
-        setup.WaitForExit();
+        RegistryFullPathName = key.GetValue("UninstallString").ToString();
+        if (File.Exists(RegistryFullPathName))
+        {
+          key.Close();
+          Utils.UninstallNSIS(RegistryFullPathName);
+        }
+        else
+        {
+          key.DeleteSubKeyTree("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal TV Server");
+        }
       }
-      catch { }
       return true;
     }
+
     public CheckResult CheckStatus()
     {
       CheckResult result;

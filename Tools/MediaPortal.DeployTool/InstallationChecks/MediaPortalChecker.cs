@@ -48,46 +48,48 @@ namespace MediaPortal.DeployTool
       result = Utils.RetryDownloadFile(FileName, prg);
       return (result == DialogResult.OK);
     }
+
     public bool Install()
     {
       string nsis = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString("MediaPortal", "FILE");
+      if (!File.Exists(nsis)) return false;
       string targetDir = InstallationProperties.Instance["MPDir"];
+      //NSIS installed doesn't want " in parameters (chefkoch)
+      //Rember that /D must be the last one         (chefkoch)
       Process setup = Process.Start(nsis, "/S /DeployMode /D=" + targetDir);
-      try
-      {
-        setup.WaitForExit();
-        return true;
-      }
-      catch 
-      {
-        return false;
-      }
+      setup.WaitForExit();
+      if (setup.ExitCode == 0) return true;
+      return false;
     }
+
     public bool UnInstall()
     {
       RegistryKey key;
       string RegistryFullPathName;
 
-      // 1.0.x
-      key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal");
-      if (key != null)
-      {
-        RegistryFullPathName = key.GetValue("UninstallString").ToString();
-        key.Close();
-        UninstallNSIS(RegistryFullPathName);
-      }
+      string[] UninstKeys = {"MediaPortal",             // 1.x
+                             "MediaPortal 0.2.3.0"};    // 0.2.3.0
 
-      // 0.2.3.0
-      key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal 0.2.3.0");
-      if (key != null)
+      foreach (string UnistKey in UninstKeys)
       {
-        RegistryFullPathName = key.GetValue("UninstallString").ToString();
-        key.Close();
-        UninstallNSIS(RegistryFullPathName);   
+        key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + UnistKey);
+        if (key != null)
+        {
+          RegistryFullPathName = key.GetValue("UninstallString").ToString();
+          if (File.Exists(RegistryFullPathName))
+          {
+            key.Close();
+            Utils.UninstallNSIS(RegistryFullPathName);
+          }
+          else
+          {
+            key.DeleteSubKeyTree("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + UnistKey);
+          }
+        }
       }
-
       return true;
     }
+
     public CheckResult CheckStatus()
     {
       CheckResult result;
@@ -137,18 +139,6 @@ namespace MediaPortal.DeployTool
         }
       }
       return result;
-    }
-
-    public void UninstallNSIS(string RegistryFullPathName)
-    {
-      Process setup;
-      string FileName = Path.GetFileName(RegistryFullPathName);
-      string Directory = Path.GetDirectoryName(RegistryFullPathName);
-      string TempFullPathName = Environment.GetEnvironmentVariable("TEMP") + "\\" + FileName;
-      File.Copy(RegistryFullPathName, TempFullPathName);
-      setup = Process.Start(TempFullPathName, " /S _?=" + Directory);
-      setup.WaitForExit();
-      File.Delete(TempFullPathName);
     }
   }
 }
