@@ -715,93 +715,101 @@ namespace TvPlugin
       _playbackStopped = true;      
     }
 
+    public static bool ManualRecord(Channel channel)
+    {
+      if (GUIWindowManager.ActiveWindow == (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
+      {
+        MediaPortal.GUI.Library.Log.Info("send message to fullscreen tv");
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORD, GUIWindowManager.ActiveWindow, 0, 0, 0, 0, null);
+        msg.SendToTargetWindow = true;
+        msg.TargetWindowId = (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN;
+        GUIGraphicsContext.SendMessage(msg);
+        return false;
+      }
+
+      MediaPortal.GUI.Library.Log.Info("TVHome:Record action");
+      TvServer server = new TvServer();
+      
+      VirtualCard card;
+      if (false == server.IsRecording(channel.Name, out card))
+      {
+        TvBusinessLayer layer = new TvBusinessLayer();
+        Program prog = channel.CurrentProgram;
+        if (prog != null)
+        {
+          GUIDialogMenuBottomRight pDlgOK = (GUIDialogMenuBottomRight)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT);
+          if (pDlgOK != null)
+          {
+            pDlgOK.Reset();
+            pDlgOK.SetHeading(605);//my tv
+            pDlgOK.AddLocalizedString(875); //current program
+            pDlgOK.AddLocalizedString(876); //till manual stop
+            pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
+            switch (pDlgOK.SelectedId)
+            {
+              case 875:
+                {
+                  //record current program
+                  Schedule newSchedule = new Schedule(channel.IdChannel, channel.CurrentProgram.Title,
+                                              channel.CurrentProgram.StartTime, channel.CurrentProgram.EndTime);
+                  newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
+                  newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
+
+                  newSchedule.RecommendedCard = TVHome.Card.Id;
+
+                  newSchedule.Persist();
+                  server.OnNewSchedule();
+                  return true;
+                }
+                break;
+
+              case 876:
+                {
+                  Schedule newSchedule = new Schedule(channel.IdChannel, GUILocalizeStrings.Get(413) + " (" + channel.DisplayName + ")",
+                                              DateTime.Now, DateTime.Now.AddDays(1));
+                  newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
+                  newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
+                  newSchedule.RecommendedCard = TVHome.Card.Id;
+
+                  newSchedule.Persist();
+                  server.OnNewSchedule();
+                  return true;
+                }
+                break;
+            }
+          }
+        }//if (prog != null)
+        else
+        {
+          Schedule newSchedule = new Schedule(channel.IdChannel, GUILocalizeStrings.Get(413) + " (" + channel.DisplayName + ")",
+                                              DateTime.Now, DateTime.Now.AddDays(1));
+          newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
+          newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
+          newSchedule.RecommendedCard = TVHome.Card.Id;
+
+          newSchedule.Persist();
+          server.OnNewSchedule();
+          return true;
+
+        }
+      }//if (false == server.IsRecording(channel, out Card))
+      else
+      {
+        DeleteRecordingSchedule(Schedule.Retrieve(card.RecordingScheduleId));
+        //server.StopRecordingSchedule(card.RecordingScheduleId);
+        return false;
+      }
+      return false;
+    }
+
     public override void OnAction(Action action)
     {
       switch (action.wID)
       {
         case Action.ActionType.ACTION_RECORD:
           //record current program on current channel
-          //are we watching tv?
-          if (GUIWindowManager.ActiveWindow == (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
-          {
-            MediaPortal.GUI.Library.Log.Info("send message to fullscreen tv");
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORD, GUIWindowManager.ActiveWindow, 0, 0, 0, 0, null);
-            msg.SendToTargetWindow = true;
-            msg.TargetWindowId = (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN;
-            GUIGraphicsContext.SendMessage(msg);
-            return;
-          }
-
-          MediaPortal.GUI.Library.Log.Info("TVHome:Record action");
-          TvServer server = new TvServer();
-          string channel = TVHome.Card.ChannelName;
-          VirtualCard card;
-          if (false == server.IsRecording(channel, out card))
-          {
-            TvBusinessLayer layer = new TvBusinessLayer();
-            Program prog = null;
-            if (Navigator.Channel != null)
-              prog = Navigator.Channel.CurrentProgram;
-            if (prog != null)
-            {
-              GUIDialogMenuBottomRight pDlgOK = (GUIDialogMenuBottomRight)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT);
-              if (pDlgOK != null)
-              {
-                pDlgOK.Reset();
-                pDlgOK.SetHeading(605);//my tv
-                pDlgOK.AddLocalizedString(875); //current program
-                pDlgOK.AddLocalizedString(876); //till manual stop
-                pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
-                switch (pDlgOK.SelectedId)
-                {
-                  case 875:
-                    {
-                      //record current program
-                      Schedule newSchedule = new Schedule(Navigator.Channel.IdChannel, Navigator.Channel.CurrentProgram.Title,
-                                                  Navigator.Channel.CurrentProgram.StartTime, Navigator.Channel.CurrentProgram.EndTime);
-                      newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
-                      newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
-
-                      newSchedule.RecommendedCard = TVHome.Card.Id;
-
-                      newSchedule.Persist();
-                      server.OnNewSchedule();
-                    }
-                    break;
-
-                  case 876:
-                    {
-                      Schedule newSchedule = new Schedule(Navigator.Channel.IdChannel, GUILocalizeStrings.Get(413) + " (" + Navigator.Channel.DisplayName + ")",
-                                                  DateTime.Now, DateTime.Now.AddDays(1));
-                      newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
-                      newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
-                      newSchedule.RecommendedCard = TVHome.Card.Id;
-
-                      newSchedule.Persist();
-                      server.OnNewSchedule();
-                    }
-                    break;
-                }
-              }
-            }//if (prog != null)
-            else
-            {
-              Schedule newSchedule = new Schedule(Navigator.Channel.IdChannel, GUILocalizeStrings.Get(413) + " (" + Navigator.Channel.DisplayName + ")",
-                                                  DateTime.Now, DateTime.Now.AddDays(1));
-              newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
-              newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
-              newSchedule.RecommendedCard = TVHome.Card.Id;
-
-              newSchedule.Persist();
-              server.OnNewSchedule();
-
-            }
-          }//if (false == server.IsRecording(channel, out Card))
-          else
-          {
-            DeleteRecordingSchedule(Schedule.Retrieve(card.RecordingScheduleId));
-            //server.StopRecordingSchedule(card.RecordingScheduleId);
-          }
+          //are we watching tv?                    
+          ManualRecord(TVHome.Navigator.Channel);          
           break;
 
         case Action.ActionType.ACTION_PREV_CHANNEL:

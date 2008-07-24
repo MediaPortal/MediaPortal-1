@@ -91,6 +91,8 @@ namespace TvPlugin
 
     #region variables
 
+    Channel _recordingExpected = null;
+    DateTime _updateTimerRecExpected = DateTime.Now;
     DateTime _viewingTime = DateTime.Now;
     int _channelOffset = 0;
     List<Channel> _channelList = new List<Channel>();
@@ -731,8 +733,29 @@ namespace TvPlugin
 
     public override void Process()
     {
-      TVHome.UpdateProgressPercentageBar();
+      TVHome.UpdateProgressPercentageBar();            
+
       OnKeyTimeout();
+
+      //if we did a manual rec. on the tvguide directly, then we have to wait for it to start and the update the GUI.
+      if (_recordingExpected != null)
+      {
+        TimeSpan ts = DateTime.Now - _updateTimerRecExpected;
+        if (ts.TotalMilliseconds > 1000)
+        {
+          _updateTimerRecExpected = DateTime.Now;
+          VirtualCard card;
+          TvServer server = new TvServer();
+          if (server.IsRecording(_recordingExpected.Name, out card))
+          {
+            _recordingExpected = null;
+            GetChannels(true);
+            LoadSchedules(true);
+            _needUpdate = true;
+          }
+        }        
+      }
+
       if (_needUpdate)
       {
         _needUpdate = false;
@@ -2691,13 +2714,20 @@ namespace TvPlugin
     {
       if (_currentProgram == null) return;
       if ((_currentProgram.IsRunningAt(DateTime.Now) ||
-          (_currentProgram.EndTime <= DateTime.Now)) &&
-          (TVHome.Card.IsTimeShifting || TVHome.Card.IsTimeShifting))
+          (_currentProgram.EndTime <= DateTime.Now)))
       {
         //record current programme
         GUIWindow tvHome = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TV);
         if ((tvHome != null) && (tvHome.GetID != GUIWindowManager.ActiveWindow))
-          tvHome.OnAction(new Action(Action.ActionType.ACTION_RECORD, 0, 0));
+        {
+          //tvHome.OnAction(new Action(Action.ActionType.ACTION_RECORD, 0, 0));          
+          bool didRecStart = TVHome.ManualRecord(_currentProgram.ReferencedChannel());
+          //refresh view.
+          if (didRecStart)
+          {
+            _recordingExpected = _currentProgram.ReferencedChannel();            
+          }
+        }
       }
       else
         ShowProgramInfo();
