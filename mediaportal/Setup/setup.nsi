@@ -529,7 +529,6 @@ SectionEnd
 
   ; Language
   Delete /REBOOTOK "$MPdir.Language\*"
-  RMDir /r /REBOOTOK "$MPdir.Language\Spanish Latin"
   RMDir "$MPdir.Language"
 
   ; Doc
