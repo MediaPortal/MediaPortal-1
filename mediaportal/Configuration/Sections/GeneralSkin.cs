@@ -33,6 +33,7 @@ using System.Xml;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
 using MediaPortal.GUI.Library;
+using MediaPortal.Localisation;
 
 #pragma warning disable 108
 
@@ -133,53 +134,7 @@ namespace MediaPortal.Configuration.Sections
       foreach(string language in languages)
         languageComboBox.Items.Add(language);
 
-      languageComboBox.Text = GUILocalizeStrings.CurrentLanguage();
-      
-      //// Get system language
-
-
-      //string strLongLanguage = CultureInfo.CurrentCulture.EnglishName;
-      //int iTrimIndex = strLongLanguage.IndexOf(" ", 0, strLongLanguage.Length);
-      //string strShortLanguage = strLongLanguage.Substring(0, iTrimIndex);
-
-      //bool bExactLanguageFound = false;
-      //if (Directory.Exists(LanguageDirectory))
-      //{
-      //  string[] folders = Directory.GetDirectories(LanguageDirectory, "*.*");
-
-      //  foreach (string folder in folders)
-      //  {
-      //    string fileName = folder.Substring(folder.LastIndexOf(@"\") + 1);
-
-      //    //
-      //    // Exclude cvs folder
-      //    //
-      //    if (fileName.ToLower() != "cvs")
-      //    {
-      //      if (fileName.Length > 0)
-      //      {
-      //        fileName = fileName.Substring(0, 1).ToUpper() + fileName.Substring(1);
-      //        languageComboBox.Items.Add(fileName);
-
-      //        // Check language file to user region language
-      //        if (fileName.ToLower() == strLongLanguage.ToLower())
-      //        {
-      //          languageComboBox.Text = fileName;
-      //          bExactLanguageFound = true;
-      //        }
-      //        else if (!bExactLanguageFound && (fileName.ToLower() == strShortLanguage.ToLower()))
-      //        {
-      //          languageComboBox.Text = fileName;
-      //        }
-      //      }
-      //    }
-      //  }
-      //}
-
-      //if (languageComboBox.Text == "")
-      //{
-      //  languageComboBox.Text = "English";
-      //}
+      languageComboBox.Text = GUILocalizeStrings.LocalSupported();  
     }
 
     private void listViewAvailableSkins_SelectedIndexChanged(object sender, EventArgs e)
