@@ -622,6 +622,7 @@ SectionEnd
 #---------------------------------------------------------------------------
 Function .onInit
   ${LOG_OPEN}
+  ${LOG_TEXT} "DEBUG" "FUNCTION .onInit"
 
   #### check and parse cmdline parameter
   ; set default values for parameters ........
@@ -633,6 +634,7 @@ Function .onInit
 
   ; gets comandline parameter
   ${GetParameters} $R0
+  ${LOG_TEXT} "DEBUG" "commandline parameters: $R0"
 
   ; check for special parameter and set the their variables
   ClearErrors
@@ -796,30 +798,25 @@ Function .onInit
 FunctionEnd
 
 Function .onInstFailed
+  ${LOG_TEXT} "DEBUG" "FUNCTION .onInstFailed"
   ${LOG_CLOSE}
 FunctionEnd
 
 Function .onInstSuccess
+  ${LOG_TEXT} "DEBUG" "FUNCTION .onInstSuccess"
   ${LOG_CLOSE}
 FunctionEnd
 
-Function .onSelChange
-  ; disable the next button if nothing is selected
-  ${IfNot} ${SectionIsSelected} ${SecServer}
-  ${AndIfNot} ${SectionIsSelected} ${SecClient}
-    EnableWindow $mui.Button.Next 0
-  ${Else}
-    EnableWindow $mui.Button.Next 1
-  ${EndIf}
-FunctionEnd
-
 Function un.onInit
+  ${un.LOG_OPEN}
+  ${LOG_TEXT} "DEBUG" "FUNCTION un.onInit"
   #### check and parse cmdline parameter
   ; set default values for parameters ........
   StrCpy $RemoveAll 0
 
   ; gets comandline parameter
   ${un.GetParameters} $R0
+  ${LOG_TEXT} "DEBUG" "commandline parameters: $R0"
 
   ; check for special parameter and set the their variables
   ClearErrors
@@ -842,13 +839,36 @@ Function un.onInit
   SetShellVarContext all
 FunctionEnd
 
+Function un.onUninstFailed
+  ${LOG_TEXT} "DEBUG" "FUNCTION un.onUninstFailed"
+  ${un.LOG_CLOSE}
+FunctionEnd
+
 Function un.onUninstSuccess
+  ${LOG_TEXT} "DEBUG" "FUNCTION un.onUninstSuccess"
+
   ; write a reboot flag, if reboot is needed, so the installer won't continue until reboot is done
   ${If} ${RebootFlag}
+    ${LOG_TEXT} "INFO" "!!! Some files were not able to uninstall. To finish uninstallation completly a REBOOT is needed."
     FileOpen $0 $INSTDIR\rebootflag w
     Delete /REBOOTOK $INSTDIR\rebootflag ; this will not be deleted until the reboot because it is currently opened
     RmDir /REBOOTOK $INSTDIR
     FileClose $0
+  ${EndIf}
+
+  ${un.LOG_CLOSE}
+FunctionEnd
+
+
+Function .onSelChange
+  ${LOG_TEXT} "DEBUG" "FUNCTION .onSelChange"
+
+  ; disable the next button if nothing is selected
+  ${IfNot} ${SectionIsSelected} ${SecServer}
+  ${AndIfNot} ${SectionIsSelected} ${SecClient}
+    EnableWindow $mui.Button.Next 0
+  ${Else}
+    EnableWindow $mui.Button.Next 1
   ${EndIf}
 FunctionEnd
 /*

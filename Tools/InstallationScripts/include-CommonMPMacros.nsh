@@ -32,7 +32,6 @@
 
 
 
-!include FileFunc.nsh
 !insertmacro GetRoot
 !insertmacro un.GetRoot
 
@@ -52,35 +51,55 @@
 #
 #**********************************************************************************************************#
 !ifdef INSTALL_LOG
-!ifndef INSTALL_LOG_FILE
-  !ifndef COMMON_APPDATA
-    !error "$\r$\n$\r$\nCOMMON_APPDATA is not defined!$\r$\n$\r$\n"
-  !endif
-
-  !define INSTALL_LOG_FILE "${COMMON_APPDATA}\log\install_${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}.log"
-!endif
+!include FileFunc.nsh
+!insertmacro GetTime
+!insertmacro un.GetTime
 
 Var LogFile
+Var TempInstallLog
 
 !define prefixERROR "[ERROR     !!!]   "
 !define prefixDEBUG "[    DEBUG    ]   "
 !define prefixINFO  "[         INFO]   "
 
-!define LOG_OPEN `!insertmacro LOG_OPEN`
-!macro LOG_OPEN
 
-  FileOpen $LogFile "$TEMP\install_$(^Name).log" w
+!define LOG_OPEN `!insertmacro LOG_OPEN ""`
+!define un.LOG_OPEN `!insertmacro LOG_OPEN "un."`
+!macro LOG_OPEN UNINSTALL_PREFIX
+  GetTempFileName $TempInstallLog
+  FileOpen $LogFile "$TempInstallLog" w
+
+  ${${UNINSTALL_PREFIX}GetTime} "" "L" $0 $1 $2 $3 $4 $5 $6
+  ${LOG_TEXT} "DEBUG" "$(^Name) installation started: $0.$1.$2 $4:$5:$6"
 
 !macroend
 
-!define LOG_CLOSE `!insertmacro LOG_CLOSE`
-!macro LOG_CLOSE
+
+!define LOG_CLOSE `!insertmacro LOG_CLOSE ""`
+!define un.LOG_CLOSE `!insertmacro LOG_CLOSE "un."`
+!macro LOG_CLOSE UNINSTALL_PREFIX
+  SetShellVarContext all
+
+  ${${UNINSTALL_PREFIX}GetTime} "" "L" $0 $1 $2 $3 $4 $5 $6
+  ${LOG_TEXT} "DEBUG" "$(^Name) installation stopped: $0.$1.$2 $4:$5:$6"
 
   FileClose $LogFile
 
-  CopyFiles "$TEMP\install_$(^Name).log" "${INSTALL_LOG_FILE}"
+!ifdef INSTALL_LOG_FILE
+  CopyFiles "$TempInstallLog" "${INSTALL_LOG_FILE}"
+!else
+  !ifndef COMMON_APPDATA
+    !error "$\r$\n$\r$\nCOMMON_APPDATA is not defined!$\r$\n$\r$\n"
+  !endif
 
+  ${${UNINSTALL_PREFIX}GetTime} "" "L" $0 $1 $2 $3 $4 $5 $6
+  CopyFiles "$TempInstallLog" "${COMMON_APPDATA}\log\install_$2-$1-$0_$4-$5-$6.log"
+
+  Delete "$TempInstallLog"
+
+!endif
 !macroend
+
 
 !define LOG_TEXT `!insertmacro LOG_TEXT`
 !macro LOG_TEXT LEVEL TEXT
@@ -122,6 +141,7 @@ Var LogFile
 #**********************************************************************************************************#
 !define KILLPROCESS `!insertmacro KILLPROCESS`
 !macro KILLPROCESS PROCESS
+/*
 !if ${KILLMODE} == "1"
   ExecShell "" "Cmd.exe" '/C "taskkill /F /IM "${PROCESS}""' SW_HIDE
   Sleep 300
@@ -130,10 +150,13 @@ Var LogFile
 !else if ${KILLMODE} == "3"
   nsExec::ExecToLog '"taskkill" /F /IM "${PROCESS}"'
 !else
-
+*/
+  ${LOG_TEXT} "DEBUG" "KILLPROCESS: ${PROCESS}"
   nsExec::ExecToLog '"taskkill" /F /IM "${PROCESS}"'
 
-!endif
+  Pop $0
+  ${LOG_TEXT} "DEBUG" "KILLPROCESS result: $0"
+
 !macroend
 
 
@@ -721,7 +744,7 @@ FunctionEnd
     ${LOG_TEXT} "INFO" "read '$MyDocs\Team MediaPortal\MediaPortalDirs.xml' successfully"
   ${EndIf}
 
-  ${LOG_TEXT} "INFO" "Installer will use the following directories:$\r$\n"
+  ${LOG_TEXT} "INFO" "Installer will use the following directories:"
   ${LOG_TEXT} "INFO" "          Base:  $MPdir.Base"
   ${LOG_TEXT} "INFO" "          Config:  $MPdir.Config"
   ${LOG_TEXT} "INFO" "          Plugins: $MPdir.Plugins"
