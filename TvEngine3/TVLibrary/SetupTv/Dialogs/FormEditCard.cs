@@ -67,7 +67,7 @@ namespace SetupTv.Sections
 
     private void FormEditCard_Load(object sender, EventArgs e)
     {
-      if (!_cardType.Equals("analog")) //analog does not have these settings
+      if (!_cardType.Equals("Analog")) //analog does not have these settings
       {
         numericUpDownDecryptLimit.Value = _card.DecryptLimit;
         checkBoxAllowEpgGrab.Checked = _card.GrabEPG;
@@ -87,7 +87,7 @@ namespace SetupTv.Sections
 
     private void mpButtonSave_Click(object sender, EventArgs e)
     {
-      if (!_cardType.Equals("analog")) //analog does not have these settings
+      if (!_cardType.Equals("Analog")) //analog does not have these settings
       {
         _card.DecryptLimit = Convert.ToInt32(numericUpDownDecryptLimit.Value);
         _card.GrabEPG = checkBoxAllowEpgGrab.Checked;
