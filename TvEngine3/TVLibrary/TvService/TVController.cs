@@ -398,12 +398,12 @@ namespace TvService
               if (dbsCard.DevicePath == _localCardCollection.Cards[cardNumber].DevicePath)
               {
                 ITVCard unknownCard = _localCardCollection.Cards[cardNumber];                
-                if (unknownCard is TvCardDvbBase && !(unknownCard is HybridCard))
+                if (unknownCard is TvCardBase)
                 {
-                  TvCardDvbBase dvbCard = (TvCardDvbBase) unknownCard;                                    
-                  if (dvbCard.PreloadCard)
+                  TvCardBase card = (TvCardBase)unknownCard;
+                  if (card.PreloadCard)
                   {
-                    dvbCard.BuildGraph();
+                    card.BuildGraph();
                   }
                 }
 

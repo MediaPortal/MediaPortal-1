@@ -38,10 +38,11 @@ namespace SetupTv.Sections
   public partial class FormEditCard : Form
   {
     private Card _card;
+    private string _cardType;
    
     public FormEditCard()
     {
-      InitializeComponent();
+      InitializeComponent();     
     }
 
     public Card Card
@@ -54,19 +55,43 @@ namespace SetupTv.Sections
       {
         _card = value;
       }
+    }
+
+    public String CardType
+    {      
+      set
+      {
+        _cardType = value;
+      }
     }   
 
     private void FormEditCard_Load(object sender, EventArgs e)
     {
-      numericUpDownDecryptLimit.Value = _card.DecryptLimit;
-      checkBoxAllowEpgGrab.Checked = _card.GrabEPG;
+      if (!_cardType.Equals("analog")) //analog does not have these settings
+      {
+        numericUpDownDecryptLimit.Value = _card.DecryptLimit;
+        checkBoxAllowEpgGrab.Checked = _card.GrabEPG;
+        numericUpDownDecryptLimit.Enabled = true;
+        checkBoxAllowEpgGrab.Enabled = true;
+      }
+      else
+      {
+        numericUpDownDecryptLimit.Value = 0;
+        checkBoxAllowEpgGrab.Checked = false;
+        numericUpDownDecryptLimit.Enabled = false;
+        checkBoxAllowEpgGrab.Enabled = false;
+      }
+
       checkBoxPreloadCard.Checked = _card.PreloadCard;
     }
 
     private void mpButtonSave_Click(object sender, EventArgs e)
     {
-      _card.DecryptLimit = Convert.ToInt32(numericUpDownDecryptLimit.Value);
-      _card.GrabEPG = checkBoxAllowEpgGrab.Checked;
+      if (!_cardType.Equals("analog")) //analog does not have these settings
+      {
+        _card.DecryptLimit = Convert.ToInt32(numericUpDownDecryptLimit.Value);
+        _card.GrabEPG = checkBoxAllowEpgGrab.Checked;
+      }
       _card.PreloadCard = checkBoxPreloadCard.Checked;
       this.Close();
     }

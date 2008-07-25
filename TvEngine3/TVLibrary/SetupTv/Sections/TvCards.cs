@@ -37,7 +37,9 @@ namespace SetupTv.Sections
 {
   public partial class TvCards : SectionSettings
   {
-    bool _needRestart = false;
+    private bool _needRestart = false;
+    private Dictionary<string, CardType> cardTypes = new Dictionary<string, CardType>();
+
     public TvCards()
       : this("TV Cards")
     {
@@ -118,8 +120,7 @@ namespace SetupTv.Sections
     void UpdateList()
     {
       base.OnSectionActivated();
-      mpListView1.Items.Clear();
-      Dictionary<string, CardType> cardTypes = new Dictionary<string, CardType>();
+      mpListView1.Items.Clear();      
       try
       {
         IList dbsCards = Card.ListAll();
@@ -287,12 +288,12 @@ namespace SetupTv.Sections
         enabled = !RemoteControl.Instance.CardPresent(card.IdCard);
       }
       if (mpListView1.SelectedItems.Count == 1)
-      {
-          string cardType = mpListView1.SelectedItems[0].SubItems[2].Text.ToLower();
-          if (cardType.Contains("dvb") || cardType.Contains("atsc")) // Only some cards can be edited
-              buttonEdit.Enabled = true;
-          else
-              buttonEdit.Enabled = false;
+      {        
+        string cardType = mpListView1.SelectedItems[0].SubItems[2].Text.ToLower();
+        if (cardType.Contains("dvb") || cardType.Contains("atsc") || cardType.Contains("analog")) // Only some cards can be edited
+            buttonEdit.Enabled = true;
+        else
+           buttonEdit.Enabled = false;                 
       }
         buttonRemove.Enabled = enabled;
     }
@@ -357,7 +358,8 @@ namespace SetupTv.Sections
       if (indexes.Count == 0) return;
       ListViewItem item = mpListView1.Items[indexes[0]];
       FormEditCard dlg = new FormEditCard();
-      dlg.Card = (Card)item.Tag;      
+      dlg.Card = (Card)item.Tag;
+      dlg.CardType = cardTypes[((Card)item.Tag).DevicePath].ToString();
       dlg.ShowDialog();
       dlg.Card.Persist();
       _needRestart = true;

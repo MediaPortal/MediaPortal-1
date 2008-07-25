@@ -43,7 +43,7 @@ using TvLibrary.Log;
 using TvLibrary.ChannelLinkage;
 using TvLibrary.Helper;
 using MediaPortal.TV.Epg;
-
+using TvDatabase;
 
 namespace TvLibrary.Implementations
 {
@@ -80,6 +80,26 @@ namespace TvLibrary.Implementations
       /// </summary>
       Atsc
     }
+    #endregion
+
+    #region ctor
+    public TvCardBase(DsDevice device)
+    {
+      _graphState = GraphState.Idle;
+      _tunerDevice = device;
+      _name = device.Name;
+      _devicePath = device.DevicePath;      
+
+      //get preload card value
+      if (this._devicePath != null)
+      {
+        //fetch preload value from db and apply it.
+        TvBusinessLayer layer = new TvBusinessLayer();
+        Card c = layer.GetCardByDevicePath(this._devicePath);
+        _preloadCard = c.PreloadCard;
+      }
+    }
+
     #endregion
 
     #region variables
@@ -173,7 +193,9 @@ namespace TvLibrary.Implementations
     /// Indicates, if the card is present
     /// </summary>
     protected bool _cardPresent = true;
-    
+
+    protected DsDevice _tunerDevice = null;
+
     #endregion
 
     #region properties
@@ -525,7 +547,18 @@ namespace TvLibrary.Implementations
     }
     #endregion
 
+    #region virtual methods
+    /// <summary>
+    /// Builds the graph.
+    /// </summary>
+    public virtual void BuildGraph()
+    {
+    }
+
+    #endregion
+
     #region abstract methods
+
     /// <summary>
     /// A derrived class should update the signal informations of the tv cards
     /// </summary>
@@ -533,6 +566,7 @@ namespace TvLibrary.Implementations
     /// <summary>
     /// Stops the current graph
     /// </summary>
+    ///     
     public abstract void StopGraph();
     /// <summary>
     /// A derrived class should activate / deactivate the epg grabber

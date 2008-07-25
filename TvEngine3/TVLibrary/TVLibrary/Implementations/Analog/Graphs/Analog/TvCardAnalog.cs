@@ -83,8 +83,7 @@ namespace TvLibrary.Implementations.Analog
     private class MpFileWriter { }
     #endregion
 
-    #region variables
-    private DsDevice _tunerDevice;
+    #region variables    
     private DsDevice _audioDevice;
     private DsDevice _crossBarDevice;
     private DsDevice _captureDevice;
@@ -129,14 +128,11 @@ namespace TvLibrary.Implementations.Analog
 
     #region ctor
     public TvCardAnalog(DsDevice device)
-    {
-      _tunerDevice = device;
-      _name = device.Name;
-      _graphState = GraphState.Idle;
+      : base(device)
+    {                  
       _parameters = new ScanParameters();
       _previousChannel = null;
-      _mapSubChannels = new Dictionary<int, BaseSubChannel>();
-      _devicePath = _tunerDevice.DevicePath;
+      _mapSubChannels = new Dictionary<int, BaseSubChannel>();      
       _supportsSubChannels = false;
       _minChannel = 0;
       _maxChannel = 128;
@@ -579,7 +575,7 @@ namespace TvLibrary.Implementations.Analog
     /// <summary>
     /// Builds the directshow graph for this analog tvcard
     /// </summary>
-    private void BuildGraph()
+    public void BuildGraph()
     {
       _lastSignalUpdate = DateTime.MinValue;
       _tunerLocked = false;

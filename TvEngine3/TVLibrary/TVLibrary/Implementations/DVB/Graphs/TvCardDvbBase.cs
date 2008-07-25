@@ -81,8 +81,7 @@ namespace TvLibrary.Implementations.DVB
     protected IBaseFilter _filterTuner = null;
     protected IBaseFilter _filterCapture = null;
     protected IBaseFilter _filterTIF = null;
-    protected IBaseFilter _filterWinTvUsb = null;
-    protected DsDevice _tunerDevice = null;
+    protected IBaseFilter _filterWinTvUsb = null;    
     protected DsDevice _captureDevice = null;
     protected DsDevice _deviceWinTvUsb = null;
     protected BaseEpgGrabber _epgGrabberCallback = null;
@@ -107,27 +106,15 @@ namespace TvLibrary.Implementations.DVB
     /// Initializes a new instance of the <see cref="TvCardDvbBase"/> class.
     /// </summary>
     public TvCardDvbBase(DsDevice device)
-    {
-      //System.Diagnostics.Debugger.Launch();
-      _tunerDevice = device;       
-      _name = device.Name;
-      _devicePath = device.DevicePath;      
+      : base(device)
+    {            
       _lastSignalUpdate = DateTime.MinValue;
       _mapSubChannels = new Dictionary<int, BaseSubChannel>();
       _parameters = new ScanParameters();
       _timeshiftingEPGGrabber = new TimeShiftingEPGGrabber((ITVCard)this);
       _minChannel = -1;
       _maxChannel = -1;
-      _supportsSubChannels = true;
-
-      //get preload card value
-      if (this._devicePath != null)
-      {                
-        //fetch preload value from db and apply it.
-        TvBusinessLayer layer = new TvBusinessLayer();
-        Card c = layer.GetCardByDevicePath(this._devicePath);
-        _preloadCard = c.PreloadCard;        
-      }
+      _supportsSubChannels = true;     
     }
     #endregion
 
