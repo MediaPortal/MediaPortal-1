@@ -302,7 +302,6 @@ Section "MediaPortal core files (required)" SecCore
     /x HelpReferences.xml \
     /x ISDNCodes.xml \
     /x keymap.xml \
-    /x MusicVideoSettings.xml \
     /x wikipedia.xml \
     /x yac-area-codes.xml \
     "
@@ -350,7 +349,6 @@ Section "MediaPortal core files (required)" SecCore
   File /nonfatal "${MEDIAPORTAL.BASE}\HelpReferences.xml"
   File /nonfatal "${MEDIAPORTAL.BASE}\ISDNCodes.xml"
   File /nonfatal "${MEDIAPORTAL.BASE}\keymap.xml"
-  File /nonfatal "${MEDIAPORTAL.BASE}\MusicVideoSettings.xml"
   File /nonfatal "${MEDIAPORTAL.BASE}\wikipedia.xml"
   File /nonfatal "${MEDIAPORTAL.BASE}\yac-area-codes.xml"
   SetOutPath "$MPdir.Config\xmltv"
@@ -509,7 +507,6 @@ SectionEnd
   Delete /REBOOTOK "$MPdir.Config\HelpReferences.xml"
   Delete /REBOOTOK "$MPdir.Config\ISDNCodes.xml"
   Delete /REBOOTOK "$MPdir.Config\keymap.xml"
-  Delete /REBOOTOK "$MPdir.Config\MusicVideoSettings.xml"
   Delete /REBOOTOK "$MPdir.Config\wikipedia.xml"
   Delete /REBOOTOK "$MPdir.Config\yac-area-codes.xml"
 
