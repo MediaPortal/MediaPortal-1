@@ -70,8 +70,10 @@ Var TempInstallLog
   FileOpen $LogFile "$TempInstallLog" w
 
   ${${UNINSTALL_PREFIX}GetTime} "" "L" $0 $1 $2 $3 $4 $5 $6
-  ${LOG_TEXT} "DEBUG" "$(^Name) installation started: $0.$1.$2 $4:$5:$6"
-
+  ${LOG_TEXT} "INFO" "$(^Name) ${UNINSTALL_PREFIX}installation"
+  ${LOG_TEXT} "INFO" "Logging started: $0.$1.$2 $4:$5:$6"
+  ${LOG_TEXT} "INFO" "${UNINSTALL_PREFIX}installer version: ${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}"
+  ${LOG_TEXT} "INFO" "============================================================================================"
 !macroend
 
 
@@ -81,7 +83,10 @@ Var TempInstallLog
   SetShellVarContext all
 
   ${${UNINSTALL_PREFIX}GetTime} "" "L" $0 $1 $2 $3 $4 $5 $6
-  ${LOG_TEXT} "DEBUG" "$(^Name) installation stopped: $0.$1.$2 $4:$5:$6"
+  ${LOG_TEXT} "INFO" "============================================================================================"
+  ${LOG_TEXT} "INFO" "Logging stopped: $0.$1.$2 $4:$5:$6"
+  ${LOG_TEXT} "INFO" "${UNINSTALL_PREFIX}installer version: ${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}"
+  ${LOG_TEXT} "INFO" "$(^Name) ${UNINSTALL_PREFIX}installation"
 
   FileClose $LogFile
 
@@ -93,7 +98,7 @@ Var TempInstallLog
   !endif
 
   ${${UNINSTALL_PREFIX}GetTime} "" "L" $0 $1 $2 $3 $4 $5 $6
-  CopyFiles "$TempInstallLog" "${COMMON_APPDATA}\log\install_$2-$1-$0_$4-$5-$6.log"
+  CopyFiles "$TempInstallLog" "${COMMON_APPDATA}\log\${UNINSTALL_PREFIX}install_${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}_$2-$1-$0_$4-$5-$6.log"
 
   Delete "$TempInstallLog"
 
