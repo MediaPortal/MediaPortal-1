@@ -1,7 +1,7 @@
-use master
-go
+use %TvLibrary%
+GO
 
----insert the upgrabe statements below ---
+---insert the upgrade statements below ---
 
 
 

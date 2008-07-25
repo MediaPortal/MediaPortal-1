@@ -1,4 +1,4 @@
-USE TvLibrary;
+USE %TvLibrary%;
 #
 
 /*Insert the upgrade statements below */
