@@ -1,6 +1,6 @@
 USE %TvLibrary%;
 
-ALTER TABLE "Channel"
- ADD COLUMN "preload" bit(1) default NULL;
+ALTER TABLE "card"
+ ADD COLUMN "preload" bit(1) NOT NULL;
 
 UPDATE "Version" SET "versionNumber"=39;
