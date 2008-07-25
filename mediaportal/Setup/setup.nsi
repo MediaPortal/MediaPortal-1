@@ -226,10 +226,11 @@ ShowUninstDetails show
 # USEFUL MACROS
 #--------------------------------------------------------------------------- 
 !macro SectionList MacroName
-    ; This macro used to perform operation on multiple sections.
-    ; List all of your components in following manner here.
+  ${LOG_TEXT} "DEBUG" "MACRO SectionList ${MacroName}"
+  ; This macro used to perform operation on multiple sections.
+  ; List all of your components in following manner here.
 !ifndef HEISE_BUILD
-    !insertmacro "${MacroName}" "SecGabest"
+  !insertmacro "${MacroName}" "SecGabest"
 !endif
 !macroend
 
@@ -237,6 +238,7 @@ ShowUninstDetails show
 # SECTIONS and REMOVEMACROS
 #---------------------------------------------------------------------------
 Section "-prepare" SecPrepare
+  ${LOG_TEXT} "DEBUG" "SECTION SecPrepare"
   DetailPrint "Prepare installation..."
   ${ReadMediaPortalDirs} "$INSTDIR"
 
@@ -257,6 +259,7 @@ SectionEnd
 
 !if ${VER_BUILD} == 0       # it's an official release (stable or release candidate)
 Section "-rename existing dirs" SecBackup
+  ${LOG_TEXT} "DEBUG" "SECTION SecBackup"
 
   !insertmacro GET_BACKUP_POSTFIX $R0
 
@@ -275,6 +278,7 @@ Section "-rename existing dirs" SecBackup
 SectionEnd
 !else                       # it's a svn reöease
 Section "Backup current installation status" SecBackup
+  ${LOG_TEXT} "DEBUG" "SECTION SecBackup"
 
   !insertmacro GET_BACKUP_POSTFIX $R0
 
@@ -291,6 +295,7 @@ SectionEnd
 
 Section "MediaPortal core files (required)" SecCore
   SectionIn RO
+  ${LOG_TEXT} "DEBUG" "SECTION SecCore"
   DetailPrint "Installing MediaPortal core files..."
 
   SetOverwrite on
@@ -469,6 +474,7 @@ Section "MediaPortal core files (required)" SecCore
 
 SectionEnd
 !macro Remove_${SecCore}
+  ${LOG_TEXT} "DEBUG" "MACRO Remove_${SecCore}"
   DetailPrint "Uninstalling MediaPortal core files..."
 
   DetailPrint "Terminating processes ..."
@@ -666,6 +672,7 @@ SectionEnd
 
 !ifndef HEISE_BUILD
 ${MementoSection} "Gabest MPA/MPV decoder" SecGabest
+  ${LOG_TEXT} "DEBUG" "MementoSection SecGabest"
   DetailPrint "Installing Gabest MPA/MPV decoder..."
 
   SetOutPath "$MPdir.Base"
@@ -704,6 +711,7 @@ ${MementoSection} "Gabest MPA/MPV decoder" SecGabest
   nsExec::ExecToLog '"$MPdir.Base\SetMerit.exe" {39F498AF-1A09-4275-B193-673B0BA3D478} 00600000'
 ${MementoSectionEnd}
 !macro Remove_${SecGabest}
+  ${LOG_TEXT} "DEBUG" "MACRO Remove_${SecGabest}"
   DetailPrint "Uninstalling Gabest MPA/MPV decoder..."
 
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\MpaDecFilter.ax"
@@ -719,6 +727,7 @@ ${MementoSectionDone}
 #---------------------------------------------------------------------------
 # This Section is executed after the Main secxtion has finished and writes Uninstall information into the registry
 Section -Post
+  ${LOG_TEXT} "DEBUG" "SECTION Post"
   DetailPrint "Doing post installation stuff..."
 
   ;Removes unselected components
@@ -778,6 +787,7 @@ SectionEnd
 #---------------------------------------------------------------------------
 # This section is called on uninstall and removes all components
 Section Uninstall
+  ${LOG_TEXT} "DEBUG" "SECTION Uninstall"
   ;First removes all optional components
   !insertmacro SectionList "RemoveSection"
   ;now also remove core component

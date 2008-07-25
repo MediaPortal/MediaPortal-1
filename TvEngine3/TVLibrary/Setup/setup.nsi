@@ -211,6 +211,7 @@ ShowUninstDetails show
 # USEFUL MACROS
 #---------------------------------------------------------------------------
 !macro SectionList MacroName
+  ${LOG_TEXT} "DEBUG" "MACRO SectionList ${MacroName}"
   ; This macro used to perform operation on multiple sections.
   ; List all of your components in following manner here.
   !insertmacro "${MacroName}" "SecServer"
@@ -222,6 +223,7 @@ ShowUninstDetails show
 #---------------------------------------------------------------------------
 !if ${VER_BUILD} == 0       # it's an official release (stable or release candidate)
 Section "-prepare" SecPrepare
+  ${LOG_TEXT} "DEBUG" "SECTION SecPrepare"
   DetailPrint "Prepare installation..."
   SetShellVarContext all
 
@@ -235,6 +237,7 @@ SectionEnd
 !endif
 
 ${MementoSection} "MediaPortal TV Server" SecServer
+  ${LOG_TEXT} "DEBUG" "MementoSection SecServer"
   DetailPrint "Installing MediaPortal TV Server..."
 
   ; Kill running Programs
@@ -351,6 +354,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   ${EndIf}
 ${MementoSectionEnd}
 !macro Remove_${SecServer}
+  ${LOG_TEXT} "DEBUG" "MACRO Remove_${SecServer}"
   DetailPrint "Uninstalling MediaPortal TV Server..."
 
   ; Kill running Programs
@@ -450,6 +454,7 @@ ${MementoSectionEnd}
 !macroend
 
 ${MementoSection} "MediaPortal TV Client plugin" SecClient
+  ${LOG_TEXT} "DEBUG" "MementoSection SecClient"
   DetailPrint "Installing MediaPortal TV Client plugin..."
 
   ; Kill running Programs
@@ -492,6 +497,7 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${MEDIAPORTAL.FILTERBIN}\mmaacd.ax" "$MPdir.Base\mmaacd.ax" "$MPdir.Base"
 ${MementoSectionEnd}
 !macro Remove_${SecClient}
+  ${LOG_TEXT} "DEBUG" "MACRO Remove_${SecClient}"
   DetailPrint "Uninstalling MediaPortal TV Client plugin..."
 
   ; Kill running Programs
@@ -530,6 +536,7 @@ ${MementoSectionDone}
 #---------------------------------------------------------------------------
 # This Section is executed after the Main secxtion has finished and writes Uninstall information into the registry
 Section -Post
+  ${LOG_TEXT} "DEBUG" "SECTION Post"
   DetailPrint "Doing post installation stuff..."
 
   ${If} $DeployMode == 1
@@ -594,6 +601,7 @@ SectionEnd
 #---------------------------------------------------------------------------
 # This section is called on uninstall and removes all components
 Section Uninstall
+  ${LOG_TEXT} "DEBUG" "SECTION Uninstall"
   ;First removes all optional components
   !insertmacro SectionList "RemoveSection"
 
