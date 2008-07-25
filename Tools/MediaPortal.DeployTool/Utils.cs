@@ -330,7 +330,7 @@ namespace MediaPortal.DeployTool
 
     public static string GetPackageVersion()
     {
-      return "1.0 RC2";
+      return "1.0 RC3";
     }
 
   }
