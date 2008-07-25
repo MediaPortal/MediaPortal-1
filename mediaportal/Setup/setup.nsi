@@ -1015,7 +1015,7 @@ Function .onInstSuccess
 FunctionEnd
 
 Function un.onInit
-  ${LOG_OPEN}
+  ${un.LOG_OPEN}
   ${LOG_TEXT} "DEBUG" "FUNCTION un.onInit"
   #### check and parse cmdline parameter
   ; set default values for parameters ........
@@ -1041,7 +1041,7 @@ FunctionEnd
 
 Function un.onUninstFailed
   ${LOG_TEXT} "DEBUG" "FUNCTION un.onUninstFailed"
-  ${LOG_CLOSE}
+  ${un.LOG_CLOSE}
 FunctionEnd
 
 Function un.onUninstSuccess
@@ -1056,7 +1056,7 @@ Function un.onUninstSuccess
     FileClose $0
   ${EndIf}
 
-  ${LOG_CLOSE}
+  ${un.LOG_CLOSE}
 FunctionEnd
 
 
