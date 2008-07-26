@@ -90,7 +90,7 @@ namespace MediaPortal.DeployTool
       string cmdLine = "/i \"" + Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString("MySQL", "FILE") + "\"";
       cmdLine += " ADDLOCAL=\"Server,ClientPrograms,MySQLCommandLineShell,MysqlCommandLineUtilsFeature,ServerInstanceConfig\"";
       cmdLine += " INSTALLDIR=\"" + InstallationProperties.Instance["DBMSDir"] + "\"";
-      cmdLine += " /qb-";
+      cmdLine += " /qn";
       cmdLine += " /L* \"" + Path.GetTempPath() + "\\mysqlinst.log\"";
       Process setup = Process.Start("msiexec.exe", cmdLine);
       try

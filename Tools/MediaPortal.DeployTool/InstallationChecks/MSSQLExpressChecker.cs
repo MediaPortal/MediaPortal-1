@@ -83,7 +83,7 @@ namespace MediaPortal.DeployTool
       //Prepare the unattended ini file
       PrepareTemplateINI(tmpPath + "\\template.ini");
       //run the setup
-      Process setup = Process.Start(tmpPath + "\\setup.exe", "/wait /settings \"" + tmpPath + "\\template.ini\" /qb");
+      Process setup = Process.Start(tmpPath + "\\setup.exe", "/wait /settings \"" + tmpPath + "\\template.ini\" /qn");
       try
       {
         setup.WaitForExit();
