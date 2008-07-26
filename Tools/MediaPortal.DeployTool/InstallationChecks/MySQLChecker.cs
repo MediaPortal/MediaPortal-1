@@ -84,6 +84,7 @@ namespace MediaPortal.DeployTool
       result = Utils.RetryDownloadFile(FileName, prg);
       return (result == DialogResult.OK);
     }
+
     public bool Install()
     {
       string cmdLine = "/i \"" + Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString("MySQL", "FILE") + "\"";
@@ -131,24 +132,47 @@ namespace MediaPortal.DeployTool
         if (ctrl.Status == ServiceControllerStatus.Running) break;
         System.Threading.Thread.Sleep(1000 * i);
       }
+      //
+      // mysqladmin.exe is used to set MySQL password
+      //
+      cmdLine = "-u root password " + InstallationProperties.Instance["DBMSPassword"];
+      Process mysqladmin = Process.Start(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysqladmin.exe", cmdLine);
+      try
+      {
+        mysqladmin.WaitForExit();
+        if (mysqladmin.ExitCode != 0) return false;
+      }
+      catch
+      {
+        return false;
+      }
+      System.Threading.Thread.Sleep(2000);
+      //
+      // mysql.exe is used to grant root access from all machines
+      //
       cmdLine = "-u root --password=" + InstallationProperties.Instance["DBMSPassword"] + " --execute=\"GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '" + InstallationProperties.Instance["DBMSPassword"] + "' WITH GRANT OPTION\" mysql";
       Process mysql = Process.Start(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysql.exe", cmdLine);
       try
       {
         mysql.WaitForExit();
-        return true;
+        if (mysql.ExitCode == 0)
+          return true;
+        else
+          return false;
       }
       catch
       {
         return false;
       }
     }
+
     public bool UnInstall()
     {
       Process mysql = Process.Start("msiexec", "/X {2FEB25F8-C3CB-49A2-AE79-DE17FFAFB5D9}");
       mysql.WaitForExit();
       return true;
     }
+
     public CheckResult CheckStatus()
     {
       CheckResult result;
