@@ -224,12 +224,13 @@ ShowUninstDetails show
 !if ${VER_BUILD} == 0       # it's an official release (stable or release candidate)
 Section "-prepare" SecPrepare
   ${LOG_TEXT} "DEBUG" "SECTION SecPrepare"
-  DetailPrint "Prepare installation..."
+  ${LOG_TEXT} "INFO" "Prepare installation..."
   SetShellVarContext all
 
   !insertmacro GET_BACKUP_POSTFIX $R0
 
   ${If} ${FileExists} "${COMMON_APPDATA}\*.*"
+    ${LOG_TEXT} "INFO" "Configuration dir already exists. It will be renamed."
     Rename "${COMMON_APPDATA}" "${COMMON_APPDATA}_$R0"
   ${EndIf}
 
@@ -238,10 +239,10 @@ SectionEnd
 
 ${MementoSection} "MediaPortal TV Server" SecServer
   ${LOG_TEXT} "DEBUG" "MementoSection SecServer"
-  DetailPrint "Installing MediaPortal TV Server..."
+  ${LOG_TEXT} "INFO" "Installing MediaPortal TV Server..."
 
   ; Kill running Programs
-  DetailPrint "Terminating processes ..."
+  ${LOG_TEXT} "INFO" "Terminating processes ..."
   ${KILLPROCESS} "TVService.exe"
   ${KILLPROCESS} "SetupTv.exe"
 
@@ -249,9 +250,9 @@ ${MementoSection} "MediaPortal TV Server" SecServer
 
   ReadRegStr $InstallPath HKLM "${REG_UNINSTALL}" InstallPath
   ${If} $InstallPath != ""
-    DetailPrint "Uninstalling TVService"
+    ${LOG_TEXT} "INFO" "Uninstalling TVService"
     ExecWait '"$InstallPath\TVService.exe" /uninstall'
-    DetailPrint "Finished uninstalling TVService"
+    ${LOG_TEXT} "INFO" "Finished uninstalling TVService"
   ${EndIf}
 
   Pop $0
@@ -319,7 +320,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   # FILTER REGISTRATION   for TVServer
   #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
   #---------------------------------------------------------------------------
-  DetailPrint "filter registration..."
+  ${LOG_TEXT} "INFO" "filter registration..."
   ; filters for digital tv
   ${IfNot} ${MP023IsInstalled}
   ${AndIfNot} ${MPIsInstalled}
@@ -333,9 +334,9 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   #---------------------------------------------------------------------------
   # SERVICE INSTALLATION
   #---------------------------------------------------------------------------
-  DetailPrint "Installing TVService"
+  ${LOG_TEXT} "INFO" "Installing TVService"
   ExecWait '"$INSTDIR\TVService.exe" /install'
-  DetailPrint "Finished Installing TVService"
+  ${LOG_TEXT} "INFO" "Finished Installing TVService"
 
   SetOutPath $INSTDIR
   ${If} $noDesktopSC != 1
@@ -355,10 +356,10 @@ ${MementoSection} "MediaPortal TV Server" SecServer
 ${MementoSectionEnd}
 !macro Remove_${SecServer}
   ${LOG_TEXT} "DEBUG" "MACRO Remove_${SecServer}"
-  DetailPrint "Uninstalling MediaPortal TV Server..."
+  ${LOG_TEXT} "INFO" "Uninstalling MediaPortal TV Server..."
 
   ; Kill running Programs
-  DetailPrint "Terminating processes ..."
+  ${LOG_TEXT} "INFO" "Terminating processes ..."
   ${KILLPROCESS} "TVService.exe"
   ${KILLPROCESS} "SetupTv.exe"
 
@@ -372,15 +373,15 @@ ${MementoSectionEnd}
   #---------------------------------------------------------------------------
   # SERVICE UNINSTALLATION
   #---------------------------------------------------------------------------
-  DetailPrint "DeInstalling TVService"
+  ${LOG_TEXT} "INFO" "DeInstalling TVService"
   ExecWait '"$INSTDIR\TVService.exe" /uninstall'
-  DetailPrint "Finished DeInstalling TVService"
+  ${LOG_TEXT} "INFO" "Finished DeInstalling TVService"
 
   #---------------------------------------------------------------------------
   # FILTER UNREGISTRATION     for TVServer
   #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
   #---------------------------------------------------------------------------
-  DetailPrint "Unreg and remove filters..."
+  ${LOG_TEXT} "INFO" "Unreg and remove filters..."
   ; filters for digital tv
   ${IfNot} ${MP023IsInstalled}
   ${AndIfNot} ${MPIsInstalled}
@@ -395,7 +396,7 @@ ${MementoSectionEnd}
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\mpFileWriter.ax
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\PDMpgMux.ax
 
-  DetailPrint "remove files..."
+  ${LOG_TEXT} "INFO" "remove files..."
   ; Remove TuningParameters
   RMDir /r /REBOOTOK $INSTDIR\TuningParameters
 
@@ -455,17 +456,17 @@ ${MementoSectionEnd}
 
 ${MementoSection} "MediaPortal TV Client plugin" SecClient
   ${LOG_TEXT} "DEBUG" "MementoSection SecClient"
-  DetailPrint "Installing MediaPortal TV Client plugin..."
+  ${LOG_TEXT} "INFO" "Installing MediaPortal TV Client plugin..."
 
   ; Kill running Programs
-  DetailPrint "Terminating processes ..."
+  ${LOG_TEXT} "INFO" "Terminating processes ..."
   ${KILLPROCESS} "MediaPortal.exe"
   ${KILLPROCESS} "configuration.exe"
 
   SetOverwrite on
 
-  DetailPrint "MediaPortal Installed at: $MPdir.Base"
-  DetailPrint "MediaPortalPlugins are at: $MPdir.Plugins"
+  ${LOG_TEXT} "INFO" "MediaPortal Installed at: $MPdir.Base"
+  ${LOG_TEXT} "INFO" "MediaPortalPlugins are at: $MPdir.Plugins"
   
   #---------------------------- File Copy ----------------------
   ; Common Files
@@ -498,10 +499,10 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
 ${MementoSectionEnd}
 !macro Remove_${SecClient}
   ${LOG_TEXT} "DEBUG" "MACRO Remove_${SecClient}"
-  DetailPrint "Uninstalling MediaPortal TV Client plugin..."
+  ${LOG_TEXT} "INFO" "Uninstalling MediaPortal TV Client plugin..."
 
   ; Kill running Programs
-  DetailPrint "Terminating processes ..."
+  ${LOG_TEXT} "INFO" "Terminating processes ..."
   ${KILLPROCESS} "MediaPortal.exe"
   ${KILLPROCESS} "configuration.exe"
 
@@ -537,7 +538,7 @@ ${MementoSectionDone}
 # This Section is executed after the Main secxtion has finished and writes Uninstall information into the registry
 Section -Post
   ${LOG_TEXT} "DEBUG" "SECTION Post"
-  DetailPrint "Doing post installation stuff..."
+  ${LOG_TEXT} "INFO" "Doing post installation stuff..."
 
   ${If} $DeployMode == 1
 
@@ -619,7 +620,7 @@ Section Uninstall
   RMDir "$INSTDIR"
 
   ${If} $RemoveAll == 1
-    DetailPrint "Removing User Settings"
+    ${LOG_TEXT} "INFO" "Removing User Settings"
     RMDir /r /REBOOTOK "${COMMON_APPDATA}"
     RMDir /r /REBOOTOK $INSTDIR
   ${EndIf}

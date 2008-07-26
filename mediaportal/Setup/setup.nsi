@@ -239,10 +239,10 @@ ShowUninstDetails show
 #---------------------------------------------------------------------------
 Section "-prepare" SecPrepare
   ${LOG_TEXT} "DEBUG" "SECTION SecPrepare"
-  DetailPrint "Prepare installation..."
+  ${LOG_TEXT} "INFO" "Prepare installation..."
   ${ReadMediaPortalDirs} "$INSTDIR"
 
-  DetailPrint "Terminating processes..."
+  ${LOG_TEXT} "INFO" "Terminating processes..."
   ${KILLPROCESS} "MediaPortal.exe"
   ${KILLPROCESS} "configuration.exe"
 
@@ -253,7 +253,7 @@ Section "-prepare" SecPrepare
   ${KILLPROCESS} "WebEPG.exe"
   ${KILLPROCESS} "WebEPG-conf.exe"
 
-  DetailPrint "Deleting SkinCache..."
+  ${LOG_TEXT} "INFO" "Deleting SkinCache..."
   RMDir /r "$MPdir.Cache"
 SectionEnd
 
@@ -264,14 +264,17 @@ Section "-rename existing dirs" SecBackup
   !insertmacro GET_BACKUP_POSTFIX $R0
 
   ${If} ${FileExists} "$MPdir.Base\*.*"
+    ${LOG_TEXT} "INFO" "Installation dir already exists. It will be renamed."
     Rename "$MPdir.Base" "$MPdir.Base_$R0"
   ${EndIf}
 
   ${If} ${FileExists} "$MPdir.Config\*.*"
+    ${LOG_TEXT} "INFO" "Configuration dir already exists. It will be renamed."
     Rename "$MPdir.Config" "$MPdir.Config_$R0"
   ${EndIf}
 
   ${If} ${FileExists} "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml"
+    ${LOG_TEXT} "INFO" "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml already exists. It will be renamed."
     Rename "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml" "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml_$R0"
   ${EndIf}
 
@@ -282,11 +285,11 @@ Section "Backup current installation status" SecBackup
 
   !insertmacro GET_BACKUP_POSTFIX $R0
 
-  DetailPrint "Creating backup of installation dir, this might take some minutes."
+  ${LOG_TEXT} "INFO" "Creating backup of installation dir, this might take some minutes."
   CreateDirectory "$MPdir.Base_$R0"
   CopyFiles /SILENT "$MPdir.Base\*.*" "$MPdir.Base_$R0"
 
-  DetailPrint "Creating backup of configuration dir, this might take some minutes."
+  ${LOG_TEXT} "INFO" "Creating backup of configuration dir, this might take some minutes."
   CreateDirectory "$MPdir.Config_$R0"
   CopyFiles /SILENT "$MPdir.Config\*.*" "$MPdir.Config_$R0"
 
@@ -296,7 +299,7 @@ SectionEnd
 Section "MediaPortal core files (required)" SecCore
   SectionIn RO
   ${LOG_TEXT} "DEBUG" "SECTION SecCore"
-  DetailPrint "Installing MediaPortal core files..."
+  ${LOG_TEXT} "INFO" "Installing MediaPortal core files..."
 
   SetOverwrite on
 
@@ -475,9 +478,9 @@ Section "MediaPortal core files (required)" SecCore
 SectionEnd
 !macro Remove_${SecCore}
   ${LOG_TEXT} "DEBUG" "MACRO Remove_${SecCore}"
-  DetailPrint "Uninstalling MediaPortal core files..."
+  ${LOG_TEXT} "INFO" "Uninstalling MediaPortal core files..."
 
-  DetailPrint "Terminating processes ..."
+  ${LOG_TEXT} "INFO" "Terminating processes ..."
   ${KILLPROCESS} "MediaPortal.exe"
   ${KILLPROCESS} "configuration.exe"
 
@@ -673,7 +676,7 @@ SectionEnd
 !ifndef HEISE_BUILD
 ${MementoSection} "Gabest MPA/MPV decoder" SecGabest
   ${LOG_TEXT} "DEBUG" "MementoSection SecGabest"
-  DetailPrint "Installing Gabest MPA/MPV decoder..."
+  ${LOG_TEXT} "INFO" "Installing Gabest MPA/MPV decoder..."
 
   SetOutPath "$MPdir.Base"
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${MEDIAPORTAL.FILTERBIN}\MpaDecFilter.ax"   "$MPdir.Base\MpaDecFilter.ax" "$MPdir.Base"
@@ -712,7 +715,7 @@ ${MementoSection} "Gabest MPA/MPV decoder" SecGabest
 ${MementoSectionEnd}
 !macro Remove_${SecGabest}
   ${LOG_TEXT} "DEBUG" "MACRO Remove_${SecGabest}"
-  DetailPrint "Uninstalling Gabest MPA/MPV decoder..."
+  ${LOG_TEXT} "INFO" "Uninstalling Gabest MPA/MPV decoder..."
 
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\MpaDecFilter.ax"
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\Mpeg2DecFilter.ax"
@@ -728,7 +731,7 @@ ${MementoSectionDone}
 # This Section is executed after the Main secxtion has finished and writes Uninstall information into the registry
 Section -Post
   ${LOG_TEXT} "DEBUG" "SECTION Post"
-  DetailPrint "Doing post installation stuff..."
+  ${LOG_TEXT} "INFO" "Doing post installation stuff..."
 
   ;Removes unselected components
   !insertmacro SectionList "FinishSection"
@@ -818,7 +821,7 @@ Section Uninstall
 
   ; do we need to deinstall everything? Then remove also the CommonAppData and InstDir
   ${If} $RemoveAll == 1
-    DetailPrint "Removing User Settings"
+    ${LOG_TEXT} "INFO" "Removing User Settings"
     DeleteRegKey HKLM "${REG_UNINSTALL}"
     RMDir /r /REBOOTOK "$MPdir.Config"
     RMDir /r /REBOOTOK "$MPdir.Database"

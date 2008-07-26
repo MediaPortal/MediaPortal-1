@@ -113,7 +113,11 @@ Var TempInstallLog
   !if   "${LEVEL}" != "ERROR"
     !if "${LEVEL}" != "INFO"
       !error "$\r$\n$\r$\nYou call macro LOG_TEXT with wrong LogLevel. Only 'DEBUG', 'ERROR' and 'INFO' are valid!$\r$\n$\r$\n"
+    !else
+      DetailPrint "${prefix${LEVEL}}${TEXT}$\r$\n"
     !endif
+  !else
+    DetailPrint "${prefix${LEVEL}}${TEXT}$\r$\n"
   !endif
 !endif
 
@@ -779,7 +783,7 @@ FunctionEnd
 
   GetVersion::WindowsServicePack
   Pop $0
-  DetailPrint "GetVersion::WindowsServicePack: $0"
+  ${LOG_TEXT} "INFO" "GetVersion::WindowsServicePack: $0"
 
   ;uncomment for testing
   ;StrCpy $0 "Service Pack 3"
