@@ -69,6 +69,9 @@ namespace MediaPortal.DeployTool
         IInstallationPackage package = (IInstallationPackage)item.Tag;
         if (!PerformPackageAction(package, item))
           break;
+        item.SubItems[1].Text = Localizer.Instance.GetString("Install_stateInstalled");
+        item.SubItems[2].Text = Localizer.Instance.GetString("Install_actionNothing");
+        item.ImageIndex = 0;
       }
       PopulateListView();
       return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Finished);
@@ -287,7 +290,6 @@ namespace MediaPortal.DeployTool
             break;
         }
       }
-      item.ImageIndex = 0;
       return true;
     }
   }
