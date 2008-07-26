@@ -59,10 +59,6 @@ namespace MediaPortal.Configuration.Sections
 
     public override void OnSectionActivated()
     {
-      OsDetection.OSVersionInfo os = new OsDetection.OperatingSystemVersion();
-      int ver = (os.OSMajorVersion*10) + os.OSMinorVersion;
-      if (ver >= 60)
-        _useVistaHandler.Select();
       groupBoxVolumeOsd.Visible = SettingsForm.AdvancedMode;
       base.OnSectionActivated();
     }
@@ -74,8 +70,16 @@ namespace MediaPortal.Configuration.Sections
 
       using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        int volumeStyle = reader.GetValueAsInt("volume", "handler", 1);
-
+        int volumeStyle = reader.GetValueAsInt("volume", "handler", -1);
+        OsDetection.OSVersionInfo os = new OsDetection.OperatingSystemVersion();
+        int ver = (os.OSMajorVersion * 10) + os.OSMinorVersion;
+        if (volumeStyle == -1)
+        {
+          if (ver >= 60)
+            volumeStyle = 4;
+          else
+            volumeStyle = 1;
+        }
         _useClassicHandler.Checked = volumeStyle == 0;
         _useWindowsHandler.Checked = volumeStyle == 1;
         _useLogarithmicHandler.Checked = volumeStyle == 2;
@@ -410,9 +414,9 @@ namespace MediaPortal.Configuration.Sections
       this._useVistaHandler.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this._useVistaHandler.Location = new System.Drawing.Point(16, 93);
       this._useVistaHandler.Name = "_useVistaHandler";
-      this._useVistaHandler.Size = new System.Drawing.Size(50, 17);
+      this._useVistaHandler.Size = new System.Drawing.Size(47, 17);
       this._useVistaHandler.TabIndex = 3;
-      this._useVistaHandler.Text = "V&ista:";
+      this._useVistaHandler.Text = "V&ista";
       this._useVistaHandler.UseVisualStyleBackColor = true;
       this._useVistaHandler.CheckedChanged += new System.EventHandler(this.OnCheckChanged);
       // 
@@ -462,7 +466,7 @@ namespace MediaPortal.Configuration.Sections
       this._useWindowsHandler.Size = new System.Drawing.Size(173, 17);
       this._useWindowsHandler.TabIndex = 0;
       this._useWindowsHandler.TabStop = true;
-      this._useWindowsHandler.Text = "&Windows XP - load from registry";
+      this._useWindowsHandler.Text = "&Windows XP (load from registry)";
       this._useWindowsHandler.UseVisualStyleBackColor = true;
       this._useWindowsHandler.CheckedChanged += new System.EventHandler(this.OnCheckChanged);
       // 
@@ -474,7 +478,7 @@ namespace MediaPortal.Configuration.Sections
       this._useClassicHandler.Name = "_useClassicHandler";
       this._useClassicHandler.Size = new System.Drawing.Size(91, 17);
       this._useClassicHandler.TabIndex = 1;
-      this._useClassicHandler.Text = "&Classic - linear";
+      this._useClassicHandler.Text = "&Classic (linear)";
       this._useClassicHandler.UseVisualStyleBackColor = true;
       this._useClassicHandler.CheckedChanged += new System.EventHandler(this.OnCheckChanged);
       // 
