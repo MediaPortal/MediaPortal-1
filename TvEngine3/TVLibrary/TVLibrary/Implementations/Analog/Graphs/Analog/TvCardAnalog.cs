@@ -575,7 +575,7 @@ namespace TvLibrary.Implementations.Analog
     /// <summary>
     /// Builds the directshow graph for this analog tvcard
     /// </summary>
-    public void BuildGraph()
+    public override void BuildGraph()
     {
       _lastSignalUpdate = DateTime.MinValue;
       _tunerLocked = false;

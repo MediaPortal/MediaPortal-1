@@ -141,7 +141,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Builds the graph.
     /// </summary>
-    public virtual void BuildGraph()
+    public override void BuildGraph()
     {
     }
     /// <summary>

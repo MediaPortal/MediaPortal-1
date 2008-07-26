@@ -383,8 +383,7 @@ namespace TvService
             Log.Info("Controller: add card:{0}", _localCardCollection.Cards[i].Name);
             layer.AddCard(_localCardCollection.Cards[i].Name, _localCardCollection.Cards[i].DevicePath, _ourServer);
           }
-        }
-
+        }        
         //notify log about cards from the database which are removed from the pc
         IList cardsInDbs = Card.ListAll();
         int cardsInstalled = _localCardCollection.Cards.Count;
@@ -397,14 +396,28 @@ namespace TvService
             {
               if (dbsCard.DevicePath == _localCardCollection.Cards[cardNumber].DevicePath)
               {
-                ITVCard unknownCard = _localCardCollection.Cards[cardNumber];                
+                ITVCard unknownCard = _localCardCollection.Cards[cardNumber];                                
+                
                 if (unknownCard is TvCardBase)
                 {
                   TvCardBase card = (TvCardBase)unknownCard;
                   if (card.PreloadCard)
                   {
+                    Log.Info("Controller: preloading card :{0}", card.Name);                    
                     card.BuildGraph();
+                    if (unknownCard is TvCardAnalog)
+                    {
+                      ((TvCardAnalog)unknownCard).ReloadQualityControlConfiguration();
+                    }
                   }
+                  else
+                  {
+                    Log.Info("Controller: NOT preloading card :{0}", card.Name);
+                  }
+                }
+                else
+                {
+                  Log.Info("Controller: NOT preloading card :{0}", unknownCard.Name);
                 }
 
                 found = true;
