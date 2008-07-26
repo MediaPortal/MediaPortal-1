@@ -203,15 +203,18 @@ namespace MediaPortal.Configuration.Sections
         checkBoxUsePrefix.Checked = xmlreader.GetValueAsBool("general", "myprefix", true);
         checkBoxlangRTL.Checked = xmlreader.GetValueAsBool("general", "rtllang", false);
         languageComboBox.Text = xmlreader.GetValueAsString("skin", "language", languageComboBox.Text);
-        string currentSkin = xmlreader.GetValueAsString("skin", "name", "BlueTwo");
+        string currentSkin = xmlreader.GetValueAsString("skin", "name", "NoSkin");
 
-        //Change default skin based on screen aspect ratio
-        float screenHeight = GUIGraphicsContext.currentFullscreenAdapterInfo.CurrentDisplayMode.Height;
-        float screenWidth = GUIGraphicsContext.currentFullscreenAdapterInfo.CurrentDisplayMode.Width;
-        float screenRatio = (screenWidth / screenHeight);
-        if (screenRatio > 1.5)
+        if (currentSkin == "NoSkin")
         {
-          currentSkin = "BlueTwo wide";
+          //Change default skin based on screen aspect ratio
+          float screenHeight = GUIGraphicsContext.currentFullscreenAdapterInfo.CurrentDisplayMode.Height;
+          float screenWidth = GUIGraphicsContext.currentFullscreenAdapterInfo.CurrentDisplayMode.Width;
+          float screenRatio = (screenWidth / screenHeight);
+          if (screenRatio > 1.5)
+            currentSkin = "BlueTwo wide";
+          else
+            currentSkin = "BlueTwo";
         }
 
         //
