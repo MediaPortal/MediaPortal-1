@@ -87,9 +87,9 @@ namespace MediaPortal.Configuration.Sections
         foreach (string skinFolder in skinFolders)
         {
           bool isInvalidDirectory = false;
-          string[] invalidDirectoryNames = new string[] {"cvs"};
+          string[] invalidDirectoryNames = new string[] { "cvs" };
 
-          string directoryName = skinFolder.Substring(SkinDirectory.Length+1);
+          string directoryName = skinFolder.Substring(SkinDirectory.Length + 1);
 
           if (directoryName != null && directoryName.Length > 0)
           {
@@ -131,10 +131,10 @@ namespace MediaPortal.Configuration.Sections
     private void LoadLanguages()
     {
       string[] languages = GUILocalizeStrings.SupportedLanguages();
-      foreach(string language in languages)
+      foreach (string language in languages)
         languageComboBox.Items.Add(language);
 
-      languageComboBox.Text = GUILocalizeStrings.LocalSupported();  
+      languageComboBox.Text = GUILocalizeStrings.LocalSupported();
     }
 
     private void listViewAvailableSkins_SelectedIndexChanged(object sender, EventArgs e)
@@ -146,7 +146,7 @@ namespace MediaPortal.Configuration.Sections
         return;
       }
       string currentSkin = listViewAvailableSkins.SelectedItems[0].Text;
-      string previewFile = Path.Combine(Path.Combine(SkinDirectory,currentSkin),@"media\preview.png");
+      string previewFile = Path.Combine(Path.Combine(SkinDirectory, currentSkin), @"media\preview.png");
 
       //
       // Clear image
@@ -156,8 +156,8 @@ namespace MediaPortal.Configuration.Sections
 
       if (File.Exists(previewFile))
       {
-        using(Stream s = new FileStream(previewFile,FileMode.Open,FileAccess.Read))
-        {img = Image.FromStream(s);}
+        using (Stream s = new FileStream(previewFile, FileMode.Open, FileAccess.Read))
+        { img = Image.FromStream(s); }
         previewPictureBox.Width = img.Width;
         previewPictureBox.Height = img.Height;
         previewPictureBox.Image = img;
@@ -205,6 +205,15 @@ namespace MediaPortal.Configuration.Sections
         languageComboBox.Text = xmlreader.GetValueAsString("skin", "language", languageComboBox.Text);
         string currentSkin = xmlreader.GetValueAsString("skin", "name", "BlueTwo");
 
+        //Change default skin based on screen aspect ratio
+        float screenHeight = GUIGraphicsContext.currentFullscreenAdapterInfo.CurrentDisplayMode.Height;
+        float screenWidth = GUIGraphicsContext.currentFullscreenAdapterInfo.CurrentDisplayMode.Width;
+        float screenRatio = (screenWidth / screenHeight);
+        if (screenRatio > 1.5)
+        {
+          currentSkin = "BlueTwo wide";
+        }
+
         //
         // Make sure the skin actually exists before setting it as the current skin
         //
@@ -213,6 +222,7 @@ namespace MediaPortal.Configuration.Sections
           if (item.SubItems[0].Text.Equals(currentSkin))
           {
             item.Selected = true;
+            Log.Info("Skin selected: {0} (screenWidth={1}, screenHeight={2}, screenRatio={3})", item.Text, screenWidth, screenHeight, screenRatio);
             break;
           }
         }
@@ -269,12 +279,12 @@ namespace MediaPortal.Configuration.Sections
       this.languageComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBoxSkin = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.linkLabel1 = new System.Windows.Forms.LinkLabel();
       this.panelFitImage = new System.Windows.Forms.Panel();
       this.previewPictureBox = new System.Windows.Forms.PictureBox();
       this.listViewAvailableSkins = new System.Windows.Forms.ListView();
       this.colName = new System.Windows.Forms.ColumnHeader();
       this.colVersion = new System.Windows.Forms.ColumnHeader();
-      this.linkLabel1 = new System.Windows.Forms.LinkLabel();
       this.groupBoxAppearance.SuspendLayout();
       this.mpGroupBox1.SuspendLayout();
       this.groupBoxSkin.SuspendLayout();
@@ -370,6 +380,18 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxSkin.TabStop = false;
       this.groupBoxSkin.Text = "Skin";
       // 
+      // linkLabel1
+      // 
+      this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.linkLabel1.AutoSize = true;
+      this.linkLabel1.Location = new System.Drawing.Point(16, 209);
+      this.linkLabel1.Name = "linkLabel1";
+      this.linkLabel1.Size = new System.Drawing.Size(131, 13);
+      this.linkLabel1.TabIndex = 10;
+      this.linkLabel1.TabStop = true;
+      this.linkLabel1.Text = "more new and hot skins ...";
+      this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
+      // 
       // panelFitImage
       // 
       this.panelFitImage.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
@@ -403,6 +425,7 @@ namespace MediaPortal.Configuration.Sections
       this.listViewAvailableSkins.FullRowSelect = true;
       this.listViewAvailableSkins.HideSelection = false;
       this.listViewAvailableSkins.Location = new System.Drawing.Point(15, 22);
+      this.listViewAvailableSkins.MultiSelect = false;
       this.listViewAvailableSkins.Name = "listViewAvailableSkins";
       this.listViewAvailableSkins.Size = new System.Drawing.Size(200, 179);
       this.listViewAvailableSkins.TabIndex = 3;
@@ -419,18 +442,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.colVersion.Text = "Version";
       this.colVersion.Width = 56;
-      // 
-      // linkLabel1
-      // 
-      this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.linkLabel1.AutoSize = true;
-      this.linkLabel1.Location = new System.Drawing.Point(16, 209);
-      this.linkLabel1.Name = "linkLabel1";
-      this.linkLabel1.Size = new System.Drawing.Size(131, 13);
-      this.linkLabel1.TabIndex = 10;
-      this.linkLabel1.TabStop = true;
-      this.linkLabel1.Text = "more new and hot skins ...";
-      this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
       // 
       // GeneralSkin
       // 
