@@ -96,6 +96,7 @@ namespace TvLibrary.Implementations
         //fetch preload value from db and apply it.
         TvBusinessLayer layer = new TvBusinessLayer();
         Card c = layer.GetCardByDevicePath(this._devicePath);
+          if (c != null)
         _preloadCard = c.PreloadCard;
       }
     }
