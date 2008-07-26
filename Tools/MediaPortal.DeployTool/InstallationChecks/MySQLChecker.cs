@@ -132,6 +132,8 @@ namespace MediaPortal.DeployTool
         if (ctrl.Status == ServiceControllerStatus.Running) break;
         System.Threading.Thread.Sleep(1000 * i);
       }
+      // Service is running, but still take some time to answer network queries
+      System.Threading.Thread.Sleep(5000);
       //
       // mysqladmin.exe is used to set MySQL password
       //
