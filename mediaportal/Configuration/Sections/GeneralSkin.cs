@@ -205,12 +205,12 @@ namespace MediaPortal.Configuration.Sections
         languageComboBox.Text = xmlreader.GetValueAsString("skin", "language", languageComboBox.Text);
         string currentSkin = xmlreader.GetValueAsString("skin", "name", "NoSkin");
 
+        float screenHeight = GUIGraphicsContext.currentFullscreenAdapterInfo.CurrentDisplayMode.Height;
+        float screenWidth = GUIGraphicsContext.currentFullscreenAdapterInfo.CurrentDisplayMode.Width;
+        float screenRatio = (screenWidth / screenHeight);
         if (currentSkin == "NoSkin")
         {
           //Change default skin based on screen aspect ratio
-          float screenHeight = GUIGraphicsContext.currentFullscreenAdapterInfo.CurrentDisplayMode.Height;
-          float screenWidth = GUIGraphicsContext.currentFullscreenAdapterInfo.CurrentDisplayMode.Width;
-          float screenRatio = (screenWidth / screenHeight);
           if (screenRatio > 1.5)
             currentSkin = "BlueTwo wide";
           else
