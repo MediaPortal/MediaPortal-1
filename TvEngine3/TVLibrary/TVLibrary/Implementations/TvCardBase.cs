@@ -94,10 +94,15 @@ namespace TvLibrary.Implementations
       if (this._devicePath != null)
       {
         //fetch preload value from db and apply it.
-        TvBusinessLayer layer = new TvBusinessLayer();
-        Card c = layer.GetCardByDevicePath(this._devicePath);
-          if (c != null)
-        _preloadCard = c.PreloadCard;
+        IList cardsInDbs = Card.ListAll();
+        foreach (Card dbsCard in cardsInDbs)
+        {
+          if (dbsCard.DevicePath.Equals(this._devicePath))
+          {
+            _preloadCard = dbsCard.PreloadCard;
+            break;
+          }
+        }        
       }
     }
 
