@@ -658,6 +658,7 @@ namespace TvPlugin
 
       Schedule rec = item.TVTag as Schedule;
       if (rec == null) return;
+      Log.Info("OnShowContextMenu: Rec = {0}", rec.ToString());
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       if (dlg == null) return;      
 
@@ -713,33 +714,20 @@ namespace TvPlugin
 
         case 981: //Cancel this show
           {
-            bool deleteRec = false;
-            int schedId = -1;
             if (server.IsRecordingSchedule(rec.IdSchedule, out card) || server.IsRecording(rec.ReferencedChannel().Name, out card))
             {
               if (PromptDeleteRecordingInProgress(true))
               {
-                schedId = card.RecordingScheduleId;
-                deleteRec = true;                
+                TVHome.DeleteRecordingSchedule(Schedule.Retrieve(rec.IdSchedule));
               }                            
             }
             else
             {
-              schedId = rec.IdSchedule;
-              deleteRec = true;             
-            }
-
-            if (deleteRec)
-            {              
-            	TVHome.DeleteRecordingSchedule(Schedule.Retrieve(rec.IdSchedule));
-            	
-              /*server.StopRecordingSchedule(schedId);
               CanceledSchedule schedule = new CanceledSchedule(rec.IdSchedule, rec.StartTime);
               schedule.Persist();
               server.OnNewSchedule();                            
-              */
-              LoadDirectory();
             }
+            LoadDirectory();
           }
           break;
 
@@ -771,7 +759,7 @@ namespace TvPlugin
                 LoadDirectory();
               }                                                            
             }
-            else if (PromptDeleteEpisode(rec.ProgramName))
+            else //if (PromptDeleteEpisode(rec.ProgramName))  => asking once again makes no sense here
             {            	            	
               server.StopRecordingSchedule(rec.IdSchedule);
               rec = Schedule.Retrieve(rec.IdSchedule);
