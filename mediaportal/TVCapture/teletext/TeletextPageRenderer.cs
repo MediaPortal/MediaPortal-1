@@ -1137,7 +1137,17 @@ namespace MediaPortal.TV.Teletext
     public void Clear()
     {
       if (_renderGraphics != null)
-        _renderGraphics.FillRectangle(getBrush((int)TextColors.Black), 0, 0, _pageRenderWidth, _pageRenderHeight);
+      {
+        // For Mantis: 0001445: TeletextPageRenderer crashes in Finalizer on MP-exit
+        try
+        {
+          _renderGraphics.FillRectangle(getBrush((int)TextColors.Black), 0, 0, _pageRenderWidth, _pageRenderHeight);
+        }
+        catch (ArgumentException)
+        {
+          MediaPortal.GUI.Library.Log.Debug("Teletext Clear() ArgumentException - MP closing down?");
+        }
+      }
     }
     #endregion
   }
