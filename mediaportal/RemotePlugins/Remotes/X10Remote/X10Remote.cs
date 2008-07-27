@@ -156,7 +156,7 @@ namespace MediaPortal.InputDevices
     {
       if ((EKeyState == X10.EX10Key.X10KEY_ON || EKeyState == X10.EX10Key.X10KEY_REPEAT) && lSequence != 2)
       {
-        if (_x10UseChannelControl && (lAddress != _x10Channel))
+        if (_x10UseChannelControl && (lAddress != ((_x10Channel-1)*16)))
         {
             return;
         }
