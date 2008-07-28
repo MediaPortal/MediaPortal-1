@@ -167,9 +167,25 @@ namespace TvLibrary.Streaming
     /// </summary>
     public void Stop()
     {
-      if (_initialized == false) return;
       Log.Log.WriteFile("RTSP: stop streamer");
+      if (_initialized == false) return;
+      StopAllStreams();
       _running = false;
+    }
+
+    private void StopAllStreams()
+    {
+      Log.Log.WriteFile("RTSP: stop all streams ({0})", _streams.Count);
+
+      List<string> removals = new List<string>();
+      foreach (string key in _streams.Keys)
+      {
+        removals.Add(key);
+      }
+      foreach(string key in removals)
+      {
+        Remove(key);
+      }
     }
 
     /// <summary>
