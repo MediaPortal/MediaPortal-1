@@ -141,7 +141,7 @@ bool CMpegPesParser::ParseMpeg2Video(byte* tsPacket,int offset,MPEG2VIDEOINFO &m
 	//LogDebug("Found MPEG2 VIDEO");
 	int width=((tsPacket[offset]<<8) + tsPacket[offset + 1]) >> 4;
 	int height=((tsPacket[offset+1]<<8)+tsPacket[offset+2])& 0x0FFF;
-	if (width<100 || height<100 || width>800 || height>800)
+	if (width<100 || height<100)
 		return false;
 	offset+=3;
 	int frameRateIndex = tsPacket[offset] & 0x0F;
