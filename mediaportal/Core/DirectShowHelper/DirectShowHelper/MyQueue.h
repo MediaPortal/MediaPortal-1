@@ -26,10 +26,29 @@ public:
 		delete[] m_elements;
 	}
 
+	void Clear()
+	{
+		m_count = 0;
+		m_insertPos = m_pos = 0;
+	}
+
+	bool IsFull() 
+	{
+		return m_count == m_size;
+	}
+
+	bool IsEmpty()
+	{
+		return m_count == 0;
+	}
+
 	bool Put(T elem)
 	{
 		CAutoLock lock(this);
-		if ( m_count == m_size ) return false;
+		if ( m_count == m_size ) {
+			Log("MyQueue: No more space");
+			return false;
+		}
 		m_count++;
 		m_elements[m_insertPos] = elem;
 		m_insertPos = NextIdx(m_insertPos);
