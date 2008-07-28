@@ -79,7 +79,7 @@ namespace TvEngine
       Blaster.DeviceRemoval += new DeviceEventHandler(OnDeviceRemoval);
       LoadRemoteCodes();
 
-      Log.WriteFile("RTSP: start streamer");
+      Log.WriteFile("ServerBlaster: start sender");
       Thread thread = new Thread(new ThreadStart(Sender));
       thread.SetApartmentState(ApartmentState.STA);
       thread.IsBackground = true;
