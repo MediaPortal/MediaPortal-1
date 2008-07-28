@@ -57,6 +57,8 @@ namespace SetupTv.Sections
       this.mpButtonReGrabEpg = new MediaPortal.UserInterface.Controls.MPButton();
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.mpComboBoxChannels = new SetupControls.ComboBoxEx();
+      this.comboBoxGroups = new SetupControls.ComboBoxEx();
+      this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpGroupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -166,7 +168,7 @@ namespace SetupTv.Sections
       // mpLabel1
       // 
       this.mpLabel1.AutoSize = true;
-      this.mpLabel1.Location = new System.Drawing.Point(9, 204);
+      this.mpLabel1.Location = new System.Drawing.Point(9, 223);
       this.mpLabel1.Name = "mpLabel1";
       this.mpLabel1.Size = new System.Drawing.Size(49, 13);
       this.mpLabel1.TabIndex = 55;
@@ -174,7 +176,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonTimeShift
       // 
-      this.mpButtonTimeShift.Location = new System.Drawing.Point(221, 199);
+      this.mpButtonTimeShift.Location = new System.Drawing.Point(221, 218);
       this.mpButtonTimeShift.Name = "mpButtonTimeShift";
       this.mpButtonTimeShift.Size = new System.Drawing.Size(115, 23);
       this.mpButtonTimeShift.TabIndex = 56;
@@ -185,7 +187,7 @@ namespace SetupTv.Sections
       // mpButtonRec
       // 
       this.mpButtonRec.Enabled = false;
-      this.mpButtonRec.Location = new System.Drawing.Point(343, 199);
+      this.mpButtonRec.Location = new System.Drawing.Point(343, 218);
       this.mpButtonRec.Name = "mpButtonRec";
       this.mpButtonRec.Size = new System.Drawing.Size(115, 23);
       this.mpButtonRec.TabIndex = 57;
@@ -211,7 +213,7 @@ namespace SetupTv.Sections
             this.User,
             this.cardName});
       this.mpListView1.FullRowSelect = true;
-      this.mpListView1.Location = new System.Drawing.Point(12, 233);
+      this.mpListView1.Location = new System.Drawing.Point(12, 252);
       this.mpListView1.Name = "mpListView1";
       this.mpListView1.Size = new System.Drawing.Size(446, 134);
       this.mpListView1.TabIndex = 58;
@@ -253,7 +255,7 @@ namespace SetupTv.Sections
       // 
       // buttonRestart
       // 
-      this.buttonRestart.Location = new System.Drawing.Point(262, 373);
+      this.buttonRestart.Location = new System.Drawing.Point(262, 392);
       this.buttonRestart.Name = "buttonRestart";
       this.buttonRestart.Size = new System.Drawing.Size(95, 23);
       this.buttonRestart.TabIndex = 59;
@@ -263,7 +265,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonReGrabEpg
       // 
-      this.mpButtonReGrabEpg.Location = new System.Drawing.Point(363, 373);
+      this.mpButtonReGrabEpg.Location = new System.Drawing.Point(363, 392);
       this.mpButtonReGrabEpg.Name = "mpButtonReGrabEpg";
       this.mpButtonReGrabEpg.Size = new System.Drawing.Size(95, 23);
       this.mpButtonReGrabEpg.TabIndex = 60;
@@ -286,15 +288,38 @@ namespace SetupTv.Sections
       this.mpComboBoxChannels.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboBoxChannels.FormattingEnabled = true;
       this.mpComboBoxChannels.ImageList = null;
-      this.mpComboBoxChannels.Location = new System.Drawing.Point(64, 201);
+      this.mpComboBoxChannels.Location = new System.Drawing.Point(64, 220);
       this.mpComboBoxChannels.Name = "mpComboBoxChannels";
       this.mpComboBoxChannels.Size = new System.Drawing.Size(151, 21);
       this.mpComboBoxChannels.TabIndex = 54;
+      // 
+      // comboBoxGroups
+      // 
+      this.comboBoxGroups.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+      this.comboBoxGroups.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxGroups.FormattingEnabled = true;
+      this.comboBoxGroups.ImageList = this.imageList1;
+      this.comboBoxGroups.Location = new System.Drawing.Point(64, 196);
+      this.comboBoxGroups.Name = "comboBoxGroups";
+      this.comboBoxGroups.Size = new System.Drawing.Size(151, 21);
+      this.comboBoxGroups.TabIndex = 61;
+      this.comboBoxGroups.SelectedIndexChanged += new System.EventHandler(this.comboBoxGroups_SelectedIndexChanged);
+      // 
+      // mpLabel2
+      // 
+      this.mpLabel2.AutoSize = true;
+      this.mpLabel2.Location = new System.Drawing.Point(9, 199);
+      this.mpLabel2.Name = "mpLabel2";
+      this.mpLabel2.Size = new System.Drawing.Size(39, 13);
+      this.mpLabel2.TabIndex = 62;
+      this.mpLabel2.Text = "Group:";
       // 
       // TestService
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.Controls.Add(this.mpLabel2);
+      this.Controls.Add(this.comboBoxGroups);
       this.Controls.Add(this.mpButtonReGrabEpg);
       this.Controls.Add(this.buttonRestart);
       this.Controls.Add(this.mpListView1);
@@ -304,7 +329,7 @@ namespace SetupTv.Sections
       this.Controls.Add(this.mpComboBoxChannels);
       this.Controls.Add(this.mpGroupBox1);
       this.Name = "TestService";
-      this.Size = new System.Drawing.Size(474, 412);
+      this.Size = new System.Drawing.Size(470, 450);
       this.Load += new System.EventHandler(this.TestService_Load);
       this.mpGroupBox1.ResumeLayout(false);
       this.mpGroupBox1.PerformLayout();
@@ -342,5 +367,7 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ImageList imageList1;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabelRecording;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabelTimeShift;
+    private SetupControls.ComboBoxEx comboBoxGroups;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
   }
 }

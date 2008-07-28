@@ -60,25 +60,15 @@ namespace SetupTv.Sections
       base.OnSectionActivated();
       mpGroupBox1.Visible = false;
       RemoteControl.Instance.EpgGrabberEnabled = true;
-      mpComboBoxChannels.Items.Clear();
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
-      sb.AddOrderByField(true, "sortOrder");
-      SqlStatement stmt = sb.GetStatement(true);
-      IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
 
-      foreach (Channel ch in channels)
-      {
-        if (ch.IsTv == false) continue;
-        int imageIndex = 1;
-        if (ch.FreeToAir == false)
-          imageIndex = 2;
-        ComboBoxExItem item = new ComboBoxExItem(ch.DisplayName, imageIndex, ch.IdChannel);
+      comboBoxGroups.Items.Clear();
+      IList groups = ChannelGroup.ListAll();
+      foreach (ChannelGroup group in groups)
+        comboBoxGroups.Items.Add(new ComboBoxExItem(group.GroupName,-1,group.IdGroup));
+      if (comboBoxGroups.Items.Count==0)
+        comboBoxGroups.Items.Add(new ComboBoxExItem("(no groups defined)", -1, -1));
+      comboBoxGroups.SelectedIndex = 0;
 
-        mpComboBoxChannels.Items.Add(item);
-
-      }
-      if (mpComboBoxChannels.Items.Count > 0)
-        mpComboBoxChannels.SelectedIndex = 0;
       timer1.Enabled = true;
 
       mpListView1.Items.Clear();
@@ -535,6 +525,47 @@ namespace SetupTv.Sections
         }
       }
       return null;
+    }
+
+    private void comboBoxGroups_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      ComboBoxExItem idItem = (ComboBoxExItem)comboBoxGroups.Items[comboBoxGroups.SelectedIndex];
+      mpComboBoxChannels.Items.Clear();
+      if (idItem.Id == -1)
+      {
+        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
+        sb.AddOrderByField(true, "sortOrder");
+        SqlStatement stmt = sb.GetStatement(true);
+        IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
+        foreach (Channel ch in channels)
+        {
+          if (ch.IsTv == false) continue;
+          int imageIndex = 1;
+          if (ch.FreeToAir == false)
+            imageIndex = 2;
+          ComboBoxExItem item = new ComboBoxExItem(ch.DisplayName, imageIndex, ch.IdChannel);
+
+          mpComboBoxChannels.Items.Add(item);
+
+        }
+      }
+      else
+      {
+        ChannelGroup group = ChannelGroup.Retrieve(idItem.Id);
+        IList maps = group.ReferringGroupMap();
+        foreach (GroupMap map in maps)
+        {
+          Channel ch = map.ReferencedChannel();
+          if (ch.IsTv == false) continue;
+          int imageIndex = 1;
+          if (ch.FreeToAir == false)
+            imageIndex = 2;
+          ComboBoxExItem item = new ComboBoxExItem(ch.DisplayName, imageIndex, ch.IdChannel);
+          mpComboBoxChannels.Items.Add(item);
+        }
+      }
+      if (mpComboBoxChannels.Items.Count > 0)
+        mpComboBoxChannels.SelectedIndex = 0;
     }
   }
 }
