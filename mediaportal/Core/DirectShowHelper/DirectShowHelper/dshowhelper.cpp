@@ -63,7 +63,7 @@ char* m_RenderPrefix = "vmr9";
 
 LPDIRECT3DDEVICE9			    m_pDevice=NULL;
 CVMR9AllocatorPresenter*	m_vmr9Presenter=NULL;
-EVRCustomPresenter*	m_evrPresenter=NULL;
+MPEVRCustomPresenter*	m_evrPresenter=NULL;
 IMFVideoDisplayControl* m_pControl=NULL;
 IBaseFilter*				      m_pVMR9Filter=NULL;
 IVMRSurfaceAllocator9*		m_allocator=NULL;
@@ -471,7 +471,8 @@ HRESULT MyGetService(IUnknown* punkObject, REFGUID guidService,
 	IMFGetService* pGetService;
 	hr = punkObject->QueryInterface(__uuidof(IMFGetService),
 		(void**)&pGetService);
-	if ( SUCCEEDED(hr) ) {
+	if ( SUCCEEDED(hr) ) 
+  {
 		hr = pGetService->GetService(guidService, riid, ppvObject);
 		SAFE_RELEASE(pGetService);
 	}
@@ -500,7 +501,7 @@ BOOL EvrInit(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter* evrFilter,
 		Log("Could not get IMFVideoRenderer");
 		return FALSE;
 	}
-	m_evrPresenter = new EVRCustomPresenter(callback, m_pDevice, (HMONITOR)monitor);
+	m_evrPresenter = new MPEVRCustomPresenter(callback, m_pDevice, (HMONITOR)monitor);
   hr = pRenderer->InitializeRenderer(NULL, m_evrPresenter);
   if (FAILED(hr) ) {
 	  Log("InitializeRenderer failed: 0x%x", hr);
@@ -517,7 +518,8 @@ BOOL EvrInit(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter* evrFilter,
 #endif
 
   CComQIPtr<IEVRFilterConfig> pConfig = m_pVMR9Filter;
-  if(!pConfig) {
+  if(!pConfig) 
+  {
 	  Log("Could not get IEVRFilterConfig  interface" );
 	  return FALSE;
   }
@@ -536,7 +538,8 @@ void EvrDeinit()
   try
   {
 	  int hr;
-	  if (m_pControl) {
+	  if (m_pControl) 
+    {
 		m_pControl->Release();
 		m_pControl = NULL;
 	  }
@@ -544,7 +547,7 @@ void EvrDeinit()
 	  {
 		  do
 		  {
-			hr=m_evrPresenter->Release();
+			  hr=m_evrPresenter->Release();
 		  } while (hr>0);
 
 		  m_evrPresenter=NULL;
@@ -758,9 +761,6 @@ void Vmr9SetDeinterlaceMode(int mode)
 					if (SUCCEEDED(hr)) 
 					{
 						Log("vmr9:SetDeinterlace() set deinterlace mode:%d",i);
-
-						
-						
 						pDeint->GetDeinterlaceMode(0,&deintMode);
 						if (deintMode.Data1==pModes[0].Data1 &&
 							deintMode.Data2==pModes[0].Data2 &&
@@ -776,7 +776,6 @@ void Vmr9SetDeinterlaceMode(int mode)
 					}
 					else
 						Log("vmr9:SetDeinterlace() deinterlace mode:%d failed 0x:%x",i,hr);
-
 				}
 			}
 			delete [] pModes;
@@ -802,7 +801,6 @@ void Vmr9SetDeinterlacePrefs(DWORD dwMethod)
 			hr=pDeint->SetDeinterlacePrefs(DeinterlacePref9_NextBest );
 		break;
 	}
-
 }
 
 
@@ -811,7 +809,6 @@ bool DvrMsCreate(LONG *id, IBaseFilter* streamBufferSink, LPCWSTR strPath, DWORD
 	*id=-1;
 	try
 	{
-
 		Log("CStreamBufferRecorder::Create() Record");
 		int hr;
 		IUnknown* pRecUnk;
@@ -859,7 +856,6 @@ void DvrMsStart(LONG id, ULONG startTime)
 	if (it==m_mapRecordControl.end()) return;
 	try
 	{
-
 		Log("CStreamBufferRecorder::Start():time:-%d secs in past id:%d", startTime,id);
 		if (it->second==NULL)
 		{
@@ -947,76 +943,75 @@ void DvrMsStop(LONG id)
 
 
 HRESULT CreateKernelFilter(
-    const GUID &guidCategory,  // Filter category.
-    LPCOLESTR szName,          // The name of the filter.
-	GUID	  clsid,		   // CLSID of the filter
-    IBaseFilter **ppFilter     // Receives a pointer to the filter.
-)
+    const GUID &guidCategory, // Filter category.
+    LPCOLESTR szName,         // The name of the filter.
+	  GUID	  clsid,            // CLSID of the filter
+    IBaseFilter **ppFilter )  // Receives a pointer to the filter.
 {
-    HRESULT hr;
-    ICreateDevEnum *pDevEnum = NULL;
-    IEnumMoniker *pEnum = NULL;
-    if (!szName || !ppFilter) 
-    {
-        return E_POINTER;
-    }
+  HRESULT hr;
+  ICreateDevEnum *pDevEnum = NULL;
+  IEnumMoniker *pEnum = NULL;
+  if (!szName || !ppFilter) 
+  {
+    return E_POINTER;
+  }
 
-    // Create the system device enumerator.
-    hr = CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC,
-        IID_ICreateDevEnum, (void**)&pDevEnum);
+  // Create the system device enumerator.
+  hr = CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC,
+  IID_ICreateDevEnum, (void**)&pDevEnum);
+  if (FAILED(hr))
+  {
+    return hr;
+  }
+
+  // Create a class enumerator for the specified category.
+  hr = pDevEnum->CreateClassEnumerator(guidCategory, &pEnum, 0);
+  pDevEnum->Release();
+  if (hr != S_OK) // S_FALSE means the category is empty.
+  {
+    return E_FAIL;
+  }
+
+  // Enumerate devices within this category.
+  bool bFound = false;
+  IMoniker *pMoniker;
+  while (!bFound && (S_OK == pEnum->Next(1, &pMoniker, 0)))
+  {
+    IPropertyBag *pBag = NULL;
+    hr = pMoniker->BindToStorage(0, 0, IID_IPropertyBag, (void **)&pBag);
     if (FAILED(hr))
     {
-        return hr;
+      pMoniker->Release();
+      continue; // Maybe the next one will work.
     }
 
-    // Create a class enumerator for the specified category.
-    hr = pDevEnum->CreateClassEnumerator(guidCategory, &pEnum, 0);
-    pDevEnum->Release();
-    if (hr != S_OK) // S_FALSE means the category is empty.
+    // Check the friendly name.
+    VARIANT var;
+    VariantInit(&var);
+    hr = pBag->Read(L"FriendlyName", &var, NULL);
+    if (SUCCEEDED(hr) )
     {
-        return E_FAIL;
-    }
-
-    // Enumerate devices within this category.
-    bool bFound = false;
-    IMoniker *pMoniker;
-    while (!bFound && (S_OK == pEnum->Next(1, &pMoniker, 0)))
-    {
-        IPropertyBag *pBag = NULL;
-        hr = pMoniker->BindToStorage(0, 0, IID_IPropertyBag, (void **)&pBag);
-        if (FAILED(hr))
-        {
-            pMoniker->Release();
-            continue; // Maybe the next one will work.
-        }
-
-        // Check the friendly name.
-        VARIANT var;
-        VariantInit(&var);
-        hr = pBag->Read(L"FriendlyName", &var, NULL);
-        if (SUCCEEDED(hr) )
-        {
-			bool ok=true;
+      bool ok=true;
       for (DWORD x=0; x <(DWORD)wcslen(szName);x++)
-			{
-				if (var.bstrVal[x]!=szName[x])
-				{
-					ok=false;
-				}
-			}
-			if (ok)
-			{
-				// This is the right filter.
-				hr = pMoniker->BindToObject(0, 0, IID_IBaseFilter,(void**)ppFilter);
-				bFound = true;
-			}
-        }
-        VariantClear(&var);
-        pBag->Release();
-        pMoniker->Release();
+      {
+      if (var.bstrVal[x]!=szName[x])
+      {
+        ok=false;
+      }
     }
-    pEnum->Release();
-    return (bFound ? hr : E_FAIL);
+    if (ok)
+    {
+      // This is the right filter.
+      hr = pMoniker->BindToObject(0, 0, IID_IBaseFilter,(void**)ppFilter);
+      bFound = true;
+      }
+    }
+    VariantClear(&var);
+    pBag->Release();
+    pMoniker->Release();
+  }
+  pEnum->Release();
+  return (bFound ? hr : E_FAIL);
 }
 void AddTeeSinkNameToGraph(IGraphBuilder* pGraph, LPCOLESTR szName)
 {
@@ -1027,7 +1022,6 @@ void AddTeeSinkNameToGraph(IGraphBuilder* pGraph, LPCOLESTR szName)
 		pGraph->AddFilter(pKernelTee, L"Kernel Tee");
 		pKernelTee->Release();
 	}
-
 }
 
 void AddTeeSinkToGraph(IGraphBuilder* pGraph)
@@ -1037,7 +1031,6 @@ void AddTeeSinkToGraph(IGraphBuilder* pGraph)
 
 void AddWstCodecToGraph(IGraphBuilder* pGraph)
 {
-										
 	IBaseFilter* pWstCodec = NULL;
 	int hr = CreateKernelFilter(AM_KSCATEGORY_VBICODEC, OLESTR("WST"), CLSID_WSTDecoder,&pWstCodec);
 	if (SUCCEEDED(hr))
@@ -1047,15 +1040,11 @@ void AddWstCodecToGraph(IGraphBuilder* pGraph)
 	}
 }
 
-
-
-
 int processCounter=0;
 int threadCounter=0;
 BOOL APIENTRY DllMain( HANDLE hModule, 
                        DWORD  ul_reason_for_call, 
-                       LPVOID lpReserved
-					 )
+                       LPVOID lpReserved )
 {
 	switch (ul_reason_for_call)
 	{

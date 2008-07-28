@@ -72,14 +72,14 @@ static DWORD GetCurrentTimestamp()
   if( !g_bTimerInitializer ) 
   {
     g_bQPCAvail = QueryPerformanceFrequency( &g_liQPCFreq );
-	Log("GetCurrentTimestamp(): Performance timer available: %d", g_bQPCAvail);
+	  Log("GetCurrentTimestamp(): Performance timer available: %d", g_bQPCAvail);
     g_bTimerInitializer = true;
   }
 
   if( g_bQPCAvail ) 
   {
     LARGE_INTEGER tics;
-	QueryPerformanceFrequency( &g_liQPCFreq );
+    QueryPerformanceFrequency( &g_liQPCFreq );
     QueryPerformanceCounter( &tics );
     ms = (((double)tics.QuadPart) / ((double)g_liQPCFreq.QuadPart)) * 1000.0; // to milliseconds
   }
@@ -100,8 +100,6 @@ CAutoLock lock(obj); \
 	  Log("Critical lock time for %s was %d ms", name, diff ); \
 	}
 //#define TIME_LOCK(obj, crit, name) CAutoLock lock(obj);
-
-
 
 // uncomment the //Log to enable extra logging
 #define LOG_TRACE //Log
@@ -161,8 +159,7 @@ UINT CALLBACK WorkerThread(void* param)
 			return 0;
 		}
 		
-		if ( !p->pPresenter->CheckForInput() ) {
-		}
+		if ( !p->pPresenter->CheckForInput() ) {}
 		p->csLock.Unlock();
 		LOG_TRACE("Worker sleeping.");
 		while ( !p->eHasWork.Wait() );
@@ -188,11 +185,11 @@ UINT CALLBACK SchedulerThread(void* param)
   timeGetDevCaps(&tc, sizeof(TIMECAPS));
   dwResolution = min(max(tc.wPeriodMin, 0), tc.wPeriodMax);
   dwUser		= timeBeginPeriod(dwResolution);
-  
 
 	while ( true ) 
 	{
-		if ( lastTimerId > 0 ) {
+		if ( lastTimerId > 0 ) 
+    {
 			timeKillEvent(lastTimerId);
 			lastTimerId = 0;
 		}
@@ -447,8 +444,8 @@ HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::GetSlowestRate(
     /* [out] */ __RPC__out float *pflRate)
 {
 	Log("GetSlowestRate");
-    // There is no minimum playback rate, so the minimum is zero.
-    *pflRate = 0; 
+  // There is no minimum playback rate, so the minimum is zero.
+  *pflRate = 0; 
 	return S_OK;
 }
 
@@ -458,19 +455,18 @@ HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::GetFastestRate(
     /* [out] */ __RPC__out float *pflRate)
 {
 	Log("GetFastestRate");
-    float   fMaxRate = 0.0f;
+  float   fMaxRate = 0.0f;
 
-    // Get the maximum *forward* rate.
-    fMaxRate = FLT_MAX;
+  // Get the maximum *forward* rate.
+  fMaxRate = FLT_MAX;
 
-    // For reverse playback, it's the negative of fMaxRate.
-    if (eDirection == MFRATE_REVERSE)
-    {
-        fMaxRate = -fMaxRate;
-    }
+  // For reverse playback, it's the negative of fMaxRate.
+  if (eDirection == MFRATE_REVERSE)
+  {
+    fMaxRate = -fMaxRate;
+  }
 
-    *pflRate = fMaxRate;
-
+  *pflRate = fMaxRate;
 
 	return S_OK;
 }
@@ -481,13 +477,12 @@ HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::IsRateSupported(
     /* [unique][out][in] */ __RPC__inout_opt float *pflNearestSupportedRate)
 {
 	Log("IsRateSupported");
-    if (pflNearestSupportedRate != NULL)
-    {
-        *pflNearestSupportedRate = flRate;
-    }
+  if (pflNearestSupportedRate != NULL)
+  {
+    *pflNearestSupportedRate = flRate;
+  }
 	return S_OK;
 }
-
 
 
 HRESULT MPEVRCustomPresenter::GetDeviceID(IID* pDeviceID)
@@ -660,7 +655,6 @@ HRESULT MPEVRCustomPresenter::GetTimeToSchedule(IMFSample* pSample, LONGLONG *ph
 		return hr;
 	}
 
-
 	// Calculate the amount of time until the sample's presentation
 	// time. A negative value means the sample is late.
 	hnsDelta = hnsPresentationTime - hnsTimeNow;
@@ -826,7 +820,8 @@ void MPEVRCustomPresenter::ReAllocSurfaces()
 	CHECK_HR(m_pDeviceManager->LockDevice(hDevice, &pDevice, TRUE), "Cannot lock device");
 	HRESULT hr;
 	Log("Textures will be %dx%d", m_iVideoWidth, m_iVideoHeight);
-	for ( int i=0; i<NUM_SURFACES; i++ ) {
+	for ( int i=0; i<NUM_SURFACES; i++ ) 
+  {
 		hr = pDevice->CreateTexture(m_iVideoWidth, m_iVideoHeight, 1,
 			D3DUSAGE_RENDERTARGET, D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT,
 			&textures[i], NULL);
@@ -849,7 +844,8 @@ void MPEVRCustomPresenter::ReAllocSurfaces()
 	
 		hr = m_pMFCreateVideoSampleFromSurface(surfaces[i],
 			&samples[i]);
-		if (FAILED(hr)) {
+		if (FAILED(hr)) 
+    {
 			Log("CreateVideoSampleFromSurface failed: 0x%x", hr);
 			return;
 		}

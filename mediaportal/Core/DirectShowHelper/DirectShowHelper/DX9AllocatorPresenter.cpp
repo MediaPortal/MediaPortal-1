@@ -57,13 +57,15 @@ CVMR9AllocatorPresenter::CVMR9AllocatorPresenter(IDirect3DDevice9* direct3dDevic
 CVMR9AllocatorPresenter::~CVMR9AllocatorPresenter()
 {
 	if (m_pCallback!=NULL)
+  {
 		m_pCallback->PresentImage(0,0,0,0,0);
+  }
 	for( size_t i = 0; i < m_pSurfaces.size(); ++i ) 
-    {
-        m_pSurfaces[i] = NULL;
-    }
-
+  {
+    m_pSurfaces[i] = NULL;
+  }
 }	
+
 void CVMR9AllocatorPresenter::UseOffScreenSurface(bool yesNo)
 {
   m_UseOffScreenSurface=yesNo;
@@ -74,53 +76,57 @@ HRESULT CVMR9AllocatorPresenter::QueryInterface(
         REFIID riid,
         void** ppvObject)
 {
-    HRESULT hr = E_NOINTERFACE;
+  HRESULT hr = E_NOINTERFACE;
 
-    if( ppvObject == NULL ) {
-        hr = E_POINTER;
-    } 
-    else if( riid == IID_IVMRSurfaceAllocator9 ) {
-        *ppvObject = static_cast<IVMRSurfaceAllocator9*>( this );
-        AddRef();
-        hr = S_OK;
-    } 
-    else if( riid == IID_IVMRImagePresenter9 ) {
-        *ppvObject = static_cast<IVMRImagePresenter9*>( this );
-        AddRef();
-        hr = S_OK;
-    } 
-    else if( riid == IID_IVMRWindowlessControl9  ) {
-        *ppvObject = static_cast<IVMRWindowlessControl9*>( this );
-        AddRef();
-        hr = S_OK;
-    } 
-    else if( riid == IID_IUnknown ) {
-        *ppvObject = 
-            static_cast<IUnknown*>( 
-            static_cast<IVMRSurfaceAllocator9*>( this ) );
-        AddRef();
-        hr = S_OK;    
-    }
+  if( ppvObject == NULL ) 
+  {
+    hr = E_POINTER;
+  } 
+  else if( riid == IID_IVMRSurfaceAllocator9 ) 
+  {
+    *ppvObject = static_cast<IVMRSurfaceAllocator9*>( this );
+    AddRef();
+    hr = S_OK;
+  } 
+  else if( riid == IID_IVMRImagePresenter9 ) 
+  {
+    *ppvObject = static_cast<IVMRImagePresenter9*>( this );
+    AddRef();
+    hr = S_OK;
+  } 
+  else if( riid == IID_IVMRWindowlessControl9  ) 
+  {
+    *ppvObject = static_cast<IVMRWindowlessControl9*>( this );
+    AddRef();
+    hr = S_OK;
+  } 
+  else if( riid == IID_IUnknown ) 
+  {
+    *ppvObject = 
+      static_cast<IUnknown*>( 
+      static_cast<IVMRSurfaceAllocator9*>( this ) );
+    AddRef();
+    hr = S_OK;    
+  }
 
-    return hr;
+  return hr;
 }
 
 ULONG CVMR9AllocatorPresenter::AddRef()
 {
-    return InterlockedIncrement(& m_refCount);
+  return InterlockedIncrement(& m_refCount);
 }
 
 ULONG CVMR9AllocatorPresenter::Release()
 {
-    Log("CVMR9AllocatorPresenter::Release()");
-    ULONG ret = InterlockedDecrement(& m_refCount);
-    if( ret == 0 )
-    {
-        Log("CVMR9AllocatorPresenter::Cleanup()");
-        delete this;
-    }
-
-    return ret;
+  Log("CVMR9AllocatorPresenter::Release()");
+  ULONG ret = InterlockedDecrement(& m_refCount);
+  if( ret == 0 )
+  {
+    Log("CVMR9AllocatorPresenter::Cleanup()");
+    delete this;
+  }
+  return ret;
 }
 
 STDMETHODIMP CVMR9AllocatorPresenter::InitializeDevice(DWORD_PTR dwUserID, VMR9AllocationInfo* lpAllocInfo, DWORD* lpNumBuffers)
@@ -169,7 +175,7 @@ STDMETHODIMP CVMR9AllocatorPresenter::InitializeDevice(DWORD_PTR dwUserID, VMR9A
 	
 	m_surfaceCount=*lpNumBuffers;
 	
-    HRESULT hr;
+  HRESULT hr;
 
 	m_pSurfaces.resize(*lpNumBuffers);
 	
@@ -225,10 +231,9 @@ STDMETHODIMP CVMR9AllocatorPresenter::InitializeDevice(DWORD_PTR dwUserID, VMR9A
 
 STDMETHODIMP CVMR9AllocatorPresenter::TerminateDevice(DWORD_PTR dwUserID)
 {
-	
-	Log("vmr9:TerminateDevice()");
-    DeleteSurfaces();
-    return S_OK;
+  Log("vmr9:TerminateDevice()");
+  DeleteSurfaces();
+  return S_OK;
 }
 
 STDMETHODIMP CVMR9AllocatorPresenter::GetSurface(DWORD_PTR dwUserID, DWORD SurfaceIndex, DWORD SurfaceFlags, IDirect3DSurface9** lplpSurface)
@@ -240,41 +245,38 @@ STDMETHODIMP CVMR9AllocatorPresenter::GetSurface(DWORD_PTR dwUserID, DWORD Surfa
 		return E_POINTER;
 	}
 
-
-    if (SurfaceIndex < 0 || SurfaceIndex >= m_pSurfaces.size() ) 
-    {
-		Log("vmr9:GetSurface() invalid SurfaceIndex:%d",SurfaceIndex);
-        return E_FAIL;
-    }
-    //CAutoLock cAutoLock(this);
-	return m_pSurfaces[SurfaceIndex].CopyTo(lplpSurface) ;
+  if (SurfaceIndex < 0 || SurfaceIndex >= m_pSurfaces.size() ) 
+  {
+    Log("vmr9:GetSurface() invalid SurfaceIndex:%d",SurfaceIndex);
+    return E_FAIL;
+  }
+  //CAutoLock cAutoLock(this);
+  return m_pSurfaces[SurfaceIndex].CopyTo(lplpSurface);
 }
 
 STDMETHODIMP CVMR9AllocatorPresenter::AdviseNotify(IVMRSurfaceAllocatorNotify9* lpIVMRSurfAllocNotify)
 {
-    //CAutoLock cAutoLock(this);
+  //CAutoLock cAutoLock(this);
 	
 	Log("vmr9:AdviseNotify()");
 	m_pIVMRSurfAllocNotify = lpIVMRSurfAllocNotify;
 
 	HRESULT hr;
-    if(FAILED(hr = m_pIVMRSurfAllocNotify->SetD3DDevice(m_pD3DDev, m_hMonitor)))
+  if(FAILED(hr = m_pIVMRSurfAllocNotify->SetD3DDevice(m_pD3DDev, m_hMonitor)))
 	{
 		Log("vmr9:AdviseNotify() failed to set d3d device:%x",hr);
 		return hr;
 	}
-    return S_OK;
+  return S_OK;
 }
 
 // IVMRImagePresenter9
 
 STDMETHODIMP CVMR9AllocatorPresenter::StartPresenting(DWORD_PTR dwUserID)
 {
-    //CAutoLock cAutoLock(this);
+  //CAutoLock cAutoLock(this);
+  //ASSERT(m_pD3DDev);
 
-    //ASSERT(m_pD3DDev);
-
-	
 	Log("vmr9:StartPresenting()");
 	return m_pD3DDev ? S_OK : E_FAIL;
 }
@@ -288,7 +290,7 @@ STDMETHODIMP CVMR9AllocatorPresenter::StopPresenting(DWORD_PTR dwUserID)
 
 STDMETHODIMP CVMR9AllocatorPresenter::PresentImage(DWORD_PTR dwUserID, VMR9PresentationInfo* lpPresInfo)
 {
-    HRESULT hr;
+  HRESULT hr;
 	static long frameCounter=0;
 	frameCounter++;
 	//Log("vmr9:PresentImage(%d)",frameCounter);
@@ -315,9 +317,7 @@ STDMETHODIMP CVMR9AllocatorPresenter::PresentImage(DWORD_PTR dwUserID, VMR9Prese
 		previousEndFrame=lpPresInfo->rtEnd;
 		//CAutoLock cAutoLock(this);
 
-
 		m_fps = 10000000.0 / (lpPresInfo->rtEnd - lpPresInfo->rtStart);
-
 
 		m_iARX=lpPresInfo->szAspectRatio.cx;
 		m_iARY=lpPresInfo->szAspectRatio.cy;
@@ -329,7 +329,7 @@ STDMETHODIMP CVMR9AllocatorPresenter::PresentImage(DWORD_PTR dwUserID, VMR9Prese
 	}
 	hr = S_OK;
 
-    return hr;
+  return hr;
 }
 
 void CVMR9AllocatorPresenter::ReleaseCallBack()
@@ -338,16 +338,16 @@ void CVMR9AllocatorPresenter::ReleaseCallBack()
 }
 void CVMR9AllocatorPresenter::DeleteSurfaces()
 {
-	Log("vmr9:DeleteSurfaces()");
+  Log("vmr9:DeleteSurfaces()");
 
-	if (m_pCallback!=NULL)
-		m_pCallback->PresentImage(0,0,0,0,0);
-	for( size_t i = 0; i < m_pSurfaces.size(); ++i ) 
-    {
-        m_pSurfaces[i] = NULL;
-    }
-
-	
+  if (m_pCallback!=NULL)
+  {
+	  m_pCallback->PresentImage(0,0,0,0,0);
+  }
+  for( size_t i = 0; i < m_pSurfaces.size(); ++i ) 
+  {
+    m_pSurfaces[i] = NULL;
+  }
 }
 
 void CVMR9AllocatorPresenter::Paint(IDirect3DSurface9* pSurface, SIZE szAspectRatio)
@@ -372,10 +372,8 @@ void CVMR9AllocatorPresenter::Paint(IDirect3DSurface9* pSurface, SIZE szAspectRa
 						m_bfirstFrame=false;
 						D3DSURFACE_DESC desc;
 						pTexture->GetLevelDesc(0,&desc);
-						
 					}
 					pTexture->Release();
-					
 					return;
 				}
 				dwPtr=(DWORD)(pSurface);
@@ -438,12 +436,12 @@ STDMETHODIMP CVMR9AllocatorPresenter::GetVideoPosition(
   lpSRCRect->top=0;
   lpSRCRect->right=m_iVideoWidth;
   lpSRCRect->bottom=m_iVideoHeight;
-
   
   lpDSTRect->left=0;
   lpDSTRect->top=0;
   lpDSTRect->right=m_iVideoWidth;
   lpDSTRect->bottom=m_iVideoHeight;
+  
   return S_OK;
 }
 
