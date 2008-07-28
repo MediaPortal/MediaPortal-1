@@ -34,28 +34,28 @@ using namespace std;
 #define CHECK_HR(hr, msg) if ( FAILED(hr) ) Log( msg );
 #define SAFE_RELEASE(p) { if(p) { (p)->Release(); (p)=NULL; } }
 
-#define NUM_SURFACES 10
+#define NUM_SURFACES 5
 
-class EVRCustomPresenter;
+class MPEVRCustomPresenter;
 
-enum RENDER_STATE
+enum MP_RENDER_STATE
 {
-	RENDER_STATE_STARTED,
-	RENDER_STATE_STOPPED,
-	RENDER_STATE_PAUSED,
-	RENDER_STATE_SHUTDOWN
+	MP_RENDER_STATE_STARTED,
+	MP_RENDER_STATE_STOPPED,
+	MP_RENDER_STATE_PAUSED,
+	MP_RENDER_STATE_SHUTDOWN
 };
 
 
 typedef struct _SchedulerParams
 {
-	EVRCustomPresenter* pPresenter;
+	MPEVRCustomPresenter* pPresenter;
 	CCritSec csLock;
 	CAMEvent eHasWork;
 	BOOL bDone;
 } SchedulerParams;
 
-class EVRCustomPresenter
+class MPEVRCustomPresenter
 	: public IMFVideoDeviceID,
 	public IMFTopologyServiceLookupClient,
 	public IMFVideoPresenter,
@@ -70,8 +70,8 @@ class EVRCustomPresenter
 {
 
 public:
-	EVRCustomPresenter(IVMR9Callback* callback, IDirect3DDevice9* direct3dDevice,HMONITOR monitor);
-  virtual ~EVRCustomPresenter();
+	MPEVRCustomPresenter(IVMR9Callback* callback, IDirect3DDevice9* direct3dDevice,HMONITOR monitor);
+  virtual ~MPEVRCustomPresenter();
   //IQualProp (stub)
   virtual HRESULT STDMETHODCALLTYPE get_FramesDroppedInRenderer(int *pcFrames);
   virtual HRESULT STDMETHODCALLTYPE get_FramesDrawn(int *pcFramesDrawn);     
@@ -218,7 +218,8 @@ public:
   void EnableFrameSkipping(bool onOff);
 
 protected:
-
+	bool IsNextAlreadyDue();
+	bool ImmediateCheckForInput();
 	void LogStats();
 	void ReleaseSurfaces();
 	HRESULT Paint(CComPtr<IDirect3DSurface9> pSurface);
@@ -294,5 +295,6 @@ protected:
 	int       m_iFramesDrawn, m_iFramesDropped, m_iFramesForStats;
 	LONGLONG  m_hnsLastFrameTime, m_hnsTotalDiff;
   bool      m_enableFrameSkipping;
-  RENDER_STATE m_state;
+	bool	m_didSkip;
+  MP_RENDER_STATE m_state;
 };

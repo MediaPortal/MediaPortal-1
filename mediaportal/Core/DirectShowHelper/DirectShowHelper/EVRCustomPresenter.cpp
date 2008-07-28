@@ -50,11 +50,15 @@
 
 #pragma warning( disable : 4244 )
 
+void Log(const char *fmt, ...);
+void LogRotate();
+HRESULT __fastcall UnicodeToAnsi(LPCOLESTR pszW, LPSTR* ppszA);
+
 static DWORD lastWorkerNotification = 0;
 
 //maximum time to run ahead of actual presentation time to avoid vsync-locks
 #define MAX_PRERUN 10
-#define MAX_PRERUN_HNS ((MAX_PRERUN+1)*10000)
+#define MAX_PRERUN_HNS ((MAX_PRERUN)*10000)
 
 static BOOL           g_bTimerInitializer = false;
 static BOOL           g_bQPCAvail;
@@ -68,14 +72,16 @@ static DWORD GetCurrentTimestamp()
   if( !g_bTimerInitializer ) 
   {
     g_bQPCAvail = QueryPerformanceFrequency( &g_liQPCFreq );
+	Log("GetCurrentTimestamp(): Performance timer available: %d", g_bQPCAvail);
     g_bTimerInitializer = true;
   }
 
   if( g_bQPCAvail ) 
   {
     LARGE_INTEGER tics;
+	QueryPerformanceFrequency( &g_liQPCFreq );
     QueryPerformanceCounter( &tics );
-    ms = ((double)(tics.QuadPart)) / ((double)(tics.QuadPart)) * 1000.0; // to milliseconds
+    ms = (((double)tics.QuadPart) / ((double)g_liQPCFreq.QuadPart)) * 1000.0; // to milliseconds
   }
   else 
   {
@@ -96,9 +102,6 @@ CAutoLock lock(obj); \
 //#define TIME_LOCK(obj, crit, name) CAutoLock lock(obj);
 
 
-void Log(const char *fmt, ...);
-void LogRotate();
-HRESULT __fastcall UnicodeToAnsi(LPCOLESTR pszW, LPSTR* ppszA);
 
 // uncomment the //Log to enable extra logging
 #define LOG_TRACE //Log
@@ -189,7 +192,10 @@ UINT CALLBACK SchedulerThread(void* param)
 
 	while ( true ) 
 	{
-		if ( lastTimerId > 0 ) timeKillEvent(lastTimerId);
+		if ( lastTimerId > 0 ) {
+			timeKillEvent(lastTimerId);
+			lastTimerId = 0;
+		}
 		//Log("Scheduler callback");
 		DWORD now = GetCurrentTimestamp();
 		p->csLock.Lock();
@@ -241,8 +247,8 @@ UINT CALLBACK SchedulerThread(void* param)
 }
 
 
-EVRCustomPresenter::EVRCustomPresenter( IVMR9Callback* pCallback, IDirect3DDevice9* direct3dDevice, HMONITOR monitor)
-: m_refCount(1), m_qScheduledSamples(NUM_SURFACES)
+MPEVRCustomPresenter::MPEVRCustomPresenter( IVMR9Callback* pCallback, IDirect3DDevice9* direct3dDevice, HMONITOR monitor)
+: m_refCount(1), m_qScheduledSamples(NUM_SURFACES), m_didSkip(false)
 {
   timeBeginPeriod(1);
   m_enableFrameSkipping = true;
@@ -263,7 +269,7 @@ EVRCustomPresenter::EVRCustomPresenter( IVMR9Callback* pCallback, IDirect3DDevic
     }
     m_pCallback = pCallback;
     m_bendStreaming = FALSE;
-    m_state = RENDER_STATE_SHUTDOWN;
+    m_state = MP_RENDER_STATE_SHUTDOWN;
     m_bSchedulerRunning = FALSE;
     m_bReallocSurfaces = FALSE;
     m_fRate = 1.0f;
@@ -277,13 +283,13 @@ EVRCustomPresenter::EVRCustomPresenter( IVMR9Callback* pCallback, IDirect3DDevic
     }*/
   }
 }
-void EVRCustomPresenter::EnableFrameSkipping(bool onOff)
+void MPEVRCustomPresenter::EnableFrameSkipping(bool onOff)
 {
   Log("Evr Enable frame skipping:%d",onOff);
   m_enableFrameSkipping = onOff;
 }
 
-EVRCustomPresenter::~EVRCustomPresenter()
+MPEVRCustomPresenter::~MPEVRCustomPresenter()
 {
 	if (m_pCallback != NULL)
   {
@@ -300,7 +306,7 @@ EVRCustomPresenter::~EVRCustomPresenter()
   Log("Done");
 }	
 
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::GetParameters( 
+HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::GetParameters( 
     /* [out] */ __RPC__out DWORD *pdwFlags,
     /* [out] */ __RPC__out DWORD *pdwQueue)
 {
@@ -308,7 +314,7 @@ HRESULT STDMETHODCALLTYPE EVRCustomPresenter::GetParameters(
 	return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::Invoke( 
+HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::Invoke( 
     /* [in] */ __RPC__in_opt IMFAsyncResult *pAsyncResult)
 {
 	Log("Invoke");
@@ -317,7 +323,7 @@ HRESULT STDMETHODCALLTYPE EVRCustomPresenter::Invoke(
 
 
 // IUnknown
-HRESULT EVRCustomPresenter::QueryInterface( 
+HRESULT MPEVRCustomPresenter::QueryInterface( 
         REFIID riid,
         void** ppvObject)
 {
@@ -403,25 +409,25 @@ HRESULT EVRCustomPresenter::QueryInterface(
   return hr;
 }
 
-ULONG EVRCustomPresenter::AddRef()
+ULONG MPEVRCustomPresenter::AddRef()
 {
-  Log("EVRCustomPresenter::AddRef()");
+  Log("MPEVRCustomPresenter::AddRef()");
   return InterlockedIncrement(& m_refCount);
 }
 
-ULONG EVRCustomPresenter::Release()
+ULONG MPEVRCustomPresenter::Release()
 {
-  Log("EVRCustomPresenter::Release()");
+  Log("MPEVRCustomPresenter::Release()");
   ULONG ret = InterlockedDecrement(& m_refCount);
   if( ret == 0 )
   {
-    Log("EVRCustomPresenter::Cleanup()");
+    Log("MPEVRCustomPresenter::Cleanup()");
     delete this;
   }
   return ret;
 }
 
-void EVRCustomPresenter::ResetStatistics()
+void MPEVRCustomPresenter::ResetStatistics()
 {
   m_bfirstFrame = true;
   m_bfirstInput = true;
@@ -435,36 +441,56 @@ void EVRCustomPresenter::ResetStatistics()
   m_dwVariance = 0;
 }
 
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::GetSlowestRate( 
+HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::GetSlowestRate( 
     /* [in] */ MFRATE_DIRECTION eDirection,
     /* [in] */ BOOL fThin,
     /* [out] */ __RPC__out float *pflRate)
 {
 	Log("GetSlowestRate");
+    // There is no minimum playback rate, so the minimum is zero.
+    *pflRate = 0; 
 	return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::GetFastestRate( 
+HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::GetFastestRate( 
     /* [in] */ MFRATE_DIRECTION eDirection,
     /* [in] */ BOOL fThin,
     /* [out] */ __RPC__out float *pflRate)
 {
 	Log("GetFastestRate");
+    float   fMaxRate = 0.0f;
+
+    // Get the maximum *forward* rate.
+    fMaxRate = FLT_MAX;
+
+    // For reverse playback, it's the negative of fMaxRate.
+    if (eDirection == MFRATE_REVERSE)
+    {
+        fMaxRate = -fMaxRate;
+    }
+
+    *pflRate = fMaxRate;
+
+
 	return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::IsRateSupported( 
+HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::IsRateSupported( 
     /* [in] */ BOOL fThin,
     /* [in] */ float flRate,
     /* [unique][out][in] */ __RPC__inout_opt float *pflNearestSupportedRate)
 {
 	Log("IsRateSupported");
+    if (pflNearestSupportedRate != NULL)
+    {
+        *pflNearestSupportedRate = flRate;
+    }
 	return S_OK;
 }
 
 
 
-HRESULT EVRCustomPresenter::GetDeviceID(IID* pDeviceID)
+HRESULT MPEVRCustomPresenter::GetDeviceID(IID* pDeviceID)
 {
   Log("GetDeviceID");
   if (pDeviceID == NULL)
@@ -475,7 +501,7 @@ HRESULT EVRCustomPresenter::GetDeviceID(IID* pDeviceID)
   return S_OK;
 }
 
-HRESULT EVRCustomPresenter::InitServicePointers(IMFTopologyServiceLookup *pLookup)
+HRESULT MPEVRCustomPresenter::InitServicePointers(IMFTopologyServiceLookup *pLookup)
 {
   Log("InitServicePointers");
   HRESULT hr = S_OK;
@@ -548,7 +574,7 @@ HRESULT EVRCustomPresenter::InitServicePointers(IMFTopologyServiceLookup *pLooku
   return S_OK;
 }
 
-HRESULT EVRCustomPresenter::ReleaseServicePointers() 
+HRESULT MPEVRCustomPresenter::ReleaseServicePointers() 
 {
   Log("ReleaseServicePointers");
   //on some channel changes it may happen that ReleaseServicePointers is called only after InitServicePointers is called
@@ -560,7 +586,7 @@ HRESULT EVRCustomPresenter::ReleaseServicePointers()
   return S_OK;
 }
 
-HRESULT EVRCustomPresenter::GetCurrentMediaType(IMFVideoMediaType** ppMediaType)
+HRESULT MPEVRCustomPresenter::GetCurrentMediaType(IMFVideoMediaType** ppMediaType)
 {
   Log("GetCurrentMediaType");
   HRESULT hr = S_OK;
@@ -586,7 +612,7 @@ HRESULT EVRCustomPresenter::GetCurrentMediaType(IMFVideoMediaType** ppMediaType)
   return hr;
 }
 
-HRESULT EVRCustomPresenter::TrackSample(IMFSample *pSample)
+HRESULT MPEVRCustomPresenter::TrackSample(IMFSample *pSample)
 {
   HRESULT hr = S_OK;
   IMFTrackedSample *pTracked = NULL;
@@ -598,7 +624,7 @@ HRESULT EVRCustomPresenter::TrackSample(IMFSample *pSample)
   return hr;
 }
 
-HRESULT EVRCustomPresenter::GetTimeToSchedule(IMFSample* pSample, LONGLONG *phnsDelta) 
+HRESULT MPEVRCustomPresenter::GetTimeToSchedule(IMFSample* pSample, LONGLONG *phnsDelta) 
 {
 	LONGLONG hnsPresentationTime = 0; // Target presentation time
 	LONGLONG hnsTimeNow = 0;          // Current presentation time
@@ -644,7 +670,7 @@ HRESULT EVRCustomPresenter::GetTimeToSchedule(IMFSample* pSample, LONGLONG *phns
 		Log("dangerous and unlikely time to schedule [%p]: %I64d. scheduled time: %I64d, now: %I64d",
 			pSample, hnsDelta, hnsPresentationTime, hnsTimeNow);
 	}
-	LOG_TRACE("Calculated delta: %I64d (rate: %f)", hnsDelta, m_fRate);
+	LOG_TRACE("Due: %I64d, Calculated delta: %I64d (rate: %f)", hnsPresentationTime/10000, hnsDelta, m_fRate);
 	if ( m_fRate != 1.0f && m_fRate != 0.0f )
   {
 		*phnsDelta = ((float)hnsDelta) / m_fRate;
@@ -656,7 +682,7 @@ HRESULT EVRCustomPresenter::GetTimeToSchedule(IMFSample* pSample, LONGLONG *phns
 	return hr;
 }
 
-HRESULT EVRCustomPresenter::GetAspectRatio(CComPtr<IMFMediaType> pType, int* piARX, int* piARY)
+HRESULT MPEVRCustomPresenter::GetAspectRatio(CComPtr<IMFMediaType> pType, int* piARX, int* piARY)
 {
 	HRESULT hr;
 	UINT32 u32;
@@ -705,7 +731,7 @@ HRESULT EVRCustomPresenter::GetAspectRatio(CComPtr<IMFMediaType> pType, int* piA
 	return hr;
 }
 
-HRESULT EVRCustomPresenter::SetMediaType(CComPtr<IMFMediaType> pType, BOOL* pbHasChanged)
+HRESULT MPEVRCustomPresenter::SetMediaType(CComPtr<IMFMediaType> pType, BOOL* pbHasChanged)
 {
 	if (pType == NULL) 
 	{
@@ -770,7 +796,7 @@ HRESULT EVRCustomPresenter::SetMediaType(CComPtr<IMFMediaType> pType, BOOL* pbHa
 	return S_OK;
 }
 
-void EVRCustomPresenter::ReAllocSurfaces()
+void MPEVRCustomPresenter::ReAllocSurfaces()
 {
 	Log("ReallocSurfaces");
 	//TIME_LOCK(this, 20, "ReAllocSurfaces")
@@ -802,7 +828,7 @@ void EVRCustomPresenter::ReAllocSurfaces()
 	Log("Textures will be %dx%d", m_iVideoWidth, m_iVideoHeight);
 	for ( int i=0; i<NUM_SURFACES; i++ ) {
 		hr = pDevice->CreateTexture(m_iVideoWidth, m_iVideoHeight, 1,
-			D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT,
+			D3DUSAGE_RENDERTARGET, D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT,
 			&textures[i], NULL);
 		//Log( "Creating chain %d...", i );
 		if ( FAILED(hr) )
@@ -839,7 +865,7 @@ void EVRCustomPresenter::ReAllocSurfaces()
 }
 
 
-HRESULT EVRCustomPresenter::CreateProposedOutputType(IMFMediaType* pMixerType, IMFMediaType** pType)
+HRESULT MPEVRCustomPresenter::CreateProposedOutputType(IMFMediaType* pMixerType, IMFMediaType** pType)
 {
   HRESULT hr;
   LARGE_INTEGER i64Size;
@@ -882,7 +908,7 @@ HRESULT EVRCustomPresenter::CreateProposedOutputType(IMFMediaType* pMixerType, I
  	return hr;
 }  
 
-HRESULT EVRCustomPresenter::LogOutputTypes()
+HRESULT MPEVRCustomPresenter::LogOutputTypes()
 {
   Log("--Dumping output types----");
   //CAutoLock lock(this);
@@ -930,7 +956,7 @@ HRESULT EVRCustomPresenter::LogOutputTypes()
   return S_OK;
 }
 
-HRESULT EVRCustomPresenter::RenegotiateMediaOutputType()
+HRESULT MPEVRCustomPresenter::RenegotiateMediaOutputType()
 {
   CAutoLock wLock(&m_workerParams.csLock);
   CAutoLock sLock(&m_schedulerParams.csLock);
@@ -1024,7 +1050,8 @@ HRESULT EVRCustomPresenter::RenegotiateMediaOutputType()
   return hr;
 }
 
-HRESULT EVRCustomPresenter::GetFreeSample(IMFSample** ppSample) 
+static int fscount=0;
+HRESULT MPEVRCustomPresenter::GetFreeSample(IMFSample** ppSample) 
 {
 	TIME_LOCK(&m_lockSamples,5,"GetFreeSample");
 	//TODO hold lock?
@@ -1037,7 +1064,7 @@ HRESULT EVRCustomPresenter::GetFreeSample(IMFSample** ppSample)
 	return S_OK;
 }
 
-void EVRCustomPresenter::Flush()
+void MPEVRCustomPresenter::Flush()
 {
 	CAutoLock sLock(&m_lockSamples);
 	CAutoLock ssLock(&m_lockScheduledSamples);
@@ -1054,7 +1081,7 @@ void EVRCustomPresenter::Flush()
 	m_bFlush = FALSE;
 }
 
-void EVRCustomPresenter::ReturnSample(IMFSample* pSample, BOOL tryNotify)
+void MPEVRCustomPresenter::ReturnSample(IMFSample* pSample, BOOL tryNotify)
 {
 	//CAutoLock lock(this);
 	TIME_LOCK(&m_lockSamples, 5, "ReturnSample")
@@ -1067,14 +1094,14 @@ void EVRCustomPresenter::ReturnSample(IMFSample* pSample, BOOL tryNotify)
     if( m_pEventSink ) 
     {
       // Is this needed?
-      //m_pEventSink->Notify(EC_SAMPLE_NEEDED, 0, 0);
+      m_pEventSink->Notify(EC_SAMPLE_NEEDED, 0, 0);
     }
 
   }
 	if ( tryNotify && m_iFreeSamples == 1 && m_bInputAvailable ) NotifyWorker();
 }
 
-HRESULT EVRCustomPresenter::PresentSample(IMFSample* pSample)
+HRESULT MPEVRCustomPresenter::PresentSample(IMFSample* pSample)
 {
   HRESULT hr = S_OK;
   IMFMediaBuffer* pBuffer = NULL;
@@ -1130,6 +1157,8 @@ HRESULT EVRCustomPresenter::PresentSample(IMFSample* pSample)
 		  m_hnsLastFrameTime = hnsTimeNow;
 	  }
     // Present the swap surface
+	  m_didSkip = false;
+	  LOG_TRACE("Painting");
 	  DWORD then = GetCurrentTimestamp();
 	  CHECK_HR(hr = Paint(pSurface), "failed: Paint");
 	  DWORD diff = GetCurrentTimestamp() - then;
@@ -1156,7 +1185,7 @@ HRESULT EVRCustomPresenter::PresentSample(IMFSample* pSample)
   return hr;
 }
 
-BOOL EVRCustomPresenter::CheckForInput()
+BOOL MPEVRCustomPresenter::CheckForInput()
 {
 	int counter;
 	ProcessInputNotify(&counter);
@@ -1164,11 +1193,33 @@ BOOL EVRCustomPresenter::CheckForInput()
 	return counter != 0;
 }
 
-void EVRCustomPresenter::LogStats()
+bool MPEVRCustomPresenter::ImmediateCheckForInput()
+{
+	int counter;
+	CAutoLock lock(&m_workerParams.csLock);
+	ProcessInputNotify(&counter);
+	return counter != 0;
+}
+
+void MPEVRCustomPresenter::LogStats()
 {
 }
 
-HRESULT EVRCustomPresenter::CheckForScheduledSample(LONGLONG *pNextSampleTime, DWORD msLastSleepTime)
+bool MPEVRCustomPresenter::IsNextAlreadyDue() {
+	if (m_qScheduledSamples.IsEmpty()) {
+		return false;
+	}
+	IMFSample* pSample = PeekSample();
+	LONGLONG delta;
+	GetTimeToSchedule(pSample, &delta);
+	if ( delta < 0 ) {
+		LOG_TRACE("Next is due too.");
+		return true;
+	}
+	return false;
+}
+
+HRESULT MPEVRCustomPresenter::CheckForScheduledSample(LONGLONG *pNextSampleTime, DWORD msLastSleepTime)
 {
 	HRESULT hr = S_OK;
 	int samplesProcessed=0;
@@ -1184,7 +1235,7 @@ HRESULT EVRCustomPresenter::CheckForScheduledSample(LONGLONG *pNextSampleTime, D
   {
 		IMFSample* pSample = PeekSample();
 		if ( pSample == NULL ) break;
-		if ( m_state == RENDER_STATE_STARTED ) 
+		if ( m_state == MP_RENDER_STATE_STARTED ) 
 		{
 			CHECK_HR(hr=GetTimeToSchedule(pSample, pNextSampleTime), "Couldn't get time to schedule!");
 			if ( FAILED(hr) ) *pNextSampleTime = 1;
@@ -1206,21 +1257,29 @@ HRESULT EVRCustomPresenter::CheckForScheduledSample(LONGLONG *pNextSampleTime, D
 		}
 		PopSample();
 		samplesProcessed++;
-		//skip only if we have a newer sample available
-		if ( *pNextSampleTime < -200000  ) 
-    {
+		//skip only if we have a newer sample available; IsNextAlreadyDue() checks if the next one should be rendered already
+		//this gives us smooth fast-forward and stuff :)
+		bool nextDue = IsNextAlreadyDue();
+		if ( *pNextSampleTime < -250000 || nextDue  ) 
+		{
 			if (  m_qScheduledSamples.Count() > 0 ) //BREAKS DVD NAVIGATION: || *pNextSampleTime < -1500000 ) 
 			{
 				//skip!
-				m_iFramesDropped++;
 			
-				if (!m_enableFrameSkipping)
+				//skip only every second frame max. (if not older than 250ms)
+				if (!m_enableFrameSkipping)// || (m_didSkip && *pNextSampleTime > -2500000)  )
 				{
+					Log("Not skipping frame (disabled or skip-smoothing mode engaged)");
 				  CHECK_HR(PresentSample(pSample), "PresentSample failed");
 				}
 				else
 				{
-					Log( "skipping frame, behind %I64d ms, last sleep time %d ms.", -*pNextSampleTime/10000, msLastSleepTime );
+					m_iFramesDropped++;
+					//nextDue means that we are most likely fast forwarding. don't report as dropped
+					if ( !nextDue ) {
+						m_didSkip = true;
+						Log( "skipping frame, behind %I64d ms, last sleep time %d ms.", -*pNextSampleTime/10000, msLastSleepTime );
+					}
 				}
 			}
 			else
@@ -1236,21 +1295,23 @@ HRESULT EVRCustomPresenter::CheckForScheduledSample(LONGLONG *pNextSampleTime, D
 		}
 		*pNextSampleTime = 0;
 		ReturnSample(pSample, TRUE);
+		//EXPERIMENTAL: give other threads some time to breath
+		Sleep(3);
 	}
 	//if ( samplesProcessed == 0 ) Log("Useless call to CheckForScheduledSamples");
 	return hr;
 } 
 
-void EVRCustomPresenter::StartWorkers()
+void MPEVRCustomPresenter::StartWorkers()
 {
   CAutoLock lock(this);
   if ( m_bSchedulerRunning ) return;
-  StartThread(&m_hScheduler, &m_schedulerParams, SchedulerThread, &m_uSchedulerThreadId, THREAD_PRIORITY_ABOVE_NORMAL);
-  StartThread(&m_hWorker, &m_workerParams, WorkerThread, &m_uWorkerThreadId, THREAD_PRIORITY_ABOVE_NORMAL);
+  StartThread(&m_hScheduler, &m_schedulerParams, SchedulerThread, &m_uSchedulerThreadId, THREAD_PRIORITY_TIME_CRITICAL);
+  StartThread(&m_hWorker, &m_workerParams, WorkerThread, &m_uWorkerThreadId, THREAD_PRIORITY_BELOW_NORMAL);
   m_bSchedulerRunning = TRUE;
 }
 
-void EVRCustomPresenter::StopWorkers()
+void MPEVRCustomPresenter::StopWorkers()
 {
   Log("Stopping workers...");
   CAutoLock lock(this);
@@ -1261,7 +1322,7 @@ void EVRCustomPresenter::StopWorkers()
   m_bSchedulerRunning = FALSE;
 }
 
-void EVRCustomPresenter::StartThread(PHANDLE handle, SchedulerParams* pParams,
+void MPEVRCustomPresenter::StartThread(PHANDLE handle, SchedulerParams* pParams,
 					UINT  (CALLBACK *ThreadProc)(void*), UINT* threadId, int priority)
 {
   Log("Starting thread!");
@@ -1269,11 +1330,11 @@ void EVRCustomPresenter::StartThread(PHANDLE handle, SchedulerParams* pParams,
   pParams->bDone = FALSE;
 
   *handle = (HANDLE)_beginthreadex(NULL, 0, ThreadProc, pParams, 0, threadId);
-  Log("Started thread. id: 0x%x, handle: 0x%x", *threadId, *handle);
+  Log("Started thread. id: 0x%x (%d), handle: 0x%x", *threadId, *threadId, *handle);
   SetThreadPriority(*handle, priority);
 }
 
-void EVRCustomPresenter::EndThread(HANDLE hThread, SchedulerParams* params)
+void MPEVRCustomPresenter::EndThread(HANDLE hThread, SchedulerParams* params)
 {
   Log("Ending thread 0x%x, 0x%x", hThread, params);
   params->csLock.Lock();
@@ -1289,7 +1350,7 @@ void EVRCustomPresenter::EndThread(HANDLE hThread, SchedulerParams* params)
   CloseHandle(hThread);
 }
 
-void EVRCustomPresenter::NotifyThread(SchedulerParams* params)
+void MPEVRCustomPresenter::NotifyThread(SchedulerParams* params)
 {
 	if ( m_bSchedulerRunning )
   {
@@ -1306,20 +1367,20 @@ void EVRCustomPresenter::NotifyThread(SchedulerParams* params)
 	m_schedulerParams->eHasWork.Set();*/
 }
 
-void EVRCustomPresenter::NotifyScheduler()
+void MPEVRCustomPresenter::NotifyScheduler()
 {
 	LOG_TRACE( "NotifyScheduler()" );
 	NotifyThread(&m_schedulerParams);
 }
 
-void EVRCustomPresenter::NotifyWorker()
+void MPEVRCustomPresenter::NotifyWorker()
 {
 	LOG_TRACE( "NotifyWorker()" );
 	lastWorkerNotification = GetCurrentTimestamp();
 	NotifyThread(&m_workerParams);
 }
 
-BOOL EVRCustomPresenter::PopSample()
+BOOL MPEVRCustomPresenter::PopSample()
 {
 	CAutoLock lock(&m_lockScheduledSamples);
 	LOG_TRACE("Removing scheduled sample, size: %d", m_qScheduledSamples.Count());
@@ -1331,7 +1392,7 @@ BOOL EVRCustomPresenter::PopSample()
 	return FALSE;
 }
 
-IMFSample* EVRCustomPresenter::PeekSample()
+IMFSample* MPEVRCustomPresenter::PeekSample()
 {
 	CAutoLock lock(&m_lockScheduledSamples);
 	if ( m_qScheduledSamples.Count() == 0 )
@@ -1342,7 +1403,7 @@ IMFSample* EVRCustomPresenter::PeekSample()
 	return m_qScheduledSamples.Peek();
 }
 
-void EVRCustomPresenter::ScheduleSample(IMFSample* pSample)
+void MPEVRCustomPresenter::ScheduleSample(IMFSample* pSample)
 {
 	CAutoLock lock(&m_lockScheduledSamples);
 	LOG_TRACE( "Scheduling Sample, size: %d", m_qScheduledSamples.Count() );
@@ -1351,7 +1412,8 @@ void EVRCustomPresenter::ScheduleSample(IMFSample* pSample)
 	CHECK_HR(hr=GetTimeToSchedule(pSample, &nextSampleTime), "Couldn't get time to schedule!");
 	if ( SUCCEEDED(hr) ) 
   {
-		if ( nextSampleTime < 0 ) 
+	  //consider 5 ms "just-in-time" for log-length's sake
+		if ( nextSampleTime < -50000 ) 
     {
 			Log("Scheduling sample from the past (%I64d ms, last call to NotifyWorker: %d ms)", 
 				-nextSampleTime/10000, GetCurrentTimestamp()-lastWorkerNotification);
@@ -1364,7 +1426,7 @@ void EVRCustomPresenter::ScheduleSample(IMFSample* pSample)
   }
 }
 
-BOOL EVRCustomPresenter::CheckForEndOfStream()
+BOOL MPEVRCustomPresenter::CheckForEndOfStream()
 {
 	//CAutoLock lock(this);
 	if ( !m_bendStreaming )
@@ -1386,7 +1448,7 @@ BOOL EVRCustomPresenter::CheckForEndOfStream()
 }
 
 
-HRESULT EVRCustomPresenter::ProcessInputNotify(int* samplesProcessed)
+HRESULT MPEVRCustomPresenter::ProcessInputNotify(int* samplesProcessed)
 {
 	//TIME_LOCK(this, 1, "ProcessInputNotify");
 	//TIME_LOCK(&m_lockSamples, 5, "ProcessInputNotify")
@@ -1403,6 +1465,8 @@ HRESULT EVRCustomPresenter::ProcessInputNotify(int* samplesProcessed)
 			m_bInputAvailable = FALSE;
 			return S_OK;
 		}
+	} else {
+		return S_OK;
 	}
 	//try to process as many samples as possible:
 	BOOL bhasMoreSamples = true;
@@ -1451,12 +1515,12 @@ HRESULT EVRCustomPresenter::ProcessInputNotify(int* samplesProcessed)
       m_pClock->GetCorrelatedTime(0, &timeAfterMixer, &systemTime);
 
       LONGLONG mixerLatency = timeAfterMixer - timeBeforeMixer;
-      LONGLONG sampleLatency = timeAfterMixer - sampleTime;
+      LONGLONG sampleLatency = sampleTime-timeAfterMixer ;
 
 	    if( m_pEventSink ) 
 	    {
 		    m_pEventSink->Notify(EC_PROCESSING_LATENCY, (LONG_PTR)&mixerLatency, 0);
-        m_pEventSink->Notify(EC_SAMPLE_LATENCY, (LONG_PTR)&sampleLatency, 0);
+        //m_pEventSink->Notify(EC_SAMPLE_LATENCY, (LONG_PTR)&sampleLatency, 0);
 	    }
       
       ScheduleSample(sample);
@@ -1508,7 +1572,7 @@ HRESULT EVRCustomPresenter::ProcessInputNotify(int* samplesProcessed)
 	return hr;
 }
 
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::ProcessMessage( 
+HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::ProcessMessage( 
             MFVP_MESSAGE_TYPE eMessage,
             ULONG_PTR ulParam)
 {
@@ -1526,7 +1590,7 @@ HRESULT STDMETHODCALLTYPE EVRCustomPresenter::ProcessMessage(
       //Streaming has started. No particular action is required by this message, but you can use it to allocate resources.
       Log("ProcessMessage %x", eMessage);
       m_bendStreaming = FALSE;
-      m_state = RENDER_STATE_STARTED;
+      m_state = MP_RENDER_STATE_STARTED;
       ResetStatistics();
       StartWorkers();
       break;
@@ -1535,14 +1599,17 @@ HRESULT STDMETHODCALLTYPE EVRCustomPresenter::ProcessMessage(
       //Streaming has ended. Release any resources that you allocated in response to the MFVP_MESSAGE_BEGINSTREAMING message.
       Log("ProcessMessage %x", eMessage);
       //m_bendStreaming = TRUE;
-      m_state = RENDER_STATE_STOPPED;
+      m_state = MP_RENDER_STATE_STOPPED;
       break;
 
 		case MFVP_MESSAGE_PROCESSINPUTNOTIFY:
       //The mixer has received a new input sample and might be able to generate a new output frame. The presenter should call IMFTransform::ProcessOutput on the mixer. See Processing Output.
       //Log("Message 2: %d", m_lInputAvailable);
       //InterlockedIncrement(&m_lInputAvailable);
-      NotifyWorker();
+//      NotifyWorker();
+			if ( !ImmediateCheckForInput() ) {
+				NotifyWorker();
+			}
       break;
 
 		case MFVP_MESSAGE_ENDOFSTREAM:
@@ -1583,12 +1650,12 @@ HRESULT STDMETHODCALLTYPE EVRCustomPresenter::ProcessMessage(
 	return hr;
 }
 
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::OnClockStart( 
+HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::OnClockStart( 
     /* [in] */ MFTIME hnsSystemTime,
     /* [in] */ LONGLONG llClockStartOffset)
 {
 	Log("OnClockStart");
-	m_state = RENDER_STATE_STARTED;
+	m_state = MP_RENDER_STATE_STARTED;
 	Flush();
 //	m_bInputAvailable = TRUE;
 	NotifyWorker();
@@ -1596,45 +1663,45 @@ HRESULT STDMETHODCALLTYPE EVRCustomPresenter::OnClockStart(
 	return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::OnClockStop( 
+HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::OnClockStop( 
     /* [in] */ MFTIME hnsSystemTime)
 {
 	Log("OnClockStop");
-	m_state = RENDER_STATE_STOPPED;
+	m_state = MP_RENDER_STATE_STOPPED;
 	return S_OK;
 }
 
 
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::OnClockPause( 
+HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::OnClockPause( 
     /* [in] */ MFTIME hnsSystemTime)
 {
 	Log("OnClockPause");
   m_bfirstFrame = TRUE;
-	m_state = RENDER_STATE_PAUSED;
+	m_state = MP_RENDER_STATE_PAUSED;
 	return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::OnClockRestart( 
+HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::OnClockRestart( 
     /* [in] */ MFTIME hnsSystemTime)
 {
 	Log("OnClockRestart");
-	m_state = RENDER_STATE_STARTED;
+	m_state = MP_RENDER_STATE_STARTED;
   //m_bInputAvailable = TRUE;
 	NotifyScheduler();
 	NotifyWorker();
 	return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::OnClockSetRate( 
+HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::OnClockSetRate( 
     /* [in] */ MFTIME hnsSystemTime,
     /* [in] */ float flRate)
 {
 	Log("OnClockSetRate: %f", flRate);
-	//m_fRate = flRate;
+	m_fRate = flRate;
 	return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::GetService( 
+HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::GetService( 
     /* [in] */ REFGUID guidService,
     /* [in] */  REFIID riid,
     /* [iid_is][out] */ LPVOID *ppvObject)
@@ -1721,11 +1788,11 @@ HRESULT STDMETHODCALLTYPE EVRCustomPresenter::GetService(
 }
 
 
-void EVRCustomPresenter::ReleaseCallBack()
+void MPEVRCustomPresenter::ReleaseCallBack()
 {
 	m_pCallback = NULL;
 }
-void EVRCustomPresenter::ReleaseSurfaces()
+void MPEVRCustomPresenter::ReleaseSurfaces()
 {
 	Log("ReleaseSurfaces()");
 	CAutoLock lock(this);
@@ -1761,7 +1828,7 @@ void EVRCustomPresenter::ReleaseSurfaces()
 	Log("ReleaseSurfaces() done");
 }
 
-HRESULT EVRCustomPresenter::Paint(CComPtr<IDirect3DSurface9> pSurface)
+HRESULT MPEVRCustomPresenter::Paint(CComPtr<IDirect3DSurface9> pSurface)
 {
 	try
 	{
@@ -1813,26 +1880,26 @@ HRESULT EVRCustomPresenter::Paint(CComPtr<IDirect3DSurface9> pSurface)
 }
 
 
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::get_FramesDroppedInRenderer(int *pcFrames)
+HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::get_FramesDroppedInRenderer(int *pcFrames)
 {
 	if ( pcFrames == NULL ) return E_POINTER;
   //Log("evr:get_FramesDropped: %d", m_iFramesDropped);
 	*pcFrames = m_iFramesDropped;
 	return S_OK;
 }
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::get_FramesDrawn(int *pcFramesDrawn)
+HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::get_FramesDrawn(int *pcFramesDrawn)
 {
 	if ( pcFramesDrawn == NULL ) return E_POINTER;
   //Log("evr:get_FramesDrawn: %d", m_iFramesDrawn);
 	*pcFramesDrawn = m_iFramesDrawn;
 	return S_OK;
 }
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::get_AvgFrameRate(int *piAvgFrameRate)
+HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::get_AvgFrameRate(int *piAvgFrameRate)
 {
 	//Log("evr:get_AvgFrameRate");
 	return S_OK;
 }
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::get_Jitter(int *iJitter)
+HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::get_Jitter(int *iJitter)
 {
 	/*Log("evr:get_Jitter: %d, deviation: %d", m_iJitter,
 		(int)(m_hnsTotalDiff / m_iFramesDrawn) );*/
@@ -1846,18 +1913,18 @@ HRESULT STDMETHODCALLTYPE EVRCustomPresenter::get_Jitter(int *iJitter)
 	}
 	return S_OK;
 }
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::get_AvgSyncOffset(int *piAvg)
+HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::get_AvgSyncOffset(int *piAvg)
 {
 	//Log("evr:get_AvgSyncOffset");
 	return S_OK;
 }
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::get_DevSyncOffset(int *piDev)
+HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::get_DevSyncOffset(int *piDev)
 {
 	//Log("evr:get_DevSyncOffset");
 	return S_OK;
 }
 
-STDMETHODIMP EVRCustomPresenter::GetNativeVideoSize( 
+STDMETHODIMP MPEVRCustomPresenter::GetNativeVideoSize( 
     /* [unique][out][in] */  SIZE *pszVideo,
     /* [unique][out][in] */  SIZE *pszARVideo) 
 {
@@ -1870,7 +1937,7 @@ STDMETHODIMP EVRCustomPresenter::GetNativeVideoSize(
   return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::GetIdealVideoSize( 
+HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::GetIdealVideoSize( 
     /* [unique][out][in] */  SIZE *pszMin,
     /* [unique][out][in] */  SIZE *pszMax) 
 {
@@ -1883,7 +1950,7 @@ HRESULT STDMETHODCALLTYPE EVRCustomPresenter::GetIdealVideoSize(
 }
 
 
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::SetVideoPosition( 
+HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::SetVideoPosition( 
     /* [unique][in] */  const MFVideoNormalizedRect *pnrcSource,
     /* [unique][in] */  const LPRECT prcDest) 
 {
@@ -1892,7 +1959,7 @@ HRESULT STDMETHODCALLTYPE EVRCustomPresenter::SetVideoPosition(
 }
 
 
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::GetVideoPosition( 
+HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::GetVideoPosition( 
     /* [out] */  MFVideoNormalizedRect *pnrcSource,
     /* [out] */  LPRECT prcDest) 
 {
@@ -1910,7 +1977,7 @@ HRESULT STDMETHODCALLTYPE EVRCustomPresenter::GetVideoPosition(
 }
 
 
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::SetAspectRatioMode( 
+HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::SetAspectRatioMode( 
     /* [in] */ DWORD dwAspectRatioMode) 
 {
   Log("IMFVideoDisplayControl.SetAspectRatioMode()");
@@ -1918,7 +1985,7 @@ HRESULT STDMETHODCALLTYPE EVRCustomPresenter::SetAspectRatioMode(
 }
 
 
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::GetAspectRatioMode( 
+HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::GetAspectRatioMode( 
     /* [out] */  DWORD *pdwAspectRatioMode) 
 {
   Log("IMFVideoDisplayControl.GetAspectRatioMode()");
@@ -1927,7 +1994,7 @@ HRESULT STDMETHODCALLTYPE EVRCustomPresenter::GetAspectRatioMode(
 }
 
 
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::SetVideoWindow( 
+HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::SetVideoWindow( 
     /* [in] */  HWND hwndVideo) 
 {
   Log("IMFVideoDisplayControl.SetVideoWindow()");
@@ -1935,7 +2002,7 @@ HRESULT STDMETHODCALLTYPE EVRCustomPresenter::SetVideoWindow(
 }
 
 
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::GetVideoWindow( 
+HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::GetVideoWindow( 
     /* [out] */  HWND *phwndVideo) 
 {
   Log("IMFVideoDisplayControl.GetVideoWindow()");
@@ -1943,14 +2010,14 @@ HRESULT STDMETHODCALLTYPE EVRCustomPresenter::GetVideoWindow(
 }
 
 
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::RepaintVideo( void) 
+HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::RepaintVideo( void) 
 {
   Log("IMFVideoDisplayControl.RepaintVideo()");
   return S_OK;
 }
 
 
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::GetCurrentImage( 
+HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::GetCurrentImage( 
     /* [out][in] */  BITMAPINFOHEADER *pBih,
     /* [size_is][size_is][out] */ BYTE **pDib,
     /* [out] */  DWORD *pcbDib,
@@ -1961,7 +2028,7 @@ HRESULT STDMETHODCALLTYPE EVRCustomPresenter::GetCurrentImage(
 }
 
 
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::SetBorderColor( 
+HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::SetBorderColor( 
     /* [in] */ COLORREF Clr)
 {
   Log("IMFVideoDisplayControl.SetBorderColor()");
@@ -1969,7 +2036,7 @@ HRESULT STDMETHODCALLTYPE EVRCustomPresenter::SetBorderColor(
 }
 
 
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::GetBorderColor( 
+HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::GetBorderColor( 
     /* [out] */  COLORREF *pClr) 
 {
   Log("IMFVideoDisplayControl.GetBorderColor()");
@@ -1978,7 +2045,7 @@ HRESULT STDMETHODCALLTYPE EVRCustomPresenter::GetBorderColor(
 }
 
 
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::SetRenderingPrefs( 
+HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::SetRenderingPrefs( 
     /* [in] */ DWORD dwRenderFlags) 
 {
   Log("IMFVideoDisplayControl.SetRenderingPrefs()");
@@ -1986,7 +2053,7 @@ HRESULT STDMETHODCALLTYPE EVRCustomPresenter::SetRenderingPrefs(
 }
 
 
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::GetRenderingPrefs( 
+HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::GetRenderingPrefs( 
     /* [out] */  DWORD *pdwRenderFlags) 
 {
   Log("IMFVideoDisplayControl.GetRenderingPrefs()");
@@ -1994,7 +2061,7 @@ HRESULT STDMETHODCALLTYPE EVRCustomPresenter::GetRenderingPrefs(
 }
 
 
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::SetFullscreen( 
+HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::SetFullscreen( 
     /* [in] */ BOOL fFullscreen) 
 {
   Log("IMFVideoDisplayControl.SetFullscreen()");
@@ -2002,7 +2069,7 @@ HRESULT STDMETHODCALLTYPE EVRCustomPresenter::SetFullscreen(
 }
 
 
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::GetFullscreen( 
+HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::GetFullscreen( 
     /* [out] */  BOOL *pfFullscreen) 
 {
   Log("GetFullscreen()");
@@ -2010,29 +2077,29 @@ HRESULT STDMETHODCALLTYPE EVRCustomPresenter::GetFullscreen(
   return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::IsInTrustedVideoMode (BOOL *pYes)
+HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::IsInTrustedVideoMode (BOOL *pYes)
 {
   Log("IEVRTrustedVideoPlugin.IsInTrustedVideoMode()");
   *pYes=TRUE;
   return S_OK;
 }
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::CanConstrict (BOOL *pYes)
+HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::CanConstrict (BOOL *pYes)
 {
   *pYes=TRUE;
   Log("IEVRTrustedVideoPlugin.CanConstrict()");
   return S_OK;
 }
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::SetConstriction(DWORD dwKPix)
+HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::SetConstriction(DWORD dwKPix)
 {
   Log("IEVRTrustedVideoPlugin.SetConstriction(%d)",dwKPix);
   return S_OK;
 }
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::DisableImageExport(BOOL bDisable)
+HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::DisableImageExport(BOOL bDisable)
 {
   Log("IEVRTrustedVideoPlugin.DisableImageExport(%d)",bDisable);
   return S_OK;
 }
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::MapOutputCoordinateToInputStream(float xOut,float yOut,DWORD dwOutputStreamIndex,DWORD dwInputStreamIndex,float* pxIn,float* pyIn)
+HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::MapOutputCoordinateToInputStream(float xOut,float yOut,DWORD dwOutputStreamIndex,DWORD dwInputStreamIndex,float* pxIn,float* pyIn)
 {
   //Log("IMFVideoPositionMapper.MapOutputCoordinateToInputStream(%f,%f)",xOut,yOut);
   *pxIn=xOut;
