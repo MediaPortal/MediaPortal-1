@@ -233,10 +233,18 @@ namespace TvService
                   Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder decrypting {2}/{3} channels. cam limit reached",
                          cardId, tvcard.Type, tvcard.NumberOfChannelsDecrypting, keyPair.Value.DataBaseCard.DecryptLimit);
 
-                  //allow admin users like the scheduler to use this card anyway
+                  // lets find out what is going on on this transponder
+                  // if just one channel is recording, then we dont want to interrupt it.
+                  bool isRec = tvcard.Recorder.IsAnySubChannelRecording;
+
+                  //allow admin users like the scheduler to use this card anyway                  
                   if (user.IsAdmin)
                   {
-                    //allow admin users like the scheduler to use this card anyway
+                    if (isRec)
+                    {
+                      // we are already rec. on this transponder, skip it.
+                      continue;
+                    }                                       
                   }
                   else
                   {
@@ -251,7 +259,7 @@ namespace TvService
               }
             }
             else
-            {
+            {    
               //different transponder, are we the owner of this card?
               if (false == tvcard.Users.IsOwner(user))
               {
