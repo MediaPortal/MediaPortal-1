@@ -400,7 +400,20 @@ namespace TvLibrary.Implementations
         OnStartRecording(transportStream, fileName);
         _isRecordingsTransportStream = transportStream;
         _recordingFileName = fileName;
-        Log.Log.WriteFile("Analog:Started recording");
+
+        if (this is AnalogSubChannel)
+        {
+          Log.Log.Info("analog subch:{0} Started recording", _subChannelId);
+        }
+        else if (this is TvDvbChannel)
+        {
+          Log.Log.Info("DVB subch:{0} Started recording", _subChannelId);
+        }
+        else
+        {
+          Log.Log.Info("Unknown subch:{0} Started recording", _subChannelId);
+        }                
+
         _graphState = GraphState.Recording;
       }
       catch (Exception e)
@@ -516,7 +529,19 @@ namespace TvLibrary.Implementations
     /// </summary>
     public void Decompose()
     {
-      Log.Log.Info("analog subch:{0} Decompose()", _subChannelId);
+      if (this is AnalogSubChannel)
+      {
+        Log.Log.Info("analog subch:{0} Decompose()", _subChannelId);
+      }
+      else if (this is TvDvbChannel)
+      {
+        Log.Log.Info("DVB subch:{0} Decompose()", _subChannelId);
+      }
+      else
+      {
+        Log.Log.Info("Unknown subch:{0} Decompose()", _subChannelId);        
+      }
+
       if (IsRecording)
       {
         StopRecording();

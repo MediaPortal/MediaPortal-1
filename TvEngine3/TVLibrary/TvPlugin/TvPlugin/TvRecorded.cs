@@ -955,8 +955,7 @@ namespace TvPlugin
 
       m_oActiveRecording = rec;
       m_bIsLiveRecording = false;
-      TvServer server = new TvServer();
-      VirtualCard card;
+      TvServer server = new TvServer();      
       foreach (Recording recItem in itemlist)
       {
         if (rec.IdRecording == recItem.IdRecording && IsRecordingActual(recItem))
