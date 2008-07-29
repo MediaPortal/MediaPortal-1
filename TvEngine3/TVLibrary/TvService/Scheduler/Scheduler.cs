@@ -456,25 +456,28 @@ namespace TvService
       TvResult result;
       //get list of all cards we can use todo the recording
       ICardAllocation allocation = CardAllocationFactory.Create(false);
-      List<CardDetail> freeCards = allocation.GetAvailableCardsForChannel(_tvController.CardCollection, recording.Channel, ref _user, false, out result);
+      List<CardDetail> freeCards = allocation.GetAvailableCardsForChannel(_tvController.CardCollection, recording.Channel, ref _user, false, out result, recording.Schedule.RecommendedCard);
       if (freeCards.Count == 0) return false;//none available..
 
       CardDetail cardInfo = null;
 
       //first try to start recording using the recommended card
       if (recording.Schedule.RecommendedCard > 0)
-      {
+      {        
+
         foreach (CardDetail card in freeCards)
-        {
-          if (card.Id != recording.Schedule.RecommendedCard) continue;
+        {       
+          User byUser;
+          bool isCardInUse = _tvController.IsCardInUse(card.Id, out byUser);                    
+          //if (card.Id != recording.Schedule.RecommendedCard) continue;
+          // now the card allocator handles the recommenedcard.
 
           //when card is idle we can use it
           //when card is busy, but already tuned to the correct channel then we can use it also
-          //when card is busy, but already tuned to the correct transponder then we can use it also
-          User byUser;
+          //when card is busy, but already tuned to the correct transponder then we can use it also          
           User tmpUser = new User();
           tmpUser = _tvController.GetUserForCard(card.Id);//added by joboehl - Allows the CurrentDbChannel bellow to work when TVServer and client are on different machines
-          if ((_tvController.IsCardInUse(card.Id, out byUser) == false) ||
+          if ((isCardInUse == false) ||
                _tvController.CurrentDbChannel(ref tmpUser) == recording.Channel.IdChannel ||
                (_tvController.IsTunedToTransponder(card.Id, card.TuningDetail) && _tvController.Type(card.Id) != CardType.Analog))
           {

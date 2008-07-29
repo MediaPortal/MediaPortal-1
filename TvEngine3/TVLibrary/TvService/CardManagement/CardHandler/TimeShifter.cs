@@ -123,6 +123,28 @@ namespace TvService
     }
 
     /// <summary>
+    /// Gets a value indicating whether this card is recording.
+    /// </summary>
+    /// <value>
+    /// 	<c>true</c> if this card is recording; otherwise, <c>false</c>.
+    /// </value>
+    public bool IsAnySubChannelTimeshifting
+    {
+      get
+      {
+        User[] users = _cardHandler.Users.GetUsers();
+        if (users == null) return false;
+        if (users.Length == 0) return false;
+        for (int i = 0; i < users.Length; ++i)
+        {
+          User user = users[i];
+          if (IsTimeShifting(ref user)) return true;
+        }
+        return false;
+      }
+    }
+
+    /// <summary>
     /// Returns if the card is timeshifting or not
     /// </summary>
     /// <param name="cardId">id of the card.</param>

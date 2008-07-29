@@ -1965,7 +1965,7 @@ namespace TvService
       try
       {
         ICardAllocation allocation = CardAllocationFactory.Create(false);
-        List<CardDetail> freeCards = allocation.GetAvailableCardsForChannel(_cards, channel, ref user, true, out result);
+        List<CardDetail> freeCards = allocation.GetAvailableCardsForChannel(_cards, channel, ref user, true, out result, 0);
         if (freeCards.Count == 0)
         {
           // enumerate all cards and check if some card is already timeshifting the channel requested
@@ -2041,7 +2041,7 @@ namespace TvService
       try
       {
         ICardAllocation allocation = CardAllocationFactory.Create(false);
-        List<CardDetail> freeCards = allocation.GetAvailableCardsForChannel(_cards, channel, ref user, true, out result);
+        List<CardDetail> freeCards = allocation.GetAvailableCardsForChannel(_cards, channel, ref user, true, out result, 0);
         if (freeCards.Count == 0)
         {
           // enumerate all cards and check if some card is already timeshifting the channel requested
@@ -2690,7 +2690,7 @@ namespace TvService
       //User anyUser = new User();
       TvResult viewResult;
       ICardAllocation allocation = CardAllocationFactory.Create(true);
-      List<CardDetail> freeCards = allocation.GetAvailableCardsForChannel(_cards, dbchannel, ref user, true, out viewResult);
+      List<CardDetail> freeCards = allocation.GetAvailableCardsForChannel(_cards, dbchannel, ref user, true, out viewResult, 0);
       if (viewResult == TvResult.Succeeded)
         chanState = ChannelState.tunable;
       else

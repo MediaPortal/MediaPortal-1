@@ -57,7 +57,7 @@ namespace TvService
     /// </summary>
     /// <param name="channelName">Name of the channel.</param>
     /// <returns>list containg all free cards which can receive the channel</returns>
-    public List<CardDetail> GetAvailableCardsForChannel(Dictionary<int, ITvCardHandler> cards, Channel dbChannel, ref User user, bool checkTransponders, out TvResult result)
+    public List<CardDetail> GetAvailableCardsForChannel(Dictionary<int, ITvCardHandler> cards, Channel dbChannel, ref User user, bool checkTransponders, out TvResult result, int recommendedCardId)
     {
       try
       {
@@ -171,6 +171,7 @@ namespace TvService
             //now we check if its free...
             cardsFound++;
             bool sameTransponder = false;
+            bool canDecrypt = true;
 
             if (tvcard.Tuner.IsTunedToTransponder(tuningDetail) && (tvcard.SupportsSubChannels || (checkTransponders == false)))
             {
@@ -213,8 +214,7 @@ namespace TvService
                   }
                 }
                 
-                //check if cam is capable of descrambling an extra channel
-                bool canDecrypt = true;
+                //check if cam is capable of descrambling an extra channel                
                 int dbDecryptLimit = keyPair.Value.DataBaseCard.DecryptLimit;
                 if (dbDecryptLimit > 0)
                 {
@@ -232,19 +232,20 @@ namespace TvService
                   //it is not, skip this card
                   Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder decrypting {2}/{3} channels. cam limit reached",
                          cardId, tvcard.Type, tvcard.NumberOfChannelsDecrypting, keyPair.Value.DataBaseCard.DecryptLimit);
-
-                  // lets find out what is going on on this transponder
-                  // if just one channel is recording, then we dont want to interrupt it.
-                  bool isRec = tvcard.Recorder.IsAnySubChannelRecording;
+                  
 
                   //allow admin users like the scheduler to use this card anyway                  
                   if (user.IsAdmin)
                   {
+                    // lets find out what is going on on this transponder
+                    // if just one channel is recording, then we dont want to interrupt it.
+                    bool isRec = tvcard.Recorder.IsAnySubChannelRecording;
+
                     if (isRec)
                     {
-                      // we are already rec. on this transponder, skip it.
+                      // we are already doing stuff on this transponder, skip it.
                       continue;
-                    }                                       
+                    }                    
                   }
                   else
                   {
@@ -295,6 +296,23 @@ namespace TvService
             {
               cardInfo.Priority -= 100;
             }
+
+            
+
+
+            // handle recommended cardid.
+            // boost priority if a cardid matches, but only if these criterias are met.
+            // A) if card is free while other cards are busy.
+            // B) if card is busy (but decryption slot available) while other cards are busy or free.
+
+            if (recommendedCardId == cardId)              
+            {
+              if (nrOfOtherUsers == 0 || canDecrypt)
+              {
+                cardInfo.Priority += 100;
+              }
+            }
+
             Log.Info("Controller:    card:{0} type:{1} is available priority:{2} #users:{3} same transponder:{4}",
                           cardInfo.Id, tvcard.Type, cardInfo.Priority, nrOfOtherUsers, sameTransponder);
 
