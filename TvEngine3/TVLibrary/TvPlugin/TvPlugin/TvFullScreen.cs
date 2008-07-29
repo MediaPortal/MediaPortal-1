@@ -918,13 +918,19 @@ namespace TvPlugin
       #region case GUI_MSG_RECORD
       if (message.Message == GUIMessage.MessageType.GUI_MSG_RECORD)
       {
-        string channel = TVHome.Card.ChannelName;
+        Channel channel = TVHome.Navigator.Channel;
+
+        if (channel == null)
+        {
+          return true;
+        }                
+
         TvBusinessLayer layer = new TvBusinessLayer();
 
-        Program prog = TVHome.Navigator.GetChannel(channel).CurrentProgram;
+        Program prog = channel.CurrentProgram;
         VirtualCard card;
         TvServer server = new TvServer();
-        if (server.IsRecording(channel, out card))
+        if (server.IsRecording(channel.Name, out card))
         {
           _dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
           _dlgYesNo.SetHeading(1449); // stop recording
@@ -940,7 +946,7 @@ namespace TvPlugin
           server.StopRecordingSchedule(card.RecordingScheduleId);
           GUIDialogNotify dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
           if (dlgNotify == null) return true;
-          string logo = Utils.GetCoverArt(Thumbs.TVChannel, channel);
+          string logo = Utils.GetCoverArt(Thumbs.TVChannel, channel.DisplayName);
           dlgNotify.Reset();
           dlgNotify.ClearAll();
           dlgNotify.SetImage(logo);
@@ -969,9 +975,11 @@ namespace TvPlugin
           {
             _dialogBottomMenu = (GUIDialogMenuBottomRight)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT);
             if (_dialogBottomMenu != null)
-            {
+            {              
               _dialogBottomMenu.Reset();
               _dialogBottomMenu.SetHeading(605);//my tv
+              //_dialogBottomMenu.SetHeadingRow2(prog.Title);              
+
               _dialogBottomMenu.AddLocalizedString(875); //current program
               _dialogBottomMenu.AddLocalizedString(876); //till manual stop
               _bottomDialogMenuVisible = true;
@@ -985,7 +993,7 @@ namespace TvPlugin
                 case 875:
                   //record current program
                   _isStartingTSForRecording = !g_Player.IsTimeShifting;
-                  Program program = TVHome.Navigator.Channel.CurrentProgram;
+                  Program program = channel.CurrentProgram;
                   rec = new Schedule(program.IdChannel, program.Title, program.StartTime, program.EndTime);
                   rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
                   rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
@@ -999,7 +1007,7 @@ namespace TvPlugin
                   //manual record
                   _isStartingTSForRecording = !g_Player.IsTimeShifting;
 
-                  rec = new Schedule(TVHome.Navigator.Channel.IdChannel, GUILocalizeStrings.Get(413) + " (" + TVHome.Navigator.Channel.DisplayName + ")", DateTime.Now, DateTime.Now.AddDays(1));
+                  rec = new Schedule(channel.IdChannel, GUILocalizeStrings.Get(413) + " (" + channel.DisplayName + ")", DateTime.Now, DateTime.Now.AddDays(1));
                   rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
                   rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
                   rec.RecommendedCard = TVHome.Card.Id;
@@ -1016,7 +1024,7 @@ namespace TvPlugin
           else
           {
             _isStartingTSForRecording = !g_Player.IsTimeShifting;
-            Schedule rec = new Schedule(TVHome.Navigator.Channel.IdChannel, (int)ScheduleRecordingType.Once, GUILocalizeStrings.Get(413) + " (" + TVHome.Navigator.Channel.DisplayName + ")", DateTime.Now, DateTime.Now.AddDays(1), 1, 1, "", 1, 1, Schedule.MinSchedule, 5, 5, Schedule.MinSchedule);
+            Schedule rec = new Schedule(channel.IdChannel, (int)ScheduleRecordingType.Once, GUILocalizeStrings.Get(413) + " (" + channel.DisplayName + ")", DateTime.Now, DateTime.Now.AddDays(1), 1, 1, "", 1, 1, Schedule.MinSchedule, 5, 5, Schedule.MinSchedule);
             rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
             rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
             rec.RecommendedCard = TVHome.Card.Id;
@@ -1035,7 +1043,7 @@ namespace TvPlugin
 
           GUIDialogNotify dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
           if (dlgNotify == null) return true;
-          string logo = Utils.GetCoverArt(Thumbs.TVChannel, channel);
+          string logo = Utils.GetCoverArt(Thumbs.TVChannel, channel.DisplayName);
           dlgNotify.Reset();
           dlgNotify.ClearAll();
           dlgNotify.SetImage(logo);
@@ -1778,10 +1786,16 @@ namespace TvPlugin
 
     void ShowProgramInfo()
     {
-      Program currentProgram = TVHome.Navigator.GetChannel(TVHome.Card.ChannelName).CurrentProgram;
+      if (TVHome.Navigator.Channel == null)
+      {
+        return;
+      }
+      Program currentProgram = TVHome.Navigator.GetChannel(TVHome.Navigator.Channel.IdChannel).CurrentProgram;
 
       if (currentProgram == null)
+      {
         return;
+      }
 
       TVProgramInfo.CurrentProgram = currentProgram;
       GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO);
