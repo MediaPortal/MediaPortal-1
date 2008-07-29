@@ -959,7 +959,7 @@ namespace TvPlugin
       VirtualCard card;
       foreach (Recording recItem in itemlist)
       {
-        if (rec.IdRecording == recItem.IdRecording && server.IsRecording(recItem.ReferencedChannel().Name, out card))
+        if (rec.IdRecording == recItem.IdRecording && IsRecordingActual(recItem))
         {
           m_bIsLiveRecording = true;
           break;
