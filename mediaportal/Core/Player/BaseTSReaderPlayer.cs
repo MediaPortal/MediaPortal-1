@@ -126,7 +126,7 @@ namespace MediaPortal.Player
     protected int _aspectX = 1;
     protected int _aspectY = 1;
     protected long _speedRate = 10000;
-    bool _CodecSupportsFastSeeking = false;
+    protected bool _CodecSupportsFastSeeking = false;
     protected IBaseFilter _interfaceTSReader = null;
     protected IBaseFilter _videoCodecFilter = null;
     protected IBaseFilter _h264videoCodecFilter = null;
@@ -768,13 +768,14 @@ namespace MediaPortal.Player
             if (iSpeed != value)
             {
               iSpeed = value;
+
               int hr = _mediaSeeking.SetRate((double)iSpeed);
-              //Log.Info("VideoPlayer:SetRate to:{0} {1:X}", iSpeed,hr);
+              Log.Info("VideoPlayer:SetRate to:{0} {1:X}", iSpeed,hr);
               if (hr != 0)
               {
                 IMediaSeeking oldMediaSeek = _graphBuilder as IMediaSeeking;
                 hr = oldMediaSeek.SetRate((double)iSpeed);
-                //Log.Info("VideoPlayer:SetRateOld to:{0} {1:X}", iSpeed,hr);
+                Log.Info("VideoPlayer:SetRateOld to:{0} {1:X}", iSpeed,hr);
               }
               if (iSpeed == 1)
               {

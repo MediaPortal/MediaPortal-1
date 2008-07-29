@@ -295,6 +295,7 @@ namespace MediaPortal.Player
           GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.PanScan43;
         if (strValue.Equals("zoom149"))
           GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom14to9;
+        _CodecSupportsFastSeeking = xmlreader.GetValueAsBool("debug", "CodecSupportsFastSeeking", false);
       }
     }
     protected void LoadMyVideosFilterSettings(ref int intFilters, ref string strFilters, ref string strVideoCodec, ref string strAudioCodec, ref string strAACAudioCodec, ref string strH264VideoCodec, ref string strAudioRenderer, ref bool enableDVBBitmapSubtitles, ref bool enableDVBTtxtSubtitles)
@@ -320,6 +321,7 @@ namespace MediaPortal.Player
         enableDVBBitmapSubtitles = xmlreader.GetValueAsBool("tvservice", "dvbbitmapsubtitles", false);
         enableDVBTtxtSubtitles = xmlreader.GetValueAsBool("tvservice", "dvbttxtsubtitles", false);
         enableMPAudioSwitcher=xmlreader.GetValueAsBool("movieplayer", "audiodualmono", false);
+        _CodecSupportsFastSeeking = xmlreader.GetValueAsBool("debug", "CodecSupportsFastSeeking", false);
       }
     }
 
