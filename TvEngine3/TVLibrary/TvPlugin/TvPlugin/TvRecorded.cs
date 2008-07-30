@@ -1550,28 +1550,32 @@ namespace TvPlugin
       {
         filename = g_Player.currentFileName;
       }
-      else if (!TVHome.UseRTSP()) // only keep the filename
+
+      // only keep the filename, making the DB lookup more simple    
+      if (g_Player.currentFileName != "")
       {
-        if (g_Player.currentFileName != "")
-        {
-          FileInfo f = new FileInfo(g_Player.currentFileName);
-          filename = f.Name;
-        }
-        else
-        {
-          FileInfo f = new FileInfo(filename);
-          filename = f.Name;
-        }
+        FileInfo f = new FileInfo(g_Player.currentFileName);
+        filename = f.Name;
       }
+      else
+      {
+        FileInfo f = new FileInfo(filename);
+        filename = f.Name;
+      }            
 
       TvBusinessLayer layer = new TvBusinessLayer();
       Recording rec = layer.GetRecordingByFileName(filename);
-      if (stoptime >= g_Player.Duration) { stoptime = 0; }; //temporary workaround before end of stream get's properly implemented
       if (rec != null)
-      {
+      {       
+        if (stoptime >= g_Player.Duration) { stoptime = 0; }; //temporary workaround before end of stream get's properly implemented        
         rec.StopTime = stoptime;
         rec.Persist();
       }
+      else
+      {
+        Log.Info("TvRecorded:OnStopped no recording found with filename {0}", filename);
+      }
+
       /*
       if (GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow))
       {
