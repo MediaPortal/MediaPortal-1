@@ -15,51 +15,55 @@ namespace MediaPortal.Configuration.Sections
   {
     #region variables
     private string _preferredAudioLanguages;
-		private string _preferredSubLanguages;
-		private IList<string> _languageCodes;
+    private string _preferredSubLanguages;
+    private IList<string> _languageCodes;
 
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox2;
     private MediaPortal.UserInterface.Controls.MPTextBox mpTextBoxHostname;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel3;
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
     private MediaPortal.UserInterface.Controls.MPCheckBox mpCheckBoxPrefAC3;
-		private IList<string> _languagesAvail;
+    private IList<string> _languagesAvail;
     private MediaPortal.UserInterface.Controls.MPCheckBox mpCheckBoxPrefAudioOverLang;
-		private MediaPortal.UserInterface.Controls.MPTabControl tabControlTVGeneral;
-		private MediaPortal.UserInterface.Controls.MPTabPage tabPageGeneralSettings;
-		private MediaPortal.UserInterface.Controls.MPTabPage tabPageAudioLanguages;
-		private MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
-		private MediaPortal.UserInterface.Controls.MPTabPage tabPageSubtitles;
-		private MediaPortal.UserInterface.Controls.MPButton mpButtonAddAudioLang;
-		private MediaPortal.UserInterface.Controls.MPButton mpButtonRemoveAudioLang;
-		private MediaPortal.UserInterface.Controls.MPListView mpListViewPreferredAudioLang;
-		private MediaPortal.UserInterface.Controls.MPListView mpListViewAvailAudioLang;
-		private MediaPortal.UserInterface.Controls.MPButton mpButtonDownAudioLang;
-		private MediaPortal.UserInterface.Controls.MPButton mpButtonUpAudioLang;
-		private MediaPortal.UserInterface.Controls.MPLabel mpLabel5;
-		private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
-		private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox3;
-		private MediaPortal.UserInterface.Controls.MPLabel mpLabel6;
-		private MediaPortal.UserInterface.Controls.MPLabel mpLabel7;
-		private MediaPortal.UserInterface.Controls.MPButton mpButtonDownSubLang;
-		private MediaPortal.UserInterface.Controls.MPButton mpButtonUpSubLang;
-		private MediaPortal.UserInterface.Controls.MPButton mpButtonAddSubLang;
-		private MediaPortal.UserInterface.Controls.MPButton mpButtonRemoveSubLang;
-		private MediaPortal.UserInterface.Controls.MPListView mpListViewPreferredSubLang;
-		private MediaPortal.UserInterface.Controls.MPListView mpListViewAvailSubLang;
-		private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox4;
+    private MediaPortal.UserInterface.Controls.MPTabControl tabControlTVGeneral;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPageGeneralSettings;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPageAudioLanguages;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPageSubtitles;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonAddAudioLang;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonRemoveAudioLang;
+    private MediaPortal.UserInterface.Controls.MPListView mpListViewPreferredAudioLang;
+    private MediaPortal.UserInterface.Controls.MPListView mpListViewAvailAudioLang;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonDownAudioLang;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonUpAudioLang;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel5;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
+    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox3;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel6;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel7;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonDownSubLang;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonUpSubLang;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonAddSubLang;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonRemoveSubLang;
+    private MediaPortal.UserInterface.Controls.MPListView mpListViewPreferredSubLang;
+    private MediaPortal.UserInterface.Controls.MPListView mpListViewAvailSubLang;
+    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox4;
     private MediaPortal.UserInterface.Controls.MPCheckBox mpCheckBoxEnableTTXTSub;
     private MediaPortal.UserInterface.Controls.MPCheckBox mpCheckBoxEnableDVBSub;
-		private ColumnHeader columnHeader1;
-		private ColumnHeader columnHeader2;
-		private ColumnHeader columnHeader4;
+    private ColumnHeader columnHeader1;
+    private ColumnHeader columnHeader2;
+    private ColumnHeader columnHeader4;
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox5;
     private MediaPortal.UserInterface.Controls.MPCheckBox cbHideAllChannels;
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox6;
     private MediaPortal.UserInterface.Controls.MPCheckBox cbShowChannelStateIcons;
     private MediaPortal.UserInterface.Controls.MPCheckBox enableAudioDualMonoModes;
-		private ColumnHeader columnHeader3;    
-		
+    private ColumnHeader columnHeader3;
+    private ColumnHeader columnHeader5;
+    private ColumnHeader columnHeader6;
+    private ColumnHeader columnHeader8;
+    private ColumnHeader columnHeader7;
+
     #endregion
 
     public TVClient()
@@ -86,11 +90,11 @@ namespace MediaPortal.Configuration.Sections
         mpTextBoxHostname.Text = xmlreader.GetValueAsString("tvservice", "hostname", "");
         mpCheckBoxPrefAC3.Checked = xmlreader.GetValueAsBool("tvservice", "preferac3", false);
         mpCheckBoxPrefAudioOverLang.Checked = xmlreader.GetValueAsBool("tvservice", "preferAudioTypeOverLang", true);
-				_preferredAudioLanguages = xmlreader.GetValueAsString("tvservice", "preferredaudiolanguages", "");
-				_preferredSubLanguages = xmlreader.GetValueAsString("tvservice", "preferredsublanguages", "");
+        _preferredAudioLanguages = xmlreader.GetValueAsString("tvservice", "preferredaudiolanguages", "");
+        _preferredSubLanguages = xmlreader.GetValueAsString("tvservice", "preferredsublanguages", "");
 
-				mpCheckBoxEnableDVBSub.Checked = xmlreader.GetValueAsBool("tvservice", "dvbbitmapsubtitles", false);
-				mpCheckBoxEnableTTXTSub.Checked = xmlreader.GetValueAsBool("tvservice", "dvbttxtsubtitles", false);
+        mpCheckBoxEnableDVBSub.Checked = xmlreader.GetValueAsBool("tvservice", "dvbbitmapsubtitles", false);
+        mpCheckBoxEnableTTXTSub.Checked = xmlreader.GetValueAsBool("tvservice", "dvbttxtsubtitles", false);
         enableAudioDualMonoModes.Checked = xmlreader.GetValueAsBool("tvservice", "audiodualmono", false);
         cbHideAllChannels.Checked = xmlreader.GetValueAsBool("mytv", "hideAllChannelsGroup", false);
         cbShowChannelStateIcons.Checked = xmlreader.GetValueAsBool("mytv", "showChannelStateIcons", true);
@@ -133,12 +137,11 @@ namespace MediaPortal.Configuration.Sections
                   {
                     mpListViewAvailAudioLang.Items.Clear();
                     mpListViewPreferredAudioLang.Items.Clear();
-                    for (int i = 0 ; i < _languagesAvail.Count ; i++)
+                    for (int i = 0; i < _languagesAvail.Count; i++)
                     {
                       if (!_preferredAudioLanguages.Contains(_languagesAvail[i]))
                       {
-                        ListViewItem item = new ListViewItem();
-                        item.Text = _languagesAvail[i];
+                        ListViewItem item = new ListViewItem(new string[] { _languagesAvail[i], _languageCodes[i] });
                         item.Tag = _languageCodes[i];
                         mpListViewAvailAudioLang.Items.Add(item);
                       }
@@ -148,19 +151,17 @@ namespace MediaPortal.Configuration.Sections
                     {
                       string[] langArr = _preferredAudioLanguages.Split(';');
 
-                      for (int i = 0 ; i < langArr.Length ; i++)
+                      for (int i = 0; i < langArr.Length; i++)
                       {
                         string langStr = langArr[i];
                         if (langStr.Trim().Length > 0)
                         {
-                          for (int j = 0 ; j < _languagesAvail.Count ; j++)
+                          for (int j = 0; j < _languagesAvail.Count; j++)
                           {
                             if (_languageCodes[j].Contains(langStr))
                             {
-                              ListViewItem item = new ListViewItem();
-                              item.Text = _languagesAvail[j];
+                              ListViewItem item = new ListViewItem(new string[] { _languagesAvail[j], _languageCodes[j] });
                               item.Tag = _languageCodes[j];
-
                               mpListViewPreferredAudioLang.Items.Add(item);
                               break;
                             }
@@ -171,12 +172,11 @@ namespace MediaPortal.Configuration.Sections
 
                     mpListViewAvailSubLang.Items.Clear();
                     mpListViewPreferredSubLang.Items.Clear();
-                    for (int i = 0 ; i < _languagesAvail.Count ; i++)
+                    for (int i = 0; i < _languagesAvail.Count; i++)
                     {
                       if (!_preferredSubLanguages.Contains(_languagesAvail[i]))
                       {
-                        ListViewItem item = new ListViewItem();
-                        item.Text = _languagesAvail[i];
+                        ListViewItem item = new ListViewItem(new string[] { _languagesAvail[i], _languageCodes[i] });
                         item.Tag = _languageCodes[i];
                         mpListViewAvailSubLang.Items.Add(item);
                       }
@@ -186,19 +186,17 @@ namespace MediaPortal.Configuration.Sections
                     {
                       string[] langArr = _preferredSubLanguages.Split(';');
 
-                      for (int i = 0 ; i < langArr.Length ; i++)
+                      for (int i = 0; i < langArr.Length; i++)
                       {
                         string langStr = langArr[i];
                         if (langStr.Trim().Length > 0)
                         {
-                          for (int j = 0 ; j < _languagesAvail.Count ; j++)
+                          for (int j = 0; j < _languagesAvail.Count; j++)
                           {
                             if (_languageCodes[j].Contains(langStr))
                             {
-                              ListViewItem item = new ListViewItem();
-                              item.Text = _languagesAvail[j];
+                              ListViewItem item = new ListViewItem(new string[] { _languagesAvail[j], _languageCodes[j] });
                               item.Tag = _languageCodes[j];
-
                               mpListViewPreferredSubLang.Items.Add(item);
                               break;
                             }
@@ -219,7 +217,7 @@ namespace MediaPortal.Configuration.Sections
               {
                 Log.Warn("TVClient: Failed to load settings {0}", gex.Message);
               }
-             }
+            }
           }
         }
         catch (Exception ex)
@@ -240,25 +238,25 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("tvservice", "preferac3", mpCheckBoxPrefAC3.Checked);
         xmlwriter.SetValueAsBool("tvservice", "preferAudioTypeOverLang", mpCheckBoxPrefAudioOverLang.Checked);
 
-				xmlwriter.SetValueAsBool("tvservice", "dvbbitmapsubtitles", mpCheckBoxEnableDVBSub.Checked);
-				xmlwriter.SetValueAsBool("tvservice", "dvbttxtsubtitles", mpCheckBoxEnableTTXTSub.Checked);
+        xmlwriter.SetValueAsBool("tvservice", "dvbbitmapsubtitles", mpCheckBoxEnableDVBSub.Checked);
+        xmlwriter.SetValueAsBool("tvservice", "dvbttxtsubtitles", mpCheckBoxEnableTTXTSub.Checked);
         xmlwriter.SetValueAsBool("tvservice", "audiodualmono", enableAudioDualMonoModes.Checked);
         xmlwriter.SetValueAsBool("mytv", "hideAllChannelsGroup", cbHideAllChannels.Checked);
-        xmlwriter.SetValueAsBool("mytv", "showChannelStateIcons", cbShowChannelStateIcons.Checked);        
-  
-        foreach (ListViewItem item in mpListViewPreferredAudioLang.Items)
-        {        
-					prefLangs += (string)item.Tag + ";";
-        }
-				xmlwriter.SetValue("tvservice", "preferredaudiolanguages", prefLangs);
+        xmlwriter.SetValueAsBool("mytv", "showChannelStateIcons", cbShowChannelStateIcons.Checked);
 
-				prefLangs = "";
-				foreach (ListViewItem item in mpListViewPreferredSubLang.Items)
-				{					
-					prefLangs += (string)item.Tag + ";";
-				}
-				xmlwriter.SetValue("tvservice", "preferredsublanguages", prefLangs);
-				
+        foreach (ListViewItem item in mpListViewPreferredAudioLang.Items)
+        {
+          prefLangs += (string)item.Tag + ";";
+        }
+        xmlwriter.SetValue("tvservice", "preferredaudiolanguages", prefLangs);
+
+        prefLangs = "";
+        foreach (ListViewItem item in mpListViewPreferredSubLang.Items)
+        {
+          prefLangs += (string)item.Tag + ";";
+        }
+        xmlwriter.SetValue("tvservice", "preferredsublanguages", prefLangs);
+
       }
     }
 
@@ -268,6 +266,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpTextBoxHostname = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.enableAudioDualMonoModes = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpCheckBoxPrefAudioOverLang = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpCheckBoxPrefAC3 = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tabControlTVGeneral = new MediaPortal.UserInterface.Controls.MPTabControl();
@@ -286,8 +285,10 @@ namespace MediaPortal.Configuration.Sections
       this.mpButtonRemoveAudioLang = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpListViewPreferredAudioLang = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
       this.mpListViewAvailAudioLang = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
       this.tabPageSubtitles = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.mpGroupBox4 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.mpCheckBoxEnableTTXTSub = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -303,7 +304,8 @@ namespace MediaPortal.Configuration.Sections
       this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
       this.mpListViewAvailSubLang = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
-      this.enableAudioDualMonoModes = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.columnHeader7 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader8 = new System.Windows.Forms.ColumnHeader();
       this.mpGroupBox2.SuspendLayout();
       this.mpGroupBox1.SuspendLayout();
       this.tabControlTVGeneral.SuspendLayout();
@@ -324,7 +326,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox2.Location = new System.Drawing.Point(16, 16);
       this.mpGroupBox2.Name = "mpGroupBox2";
-      this.mpGroupBox2.Size = new System.Drawing.Size(464, 53);
+      this.mpGroupBox2.Size = new System.Drawing.Size(431, 53);
       this.mpGroupBox2.TabIndex = 10;
       this.mpGroupBox2.TabStop = false;
       this.mpGroupBox2.Text = "TV-Server";
@@ -354,12 +356,25 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.Controls.Add(this.mpCheckBoxPrefAudioOverLang);
       this.mpGroupBox1.Controls.Add(this.mpCheckBoxPrefAC3);
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox1.Location = new System.Drawing.Point(16, 308);
+      this.mpGroupBox1.Location = new System.Drawing.Point(16, 290);
       this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(465, 79);
+      this.mpGroupBox1.Size = new System.Drawing.Size(432, 79);
       this.mpGroupBox1.TabIndex = 9;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Audio stream settings";
+      // 
+      // enableAudioDualMonoModes
+      // 
+      this.enableAudioDualMonoModes.AutoSize = true;
+      this.enableAudioDualMonoModes.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
+      this.enableAudioDualMonoModes.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.enableAudioDualMonoModes.Location = new System.Drawing.Point(9, 43);
+      this.enableAudioDualMonoModes.Name = "enableAudioDualMonoModes";
+      this.enableAudioDualMonoModes.Size = new System.Drawing.Size(386, 30);
+      this.enableAudioDualMonoModes.TabIndex = 12;
+      this.enableAudioDualMonoModes.Text = "Enable AudioDualMono mode switching\r\n(if 1 audio stream contains 2x mono channels" +
+          ", you can switch between them)";
+      this.enableAudioDualMonoModes.UseVisualStyleBackColor = true;
       // 
       // mpCheckBoxPrefAudioOverLang
       // 
@@ -368,9 +383,9 @@ namespace MediaPortal.Configuration.Sections
       this.mpCheckBoxPrefAudioOverLang.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpCheckBoxPrefAudioOverLang.Location = new System.Drawing.Point(239, 22);
       this.mpCheckBoxPrefAudioOverLang.Name = "mpCheckBoxPrefAudioOverLang";
-      this.mpCheckBoxPrefAudioOverLang.Size = new System.Drawing.Size(175, 17);
+      this.mpCheckBoxPrefAudioOverLang.Size = new System.Drawing.Size(172, 17);
       this.mpCheckBoxPrefAudioOverLang.TabIndex = 11;
-      this.mpCheckBoxPrefAudioOverLang.Text = "Prefer audiotype over language:";
+      this.mpCheckBoxPrefAudioOverLang.Text = "Prefer audiotype over language";
       this.mpCheckBoxPrefAudioOverLang.UseVisualStyleBackColor = false;
       // 
       // mpCheckBoxPrefAC3
@@ -393,7 +408,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabControlTVGeneral.Location = new System.Drawing.Point(0, 2);
       this.tabControlTVGeneral.Name = "tabControlTVGeneral";
       this.tabControlTVGeneral.SelectedIndex = 0;
-      this.tabControlTVGeneral.Size = new System.Drawing.Size(505, 426);
+      this.tabControlTVGeneral.Size = new System.Drawing.Size(472, 408);
       this.tabControlTVGeneral.TabIndex = 11;
       // 
       // tabPageGeneralSettings
@@ -404,7 +419,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageGeneralSettings.Location = new System.Drawing.Point(4, 22);
       this.tabPageGeneralSettings.Name = "tabPageGeneralSettings";
       this.tabPageGeneralSettings.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPageGeneralSettings.Size = new System.Drawing.Size(497, 374);
+      this.tabPageGeneralSettings.Size = new System.Drawing.Size(464, 382);
       this.tabPageGeneralSettings.TabIndex = 0;
       this.tabPageGeneralSettings.Text = "General settings";
       this.tabPageGeneralSettings.UseVisualStyleBackColor = true;
@@ -415,7 +430,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox6.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox6.Location = new System.Drawing.Point(16, 161);
       this.mpGroupBox6.Name = "mpGroupBox6";
-      this.mpGroupBox6.Size = new System.Drawing.Size(464, 53);
+      this.mpGroupBox6.Size = new System.Drawing.Size(431, 53);
       this.mpGroupBox6.TabIndex = 12;
       this.mpGroupBox6.TabStop = false;
       this.mpGroupBox6.Text = "Mini Guide";
@@ -439,7 +454,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox5.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox5.Location = new System.Drawing.Point(16, 91);
       this.mpGroupBox5.Name = "mpGroupBox5";
-      this.mpGroupBox5.Size = new System.Drawing.Size(464, 53);
+      this.mpGroupBox5.Size = new System.Drawing.Size(431, 53);
       this.mpGroupBox5.TabIndex = 11;
       this.mpGroupBox5.TabStop = false;
       this.mpGroupBox5.Text = "TV-Group";
@@ -462,7 +477,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageAudioLanguages.Location = new System.Drawing.Point(4, 22);
       this.tabPageAudioLanguages.Name = "tabPageAudioLanguages";
       this.tabPageAudioLanguages.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPageAudioLanguages.Size = new System.Drawing.Size(497, 400);
+      this.tabPageAudioLanguages.Size = new System.Drawing.Size(464, 382);
       this.tabPageAudioLanguages.TabIndex = 3;
       this.tabPageAudioLanguages.Text = "Audio settings";
       this.tabPageAudioLanguages.UseVisualStyleBackColor = true;
@@ -482,7 +497,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox2.Location = new System.Drawing.Point(16, 16);
       this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(465, 286);
+      this.groupBox2.Size = new System.Drawing.Size(432, 286);
       this.groupBox2.TabIndex = 2;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "Preferred audio languages";
@@ -508,7 +523,7 @@ namespace MediaPortal.Configuration.Sections
       // mpButtonDownAudioLang
       // 
       this.mpButtonDownAudioLang.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpButtonDownAudioLang.Location = new System.Drawing.Point(324, 257);
+      this.mpButtonDownAudioLang.Location = new System.Drawing.Point(289, 257);
       this.mpButtonDownAudioLang.Name = "mpButtonDownAudioLang";
       this.mpButtonDownAudioLang.Size = new System.Drawing.Size(46, 20);
       this.mpButtonDownAudioLang.TabIndex = 5;
@@ -519,7 +534,7 @@ namespace MediaPortal.Configuration.Sections
       // mpButtonUpAudioLang
       // 
       this.mpButtonUpAudioLang.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpButtonUpAudioLang.Location = new System.Drawing.Point(272, 257);
+      this.mpButtonUpAudioLang.Location = new System.Drawing.Point(237, 257);
       this.mpButtonUpAudioLang.Name = "mpButtonUpAudioLang";
       this.mpButtonUpAudioLang.Size = new System.Drawing.Size(46, 20);
       this.mpButtonUpAudioLang.TabIndex = 4;
@@ -530,7 +545,7 @@ namespace MediaPortal.Configuration.Sections
       // mpButtonAddAudioLang
       // 
       this.mpButtonAddAudioLang.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpButtonAddAudioLang.Location = new System.Drawing.Point(233, 40);
+      this.mpButtonAddAudioLang.Location = new System.Drawing.Point(202, 40);
       this.mpButtonAddAudioLang.Name = "mpButtonAddAudioLang";
       this.mpButtonAddAudioLang.Size = new System.Drawing.Size(28, 20);
       this.mpButtonAddAudioLang.TabIndex = 3;
@@ -541,7 +556,7 @@ namespace MediaPortal.Configuration.Sections
       // mpButtonRemoveAudioLang
       // 
       this.mpButtonRemoveAudioLang.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpButtonRemoveAudioLang.Location = new System.Drawing.Point(233, 66);
+      this.mpButtonRemoveAudioLang.Location = new System.Drawing.Point(202, 66);
       this.mpButtonRemoveAudioLang.Name = "mpButtonRemoveAudioLang";
       this.mpButtonRemoveAudioLang.Size = new System.Drawing.Size(28, 20);
       this.mpButtonRemoveAudioLang.TabIndex = 2;
@@ -556,10 +571,11 @@ namespace MediaPortal.Configuration.Sections
       this.mpListViewPreferredAudioLang.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.mpListViewPreferredAudioLang.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader2});
+            this.columnHeader2,
+            this.columnHeader6});
       this.mpListViewPreferredAudioLang.FullRowSelect = true;
       this.mpListViewPreferredAudioLang.HideSelection = false;
-      this.mpListViewPreferredAudioLang.Location = new System.Drawing.Point(272, 40);
+      this.mpListViewPreferredAudioLang.Location = new System.Drawing.Point(239, 40);
       this.mpListViewPreferredAudioLang.Name = "mpListViewPreferredAudioLang";
       this.mpListViewPreferredAudioLang.Size = new System.Drawing.Size(183, 211);
       this.mpListViewPreferredAudioLang.TabIndex = 1;
@@ -570,7 +586,12 @@ namespace MediaPortal.Configuration.Sections
       // columnHeader2
       // 
       this.columnHeader2.Text = "Language";
-      this.columnHeader2.Width = 150;
+      this.columnHeader2.Width = 125;
+      // 
+      // columnHeader6
+      // 
+      this.columnHeader6.Text = "ID";
+      this.columnHeader6.Width = 35;
       // 
       // mpListViewAvailAudioLang
       // 
@@ -580,12 +601,13 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.mpListViewAvailAudioLang.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1});
+            this.columnHeader1,
+            this.columnHeader5});
       this.mpListViewAvailAudioLang.FullRowSelect = true;
       this.mpListViewAvailAudioLang.HideSelection = false;
-      this.mpListViewAvailAudioLang.Location = new System.Drawing.Point(9, 40);
+      this.mpListViewAvailAudioLang.Location = new System.Drawing.Point(6, 40);
       this.mpListViewAvailAudioLang.Name = "mpListViewAvailAudioLang";
-      this.mpListViewAvailAudioLang.Size = new System.Drawing.Size(216, 237);
+      this.mpListViewAvailAudioLang.Size = new System.Drawing.Size(183, 211);
       this.mpListViewAvailAudioLang.TabIndex = 0;
       this.mpListViewAvailAudioLang.UseCompatibleStateImageBehavior = false;
       this.mpListViewAvailAudioLang.View = System.Windows.Forms.View.Details;
@@ -593,7 +615,12 @@ namespace MediaPortal.Configuration.Sections
       // columnHeader1
       // 
       this.columnHeader1.Text = "Language";
-      this.columnHeader1.Width = 150;
+      this.columnHeader1.Width = 125;
+      // 
+      // columnHeader5
+      // 
+      this.columnHeader5.Text = "ID";
+      this.columnHeader5.Width = 35;
       // 
       // tabPageSubtitles
       // 
@@ -602,7 +629,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageSubtitles.Location = new System.Drawing.Point(4, 22);
       this.tabPageSubtitles.Name = "tabPageSubtitles";
       this.tabPageSubtitles.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPageSubtitles.Size = new System.Drawing.Size(497, 400);
+      this.tabPageSubtitles.Size = new System.Drawing.Size(464, 382);
       this.tabPageSubtitles.TabIndex = 2;
       this.tabPageSubtitles.Text = "Subtitle settings";
       this.tabPageSubtitles.UseVisualStyleBackColor = true;
@@ -657,7 +684,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox3.Location = new System.Drawing.Point(16, 16);
       this.mpGroupBox3.Name = "mpGroupBox3";
-      this.mpGroupBox3.Size = new System.Drawing.Size(465, 286);
+      this.mpGroupBox3.Size = new System.Drawing.Size(432, 286);
       this.mpGroupBox3.TabIndex = 3;
       this.mpGroupBox3.TabStop = false;
       this.mpGroupBox3.Text = "Preferred subtitle languages";
@@ -682,7 +709,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpButtonDownSubLang
       // 
-      this.mpButtonDownSubLang.Location = new System.Drawing.Point(291, 257);
+      this.mpButtonDownSubLang.Location = new System.Drawing.Point(289, 257);
       this.mpButtonDownSubLang.Name = "mpButtonDownSubLang";
       this.mpButtonDownSubLang.Size = new System.Drawing.Size(46, 20);
       this.mpButtonDownSubLang.TabIndex = 5;
@@ -692,7 +719,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpButtonUpSubLang
       // 
-      this.mpButtonUpSubLang.Location = new System.Drawing.Point(239, 257);
+      this.mpButtonUpSubLang.Location = new System.Drawing.Point(237, 257);
       this.mpButtonUpSubLang.Name = "mpButtonUpSubLang";
       this.mpButtonUpSubLang.Size = new System.Drawing.Size(46, 20);
       this.mpButtonUpSubLang.TabIndex = 4;
@@ -702,7 +729,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpButtonAddSubLang
       // 
-      this.mpButtonAddSubLang.Location = new System.Drawing.Point(200, 40);
+      this.mpButtonAddSubLang.Location = new System.Drawing.Point(202, 40);
       this.mpButtonAddSubLang.Name = "mpButtonAddSubLang";
       this.mpButtonAddSubLang.Size = new System.Drawing.Size(28, 20);
       this.mpButtonAddSubLang.TabIndex = 3;
@@ -712,7 +739,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpButtonRemoveSubLang
       // 
-      this.mpButtonRemoveSubLang.Location = new System.Drawing.Point(200, 66);
+      this.mpButtonRemoveSubLang.Location = new System.Drawing.Point(202, 66);
       this.mpButtonRemoveSubLang.Name = "mpButtonRemoveSubLang";
       this.mpButtonRemoveSubLang.Size = new System.Drawing.Size(28, 20);
       this.mpButtonRemoveSubLang.TabIndex = 2;
@@ -725,7 +752,8 @@ namespace MediaPortal.Configuration.Sections
       this.mpListViewPreferredSubLang.AllowDrop = true;
       this.mpListViewPreferredSubLang.AllowRowReorder = true;
       this.mpListViewPreferredSubLang.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader4});
+            this.columnHeader4,
+            this.columnHeader8});
       this.mpListViewPreferredSubLang.FullRowSelect = true;
       this.mpListViewPreferredSubLang.HideSelection = false;
       this.mpListViewPreferredSubLang.Location = new System.Drawing.Point(239, 40);
@@ -738,19 +766,20 @@ namespace MediaPortal.Configuration.Sections
       // columnHeader4
       // 
       this.columnHeader4.Text = "Language";
-      this.columnHeader4.Width = 150;
+      this.columnHeader4.Width = 125;
       // 
       // mpListViewAvailSubLang
       // 
       this.mpListViewAvailSubLang.AllowDrop = true;
       this.mpListViewAvailSubLang.AllowRowReorder = true;
       this.mpListViewAvailSubLang.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader3});
+            this.columnHeader3,
+            this.columnHeader7});
       this.mpListViewAvailSubLang.FullRowSelect = true;
       this.mpListViewAvailSubLang.HideSelection = false;
-      this.mpListViewAvailSubLang.Location = new System.Drawing.Point(9, 40);
+      this.mpListViewAvailSubLang.Location = new System.Drawing.Point(6, 40);
       this.mpListViewAvailSubLang.Name = "mpListViewAvailSubLang";
-      this.mpListViewAvailSubLang.Size = new System.Drawing.Size(183, 237);
+      this.mpListViewAvailSubLang.Size = new System.Drawing.Size(183, 211);
       this.mpListViewAvailSubLang.TabIndex = 0;
       this.mpListViewAvailSubLang.UseCompatibleStateImageBehavior = false;
       this.mpListViewAvailSubLang.View = System.Windows.Forms.View.Details;
@@ -758,20 +787,17 @@ namespace MediaPortal.Configuration.Sections
       // columnHeader3
       // 
       this.columnHeader3.Text = "Language";
-      this.columnHeader3.Width = 150;
+      this.columnHeader3.Width = 125;
       // 
-      // enableAudioDualMonoModes
+      // columnHeader7
       // 
-      this.enableAudioDualMonoModes.AutoSize = true;
-      this.enableAudioDualMonoModes.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
-      this.enableAudioDualMonoModes.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.enableAudioDualMonoModes.Location = new System.Drawing.Point(9, 43);
-      this.enableAudioDualMonoModes.Name = "enableAudioDualMonoModes";
-      this.enableAudioDualMonoModes.Size = new System.Drawing.Size(442, 30);
-      this.enableAudioDualMonoModes.TabIndex = 12;
-      this.enableAudioDualMonoModes.Text = "Enable AudioDualMono mode switching\r\n(If 1 audio stream contains e.g. LEFT=SWE,RI" +
-          "GHT=ENG you can switch between them)";
-      this.enableAudioDualMonoModes.UseVisualStyleBackColor = true;
+      this.columnHeader7.Text = "ID";
+      this.columnHeader7.Width = 35;
+      // 
+      // columnHeader8
+      // 
+      this.columnHeader8.Text = "ID";
+      this.columnHeader8.Width = 35;
       // 
       // TVClient
       // 
@@ -800,114 +826,114 @@ namespace MediaPortal.Configuration.Sections
 
     }
 
-		private void mpListView2_SelectedIndexChanged(object sender, EventArgs e)
-		{
+    private void mpListView2_SelectedIndexChanged(object sender, EventArgs e)
+    {
 
-		}
+    }
 
-		private void mpCheckBox1_CheckedChanged(object sender, EventArgs e)
-		{
+    private void mpCheckBox1_CheckedChanged(object sender, EventArgs e)
+    {
 
-		}
+    }
 
-		private void mpButtonAddAudioLang_Click(object sender, EventArgs e)
-		{
-			if (mpListViewAvailAudioLang.SelectedItems.Count == 0) return;
+    private void mpButtonAddAudioLang_Click(object sender, EventArgs e)
+    {
+      if (mpListViewAvailAudioLang.SelectedItems.Count == 0) return;
 
-			foreach (ListViewItem lang in mpListViewAvailAudioLang.SelectedItems)
-			{
-				mpListViewAvailAudioLang.Items.Remove(lang);
-				mpListViewPreferredAudioLang.Items.Add(lang);
-			}
+      foreach (ListViewItem lang in mpListViewAvailAudioLang.SelectedItems)
+      {
+        mpListViewAvailAudioLang.Items.Remove(lang);
+        mpListViewPreferredAudioLang.Items.Add(lang);
+      }
 
-		}
+    }
 
-		private void mpButtonRemoveAudioLang_Click(object sender, EventArgs e)
-		{
-			if (mpListViewPreferredAudioLang.SelectedItems.Count == 0) return;
+    private void mpButtonRemoveAudioLang_Click(object sender, EventArgs e)
+    {
+      if (mpListViewPreferredAudioLang.SelectedItems.Count == 0) return;
 
-			foreach (ListViewItem lang in mpListViewPreferredAudioLang.SelectedItems)
-			{
-				mpListViewPreferredAudioLang.Items.Remove(lang);
-				mpListViewAvailAudioLang.Items.Add(lang);
-			}
-		}
+      foreach (ListViewItem lang in mpListViewPreferredAudioLang.SelectedItems)
+      {
+        mpListViewPreferredAudioLang.Items.Remove(lang);
+        mpListViewAvailAudioLang.Items.Add(lang);
+      }
+    }
 
-		private void mpButtonUpAudioLang_Click(object sender, EventArgs e)
-		{
-			moveItemUp(mpListViewPreferredAudioLang);			
-		}
+    private void mpButtonUpAudioLang_Click(object sender, EventArgs e)
+    {
+      moveItemUp(mpListViewPreferredAudioLang);
+    }
 
-		private void mpButtonDownAudioLang_Click(object sender, EventArgs e)
-		{
-			moveItemDown(mpListViewPreferredAudioLang);									
-		}
+    private void mpButtonDownAudioLang_Click(object sender, EventArgs e)
+    {
+      moveItemDown(mpListViewPreferredAudioLang);
+    }
 
-		private void mpButtonAddSubLang_Click(object sender, EventArgs e)
-		{
-			if (mpListViewAvailSubLang.SelectedItems.Count == 0) return;
+    private void mpButtonAddSubLang_Click(object sender, EventArgs e)
+    {
+      if (mpListViewAvailSubLang.SelectedItems.Count == 0) return;
 
-			foreach (ListViewItem lang in mpListViewAvailSubLang.SelectedItems)
-			{
-				mpListViewAvailSubLang.Items.Remove(lang);
-				mpListViewPreferredSubLang.Items.Add(lang);
-			}
-		}
+      foreach (ListViewItem lang in mpListViewAvailSubLang.SelectedItems)
+      {
+        mpListViewAvailSubLang.Items.Remove(lang);
+        mpListViewPreferredSubLang.Items.Add(lang);
+      }
+    }
 
-		private void mpButtonRemoveSubLang_Click(object sender, EventArgs e)
-		{
-			if (mpListViewPreferredSubLang.SelectedItems.Count == 0) return;
+    private void mpButtonRemoveSubLang_Click(object sender, EventArgs e)
+    {
+      if (mpListViewPreferredSubLang.SelectedItems.Count == 0) return;
 
-			foreach (ListViewItem lang in mpListViewPreferredSubLang.SelectedItems)
-			{
-				mpListViewPreferredSubLang.Items.Remove(lang);
-				mpListViewAvailSubLang.Items.Add(lang);				
-			}
-		}
+      foreach (ListViewItem lang in mpListViewPreferredSubLang.SelectedItems)
+      {
+        mpListViewPreferredSubLang.Items.Remove(lang);
+        mpListViewAvailSubLang.Items.Add(lang);
+      }
+    }
 
-		private void mpButtonUpSubLang_Click(object sender, EventArgs e)
-		{
-			moveItemUp(mpListViewPreferredSubLang);						
-		}
+    private void mpButtonUpSubLang_Click(object sender, EventArgs e)
+    {
+      moveItemUp(mpListViewPreferredSubLang);
+    }
 
-		private void mpButtonDownSubLang_Click(object sender, EventArgs e)
-		{
-			moveItemDown(mpListViewPreferredSubLang);			
-		}
+    private void mpButtonDownSubLang_Click(object sender, EventArgs e)
+    {
+      moveItemDown(mpListViewPreferredSubLang);
+    }
 
-		private void moveItemDown(MediaPortal.UserInterface.Controls.MPListView mplistView)
-		{
-			ListView.SelectedIndexCollection indexes = mplistView.SelectedIndices;
-			if (indexes.Count == 0) return;
-			if (mplistView.Items.Count < 2) return;
-			for (int i = indexes.Count - 1; i >= 0; i--)
-			{
-				int index = indexes[i];
-				ListViewItem item = mplistView.Items[index];
-				mplistView.Items.RemoveAt(index);
-				if (index + 1 < mplistView.Items.Count)
-					mplistView.Items.Insert(index + 1, item);
-				else
-					mplistView.Items.Add(item);
-			}
-		}
+    private void moveItemDown(MediaPortal.UserInterface.Controls.MPListView mplistView)
+    {
+      ListView.SelectedIndexCollection indexes = mplistView.SelectedIndices;
+      if (indexes.Count == 0) return;
+      if (mplistView.Items.Count < 2) return;
+      for (int i = indexes.Count - 1; i >= 0; i--)
+      {
+        int index = indexes[i];
+        ListViewItem item = mplistView.Items[index];
+        mplistView.Items.RemoveAt(index);
+        if (index + 1 < mplistView.Items.Count)
+          mplistView.Items.Insert(index + 1, item);
+        else
+          mplistView.Items.Add(item);
+      }
+    }
 
-		private void moveItemUp(MediaPortal.UserInterface.Controls.MPListView mplistView)
-		{
+    private void moveItemUp(MediaPortal.UserInterface.Controls.MPListView mplistView)
+    {
 
-			ListView.SelectedIndexCollection indexes = mplistView.SelectedIndices;
-			if (indexes.Count == 0) return;
-			for (int i = 0; i < indexes.Count; ++i)
-			{
-				int index = indexes[i];
-				if (index > 0)
-				{
-					ListViewItem item = mplistView.Items[index];
-					mplistView.Items.RemoveAt(index);
-					mplistView.Items.Insert(index - 1, item);
-				}
-			}			
-		}
-    
+      ListView.SelectedIndexCollection indexes = mplistView.SelectedIndices;
+      if (indexes.Count == 0) return;
+      for (int i = 0; i < indexes.Count; ++i)
+      {
+        int index = indexes[i];
+        if (index > 0)
+        {
+          ListViewItem item = mplistView.Items[index];
+          mplistView.Items.RemoveAt(index);
+          mplistView.Items.Insert(index - 1, item);
+        }
+      }
+    }
+
   }
 }
