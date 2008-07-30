@@ -99,7 +99,8 @@ namespace TvPlugin
 
     long _timeOsdOnscreen;
     long _zapTimeOutValue;
-    DateTime _updateTimer = DateTime.Now;		
+    DateTime _updateTimer = DateTime.Now;
+    DateTime _updateTimerProgressbar = DateTime.Now;		
     bool _lastPause = false;
     int _lastSpeed = 1;
     DateTime _keyPressedTimer = DateTime.Now;
@@ -2000,6 +2001,18 @@ namespace TvPlugin
       if ((_statusVisible || _stepSeekVisible || (!_isOsdVisible && g_Player.Speed != 1) || (!_isOsdVisible && g_Player.Paused)) || _isOsdVisible)
       {
         TVHome.UpdateProgressPercentageBar();
+      }
+      else
+      {
+        // in fullscreen TV we still have to update the properties - since external displays depend on these.
+        // one update per. minute should be enough
+        TimeSpan tsProgressBar = DateTime.Now - _updateTimerProgressbar;
+
+        if (tsProgressBar.TotalMilliseconds > 60000)
+        {
+          TVHome.UpdateProgressPercentageBar();
+          _updateTimerProgressbar = DateTime.Now;
+        }
       }
 
       if (!VideoRendererStatistics.IsVideoFound)

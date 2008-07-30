@@ -1906,7 +1906,7 @@ namespace TvPlugin
         }        
         imgRecordingIcon.IsVisible = false;
       }
-    }
+    }    
 
     /// <summary>
     /// Update the the progressbar in the GUI which shows
@@ -1922,15 +1922,7 @@ namespace TvPlugin
       {
         return;
       }
-      /*if (!TVHome.Connected || (!g_Player.IsTVRecording && !g_Player.IsTV))
-      {
-        GUIPropertyManager.SetProperty("#TV.View.channel", "");
-        GUIPropertyManager.SetProperty("#TV.View.start", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.View.stop", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.View.title", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.View.description", String.Empty);
-        return;
-      }*/
+    
       if (g_Player.Playing && g_Player.IsTimeShifting)
       {
         if (TVHome.Card != null)
@@ -1950,22 +1942,21 @@ namespace TvPlugin
         }
       }
 
-      if (!g_Player.IsTVRecording)
+      if (!g_Player.IsTVRecording) //playing live TV
       {
         if (Navigator.Channel == null) return;
         try
         {
           if (Navigator.CurrentChannel == null)
           {
-            GUIPropertyManager.SetProperty("#TV.View.Percentage", "0");
-            GUIPropertyManager.SetProperty("#TV.View.channel", "");
-
+            GUIPropertyManager.SetProperty("#TV.View.channel", String.Empty);
             GUIPropertyManager.SetProperty("#TV.View.start", String.Empty);
             GUIPropertyManager.SetProperty("#TV.View.stop", String.Empty);
-            GUIPropertyManager.SetProperty("#TV.View.remaining", String.Empty);
-            GUIPropertyManager.SetProperty("#TV.View.genre", String.Empty);
             GUIPropertyManager.SetProperty("#TV.View.title", String.Empty);
             GUIPropertyManager.SetProperty("#TV.View.description", String.Empty);
+            GUIPropertyManager.SetProperty("#TV.View.Percentage", "0");                        
+            GUIPropertyManager.SetProperty("#TV.View.remaining", String.Empty);
+            GUIPropertyManager.SetProperty("#TV.View.genre", String.Empty);                        
             GUIPropertyManager.SetProperty("#TV.Next.start", String.Empty);
             GUIPropertyManager.SetProperty("#TV.Next.stop", String.Empty);
             GUIPropertyManager.SetProperty("#TV.Next.genre", String.Empty);
@@ -1973,6 +1964,7 @@ namespace TvPlugin
             GUIPropertyManager.SetProperty("#TV.Next.description", String.Empty);
             return;
           }
+
           GUIPropertyManager.SetProperty("#TV.View.channel", Navigator.CurrentChannel);
           GUIPropertyManager.SetProperty("#TV.View.title", Navigator.CurrentChannel);
           Program current = Navigator.Channel.CurrentProgram;
@@ -1990,6 +1982,7 @@ namespace TvPlugin
           {
             GUIPropertyManager.SetProperty("#TV.View.title", GUILocalizeStrings.Get(736));// no epg for this channel
           }
+
           Program next = Navigator.Channel.NextProgram;
           if (next != null)
           {
@@ -2014,16 +2007,16 @@ namespace TvPlugin
 
           //get current tv program
           Program prog = Navigator.Channel.CurrentProgram;
-          if (prog == null)
+          bool clearPrgProperties = false;
+          clearPrgProperties = (prog == null);
+
+          if (!clearPrgProperties)
           {
-            GUIPropertyManager.SetProperty("#TV.View.Percentage", "0");
-            GUIPropertyManager.SetProperty("#TV.Record.percent1", "0");
-            GUIPropertyManager.SetProperty("#TV.Record.percent2", "0");
-            GUIPropertyManager.SetProperty("#TV.Record.percent3", "0");
-            return;
+            ts = prog.EndTime - prog.StartTime;
+            clearPrgProperties = (ts.TotalSeconds <= 0);
           }
-          ts = prog.EndTime - prog.StartTime;
-          if (ts.TotalSeconds <= 0)
+          
+          if (clearPrgProperties)
           {
             GUIPropertyManager.SetProperty("#TV.View.Percentage", "0");
             GUIPropertyManager.SetProperty("#TV.Record.percent1", "0");
@@ -3405,7 +3398,7 @@ namespace TvPlugin
         }
         if (newChannel == null)
           newChannel = m_currentChannel;
-        if (m_currentChannel != newChannel && newChannel != null)
+        if (m_currentChannel.IdChannel != newChannel.IdChannel && newChannel != null)
         {
           m_currentChannel = newChannel;
           m_currentChannel.CurrentGroup = CurrentGroup;
