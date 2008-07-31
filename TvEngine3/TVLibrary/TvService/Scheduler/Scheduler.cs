@@ -172,6 +172,24 @@ namespace TvService
       }
     }
 
+    private void CheckAndDeleteOrphanedRecordings()
+    {
+      List<VirtualCard> vCards = _tvController.GetAllRecordingCards();
+
+      foreach (VirtualCard vCard in vCards)
+      {
+        int schedId = vCard.RecordingScheduleId;
+
+        Schedule sc = Schedule.Retrieve(schedId);
+        if (sc == null)
+        {
+          //seems like the schedule has disappeared  stop the recording also.
+          Log.Debug("Orphaned Recording found {0} - removing", schedId);
+          StopRecordingSchedule(schedId);
+        }
+      }
+    }
+
     /// <summary>
     /// DoSchedule() will start recording any schedule if its time todo so
     /// </summary>
@@ -185,7 +203,7 @@ namespace TvService
 
         //if we are already recording this schedule then do nothing
         VirtualCard card;
-        if (IsRecordingSchedule(schedule.IdSchedule, out card)) continue;
+        if (IsRecordingSchedule(schedule.IdSchedule, out card)) continue;        
 
         DateTime now = DateTime.Now;
         //check if this series is canceled
@@ -198,6 +216,8 @@ namespace TvService
           //yes, then lets recording it
           StartRecord(newRecording);
         }
+
+        CheckAndDeleteOrphanedRecordings();
       }
     }
 

@@ -1105,6 +1105,32 @@ namespace TvService
       return false;
     }
 
+    public List<VirtualCard> GetAllRecordingCards ()
+    {
+      List<VirtualCard> recCards = new List<VirtualCard>();      
+
+      Dictionary<int, ITvCardHandler>.Enumerator en = _cards.GetEnumerator();
+      ITvCardHandler tvcard = null;      
+      while (en.MoveNext())
+      {
+        tvcard = en.Current.Value;
+        User[] users = tvcard.Users.GetUsers();
+        if (users == null) continue;
+        if (users.Length == 0) continue;
+        for (int i = 0; i < users.Length; ++i)
+        {
+          User user = users[i];                      
+          bool isREC = tvcard.Recorder.IsRecording(ref user);
+          if (isREC)
+          {
+            VirtualCard card = GetVirtualCard(user);
+            recCards.Add(card);
+          }                     
+        }
+      }
+      return recCards;
+    }
+
     /// <summary>
     /// Determines whether the specified channel name is recording.
     /// </summary>
@@ -1136,7 +1162,7 @@ namespace TvService
           if (tvcard.CurrentChannelName(ref user) == channelName)
           {
             if (!isREC)
-            {
+            {              
               isREC = tvcard.Recorder.IsRecording(ref user);
               if (isREC)
               {
