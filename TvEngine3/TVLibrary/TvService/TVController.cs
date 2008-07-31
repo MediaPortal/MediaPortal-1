@@ -396,28 +396,36 @@ namespace TvService
             {
               if (dbsCard.DevicePath == _localCardCollection.Cards[cardNumber].DevicePath)
               {
-                ITVCard unknownCard = _localCardCollection.Cards[cardNumber];                                
-                
-                if (unknownCard is TvCardBase)
+                Card cardDB = layer.GetCardByDevicePath(_localCardCollection.Cards[cardNumber].DevicePath);
+
+                bool cardEnabled = cardDB.Enabled;
+                bool cardPresent = _localCardCollection.Cards[cardNumber].CardPresent;                
+
+                if (cardEnabled && cardPresent)
                 {
-                  TvCardBase card = (TvCardBase)unknownCard;
-                  if (card.PreloadCard)
+                  ITVCard unknownCard = _localCardCollection.Cards[cardNumber];
+
+                  if (unknownCard is TvCardBase)
                   {
-                    Log.Info("Controller: preloading card :{0}", card.Name);                    
-                    card.BuildGraph();
-                    if (unknownCard is TvCardAnalog)
+                    TvCardBase card = (TvCardBase)unknownCard;
+                    if (card.PreloadCard)
                     {
-                      ((TvCardAnalog)unknownCard).ReloadQualityControlConfiguration();
+                      Log.Info("Controller: preloading card :{0}", card.Name);
+                      card.BuildGraph();
+                      if (unknownCard is TvCardAnalog)
+                      {
+                        ((TvCardAnalog)unknownCard).ReloadQualityControlConfiguration();
+                      }
+                    }
+                    else
+                    {
+                      Log.Info("Controller: NOT preloading card :{0}", card.Name);
                     }
                   }
                   else
                   {
-                    Log.Info("Controller: NOT preloading card :{0}", card.Name);
+                    Log.Info("Controller: NOT preloading card :{0}", unknownCard.Name);
                   }
-                }
-                else
-                {
-                  Log.Info("Controller: NOT preloading card :{0}", unknownCard.Name);
                 }
 
                 found = true;
