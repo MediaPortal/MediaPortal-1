@@ -366,7 +366,10 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
 
       // execute the statement/query and create a collection of User instances from the result set
-      return (Program)ObjectFactory.GetCollection(typeof(Program), stmt.Execute())[0];
+      IList result = ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
+      if (result == null) return null;      
+      if (result.Count == 0) return null;
+      return (Program)result[0];
 
       // TODO In the end, a GentleList should be returned instead of an arraylist
       //return new GentleList( typeof(ChannelMap), this );

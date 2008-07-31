@@ -560,16 +560,15 @@ namespace TvPlugin
 			Update();
     }
 
-    private VirtualCard DeleteRecordingPrompt(TvServer server, Schedule schedule)
-    {
-      VirtualCard card = null;
-      if (server.IsRecordingSchedule(schedule.IdSchedule, out card)) //check if we currently recoding this schedule
+    private bool DeleteRecordingPrompt(Schedule schedule, Program program)
+    {      
+      if (schedule.IsRecordingProgram(program, true)) //check if we currently recoding this schedule      
       {
         GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
         if (null == dlgYesNo)
         {
           Log.Error("TVProgramInfo.DeleteRecordingPrompt: ERROR no GUIDialogYesNo found !!!!!!!!!!");
-          return card;
+          return false;
         }
         dlgYesNo.SetHeading(GUILocalizeStrings.Get(653)); //Delete this recording?
         dlgYesNo.SetLine(1, GUILocalizeStrings.Get(730)); //This schedule is recording. If you delete
@@ -579,37 +578,38 @@ namespace TvPlugin
 
         if (dlgYesNo.IsConfirmed)
         {
-          server.StopRecordingSchedule(schedule.IdSchedule);
+          //server.StopRecordingSchedule(schedule.IdSchedule);
+          return true;
         }
         else
         {
-          Log.Debug("TVProgramInfo.DeleteRecordingPrompt: not confirmed");
-          return card;
+          Log.Debug("TVProgramInfo.DeleteRecordingPrompt: not confirmed");          
         }
       }
-      return card;
+      return false;
     }
-
 
     void CancelProgram(Program program, Schedule schedule)
     {
       Log.Debug("TVProgammInfo.CancelProgram - programm = {0}", program.ToString());
       Log.Debug("                            - schedule = {0}", schedule.ToString());
       Log.Debug(" ProgramID = {0}            ScheduleID = {1}", program.IdProgram, schedule.IdSchedule);
-
-      TvServer server = new TvServer();
-      VirtualCard card = null;
+      
+      bool deleteEntireSched = false;
 
       if (schedule.ScheduleType == (int)ScheduleRecordingType.Once)
       {
-        card = DeleteRecordingPrompt(server, schedule);
-        schedule.Delete();
+        TVHome.PromptAndDeleteRecordingSchedule(schedule.IdSchedule, program, false, false);
+        return;        
       }
 
       else if ((schedule.ScheduleType == (int)ScheduleRecordingType.Daily)
             || (schedule.ScheduleType == (int)ScheduleRecordingType.Weekends)
             || (schedule.ScheduleType == (int)ScheduleRecordingType.Weekly)
-            || (schedule.ScheduleType == (int)ScheduleRecordingType.WorkingDays))
+            || (schedule.ScheduleType == (int)ScheduleRecordingType.WorkingDays)
+            || (schedule.ScheduleType == (int)ScheduleRecordingType.EveryTimeOnEveryChannel) 
+            || (schedule.ScheduleType == (int)ScheduleRecordingType.EveryTimeOnThisChannel))
+
       {
         GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
         if (dlg == null)
@@ -624,7 +624,7 @@ namespace TvPlugin
         dlg.AddLocalizedString(982); //Delete this entire schedule
         dlg.DoModal(GetID);
         if (dlg.SelectedLabel == -1) return;
-        bool deleteEntireSched = false;
+        
         switch (dlg.SelectedId)
         {
           case 981: //delete specific series
@@ -635,51 +635,9 @@ namespace TvPlugin
             deleteEntireSched = true;
             break;
         }
-        card = DeleteRecordingPrompt(server, schedule);
-        if (deleteEntireSched)
-          schedule.Delete();
-        else
-        {
-          CanceledSchedule canceledSchedule = new CanceledSchedule(schedule.IdSchedule, program.StartTime);
-          canceledSchedule.Persist();
-        }
-      }
 
-      if ((schedule.ScheduleType == (int)ScheduleRecordingType.EveryTimeOnEveryChannel) || (schedule.ScheduleType == (int)ScheduleRecordingType.EveryTimeOnThisChannel))
-      {
-        GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-        if (dlg == null)
-        {
-          Log.Error("TVProgramInfo.CancelProgram: ERROR no GUIDialogMenu found !!!!!!!!!!");
-          return;
-        }
-
-        dlg.Reset();
-        dlg.SetHeading(program.Title);
-        dlg.AddLocalizedString(981); //Cancel this show
-        dlg.AddLocalizedString(982); //Delete this entire schedule
-        dlg.DoModal(GetID);
-        if (dlg.SelectedLabel == -1) return;
-        switch (dlg.SelectedId)
-        {
-          case 981: //delete specific series
-            CanceledSchedule canceledSchedule = new CanceledSchedule(schedule.IdSchedule, program.StartTime);
-            canceledSchedule.Persist();
-            break;
-          case 982: //Delete entire recording
-            schedule.Delete();
-            break;
-        }
-      }
-      //Schedules of type "EveryTimeOnXChannel never record they only create type "Once" schedules as needed.
-      //Here we check if that type "Once" associated sched has been created and if it's currently recording.
-      Schedule assocSchedule = Schedule.RetrieveOnce(schedule.IdChannel, schedule.ProgramName, schedule.StartTime, schedule.EndTime);
-      if (assocSchedule != null)
-      {
-        card = DeleteRecordingPrompt(server, assocSchedule);        
-        assocSchedule.Delete();
-      }
-      server.OnNewSchedule();
+        TVHome.PromptAndDeleteRecordingSchedule(schedule.IdSchedule, program, deleteEntireSched, false);       
+      }                  
     }
 		
 		void CreateProgram(Program program, int scheduleType)
@@ -778,7 +736,9 @@ namespace TvPlugin
 			if (saveSchedule != null)
 			{
 				Log.Debug("TVProgramInfo.CreateProgram - UnCancleSerie at {0}", program.StartTime);
-				saveSchedule.UnCancelSerie(program.StartTime);
+				//saveSchedule.UnCancelSerie(program.StartTime);
+        saveSchedule.UnCancelSerie();
+
 				saveSchedule.Persist();
 			}
 			else

@@ -1062,7 +1062,11 @@ namespace TvPlugin
                 if (rec1.ScheduleType != (int)ScheduleRecordingType.Once)
                 {
                   //delete specific series
-                  TVHome.DeleteRecordingSchedule(Schedule.Retrieve(rec1.IdSchedule));
+                  Schedule sched = Schedule.Retrieve(rec1.IdSchedule);
+                  TVHome.PromptAndDeleteRecordingSchedule(sched.IdSchedule, sched.ReferencedChannel().CurrentProgram, false, false);
+
+                  //TVHome.DeleteRecordingSchedule(Schedule.Retrieve(rec1.IdSchedule));
+
                   /*
                   server.StopRecordingSchedule(rec1.IdSchedule);
                   CanceledSchedule schedule = new CanceledSchedule(rec1.IdSchedule, program.StartTime);

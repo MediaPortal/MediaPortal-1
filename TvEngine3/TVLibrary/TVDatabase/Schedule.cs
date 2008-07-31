@@ -86,7 +86,7 @@ namespace TvDatabase
       EndTime = endTime;
       KeepDate = MinSchedule;
       KeepMethod = (int)KeepMethodType.UntilSpaceNeeded;
-    	MaxAirings = Int32.MaxValue; //BAV: changed due to mantis bug 1162 - old value 5;
+      MaxAirings = Int32.MaxValue; //BAV: changed due to mantis bug 1162 - old value 5;
       PostRecordInterval = 0;
       PreRecordInterval = 0;
       Priority = 0;
@@ -377,6 +377,68 @@ namespace TvDatabase
     }
 
     /// <summary>
+    /// Retreives the first found instance of a 'Series' typed schedule given its Channel,Title,Start and End Times 
+    /// </summary>
+    /// <param name="IdChannel">Channel id to look for</param>
+    /// <param name="title">Title we wanna look for</param>
+    /// <param name="startTime">StartTime</param>
+    /// <param name="endTime">EndTime</param>
+    /// <returns>schedule instance or null</returns>
+    public static Schedule RetrieveSeries(int idChannel, string programName, DateTime startTime, DateTime endTime)
+    {
+      //select * from 'foreigntable'
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Schedule));
+
+      // 
+      sb.AddConstraint(Operator.NotEquals, "scheduleType", 0);
+      sb.AddConstraint(Operator.Equals, "idChannel", idChannel);
+      sb.AddConstraint(Operator.Equals, "programName", programName);
+      sb.AddConstraint(Operator.Equals, "startTime", startTime);
+      sb.AddConstraint(Operator.Equals, "endTime", endTime);
+      // passing true indicates that we'd like a list of elements, i.e. that no primary key
+      // constraints from the type being retrieved should be added to the statement
+      SqlStatement stmt = sb.GetStatement(true);
+
+      // execute the statement/query and create a collection of User instances from the result set
+      IList getList = ObjectFactory.GetCollection(typeof(Schedule), stmt.Execute());
+      if (getList.Count != 0) return (Schedule)getList[0];
+      else return null;
+
+      // TODO In the end, a GentleList should be returned instead of an arraylist
+      //return new GentleList( typeof(ChannelMap), this );
+    }
+
+    /// <summary>
+    /// Retreives the first found instance of a 'Series' typed schedule given its Channel,Title,Start and End Times 
+    /// </summary>
+    /// <param name="IdChannel">Channel id to look for</param>    
+    /// <param name="startTime">StartTime</param>
+    /// <param name="endTime">EndTime</param>
+    /// <returns>schedule instance or null</returns>
+    public static Schedule RetrieveSeries(int idChannel, DateTime startTime, DateTime endTime)
+    {
+      //select * from 'foreigntable'
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Schedule));
+
+      // 
+      sb.AddConstraint(Operator.NotEquals, "scheduleType", 0);
+      sb.AddConstraint(Operator.Equals, "idChannel", idChannel);      
+      sb.AddConstraint(Operator.Equals, "startTime", startTime);
+      sb.AddConstraint(Operator.Equals, "endTime", endTime);
+      // passing true indicates that we'd like a list of elements, i.e. that no primary key
+      // constraints from the type being retrieved should be added to the statement
+      SqlStatement stmt = sb.GetStatement(true);
+
+      // execute the statement/query and create a collection of User instances from the result set
+      IList getList = ObjectFactory.GetCollection(typeof(Schedule), stmt.Execute());
+      if (getList.Count != 0) return (Schedule)getList[0];
+      else return null;
+
+      // TODO In the end, a GentleList should be returned instead of an arraylist
+      //return new GentleList( typeof(ChannelMap), this );
+    }
+
+    /// <summary>
     /// Retreives the first found instance of a 'Once' typed schedule given its Channel,Title,Start and End Times 
     /// </summary>
     /// <param name="IdChannel">Channel id to look for</param>
@@ -495,14 +557,23 @@ namespace TvDatabase
       }
       return false;
     }
+
+    public void UnCancelSerie()
+    {
+      foreach (CanceledSchedule schedule in ReferringCanceledSchedule())
+      {                
+        schedule.Remove();        
+      }
+      return;
+    }
+
     public void UnCancelSerie(DateTime startTime)
     {
       foreach (CanceledSchedule schedule in ReferringCanceledSchedule())
       {
         if (schedule.CancelDateTime == startTime)
         {
-          schedule.Remove();
-          return;
+          schedule.Remove();          
         }
       }
       return;
@@ -519,6 +590,8 @@ namespace TvDatabase
     /// <seealso cref="MediaPortal.TV.Database.TVProgram"/>
     public bool IsRecordingProgram(Program program, bool filterCanceledRecordings)
     {
+      if (program == null) return false;
+
       ScheduleRecordingType scheduleType = (ScheduleRecordingType)this.ScheduleType;
       switch (scheduleType)
       {
@@ -665,9 +738,15 @@ namespace TvDatabase
       foreach (Conflict conflict in list)
         conflict.Remove();
 
+      //Schedule parentSeriesSched = RetrieveSeries(this.ReferencedChannel().IdChannel, this.programName, this.startTime, this.endTime);
+      //if (parentSeriesSched == null)
+      //{
       list = ReferringCanceledSchedule();
       foreach (CanceledSchedule schedule in list)
+      {
         schedule.Remove();
+      }
+      //}
 
       // does the schedule still exist ?
       // if yes then remove it, if no leave it.
@@ -736,19 +815,19 @@ namespace TvDatabase
         }
       }
       return false;
-      
+
     }
 
     public QualityType QualityType
     {
       get
       {
-        return (QualityType) (quality / 10);
+        return (QualityType)(quality / 10);
       }
       set
       {
         int type = ((int)value);
-        quality = (type*10) + (quality % 10);
+        quality = (type * 10) + (quality % 10);
       }
     }
 
@@ -761,7 +840,7 @@ namespace TvDatabase
       set
       {
         int mode = ((int)value);
-        quality = mode + ((quality / 10)*10);
+        quality = mode + ((quality / 10) * 10);
       }
     }
 

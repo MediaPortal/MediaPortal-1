@@ -624,11 +624,14 @@ namespace TvPlugin
       return;
       */
     }
+
+
     void OnShowContextMenu(int iItem, bool clicked)
     {
       m_iSelectedItem = iItem;
       GUIListItem item = GetItem(iItem);
       if (item == null) return;
+
       if (item.IsFolder && clicked)
 			{
 				bool noitems = false;
@@ -657,7 +660,8 @@ namespace TvPlugin
       bool showSeries = btnSeries.Selected;
 
       Schedule rec = item.TVTag as Schedule;
-      if (rec == null) return;
+      if (rec == null) return;      
+
       Log.Info("OnShowContextMenu: Rec = {0}", rec.ToString());
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       if (dlg == null) return;      
@@ -682,19 +686,31 @@ namespace TvPlugin
       }
       VirtualCard card;
       TvServer server = new TvServer();
-      if (server.IsRecordingSchedule(rec.IdSchedule, out card))
+
+      bool isRec = TVHome.IsRecordingSchedule(rec, null, out card);      
+
+      if (isRec)
       {
         dlg.AddLocalizedString(979); //Play recording from beginning
         dlg.AddLocalizedString(980); //Play recording from live point
       }
-      dlg.AddLocalizedString(1048); // settings
+
+
+      Schedule schedDB = Schedule.Retrieve(rec.IdSchedule);
+      if (schedDB.ScheduleType != (int)ScheduleRecordingType.Once)
+      {
+        dlg.AddLocalizedString(1048); // settings
+      }
+
       dlg.DoModal(GetID);
       if (dlg.SelectedLabel == -1) return;
 
+      bool isSchedRec = TVHome.IsRecordingSchedule(rec, null, out card);
+
       string fileName = "";
-      if (server.IsRecordingSchedule(rec.IdSchedule, out card))
+      if (isSchedRec)
       {
-        fileName = card.RecordingFileName;
+        fileName = card.RecordingFileName;        
       }
       Log.Info("recording fname:{0}", fileName);
       switch (dlg.SelectedId)
@@ -713,21 +729,13 @@ namespace TvPlugin
           break;
 
         case 981: //Cancel this show
-          {
-            if (server.IsRecordingSchedule(rec.IdSchedule, out card) || server.IsRecording(rec.ReferencedChannel().Name, out card))
+          {            
+            Program prgFromSchedule = Program.RetrieveByTitleAndTimes(rec.ProgramName, rec.StartTime, rec.EndTime);
+            bool res = TVHome.PromptAndDeleteRecordingSchedule(schedDB.IdSchedule, prgFromSchedule, false, false);            
+            if (res)
             {
-              if (PromptDeleteRecordingInProgress(true))
-              {
-                TVHome.DeleteRecordingSchedule(Schedule.Retrieve(rec.IdSchedule));
-              }                            
+              LoadDirectory();
             }
-            else
-            {
-              CanceledSchedule schedule = new CanceledSchedule(rec.IdSchedule, rec.StartTime);
-              schedule.Persist();
-              server.OnNewSchedule();                            
-            }
-            LoadDirectory();
           }
           break;
 
@@ -736,40 +744,11 @@ namespace TvPlugin
 
         case 618: // delete entire recording
           {
-            bool isRecSchedule = server.IsRecordingSchedule(rec.IdSchedule, out card);
-            bool isRec = false;
-
-            if (card == null || (card != null && card.RecordingScheduleId == -1))
-            {
-              isRec = server.IsRecording(rec.ReferencedChannel().Name, out card);
-            }
-
-            if (isRecSchedule || isRec)
-            {
-              if (PromptDeleteRecordingInProgress(false))
-              {              	              	
-                /*server.StopRecordingSchedule(card.RecordingScheduleId);
-                rec = Schedule.Retrieve(rec.IdSchedule);
-                if (rec != null)
-                {
-                  rec.Delete();
-                }
-                */
-                TVHome.DeleteRecordingSchedule(Schedule.Retrieve(card.RecordingScheduleId));
-                LoadDirectory();
-              }                                                            
-            }
-            else //if (PromptDeleteEpisode(rec.ProgramName))  => asking once again makes no sense here
-            {            	            	
-              server.StopRecordingSchedule(rec.IdSchedule);
-              rec = Schedule.Retrieve(rec.IdSchedule);
-              if (rec != null)
-              {
-                rec.Delete();
-              }        
-              server.OnNewSchedule();              
-              
-
+            Schedule recFromDB = Schedule.Retrieve(rec.IdSchedule);
+            Program prgFromSchedule = Program.RetrieveByTitleAndTimes(rec.ProgramName, rec.StartTime, rec.EndTime);
+            bool res = TVHome.PromptAndDeleteRecordingSchedule(recFromDB.IdSchedule, prgFromSchedule, true, false);
+            if (res)
+            {              
               if (showSeries && !item.IsFolder)
               {
                 OnShowContextMenu(0, true);
@@ -778,8 +757,8 @@ namespace TvPlugin
               else
               {
                 LoadDirectory();
-              }
-            }            
+              }                                     
+            }
           }
           break;
 
@@ -788,6 +767,8 @@ namespace TvPlugin
             g_Player.Stop(true);
             if (System.IO.File.Exists(fileName))
             {
+              TvDatabase.Recording recDB = Recording.Retrieve(card.RecordingFileName);
+              TvRecorded.SetActiveRecording(recDB);
               g_Player.Play(fileName, g_Player.MediaType.Recording);
               g_Player.ShowFullScreenWindow();
               return;
@@ -797,11 +778,13 @@ namespace TvPlugin
               string url = server.GetRtspUrlForFile(fileName);
               Log.Info("recording url:{0}", url);
               if (url.Length > 0)
-              {
+              {                
                 g_Player.Play(url, g_Player.MediaType.Recording);
 
                 if (g_Player.Playing)
                 {
+                  TvDatabase.Recording recDB = Recording.Retrieve(card.RecordingFileName);
+                  TvRecorded.SetActiveRecording(recDB);
                   g_Player.SeekAbsolute(0);
                   g_Player.SeekAbsolute(0);
                   g_Player.ShowFullScreenWindow();
@@ -848,43 +831,8 @@ namespace TvPlugin
       }
       while (m_iSelectedItem >= GetItemCount() && m_iSelectedItem > 0) m_iSelectedItem--;
       GUIControl.SelectItemControl(GetID, listSchedules.GetID, m_iSelectedItem);
-    }
-
-    private bool PromptDeleteRecordingInProgress(bool episode)
-    {
-      GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-      if (null == dlgYesNo) return false;
-
-      dlgYesNo.SetDefaultToYes(false);
-      if (episode)
-      {
-        dlgYesNo.SetHeading(GUILocalizeStrings.Get(200051));//Delete this episode?
-      }
-      else
-      {
-        dlgYesNo.SetHeading(GUILocalizeStrings.Get(653));//Delete this recording?
-      }
-      dlgYesNo.SetLine(1, GUILocalizeStrings.Get(730));//This schedule is recording. If you delete
-      dlgYesNo.SetLine(2, GUILocalizeStrings.Get(731));//the schedule then the recording is stopped.
-      dlgYesNo.SetLine(3, GUILocalizeStrings.Get(732));//are you sure
-      dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
-
-      return dlgYesNo.IsConfirmed;
     }    
-
-    private bool PromptDeleteEpisode(string episodeName)
-    {
-      GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-      if (null == dlgYesNo) return false;
-
-      dlgYesNo.SetHeading(GUILocalizeStrings.Get(200051));//Delete this episode?
-      dlgYesNo.SetLine(1, episodeName);//name of the episode
-      dlgYesNo.SetLine(2, GUILocalizeStrings.Get(506)); // Are you sure?
-      dlgYesNo.SetLine(3, String.Empty);
-      dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
-
-      return dlgYesNo.IsConfirmed;
-    }
+    
 
     void ChangeType(Schedule rec)
     {
@@ -987,7 +935,8 @@ namespace TvPlugin
         dlg.EnableChannel = true;
         dlg.EnableStartTime = true;
         TvServer server = new TvServer();
-        if (server.IsRecordingSchedule(rec.IdSchedule, out card))
+
+        if (rec.IsRecordingProgram(rec.ReferencedChannel().CurrentProgram, true))        
         {
           dlg.EnableChannel = false;
           dlg.EnableStartTime = false;

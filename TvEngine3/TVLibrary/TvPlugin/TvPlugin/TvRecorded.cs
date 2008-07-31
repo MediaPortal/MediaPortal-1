@@ -210,6 +210,11 @@ namespace TvPlugin
       return m_oActiveRecording;
     }
 
+    public static void SetActiveRecording(Recording rec)
+    {
+      m_oActiveRecording = rec;
+    }    
+
     public static bool IsLiveRecording()
     {
       return m_bIsLiveRecording;
@@ -1128,7 +1133,7 @@ namespace TvPlugin
       bool activeRecDeleted = false;
       TvServer server = new TvServer(); ;
       if (isRec)
-      {
+      {        
         dlgYesNo.SetHeading(GUILocalizeStrings.Get(653));//Delete this recording?
         dlgYesNo.SetLine(1, GUILocalizeStrings.Get(730));//This schedule is recording. If you delete
         dlgYesNo.SetLine(2, GUILocalizeStrings.Get(731));//the schedule then the recording is stopped.
@@ -1137,7 +1142,7 @@ namespace TvPlugin
         if (!dlgYesNo.IsConfirmed)
         {
           return;
-        }
+        }        
 
         IList schedulesList = Schedule.ListAll();
         if (schedulesList != null)
@@ -1164,14 +1169,14 @@ namespace TvPlugin
                     g_Player.Stop();
                   }
 
-                  TVHome.DeleteRecordingSchedule(s);
-                  /*
+                  //TVHome.DeleteRecordingSchedule(s);                  
                   CanceledSchedule schedule = new CanceledSchedule(s.IdSchedule, s.StartTime);
                   schedule.Persist();
                   server.OnNewSchedule();
                   server.StopRecordingSchedule(s.IdSchedule);
-                  */
+                
                   activeRecDeleted = true;
+                  
                 }
               }
             }
@@ -1546,22 +1551,15 @@ namespace TvPlugin
       Log.Info("TvRecorded:OnStopped {0} {1}", type, filename);
       if (type != g_Player.MediaType.Recording) return;
 
-      if (filename.Substring(0, 4) == "rtsp")
-      {
-        filename = g_Player.currentFileName;
-      }
-
-      // only keep the filename, making the DB lookup more simple    
-      if (g_Player.currentFileName != "")
-      {
-        FileInfo f = new FileInfo(g_Player.currentFileName);
-        filename = f.Name;
-      }
-      else
+      // the m_oActiveRecording object should always reflect the currently played back recording
+      // we can not rely on filename from the method parameter, as this can be a RTSP://123455 kind of URL.
+      filename = m_oActiveRecording.FileName;
+      
+      if (filename.Length > 0)
       {
         FileInfo f = new FileInfo(filename);
         filename = f.Name;
-      }            
+      }
 
       TvBusinessLayer layer = new TvBusinessLayer();
       Recording rec = layer.GetRecordingByFileName(filename);

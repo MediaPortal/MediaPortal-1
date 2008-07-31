@@ -993,28 +993,16 @@ namespace TvPlugin
               {
                 case 875:
                   //record current program
-                  _isStartingTSForRecording = !g_Player.IsTimeShifting;
-                  Program program = channel.CurrentProgram;
-                  rec = new Schedule(program.IdChannel, program.Title, program.StartTime, program.EndTime);
-                  rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
-                  rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
-                  rec.RecommendedCard = TVHome.Card.Id;
+                  _isStartingTSForRecording = !g_Player.IsTimeShifting;                  
 
-                  rec.Persist();
-                  server.OnNewSchedule();
+                  TVHome.StartRecordingSchedule(channel, false);                             
                   break;
 
                 case 876:
                   //manual record
                   _isStartingTSForRecording = !g_Player.IsTimeShifting;
 
-                  rec = new Schedule(channel.IdChannel, GUILocalizeStrings.Get(413) + " (" + channel.DisplayName + ")", DateTime.Now, DateTime.Now.AddDays(1));
-                  rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
-                  rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
-                  rec.RecommendedCard = TVHome.Card.Id;
-
-                  rec.Persist();
-                  server.OnNewSchedule();
+                  TVHome.StartRecordingSchedule(channel, true);                             
                   break;
                 default:
                   return true;
@@ -1023,15 +1011,9 @@ namespace TvPlugin
             }
           }
           else
-          {
+          {            
             _isStartingTSForRecording = !g_Player.IsTimeShifting;
-            Schedule rec = new Schedule(channel.IdChannel, (int)ScheduleRecordingType.Once, GUILocalizeStrings.Get(413) + " (" + channel.DisplayName + ")", DateTime.Now, DateTime.Now.AddDays(1), 1, 1, "", 1, 1, Schedule.MinSchedule, 5, 5, Schedule.MinSchedule);
-            rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
-            rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
-            rec.RecommendedCard = TVHome.Card.Id;
-
-            rec.Persist();
-            server.OnNewSchedule();
+            TVHome.StartRecordingSchedule(channel, true);           
           }
 
           // check if recorder has to start timeshifting for this recording

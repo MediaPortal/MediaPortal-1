@@ -240,6 +240,28 @@ namespace TvDatabase
     }
 
     /// <summary>
+    /// Retrieves an entity given it's filename.
+    /// </summary>
+    public static Recording Retrieve(string fileName)
+    {
+      // Return null if id is smaller than seed and/or increment for autokey
+      if (fileName == null || fileName.Length == 0)
+      {
+        return null;
+      }
+
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Recording));
+      sb.AddConstraint(Operator.Like, "filename", fileName);
+
+      SqlStatement stmt = sb.GetStatement(true);
+
+      // execute the statement/query and create a collection of User instances from the result set
+      IList getList = ObjectFactory.GetCollection(typeof(Recording), stmt.Execute());
+      if (getList.Count != 0) return (Recording)getList[0];
+      else return null;           
+    }
+
+    /// <summary>
     /// Retrieves an entity given it's id, using Gentle.Framework.Key class.
     /// This allows retrieval based on multi-column keys.
     /// </summary>

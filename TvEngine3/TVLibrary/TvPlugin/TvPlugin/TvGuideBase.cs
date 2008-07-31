@@ -2541,10 +2541,12 @@ namespace TvPlugin
                 {
                   recMatchFound = true;
 
-                  string fileName = "";
                   TvServer server = new TvServer();
                   VirtualCard card;
-                  if (server.IsRecordingSchedule(rec.IdSchedule, out card))
+
+                  string fileName = "";                  
+                  bool isRec = TVHome.IsRecordingSchedule(rec, null, out card);      
+                  if (isRec)
                   {
                     fileName = card.RecordingFileName;
                   }
@@ -2571,6 +2573,8 @@ namespace TvPlugin
                           g_Player.Stop(true);
                           if (System.IO.File.Exists(fileName))
                           {
+                            TvDatabase.Recording recDB = Recording.Retrieve(card.RecordingFileName);
+                            TvRecorded.SetActiveRecording(recDB);
                             g_Player.Play(fileName, g_Player.MediaType.Recording);
                             g_Player.ShowFullScreenWindow();
                             return;
@@ -2585,6 +2589,8 @@ namespace TvPlugin
 
                               if (g_Player.Playing)
                               {
+                                TvDatabase.Recording recDB = Recording.Retrieve(card.RecordingFileName);
+                                TvRecorded.SetActiveRecording(recDB);
                                 g_Player.SeekAbsolute(0);
                                 g_Player.SeekAbsolute(0);
                                 g_Player.ShowFullScreenWindow();
