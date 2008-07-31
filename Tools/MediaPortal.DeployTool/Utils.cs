@@ -55,10 +55,12 @@ namespace MediaPortal.DeployTool
     static Localizer()
     {
     }
+
     Localizer()
     {
       _rscMan = new ResourceManager("MediaPortal.DeployTool.MediaPortal.DeployTool", System.Reflection.Assembly.GetExecutingAssembly());
     }
+
     public static Localizer Instance
     {
       get
@@ -76,10 +78,17 @@ namespace MediaPortal.DeployTool
     {
       return _rscMan.GetString(id);
     }
+
+    public string GetDefaultString(string id)
+    {
+      return _rscMan.GetString(id, new CultureInfo("en-US"));
+    }
+
     public void SwitchCulture(string cultureId)
     {
       System.Threading.Thread.CurrentThread.CurrentUICulture = new CultureInfo(cultureId);
     }
+
   }
 
   class Utils
@@ -115,7 +124,7 @@ namespace MediaPortal.DeployTool
       }
       catch
       {
-        // TODO: MessageBox.Show(Localizer.Instance.GetString("DownloadSettings_failed"), XmlUrl, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+        // TODO: MessageBox.Show(Utils.GetBestTranslation("DownloadSettings_failed"), XmlUrl, MessageBoxButtons.OK, MessageBoxIcon.Stop);
         MessageBox.Show("Download of settings file failed.\nPlease review your InternetExplorer configuration.\nCorrupted config file, if found, will now be deleted.", XmlUrl, MessageBoxButtons.OK, MessageBoxIcon.Stop);
         File.Delete(XmlFile);
         Environment.Exit(-2);
@@ -237,7 +246,7 @@ namespace MediaPortal.DeployTool
       // Disable OS if < XP
       if (ver < 51)
       {
-        MessageBox.Show(Localizer.Instance.GetString("OS_Support"), MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
+        MessageBox.Show(Utils.GetBestTranslation("OS_Support"), MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
         Application.Exit();
       }
       switch (ver)
@@ -245,7 +254,7 @@ namespace MediaPortal.DeployTool
         case 51:
           if (os.OSServicePackMajor < 2)
           {
-            MessageBox.Show(Localizer.Instance.GetString("OS_Support"), MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(Utils.GetBestTranslation("OS_Support"), MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
             Application.Exit();
           }
           break;
@@ -253,23 +262,23 @@ namespace MediaPortal.DeployTool
           if (os.OSProductType == OsDetection.OSProductType.Workstation)
           {
             MsgOsVersion = MsgOsVersion + " [64bit]";
-            MessageBox.Show(Localizer.Instance.GetString("OS_Support"), MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(Utils.GetBestTranslation("OS_Support"), MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
             Application.Exit();
           }
-          res = MessageBox.Show(Localizer.Instance.GetString("OS_Warning"), MsgOsVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+          res = MessageBox.Show(Utils.GetBestTranslation("OS_Warning"), MsgOsVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
           if (res == DialogResult.Cancel) Application.Exit();
           break;
         case 60:
           if (os.OSProductType != OsDetection.OSProductType.Workstation || os.OSServicePackMajor < 1)
           {
-            res = MessageBox.Show(Localizer.Instance.GetString("OS_Warning"), MsgOsVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+            res = MessageBox.Show(Utils.GetBestTranslation("OS_Warning"), MsgOsVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
             if (res == DialogResult.Cancel) Application.Exit();
           }
           break;
       }
       if (os.OSServicePackBuild != 0)
       {
-        res = MessageBox.Show(Localizer.Instance.GetString("OS_Beta"), MsgOsVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+        res = MessageBox.Show(Utils.GetBestTranslation("OS_Beta"), MsgOsVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
         if (res == DialogResult.Cancel) Application.Exit();
       }
     }
@@ -325,6 +334,19 @@ namespace MediaPortal.DeployTool
       {
         MessageBox.Show("Unable to determine startup path. Please try running from a local drive with write access.", Application.StartupPath, MessageBoxButtons.OK, MessageBoxIcon.Stop);
         return false;
+      }
+    }
+
+    public static string GetBestTranslation(string ID)
+    {
+      string _translation = Localizer.Instance.GetString(ID);
+      if (_translation.Length > 0)
+      {
+        return _translation;
+      }
+      else
+      {
+        return Localizer.Instance.GetDefaultString(ID);
       }
     }
 

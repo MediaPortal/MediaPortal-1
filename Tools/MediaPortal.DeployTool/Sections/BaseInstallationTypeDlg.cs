@@ -52,12 +52,12 @@ namespace MediaPortal.DeployTool
     #region IDeployDialog interface
     public override void UpdateUI()
     {
-      labelOneClickCaption.Text = Localizer.Instance.GetString("BaseInstallation_labelOneClickCaption");
-      labelOneClickDesc.Text = Localizer.Instance.GetString("BaseInstallation_labelOneClickDesc");
-      rbOneClick.Text = Localizer.Instance.GetString("BaseInstallation_rbOneClick");
-      labelAdvancedCaption.Text = Localizer.Instance.GetString("BaseInstallation_labelAdvancedCaption");
-      labelAdvancedDesc.Text = Localizer.Instance.GetString("BaseInstallation_labelAdvancedDesc");
-      rbAdvanced.Text = Localizer.Instance.GetString("BaseInstallation_rbAdvanced");
+      labelOneClickCaption.Text = Utils.GetBestTranslation("BaseInstallation_labelOneClickCaption");
+      labelOneClickDesc.Text = Utils.GetBestTranslation("BaseInstallation_labelOneClickDesc");
+      rbOneClick.Text = Utils.GetBestTranslation("BaseInstallation_rbOneClick");
+      labelAdvancedCaption.Text = Utils.GetBestTranslation("BaseInstallation_labelAdvancedCaption");
+      labelAdvancedDesc.Text = Utils.GetBestTranslation("BaseInstallation_labelAdvancedDesc");
+      rbAdvanced.Text = Utils.GetBestTranslation("BaseInstallation_rbAdvanced");
 
     }
     public override DeployDialog GetNextDialog()
@@ -75,7 +75,7 @@ namespace MediaPortal.DeployTool
     {
       if (rbOneClickChecked)
       {
-        InstallationProperties.Instance.Set("InstallTypeHeader", Localizer.Instance.GetString("BaseInstallation_rbOneClick"));
+        InstallationProperties.Instance.Set("InstallTypeHeader", Utils.GetBestTranslation("BaseInstallation_rbOneClick"));
         InstallationProperties.Instance.Set("InstallType", "singleseat");
         InstallationProperties.Instance.Set("DBMSType", "mssql2005");
         InstallationProperties.Instance.Set("DBMSDir", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Microsoft SQL Server");

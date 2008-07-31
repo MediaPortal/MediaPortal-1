@@ -51,10 +51,10 @@ namespace MediaPortal.DeployTool
     #region IDeployDialog interface
     public override void UpdateUI()
     {
-      labelSectionHeader.Text = Localizer.Instance.GetString("TvEngineType_labelSectionHeader");
-      rbTV2.Text = Localizer.Instance.GetString("TvEngineType_rbTvBuildIn");
-      rbTV3.Text = Localizer.Instance.GetString("TvEngineType_rbTvEngine");
-      labelTV3.Text = Localizer.Instance.GetString("TvEngineType_labelTvEngine");
+      labelSectionHeader.Text = Utils.GetBestTranslation("TvEngineType_labelSectionHeader");
+      rbTV2.Text = Utils.GetBestTranslation("TvEngineType_rbTvBuildIn");
+      rbTV3.Text = Utils.GetBestTranslation("TvEngineType_rbTvEngine");
+      labelTV3.Text = Utils.GetBestTranslation("TvEngineType_labelTvEngine");
     }
     public override DeployDialog GetNextDialog()
     {

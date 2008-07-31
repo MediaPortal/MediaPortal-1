@@ -49,13 +49,13 @@ namespace MediaPortal.DeployTool
     #region IDeployDialog interface
     public override void UpdateUI()
     {
-      labelSectionHeader.Text = Localizer.Instance.GetString("CustomInstallation_labelSectionHeader");
-      rbSingleSeat.Text = Localizer.Instance.GetString("CustomInstallation_rbSingleSeat");
-      labelSingleSeat.Text = Localizer.Instance.GetString("CustomInstallation_labelSingleSeat");
-      rbTvServerMaster.Text = Localizer.Instance.GetString("CustomInstallation_rbTvServerMaster");
-      labelMaster.Text = Localizer.Instance.GetString("CustomInstallation_labelMaster");
-      rbClient.Text = Localizer.Instance.GetString("CustomInstallation_rbClient");
-      labelClient.Text = Localizer.Instance.GetString("CustomInstallation_labelClient");
+      labelSectionHeader.Text = Utils.GetBestTranslation("CustomInstallation_labelSectionHeader");
+      rbSingleSeat.Text = Utils.GetBestTranslation("CustomInstallation_rbSingleSeat");
+      labelSingleSeat.Text = Utils.GetBestTranslation("CustomInstallation_labelSingleSeat");
+      rbTvServerMaster.Text = Utils.GetBestTranslation("CustomInstallation_rbTvServerMaster");
+      labelMaster.Text = Utils.GetBestTranslation("CustomInstallation_labelMaster");
+      rbClient.Text = Utils.GetBestTranslation("CustomInstallation_rbClient");
+      labelClient.Text = Utils.GetBestTranslation("CustomInstallation_labelClient");
     }
     public override DeployDialog GetNextDialog()
     {

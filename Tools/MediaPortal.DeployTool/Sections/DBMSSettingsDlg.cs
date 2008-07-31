@@ -50,11 +50,11 @@ namespace MediaPortal.DeployTool
     #region IDeployDialog interface
     public override void UpdateUI()
     {
-      labelHeading.Text = Localizer.Instance.GetString("DBMSSettings_labelHeading");
-      labelInstDir.Text = Localizer.Instance.GetString("DBMSSettings_labelInstDir");
-      buttonBrowse.Text = Localizer.Instance.GetString("DBMSSettings_buttonBrowse");
-      checkBoxFirewall.Text = Localizer.Instance.GetString("DBMSSettings_checkBoxFirewall");
-      labelPassword.Text = Localizer.Instance.GetString("DBMSSettings_labelPassword");
+      labelHeading.Text = Utils.GetBestTranslation("DBMSSettings_labelHeading");
+      labelInstDir.Text = Utils.GetBestTranslation("DBMSSettings_labelInstDir");
+      buttonBrowse.Text = Utils.GetBestTranslation("DBMSSettings_buttonBrowse");
+      checkBoxFirewall.Text = Utils.GetBestTranslation("DBMSSettings_checkBoxFirewall");
+      labelPassword.Text = Utils.GetBestTranslation("DBMSSettings_labelPassword");
     }
     public override DeployDialog GetNextDialog()
     {
@@ -67,12 +67,12 @@ namespace MediaPortal.DeployTool
     {
       if (!Utils.CheckTargetDir(textBoxDir.Text))
       {
-        Utils.ErrorDlg(Localizer.Instance.GetString("DBMSSettings_errInvalidInstallationPath"));
+        Utils.ErrorDlg(Utils.GetBestTranslation("DBMSSettings_errInvalidInstallationPath"));
         return false;
       }
       if (textBoxPassword.Text == "")
       {
-        Utils.ErrorDlg(Localizer.Instance.GetString("DBMSSettings_errPasswordMissing"));
+        Utils.ErrorDlg(Utils.GetBestTranslation("DBMSSettings_errPasswordMissing"));
         return false;
       }
       return true;
@@ -91,7 +91,7 @@ namespace MediaPortal.DeployTool
     private void buttonBrowse_Click(object sender, EventArgs e)
     {
       FolderBrowserDialog dlg = new FolderBrowserDialog();
-      dlg.Description = Localizer.Instance.GetString("DBMSSettings_msgSelectDir");
+      dlg.Description = Utils.GetBestTranslation("DBMSSettings_msgSelectDir");
       dlg.SelectedPath = textBoxDir.Text;
       if (dlg.ShowDialog() == DialogResult.OK)
         textBoxDir.Text = dlg.SelectedPath;

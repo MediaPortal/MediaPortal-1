@@ -52,10 +52,10 @@ namespace MediaPortal.DeployTool
     #region IDeployDialog interface
     public override void UpdateUI()
     {
-      labelSectionHeader.Text = Localizer.Instance.GetString("WatchHDTv_labelSectionHeader");
-      rbYesHD.Text = Localizer.Instance.GetString("WatchHDTv_yes");
-      rbNoHD.Text = Localizer.Instance.GetString("WatchHDTv_no");
-      rbMaybeHD.Text = Localizer.Instance.GetString("WatchHDTv_maybe");
+      labelSectionHeader.Text = Utils.GetBestTranslation("WatchHDTv_labelSectionHeader");
+      rbYesHD.Text = Utils.GetBestTranslation("WatchHDTv_yes");
+      rbNoHD.Text = Utils.GetBestTranslation("WatchHDTv_no");
+      rbMaybeHD.Text = Utils.GetBestTranslation("WatchHDTv_maybe");
     }
     public override DeployDialog GetNextDialog()
     {

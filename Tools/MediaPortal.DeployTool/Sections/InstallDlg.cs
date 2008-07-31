@@ -53,13 +53,13 @@ namespace MediaPortal.DeployTool
       InstallationProperties.Instance.Set("Install_Dialog", "yes");
 
       if (InstallationProperties.Instance["InstallType"] == "download_only")
-        labelHeading.Text = Localizer.Instance.GetString("Install_labelHeadingDownload");
+        labelHeading.Text = Utils.GetBestTranslation("Install_labelHeadingDownload");
       else
-        labelHeading.Text = Localizer.Instance.GetString("Install_labelHeadingInstall");
+        labelHeading.Text = Utils.GetBestTranslation("Install_labelHeadingInstall");
 
-      listView.Columns[0].Text = Localizer.Instance.GetString("Install_colApplication");
-      listView.Columns[1].Text = Localizer.Instance.GetString("Install_colState");
-      listView.Columns[2].Text = Localizer.Instance.GetString("Install_colAction");
+      listView.Columns[0].Text = Utils.GetBestTranslation("Install_colApplication");
+      listView.Columns[1].Text = Utils.GetBestTranslation("Install_colState");
+      listView.Columns[2].Text = Utils.GetBestTranslation("Install_colAction");
       labelSectionHeader.Text = "";
     }
     public override DeployDialog GetNextDialog()
@@ -69,8 +69,8 @@ namespace MediaPortal.DeployTool
         IInstallationPackage package = (IInstallationPackage)item.Tag;
         if (!PerformPackageAction(package, item))
           break;
-        item.SubItems[1].Text = Localizer.Instance.GetString("Install_stateInstalled");
-        item.SubItems[2].Text = Localizer.Instance.GetString("Install_actionNothing");
+        item.SubItems[1].Text = Utils.GetBestTranslation("Install_stateInstalled");
+        item.SubItems[2].Text = Utils.GetBestTranslation("Install_actionNothing");
         item.ImageIndex = 0;
       }
       PopulateListView();
@@ -95,54 +95,54 @@ namespace MediaPortal.DeployTool
       switch (result.state)
       {
         case CheckState.INSTALLED:
-          item.SubItems.Add(Localizer.Instance.GetString("Install_stateInstalled"));
-          item.SubItems.Add(Localizer.Instance.GetString("Install_actionNothing"));
+          item.SubItems.Add(Utils.GetBestTranslation("Install_stateInstalled"));
+          item.SubItems.Add(Utils.GetBestTranslation("Install_actionNothing"));
           item.ImageIndex = 0;
           break;
         case CheckState.NOT_INSTALLED:
-          item.SubItems.Add(Localizer.Instance.GetString("Install_stateNotInstalled"));
+          item.SubItems.Add(Utils.GetBestTranslation("Install_stateNotInstalled"));
           if (result.needsDownload)
-            item.SubItems.Add(Localizer.Instance.GetString("Install_actionDownloadInstall"));
+            item.SubItems.Add(Utils.GetBestTranslation("Install_actionDownloadInstall"));
           else
-            item.SubItems.Add(Localizer.Instance.GetString("Install_actionInstall"));
+            item.SubItems.Add(Utils.GetBestTranslation("Install_actionInstall"));
           item.ImageIndex = 1;
           break;
         case CheckState.CONFIGURED:
-          item.SubItems.Add(Localizer.Instance.GetString("Install_stateConfigured"));
-          item.SubItems.Add(Localizer.Instance.GetString("Install_actionNothing"));
+          item.SubItems.Add(Utils.GetBestTranslation("Install_stateConfigured"));
+          item.SubItems.Add(Utils.GetBestTranslation("Install_actionNothing"));
           item.ImageIndex = 0;
           break;
         case CheckState.NOT_CONFIGURED:
-          item.SubItems.Add(Localizer.Instance.GetString("Install_stateNotConfigured"));
-          item.SubItems.Add(Localizer.Instance.GetString("Install_actionConfigure"));
+          item.SubItems.Add(Utils.GetBestTranslation("Install_stateNotConfigured"));
+          item.SubItems.Add(Utils.GetBestTranslation("Install_actionConfigure"));
           item.ImageIndex = 1;
           break;
         case CheckState.REMOVED:
-          item.SubItems.Add(Localizer.Instance.GetString("Install_stateRemoved"));
-          item.SubItems.Add(Localizer.Instance.GetString("Install_actionNothing"));
+          item.SubItems.Add(Utils.GetBestTranslation("Install_stateRemoved"));
+          item.SubItems.Add(Utils.GetBestTranslation("Install_actionNothing"));
           item.ImageIndex = 0;
           break;
         case CheckState.NOT_REMOVED:
-          item.SubItems.Add(Localizer.Instance.GetString("Install_stateUninstall"));
-          item.SubItems.Add(Localizer.Instance.GetString("Install_actionRemove"));
+          item.SubItems.Add(Utils.GetBestTranslation("Install_stateUninstall"));
+          item.SubItems.Add(Utils.GetBestTranslation("Install_actionRemove"));
           item.ImageIndex = 1;
           break;
         case CheckState.DOWNLOADED:
-          item.SubItems.Add(Localizer.Instance.GetString("Install_stateDownloaded"));
-          item.SubItems.Add(Localizer.Instance.GetString("Install_actionNothing"));
+          item.SubItems.Add(Utils.GetBestTranslation("Install_stateDownloaded"));
+          item.SubItems.Add(Utils.GetBestTranslation("Install_actionNothing"));
           item.ImageIndex = 0;
           break;
         case CheckState.NOT_DOWNLOADED:
-          item.SubItems.Add(Localizer.Instance.GetString("Install_stateNotDownloaded"));
-          item.SubItems.Add(Localizer.Instance.GetString("Install_actionDownload"));
+          item.SubItems.Add(Utils.GetBestTranslation("Install_stateNotDownloaded"));
+          item.SubItems.Add(Utils.GetBestTranslation("Install_actionDownload"));
           item.ImageIndex = 1;
           break;
         case CheckState.VERSION_MISMATCH:
-          item.SubItems.Add(Localizer.Instance.GetString("Install_stateVersionMismatch"));
+          item.SubItems.Add(Utils.GetBestTranslation("Install_stateVersionMismatch"));
           if (result.needsDownload)
-            item.SubItems.Add(Localizer.Instance.GetString("Install_actionUninstallDownloadInstall"));
+            item.SubItems.Add(Utils.GetBestTranslation("Install_actionUninstallDownloadInstall"));
           else
-            item.SubItems.Add(Localizer.Instance.GetString("Install_actionUninstallInstall"));
+            item.SubItems.Add(Utils.GetBestTranslation("Install_actionUninstallInstall"));
           item.ImageIndex = 2;
           break;
       }
@@ -215,76 +215,76 @@ namespace MediaPortal.DeployTool
           case CheckState.NOT_INSTALLED:
             if (result.needsDownload)
             {
-              item.SubItems[1].Text = Localizer.Instance.GetString("Install_msgDownloading");
+              item.SubItems[1].Text = Utils.GetBestTranslation("Install_msgDownloading");
               Update();
               if (!package.Download())
               {
-                Utils.ErrorDlg(string.Format(Localizer.Instance.GetString("Install_errInstallFailed"), package.GetDisplayName()));
+                Utils.ErrorDlg(string.Format(Utils.GetBestTranslation("Install_errInstallFailed"), package.GetDisplayName()));
                 return false;
               }
             }
-            item.SubItems[1].Text = Localizer.Instance.GetString("Install_msgInstalling");
+            item.SubItems[1].Text = Utils.GetBestTranslation("Install_msgInstalling");
             Update();
             if (!package.Install())
             {
-              Utils.ErrorDlg(string.Format(Localizer.Instance.GetString("Install_errInstallFailed"), package.GetDisplayName()));
+              Utils.ErrorDlg(string.Format(Utils.GetBestTranslation("Install_errInstallFailed"), package.GetDisplayName()));
               return false;
             }
             break;
 
           case CheckState.NOT_CONFIGURED:
-            item.SubItems[1].Text = Localizer.Instance.GetString("Install_msgConfiguring");
+            item.SubItems[1].Text = Utils.GetBestTranslation("Install_msgConfiguring");
             Update();
             if (!package.Install())
             {
-              Utils.ErrorDlg(string.Format(Localizer.Instance.GetString("Install_errConfigureFailed"), package.GetDisplayName()));
+              Utils.ErrorDlg(string.Format(Utils.GetBestTranslation("Install_errConfigureFailed"), package.GetDisplayName()));
               return false;
             }
             break;
 
           case CheckState.NOT_REMOVED:
-            item.SubItems[1].Text = Localizer.Instance.GetString("Install_msgUninstalling");
+            item.SubItems[1].Text = Utils.GetBestTranslation("Install_msgUninstalling");
             Update();
             if (!package.Install())
             {
-              Utils.ErrorDlg(string.Format(Localizer.Instance.GetString("Install_errRemoveFailed"), package.GetDisplayName()));
+              Utils.ErrorDlg(string.Format(Utils.GetBestTranslation("Install_errRemoveFailed"), package.GetDisplayName()));
               return false;
             }
             break;
 
           case CheckState.VERSION_MISMATCH:
-            item.SubItems[1].Text = Localizer.Instance.GetString("Install_msgUninstalling");
+            item.SubItems[1].Text = Utils.GetBestTranslation("Install_msgUninstalling");
             Update();
             if (!package.UnInstall())
             {
-              Utils.ErrorDlg(string.Format(Localizer.Instance.GetString("Install_errUinstallFailed"), package.GetDisplayName()));
+              Utils.ErrorDlg(string.Format(Utils.GetBestTranslation("Install_errUinstallFailed"), package.GetDisplayName()));
               return false;
             }
             if (result.needsDownload)
             {
-              item.SubItems[1].Text = Localizer.Instance.GetString("Install_msgDownloading");
+              item.SubItems[1].Text = Utils.GetBestTranslation("Install_msgDownloading");
               Update();
               if (!package.Download())
               {
-                Utils.ErrorDlg(string.Format(Localizer.Instance.GetString("Install_errDownloadFailed"), package.GetDisplayName()));
+                Utils.ErrorDlg(string.Format(Utils.GetBestTranslation("Install_errDownloadFailed"), package.GetDisplayName()));
                 return false;
               }
             }
-            item.SubItems[1].Text = Localizer.Instance.GetString("Install_msgInstalling");
+            item.SubItems[1].Text = Utils.GetBestTranslation("Install_msgInstalling");
             Update();
             if (!package.Install())
             {
-              Utils.ErrorDlg(string.Format(Localizer.Instance.GetString("Install_errInstallFailed"), package.GetDisplayName()));
+              Utils.ErrorDlg(string.Format(Utils.GetBestTranslation("Install_errInstallFailed"), package.GetDisplayName()));
               return false;
             }
             break;
 
           case CheckState.NOT_DOWNLOADED:
-            item.SubItems[1].Text = Localizer.Instance.GetString("Install_msgDownloading");
+            item.SubItems[1].Text = Utils.GetBestTranslation("Install_msgDownloading");
             Update();
             if (!package.Download())
             {
-              Utils.ErrorDlg(string.Format(Localizer.Instance.GetString("Install_errDownloadFailed"), package.GetDisplayName()));
+              Utils.ErrorDlg(string.Format(Utils.GetBestTranslation("Install_errDownloadFailed"), package.GetDisplayName()));
               return false;
             }
             break;

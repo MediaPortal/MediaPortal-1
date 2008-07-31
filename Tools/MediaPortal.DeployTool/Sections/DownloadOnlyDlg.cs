@@ -52,9 +52,9 @@ namespace MediaPortal.DeployTool
     #region IDeployDialog interface
     public override void UpdateUI()
     {
-      labelSectionHeader.Text = Localizer.Instance.GetString("DownloadOnly_labelSectionHeader");
-      rbDownloadOnly.Text = Localizer.Instance.GetString("DownloadOnly_no");
-      rbInstallNow.Text = Localizer.Instance.GetString("DownloadOnly_yes");
+      labelSectionHeader.Text = Utils.GetBestTranslation("DownloadOnly_labelSectionHeader");
+      rbDownloadOnly.Text = Utils.GetBestTranslation("DownloadOnly_no");
+      rbInstallNow.Text = Utils.GetBestTranslation("DownloadOnly_yes");
     }
     public override DeployDialog GetNextDialog()
     {

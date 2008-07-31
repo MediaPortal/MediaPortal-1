@@ -40,15 +40,15 @@ namespace MediaPortal.DeployTool
   public partial class DeployTool : Form, IDeployDialog
   {
     private DeployDialog _currentDialog;
-    private string _currentCulture = "en-US";
+    public string _currentCulture = "en-US";
 
     #region IDeployDialog interface
     public void UpdateUI()
     {
-      this.Text = Localizer.Instance.GetString("MainWindow_AppName");
-      //labelAppHeading.Text = Localizer.Instance.GetString("MainWindow_labelAppHeading");
-      backButton.Text = Localizer.Instance.GetString("MainWindow_backButton");
-      nextButton.Text = Localizer.Instance.GetString("MainWindow_nextButton");
+      this.Text = Utils.GetBestTranslation("MainWindow_AppName");
+      //labelAppHeading.Text = Utils.GetBestTranslation("MainWindow_labelAppHeading");
+      backButton.Text = Utils.GetBestTranslation("MainWindow_backButton");
+      nextButton.Text = Utils.GetBestTranslation("MainWindow_nextButton");
     }
     public DeployDialog GetNextDialog()
     {
@@ -106,7 +106,7 @@ namespace MediaPortal.DeployTool
 
     private void nextButton_Click(object sender, EventArgs e)
     {
-      if (nextButton.Text == Localizer.Instance.GetString("MainWindow_buttonClose"))
+      if (nextButton.Text == Utils.GetBestTranslation("MainWindow_buttonClose"))
       {
         //
         // If in download_only mode, start explorer to show downloaded stuff
@@ -138,14 +138,14 @@ namespace MediaPortal.DeployTool
       if (InstallationProperties.Instance["finished"] == "yes")
       {
         backButton.Visible = false;
-        nextButton.Text = Localizer.Instance.GetString("MainWindow_buttonClose");
+        nextButton.Text = Utils.GetBestTranslation("MainWindow_buttonClose");
       }
       if (InstallationProperties.Instance["Install_Dialog"] == "yes")
       {
         if (InstallationProperties.Instance["InstallType"] == "download_only")
-          nextButton.Text = Localizer.Instance.GetString("Install_buttonDownload");
+          nextButton.Text = Utils.GetBestTranslation("Install_buttonDownload");
         else
-          nextButton.Text = Localizer.Instance.GetString("Install_buttonInstall");
+          nextButton.Text = Utils.GetBestTranslation("Install_buttonInstall");
         InstallationProperties.Instance.Set("Install_Dialog", "no");
       }
     }
@@ -156,7 +156,7 @@ namespace MediaPortal.DeployTool
       _currentDialog = DialogFlowHandler.Instance.GetPreviousDlg(ref isFirstDlg);
       if (isFirstDlg)
         backButton.Visible = false;
-      nextButton.Text = Localizer.Instance.GetString("MainWindow_nextButton");
+      nextButton.Text = Utils.GetBestTranslation("MainWindow_nextButton");
       SwitchDialog(_currentDialog);
     }
   }

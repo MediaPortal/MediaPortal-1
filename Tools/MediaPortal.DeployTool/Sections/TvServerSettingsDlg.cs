@@ -48,10 +48,10 @@ namespace MediaPortal.DeployTool
     #region IDeployDialog interface
     public override void UpdateUI()
     {
-      labelHeading.Text = Localizer.Instance.GetString("TvServerSettings_labelHeading");
-      labelInstDir.Text = Localizer.Instance.GetString("TvServerSettings_labelInstDir");
-      checkBoxFirewall.Text = Localizer.Instance.GetString("TvServerSettings_checkBoxFirewall");
-      buttonBrowse.Text = Localizer.Instance.GetString("TvServerSettings_buttonBrowse");
+      labelHeading.Text = Utils.GetBestTranslation("TvServerSettings_labelHeading");
+      labelInstDir.Text = Utils.GetBestTranslation("TvServerSettings_labelInstDir");
+      checkBoxFirewall.Text = Utils.GetBestTranslation("TvServerSettings_checkBoxFirewall");
+      buttonBrowse.Text = Utils.GetBestTranslation("TvServerSettings_buttonBrowse");
     }
     public override DeployDialog GetNextDialog()
     {
@@ -61,7 +61,7 @@ namespace MediaPortal.DeployTool
     {
       if (!Utils.CheckTargetDir(textBoxDir.Text))
       {
-        Utils.ErrorDlg(Localizer.Instance.GetString("TvServerSettings_errInvalidPath"));
+        Utils.ErrorDlg(Utils.GetBestTranslation("TvServerSettings_errInvalidPath"));
         return false;
       }
       return true;
@@ -79,7 +79,7 @@ namespace MediaPortal.DeployTool
     private void buttonBrowse_Click(object sender, EventArgs e)
     {
       FolderBrowserDialog dlg = new FolderBrowserDialog();
-      dlg.Description = Localizer.Instance.GetString("TvServerSettings_msgSelectDir");
+      dlg.Description = Utils.GetBestTranslation("TvServerSettings_msgSelectDir");
       dlg.SelectedPath = textBoxDir.Text;
       if (dlg.ShowDialog() == DialogResult.OK)
       {

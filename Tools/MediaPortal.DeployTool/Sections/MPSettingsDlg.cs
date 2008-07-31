@@ -42,16 +42,16 @@ namespace MediaPortal.DeployTool
       InitializeComponent();
       type = DialogType.MPSettings;
       textBoxDir.Text = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal";
-      checkBoxFirewall.Text = Localizer.Instance.GetString("MPSettings_checkBoxFirewall");
+      checkBoxFirewall.Text = Utils.GetBestTranslation("MPSettings_checkBoxFirewall");
       UpdateUI();
     }
 
     #region IDeployDialog interface
     public override void UpdateUI()
     {
-      labelHeading.Text = Localizer.Instance.GetString("MPSettings_labelHeading");
-      labelInstDir.Text = Localizer.Instance.GetString("MPSettings_labelInstDir");
-      buttonBrowse.Text = Localizer.Instance.GetString("MPSettings_buttonBrowse");
+      labelHeading.Text = Utils.GetBestTranslation("MPSettings_labelHeading");
+      labelInstDir.Text = Utils.GetBestTranslation("MPSettings_labelInstDir");
+      buttonBrowse.Text = Utils.GetBestTranslation("MPSettings_buttonBrowse");
     }
     public override DeployDialog GetNextDialog()
     {
@@ -65,7 +65,7 @@ namespace MediaPortal.DeployTool
     {
       if (!Utils.CheckTargetDir(textBoxDir.Text))
       {
-        Utils.ErrorDlg(Localizer.Instance.GetString("MPSettings_errInvalidPath"));
+        Utils.ErrorDlg(Utils.GetBestTranslation("MPSettings_errInvalidPath"));
         return false;
       }
       return true;
@@ -83,7 +83,7 @@ namespace MediaPortal.DeployTool
     private void buttonBrowse_Click(object sender, EventArgs e)
     {
       FolderBrowserDialog dlg = new FolderBrowserDialog();
-      dlg.Description = Localizer.Instance.GetString("MPSettings_msgSelectDir");
+      dlg.Description = Utils.GetBestTranslation("MPSettings_msgSelectDir");
       dlg.SelectedPath = textBoxDir.Text;
       if (dlg.ShowDialog() == DialogResult.OK)
       {

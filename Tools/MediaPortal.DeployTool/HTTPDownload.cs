@@ -40,10 +40,10 @@ namespace MediaPortal.DeployTool
 
     private void UpdateUI()
     {
-      this.Text = Localizer.Instance.GetString("HTTPDownload_Title");
-      labelSourceURL.Text = Localizer.Instance.GetString("HTTPDownload_labelSourceURL");
-      labelTargetFile.Text = Localizer.Instance.GetString("HTTPDownload_labelTargetFile");
-      buttonCancel.Text = Localizer.Instance.GetString("HTTPDownload_buttonCancel");
+      this.Text = Utils.GetBestTranslation("HTTPDownload_Title");
+      labelSourceURL.Text = Utils.GetBestTranslation("HTTPDownload_labelSourceURL");
+      labelTargetFile.Text = Utils.GetBestTranslation("HTTPDownload_labelTargetFile");
+      buttonCancel.Text = Utils.GetBestTranslation("HTTPDownload_buttonCancel");
     }
 
     public HTTPDownload()
@@ -87,7 +87,7 @@ namespace MediaPortal.DeployTool
       }
       catch
       {
-        Utils.ErrorDlg(Localizer.Instance.GetString("HTTPDownload_errDownloadFailed"));
+        Utils.ErrorDlg(Utils.GetBestTranslation("HTTPDownload_errDownloadFailed"));
         try
         {
           File.Delete(targetFile);
@@ -110,7 +110,7 @@ namespace MediaPortal.DeployTool
     private void buttonCancel_Click(object sender, EventArgs e)
     {
       client.CancelAsync();
-      Utils.ErrorDlg(Localizer.Instance.GetString("HTTPDownload_msgCanceledByUser"));
+      Utils.ErrorDlg(Utils.GetBestTranslation("HTTPDownload_msgCanceledByUser"));
       try
       {
         File.Delete(_target);

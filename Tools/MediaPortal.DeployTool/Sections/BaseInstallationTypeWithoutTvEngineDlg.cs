@@ -52,12 +52,12 @@ namespace MediaPortal.DeployTool
     #region IDeployDialog interface
     public override void UpdateUI()
     {
-      labelOneClickCaption.Text = Localizer.Instance.GetString("BaseInstallation_labelOneClickCaption");
-      labelOneClickDesc.Text = Localizer.Instance.GetString("BaseInstallationNoTvEngine_labelOneClickDesc");
-      rbOneClick.Text = Localizer.Instance.GetString("BaseInstallation_rbOneClick");
-      labelAdvancedCaption.Text = Localizer.Instance.GetString("BaseInstallation_labelAdvancedCaption");
-      labelAdvancedDesc.Text = Localizer.Instance.GetString("BaseInstallationNoTvEngine_labelAdvancedDesc");
-      rbAdvanced.Text = Localizer.Instance.GetString("BaseInstallation_rbAdvanced");
+      labelOneClickCaption.Text = Utils.GetBestTranslation("BaseInstallation_labelOneClickCaption");
+      labelOneClickDesc.Text = Utils.GetBestTranslation("BaseInstallationNoTvEngine_labelOneClickDesc");
+      rbOneClick.Text = Utils.GetBestTranslation("BaseInstallation_rbOneClick");
+      labelAdvancedCaption.Text = Utils.GetBestTranslation("BaseInstallation_labelAdvancedCaption");
+      labelAdvancedDesc.Text = Utils.GetBestTranslation("BaseInstallationNoTvEngine_labelAdvancedDesc");
+      rbAdvanced.Text = Utils.GetBestTranslation("BaseInstallation_rbAdvanced");
     }
     public override DeployDialog GetNextDialog()
     {
