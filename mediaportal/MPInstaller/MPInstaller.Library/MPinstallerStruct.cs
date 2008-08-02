@@ -1167,6 +1167,10 @@ namespace MediaPortal.MPInstaller
       set { _checked = value; }
     }
 
+    override public string ToString()
+    {
+      return Id + " - " + Name;
+    }
   }
 
   public class GroupStringMapping

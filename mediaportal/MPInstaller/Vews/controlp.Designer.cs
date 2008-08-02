@@ -82,7 +82,7 @@ namespace MediaPortal.MPInstaller
           this.listView1.MultiSelect = false;
           this.listView1.Name = "listView1";
           this.listView1.ShowItemToolTips = true;
-          this.listView1.Size = new System.Drawing.Size(619, 343);
+          this.listView1.Size = new System.Drawing.Size(619, 339);
           this.listView1.SmallImageList = this.imageList1;
           this.listView1.TabIndex = 0;
           this.listView1.UseCompatibleStateImageBehavior = false;
@@ -222,7 +222,7 @@ namespace MediaPortal.MPInstaller
           // 
           this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
           this.label3.AutoSize = true;
-          this.label3.Location = new System.Drawing.Point(483, 347);
+          this.label3.Location = new System.Drawing.Point(479, 342);
           this.label3.Name = "label3";
           this.label3.Size = new System.Drawing.Size(29, 13);
           this.label3.TabIndex = 11;
@@ -264,7 +264,7 @@ namespace MediaPortal.MPInstaller
             this.mozItem1});
           this.mozPane1.Location = new System.Drawing.Point(3, 6);
           this.mozPane1.Name = "mozPane1";
-          this.mozPane1.Size = new System.Drawing.Size(155, 337);
+          this.mozPane1.Size = new System.Drawing.Size(155, 333);
           this.mozPane1.TabIndex = 8;
           this.mozPane1.ItemSelected += new Pabo.MozBar.MozItemEventHandler(this.mozPane1_ItemSelected);
           // 
@@ -305,7 +305,7 @@ namespace MediaPortal.MPInstaller
           // 
           this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
           this.label2.AutoSize = true;
-          this.label2.Location = new System.Drawing.Point(609, 346);
+          this.label2.Location = new System.Drawing.Point(609, 342);
           this.label2.Name = "label2";
           this.label2.Size = new System.Drawing.Size(36, 13);
           this.label2.TabIndex = 7;
@@ -353,6 +353,7 @@ namespace MediaPortal.MPInstaller
           this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
           this.ClientSize = new System.Drawing.Size(792, 416);
           this.Controls.Add(this.tabControl1);
+          this.MinimumSize = new System.Drawing.Size(800, 450);
           this.Name = "controlp";
           this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
           this.Text = "Control panel";

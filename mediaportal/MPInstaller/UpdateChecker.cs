@@ -26,10 +26,11 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
+//using System.Data;
 using System.Drawing;
 using System.Text;
 using System.IO;
+using System.Xml;
 using System.Windows.Forms;
 using MediaPortal.MPInstaller;
 
@@ -64,9 +65,20 @@ namespace MediaPortal.MPInstaller
             dw.ShowDialog();
             if (File.Exists(temp_file))
             {
+              try
+              {
                 lst_online.LoadFromFile(temp_file);
                 lst_online.Compare(lst);
                 LoadToListview(lst_online, listView1);
+              }
+              catch (XmlException)
+              {
+                MessageBox.Show("Xml format error.Update aborted !");
+              }
+              catch
+              {
+                MessageBox.Show("Unknow error.Update aborted !");
+              }
             }
 
         }

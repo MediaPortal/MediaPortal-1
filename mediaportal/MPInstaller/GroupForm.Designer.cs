@@ -30,10 +30,11 @@ namespace MediaPortal.MPInstaller
     {
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
+      this.button_delete_group = new System.Windows.Forms.Button();
       this.button4 = new System.Windows.Forms.Button();
       this.textBox2 = new System.Windows.Forms.TextBox();
       this.textBox1 = new System.Windows.Forms.TextBox();
-      this.listView1 = new System.Windows.Forms.ListView();
+      this.group_listView = new System.Windows.Forms.ListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
       this.tabPage2 = new System.Windows.Forms.TabPage();
@@ -67,10 +68,11 @@ namespace MediaPortal.MPInstaller
       // 
       // tabPage1
       // 
+      this.tabPage1.Controls.Add(this.button_delete_group);
       this.tabPage1.Controls.Add(this.button4);
       this.tabPage1.Controls.Add(this.textBox2);
       this.tabPage1.Controls.Add(this.textBox1);
-      this.tabPage1.Controls.Add(this.listView1);
+      this.tabPage1.Controls.Add(this.group_listView);
       this.tabPage1.Location = new System.Drawing.Point(4, 22);
       this.tabPage1.Name = "tabPage1";
       this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
@@ -78,6 +80,17 @@ namespace MediaPortal.MPInstaller
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "Groups";
       this.tabPage1.UseVisualStyleBackColor = true;
+      // 
+      // button_delete_group
+      // 
+      this.button_delete_group.Enabled = false;
+      this.button_delete_group.Location = new System.Drawing.Point(6, 173);
+      this.button_delete_group.Name = "button_delete_group";
+      this.button_delete_group.Size = new System.Drawing.Size(75, 23);
+      this.button_delete_group.TabIndex = 4;
+      this.button_delete_group.Text = "Delete";
+      this.button_delete_group.UseVisualStyleBackColor = true;
+      this.button_delete_group.Click += new System.EventHandler(this.button_delete_group_Click);
       // 
       // button4
       // 
@@ -107,23 +120,26 @@ namespace MediaPortal.MPInstaller
       this.textBox1.Size = new System.Drawing.Size(53, 20);
       this.textBox1.TabIndex = 1;
       // 
-      // listView1
+      // group_listView
       // 
-      this.listView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+      this.group_listView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+      this.group_listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2});
-      this.listView1.FullRowSelect = true;
-      this.listView1.Location = new System.Drawing.Point(6, 6);
-      this.listView1.Name = "listView1";
-      this.listView1.Size = new System.Drawing.Size(493, 135);
-      this.listView1.TabIndex = 0;
-      this.listView1.UseCompatibleStateImageBehavior = false;
-      this.listView1.View = System.Windows.Forms.View.Details;
-      this.listView1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listView1_MouseDoubleClick);
-      this.listView1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.listView1_MouseClick);
+      this.group_listView.FullRowSelect = true;
+      this.group_listView.Location = new System.Drawing.Point(6, 6);
+      this.group_listView.Name = "group_listView";
+      this.group_listView.Size = new System.Drawing.Size(493, 135);
+      this.group_listView.TabIndex = 0;
+      this.group_listView.UseCompatibleStateImageBehavior = false;
+      this.group_listView.View = System.Windows.Forms.View.Details;
+      this.group_listView.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listView1_MouseDoubleClick);
+      this.group_listView.MouseClick += new System.Windows.Forms.MouseEventHandler(this.listView1_MouseClick);
+      this.group_listView.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
+      this.group_listView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.listView1_KeyDown);
+      this.group_listView.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listView1_ColumnClick);
       // 
       // columnHeader1
       // 
@@ -282,7 +298,7 @@ namespace MediaPortal.MPInstaller
     private System.Windows.Forms.TabPage tabPage1;
     private System.Windows.Forms.TabPage tabPage2;
     private System.Windows.Forms.Button button1;
-    private System.Windows.Forms.ListView listView1;
+    private System.Windows.Forms.ListView group_listView;
     private System.Windows.Forms.ColumnHeader columnHeader1;
     private System.Windows.Forms.ColumnHeader columnHeader2;
     private System.Windows.Forms.TextBox textBox2;
@@ -297,5 +313,6 @@ namespace MediaPortal.MPInstaller
     private System.Windows.Forms.Button button2;
     private System.Windows.Forms.Label label2;
     private System.Windows.Forms.Label label1;
+    private System.Windows.Forms.Button button_delete_group;
   }
 }

@@ -388,6 +388,7 @@ namespace MediaPortal.MPInstaller
         this.Text = proiect_file_name;
       }
     }
+
     private void Form1_Load(object sender, EventArgs e)
     {
       tabControl1.Controls.Clear();
@@ -484,6 +485,7 @@ namespace MediaPortal.MPInstaller
       }
       bossview.Focus();
     }
+
     private void bossview_ColumnClick(object sender, ColumnClickEventArgs e)
     {
       // Determine whether the column is the same as the last column clicked.
@@ -721,6 +723,7 @@ namespace MediaPortal.MPInstaller
       }
 
     }
+
     private bool IsGoodToSave()
     {
       if (proiectt_textBox1.Text.Length == 0)
