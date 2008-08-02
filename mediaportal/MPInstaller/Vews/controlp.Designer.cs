@@ -46,14 +46,14 @@ namespace MediaPortal.MPInstaller
           this.tabControl1 = new System.Windows.Forms.TabControl();
           this.tabPage1 = new System.Windows.Forms.TabPage();
           this.label3 = new System.Windows.Forms.Label();
-          this.comboBox3 = new System.Windows.Forms.ComboBox();
+          this.comboBox_filter = new System.Windows.Forms.ComboBox();
           this.button6 = new System.Windows.Forms.Button();
           this.mozPane1 = new Pabo.MozBar.MozPane();
           this.imageList2 = new System.Windows.Forms.ImageList(this.components);
           this.mozItem1 = new Pabo.MozBar.MozItem();
           this.label2 = new System.Windows.Forms.Label();
           this.button5 = new System.Windows.Forms.Button();
-          this.comboBox2 = new System.Windows.Forms.ComboBox();
+          this.comboBox_view = new System.Windows.Forms.ComboBox();
           this.linkLabel1 = new System.Windows.Forms.LinkLabel();
           this.contextMenuStrip1.SuspendLayout();
           this.tabControl1.SuspendLayout();
@@ -86,7 +86,6 @@ namespace MediaPortal.MPInstaller
           this.listView1.SmallImageList = this.imageList1;
           this.listView1.TabIndex = 0;
           this.listView1.UseCompatibleStateImageBehavior = false;
-          this.listView1.View = System.Windows.Forms.View.Details;
           this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
           this.listView1.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listView1_ColumnClick);
           // 
@@ -197,12 +196,12 @@ namespace MediaPortal.MPInstaller
           // tabPage1
           // 
           this.tabPage1.Controls.Add(this.label3);
-          this.tabPage1.Controls.Add(this.comboBox3);
+          this.tabPage1.Controls.Add(this.comboBox_filter);
           this.tabPage1.Controls.Add(this.button6);
           this.tabPage1.Controls.Add(this.mozPane1);
           this.tabPage1.Controls.Add(this.label2);
           this.tabPage1.Controls.Add(this.button5);
-          this.tabPage1.Controls.Add(this.comboBox2);
+          this.tabPage1.Controls.Add(this.comboBox_view);
           this.tabPage1.Controls.Add(this.linkLabel1);
           this.tabPage1.Controls.Add(this.listView1);
           this.tabPage1.Controls.Add(this.button2);
@@ -228,21 +227,21 @@ namespace MediaPortal.MPInstaller
           this.label3.TabIndex = 11;
           this.label3.Text = "Filter";
           // 
-          // comboBox3
+          // comboBox_filter
           // 
-          this.comboBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-          this.comboBox3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-          this.comboBox3.FormattingEnabled = true;
-          this.comboBox3.Items.AddRange(new object[] {
+          this.comboBox_filter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+          this.comboBox_filter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+          this.comboBox_filter.FormattingEnabled = true;
+          this.comboBox_filter.Items.AddRange(new object[] {
             "None",
             "Local",
             "Updates",
             "Online"});
-          this.comboBox3.Location = new System.Drawing.Point(482, 358);
-          this.comboBox3.Name = "comboBox3";
-          this.comboBox3.Size = new System.Drawing.Size(121, 21);
-          this.comboBox3.TabIndex = 10;
-          this.comboBox3.SelectedIndexChanged += new System.EventHandler(this.comboBox3_SelectedIndexChanged);
+          this.comboBox_filter.Location = new System.Drawing.Point(482, 358);
+          this.comboBox_filter.Name = "comboBox_filter";
+          this.comboBox_filter.Size = new System.Drawing.Size(121, 21);
+          this.comboBox_filter.TabIndex = 10;
+          this.comboBox_filter.SelectedIndexChanged += new System.EventHandler(this.comboBox3_SelectedIndexChanged);
           // 
           // button6
           // 
@@ -322,19 +321,19 @@ namespace MediaPortal.MPInstaller
           this.button5.UseVisualStyleBackColor = true;
           this.button5.Click += new System.EventHandler(this.button5_Click);
           // 
-          // comboBox2
+          // comboBox_view
           // 
-          this.comboBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-          this.comboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-          this.comboBox2.FormattingEnabled = true;
-          this.comboBox2.Items.AddRange(new object[] {
+          this.comboBox_view.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+          this.comboBox_view.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+          this.comboBox_view.FormattingEnabled = true;
+          this.comboBox_view.Items.AddRange(new object[] {
             "List",
             "Icons"});
-          this.comboBox2.Location = new System.Drawing.Point(612, 358);
-          this.comboBox2.Name = "comboBox2";
-          this.comboBox2.Size = new System.Drawing.Size(82, 21);
-          this.comboBox2.TabIndex = 6;
-          this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
+          this.comboBox_view.Location = new System.Drawing.Point(612, 358);
+          this.comboBox_view.Name = "comboBox_view";
+          this.comboBox_view.Size = new System.Drawing.Size(82, 21);
+          this.comboBox_view.TabIndex = 6;
+          this.comboBox_view.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
           // 
           // linkLabel1
           // 
@@ -386,13 +385,13 @@ namespace MediaPortal.MPInstaller
         private System.Windows.Forms.ImageList imageList1;
         private System.Windows.Forms.ColumnHeader columnHeader9;
         private System.Windows.Forms.Label label2;
-      private System.Windows.Forms.ComboBox comboBox2;
+      private System.Windows.Forms.ComboBox comboBox_view;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
       private Pabo.MozBar.MozPane mozPane1;
       private Pabo.MozBar.MozItem mozItem1;
       private System.Windows.Forms.Button button6;
       private System.Windows.Forms.Label label3;
-      private System.Windows.Forms.ComboBox comboBox3;
+      private System.Windows.Forms.ComboBox comboBox_filter;
       private System.Windows.Forms.ToolStripMenuItem informationToolStripMenuItem;
       private System.Windows.Forms.ImageList imageList2;
     }

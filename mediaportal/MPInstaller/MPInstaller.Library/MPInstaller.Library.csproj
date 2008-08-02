@@ -66,6 +66,7 @@
     <Compile Include="MPInstallerForm.Designer.cs">
       <DependentUpon>MPInstallerForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="MpInstallerNameReplace.cs" />
     <Compile Include="MPinstallerStruct.cs" />
     <Compile Include="MPIutils.cs" />
     <Compile Include="MPpackageStruct.cs" />

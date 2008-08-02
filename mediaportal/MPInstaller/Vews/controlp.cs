@@ -44,7 +44,7 @@ namespace MediaPortal.MPInstaller
   {
     public MPInstallHelper lst = new MPInstallHelper();
     public MPInstallHelper lst_online = new MPInstallHelper();
-    private string InstalDir = Config.GetFolder(Config.Dir.Base) + @"\" + "Installer";
+    private string InstallDir = Config.GetFolder(Config.Dir.Base) + @"\" + "Installer";
     private Hashtable[] groupTables;
     int groupColumn = 0;
 
@@ -60,6 +60,11 @@ namespace MediaPortal.MPInstaller
       this.Close();
     }
 
+    /// <summary>
+    /// Handles the Load event of the controlp control.
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
     private void controlp_Load(object sender, EventArgs e)
     {
       listView1.Items.Clear();
@@ -68,8 +73,8 @@ namespace MediaPortal.MPInstaller
       InitCategories();
       LoadListFiles();
       //LoadToListview("All");
-      comboBox3.SelectedIndex = 0;
-      comboBox2.SelectedIndex = 0;
+      comboBox_filter.SelectedIndex = 0;
+      comboBox_view.SelectedIndex = 1;
     }
 
     public void LoadToListview(string strgroup)
@@ -105,13 +110,19 @@ namespace MediaPortal.MPInstaller
       return false;
     }
 
+    /// <summary>
+    /// Loads to listview.
+    /// </summary>
+    /// <param name="mpih">The mpih.</param>
+    /// <param name="lv">The lv.</param>
+    /// <param name="strgroup">The strgroup.</param>
     public void LoadToListview(MPInstallHelper mpih, ListView lv, string strgroup)
     {
       lv.Items.Clear();
       for (int i = 0; i < mpih.lst.Count; i++)
       {
         MPpackageStruct pk = (MPpackageStruct)mpih.lst[i];
-        if ((pk._intalerStruct.Group == strgroup || strgroup == "All")&&TestView(pk,comboBox3.SelectedIndex))
+        if ((pk._intalerStruct.Group == strgroup || strgroup == "All")&&TestView(pk,comboBox_filter.SelectedIndex))
         {
           ListViewItem item1 = new ListViewItem(pk._intalerStruct.Name, 0);
           if (pk._intalerStruct.Logo != null)
@@ -128,10 +139,11 @@ namespace MediaPortal.MPInstaller
           item1.SubItems.Add(pk._intalerStruct.Group);
           lv.Items.AddRange(new ListViewItem[] { item1 });
         }
-        InitGroups(lv);
-        SetGroups(0, lv);
-        SetButtonState();
       }
+      //lv.Items.AddRange(itemlist);
+      InitGroups(lv);
+      SetGroups(0, lv);
+      SetButtonState();
     }
 
     private void InitGroups(ListView myListView)
@@ -148,6 +160,7 @@ namespace MediaPortal.MPInstaller
       SetGroups(0, myListView);
 
     }
+
     private void SetGroups(int column, ListView myListView)
     {
       // Remove the current groups.
@@ -327,7 +340,7 @@ namespace MediaPortal.MPInstaller
 
     private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
     {
-      if (comboBox2.Text == "Icons")
+      if (comboBox_view.Text == "Icons")
       {
         SetGroups(4, listView1);
         listView1.View = System.Windows.Forms.View.LargeIcon;
@@ -489,10 +502,10 @@ namespace MediaPortal.MPInstaller
 
     private void button6_Click(object sender, EventArgs e)
     {
-      string temp_file = InstalDir + @"\online.xml";
-      if (!Directory.Exists(InstalDir))
+      string temp_file = InstallDir + @"\online.xml";
+      if (!Directory.Exists(InstallDir))
       {
-        Directory.CreateDirectory(InstalDir);
+        Directory.CreateDirectory(InstallDir);
       }
       download_form dw = new download_form(MPinstallerStruct.DEFAULT_UPDATE_SITE + "/" + "MPExtensionFileList.xml", temp_file);
       dw.Text = "Download online list";
@@ -511,7 +524,7 @@ namespace MediaPortal.MPInstaller
         ((MPpackageStruct)lst.lst[i]).isInstalled = true;
         ((MPpackageStruct)lst.lst[i]).isLocal = true;
       }
-      string temp_file = InstalDir+ @"\online.xml";
+      string temp_file = InstallDir+ @"\online.xml";
       if (File.Exists(temp_file))
       {
         lst_online.LoadFromFile(temp_file);

@@ -48,7 +48,7 @@ namespace MediaPortal.MPInstaller
       Application.SetCompatibleTextRenderingDefault(false);
       Thread.CurrentThread.Name = "MPInstaller";
     
-      if (File.Exists(AppDomain.CurrentDomain.BaseDirectory+ @"\MediaPortal.exe"))
+      if (true || File.Exists(Path.GetFullPath(AppDomain.CurrentDomain.BaseDirectory)+ @"MediaPortal.exe"))
       {
         if (!String.IsNullOrEmpty(fil))
         {
@@ -74,7 +74,7 @@ namespace MediaPortal.MPInstaller
       }
       else
       {
-        MessageBox.Show(AppDomain.CurrentDomain.BaseDirectory +  @"\MediaPortal.exe not found. Program Exit.....");
+        MessageBox.Show(Path.GetFullPath(AppDomain.CurrentDomain.BaseDirectory) +  @"MediaPortal.exe not found. Program Exit.....");
       }
     }
   }

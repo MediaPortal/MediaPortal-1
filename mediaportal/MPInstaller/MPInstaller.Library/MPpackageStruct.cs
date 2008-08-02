@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.IO;
 using System.Net;
 using System.Xml;
+using System.Xml.Serialization;
 using System.Drawing;
 using System.Globalization;
 using ICSharpCode.SharpZipLib.Zip;
@@ -520,10 +522,24 @@ namespace MediaPortal.MPInstaller
     
     public void NormalizeNames()
     {
+      string rfile = InstalDir + @"\cleanup.xml";
+      MpInstallerNameReplace replecer = new MpInstallerNameReplace();
+      if (File.Exists(rfile))
+      {
+        replecer.Load(rfile);
+      }
       foreach (MPpackageStruct pk in this.lst)
       {
-        pk._intalerStruct.Name = pk._intalerStruct.Name.Replace("(MPI)", "");
-        pk._intalerStruct.Name = pk._intalerStruct.Name.Replace("(Mpi)", "");
+        if (replecer.GroupSubstitutions.ContainsKey(pk._intalerStruct.Group))
+        {
+          pk._intalerStruct.Group = replecer.GroupSubstitutions[pk._intalerStruct.Group];
+        }
+        
+        foreach(KeyValuePair<string,string> kpv in replecer.NameCleanups)
+        {
+          Regex replacregex = new Regex(kpv.Key);
+          pk._intalerStruct.Name = replacregex.Replace(pk._intalerStruct.Name, kpv.Value);
+        }
       }
     }
     
@@ -693,55 +709,62 @@ namespace MediaPortal.MPInstaller
       XmlDocument doc = new XmlDocument();
       if (File.Exists(FileName))
       {
-        doc.Load(FileName);
-        lst.Clear();
-        XmlNode ver = doc.DocumentElement.SelectSingleNode("/MPinstalerS");
-        XmlNodeList fileList = ver.SelectNodes("ExtensionList/Extension");
-        foreach (XmlNode nodefile in fileList)
+        try
         {
-          MPpackageStruct pkg = new MPpackageStruct();
-          pkg.FileName = nodefile.SelectSingleNode("FileName").InnerText;
-          pkg._intalerStruct.Name = nodefile.SelectSingleNode("Name").InnerText;
-          pkg._intalerStruct.Author = nodefile.SelectSingleNode("Author").InnerText;
-          pkg._intalerStruct.Version = nodefile.SelectSingleNode("Version").InnerText;
-          pkg._intalerStruct.UpdateURL = nodefile.SelectSingleNode("URL").InnerText;
-          XmlNode grup_node = nodefile.SelectSingleNode("Group");
-          if (grup_node != null)
-            pkg._intalerStruct.Group = grup_node.InnerText;
-          XmlNode node_logo = nodefile.SelectSingleNode("Logo");
-          if (node_logo != null)
+          doc.Load(FileName);
+          lst.Clear();
+          XmlNode ver = doc.DocumentElement.SelectSingleNode("/MPinstalerS");
+          XmlNodeList fileList = ver.SelectNodes("ExtensionList/Extension");
+          foreach (XmlNode nodefile in fileList)
           {
-            byte[] buffer = Convert.FromBase64String(node_logo.InnerText);
-            string t = Path.GetTempFileName();
-            FileStream fs = new FileStream(t, FileMode.Create);
-            fs.Write(buffer, 0, buffer.Length);
-            fs.Close();
-            pkg._intalerStruct.Logo = Image.FromFile(t, true);
-            try
+            MPpackageStruct pkg = new MPpackageStruct();
+            pkg.FileName = nodefile.SelectSingleNode("FileName").InnerText;
+            pkg._intalerStruct.Name = nodefile.SelectSingleNode("Name").InnerText;
+            pkg._intalerStruct.Author = nodefile.SelectSingleNode("Author").InnerText;
+            pkg._intalerStruct.Version = nodefile.SelectSingleNode("Version").InnerText;
+            pkg._intalerStruct.UpdateURL = nodefile.SelectSingleNode("URL").InnerText;
+            XmlNode grup_node = nodefile.SelectSingleNode("Group");
+            if (grup_node != null)
+              pkg._intalerStruct.Group = grup_node.InnerText;
+            XmlNode node_logo = nodefile.SelectSingleNode("Logo");
+            if (node_logo != null)
             {
-              File.Delete(t);
+              byte[] buffer = Convert.FromBase64String(node_logo.InnerText);
+              string t = Path.GetTempFileName();
+              FileStream fs = new FileStream(t, FileMode.Create);
+              fs.Write(buffer, 0, buffer.Length);
+              fs.Close();
+              pkg._intalerStruct.Logo = Image.FromFile(t, true);
+              try
+              {
+                File.Delete(t);
+              }
+              catch (Exception)
+              {
+
+              }
             }
-            catch (Exception)
+            XmlNode node_des = nodefile.SelectSingleNode("Description");
+            XmlNodeList uninstallList = nodefile.SelectNodes("Uninstall/FileInfo");
+            foreach (XmlNode un in uninstallList)
             {
-
+              pkg._intalerStruct.Uninstall.Add(new UninstallInfo(un.SelectSingleNode("FileName").InnerText, un.SelectSingleNode("Date").InnerText));
             }
-          }
-          XmlNode node_des = nodefile.SelectSingleNode("Description");
-          XmlNodeList uninstallList = nodefile.SelectNodes("Uninstall/FileInfo");
-          foreach (XmlNode un in uninstallList)
-          {
-            pkg._intalerStruct.Uninstall.Add(new UninstallInfo(un.SelectSingleNode("FileName").InnerText, un.SelectSingleNode("Date").InnerText));
-          }
-          if (node_des != null)
-            pkg._intalerStruct.Description = node_des.InnerText;
-          XmlNode nodeproperties = nodefile.SelectSingleNode("Properties");
-          pkg._intalerStruct.ProiectProperties.Load(nodeproperties);
+            if (node_des != null)
+              pkg._intalerStruct.Description = node_des.InnerText;
+            XmlNode nodeproperties = nodefile.SelectSingleNode("Properties");
+            pkg._intalerStruct.ProiectProperties.Load(nodeproperties);
 
-          this.lst.Add(pkg);
+            this.lst.Add(pkg);
+          }
+          //XmlNode nodeoption = ver.SelectSingleNode("Option");
+          //this.BuildFileName = nodeoption.SelectSingleNode("BuildFileName").InnerText;
+          NormalizeNames();
         }
-        //XmlNode nodeoption = ver.SelectSingleNode("Option");
-        //this.BuildFileName = nodeoption.SelectSingleNode("BuildFileName").InnerText;
-        NormalizeNames();
+        catch(Exception)
+        {
+          MessageBox.Show("List loading error","Error");
+        }
       }
     }
 
