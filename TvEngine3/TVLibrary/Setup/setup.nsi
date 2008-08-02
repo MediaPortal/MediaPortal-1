@@ -229,9 +229,18 @@ Section "-prepare" SecPrepare
 
   !insertmacro GET_BACKUP_POSTFIX $R0
 
-  ${If} ${FileExists} "${COMMON_APPDATA}\*.*"
-    ${LOG_TEXT} "INFO" "Configuration dir already exists. It will be renamed."
-    Rename "${COMMON_APPDATA}" "${COMMON_APPDATA}_$R0"
+  ${If} $DeployMode == 1
+  ${AndIf} $noServer == 1   ; this means the client is being installed, tv server was installed before, so the instdir shouldn't be renamed again       noClient
+
+    ${LOG_TEXT} "INFO" "!!!!!!!!!!!! the client is being installed, tv server was installed before, so the instdir shouldn't be renamed again"
+
+  ${Else}
+
+    ${If} ${FileExists} "${COMMON_APPDATA}\*.*"
+      ${LOG_TEXT} "INFO" "Configuration dir already exists. It will be renamed."
+      Rename "${COMMON_APPDATA}" "${COMMON_APPDATA}_$R0"
+    ${EndIf}
+
   ${EndIf}
 
 SectionEnd
@@ -784,25 +793,6 @@ Function .onInit
     ${ReadMediaPortalDirs} $MPdir.Base
   ${EndIf}
 
-  /*
-    ; if silent and tve3 is already installed, remove it first, the continue with installation
-    ${If} ${Silent}
-        ReadRegStr $R0 HKLM "${REG_UNINSTALL}" "UninstallString"
-        ${If} ${FileExists} '$R0'
-            ${GetParent} $R0 $R1
-            ; start uninstallation of installed MP, from tmp folder, so it will delete itself
-            ClearErrors
-            CopyFiles $R0 "$TEMP\uninstall-tve3.exe"
-            ExecWait '"$TEMP\uninstall-tve3.exe" /S _?=$R1'
-
-            ; if an error occured, ask to cancel installation
-            #${If} ${Errors}
-            #    MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_ON_UNINSTALL)" /SD IDNO IDYES +2 IDNO 0
-            #    Quit
-            #${EndIf}
-        ${EndIf}
-    ${EndIf}
-*/
   SetShellVarContext all
 FunctionEnd
 
