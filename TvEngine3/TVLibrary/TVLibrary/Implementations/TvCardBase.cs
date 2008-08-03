@@ -190,7 +190,7 @@ namespace TvLibrary.Implementations
     /// <summary>
     /// Last subchannel id
     /// </summary>
-    protected int _subChannelId;
+    protected int _subChannelId = -1;
     /// <summary>
     /// Indicates, if the signal is present
     /// </summary>
@@ -600,7 +600,7 @@ namespace TvLibrary.Implementations
       }
       if (_mapSubChannels.Count == 0)
       {
-        _subChannelId = 0;
+        _subChannelId = -1;
         StopGraph();
       }
     }
@@ -617,7 +617,7 @@ namespace TvLibrary.Implementations
         en.Current.Value.Decompose();
       }
       _mapSubChannels.Clear();
-      _subChannelId = 0;
+      _subChannelId = -1;
     }
 
     /// <summary>
