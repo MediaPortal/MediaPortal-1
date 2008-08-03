@@ -599,19 +599,35 @@ namespace TvEngine
 
                   if (nodeEpisodeNum != null)
                   {
-                    if (nodeEpisodeNumSystem != null && nodeEpisodeNumSystem == "xmltv_ns")
+                    if (nodeEpisodeNumSystem != null)
                     {
                       // http://xml.coverpages.org/XMLTV-DTD-20021210.html
+                      if (nodeEpisodeNumSystem == "xmltv_ns")
+                      {
+                        serEpNum = ConvertHTMLToAnsi(nodeEpisodeNum.Replace(" ", ""));
+                        int dot1 = serEpNum.IndexOf(".", 0);
+                        int dot2 = serEpNum.IndexOf(".", dot1 + 1);
+                        seriesNum = serEpNum.Substring(0, dot1);
+                        episodeNum = serEpNum.Substring(dot1 + 1, dot2 - (dot1 + 1));
+                        episodePart = serEpNum.Substring(dot2 + 1, serEpNum.Length - (dot2 + 1));
+
+                        seriesNum = CorrectEpisodeNum(seriesNum);
+                        episodeNum = CorrectEpisodeNum(episodeNum);
+                        episodePart = CorrectEpisodeNum(episodePart);
+                      }
+                      else if (nodeEpisodeNumSystem == "onscreen")
+                      {
+                        // example: 'Episode #FFEE' 
+                        serEpNum = ConvertHTMLToAnsi(nodeEpisodeNum);
+                        int num1 = serEpNum.IndexOf("#", 0);
+                        episodeNum = serEpNum.Substring(num1, serEpNum.Length - num1);
+                      }
+                    }
+                    else  // fixing mantis bug 1486: XMLTV import doesn't take episode number from TVGuide.xml made by WebEPG 
+                    {
+                      // example: '5' like WebEPG is creating
                       serEpNum = ConvertHTMLToAnsi(nodeEpisodeNum.Replace(" ", ""));
-                      int dot1 = serEpNum.IndexOf(".", 0);
-                      int dot2 = serEpNum.IndexOf(".", dot1 + 1);
-                      seriesNum = serEpNum.Substring(0, dot1);
-                      episodeNum = serEpNum.Substring(dot1 + 1, dot2 - (dot1 + 1));
-                      episodePart = serEpNum.Substring(dot2 + 1, serEpNum.Length - (dot2 + 1));
-                      
-                      seriesNum = CorrectEpisodeNum(seriesNum);
-                      episodeNum = CorrectEpisodeNum(episodeNum);
-                      episodePart = CorrectEpisodeNum(episodePart);
+                      episodeNum = CorrectEpisodeNum(serEpNum);
                     }
                   }
 
