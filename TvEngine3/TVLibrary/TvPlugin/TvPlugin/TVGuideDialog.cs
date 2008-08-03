@@ -49,11 +49,8 @@ namespace TvPlugin
   /// <summary>
   /// 
   /// </summary>
-  public class TVGuideDialog : TvGuideBase, IRenderLayer
+  public class TVGuideDialog : TvGuideBase
   {
-    #region Base Dialog Variables
-    bool m_bRunning = false;
-    #endregion    
 
     public TVGuideDialog()
       : base()
@@ -91,64 +88,7 @@ namespace TvPlugin
     protected override void OnPageDestroy(int new_windowId)
     {
       base.OnPageDestroy(new_windowId);
-      m_bRunning = false;
-    }
-
-    #region Base Dialog Members
-    public void DoModal(int dwParentId)
-    {
-      GUIWindow parentWindow = GUIWindowManager.GetWindow(dwParentId); ;
-      if (null == parentWindow)
-        return;
-      
-      bool wasRouted = GUIWindowManager.IsRouted;
-      IRenderLayer prevLayer = GUILayerManager.GetLayer(GUILayerManager.LayerType.Dialog);
-
-      GUIWindowManager.IsSwitchingToNewWindow = true;
-      GUIWindowManager.RouteToWindow(GetID);
-
-      // active this window...
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, GetID, 0, 0, -1, 0, null);
-      Log.Debug("GUITVGuideDialog: OnMessage - GetID: {0}", Convert.ToString(GetID));
-      OnMessage(msg);
-
-      GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
-      GUIWindowManager.IsSwitchingToNewWindow = false;
-      m_bRunning = true;
-      while (m_bRunning && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
-        GUIWindowManager.Process();
-
-      GUIWindowManager.IsSwitchingToNewWindow = true;
-      GUIWindowManager.UnRoute();
-      GUIWindowManager.IsSwitchingToNewWindow = false;
-
-      FreeResources();
-      DeInitControls();
-      GUILayerManager.UnRegisterLayer(this);
-      if (wasRouted)
-      {
-        GUIWindowManager.RouteToWindow(dwParentId);
-        GUILayerManager.RegisterLayer(prevLayer, GUILayerManager.LayerType.Dialog);
-      }
-    }
-    #endregion
-
-    public override bool OnMessage(GUIMessage message)
-    {
-			//      needRefresh = true;
-      switch (message.Message)
-      {
-        case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
-          {
-            Log.Debug("tvguidedlg: GUI_MSG_WINDOW_DEINIT");
-            m_bRunning = false;
-            return true;
-          }
-				case GUIMessage.MessageType.GUI_MSG_CLICKED:
-					m_bRunning = false;
-					break;
-      }
-      return base.OnMessage(message);
+      if (_running) PageDestroy();
     }
 
     public override void OnAction(Action action)
@@ -156,40 +96,15 @@ namespace TvPlugin
 			switch (action.wID)
       {
         case Action.ActionType.ACTION_CONTEXT_MENU:
-          /*if (GetFocusControlId() == -1)
-          {
-            m_bRunning = false;
-            return;
-          }*/
-      		m_bRunning = false;
-          break;
         case Action.ActionType.ACTION_CLOSE_DIALOG:
-          m_bRunning = false;
-          return;
         case Action.ActionType.ACTION_SHOW_FULLSCREEN:
-          m_bRunning = false;
-          return;
         case Action.ActionType.ACTION_PREVIOUS_MENU:
-          m_bRunning = false;
-          return;
-				case Action.ActionType.ACTION_SELECT_ITEM:
-					m_bRunning = false;
-      		break;
+        case Action.ActionType.ACTION_SELECT_ITEM:
+          PageDestroy();
+      		return;
       }
       base.OnAction(action);
     }
-
-    #region IRenderLayer
-    public bool ShouldRenderLayer()
-    {
-      //TVHome.SendHeartBeat(); //not needed, now sent from tvoverlay.cs
-      return m_bRunning;
-    }
-
-    public void RenderLayer(float timePassed)
-    {
-      Render(timePassed);
-    }
-    #endregion
+  
   }
 }

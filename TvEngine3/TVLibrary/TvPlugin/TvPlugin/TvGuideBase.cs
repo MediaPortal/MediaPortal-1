@@ -54,7 +54,7 @@ namespace TvPlugin
   /// <summary>
   /// 
   /// </summary>
-  public class TvGuideBase : GUIWindow
+  public class TvGuideBase : GUIDialogWindow
   {
     #region constants
     const int MaxDaysInGuide = 30;

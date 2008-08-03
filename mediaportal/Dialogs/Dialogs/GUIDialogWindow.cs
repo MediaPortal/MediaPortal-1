@@ -56,6 +56,12 @@ namespace MediaPortal.Dialogs
     #region Public Methods
     public virtual void PageLoad(int ParentID)
     {
+      if (GUIWindowManager.IsRouted)
+      {
+        GUIDialogWindow win = (GUIDialogWindow) GUIWindowManager.GetWindow(GUIWindowManager.RoutedWindow);
+        if (win != null) win.PageDestroy();
+      }
+      
       _parentWindowID = ParentID;
       _parentWindow = GUIWindowManager.GetWindow(_parentWindowID);
       if (_parentWindow == null)
@@ -72,11 +78,7 @@ namespace MediaPortal.Dialogs
         _running = true;
       }
       GUIWindowManager.IsSwitchingToNewWindow = false;
-      while (IsAnimating(AnimationType.WindowOpen) && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
-      {
-        GUIWindowManager.Process();
-      }
-    }
+   }
 
     public virtual void PageDestroy()
     {
@@ -95,6 +97,7 @@ namespace MediaPortal.Dialogs
       {
         GUIWindowManager.Process();
       }
+
     }
 
     public virtual void Reset()
