@@ -549,6 +549,10 @@ SectionEnd
   RMDir /r /REBOOTOK "$MPdir.Base\WebEPG\grabbers"
   RMDir "$MPdir.Base\WebEPG"
 
+  ; MPinstaller
+  Delete /REBOOTOK "$MPdir.Base\Installer\cleanup.xml"
+  RMDir "$MPdir.Base\Installer"
+
   ; xmltv
   Delete /REBOOTOK "$MPdir.Base\xmltv\ReadMe.txt"
   Delete /REBOOTOK "$MPdir.Base\xmltv\xmltv.dtd"
