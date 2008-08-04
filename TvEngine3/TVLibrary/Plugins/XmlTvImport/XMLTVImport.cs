@@ -620,7 +620,8 @@ namespace TvEngine
                         // example: 'Episode #FFEE' 
                         serEpNum = ConvertHTMLToAnsi(nodeEpisodeNum);
                         int num1 = serEpNum.IndexOf("#", 0);
-                        episodeNum = serEpNum.Substring(num1, serEpNum.Length - num1);
+                        if (num1 < 0) num1 = 0;
+                        episodeNum = CorrectEpisodeNum(serEpNum.Substring(num1, serEpNum.Length - num1));
                       }
                     }
                     else  // fixing mantis bug 1486: XMLTV import doesn't take episode number from TVGuide.xml made by WebEPG 
