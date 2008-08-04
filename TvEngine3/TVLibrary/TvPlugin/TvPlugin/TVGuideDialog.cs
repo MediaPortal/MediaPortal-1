@@ -99,7 +99,7 @@ namespace TvPlugin
         case Action.ActionType.ACTION_CLOSE_DIALOG:
         case Action.ActionType.ACTION_SHOW_FULLSCREEN:
         case Action.ActionType.ACTION_PREVIOUS_MENU:
-        case Action.ActionType.ACTION_SELECT_ITEM:
+        //case Action.ActionType.ACTION_SELECT_ITEM:
           PageDestroy();
       		return;
       }

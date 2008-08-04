@@ -869,7 +869,7 @@ namespace TvPlugin
 
     public static bool ManualRecord(Channel channel)
     {
-      if (GUIWindowManager.ActiveWindow == (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
+      if (GUIWindowManager.ActiveWindowEx == (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
       {
         MediaPortal.GUI.Library.Log.Info("send message to fullscreen tv");
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORD, GUIWindowManager.ActiveWindow, 0, 0, 0, 0, null);

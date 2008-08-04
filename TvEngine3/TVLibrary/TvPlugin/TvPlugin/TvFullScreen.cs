@@ -919,6 +919,8 @@ namespace TvPlugin
       #region case GUI_MSG_RECORD
       if (message.Message == GUIMessage.MessageType.GUI_MSG_RECORD)
       {
+        if (_isDialogVisible) return false;
+
         Channel channel = TVHome.Navigator.Channel;
 
         if (channel == null)
@@ -2441,7 +2443,7 @@ namespace TvPlugin
       GUIWindowManager.IsOsdVisible = false;
       Log.Debug("Tvfullscreen:not viewing anymore");
       GUIWindowManager.ShowPreviousWindow();
-    }
+    }    
 
     public void UpdateOSD()
     {
