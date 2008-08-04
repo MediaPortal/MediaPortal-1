@@ -106,27 +106,27 @@
   <font>
     <name>font32</name>
     <start>48</start>
-    <end>58</end>   
+    <end>58</end>
     <filename>Arial</filename>
     <height>32</height>
   </font>
-    <font>
-	<start>48</start>
-	<end>58</end>
+  <font>
+    <start>48</start>
+    <end>58</end>
     <name>font48</name>
     <filename>Arial</filename>
     <height>48</height>
   </font>
   <font>
-	<start>48</start>
-	<end>58</end>
+    <start>48</start>
+    <end>58</end>
     <name>font72</name>
     <filename>Arial</filename>
     <height>72</height>
   </font>
   <font>
-  	  <name>fontSVT</name>
-  	  <filename>Courier New</filename>
-  	  <height>13</height>
+    <name>fontSVT</name>
+    <filename>Courier New</filename>
+    <height>13</height>
   </font>
 </fonts>

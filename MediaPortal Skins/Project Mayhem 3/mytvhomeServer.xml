@@ -51,8 +51,8 @@
         <ondown>7</ondown>
         <onright>99</onright>
       </control>
-      
-<!--       <control>
+
+      <!--       <control>
         <description>Group button</description>
         <type>button</type>
         <id>6</id>
@@ -126,7 +126,7 @@
         <ondown>2</ondown>
         <onright>99</onright>
       </control>
-<!--       <control>
+      <!--       <control>
         <description>TuningDetails</description>
         <type>button</type>
         <id>14</id>
@@ -230,7 +230,7 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
-<!--     <control>
+    <!--     <control>
       <description>rectangle</description>
       <type>image</type>
       <id>21</id>

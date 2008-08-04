@@ -174,7 +174,7 @@
       <label>#TV.View.title</label>
       <align>center</align>
       <textcolor>White</textcolor>
-		<font>font12</font>	
+      <font>font12</font>
     </control>
     <control>
       <description>Current program time</description>
@@ -185,7 +185,7 @@
       <label>#TV.View.start-#TV.View.stop</label>
       <align>right</align>
       <textcolor>ffa9d0f7</textcolor>
-	  <font>font10</font>
+      <font>font10</font>
     </control>
     <control>
       <description>Current Channelname</description>
@@ -194,11 +194,11 @@
       <posX>282</posX>
       <posY>122</posY>
       <width>313</width>
-	  <height>16</height>
+      <height>16</height>
       <label>#TV.View.channel</label>
       <align>center</align>
       <textcolor>Gray</textcolor>
-	  <font>font12</font>	
+      <font>font12</font>
     </control>
     <control>
       <description>Description1</description>
@@ -211,7 +211,7 @@
       <seperator>----------------------------------------------------------------------------------------------</seperator>
       <label>#TV.View.description</label>
       <textcolor>White</textcolor>
-	  <font>font11</font>
+      <font>font11</font>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>

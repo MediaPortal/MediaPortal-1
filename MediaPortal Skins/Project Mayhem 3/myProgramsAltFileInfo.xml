@@ -16,7 +16,7 @@
       <id>1</id>
       <posX>60</posX>
       <posY>20</posY>
-       <texture>movieinfo_logo.png</texture> 
+      <texture>movieinfo_logo.png</texture>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -62,7 +62,7 @@
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
-     <control>
+    <control>
       <description>Refresh from AMG</description>
       <type>button</type>
       <id>5</id>

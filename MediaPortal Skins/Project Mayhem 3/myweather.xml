@@ -541,7 +541,7 @@
       <width>51</width>
       <texture>background-myweather.png</texture>
     </control>
-     <control>
+    <control>
       <description>day 4 label</description>
       <type>button</type>
       <align>center</align>
@@ -600,7 +600,8 @@
       <height>51</height>
       <width>51</width>
       <texture>background-myweather.png</texture>
-    </control>   <control>
+    </control>
+    <control>
       <description>Satellite image</description>
       <type>image</type>
       <id>1000</id>

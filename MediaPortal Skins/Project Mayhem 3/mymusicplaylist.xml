@@ -77,7 +77,7 @@
         <ondown>28</ondown>
         <alignY>center</alignY>
       </control>
-<!--       <control>
+      <!--       <control>
         <description>Play button</description>
         <type>button</type>
         <id>23</id>
@@ -114,8 +114,8 @@
         <description>last.fm button</description>
         <type>togglebutton</type>
         <id>27</id>
-<!--         <width>190</width> -->        
-<!--         <textXOff>10</textXOff> -->
+        <!--         <width>190</width> -->
+        <!--         <textXOff>10</textXOff> -->
         <label>33000</label>
         <height>32</height>
         <AltTextureFocus>togglebutton-off-focus.png</AltTextureFocus>
@@ -155,7 +155,7 @@
           <id>51</id>
           <onleft>2</onleft>
           <onright>52</onright>
-<!--           <onup>2</onup>
+          <!--           <onup>2</onup>
           <ondown>2</ondown> -->
         </control>
         <control>
@@ -178,7 +178,7 @@
           <textureHeight>90</textureHeight>
           <onleft>2</onleft>
           <onright>52</onright>
-<!--           <onup>2</onup>
+          <!--           <onup>2</onup>
           <ondown>2</ondown> -->
         </control>
         <control>
@@ -187,7 +187,7 @@
           <id>53</id>
           <onleft>2</onleft>
           <onright>53</onright>
-<!--           <onup>2</onup>
+          <!--           <onup>2</onup>
           <ondown>2</ondown> -->
           <textcolor>FFFFFFFF</textcolor>
           <height>420</height>
