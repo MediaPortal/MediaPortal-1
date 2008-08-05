@@ -725,14 +725,8 @@ namespace TvPlugin
         listViews.Add(item);
       }
 
-      string strObjects = string.Format("{0} {1}", itemlist.Count, GUILocalizeStrings.Get(632));
-      GUIPropertyManager.SetProperty("#itemcount", strObjects);
-      GUIControl cntlLabel = GetControl(12);
-
-      if (currentViewMethod == ViewAs.Album)
-        cntlLabel.YPosition = listAlbums.SpinY;
-      else
-        cntlLabel.YPosition = listViews.SpinY;
+      //set object count label
+      GUIPropertyManager.SetProperty("#itemcount", MediaPortal.Util.Utils.GetObjectCountLabel(itemlist.Count));
 
       OnSort();
       UpdateProperties();

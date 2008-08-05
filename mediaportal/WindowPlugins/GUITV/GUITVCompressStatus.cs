@@ -330,13 +330,6 @@ namespace MediaPortal.GUI.TV
       //set object count label
       GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(itemlist.Count));
 
-      GUIControl cntlLabel = GetControl(12);
-
-      if (currentViewMethod == ViewAs.Album)
-        cntlLabel.YPosition = listAlbums.SpinY;
-      else
-        cntlLabel.YPosition = listViews.SpinY;
-
       OnSort();
       //UpdateButtonStates(); done in OnSort()
       UpdateProperties();

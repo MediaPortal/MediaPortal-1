@@ -225,12 +225,10 @@ namespace MediaPortal.GUI.TV
         total++;
       }
 
-      string strObjects = String.Format("{0} {1}", total, GUILocalizeStrings.Get(632));
-      GUIPropertyManager.SetProperty("#itemcount", strObjects);
+      //set object count label
+      GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(total));
+
       GUIControl.SelectItemControl(GetID, listPriorities.GetID, m_iSelectedItem);
-      GUIControl cntlLabel = GetControl(12);
-      if (cntlLabel != null)
-        cntlLabel.YPosition = listPriorities.SpinY;
       GUIWaitCursor.Hide();
     }
     void SetLabels()

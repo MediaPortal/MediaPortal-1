@@ -248,14 +248,12 @@ namespace TvPlugin
         total++;
       }
 
-      string strObjects = String.Format("{0} {1}", total, GUILocalizeStrings.Get(632));
-      GUIPropertyManager.SetProperty("#itemcount", strObjects);
-      GUIControl.SelectItemControl(GetID, listPriorities.GetID, m_iSelectedItem);
-      GUIControl cntlLabel = GetControl(12);
-      if (cntlLabel != null)
-        cntlLabel.YPosition = listPriorities.SpinY;
+      //set object count label
+      GUIPropertyManager.SetProperty("#itemcount", MediaPortal.Util.Utils.GetObjectCountLabel(total));
 
+      GUIControl.SelectItemControl(GetID, listPriorities.GetID, m_iSelectedItem);
     }
+    
     void SetLabels()
     {
 

@@ -736,8 +736,9 @@ namespace TvPlugin
           }
           break;
       }
-      string strObjects = String.Format("{0} {1}", itemCount, GUILocalizeStrings.Get(632));
-      GUIPropertyManager.SetProperty("#itemcount", strObjects);
+
+      //set object count label
+      GUIPropertyManager.SetProperty("#itemcount", MediaPortal.Util.Utils.GetObjectCountLabel(itemCount));
 
       btnShow.Clear();
       try

@@ -157,7 +157,6 @@ namespace MediaPortal.GUI.TV
     {
       GUIWaitCursor.Show();
       GUIControl.ClearControl(GetID, listConflicts.GetID);
-      GUIControl cntlLabel;
 
       int total = 0;
       if (currentShow != null)
@@ -231,10 +230,6 @@ namespace MediaPortal.GUI.TV
         //set object count label
         GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(total));
 
-        cntlLabel = GetControl(12);
-        if (cntlLabel != null)
-          cntlLabel.YPosition = listConflicts.SpinY;
-
         SetLabels();
         GUIWaitCursor.Hide();
 
@@ -257,10 +252,6 @@ namespace MediaPortal.GUI.TV
 
       //set object count label
       GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(total));
-
-      cntlLabel = GetControl(12);
-      if (cntlLabel != null)
-        cntlLabel.YPosition = listConflicts.SpinY;
 
       SetLabels();
       GUIWaitCursor.Hide();

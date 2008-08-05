@@ -566,10 +566,6 @@ namespace MediaPortal.GUI.TV
       //set object count label
       GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(total));
 
-      GUIControl cntlLabel = GetControl(12);
-      if (cntlLabel != null)
-        cntlLabel.YPosition = listSchedules.SpinY;
-
       OnSort();
       UpdateButtonStates();
       GUIWaitCursor.Hide();
