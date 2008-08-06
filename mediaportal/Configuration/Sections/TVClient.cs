@@ -302,10 +302,10 @@ namespace MediaPortal.Configuration.Sections
       this.mpButtonRemoveSubLang = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpListViewPreferredSubLang = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader8 = new System.Windows.Forms.ColumnHeader();
       this.mpListViewAvailSubLang = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader7 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader8 = new System.Windows.Forms.ColumnHeader();
       this.mpGroupBox2.SuspendLayout();
       this.mpGroupBox1.SuspendLayout();
       this.tabControlTVGeneral.SuspendLayout();
@@ -652,9 +652,9 @@ namespace MediaPortal.Configuration.Sections
       this.mpCheckBoxEnableTTXTSub.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpCheckBoxEnableTTXTSub.Location = new System.Drawing.Point(239, 28);
       this.mpCheckBoxEnableTTXTSub.Name = "mpCheckBoxEnableTTXTSub";
-      this.mpCheckBoxEnableTTXTSub.Size = new System.Drawing.Size(138, 17);
+      this.mpCheckBoxEnableTTXTSub.Size = new System.Drawing.Size(135, 17);
       this.mpCheckBoxEnableTTXTSub.TabIndex = 11;
-      this.mpCheckBoxEnableTTXTSub.Text = "Enable teletext subtitles:";
+      this.mpCheckBoxEnableTTXTSub.Text = "Enable teletext subtitles";
       this.mpCheckBoxEnableTTXTSub.UseVisualStyleBackColor = false;
       this.mpCheckBoxEnableTTXTSub.CheckedChanged += new System.EventHandler(this.mpCheckBox1_CheckedChanged);
       // 
@@ -768,6 +768,11 @@ namespace MediaPortal.Configuration.Sections
       this.columnHeader4.Text = "Language";
       this.columnHeader4.Width = 125;
       // 
+      // columnHeader8
+      // 
+      this.columnHeader8.Text = "ID";
+      this.columnHeader8.Width = 35;
+      // 
       // mpListViewAvailSubLang
       // 
       this.mpListViewAvailSubLang.AllowDrop = true;
@@ -793,11 +798,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.columnHeader7.Text = "ID";
       this.columnHeader7.Width = 35;
-      // 
-      // columnHeader8
-      // 
-      this.columnHeader8.Text = "ID";
-      this.columnHeader8.Width = 35;
       // 
       // TVClient
       // 

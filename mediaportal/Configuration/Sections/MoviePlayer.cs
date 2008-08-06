@@ -272,6 +272,7 @@ namespace MediaPortal.Configuration.Sections
       this.fileNameTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.enableAudioDualMonoModes = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.autoDecoderSettings = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.h264videoCodecComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
@@ -285,7 +286,6 @@ namespace MediaPortal.Configuration.Sections
       this.wmvGroupBox = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.wmvCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.enableAudioDualMonoModes = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBoxExternalPlayer.SuspendLayout();
       this.mpGroupBox1.SuspendLayout();
       this.wmvGroupBox.SuspendLayout();
@@ -401,6 +401,19 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.TabIndex = 0;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Codec Settings (internal player)";
+      // 
+      // enableAudioDualMonoModes
+      // 
+      this.enableAudioDualMonoModes.AutoSize = true;
+      this.enableAudioDualMonoModes.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
+      this.enableAudioDualMonoModes.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.enableAudioDualMonoModes.Location = new System.Drawing.Point(19, 162);
+      this.enableAudioDualMonoModes.Name = "enableAudioDualMonoModes";
+      this.enableAudioDualMonoModes.Size = new System.Drawing.Size(386, 30);
+      this.enableAudioDualMonoModes.TabIndex = 10;
+      this.enableAudioDualMonoModes.Text = "Enable AudioDualMono mode switching\r\n(if 1 audio stream contains 2x mono channels" +
+          ", you can switch between them)";
+      this.enableAudioDualMonoModes.UseVisualStyleBackColor = true;
       // 
       // autoDecoderSettings
       // 
@@ -523,19 +536,6 @@ namespace MediaPortal.Configuration.Sections
       this.wmvCheckBox.TabIndex = 0;
       this.wmvCheckBox.Text = "Use 5.1 audio playback for WMV movie files";
       this.wmvCheckBox.UseVisualStyleBackColor = true;
-      // 
-      // enableAudioDualMonoModes
-      // 
-      this.enableAudioDualMonoModes.AutoSize = true;
-      this.enableAudioDualMonoModes.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
-      this.enableAudioDualMonoModes.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.enableAudioDualMonoModes.Location = new System.Drawing.Point(19, 162);
-      this.enableAudioDualMonoModes.Name = "enableAudioDualMonoModes";
-      this.enableAudioDualMonoModes.Size = new System.Drawing.Size(442, 30);
-      this.enableAudioDualMonoModes.TabIndex = 10;
-      this.enableAudioDualMonoModes.Text = "Enable AudioDualMono mode switching\r\n(If 1 audio stream contains e.g. LEFT=SWE,RI" +
-          "GHT=ENG you can switch between them)";
-      this.enableAudioDualMonoModes.UseVisualStyleBackColor = true;
       // 
       // MoviePlayer
       // 
