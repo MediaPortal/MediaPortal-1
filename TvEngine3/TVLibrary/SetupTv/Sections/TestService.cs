@@ -223,26 +223,14 @@ namespace SetupTv.Sections
           mpLabelTimeShift.Text = card.TimeShiftFileName;
           mpLabelChannel.Text = card.Channel.ToString();
           if (card.IsRecording)
-          {
             mpButtonRec.Text = "Stop Rec/TimeShift";
-            mpButtonRec.Enabled = true;
-          }
           else
-          {
             mpButtonRec.Text = "Record";
-            mpButtonRec.Enabled = false;
-          }
 
           if (card.IsTimeShifting)
-          {
             mpButtonTimeShift.Text = "Stop TimeShift";
-            mpButtonRec.Enabled = true;
-          }
           else
-          {
             mpButtonTimeShift.Text = "Start TimeShift";
-            mpButtonRec.Enabled = false;
-          }
 
           return;
         }
