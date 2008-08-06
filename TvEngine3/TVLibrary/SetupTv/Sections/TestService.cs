@@ -110,6 +110,7 @@ namespace SetupTv.Sections
       {
         User user = new User();
         user.Name = "setuptv";
+        user.IsAdmin = true;          //fixing mantis bug 1513: recordings you start in manual control can not be stopped  
         //user.Name = "setuptv" + id.ToString();
         TvResult result = server.StartTimeShifting(ref user, id, out card);
         if (result != TvResult.Succeeded)
@@ -222,14 +223,26 @@ namespace SetupTv.Sections
           mpLabelTimeShift.Text = card.TimeShiftFileName;
           mpLabelChannel.Text = card.Channel.ToString();
           if (card.IsRecording)
+          {
             mpButtonRec.Text = "Stop Rec/TimeShift";
+            mpButtonRec.Enabled = true;
+          }
           else
+          {
             mpButtonRec.Text = "Record";
+            mpButtonRec.Enabled = false;
+          }
 
           if (card.IsTimeShifting)
+          {
             mpButtonTimeShift.Text = "Stop TimeShift";
+            mpButtonRec.Enabled = true;
+          }
           else
+          {
             mpButtonTimeShift.Text = "Start TimeShift";
+            mpButtonRec.Enabled = false;
+          }
 
           return;
         }
