@@ -133,7 +133,7 @@ namespace TvService
         if (tuningDetails == null || tuningDetails.Count == 0)
         {
           //no tuning details??
-          Log.Info("Controller:  No tuning details for channel:{0}", ch.Name);
+          //Log.Info("Controller:  No tuning details for channel:{0}", ch.Name);
           UpdateChannelStateUsers(ref allUsers, ChannelState.nottunable, ch.IdChannel);
           continue;
         }
@@ -143,7 +143,7 @@ namespace TvService
 
           foreach (IChannel tuningDetail in tuningDetails)
           {
-            Log.Info("Controller:   channel #{0} {1} ", number, tuningDetail.ToString());
+            //Log.Info("Controller:   channel #{0} {1} ", number, tuningDetail.ToString());
             enumerator = cards.GetEnumerator();
 
             while (enumerator.MoveNext())
@@ -157,7 +157,7 @@ namespace TvService
               if (!keyPair.Value.DataBaseCard.Enabled)
               {
                 //not enabled, so skip the card
-                Log.Info("Controller:    card:{0} type:{1} is disabled", cardId, tvcard.Type);
+                //Log.Info("Controller:    card:{0} type:{1} is disabled", cardId, tvcard.Type);
                 UpdateChannelStateUsers(ref allUsers, ChannelState.nottunable, ch.IdChannel);
                 continue;
               }
@@ -165,7 +165,7 @@ namespace TvService
               if (!tvcard.Tuner.CanTune(tuningDetail))
               {
                 //card cannot tune to this channel, so skip it
-                Log.Info("Controller:    card:{0} type:{1} cannot tune to channel", cardId, tvcard.Type);
+                //Log.Info("Controller:    card:{0} type:{1} cannot tune to channel", cardId, tvcard.Type);
                 UpdateChannelStateUsers(ref allUsers, ChannelState.nottunable, ch.IdChannel);
                 continue;
               }
@@ -184,7 +184,7 @@ namespace TvService
               if (null == channelMap)
               {
                 //channel is not mapped to this card, so skip it
-                Log.Info("Controller:    card:{0} type:{1} channel not mapped", cardId, tvcard.Type);
+                //Log.Info("Controller:    card:{0} type:{1} channel not mapped", cardId, tvcard.Type);
                 UpdateChannelStateUsers(ref allUsers, ChannelState.nottunable, ch.IdChannel);
                 continue;
               }
@@ -248,8 +248,8 @@ namespace TvService
                     if (canDecrypt || ch.FreeToAir || (checkCam == false))
                     {
                       //it is.. we can really use this card
-                      Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder decrypting {2}/{3} channels",
-                          cardId, tvcard.Type, tvcard.NumberOfChannelsDecrypting, keyPair.Value.DataBaseCard.DecryptLimit);
+                      //Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder decrypting {2}/{3} channels",
+                      //    cardId, tvcard.Type, tvcard.NumberOfChannelsDecrypting, keyPair.Value.DataBaseCard.DecryptLimit);
                       user = allUsers[i];
                       UpdateChannelStateUser(ref user, ChannelState.tunable, ch.IdChannel);
                       allUsers[i] = user;
@@ -257,8 +257,8 @@ namespace TvService
                     else
                     {
                       //it is not, skip this card
-                      Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder decrypting {2}/{3} channels. cam limit reached",
-                             cardId, tvcard.Type, tvcard.NumberOfChannelsDecrypting, keyPair.Value.DataBaseCard.DecryptLimit);
+                      //Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder decrypting {2}/{3} channels. cam limit reached",
+                        //     cardId, tvcard.Type, tvcard.NumberOfChannelsDecrypting, keyPair.Value.DataBaseCard.DecryptLimit);
 
                       //allow admin users like the scheduler to use this card anyway
                       if (user.IsAdmin)
@@ -278,7 +278,7 @@ namespace TvService
                 } //end of cam present block              
                 else // no cam present
                 {
-                  Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder no CA present", cardId, tvcard.Type);
+                  //Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder no CA present", cardId, tvcard.Type);
                   UpdateChannelStateUsers(ref allUsers, ChannelState.tunable, ch.IdChannel);                 
                 }
               }
@@ -291,7 +291,7 @@ namespace TvService
                   if (!tvcard.Users.IsOwner(user))
                   {
                     //no
-                    Log.Info("Controller:    card:{0} type:{1} is tuned to different transponder", cardId, tvcard.Type);
+                    //Log.Info("Controller:    card:{0} type:{1} is tuned to different transponder", cardId, tvcard.Type);
                     if (user.IsAdmin)
                     {
                       //allow admin users like the scheduler to use this card anyway
@@ -400,7 +400,7 @@ namespace TvService
         if (tuningDetails == null || tuningDetails.Count == 0)
         {
           //no tuning details??
-          Log.Info("Controller:  No tuning details for channel:{0}", ch.Name);
+          //Log.Info("Controller:  No tuning details for channel:{0}", ch.Name);
           channelStates.Add(ch.IdChannel, ChannelState.nottunable);
           continue;
         }
@@ -410,7 +410,7 @@ namespace TvService
 
           foreach (IChannel tuningDetail in tuningDetails)
           {            
-            Log.Info("Controller:   channel #{0} {1} ", number, tuningDetail.ToString());
+            //Log.Info("Controller:   channel #{0} {1} ", number, tuningDetail.ToString());
             Dictionary<int, ITvCardHandler>.Enumerator enumerator = cards.GetEnumerator();
             while (enumerator.MoveNext() && !chTunable)
             {
@@ -422,14 +422,14 @@ namespace TvService
               if (!keyPair.Value.DataBaseCard.Enabled)
               {
                 //not enabled, so skip the card
-                Log.Info("Controller:    card:{0} type:{1} is disabled", cardId, tvcard.Type);
+                //Log.Info("Controller:    card:{0} type:{1} is disabled", cardId, tvcard.Type);
                 continue;
               }
 
               if (!tvcard.Tuner.CanTune(tuningDetail))
               {
                 //card cannot tune to this channel, so skip it
-                Log.Info("Controller:    card:{0} type:{1} cannot tune to channel", cardId, tvcard.Type);
+                //Log.Info("Controller:    card:{0} type:{1} cannot tune to channel", cardId, tvcard.Type);
                 continue;
               }
 
@@ -447,7 +447,7 @@ namespace TvService
               if (null == channelMap)
               {
                 //channel is not mapped to this card, so skip it
-                Log.Info("Controller:    card:{0} type:{1} channel not mapped", cardId, tvcard.Type);
+                //Log.Info("Controller:    card:{0} type:{1} channel not mapped", cardId, tvcard.Type);
                 continue;
               }
 
@@ -506,14 +506,14 @@ namespace TvService
                   if (canDecrypt || ch.FreeToAir || (checkCam == false))
                   {
                     //it is.. we can really use this card
-                    Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder decrypting {2}/{3} channels",
-                        cardId, tvcard.Type, tvcard.NumberOfChannelsDecrypting, keyPair.Value.DataBaseCard.DecryptLimit);
+                    //Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder decrypting {2}/{3} channels",
+                     //   cardId, tvcard.Type, tvcard.NumberOfChannelsDecrypting, keyPair.Value.DataBaseCard.DecryptLimit);
                   }
                   else
                   {
                     //it is not, skip this card
-                    Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder decrypting {2}/{3} channels. cam limit reached",
-                           cardId, tvcard.Type, tvcard.NumberOfChannelsDecrypting, keyPair.Value.DataBaseCard.DecryptLimit);
+                    //Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder decrypting {2}/{3} channels. cam limit reached",
+                    //       cardId, tvcard.Type, tvcard.NumberOfChannelsDecrypting, keyPair.Value.DataBaseCard.DecryptLimit);
 
                     //allow admin users like the scheduler to use this card anyway
                     if (user.IsAdmin)
@@ -528,7 +528,7 @@ namespace TvService
                 } //end of cam present block              
                 else // no cam present
                 {
-                  Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder no CA present", cardId, tvcard.Type);
+                  //Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder no CA present", cardId, tvcard.Type);
                 }
               }
               else
@@ -537,7 +537,7 @@ namespace TvService
                 if (false == tvcard.Users.IsOwner(user))
                 {
                   //no
-                  Log.Info("Controller:    card:{0} type:{1} is tuned to different transponder", cardId, tvcard.Type);
+                  //Log.Info("Controller:    card:{0} type:{1} is tuned to different transponder", cardId, tvcard.Type);
                   if (user.IsAdmin)
                   {
                     //allow admin users like the scheduler to use this card anyway
@@ -634,7 +634,7 @@ namespace TvService
         foreach (IChannel tuningDetail in tuningDetails)
         {
           number++;
-          Log.Info("Controller:   channel #{0} {1} ", number, tuningDetail.ToString());
+          //Log.Info("Controller:   channel #{0} {1} ", number, tuningDetail.ToString());
           Dictionary<int, ITvCardHandler>.Enumerator enumerator = cards.GetEnumerator();
 
           //for each card...
@@ -649,7 +649,7 @@ namespace TvService
             if (keyPair.Value.DataBaseCard.Enabled == false)
             {
               //not enabled, so skip the card
-              Log.Info("Controller:    card:{0} type:{1} is disabled", cardId, tvcard.Type);
+              //Log.Info("Controller:    card:{0} type:{1} is disabled", cardId, tvcard.Type);
               continue;
             }
 
@@ -672,7 +672,7 @@ namespace TvService
             if (tvcard.Tuner.CanTune(tuningDetail) == false)
             {
               //card cannot tune to this channel, so skip it
-              Log.Info("Controller:    card:{0} type:{1} cannot tune to channel", cardId, tvcard.Type);
+              //Log.Info("Controller:    card:{0} type:{1} cannot tune to channel", cardId, tvcard.Type);
               continue;
             }
 
@@ -690,7 +690,7 @@ namespace TvService
             if (null == channelMap)
             {
               //channel is not mapped to this card, so skip it
-              Log.Info("Controller:    card:{0} type:{1} channel not mapped", cardId, tvcard.Type);
+              //Log.Info("Controller:    card:{0} type:{1} channel not mapped", cardId, tvcard.Type);
               continue;
             }
 
@@ -748,14 +748,14 @@ namespace TvService
                 if (canDecrypt || dbChannel.FreeToAir || (checkCam == false))
                 {
                   //it is.. we can really use this card
-                  Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder decrypting {2}/{3} channels",
-                      cardId, tvcard.Type, tvcard.NumberOfChannelsDecrypting, keyPair.Value.DataBaseCard.DecryptLimit);
+                  //Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder decrypting {2}/{3} channels",
+                  //    cardId, tvcard.Type, tvcard.NumberOfChannelsDecrypting, keyPair.Value.DataBaseCard.DecryptLimit);
                 }
                 else
                 {
                   //it is not, skip this card
-                  Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder decrypting {2}/{3} channels. cam limit reached",
-                         cardId, tvcard.Type, tvcard.NumberOfChannelsDecrypting, keyPair.Value.DataBaseCard.DecryptLimit);
+                  //Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder decrypting {2}/{3} channels. cam limit reached",
+                   //      cardId, tvcard.Type, tvcard.NumberOfChannelsDecrypting, keyPair.Value.DataBaseCard.DecryptLimit);
 
                   //allow admin users like the scheduler to use this card anyway
                   if (user.IsAdmin)
@@ -770,7 +770,7 @@ namespace TvService
               } //end of cam present block              
               else // no cam present
               {
-                Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder no CA present", cardId, tvcard.Type);
+                //Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder no CA present", cardId, tvcard.Type);
               }
             }
             else
@@ -779,7 +779,7 @@ namespace TvService
               if (false == tvcard.Users.IsOwner(user))
               {
                 //no
-                Log.Info("Controller:    card:{0} type:{1} is tuned to different transponder", cardId, tvcard.Type);
+                //Log.Info("Controller:    card:{0} type:{1} is tuned to different transponder", cardId, tvcard.Type);
                 if (user.IsAdmin)
                 {
                   //allow admin users like the scheduler to use this card anyway
@@ -810,7 +810,7 @@ namespace TvService
           else
             result = TvResult.AllCardsBusy;
         }
-        Log.Info("Controller: found {0} available", cardsAvailable.Count);
+        //Log.Info("Controller: found {0} available", cardsAvailable.Count);
 
         return cardsAvailable;
       }
