@@ -270,8 +270,7 @@ namespace SetupTv.Sections
         {
           cardNo++;
           User user = new User();
-          user.CardId = card.IdCard;
-          VirtualCard vcard = new VirtualCard(user);
+          user.CardId = card.IdCard;          
           if (off >= mpListView1.Items.Count)
           {
             item = mpListView1.Items.Add("");
@@ -286,22 +285,12 @@ namespace SetupTv.Sections
           {
             item = mpListView1.Items[off];
           }
-          item.SubItems[0].Text = cardNo.ToString();
-          item.SubItems[1].Text = vcard.Type.ToString();
 
-          if (card.Enabled == false)
+          bool cardPresent = RemoteControl.Instance.CardPresent(card.IdCard);
+          if (!cardPresent)
           {
-            item.SubItems[2].Text = "disabled";
-            item.SubItems[3].Text = "";
-            item.SubItems[4].Text = "";
-            item.SubItems[5].Text = "";
-            item.SubItems[6].Text = card.Name;
-            off++;
-            continue;
-          }
-
-          if (!RemoteControl.Instance.CardPresent(card.IdCard))
-          {
+            item.SubItems[0].Text = cardNo.ToString();
+            item.SubItems[1].Text = "n/a";
             item.SubItems[2].Text = "n/a";
             item.SubItems[3].Text = "";
             item.SubItems[4].Text = "";
@@ -311,7 +300,23 @@ namespace SetupTv.Sections
             continue;
           }
 
+          VirtualCard vcard = new VirtualCard(user);
+          item.SubItems[0].Text = cardNo.ToString();
+          item.SubItems[1].Text = vcard.Type.ToString();
 
+          if (card.Enabled == false)
+          {
+            item.SubItems[0].Text = cardNo.ToString();
+            item.SubItems[1].Text = vcard.Type.ToString();
+            item.SubItems[2].Text = "disabled";
+            item.SubItems[3].Text = "";
+            item.SubItems[4].Text = "";
+            item.SubItems[5].Text = "";
+            item.SubItems[6].Text = card.Name;
+            off++;
+            continue;
+          }                    
+          
           User[] usersForCard = RemoteControl.Instance.GetUsersForCard(card.IdCard);
           if (usersForCard == null)
           {
@@ -339,6 +344,7 @@ namespace SetupTv.Sections
             off++;
             continue;
           }
+          
 
           userFound = false;
           for (int i = 0; i < usersForCard.Length; ++i)
@@ -479,6 +485,8 @@ namespace SetupTv.Sections
       IList cards = Card.ListAll();
       foreach (Card card in cards)
       {
+        if (card.Enabled == false) continue;
+        if (!TvControl.RemoteControl.Instance.CardPresent(card.IdCard)) continue;
         User[] usersForCard = RemoteControl.Instance.GetUsersForCard(card.IdCard);
         if (usersForCard == null) continue;
         if (usersForCard.Length == 0) continue;
@@ -509,6 +517,8 @@ namespace SetupTv.Sections
       IList cards = Card.ListAll();
       foreach (Card card in cards)
       {
+        if (card.Enabled == false) continue;
+        if (!TvControl.RemoteControl.Instance.CardPresent(card.IdCard)) continue;
         User[] usersForCard = RemoteControl.Instance.GetUsersForCard(card.IdCard);
         if (usersForCard == null) continue;
         if (usersForCard.Length == 0) continue;

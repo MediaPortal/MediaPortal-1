@@ -261,9 +261,9 @@ namespace TvService
       }
 
       if (result)
-        Log.Info("Controller: TVServer initilized okay");
+        Log.Info("Controller: TVServer initialized okay");
       else
-        Log.Info("Controller: Failed to initilize TVServer");
+        Log.Info("Controller: Failed to initialize TVServer");
 
       return result;
     }
@@ -411,7 +411,7 @@ namespace TvService
                     if (card.PreloadCard)
                     {
                       Log.Info("Controller: preloading card :{0}", card.Name);
-                      card.BuildGraph();
+                      card.BuildGraph();                      
                       if (unknownCard is TvCardAnalog)
                       {
                         ((TvCardAnalog)unknownCard).ReloadQualityControlConfiguration();
@@ -2567,8 +2567,7 @@ namespace TvService
       if (ValidateTvControllerParams(cardId))
       {
         return null;
-      }
-
+      }      
       return _cards[cardId].Users.GetUsers();
     }
 

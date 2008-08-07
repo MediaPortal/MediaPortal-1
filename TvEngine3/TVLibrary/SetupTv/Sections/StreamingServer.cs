@@ -117,15 +117,16 @@ namespace SetupTv.Sections
 				RtspClient client = (RtspClient)item.Tag;
 				
 				User user = new User();
-				user.Name = System.Net.Dns.GetHostEntry(client.IpAdress).HostName;								
+				user.Name = System.Net.Dns.GetHostEntry(client.IpAdress).HostName;        
 
 				IList dbsCards = Card.ListAll();				
 
                 foreach (Card card in dbsCards)
                 {
+                  if (!card.Enabled) continue;
+                  if (!TvControl.RemoteControl.Instance.CardPresent(card.IdCard)) continue;
 
-					        User[] users = TvControl.RemoteControl.Instance.GetUsersForCard(card.IdCard);
-        					
+					        User[] users = TvControl.RemoteControl.Instance.GetUsersForCard(card.IdCard);        					
 					        foreach (User u in users)
 					        {
 						        if (u.Name == user.Name || u.Name == "setuptv")

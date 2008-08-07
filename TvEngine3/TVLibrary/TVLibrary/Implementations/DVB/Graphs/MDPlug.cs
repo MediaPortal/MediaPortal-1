@@ -367,10 +367,14 @@ namespace TvLibrary.Implementations.DVB
     /// Sends the current channel to the mdapifilter
     /// </summary>
     public void SetChannel(int SubCh, IChannel currentChannel, ChannelInfo channelInfo)
-    {
+    {      
       MDPlug[] plugins = getPlugins();
-      if( plugins[SubCh] != null)
-        plugins[SubCh].SetChannel(currentChannel, channelInfo);
+      //SubCh++; //subch on first channel is -1, so lets increment it. otherwise array lookup will fail.
+      if (plugins.Length-1 >= SubCh)
+      {
+        if (plugins[SubCh] != null)
+          plugins[SubCh].SetChannel(currentChannel, channelInfo);
+      }
     }
     #endregion
   }
