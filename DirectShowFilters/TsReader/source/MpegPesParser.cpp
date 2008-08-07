@@ -328,34 +328,19 @@ bool CMpegPesParser::ParseH264Video(byte* tsPacket,int offset,MPEG2VIDEOINFO &mp
 
 bool CMpegPesParser::ParseVideo(byte* tsPacket,int offset,MPEG2VIDEOINFO &mpeg2VideoInfo)
 {
-	//LogDebug("Found VIDEO offset=%d 0x%x%x%x%x",offset,tsPacket[offset],tsPacket[offset+1],tsPacket[offset+2],tsPacket[offset+3]);
-	unsigned int off=offset;
-	unsigned int marker = 0xffffffff;
-  for (; off < 188; off++)
-  {
-		marker=(unsigned int)marker<<8;
-		marker &= 0xffffff00;
-    marker += tsPacket[off];
-		if (marker==MPEG2_SEQ_CODE)
-			break;
-	}
-	if (off<187)
-		return ParseMpeg2Video(tsPacket,off+1,mpeg2VideoInfo);
-	          
-	marker = 0xffffffff;
+  //LogDebug("Found VIDEO offset=%d 0x%x%x%x%x",offset,tsPacket[offset],tsPacket[offset+1],tsPacket[offset+2],tsPacket[offset+3]);
+  unsigned int marker = 0xffffffff;
   for (; offset < 188; offset++)
   {
-		marker = marker << 8;
-    marker &= 0xffffff00;
+	marker=(unsigned int)marker<<8;
+	marker &= 0xffffff00;
     marker += tsPacket[offset];
-    if ((marker & 0xffffff9f) == H264_PREFIX)
-    {
-			break;
-		}
+	if ((marker==MPEG2_SEQ_CODE) && (offset <= 187))
+		return ParseMpeg2Video(tsPacket,offset+1,mpeg2VideoInfo);
+	if(((marker & 0xffffff9f) == H264_PREFIX) && (offset <= 187))
+	    return ParseH264Video(tsPacket,offset+1,mpeg2VideoInfo);
   }
-	if (offset<187)
-		return ParseH264Video(tsPacket,offset+1,mpeg2VideoInfo);
-	return false;
+  return false;
 }
 
 bool CMpegPesParser::OnTsPacket(byte *tsPacket, CTsHeader header, MPEG2VIDEOINFO &mpeg2VideoInfo)
