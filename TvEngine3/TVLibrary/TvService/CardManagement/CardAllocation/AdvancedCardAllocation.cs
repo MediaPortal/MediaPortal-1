@@ -204,8 +204,8 @@ namespace TvService
                 //and is watching a scrambled signal
                 //then we must the CAM will always be able to watch the requested channel
                 //since the users zaps
-                
-                if (tvcard.TimeShifter.IsTimeShifting(ref user))
+                bool isRec = tvcard.Recorder.IsAnySubChannelRecording;
+                if (tvcard.TimeShifter.IsTimeShifting(ref user) && !isRec)
                 {
                   bool fta = isFTA(tvcard, user);
                   if (!fta)
@@ -239,7 +239,7 @@ namespace TvService
                   {
                     // lets find out what is going on on this transponder
                     // if just one channel is recording, then we dont want to interrupt it.
-                    bool isRec = tvcard.Recorder.IsAnySubChannelRecording;
+                    //bool isRec = tvcard.Recorder.IsAnySubChannelRecording;
 
                     if (isRec)
                     {
