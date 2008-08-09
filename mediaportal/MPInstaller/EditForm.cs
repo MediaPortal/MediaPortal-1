@@ -524,25 +524,34 @@ namespace MediaPortal.MPInstaller
 
     private void tab_text_change(object sender, EventArgs e)
     {
-      if (bossview.SelectedItems.Count > 0)
+      foreach (ListViewItem item in bossview.SelectedItems)
       {
-        bossview.SelectedItems[0].SubItems[2].Text = textt_comboBox1.Text;
+        if (item.SubItems[1].Text == MPinstallerStruct.TEXT_TYPE)
+        {
+          item.SubItems[2].Text = textt_comboBox1.Text;
+        }
       }
     }
 
     private void tab_skin_change(object sender, EventArgs e)
     {
-      if (bossview.SelectedItems.Count > 0)
+      foreach (ListViewItem item in bossview.SelectedItems)
       {
-        bossview.SelectedItems[0].SubItems[2].Text = skint_comboBox1.Text;
+        if (item.SubItems[1].Text == MPinstallerStruct.SKIN_TYPE)
+        {
+          item.SubItems[2].Text = skint_comboBox1.Text;
+        }
       }
     }
 
     private void tab_thumbs_change(object sender, EventArgs e)
     {
-      if (bossview.SelectedItems.Count > 0)
+      foreach (ListViewItem item in bossview.SelectedItems)
       {
-        bossview.SelectedItems[0].SubItems[2].Text = thumbst_comboBox1.Text;
+        if (item.SubItems[1].Text == MPinstallerStruct.THUMBS_TYPE)
+        {
+          item.SubItems[2].Text = thumbst_comboBox1.Text;
+        }
       }
     }
 
@@ -550,7 +559,7 @@ namespace MediaPortal.MPInstaller
     {
       foreach (ListViewItem item in bossview.SelectedItems)
       {
-        if (item.SubItems[1].Text == "Other")
+        if (item.SubItems[1].Text == MPinstallerStruct.OTHER_TYPE)
         {
           item.SubItems[2].Text = othert_comboBox1.Text;
         }
