@@ -31,8 +31,6 @@ using System.Threading;
 using System.Xml;
 using System.Net;
 using DirectShowLib;
-
-
 using TvDatabase;
 using TvControl;
 using TvLibrary;
@@ -68,7 +66,7 @@ namespace SetupTv.Sections
       {
         return SatteliteName.CompareTo(other.SatteliteName);
       }
-
+      
 
       #region IComparable<SatteliteContext> Members
 
@@ -121,6 +119,8 @@ namespace SetupTv.Sections
     bool _enableEvents = false;
     bool _ignoreCheckBoxCreateGroupsClickEvent = false;
     User _user;
+    bool dvbs2 = false;
+    int _count = 0;
     #endregion
 
     #region ctors
@@ -195,19 +195,28 @@ namespace SetupTv.Sections
       }
       Application.DoEvents();
     }
-    void LoadTransponders(SatteliteContext context)
+
+    void ReadTransponders(SatteliteContext context)
     {
-      if (!System.IO.File.Exists(context.FileName))
-      {
-        DownloadTransponder(context);
-      }
-      _transponders.Clear();
-      _channelCount = 0;
+      //set filename of transpoder file
+      string tsfilename = context.FileName;
       string line;
       string[] tpdata;
       // load transponder list and start scan
-      System.IO.TextReader tin = System.IO.File.OpenText(context.FileName);
-      int _count = 0;
+      // first check if we are to look for the dvbs2 scanning file with the -S2 extension
+      if (dvbs2 == true)
+      {
+        Log.Info("DVBS: Also using DVB-S2 transponder scanning information");
+        string transpondername = System.IO.Path.GetFileNameWithoutExtension(tsfilename).ToLower();
+        //@"\Tuningparameters\"
+        tsfilename = @"Tuningparameters\" + transpondername + "-S2.ini";
+        if (!System.IO.File.Exists(tsfilename))
+        {
+          Log.Info("DVBS: {0} transponder scanning file not present!", tsfilename);
+          return;
+        }
+      }
+      System.IO.TextReader tin = System.IO.File.OpenText(tsfilename);
       do
       {
         line = null;
@@ -228,7 +237,6 @@ namespace SetupTv.Sections
               }
               try
               {
-
                 Transponder transponder = new Transponder();
                 transponder.CarrierFrequency = Int32.Parse(tpdata[0]) * 1000;
                 switch (tpdata[1].ToLower())
@@ -288,7 +296,6 @@ namespace SetupTv.Sections
                   if (fieldValue == "8/9") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate8_9;
                   if (fieldValue == "9/10") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate9_10;
 
-
                   if (fieldValue == "off") transponder.Pilot = Pilot.Off;
                   if (fieldValue == "on") transponder.Pilot = Pilot.On;
 
@@ -299,16 +306,38 @@ namespace SetupTv.Sections
                 _transponders.Add(transponder);
                 _count += 1;
               }
-              catch
-              { }
+              catch{ }
             }
           }
         }
-      } while (!(line == null));
+      }
+      while (!(line == null));
       tin.Close();
+      dvbs2 = false;
+    }
+    
+    void LoadTransponders(SatteliteContext context)
+    {
+      if (!System.IO.File.Exists(context.FileName))
+      {
+        DownloadTransponder(context);
+      }
+      _count = 0;
+      _transponders.Clear();
+      _channelCount = 0;
+      // Read normal transponder file
+      ReadTransponders(context);
+      // Read DVB-S2 transponder file if required and check if available
+      if (checkEnableDVBS2.Checked)
+      {
+        dvbs2 = true;
+        Log.Debug("DVBS: reading -S2 transponder file now");
+        ReadTransponders(context);
+      }
       _channelCount = _count;
       _transponders.Sort();
     }
+
     List<SatteliteContext> LoadSattelites()
     {
       List<SatteliteContext> satellites = new List<SatteliteContext>();
@@ -322,7 +351,6 @@ namespace SetupTv.Sections
         ts.Url = node.Attributes.GetNamedItem("url").Value;
         string name = Utils.FilterFileName(ts.SatteliteName);
         ts.FileName = System.IO.Directory.GetCurrentDirectory() + @"\Tuningparameters\" + name + ".ini";
-
         satellites.Add(ts);
       }
 
@@ -382,7 +410,6 @@ namespace SetupTv.Sections
       mpTransponder3.Items.Clear();
       mpTransponder4.Items.Clear();
       List<SatteliteContext> satellites = LoadSattelites();
-
       foreach (SatteliteContext ts in satellites)
       {
         mpTransponder1.Items.Add(ts);
