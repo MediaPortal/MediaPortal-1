@@ -548,9 +548,12 @@ namespace MediaPortal.MPInstaller
 
     private void tab_other_change(object sender, EventArgs e)
     {
-      if (bossview.SelectedItems.Count > 0)
+      foreach (ListViewItem item in bossview.SelectedItems)
       {
-        bossview.SelectedItems[0].SubItems[2].Text = othert_comboBox1.Text;
+        if (item.SubItems[1].Text == "Other")
+        {
+          item.SubItems[2].Text = othert_comboBox1.Text;
+        }
       }
     }
 
