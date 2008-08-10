@@ -228,6 +228,8 @@ namespace SetupTv.Sections
           {
             if (line.StartsWith(";"))
               continue;
+            if (line.Contains("S2"))
+              continue;
             tpdata = line.Split(new char[] { ',' });
             if (tpdata.Length >= 3)
             {
