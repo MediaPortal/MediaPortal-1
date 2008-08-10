@@ -929,8 +929,9 @@
         <String id="1512">Start forrige kanal?</String>        
         <String id="1513">Tidsforskydning er blevet stoppet for\rat kunne gennemføre planlagt\roptagelse</String>
         <String id="1514">Tidsforskydning er blevet stoppet af\ren administrator</String>
-        <String id="1515">Tidsforskydning er blevet stoppet af\rTV-server</String>  
-        <String id="1516">Tidsforskydning er blevet stoppet af\rukendte årsager</String>                
+        <String id="1515">Tidsforskydning er blevet stoppet af\rTV-server</String>
+        <String id="1516">Tidsforskydning er blevet stoppet af\rukendte årsager</String>
+        <String id="1517">Tidsforskydning er blevet stoppet af\randen bruger</String>
         <String id="1950" prefix="Min ">Status</String>
         <String id="1951">Harddisk</String>
         <String id="1952">Blæser</String>
