@@ -197,7 +197,8 @@ namespace TvLibrary.Implementations.DVB
           pids.Add((ushort)ch.PmtPid);//sdt
         }
       }
-      //SendHwPids(pids);
+
+      _conditionalAccess.SendPids(_subChannelId,(DVBBaseChannel)_currentChannel,pids);
 
       _pmtPid = -1;
       _pmtVersion = -1;
@@ -720,7 +721,7 @@ namespace TvLibrary.Implementations.DVB
         if (info.network_pmt_PID >= 0 && ((DVBBaseChannel)_currentChannel).ServiceId >= 0)
         {
           hwPids.Add((ushort)info.network_pmt_PID);
-          // SendHwPids(hwPids);
+          _conditionalAccess.SendPids(_subChannelId, (DVBBaseChannel)_currentChannel, hwPids);
         }
 
         if (_startTimeShifting)

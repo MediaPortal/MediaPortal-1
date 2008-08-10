@@ -546,19 +546,47 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="channel">The current tv/radio channel.</param>
     /// <param name="pids">The pids.</param>
     /// <remarks>when the pids array is empty, pid filtering is disabled and all pids are received</remarks>
-    public void SendPids(DVBBaseChannel channel, ArrayList pids)
+    public void SendPids(int subChannel, DVBBaseChannel channel, ArrayList pids)
     {
       try
       {
+        ArrayList HwPids = new ArrayList() ;
+
+        _mapSubChannels[subChannel].HwPids = pids ;
+
+        Dictionary<int, ConditionalAccessContext>.Enumerator enSubch = _mapSubChannels.GetEnumerator() ;
+        while (enSubch.MoveNext())
+        {
+          ArrayList enPid = enSubch.Current.Value.HwPids ;
+          for (int i = 0; i < (int)enPid.Count; ++i)
+          {
+            if (!HwPids.Contains(enPid[i])) HwPids.Add(enPid[i]);
+          }
+        }
+
         if (!_useCam) return;
         if (_digitalEveryWhere != null)
         {
-          bool isDvbc, isDvbt, isDvbs, isAtsc;
+            bool isDvbc, isDvbt, isDvbs, isAtsc;
           isDvbc = ((channel as DVBCChannel) != null);
           isDvbt = ((channel as DVBTChannel) != null);
           isDvbs = ((channel as DVBSChannel) != null);
           isAtsc = ((channel as ATSCChannel) != null);
-          _digitalEveryWhere.SetHardwarePidFiltering(isDvbc, isDvbt, isDvbs, isAtsc, pids);
+
+          if ((pids.Count!=0) && (isDvbs) && (((DVBSChannel)channel).ModulationType == ModulationType.ModNbc8Psk))
+          {
+            for (int i = 0; i < (int)HwPids.Count; ++i)
+            {
+              Log.Log.Info("FireDTV: HW Filtered Pid : 0x{0:X}", (ushort)HwPids[i]);
+            }
+            _digitalEveryWhere.SetHardwarePidFiltering(isDvbc, isDvbt, isDvbs, isAtsc, HwPids);
+          }
+          else
+          {
+            pids.Clear();
+            Log.Log.Info("FireDTV: HW Filtering disabled.");
+            _digitalEveryWhere.SetHardwarePidFiltering(isDvbc, isDvbt, isDvbs, isAtsc, pids);
+          }
         }
       }
       catch (Exception ex)

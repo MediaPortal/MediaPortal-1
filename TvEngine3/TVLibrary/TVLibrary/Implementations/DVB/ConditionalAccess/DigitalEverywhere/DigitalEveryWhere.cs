@@ -532,13 +532,13 @@ namespace TvLibrary.Implementations.DVB
         Marshal.StructureToPtr(dvbsStruct, _ptrDataReturned, true);
       }
 
-      Log.Log.WriteFile("FireDTV: Set H/W pid filtering count:{0} len:{1}", pids.Count, len);
+//      Log.Log.WriteFile("FireDTV: Set H/W pid filtering count:{0} len:{1}", pids.Count, len);
 
-      string txt = "";
-      for (int i = 0; i < len; ++i)
-        txt += String.Format("0x{0:X} ", Marshal.ReadByte(_ptrDataInstance, i));
+//      string txt = "";
+//      for (int i = 0; i < len; ++i)
+//        txt += String.Format("0x{0:X} ", Marshal.ReadByte(_ptrDataInstance, i));
 
-      Log.Log.WriteFile("FireDTV: Set H/W pid filtering pid {0} data:{1}", logStart, txt);
+//      Log.Log.WriteFile("FireDTV: Set H/W pid filtering pid {0} data:{1}", logStart, txt);
       hr = propertySet.Set(propertyGuid,
                           (int)propertySelect,
                           _ptrDataInstance, (int)len,

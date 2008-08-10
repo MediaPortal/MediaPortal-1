@@ -39,6 +39,7 @@ namespace TvLibrary.Implementations.DVB
     int _pmtLength;
     int _audioPid;
     int _serviceId;
+    ArrayList _HwPids;
 
     /// <summary>
     /// Gets or sets the type of the cam.
@@ -130,5 +131,21 @@ namespace TvLibrary.Implementations.DVB
         _serviceId = value;
       }
     }
+    /// <summary>
+    /// Gets or sets the Pid list for hardware filtering.
+    /// </summary>
+    /// <value>The Pid list.</value>
+    public ArrayList HwPids
+    {
+        get
+        {
+            return _HwPids;
+        }
+        set
+        {
+            _HwPids = value;
+        }
+    }
+
   }
 }
