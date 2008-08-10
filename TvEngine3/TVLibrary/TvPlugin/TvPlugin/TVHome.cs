@@ -120,18 +120,27 @@ namespace TvPlugin
 
     //Stopwatch benchClock = null;
 
-    [SkinControlAttribute(2)]     protected GUIButtonControl btnTvGuide = null;
-    [SkinControlAttribute(3)]     protected GUIButtonControl btnRecord = null;
+    [SkinControlAttribute(2)]
+    protected GUIButtonControl btnTvGuide = null;
+    [SkinControlAttribute(3)]
+    protected GUIButtonControl btnRecord = null;
     // [SkinControlAttribute(6)]     protected GUIButtonControl btnGroup = null;
-    [SkinControlAttribute(7)]     protected GUIButtonControl btnChannel = null;
-    [SkinControlAttribute(8)]     protected GUIToggleButtonControl btnTvOnOff = null;
-    [SkinControlAttribute(13)]    protected GUIButtonControl btnTeletext = null;
+    [SkinControlAttribute(7)]
+    protected GUIButtonControl btnChannel = null;
+    [SkinControlAttribute(8)]
+    protected GUIToggleButtonControl btnTvOnOff = null;
+    [SkinControlAttribute(13)]
+    protected GUIButtonControl btnTeletext = null;
     //    [SkinControlAttribute(14)]    protected GUIButtonControl btnTuningDetails = null;
-    [SkinControlAttribute(24)]    protected GUIImage imgRecordingIcon = null;
-    [SkinControlAttribute(99)]    protected GUIVideoControl videoWindow = null;
-    [SkinControlAttribute(9)]     protected GUIButtonControl btnActiveStreams = null;
+    [SkinControlAttribute(24)]
+    protected GUIImage imgRecordingIcon = null;
+    [SkinControlAttribute(99)]
+    protected GUIVideoControl videoWindow = null;
+    [SkinControlAttribute(9)]
+    protected GUIButtonControl btnActiveStreams = null;
 
-    [SkinControlAttribute(14)]     protected GUIButtonControl btnActiveRecordings = null;
+    [SkinControlAttribute(14)]
+    protected GUIButtonControl btnActiveRecordings = null;
 
     static bool _connected = false;
     static protected TvServer _server;
@@ -171,9 +180,9 @@ namespace TvPlugin
       try
       {
         if (TVHome.Card.IsTimeShifting)
-        {          
-           TVHome.Card.User.Name = new User().Name;
-           TVHome.Card.StopTimeShifting();          
+        {
+          TVHome.Card.User.Name = new User().Name;
+          TVHome.Card.StopTimeShifting();
         }
         stopHeartBeatThread();
       }
@@ -186,7 +195,8 @@ namespace TvPlugin
     {
       while (true)
       {
-        if (TVHome.Connected && TVHome.Card.IsTimeShifting)
+        bool isTS = TVHome.Card.IsTimeShifting;
+        if (TVHome.Connected && isTS)
         {
           // send heartbeat to tv server each 5 sec.
           // this way we signal to the server that we are alive thus avoid being kicked.
@@ -204,7 +214,7 @@ namespace TvPlugin
           }
 #endif
         }
-        else if (TVHome.Connected && !TVHome.Card.IsTimeShifting && !_playbackStopped && _onPageLoadDone && (!g_Player.IsMusic && !g_Player.IsDVD && !g_Player.IsRadio && !g_Player.IsVideo))
+        else if (TVHome.Connected && !isTS && !_playbackStopped && _onPageLoadDone && (!g_Player.IsMusic && !g_Player.IsDVD && !g_Player.IsRadio && !g_Player.IsVideo))
         {
           // check the possible reason why timeshifting has suddenly stopped
           // maybe the server kicked the client b/c a recording on another transponder was due.
@@ -226,6 +236,9 @@ namespace TvPlugin
               case TvStoppedReason.RecordingStarted:
                 errMsg = GUILocalizeStrings.Get(1513);
                 break;
+              case TvStoppedReason.OwnerChangedTS:
+                errMsg = GUILocalizeStrings.Get(1517);
+                break;
               default:
                 errMsg = GUILocalizeStrings.Get(1516);
                 break;
@@ -235,28 +248,28 @@ namespace TvPlugin
 
             if (pDlgOK != null)
             {
-              
+
               if (GUIWindowManager.ActiveWindow == (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
               {
                 GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV, true);
-              }              
+              }
 
               pDlgOK.SetHeading(GUILocalizeStrings.Get(605) + " - " + TVHome.Navigator.CurrentChannel);//my tv
               errMsg = errMsg.Replace("\\r", "\r");
               string[] lines = errMsg.Split('\r');
               //pDlgOK.SetLine(1, TVHome.Navigator.CurrentChannel);
 
-              for (int i = 0 ; i < lines.Length ; i++)
+              for (int i = 0; i < lines.Length; i++)
               {
                 string line = lines[i];
                 pDlgOK.SetLine(1 + i, line);
               }
               pDlgOK.DoModal(GUIWindowManager.ActiveWindowEx);
             }
-            Action keyAction = new Action(Action.ActionType.ACTION_STOP, 0, 0);            
+            Action keyAction = new Action(Action.ActionType.ACTION_STOP, 0, 0);
             GUIGraphicsContext.OnAction(keyAction);
             _playbackStopped = true;
-            
+
           }
         }
         Thread.Sleep(HEARTBEAT_INTERVAL * 1000); //sleep for 5 secs. before sending heartbeat again
@@ -323,7 +336,7 @@ namespace TvPlugin
 
     #region Public static methods
 
-    public static void StartRecordingSchedule (Channel channel, bool manual)
+    public static void StartRecordingSchedule(Channel channel, bool manual)
     {
       TvBusinessLayer layer = new TvBusinessLayer();
       TvServer server = new TvServer();
@@ -337,23 +350,23 @@ namespace TvPlugin
         newSchedule.RecommendedCard = TVHome.Card.Id; //added by joboehl - Enables the server to use the current card as the prefered on for recording. 
 
         newSchedule.Persist();
-        server.OnNewSchedule();        
+        server.OnNewSchedule();
       }
       else //current program
       {
         //lets find any canceled episodes that match this one we want to create, if found uncancel it.
-        Schedule existingParentSchedule = Schedule.RetrieveSeries(channel.IdChannel, channel.CurrentProgram.Title, channel.CurrentProgram.StartTime, channel.CurrentProgram.EndTime);        
+        Schedule existingParentSchedule = Schedule.RetrieveSeries(channel.IdChannel, channel.CurrentProgram.Title, channel.CurrentProgram.StartTime, channel.CurrentProgram.EndTime);
         if (existingParentSchedule != null)
-        {          
+        {
           foreach (CanceledSchedule cancelSched in existingParentSchedule.ReferringCanceledSchedule())
           {
             if (cancelSched.CancelDateTime == channel.CurrentProgram.StartTime)
-            {              
+            {
               existingParentSchedule.UnCancelSerie(channel.CurrentProgram.StartTime);
-              server.OnNewSchedule();        
+              server.OnNewSchedule();
               return;
             }
-          }          
+          }
         }
 
         // ok, no existing schedule found with matching canceled schedules found. proceeding to add the schedule normally
@@ -364,13 +377,13 @@ namespace TvPlugin
         newSchedule.RecommendedCard = TVHome.Card.Id; //added by joboehl - Enables the server to use the current card as the prefered on for recording. 
 
         newSchedule.Persist();
-        server.OnNewSchedule();        
-      }            
+        server.OnNewSchedule();
+      }
     }
 
     public static bool IsRecordingSchedule(Schedule rec, Program prg, out VirtualCard card)
     {
-      TvServer server = new TvServer();      
+      TvServer server = new TvServer();
 
       bool isRec = false;
       bool isCardRec = server.IsRecording(rec.ReferencedChannel().Name, out card);
@@ -391,28 +404,28 @@ namespace TvPlugin
         Schedule assocSchedule = Schedule.RetrieveOnce(schedDB.IdChannel, schedDB.ProgramName, schedDB.StartTime, schedDB.EndTime);
         if (assocSchedule != null)
         {
-          schedId2CheckIfRec = assocSchedule.IdSchedule;          
+          schedId2CheckIfRec = assocSchedule.IdSchedule;
           isSchedSetupForRec = assocSchedule.IsRecordingProgram(prg, false); //check if we currently recoding this schedule 
         }
         else
-        {          
+        {
           isSchedSetupForRec = schedDB.IsRecordingProgram(prg, false); //check if we currently recoding this schedule 
         }
       }
       else
       {
         if (prg == null)
-        {          
+        {
           isSchedSetupForRec = (isCardRec && isSchedRec);
         }
         else
-        {          
+        {
           isSchedSetupForRec = schedDB.IsRecordingProgram(prg, false); //check if we currently recoding this schedule 
         }
       }
 
-      isSchedRec = server.IsRecordingSchedule(schedId2CheckIfRec, out card);                  
-            
+      isSchedRec = server.IsRecordingSchedule(schedId2CheckIfRec, out card);
+
       if (typeOnce) //if we have a once rec. that has no EPG, then go ahead
       {
         if (prg == null)
@@ -428,7 +441,7 @@ namespace TvPlugin
       {
         isRec = (isCardRec && isSchedRec && isSchedSetupForRec);
       }
-      
+
 
       return isRec;
     }
@@ -449,27 +462,27 @@ namespace TvPlugin
       Schedule s = Schedule.Retrieve(scheduleId); //always have the correct version from DB.
       if (s == null) return false;
       TvServer server = new TvServer();
-      Program prg2Use = program;      
+      Program prg2Use = program;
       Schedule assocSchedule = null;
       bool typeOnce = (s.ScheduleType == (int)ScheduleRecordingType.Once);
 
-      VirtualCard card;            
+      VirtualCard card;
 
       int schedId2CheckIfRec = s.IdSchedule;
       if (!typeOnce)
       {
         assocSchedule = Schedule.RetrieveOnce(s.IdChannel, s.ProgramName, s.StartTime, s.EndTime);
         if (assocSchedule != null)
-        {          
+        {
           if (deleteEntireSchedule)
-          {         
+          {
             prg2Use = assocSchedule.ReferencedChannel().CurrentProgram;
-          }          
-        }        
-      }      
+          }
+        }
+      }
       bool isRec = IsRecordingSchedule(s, prg2Use, out card);
       bool confirmed = true;
-      
+
       if (isRec)
       {
         GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
@@ -483,11 +496,11 @@ namespace TvPlugin
         dlgYesNo.SetLine(2, GUILocalizeStrings.Get(731)); //the schedule then the recording is stopped.
         dlgYesNo.SetLine(3, GUILocalizeStrings.Get(732)); //are you sure
         dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
-        confirmed = dlgYesNo.IsConfirmed;        
-      }      
+        confirmed = dlgYesNo.IsConfirmed;
+      }
 
       if (confirmed)
-      {             
+      {
         if (deleteEntireSchedule) //delete the entire schedule
         {
           if (isRec)
@@ -501,7 +514,7 @@ namespace TvPlugin
               server.StopRecordingSchedule(s.IdSchedule);
             }
           }
-          s.Delete();          
+          s.Delete();
           server.OnNewSchedule();
         }
         else //delete only a single show, keep the schedule
@@ -509,13 +522,13 @@ namespace TvPlugin
           if (isRec)
           {
             if (assocSchedule != null)
-            {                            
-              server.StopRecordingSchedule(assocSchedule.IdSchedule);              
+            {
+              server.StopRecordingSchedule(assocSchedule.IdSchedule);
             }
             else
             {
               server.StopRecordingSchedule(s.IdSchedule);
-            }           
+            }
           }
 
           if (typeOnce)
@@ -536,11 +549,11 @@ namespace TvPlugin
             CanceledSchedule canceledSchedule = new CanceledSchedule(s.IdSchedule, program.StartTime);
             canceledSchedule.Persist();
             server.OnNewSchedule();
-          }         
+          }
         }
-        return true;                                
+        return true;
       }
-      return false;     
+      return false;
     }
 
     public static bool UseRTSP()
@@ -747,7 +760,7 @@ namespace TvPlugin
         _autoFullScreen = xmlreader.GetValueAsBool("mytv", "autofullscreen", false);
         _autoFullScreenOnly = xmlreader.GetValueAsBool("mytv", "autofullscreenonly", false);
         _showChannelStateIcons = xmlreader.GetValueAsBool("mytv", "showChannelStateIcons", true);
-        
+
       }
     }
 
@@ -841,7 +854,7 @@ namespace TvPlugin
 
       //gemx: fix for 0001181: Videoplayback does not work if tvservice.exe is not running 
       if (TVHome.Connected)
-        TVHome.Card.StopTimeShifting();      
+        TVHome.Card.StopTimeShifting();
     }
 
     void OnPlayBackStopped(g_Player.MediaType type, int stoptime, string filename)
@@ -860,11 +873,11 @@ namespace TvPlugin
 
       if (type == g_Player.MediaType.Radio || type == g_Player.MediaType.TV)
       {
-       // doProcess();
+        // doProcess();
         UpdateGUIonPlaybackStateChange(false);
       }
 
-      _playbackStopped = true;      
+      _playbackStopped = true;
     }
 
     public static bool ManualRecord(Channel channel)
@@ -881,7 +894,7 @@ namespace TvPlugin
 
       MediaPortal.GUI.Library.Log.Info("TVHome:Record action");
       TvServer server = new TvServer();
-      
+
       VirtualCard card;
       if (false == server.IsRecording(channel.Name, out card))
       {
@@ -910,7 +923,7 @@ namespace TvPlugin
               case 876:
                 {
                   //manual
-                  StartRecordingSchedule(channel, true);                  
+                  StartRecordingSchedule(channel, true);
                   return true;
                 }
                 break;
@@ -919,7 +932,7 @@ namespace TvPlugin
         }//if (prog != null)
         else
         {
-          StartRecordingSchedule(channel, true);          
+          StartRecordingSchedule(channel, true);
           return true;
 
         }
@@ -927,7 +940,7 @@ namespace TvPlugin
       else
       {
         Schedule s = Schedule.Retrieve(card.RecordingScheduleId);
-        PromptAndDeleteRecordingSchedule(s.IdSchedule, s.ReferencedChannel().CurrentProgram, false, true);        
+        PromptAndDeleteRecordingSchedule(s.IdSchedule, s.ReferencedChannel().CurrentProgram, false, true);
         return false;
       }
       return false;
@@ -940,7 +953,7 @@ namespace TvPlugin
         case Action.ActionType.ACTION_RECORD:
           //record current program on current channel
           //are we watching tv?                    
-          ManualRecord(TVHome.Navigator.Channel);          
+          ManualRecord(TVHome.Navigator.Channel);
           break;
 
         case Action.ActionType.ACTION_PREV_CHANNEL:
@@ -1217,7 +1230,7 @@ namespace TvPlugin
           }
 
           ViewChannelAndCheck(channel);
-        }        
+        }
 
         GUIPropertyManager.SetProperty("#TV.Guide.Group", Navigator.CurrentGroup.GroupName);
         MediaPortal.GUI.Library.Log.Info("tv home init:{0} done", channel.DisplayName);
@@ -1341,7 +1354,7 @@ namespace TvPlugin
       dlg.SetHeading(971); // group
       int selected = 0;
 
-      for (int i = 0 ; i < Navigator.Groups.Count ; ++i)
+      for (int i = 0; i < Navigator.Groups.Count; ++i)
       {
         dlg.Add(Navigator.Groups[i].GroupName);
         if (Navigator.Groups[i].GroupName == Navigator.CurrentGroup.GroupName)
@@ -1527,7 +1540,7 @@ namespace TvPlugin
     }
 
     public override void Process()
-    {      
+    {
       TimeSpan ts = DateTime.Now - _updateTimer;
       if (ts.TotalMilliseconds < 1000) return;
 
@@ -1540,11 +1553,11 @@ namespace TvPlugin
       //                by moving thisthe 1 min delays in zapping should be fixed
       // Let the navigator zap channel if needed
       Navigator.CheckChannelChange();
-      
+
       if (GUIGraphicsContext.InVmr9Render) return;
 
       doProcess();
-      
+
       _updateTimer = DateTime.Now;
     }
 
@@ -1560,7 +1573,7 @@ namespace TvPlugin
       UpdateProgressPercentageBar();
 
       bool hasTeletext = (!TVHome.Connected || TVHome.Card.HasTeletext) && (playbackStarted);
-      btnTeletext.IsVisible = hasTeletext;                    
+      btnTeletext.IsVisible = hasTeletext;
     }
 
     private void UpdateGUIonPlaybackStateChange()
@@ -1572,19 +1585,19 @@ namespace TvPlugin
         btnTvOnOff.Selected = isTimeShiftingTV;
       }
 
-      UpdateProgressPercentageBar();      
+      UpdateProgressPercentageBar();
 
-      bool hasTeletext = (!TVHome.Connected || TVHome.Card.HasTeletext) && (isTimeShiftingTV);                            
-      btnTeletext.IsVisible = hasTeletext;                    
+      bool hasTeletext = (!TVHome.Connected || TVHome.Card.HasTeletext) && (isTimeShiftingTV);
+      btnTeletext.IsVisible = hasTeletext;
     }
 
     private void doProcess()
-    {      
+    {
       if (!g_Player.Playing)
       {
         return;
       }
-     
+
       // BAV, 02.03.08
       //Navigator.CheckChannelChange();
 
@@ -1594,7 +1607,7 @@ namespace TvPlugin
       string currchan = Navigator.CurrentChannel;		// Remember current channel
       Navigator.UpdateCurrentChannel();
       bool channelchanged = currchan != Navigator.CurrentChannel;
-      
+
       UpdateProgressPercentageBar();
 
       GUIControl.HideControl(GetID, (int)Controls.LABEL_REC_INFO);
@@ -1636,9 +1649,9 @@ namespace TvPlugin
     }
 
     void OnActiveRecordings()
-    {      
+    {
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-      if (dlg == null) return;            
+      if (dlg == null) return;
 
       dlg.Reset();
       dlg.SetHeading(200052); // Active Recordings
@@ -1650,7 +1663,7 @@ namespace TvPlugin
       TvServer server = new TvServer();
       List<User> _users = new List<User>();
 
-      List <Schedule> recordingSchedules = new List<Schedule>();
+      List<Schedule> recordingSchedules = new List<Schedule>();
 
       foreach (Card card in cards)
       {
@@ -1658,7 +1671,7 @@ namespace TvPlugin
         if (!RemoteControl.Instance.CardPresent(card.IdCard)) continue;
         User[] users = RemoteControl.Instance.GetUsersForCard(card.IdCard);
         if (users == null) return;
-        for (int i = 0 ; i < users.Length ; ++i)
+        for (int i = 0; i < users.Length; ++i)
         {
           User user = users[i];
           if (card.IdCard != user.CardId)
@@ -1666,7 +1679,7 @@ namespace TvPlugin
             continue;
           }
           bool isRecording;
-          VirtualCard tvcard = new VirtualCard(user, RemoteControl.HostName);                    
+          VirtualCard tvcard = new VirtualCard(user, RemoteControl.HostName);
           isRecording = tvcard.IsRecording;
 
           if (isRecording)
@@ -1688,7 +1701,7 @@ namespace TvPlugin
             //retrive the EPG info from when the rec. was started.
             IList schedulesList = Schedule.ListAll();
             if (schedulesList != null)
-            {              
+            {
               Schedule rec = Schedule.Retrieve(tvcard.RecordingScheduleId);
 
               if (rec == null)
@@ -1703,12 +1716,12 @@ namespace TvPlugin
                 }
               }
 
-              
+
               if (rec != null)
               {
                 foreach (Schedule s in schedulesList)
-                {                  
-                  ScheduleRecordingType scheduleType = (ScheduleRecordingType) s.ScheduleType;
+                {
+                  ScheduleRecordingType scheduleType = (ScheduleRecordingType)s.ScheduleType;
                   bool isManual = (scheduleType == ScheduleRecordingType.Once);
 
                   if (isManual && s.ReferencedChannel().IdChannel == rec.ReferencedChannel().IdChannel && s.StartTime == rec.StartTime)
@@ -1738,7 +1751,7 @@ namespace TvPlugin
             }
 
             item.IconImage = strLogo;
-            item.IconImageBig = strLogo;                        
+            item.IconImageBig = strLogo;
             item.PinImage = "";
 
             dlg.Add(item);
@@ -1770,7 +1783,7 @@ namespace TvPlugin
       if (recordingSchedules.Count == 0) return;
       Schedule sched = recordingSchedules[dlg.SelectedLabel];
       Program prg2use = Program.RetrieveByTitleAndTimes(sched.ProgramName, sched.StartTime, sched.EndTime);
-      PromptAndDeleteRecordingSchedule(sched.IdSchedule, prg2use, false, true);      
+      PromptAndDeleteRecordingSchedule(sched.IdSchedule, prg2use, false, true);
       OnActiveRecordings(); //keep on showing the list until --> 1) user leaves menu, 2) no more active recordings
     }
 
@@ -1793,7 +1806,7 @@ namespace TvPlugin
         if (!RemoteControl.Instance.CardPresent(card.IdCard)) continue;
         User[] users = RemoteControl.Instance.GetUsersForCard(card.IdCard);
         if (users == null) return;
-        for (int i = 0 ; i < users.Length ; ++i)
+        for (int i = 0; i < users.Length; ++i)
         {
           User user = users[i];
           if (card.IdCard != user.CardId)
@@ -1867,9 +1880,9 @@ namespace TvPlugin
       {
         // check if we are already recording this channel
         // simply using server.IsRecording, is not always enough - race condition.
-        bool alreadyRec = (lastActiveRecChannelId == Navigator.Channel.IdChannel);                
+        bool alreadyRec = (lastActiveRecChannelId == Navigator.Channel.IdChannel);
         if (!alreadyRec)
-        {          
+        {
           //no then start recording
           Program prog = Navigator.Channel.CurrentProgram;
           if (prog != null)
@@ -1884,7 +1897,7 @@ namespace TvPlugin
               switch (pDlgOK.SelectedId)
               {
                 case 875:
-                  {                  
+                  {
                     StartRecordingSchedule(Navigator.Channel, false);
 
                     lastActiveRecChannelId = Navigator.Channel.IdChannel;
@@ -1894,7 +1907,7 @@ namespace TvPlugin
 
                 case 876:
                   {
-                    StartRecordingSchedule(Navigator.Channel, true);                   
+                    StartRecordingSchedule(Navigator.Channel, true);
 
                     lastActiveRecChannelId = Navigator.Channel.IdChannel;
                     lastRecordTime = DateTime.Now;
@@ -1906,10 +1919,10 @@ namespace TvPlugin
           else
           {
             //manual record
-            StartRecordingSchedule(Navigator.Channel, true);            
+            StartRecordingSchedule(Navigator.Channel, true);
 
             lastActiveRecChannelId = Navigator.Channel.IdChannel;
-            lastRecordTime = DateTime.Now;            
+            lastRecordTime = DateTime.Now;
           }
         }
       }
@@ -1934,14 +1947,14 @@ namespace TvPlugin
         return;
       }
       bool isTimeShifting = TVHome.Card.IsTimeShifting;
-      
+
       //are we recording a tv program?      
       if (Navigator.Channel != null && TVHome.Card != null)
-      {                          
-        string label;        
+      {
+        string label;
         TvServer server = new TvServer();
         VirtualCard vc;
-        if (server.IsRecording(TVHome.Navigator.Channel.Name , out vc))
+        if (server.IsRecording(TVHome.Navigator.Channel.Name, out vc))
         {
           if (!isTimeShifting)
           {
@@ -1961,7 +1974,7 @@ namespace TvPlugin
         {
           btnRecord.Label = label;
         }
-        
+
       }
     }
 
@@ -1970,7 +1983,7 @@ namespace TvPlugin
       DateTime now = DateTime.Now;
 
       // if we're recording tv, update gui with info
-      if (TVHome.Connected && TVHome.Card.IsRecording)      
+      if (TVHome.Connected && TVHome.Card.IsRecording)
       {
         /*if (lastRecordTime == DateTime.MinValue)
         {
@@ -1997,7 +2010,7 @@ namespace TvPlugin
       else
       {
         // if Recording hasn't been active for over 5 sec. then reset the lastActiveRecChannelId var)        
-        if (lastRecordTime != DateTime.MinValue && lastActiveRecChannelId > 0)        
+        if (lastRecordTime != DateTime.MinValue && lastActiveRecChannelId > 0)
         {
           TimeSpan ts = now - lastRecordTime;
           if (ts.TotalSeconds > 5)
@@ -2005,10 +2018,10 @@ namespace TvPlugin
             lastActiveRecChannelId = 0;
             lastRecordTime = DateTime.MinValue;
           }
-        }        
+        }
         imgRecordingIcon.IsVisible = false;
       }
-    }    
+    }
 
     /// <summary>
     /// Update the the progressbar in the GUI which shows
@@ -2024,7 +2037,7 @@ namespace TvPlugin
       {
         return;
       }
-    
+
       if (g_Player.Playing && g_Player.IsTimeShifting)
       {
         if (TVHome.Card != null)
@@ -2056,9 +2069,9 @@ namespace TvPlugin
             GUIPropertyManager.SetProperty("#TV.View.stop", String.Empty);
             GUIPropertyManager.SetProperty("#TV.View.title", String.Empty);
             GUIPropertyManager.SetProperty("#TV.View.description", String.Empty);
-            GUIPropertyManager.SetProperty("#TV.View.Percentage", "0");                        
+            GUIPropertyManager.SetProperty("#TV.View.Percentage", "0");
             GUIPropertyManager.SetProperty("#TV.View.remaining", String.Empty);
-            GUIPropertyManager.SetProperty("#TV.View.genre", String.Empty);                        
+            GUIPropertyManager.SetProperty("#TV.View.genre", String.Empty);
             GUIPropertyManager.SetProperty("#TV.Next.start", String.Empty);
             GUIPropertyManager.SetProperty("#TV.Next.stop", String.Empty);
             GUIPropertyManager.SetProperty("#TV.Next.genre", String.Empty);
@@ -2117,7 +2130,7 @@ namespace TvPlugin
             ts = prog.EndTime - prog.StartTime;
             clearPrgProperties = (ts.TotalSeconds <= 0);
           }
-          
+
           if (clearPrgProperties)
           {
             GUIPropertyManager.SetProperty("#TV.View.Percentage", "0");
@@ -2222,7 +2235,7 @@ namespace TvPlugin
       IAudioStream[] streams;
 
       List<IAudioStream> streamsList = new List<IAudioStream>();
-      for (int i = 0 ; i < g_Player.AudioStreams ; i++)
+      for (int i = 0; i < g_Player.AudioStreams; i++)
       {
         DVBAudioStream stream = new DVBAudioStream();
 
@@ -2271,7 +2284,7 @@ namespace TvPlugin
         return 0;
       }
 
-      for (int i = 0 ; i < streams.Length ; i++)
+      for (int i = 0; i < streams.Length; i++)
       {
         //tag the first found ac3 and mpeg indexes
         if (streams[i].StreamType == AudioStreamType.AC3)
@@ -2286,7 +2299,7 @@ namespace TvPlugin
         //now find the ones based on LANG prefs.
         if (_preferredLanguages != null)
         {
-          for (int j = 0 ; j < _preferredLanguages.Length ; j++)
+          for (int j = 0; j < _preferredLanguages.Length; j++)
           {
             if (_preferredLanguages[j].Length == 0) continue;
             langSel = _preferredLanguages[j];
@@ -2462,7 +2475,7 @@ namespace TvPlugin
         string caption = GUILocalizeStrings.Get(605) + " - " + GUILocalizeStrings.Get(1512);
         pDlgYesNo.SetHeading(caption);//my tv
         pDlgYesNo.SetLine(1, channel.DisplayName);
-        pDlgYesNo.SetLine(2, lines[0]);                
+        pDlgYesNo.SetLine(2, lines[0]);
         if (lines.Length > 1)
           pDlgYesNo.SetLine(3, lines[1]);
         else
@@ -2551,7 +2564,7 @@ namespace TvPlugin
     */
 
     public static bool ViewChannelAndCheck(Channel channel)
-    {      
+    {
       //GUIWaitCursor.Show();
       _doingChannelChange = false;
       //System.Diagnostics.Debugger.Launch();
@@ -2571,13 +2584,13 @@ namespace TvPlugin
 
         //if (!isChannelAnalogue(channel))
         //{
-          int CurrentChanState = (int)TVHome.TvServer.GetChannelState(channel.IdChannel, TVHome.Card.User);
-          if (CurrentChanState == (int)ChannelState.nottunable)
-          {
-            ChannelTuneFailedNotifyUser(TvResult.AllCardsBusy, false, channel);
-            //GUIWaitCursor.Hide();
-            return false;
-          }
+        int CurrentChanState = (int)TVHome.TvServer.GetChannelState(channel.IdChannel, TVHome.Card.User);
+        if (CurrentChanState == (int)ChannelState.nottunable)
+        {
+          ChannelTuneFailedNotifyUser(TvResult.AllCardsBusy, false, channel);
+          //GUIWaitCursor.Hide();
+          return false;
+        }
         //}
 
         //BAV: fixing mantis bug 1263: TV starts with no video if Radio is previously ON & channel selected from TV guide
@@ -2645,7 +2658,7 @@ namespace TvPlugin
           if (Navigator.LastViewedChannel.IsWebstream())
             g_Player.Stop();
         }*/
-        
+
         TvResult succeeded;
         if (TVHome.Card != null)
         {
@@ -2665,13 +2678,13 @@ namespace TvPlugin
         {
           user.CardId = TVHome.Card.Id;
         }
-        
+
         bool wasPlaying = (g_Player.Playing && g_Player.IsTimeShifting && !g_Player.Stopped) && (g_Player.IsTV || g_Player.IsRadio);
 
         //Start timeshifting the new tv channel
         TvServer server = new TvServer();
-        VirtualCard card;        
-        bool cardChanged = false;        
+        VirtualCard card;
+        bool cardChanged = false;
         if (wasPlaying)
         {
           // we need to stop player HERE if card has changed.        
@@ -2710,14 +2723,14 @@ namespace TvPlugin
         }
         else
         {
-          succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);          
+          succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
         }
 
         if (succeeded == TvResult.Succeeded)
         {
           //timeshifting succeeded					                    
           MediaPortal.GUI.Library.Log.Info("succeeded:{0} {1}", succeeded, card);
-          
+
           TVHome.Card = card; //Moved by joboehl - Only touch the card if starttimeshifting succeeded. 
 
           if (!g_Player.Playing || cardChanged)
@@ -2743,7 +2756,7 @@ namespace TvPlugin
           //timeshifting new channel failed. 
           //if (g_Player.Duration == 0)
           //{
-            //Added by joboehl - Only stops if stream is empty. Otherwise, a message is displaying but everything stays as before.  
+          //Added by joboehl - Only stops if stream is empty. Otherwise, a message is displaying but everything stays as before.  
           if (!cardChanged)
           {
             g_Player.Stop();
@@ -2752,6 +2765,8 @@ namespace TvPlugin
           {
             wasPlaying = false;
           }
+
+          //UpdateGUIonPlaybackStateChange(false);
           //}
         }
 
@@ -2761,7 +2776,7 @@ namespace TvPlugin
 
         //GUIWaitCursor.Hide();
         ChannelTuneFailedNotifyUser(succeeded, wasPlaying, channel);
-        
+
         _doingChannelChange = false;
         return false;
       }
@@ -3173,11 +3188,11 @@ namespace TvPlugin
         Gentle.Framework.ProviderFactory.ResetGentle(true);
         Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(connectionString);
         MediaPortal.GUI.Library.Log.Info("get channels from database");
-        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
+        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
         sb.AddConstraint(Operator.Equals, "isTv", 1);
         sb.AddOrderByField(true, "sortOrder");
         SqlStatement stmt = sb.GetStatement(true);
-        channels = ObjectFactory.GetCollection(typeof (Channel), stmt.Execute());
+        channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
         MediaPortal.GUI.Library.Log.Info("found:{0} tv channels", channels.Count);
         TvNotifyManager.OnNotifiesChanged();
         m_groups.Clear();
@@ -3204,10 +3219,10 @@ namespace TvPlugin
 
         MediaPortal.GUI.Library.Log.Info("get all groups from database");
         bool found = false;
-        sb = new SqlBuilder(StatementType.Select, typeof (ChannelGroup));
+        sb = new SqlBuilder(StatementType.Select, typeof(ChannelGroup));
         sb.AddOrderByField(true, "groupName");
         stmt = sb.GetStatement(true);
-        IList groups = ObjectFactory.GetCollection(typeof (ChannelGroup), stmt.Execute());
+        IList groups = ObjectFactory.GetCollection(typeof(ChannelGroup), stmt.Execute());
         IList allgroupMaps = GroupMap.ListAll();
 
         bool hideAllChannelsGroup = false;
@@ -3482,7 +3497,7 @@ namespace TvPlugin
           TvServer server = new TvServer();
           if (server.IsAnyCardRecording())
           {
-            for (int i = 0 ; i < server.Count ; ++i)
+            for (int i = 0; i < server.Count; ++i)
             {
               User user = new User();
               VirtualCard card = server.CardByIndex(user, i);
@@ -3552,7 +3567,7 @@ namespace TvPlugin
         if (_channelList.Count == 0)
         {
           Channel newChannel = new Channel(GUILocalizeStrings.Get(911), false, true, 0, DateTime.MinValue, false, DateTime.MinValue, 0, true, "", true, GUILocalizeStrings.Get(911));
-          for (int i = 0 ; i < 10 ; ++i)
+          for (int i = 0; i < 10; ++i)
             _channelList.Add(newChannel);
         }
       }
@@ -3782,7 +3797,7 @@ namespace TvPlugin
     private int GetChannelIndex(Channel ch)
     {
       IList groupMaps = CurrentGroup.ReferringGroupMap();
-      for (int i = 0 ; i < groupMaps.Count ; i++)
+      for (int i = 0; i < groupMaps.Count; i++)
       {
         GroupMap gm = (GroupMap)groupMaps[i];
         Channel chan = (Channel)gm.ReferencedChannel();
@@ -3799,7 +3814,7 @@ namespace TvPlugin
     /// <returns></returns>
     private int GetGroupIndex(string groupname)
     {
-      for (int i = 0 ; i < m_groups.Count ; i++)
+      for (int i = 0; i < m_groups.Count; i++)
       {
         ChannelGroup group = (ChannelGroup)m_groups[i];
         if (group.GroupName == groupname)

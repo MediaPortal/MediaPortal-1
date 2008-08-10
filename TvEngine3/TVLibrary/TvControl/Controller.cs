@@ -81,7 +81,11 @@ namespace TvControl
 		/// <summary>
 		/// Timeshifting stopped because client heartbeat timed out.
 		/// </summary>
-		HeartBeatTimeOut
+		HeartBeatTimeOut,
+    /// <summary>
+    /// Timeshifting stopped because the owner of the same transponder has decided to change transponder.
+    /// </summary>
+    OwnerChangedTS
 	}
 
   /// <summary>
@@ -552,7 +556,7 @@ namespace TvControl
     /// </summary>
     /// <param name="user">The user.</param>
     /// <returns>true when card is timeshifting otherwise false</returns>
-    bool IsTimeShifting(ref User user);
+    bool IsTimeShifting(ref User user);    
 
     /// <summary>
     /// Returns if the card is currently recording or not
@@ -799,7 +803,7 @@ namespace TvControl
     /// </summary>
     /// <param name="cardId">The card id.</param>
     /// <returns></returns>
-    User GetUserForCard(int cardId);
+    User GetUserForCard(int cardId);        
 
     /// <summary>
     /// Gets the users for card.

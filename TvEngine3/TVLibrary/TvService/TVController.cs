@@ -974,7 +974,7 @@ namespace TvService
     {
       if (ValidateTvControllerParams(user)) return false;
       return _cards[user.CardId].TimeShifter.IsTimeShifting(ref user);
-    }
+    }    
 
     /// <summary>
     /// Returns the video stream currently associated with the card. 
@@ -2155,6 +2155,29 @@ namespace TvService
             }
           }
 
+          //todo : if the owner is changing channel to a new transponder, then kick any leeching users.
+          ITvCardHandler tvcard = _cards[cardInfo.Id];          
+          bool isTS = tvcard.TimeShifter.IsAnySubChannelTimeshifting;
+
+          if (isTS)
+          {
+            User[] users = tvcard.Users.GetUsers();
+            for (int j = 0; j < users.Length; j++)
+            {              
+              User u = users[j];
+              if (user.Name.Equals(u.Name)) continue;
+              IChannel tmpChannel = tvcard.CurrentChannel(ref u);
+
+              bool isDiffTS = tvcard.Tuner.IsDifferentTransponder(tuneChannel, tmpChannel);
+
+              if (isDiffTS)
+              {
+                Log.Write("Controller: kicking leech user {0} off card {1} since owner {2} changed transponder", u.Name, cardInfo.Card.Name, user.Name);
+                StopTimeShifting(ref u, TvStoppedReason.OwnerChangedTS);
+              }
+            }
+          }
+          
           //tune to the new channel                  
           result = CardTune(ref userCopy, tuneChannel, channel);
           if (result != TvResult.Succeeded)

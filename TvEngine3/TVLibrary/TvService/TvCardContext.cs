@@ -212,6 +212,27 @@ namespace TvService
         }
       }
     }
+
+    /// <summary>
+    /// Gets the user.
+    /// </summary>
+    /// <param name="user">The user.</param>
+    public void GetUser(ref User user, out bool exists)
+    {
+      foreach (User existingUser in _users)
+      {
+        if (existingUser.Name == user.Name && existingUser.CardId == user.CardId)
+        {
+          TvStoppedReason reason = user.TvStoppedReason;
+          user = (User)existingUser.Clone();
+          user.TvStoppedReason = reason;
+          exists = true;
+          return;
+        }
+      }
+      exists = false;
+    }
+
     /// <summary>
     /// Returns if the user exists or not
     /// </summary>

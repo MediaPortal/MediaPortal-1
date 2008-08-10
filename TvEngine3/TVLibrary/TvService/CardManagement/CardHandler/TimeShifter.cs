@@ -171,7 +171,9 @@ namespace TvService
 				} 
         TvCardContext context = _cardHandler.Card.Context as TvCardContext;
         if (context == null) return false;
-        context.GetUser(ref user);
+        bool userExists = false;
+        context.GetUser(ref user, out userExists);
+        if (!userExists) return false;
         ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(user.SubChannel);
         if (subchannel == null) return false;
         return subchannel.IsTimeShifting;
