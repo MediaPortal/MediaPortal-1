@@ -55,14 +55,8 @@ namespace MediaPortal.MPInstaller
       proiect_file_name = fil;
       InitializeComponent();
       proiectt_textBox6.Items.AddRange(MPinstallerStruct.CategoriListing);
-      _struct.LoadFromFile(fil);
-      _struct.ProiectdFileName = fil;
-      loadProperties();
-      this.Text = proiect_file_name;
-      for (int i = 0; i < _struct.FileList.Count; i++)
-      {
-        addrow((MPIFileList)_struct.FileList[i]);
-      }
+
+      OpenProjectFile(fil);
     }
 
     private void sToolStripMenuItem_Click(object sender, EventArgs e)
@@ -273,25 +267,32 @@ namespace MediaPortal.MPInstaller
       bossview.Items.AddRange(new ListViewItem[] { item1 });
     }
 
+    private void OpenProjectFile(string projectFile)
+    {
+      _struct.LoadFromFile(projectFile);
+      _struct.ProiectdFileName = projectFile;
+      loadProperties();
+      this.Text = projectFile;
+      for (int i = 0; i < _struct.FileList.Count; i++)
+      {
+        addrow((MPIFileList)_struct.FileList[i]);
+      }
+
+      openFileDialog1.InitialDirectory = Path.GetDirectoryName(_struct.ProiectdFileName);
+      folderBrowserDialog1.SelectedPath = Path.GetDirectoryName(_struct.ProiectdFileName);
+    }
+
     private void openProiectToolStripMenuItem_Click(object sender, EventArgs e)
     {
-      string fil;
       openFileDialog1.Filter = "Project files (*.xmp)|*.xmp|All files (*.*)|*.*";
       openFileDialog1.FileName = "";
       openFileDialog1.DefaultExt = "*.xmp";
       if (openFileDialog1.ShowDialog(this) == DialogResult.OK)
       {
         bossview.Items.Clear();
-        fil = openFileDialog1.FileName;
-        proiect_file_name = fil;
-        _struct.LoadFromFile(fil);
-        _struct.ProiectdFileName = fil;
-        loadProperties();
-        this.Text = proiect_file_name;
-        for (int i = 0; i < _struct.FileList.Count; i++)
-        {
-          addrow((MPIFileList)_struct.FileList[i]);
-        }
+        
+        proiect_file_name = openFileDialog1.FileName;
+        OpenProjectFile(proiect_file_name);
       }
     }
 
