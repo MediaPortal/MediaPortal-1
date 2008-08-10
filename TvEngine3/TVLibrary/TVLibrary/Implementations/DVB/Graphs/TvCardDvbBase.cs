@@ -300,7 +300,7 @@ namespace TvLibrary.Implementations.DVB
       _graphRunning = true;
       if (_mapSubChannels.ContainsKey(subChannel))
       {
-        _mapSubChannels[subChannel].OnGraphStart();
+        _mapSubChannels[subChannel].OnGraphStarted();
       }
     }
 

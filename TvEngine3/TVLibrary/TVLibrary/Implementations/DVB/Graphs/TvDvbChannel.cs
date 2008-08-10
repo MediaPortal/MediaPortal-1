@@ -253,17 +253,19 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Should be called when the graph has been started
-    /// sets up the pmt grabber to grab the pmt of the channel
+    /// Should be called when the graph has been started.
+    /// Sets up the PMT grabber to grab the PMT of the channel
+    /// when the graph hasn't been running previously
     /// </summary>
     public override void OnGraphStarted()
     {
       Log.Log.WriteFile("subch:{0} OnGraphStarted", _subChannelId);
+      bool graphAlreadyRunning = _graphRunning;
       _graphRunning = true;
       _dateTimeShiftStarted = DateTime.MinValue;
       DVBBaseChannel dvbChannel = _currentChannel as DVBBaseChannel;
       bool result = false;
-      if (dvbChannel != null)
+      if (dvbChannel != null && !graphAlreadyRunning)
       {
         result = SetupPmtGrabber(dvbChannel.PmtPid, dvbChannel.ServiceId);
       }
