@@ -1735,5 +1735,7 @@
     <String id="200049">Seulement les enregs déjà vus</String>
     <String id="200050">Cela supprimera les enregs du disque dur</String>		
     <String id="200051">Supprimer cet épisode ?</String>
+    <String id="200052">Enregistrements en cours</String>
+    <String id="200053">Pas d'enregistrements en cours</String>
   </Section>
 </Language>
