@@ -574,6 +574,7 @@ namespace MediaPortal.Configuration.Sections
             this.columnHeader2,
             this.columnHeader6});
       this.mpListViewPreferredAudioLang.FullRowSelect = true;
+      this.mpListViewPreferredAudioLang.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
       this.mpListViewPreferredAudioLang.HideSelection = false;
       this.mpListViewPreferredAudioLang.Location = new System.Drawing.Point(239, 40);
       this.mpListViewPreferredAudioLang.Name = "mpListViewPreferredAudioLang";
@@ -604,6 +605,7 @@ namespace MediaPortal.Configuration.Sections
             this.columnHeader1,
             this.columnHeader5});
       this.mpListViewAvailAudioLang.FullRowSelect = true;
+      this.mpListViewAvailAudioLang.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
       this.mpListViewAvailAudioLang.HideSelection = false;
       this.mpListViewAvailAudioLang.Location = new System.Drawing.Point(6, 40);
       this.mpListViewAvailAudioLang.Name = "mpListViewAvailAudioLang";
@@ -755,6 +757,7 @@ namespace MediaPortal.Configuration.Sections
             this.columnHeader4,
             this.columnHeader8});
       this.mpListViewPreferredSubLang.FullRowSelect = true;
+      this.mpListViewPreferredSubLang.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
       this.mpListViewPreferredSubLang.HideSelection = false;
       this.mpListViewPreferredSubLang.Location = new System.Drawing.Point(239, 40);
       this.mpListViewPreferredSubLang.Name = "mpListViewPreferredSubLang";
@@ -781,6 +784,7 @@ namespace MediaPortal.Configuration.Sections
             this.columnHeader3,
             this.columnHeader7});
       this.mpListViewAvailSubLang.FullRowSelect = true;
+      this.mpListViewAvailSubLang.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
       this.mpListViewAvailSubLang.HideSelection = false;
       this.mpListViewAvailSubLang.Location = new System.Drawing.Point(6, 40);
       this.mpListViewAvailSubLang.Name = "mpListViewAvailSubLang";
