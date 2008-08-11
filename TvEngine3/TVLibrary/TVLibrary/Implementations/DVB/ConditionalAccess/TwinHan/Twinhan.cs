@@ -324,24 +324,21 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Sends the PMT to the CAM/CI module
     /// </summary>
-    /// <param name="camType">Type of the cam.</param>
-    /// <param name="videoPid">The video pid.</param>
-    /// <param name="audioPid">The audio pid.</param>
     /// <param name="caPMT">The caPMT structure.</param>
     /// <param name="caPMTLen">The caPMT lenght</param>
-    public void SendPMT(CamType camType, uint videoPid, uint audioPid, byte[] caPMT, int caPMTLen)
+    /// <returns>false on failure to send PMT</returns>
+    public bool SendPMT(byte[] caPMT, int caPMTLen)
     {
-      if (IsCamPresent() == false) return;
-      int camNumber = (int)camType;
-      Log.Log.WriteFile("Twinhan:  Send PMT cam:{0} len:{1} video:0x{2:X} audio:0x{3:X}", camType, caPMTLen, videoPid, audioPid);
-      if (caPMT.Length == 0) return;
+      if (IsCamPresent() == false) return true; // Nothing to do
+      Log.Log.WriteFile("Twinhan: Send PMT, len: {0}", caPMTLen);
+      if (caPMT.Length == 0) return false;
+
       string line = "";
       for (int i = 0; i < caPMTLen; ++i)
-      {
-        string tmp = String.Format("{0:X} ", caPMT[i]);
-        line += tmp;
-      }
-      Log.Log.WriteFile("capmt:{0}", line);
+        line += String.Format("{0:X} ", caPMT[i]);
+      Log.Log.WriteFile(" capmt:{0}", line);
+
+      bool suceeded = false;
       Marshal.Copy(caPMT, 0, _ptrPmt, caPMTLen);
       int thbdaLen = 0x28;
       Marshal.WriteInt32(_thbdaBuf, 0, 0x255e0082);//GUID_THBDA_CMD  = new Guid( "255E0082-2017-4b03-90F8-856A62CB3D67" );
@@ -375,11 +372,15 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.WriteFile("Twinhan:  CAM failed 0x{0:X}", hr);
           }
           else
+          {
             Log.Log.WriteFile("Twinhan:  CAM returned ok 0x{0:X}", hr);
+            suceeded = true;
+          }
           Marshal.ReleaseComObject(propertySet);
         }
         Marshal.ReleaseComObject(pin);
       }
+      return suceeded;
     }
 
     /// <summary>

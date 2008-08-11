@@ -236,9 +236,13 @@ namespace TvLibrary.Implementations.DVB
                 Log.Log.Write("subch:{0} wait for pmt {1:X}", _subChannelId, channel.PmtPid);
                 System.Threading.Thread.Sleep(20);
                 TimeSpan ts = DateTime.Now - dtNow;
-                if (ts.TotalMilliseconds >= (_parameters.TimeOutPMT * 1000)) break;
+                if (ts.TotalMilliseconds >= (_parameters.TimeOutPMT * 1000))
+                {
+                    Log.Log.Debug("Timedout waiting for PMT after {0} seconds. Increase the PMT timeout value?", ts.TotalSeconds);
+                    break;
               }
             }
+          }
           }
           return;
         }
@@ -280,10 +284,14 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.Write("subch:{0} wait for pmt:{1:X}", _subChannelId, dvbChannel.PmtPid);
             System.Threading.Thread.Sleep(20);
             TimeSpan ts = DateTime.Now - dtNow;
-            if (ts.TotalMilliseconds >= (_parameters.TimeOutPMT * 1000)) break;
+            if (ts.TotalMilliseconds >= (_parameters.TimeOutPMT * 1000))
+            {
+                Log.Log.Debug("Timedout waiting for PMT after {0} seconds. Increase the PMT timeout value?", ts.TotalSeconds);
+                break;
           }
         }
       }
+    }
     }
 
     /// <summary>

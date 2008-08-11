@@ -470,17 +470,10 @@ namespace TvLibrary.Implementations.DVB
         {
           ChannelInfo info = new ChannelInfo();
           info.DecodePmt(PMT);
-          int videoPid = -1;
-          foreach (PidInfo pmtData in info.pids)
-          {
-            if (pmtData.isVideo && videoPid < 0) videoPid = pmtData.pid;
-            if (pmtData.isAudio && audioPid < 0) audioPid = pmtData.pid;
-            if (videoPid >= 0 && audioPid >= 0) break;
-          }
+
           int caPmtLen;
           byte[] caPmt = info.caPMT.CaPmtStruct(out caPmtLen);
-          _twinhan.SendPMT(camType, (uint)videoPid, (uint)audioPid, caPmt, caPmtLen);
-          return true;
+          return _twinhan.SendPMT(caPmt, caPmtLen);
         }
       }
       catch (Exception ex)

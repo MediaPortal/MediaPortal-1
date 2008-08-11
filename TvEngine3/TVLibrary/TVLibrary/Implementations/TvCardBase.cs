@@ -427,8 +427,8 @@ namespace TvLibrary.Implementations
       get
       {
         UpdateSignalQuality();
-        if (_signalLevel < 0) _signalQuality = 0;
-        if (_signalLevel > 100) _signalQuality = 100;
+        if (_signalQuality < 0) _signalQuality = 0;
+        if (_signalQuality > 100) _signalQuality = 100;
         return _signalQuality;
       }
     }
