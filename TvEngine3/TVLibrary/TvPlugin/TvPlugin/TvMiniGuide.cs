@@ -381,6 +381,8 @@ namespace TvPlugin
       }
       lstChannels.Visible = true;
 
+      spinGroup.CycleItems = true;
+
       FillChannelList();
       FillGroupList();
       base.OnPageLoad();
