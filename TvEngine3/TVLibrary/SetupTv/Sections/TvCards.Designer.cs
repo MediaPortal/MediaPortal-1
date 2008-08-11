@@ -46,6 +46,7 @@ namespace SetupTv.Sections
       this.buttonUp = new System.Windows.Forms.Button();
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
+      this.labelCardPriority = new System.Windows.Forms.Label();
       this.buttonRemove = new System.Windows.Forms.Button();
       this.buttonEdit = new System.Windows.Forms.Button();
       this.tabPage2 = new System.Windows.Forms.TabPage();
@@ -57,7 +58,6 @@ namespace SetupTv.Sections
       this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader7 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader8 = new System.Windows.Forms.ColumnHeader();
-      this.labelCardPriority = new System.Windows.Forms.Label();
       this.contextMenuStrip2.SuspendLayout();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
@@ -207,6 +207,16 @@ namespace SetupTv.Sections
       this.tabPage1.Text = "Cards";
       this.tabPage1.UseVisualStyleBackColor = true;
       // 
+      // labelCardPriority
+      // 
+      this.labelCardPriority.AutoSize = true;
+      this.labelCardPriority.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.labelCardPriority.Location = new System.Drawing.Point(6, 329);
+      this.labelCardPriority.Name = "labelCardPriority";
+      this.labelCardPriority.Size = new System.Drawing.Size(250, 13);
+      this.labelCardPriority.TabIndex = 4;
+      this.labelCardPriority.Text = "Attention: Priority = 1 means lowest Priority";
+      // 
       // buttonRemove
       // 
       this.buttonRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -295,16 +305,6 @@ namespace SetupTv.Sections
       // 
       this.columnHeader8.Text = "Name";
       this.columnHeader8.Width = 200;
-      // 
-      // labelCardPriority
-      // 
-      this.labelCardPriority.AutoSize = true;
-      this.labelCardPriority.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.labelCardPriority.Location = new System.Drawing.Point(10, 322);
-      this.labelCardPriority.Name = "labelCardPriority";
-      this.labelCardPriority.Size = new System.Drawing.Size(250, 13);
-      this.labelCardPriority.TabIndex = 4;
-      this.labelCardPriority.Text = "Attention: Priority = 1 means lowest Priority";
       // 
       // TvCards
       // 
