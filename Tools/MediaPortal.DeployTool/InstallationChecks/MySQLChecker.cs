@@ -115,8 +115,9 @@ namespace MediaPortal.DeployTool
       sr.Close();
       if (!installOk)
         return false;
-      PrepareMyIni(InstallationProperties.Instance["DBMSDir"] + "\\my.ini");
-      Process svcInstaller = Process.Start(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysqld-nt.exe", "--install");
+      string inifile = InstallationProperties.Instance["DBMSDir"] + "\\my.ini";
+      PrepareMyIni(inifile);
+      Process svcInstaller = Process.Start(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysqld-nt.exe", "--install mysqld --defaults-file=\"" + inifile + "\"");
       svcInstaller.WaitForExit();
       ServiceController ctrl = new ServiceController("mysql");
       try
