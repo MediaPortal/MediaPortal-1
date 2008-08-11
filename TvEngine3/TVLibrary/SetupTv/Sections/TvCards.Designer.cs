@@ -209,9 +209,9 @@ namespace SetupTv.Sections
       // 
       // labelCardPriority
       // 
-      this.labelCardPriority.AutoSize = true;
+      this.labelCardPriority.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.labelCardPriority.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.labelCardPriority.Location = new System.Drawing.Point(6, 329);
+      this.labelCardPriority.Location = new System.Drawing.Point(8, 321);
       this.labelCardPriority.Name = "labelCardPriority";
       this.labelCardPriority.Size = new System.Drawing.Size(250, 13);
       this.labelCardPriority.TabIndex = 4;
@@ -316,7 +316,6 @@ namespace SetupTv.Sections
       this.contextMenuStrip2.ResumeLayout(false);
       this.tabControl1.ResumeLayout(false);
       this.tabPage1.ResumeLayout(false);
-      this.tabPage1.PerformLayout();
       this.tabPage2.ResumeLayout(false);
       this.contextMenuStrip1.ResumeLayout(false);
       this.ResumeLayout(false);
