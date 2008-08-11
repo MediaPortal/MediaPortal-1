@@ -89,7 +89,7 @@ namespace SetupTv.Sections
 
       ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
       if (indexes.Count == 0) return;
-      for (int i = 0 ; i < indexes.Count ; ++i)
+      for (int i = 0; i < indexes.Count; ++i)
       {
         ListViewItem item = mpListView1.Items[indexes[i]];
         Card card = (Card)item.Tag;
@@ -120,7 +120,7 @@ namespace SetupTv.Sections
     void UpdateList()
     {
       base.OnSectionActivated();
-      mpListView1.Items.Clear();      
+      mpListView1.Items.Clear();
       try
       {
         IList dbsCards = Card.ListAll();
@@ -140,7 +140,7 @@ namespace SetupTv.Sections
         SqlStatement stmt = sb.GetStatement(true);
         IList cards = ObjectFactory.GetCollection(typeof(Card), stmt.Execute());
 
-        for (int i = 0 ; i < cards.Count ; ++i)
+        for (int i = 0; i < cards.Count; ++i)
         {
           Card card = (Card)cards[i];
           string cardType = "";
@@ -164,12 +164,12 @@ namespace SetupTv.Sections
             item.Font = new Font(item.Font, FontStyle.Strikeout);
             item.Text = "No";
           }
-          
+
           item.SubItems.Add(cardType);
           if (cardType.ToLower().Contains("dvb") || cardType.ToLower().Contains("atsc"))//CAM limit doesn't apply to non-digital cards
-              item.SubItems.Add(card.DecryptLimit.ToString());
+            item.SubItems.Add(card.DecryptLimit.ToString());
           else
-              item.SubItems.Add("");
+            item.SubItems.Add("");
           item.SubItems.Add(card.Name);
 
           //check if card is really available before setting to enabled.
@@ -185,18 +185,17 @@ namespace SetupTv.Sections
 
           if (cardType.ToLower().Contains("dvb") || cardType.ToLower().Contains("atsc"))//CAM limit doesn't apply to non-digital cards
           {
-              if (!card.GrabEPG)
-              {
-                  item.SubItems.Add("No");
-              }
-              else
-              {
-                  item.SubItems.Add("Yes");
-              }
+            if (!card.GrabEPG)
+            {
+              item.SubItems.Add("No");
+            }
+            else
+            {
+              item.SubItems.Add("Yes");
+            }
           }
-   
           else
-              item.SubItems.Add("");
+            item.SubItems.Add("");
 
           item.Tag = card;
         }
@@ -218,7 +217,7 @@ namespace SetupTv.Sections
       mpListView1.BeginUpdate();
       ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
       if (indexes.Count == 0) return;
-      for (int i = 0 ; i < indexes.Count ; ++i)
+      for (int i = 0; i < indexes.Count; ++i)
       {
         int index = indexes[i];
         if (index > 0)
@@ -230,7 +229,6 @@ namespace SetupTv.Sections
       }
       ReOrder();
       mpListView1.EndUpdate();
-
       _needRestart = true;
     }
 
@@ -240,7 +238,7 @@ namespace SetupTv.Sections
       ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
       if (indexes.Count == 0) return;
       if (mpListView1.Items.Count < 2) return;
-      for (int i = indexes.Count - 1 ; i >= 0 ; i--)
+      for (int i = indexes.Count - 1; i >= 0; i--)
       {
         int index = indexes[i];
         ListViewItem item = mpListView1.Items[index];
@@ -257,7 +255,7 @@ namespace SetupTv.Sections
 
     void ReOrder()
     {
-      for (int i = 0 ; i < mpListView1.Items.Count ; ++i)
+      for (int i = 0; i < mpListView1.Items.Count; ++i)
       {
         mpListView1.Items[i].SubItems[1].Text = (mpListView1.Items.Count - i).ToString();
 
@@ -277,6 +275,7 @@ namespace SetupTv.Sections
         e.Item.Font = new Font(e.Item.Font, FontStyle.Regular);
       else
         e.Item.Font = new Font(e.Item.Font, FontStyle.Strikeout);
+      buttonEdit.Enabled = e.Item.Checked;
     }
 
     private void mpListView1_SelectedIndexChanged(object sender, EventArgs e)
@@ -288,14 +287,14 @@ namespace SetupTv.Sections
         enabled = !RemoteControl.Instance.CardPresent(card.IdCard);
       }
       if (mpListView1.SelectedItems.Count == 1)
-      {        
+      {
         string cardType = mpListView1.SelectedItems[0].SubItems[2].Text.ToLower();
-        if (cardType.Contains("dvb") || cardType.Contains("atsc") || cardType.Contains("analog")) // Only some cards can be edited
-            buttonEdit.Enabled = true;
+        if (mpListView1.SelectedItems[0].Checked && (cardType.Contains("dvb") || cardType.Contains("atsc") || cardType.Contains("analog"))) // Only some cards can be edited
+          buttonEdit.Enabled = true;
         else
-           buttonEdit.Enabled = false;                 
+          buttonEdit.Enabled = false;
       }
-        buttonRemove.Enabled = enabled;
+      buttonRemove.Enabled = enabled;
     }
 
     private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
@@ -349,7 +348,6 @@ namespace SetupTv.Sections
       group.Delete();
       UpdateHybrids();
       RemoteControl.Instance.Restart();
-
     }
 
     private void buttonEdit_Click(object sender, EventArgs e)
