@@ -79,6 +79,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("orientation")]
     protected eOrientation _orientation = eOrientation.Horizontal;
 
+    protected bool _cycleItems = false; //currently only impl. for SPIN_CONTROL_TYPE_DISC_NUMBER - used in mini EPG guide in tvplugin.
     protected bool autoCheck = true;
     protected int _startInt = 0;
     protected int _endInt = 100;
@@ -1019,7 +1020,13 @@ namespace MediaPortal.GUI.Library
         case SpinType.SPIN_CONTROL_TYPE_DISC_NUMBER:
           {
             if (_intValue - 1 >= 0)
+            {
               _intValue--;
+            }
+            else if (_cycleItems)
+            {
+              _intValue = (_listLabels.Count -1);
+            }
 
             if (_intValue < _listLabels.Count)
             {
@@ -1059,8 +1066,16 @@ namespace MediaPortal.GUI.Library
         case SpinType.SPIN_CONTROL_TYPE_TEXT:
         case SpinType.SPIN_CONTROL_TYPE_DISC_NUMBER:
           {
+            //int maxNr = (int)_listLabels.Count;
+            
             if (_intValue + 1 < (int)_listLabels.Count)
+            {
               _intValue++;
+            }
+            else if (_cycleItems)
+            {
+              _intValue = 0;
+            }
             if (_intValue < (int)_listLabels.Count)
             {
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID, 0, 0, null);
@@ -1164,6 +1179,12 @@ namespace MediaPortal.GUI.Library
         if (_listLabels.Count < 2) return false;
       }
       return true;
+    }
+
+    public bool CycleItems
+    {
+      get { return _cycleItems; }
+      set { _cycleItems = value; }
     }
 
     public bool AutoCheck
