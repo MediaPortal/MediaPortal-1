@@ -754,7 +754,7 @@ namespace MediaPortal.MPInstaller
             "Utilities",
             "Video/Movies",
             "Web",
-            "TV Logo"});
+            "TV Logos"});
           this.proiectt_textBox6.Location = new System.Drawing.Point(224, 85);
           this.proiectt_textBox6.Name = "proiectt_textBox6";
           this.proiectt_textBox6.Size = new System.Drawing.Size(168, 21);

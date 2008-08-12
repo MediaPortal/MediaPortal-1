@@ -167,7 +167,7 @@ namespace MediaPortal.MPInstaller
       writer.WriteElementString("MaxExtensionVersion", MaxExtensionVersion);
       writer.WriteElementString("ForumURL", ForumURL);
       writer.WriteElementString("WebURL", WebURL);
-      writer.WriteElementString("CreationDate", CreationDate.ToString("F", new CultureInfo("en-US")));
+      writer.WriteElementString("CreationDate", CreationDate.ToString("dd-MM-yy"));
       writer.WriteElementString("SingleGroupSelect", SingleGroupSelect.ToString());
     }
 
@@ -196,13 +196,20 @@ namespace MediaPortal.MPInstaller
           WebURL = node.InnerText;
         node = basenode.SelectSingleNode("CreationDate");
         if (node != null && node.InnerText != null)
-          DateTime.TryParse(node.InnerText,out creationdate);
+          try
+          {
+            CreationDate = DateTime.ParseExact(node.InnerText, "dd-MM-yy", null);
+          }
+          catch (System.FormatException)
+          {
+            CreationDate = DateTime.Now;
+          }
         node = basenode.SelectSingleNode("SingleGroupSelect");
         if (node != null && node.InnerText != null)
           if (node.InnerText == "True")
             SingleGroupSelect = true;
           else SingleGroupSelect = false;
-
+      
       }
 
     }
