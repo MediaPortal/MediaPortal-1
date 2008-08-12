@@ -511,11 +511,11 @@ namespace MediaPortal.Player
         _textureAddress = pTex;
         if (_vmr9Util.FrameCounter == 0)
         {
-          Log.Info("planescene: PresentImage() ");
+          Log.Debug("planescene: PresentImage() ");
         }
         if (pTex == 0)
         {
-          Log.Info("PlaneScene: PresentImage() dispose surfaces");
+          Log.Debug("PlaneScene: PresentImage() dispose surfaces");
           _surfaceAdress = 0;
           _vmr9Util.VideoWidth = 0;
           _vmr9Util.VideoHeight = 0;
