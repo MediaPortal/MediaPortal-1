@@ -1545,19 +1545,21 @@ namespace TvPlugin
       }
       //TvBusinessLayer layer = new TvBusinessLayer();
       //programs = layer.GetPrograms(channel, Utils.longtodate(iStart), Utils.longtodate(iEnd));
-
-      if (programs.Count == 0)
-      {
+      bool noEPG = (programs.Count == 0);
+      if (noEPG)
+      {        
         DateTime dt = Utils.longtodate(iEnd);
         //dt=dt.AddMinutes(_timePerBlock);
         long iProgEnd = Utils.datetolong(dt);
         Program prog = new Program(channel.IdChannel, Utils.longtodate(iStart), Utils.longtodate(iProgEnd), GUILocalizeStrings.Get(736), "", "", false, DateTime.MinValue, string.Empty, string.Empty, -1, string.Empty, -1);
-        programs.Add(prog);
+        programs.Add(prog);      
       }
+
       if (programs.Count > 0)
       {
         int iProgram = 0;
-        int iPreviousEndXPos = 0;
+        int iPreviousEndXPos = 0;               
+
         foreach (Program program in programs)
         {
           string strTitle = program.Title;
@@ -1587,13 +1589,35 @@ namespace TvPlugin
           bool bSeries = false;
           bool bRecording = false;
           bool bConflict = false;
+
           foreach (Schedule record in _recordingList)
-          {
-            if (record.IsRecordingProgram(program, true))
+          {                                    
+            bool isRecPrg = false;
+            if (channel.IdChannel == record.ReferencedChannel().IdChannel)
+            {                          
+              if (noEPG)
+              {                               
+                VirtualCard card;
+                isRecPrg = (TVHome.IsRecordingSchedule(record, null, out card));
+              }
+              else
+              {
+                if (record.ProgramName.ToLower().IndexOf("manuel (") > -1) //do we have a manually started recording ?
+                {
+                  record.ProgramName = program.Title;
+                  record.EndTime = program.EndTime;
+                  record.StartTime = program.StartTime;                  
+                }
+                isRecPrg = record.IsRecordingProgram(program, true);
+              }              
+            }
+                                   
+            if (isRecPrg)
             {
               if (record.ReferringConflicts().Count != 0)
                 bConflict = true;
-              if ((ScheduleRecordingType)record.ScheduleType != ScheduleRecordingType.Once)
+              bool isOnce = ((ScheduleRecordingType)record.ScheduleType == ScheduleRecordingType.Once);
+              if (!isOnce)
                 bSeries = true;
               bRecording = true;
               break;
