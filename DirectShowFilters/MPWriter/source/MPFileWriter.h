@@ -1,23 +1,23 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
+*	Copyright (C) 2006-2008 Team MediaPortal
+*	http://www.team-mediaportal.com
+*
+*  This Program is free software; you can redistribute it and/or modify
+*  it under the terms of the GNU General Public License as published by
+*  the Free Software Foundation; either version 2, or (at your option)
+*  any later version.
+*   
+*  This Program is distributed in the hope that it will be useful,
+*  but WITHOUT ANY WARRANTY; without even the implied warranty of
+*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+*  GNU General Public License for more details.
+*   
+*  You should have received a copy of the GNU General Public License
+*  along with GNU Make; see the file COPYING.  If not, write to
+*  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+*  http://www.gnu.org/copyleft/gpl.html
+*
+*/
 #include <map>
 #include "filewriter.h"
 #include "ProgramToTransportStream.h"
@@ -25,13 +25,8 @@
 #include "TeletextGrabber.h"
 #include "AnalogVideoAudioObserver.h"
 #include "ChannelScan.h"
+#include "SubChannel.h"
 using namespace std;
-
-enum RecordingMode
-{
-    ProgramStream=0,
-    TransportStream=1
-};
 
 class CMPFileWriterMPEG2InputPin;
 class CMPFileWriterTeletextInputPin;
@@ -47,19 +42,22 @@ DEFINE_GUID(IID_IMPFileRecord,0xd5ff805e, 0xa98b, 0x4d56,  0xbe, 0xde, 0x3f, 0x1
 
 DECLARE_INTERFACE_(IMPFileRecord, IUnknown)
 {
-	STDMETHOD(SetRecordingMode)(THIS_ int mode)PURE;
-	STDMETHOD(SetRecordingFileName)(THIS_ char* pszFileName)PURE;
-	STDMETHOD(StartRecord)(THIS_ )PURE;
-	STDMETHOD(StopRecord)(THIS_ )PURE;
+	STDMETHOD(SetRecordingMode)(THIS_ int subChannelId, int mode)PURE;
+	STDMETHOD(SetRecordingFileName)(THIS_ int subChannelId, char* pszFileName)PURE;
+	STDMETHOD(StartRecord)(THIS_ int subChannelId)PURE;
+	STDMETHOD(StopRecord)(THIS_ int subChannelId)PURE;
 	STDMETHOD(IsReceiving)(THIS_ BOOL* yesNo)PURE;
 	STDMETHOD(Reset)(THIS_)PURE;
-	STDMETHOD(SetTimeShiftFileName)(THIS_ char* pszFileName)PURE;
-	STDMETHOD(StartTimeShifting)(THIS_ )PURE;
-	STDMETHOD(StopTimeShifting)(THIS_ )PURE;
-	STDMETHOD(PauseTimeShifting)(THIS_ int onOff)PURE;
-	STDMETHOD(SetTimeShiftParams)(THIS_ int minFiles, int maxFiles, ULONG maxFileSize)PURE;
-	STDMETHOD(TTxSetCallBack)(THIS_ IAnalogTeletextCallBack* callback)PURE;
-	STDMETHOD(SetVideoAudioObserver)(THIS_ IAnalogVideoAudioObserver* callback)PURE;
+	STDMETHOD(SetTimeShiftFileName)(THIS_ int subChannelId, char* pszFileName)PURE;
+	STDMETHOD(StartTimeShifting)(THIS_ int subChannelId)PURE;
+	STDMETHOD(StopTimeShifting)(THIS_ int subChannelId)PURE;
+	STDMETHOD(PauseTimeShifting)(THIS_ int subChannelId, int onOff)PURE;
+	STDMETHOD(SetTimeShiftParams)(THIS_ int subChannelId, int minFiles, int maxFiles, ULONG maxFileSize)PURE;
+	STDMETHOD(TTxSetCallBack)(THIS_ int subChannelId, IAnalogTeletextCallBack* callback)PURE;
+	STDMETHOD(SetVideoAudioObserver)(THIS_ int subChannelId, IAnalogVideoAudioObserver* callback)PURE;
+	STDMETHOD(AddChannel)(THIS_ int* subChannelId)PURE;
+	STDMETHOD(DeleteChannel)(THIS_ int subChannelId)PURE;
+	STDMETHOD(DeleteAllChannels)(THIS_)PURE;
 };
 // Main filter object
 
@@ -106,9 +104,6 @@ public:
 	STDMETHODIMP EndOfStream(void);
 	STDMETHODIMP ReceiveCanBlock();
 
-	// Write detailed information about this sample to a file
-	//    HRESULT WriteStringInfo(IMediaSample *pSample);
-
 	// Check if the pin can support this specific proposed type and format
 	HRESULT		CheckMediaType(const CMediaType *);
 	// Break connection
@@ -136,7 +131,6 @@ class CMPFileWriter : public CUnknown, public IMPFileRecord
 	CMPFileWriterTeletextInputPin*	m_pTeletextInputPin;	// A Teletext rendered input pin
 	CCritSec 		m_Lock;									// Main renderer critical section
 	CCritSec 		m_ReceiveLock;							// Sublock for received samples
-	FileWriter* m_pRecordFile;
 public:
 	DECLARE_IUNKNOWN
 
@@ -147,36 +141,33 @@ public:
 
 	HRESULT		 Write(PBYTE pbData, LONG lDataLength);
 	HRESULT		 WriteTeletext(PBYTE pbData, LONG lDataLength);
-	STDMETHODIMP SetRecordingMode(int mode);
-	STDMETHODIMP SetRecordingFileName(char* pszFileName);
-	STDMETHODIMP StartRecord();
-	STDMETHODIMP StopRecord();
+	STDMETHODIMP SetRecordingMode(int subChannelId, int mode);
+	STDMETHODIMP SetRecordingFileName(int subChannelId, char* pszFileName);
+	STDMETHODIMP StartRecord(int subChannelId);
+	STDMETHODIMP StopRecord(int subChannelId);
 
-	STDMETHODIMP IsReceiving( BOOL* yesNo);
+	STDMETHODIMP IsReceiving(BOOL* yesNo);
 	STDMETHODIMP Reset();
 
-	STDMETHODIMP SetTimeShiftFileName(char* pszFileName);
-	STDMETHODIMP StartTimeShifting();
-	STDMETHODIMP StopTimeShifting();
-	STDMETHODIMP PauseTimeShifting(int onOff);
-	STDMETHODIMP SetTimeShiftParams( int minFiles, int maxFiles, ULONG maxFileSize);
-	STDMETHODIMP TTxSetCallBack(IAnalogTeletextCallBack* callback);
-	STDMETHODIMP SetVideoAudioObserver(IAnalogVideoAudioObserver* callback);
+	STDMETHODIMP SetTimeShiftFileName(int subChannelId, char* pszFileName);
+	STDMETHODIMP StartTimeShifting(int subChannelId);
+	STDMETHODIMP StopTimeShifting(int subChannelId);
+	STDMETHODIMP PauseTimeShifting(int subChannelId, int onOff);
+	STDMETHODIMP SetTimeShiftParams(int subChannelId,  int minFiles, int maxFiles, ULONG maxFileSize);
+	STDMETHODIMP TTxSetCallBack(int subChannelId, IAnalogTeletextCallBack* callback);
+	STDMETHODIMP SetVideoAudioObserver(int subChannelId, IAnalogVideoAudioObserver* callback);
+	STDMETHODIMP AddChannel(int* subChannelId);
+	STDMETHODIMP DeleteChannel(int subChannelId);
+	STDMETHODIMP DeleteAllChannels();
 private:
 
+	CSubChannel* GetSubChannel(int handle);	
 	// Overriden to say what interfaces we support where
 	STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void ** ppv);
-
-	char	m_strRecordingFileName[1024];
-	char	m_strTimeShiftFileName[1024];
-	CProgramToTransportStream m_tsWriter;
-	bool m_bIsTimeShifting;
-	bool m_bPaused;
-	CProgramToTransportStreamRecorder m_tsRecorder;
-	bool m_bIsRecording;
-	RecordingMode m_recordingMode;
-	CTeletextGrabber*	m_pTeletextGrabber;
 	CChannelScan* m_pChannelScan;
+	vector<CSubChannel*> m_vecChannels;
+	typedef vector<CSubChannel*>::iterator ivecChannels;
+	int m_id;
 };
 
 
@@ -201,20 +192,17 @@ public:
 	STDMETHODIMP EndOfStream(void);
 	STDMETHODIMP ReceiveCanBlock();
 
-	// Write detailed information about this sample to a file
-	//    HRESULT WriteStringInfo(IMediaSample *pSample);
-
 	// Check if the pin can support this specific proposed type and format
-	HRESULT		CheckMediaType(const CMediaType *);
+	HRESULT			CheckMediaType(const CMediaType *);
 	// Break connection
-	HRESULT		BreakConnect();
+	HRESULT			BreakConnect();
 	BOOL			IsReceiving();
 	void			Reset();
 	// Track NewSegment
 	STDMETHODIMP NewSegment(REFERENCE_TIME tStart,REFERENCE_TIME tStop,double dRate);
 private:
-	BOOL				m_bIsReceiving;
-	DWORD				m_lTickCount;
+	BOOL			m_bIsReceiving;
+	DWORD			m_lTickCount;
 	CCritSec		m_section;
 };
 

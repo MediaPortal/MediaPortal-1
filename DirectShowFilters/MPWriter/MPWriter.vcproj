@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="MPFileWriter"
 	ProjectGUID="{4D369052-C13D-4013-91A7-688C86BC9652}"
 	RootNamespace="MPFileWriter"
@@ -282,6 +282,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\source\SubChannel.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\source\TeletextGrabber.cpp"
 				>
 			</File>
@@ -348,6 +352,10 @@
 			</File>
 			<File
 				RelativePath=".\source\ProgramToTransportStreamRecorder.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\SubChannel.h"
 				>
 			</File>
 			<File

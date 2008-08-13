@@ -166,7 +166,7 @@ STDMETHODIMP CMPFileWriterFilter::Stop()
 	//m_pDump->Log(TEXT("graph Stop() called"),true);
 
 	if (m_pMPFileWriter)
-		m_pMPFileWriter->StopRecord();
+		m_pMPFileWriter->DeleteAllChannels();
 
 	HRESULT result =  CBaseFilter::Stop();
 	LogDebug("CMPFileWriterFilter::Stop() completed");
@@ -388,9 +388,7 @@ m_pTeletextInputPin(NULL)
 	LogDebug("CMPFileWriter::ctor()");
 
 	DeleteFile("MPFileWriter.log");
-	m_pRecordFile = NULL;
-
-
+	m_id=0;
 	m_pFilter = new CMPFileWriterFilter(this, GetOwner(), &m_Lock, phr);
 	if (m_pFilter == NULL) 
 	{
@@ -421,13 +419,8 @@ m_pTeletextInputPin(NULL)
 		return;
 	}
 
-	m_pTeletextGrabber = new CTeletextGrabber();
 	m_pChannelScan = new CChannelScan(GetOwner(),phr);
 
-	strcpy(m_strRecordingFileName,"");
-	strcpy(m_strTimeShiftFileName,"");
-	m_bIsTimeShifting=false;
-	m_bIsRecording=false;
 }
 
 
@@ -439,10 +432,14 @@ CMPFileWriter::~CMPFileWriter()
 {
 	LogDebug("CMPFilerWriter::dtor()");
 
-	if(m_bIsRecording){
-		StopRecord();
+
+	LogDebug("CMPFileWriter::dtor() - Stopping all subchannels");
+
+	for (int i=0; i < (int)m_vecChannels.size();++i)
+	{
+		delete m_vecChannels[i];
 	}
-	LogDebug("Stopping Recording");
+	m_vecChannels.clear();
 
 	delete m_pMPEG2InputPin;
 	m_pMPEG2InputPin = NULL;
@@ -457,11 +454,6 @@ CMPFileWriter::~CMPFileWriter()
 	delete m_pFilter;
 	m_pFilter = NULL;
 	LogDebug("CMPFileWriterFilter::dtor() completed");
-
-	delete m_pTeletextGrabber;
-	m_pTeletextGrabber = NULL;
-
-	LogDebug("CTeletextGrabber::dtor() completed");
 
 	delete m_pChannelScan;
 	m_pChannelScan = NULL;
@@ -557,156 +549,73 @@ BOOL APIENTRY DllMain(HANDLE hModule,
 	return DllEntryPoint((HINSTANCE)(hModule), dwReason, lpReserved);
 }
 
-STDMETHODIMP CMPFileWriter::SetTimeShiftFileName(char* pszFileName)
+STDMETHODIMP CMPFileWriter::SetTimeShiftFileName(int subChannelId, char* pszFileName)
 {
-	strcpy(m_strTimeShiftFileName,pszFileName);
-	strcat(m_strTimeShiftFileName,".tsbuffer");
-	return S_OK;
+	CSubChannel* pSubChannel=GetSubChannel(subChannelId);
+	if (pSubChannel==NULL) return S_OK;
+	return pSubChannel->SetTimeShiftFileName(pszFileName);
 }
 
-STDMETHODIMP CMPFileWriter::SetTimeShiftParams( int minFiles, int maxFiles, ULONG maxFileSize)
+STDMETHODIMP CMPFileWriter::SetTimeShiftParams(int subChannelId, int minFiles, int maxFiles, ULONG maxFileSize)
 {
-	m_tsWriter.SetTimeShiftParams(  minFiles,  maxFiles,  maxFileSize);
-	return S_OK;
+	CSubChannel* pSubChannel=GetSubChannel(subChannelId);
+	if (pSubChannel==NULL) return S_OK;
+	return pSubChannel->SetTimeShiftParams(minFiles, maxFiles,maxFileSize);
 }
-STDMETHODIMP CMPFileWriter::StartTimeShifting( )
+STDMETHODIMP CMPFileWriter::StartTimeShifting(int subChannelId)
 {
-	CAutoLock lock(&m_Lock);
-
-	if (m_bIsTimeShifting)
-	{
-		LogDebug("Stop TimeShifting:'%s'",m_strTimeShiftFileName);
-		m_tsWriter.Close();
-		m_bIsTimeShifting=false;
-	}
-
-	if (strlen(m_strTimeShiftFileName)==0) return E_FAIL;
-
-	::DeleteFile((LPCTSTR) m_strTimeShiftFileName);
-	LogDebug("Start TimeShifting:'%s'",m_strTimeShiftFileName);
-
-	m_tsWriter.Initialize(m_strTimeShiftFileName);
-	m_bIsTimeShifting=true;
-	m_bPaused=false;
-	WCHAR wstrFileName[2048];
-	MultiByteToWideChar(CP_ACP,0,m_strTimeShiftFileName,-1,wstrFileName,1+strlen(m_strTimeShiftFileName));
-	return S_OK;
+	CSubChannel* pSubChannel=GetSubChannel(subChannelId);
+	if (pSubChannel==NULL) return S_OK;
+	return pSubChannel->StartTimeShifting();
 
 }	
-STDMETHODIMP CMPFileWriter::StopTimeShifting( )
+STDMETHODIMP CMPFileWriter::StopTimeShifting(int subChannelId)
 {
-	CAutoLock lock(&m_Lock);
-
-	if (m_bIsTimeShifting)
-	{
-		LogDebug("Stop TimeShifting:'%s'",m_strTimeShiftFileName);
-		m_tsWriter.Close();
-		strcpy(m_strTimeShiftFileName,"");
-		m_bIsTimeShifting=false;
-		::DeleteFile((LPCTSTR) m_strTimeShiftFileName);
-	}
-	return S_OK;
+	CSubChannel* pSubChannel=GetSubChannel(subChannelId);
+	if (pSubChannel==NULL) return S_OK;
+	return pSubChannel->StopTimeShifting();
 }
 
-STDMETHODIMP CMPFileWriter::PauseTimeShifting(int onOff)
+STDMETHODIMP CMPFileWriter::PauseTimeShifting(int subChannelId, int onOff)
 {
-	CAutoLock lock(&m_Lock);
-
-	LogDebug("Pause TimeShifting:%d",onOff);
-	m_bPaused=(onOff!=0);
-	if(m_bPaused){
-		m_tsWriter.Flush();
-		if(m_pChannelScan!=NULL){
-			m_pChannelScan->ResetScanningPossible();
-		}
-		if(m_pTeletextGrabber!=NULL){
-			m_pTeletextGrabber->Stop();
-		}
-	}else{
-		if(m_pTeletextGrabber!=NULL){
-			m_pTeletextGrabber->Start();
-		}
-	}
-	return S_OK;
+	CSubChannel* pSubChannel=GetSubChannel(subChannelId);
+	if (pSubChannel==NULL) return S_OK;
+	return pSubChannel->PauseTimeShifting(onOff);
 }
 
 
-STDMETHODIMP CMPFileWriter::SetRecordingMode(int mode)
+STDMETHODIMP CMPFileWriter::SetRecordingMode(int subChannelId, int mode)
 {
-	if(m_bIsRecording){
-		return S_OK;
-	}
-	m_recordingMode = (RecordingMode) mode;
-	if (m_recordingMode==ProgramStream)
-		LogDebug("Recorder:program stream mode");
-	else
-		LogDebug("Recorder:transport stream mode");
-	return S_OK;
+	CSubChannel* pSubChannel=GetSubChannel(subChannelId);
+	if (pSubChannel==NULL) return S_OK;
+	return pSubChannel->SetRecordingMode(mode);
 }
 
 
-STDMETHODIMP CMPFileWriter::SetRecordingFileName(char* pszFileName)
+STDMETHODIMP CMPFileWriter::SetRecordingFileName(int subChannelId, char* pszFileName)
 {
-	if(m_bIsRecording){
-		return S_OK;
-	}
-	strcpy(m_strRecordingFileName,pszFileName);
-	return S_OK;
+	CSubChannel* pSubChannel=GetSubChannel(subChannelId);
+	if (pSubChannel==NULL) return S_OK;
+	return pSubChannel->SetRecordingFileName(pszFileName);
 }
 
 
-STDMETHODIMP CMPFileWriter::StartRecord( )
+STDMETHODIMP CMPFileWriter::StartRecord(int subChannelId)
 {
-	CAutoLock lock(&m_Lock);
-	StopRecord();
-	if (strlen(m_strRecordingFileName)==0) return E_FAIL;
-
-	::DeleteFile((LPCTSTR) m_strRecordingFileName);
-	LogDebug("Start Recording:'%s'",m_strRecordingFileName);
-	if(m_recordingMode == ProgramStream){
-		WCHAR wstrFileName[2048];
-		MultiByteToWideChar(CP_ACP,0,m_strRecordingFileName,-1,wstrFileName,1+strlen(m_strRecordingFileName));
-		m_pRecordFile = new FileWriter();
-		m_pRecordFile->SetFileName( wstrFileName);
-		if (FAILED(m_pRecordFile->OpenFile())) 
-		{
-			m_pRecordFile->CloseFile();
-			delete m_pRecordFile;
-			m_pRecordFile=NULL;
-			return E_FAIL;
-		}
-	}else{
-		m_tsRecorder.Initialize(m_strRecordingFileName);
-	}
-	m_bIsRecording = true;
-	return S_OK;
-
+	CSubChannel* pSubChannel=GetSubChannel(subChannelId);
+	if (pSubChannel==NULL) return S_OK;
+	return pSubChannel->StartRecord();
 }	
-STDMETHODIMP CMPFileWriter::StopRecord( )
+STDMETHODIMP CMPFileWriter::StopRecord(int subChannelId)
 {
-	CAutoLock lock(&m_Lock);
-	if(!m_bIsRecording){
-		return S_OK;
-	}
-
-	LogDebug("Stop Recording:'%s'",m_strRecordingFileName);
-	if(m_recordingMode == ProgramStream){
-		m_pRecordFile->FlushFile();
-		m_pRecordFile->CloseFile();
-		delete m_pRecordFile;
-		m_pRecordFile=NULL;
-	}else{
-		m_tsRecorder.Close();
-	}
-	strcpy(m_strRecordingFileName,"");
-	m_bIsRecording = false;
-	return S_OK;
+	CSubChannel* pSubChannel=GetSubChannel(subChannelId);
+	if (pSubChannel==NULL) return S_OK;
+	return pSubChannel->StopRecord();
 }
 
 HRESULT CMPFileWriter::Write(PBYTE pbData, LONG lDataLength)
 {
 	CAutoLock lock(&m_Lock);
-	DWORD written = 0;
 	if (lDataLength<=0) 
 	{
 		LogDebug("write: datalen=%d", (int)lDataLength);
@@ -717,19 +626,9 @@ HRESULT CMPFileWriter::Write(PBYTE pbData, LONG lDataLength)
 		LogDebug("write: pbData=NULL");
 		return S_OK;
 	}
-	if(m_bIsRecording){
-		if(m_recordingMode == ProgramStream){
-			m_pRecordFile->Write(pbData,lDataLength);
-		}else{
-			m_tsRecorder.Write(pbData,lDataLength);
-		}
-	}
-	if (m_bIsTimeShifting)
+	for (int i=0; i < (int)m_vecChannels.size();++i)
 	{
-		if (!m_bPaused)
-		{
-			m_tsWriter.Write(pbData,lDataLength);
-		}
+		m_vecChannels[i]->Write(pbData,lDataLength);
 	}
 	return S_OK;
 }
@@ -745,10 +644,9 @@ HRESULT CMPFileWriter::WriteTeletext(PBYTE pbData, LONG lDataLength){
 		LogDebug("teletext write: pbData=NULL");
 		return S_OK;
 	}
-	if(m_bIsTimeShifting){
-		if(m_pTeletextGrabber!=NULL){
-			m_pTeletextGrabber->OnSampleReceived(pbData,lDataLength);
-		}
+	for (int i=0; i < (int)m_vecChannels.size();++i)
+	{
+		m_vecChannels[i]->WriteTeletext(pbData,lDataLength);
 	}
 	if(m_pChannelScan!=NULL){
 		m_pChannelScan->OnTeletextData(pbData,lDataLength);
@@ -763,14 +661,84 @@ STDMETHODIMP  CMPFileWriter::IsReceiving(BOOL* yesNo)
 	return S_OK;
 }
 
-STDMETHODIMP CMPFileWriter::TTxSetCallBack(IAnalogTeletextCallBack* callback){
-	LogDebug("Set teletext callback");
-	m_pTeletextGrabber->SetCallBack(callback);
+STDMETHODIMP CMPFileWriter::TTxSetCallBack(int subChannelId, IAnalogTeletextCallBack* callback){
+	CSubChannel* pSubChannel=GetSubChannel(subChannelId);
+	if (pSubChannel==NULL) return S_OK;
+	return pSubChannel->TTxSetCallBack(callback);
+}
+
+STDMETHODIMP CMPFileWriter::SetVideoAudioObserver(int subChannelId, IAnalogVideoAudioObserver* callback){
+	CSubChannel* pSubChannel=GetSubChannel(subChannelId);
+	if (pSubChannel==NULL) return S_OK;
+	return pSubChannel->SetVideoAudioObserver(callback);
+}
+
+STDMETHODIMP CMPFileWriter::AddChannel(int* subChannelId)
+{
+	CAutoLock lock(&m_Lock);
+	HRESULT hr;
+	LogDebug("CMPFileWriter::AddChannel() - ID: %d",m_id);
+	CSubChannel* channel = new CSubChannel(GetOwner(),&hr,m_id); 
+	*subChannelId=m_id;
+	m_id++;
+	m_vecChannels.push_back(channel);
 	return S_OK;
 }
 
-STDMETHODIMP CMPFileWriter::SetVideoAudioObserver(IAnalogVideoAudioObserver* callback){
-	m_tsWriter.SetVideoAudioObserver(callback);
+STDMETHODIMP CMPFileWriter::DeleteChannel( int subChannelId)
+{
+	CAutoLock lock(&m_Lock);
+	LogDebug("CMPFileWriter::DeleteChannel() - ID: %d",subChannelId);
+	try
+	{
+		ivecChannels it = m_vecChannels.begin();
+		while (it != m_vecChannels.end())
+		{
+			if ((*it)->Handle()==subChannelId)
+			{
+				delete *it;
+				m_vecChannels.erase(it);
+				if (m_vecChannels.size()==0)
+				{
+					m_id=0;
+				}
+				return S_OK;
+			}
+			++it;
+		}
+	}
+	catch(...)
+	{
+		LogDebug("exception in delete channel");
+	}
+	return S_OK;
+}
+
+CSubChannel* CMPFileWriter::GetSubChannel(int subChannelId)
+{
+	CAutoLock lock(&m_Lock);
+	ivecChannels it = m_vecChannels.begin();
+	while (it != m_vecChannels.end())
+	{
+		if ((*it)->Handle()==subChannelId)
+		{
+			return *it;
+		}
+		++it;
+	}
+	return NULL;
+}
+
+STDMETHODIMP CMPFileWriter::DeleteAllChannels()
+{
+	CAutoLock lock(&m_Lock);
+	LogDebug("CMPFileWriter::DeleteAllChannels()");
+	for (int i=0; i < (int)m_vecChannels.size();++i)
+	{
+		delete m_vecChannels[i];
+	}
+	m_vecChannels.clear();
+	m_id=0;
 	return S_OK;
 }
 

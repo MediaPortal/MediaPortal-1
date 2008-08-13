@@ -50,7 +50,7 @@ DWORD CMemoryBuffer::ReadFromBuffer(BYTE *pbData, long lDataLength, long lOffset
   {	
     if (m_bStopping) 
     {
-	    LogDebug("ReadFromBuffer::Stop()");
+	    LogDebug("CMemoryBuffer::ReadFromBuffer - ReadFromBuffer::Stop()");
       return 0;
     }
     m_event.ResetEvent();
@@ -65,7 +65,7 @@ DWORD CMemoryBuffer::ReadFromBuffer(BYTE *pbData, long lDataLength, long lOffset
     if (m_bStopping) return 0;
 		if(!m_Array.size() || m_Array.size() <= 0)
     {
-			LogDebug("read:empty buffer\n");
+			LogDebug("CMemoryBuffer::ReadFromBuffer - read:empty buffer\n");
 			return 0;
     }
 		BUFFERITEM *item = m_Array.at(0);
@@ -107,7 +107,7 @@ HRESULT CMemoryBuffer::PutBuffer(BYTE *pbData, long lDataLength, long lOffset)
 	  //Log("add..%d/%d",lDataLength,m_BytesInBuffer);
     while (m_BytesInBuffer > MAX_MEMORY_BUFFER_SIZE)
     {
-		  LogDebug("add: full buffer (%d)",m_BytesInBuffer);
+		  LogDebug("CMemoryBuffer::PutBuffer - add: full buffer (%d)",m_BytesInBuffer);
 		  BUFFERITEM *item = m_Array.at(0);
       int copyLength=item->nDataLength - item->nOffset;
 

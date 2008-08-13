@@ -33,7 +33,6 @@ CChannelScan::CChannelScan(LPUNKNOWN pUnk, HRESULT *phr )
 	m_pBuffer = new byte[20000];
 	m_pBufferTemp = new byte[20000];
 	m_bIsScanning = false;
-	m_bScanningPossible = false;
 }
 CChannelScan::~CChannelScan(void)
 {
@@ -81,25 +80,9 @@ STDMETHODIMP CChannelScan::GetChannel(char** serviceName)
 	return S_OK;
 }
 
-STDMETHODIMP CChannelScan::IsScanningPossible(BOOL *yesNo)
-{
-	if(m_bScanningPossible){
-		LogDebug("CChannelScan::IsScanningPossible() - true");
-	}else{
-		LogDebug("CChannelScan::IsScanningPossible() - false");
-	}
-	*yesNo = m_bScanningPossible;
-	return S_OK;
-}
-
-void CChannelScan::ResetScanningPossible()
-{
-	m_bScanningPossible = false;
-}
 void CChannelScan::OnTeletextData(byte* sampleData, int sampleLen)
 {
 	try{
-		m_bScanningPossible = true;
 		if(m_bIsScanning){
 			byte magazine_and_packet_address;
 			byte magazine_and_packet_address1;
@@ -126,12 +109,12 @@ void CChannelScan::OnTeletextData(byte* sampleData, int sampleLen)
 						// packetNumber 30 means that we have found the line
 						if(packetNumber == 30){
 
-							LogDebug("ChannelScan: Packet Number 30 of magazin 8 found");
+							LogDebug("CChannelScan::OnTeletextData - Packet Number 30 of magazin 8 found");
 							for (int i = 0; i < 20; i++)
 							{
 								m_sServiceName[i] = (char)(m_pBuffer[22 + i] & 127);
 							}
-							LogDebug("ChannelScan: Name found: '%s'",m_sServiceName);
+							LogDebug("CChannelScan::OnTeletextData - Name found: '%s'",m_sServiceName);
 							m_bChannelFound = TRUE;
 							if(m_pCallback!=NULL){
 								m_pCallback->OnScannerDone();
@@ -146,6 +129,6 @@ void CChannelScan::OnTeletextData(byte* sampleData, int sampleLen)
 			}
 		}
 	}catch (...) {
-		LogDebug("CCHANNELSCAN: ERROR");
+		LogDebug("CChannelScan:: ERROR");
 	}
 }
