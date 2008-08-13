@@ -36,29 +36,33 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <summary>
     /// Sets the mode of the recording
     /// </summary>
+    /// <param name="subChannelId">SubChannel id</param>
     /// <param name="mode"></param>
     /// <returns></returns>
     [PreserveSig]
-    int SetRecordingMode(TimeShiftingMode mode);
+    int SetRecordingMode(int subChannelId, TimeShiftingMode mode);
     /// <summary>
     /// Sets the name of the recording file.
     /// </summary>
+    /// <param name="subChannelId">SubChannel id</param>
     /// <param name="fileName">Name of the file.</param>
     /// <returns></returns>
     [PreserveSig]
-    int SetRecordingFileName([In, MarshalAs(UnmanagedType.LPStr)]			string fileName);
+    int SetRecordingFileName(int subChannelId, [In, MarshalAs(UnmanagedType.LPStr)]			string fileName);
     /// <summary>
     /// Starts recording.
     /// </summary>
+    /// <param name="subChannelId">SubChannel id</param>
     /// <returns></returns>
     [PreserveSig]
-    int StartRecord();
+    int StartRecord(int subChannelId);
     /// <summary>
     /// Stops the recording.
     /// </summary>
+    /// <param name="subChannelId">SubChannel id</param>
     /// <returns></returns>
     [PreserveSig]
-    int StopRecord();
+    int StopRecord(int subChannelId);
     /// <summary>
     /// Determines whether the we are receiving audio and video.
     /// </summary>
@@ -76,54 +80,85 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <summary>
     /// Sets the name of the time shift file.
     /// </summary>
+    /// <param name="subChannelId">SubChannel id</param>
     /// <param name="fileName">Name of the file.</param>
     /// <returns></returns>
     [PreserveSig]
-    int SetTimeShiftFileName([In, MarshalAs(UnmanagedType.LPStr)]			string fileName);
+    int SetTimeShiftFileName(int subChannelId, [In, MarshalAs(UnmanagedType.LPStr)]			string fileName);
     /// <summary>
     /// Starts  time shifting.
     /// </summary>
+    /// <param name="subChannelId">SubChannel id</param>
     /// <returns></returns>
     [PreserveSig]
-    int StartTimeShifting();
+    int StartTimeShifting(int subChannelId);
     /// <summary>
     /// Stops  time shifting.
     /// </summary>
+    /// <param name="subChannelId">SubChannel id</param>
     /// <returns></returns>
     [PreserveSig]
-    int StopTimeShifting();
+    int StopTimeShifting(int subChannelId);
     /// <summary>
     /// Pauses/Continues timeshifting.
     /// </summary>
+    /// <param name="subChannelId">SubChannel id</param>
     /// <returns></returns>
     [PreserveSig]
-    int PauseTimeShifting(short onOff);
+    int PauseTimeShifting(int subChannelId, short onOff);
 
     /// <summary>
     /// Sets the timeshift parameters
     /// </summary>
+    /// <param name="subChannelId">SubChannel id</param>
     /// <param name="minFiles">Number of minimum timeshifting files</param>
     /// <param name="maxFiles">Number of maximum timeshifting files</param>
     /// <param name="maxFileSize">Maximum file size for each timeshifting file</param>
     /// <returns></returns>
     [PreserveSig]
-    int SetTimeShiftParams(int minFiles, int maxFiles, UInt32 maxFileSize);
+    int SetTimeShiftParams(int subChannelId, int minFiles, int maxFiles, UInt32 maxFileSize);
 
     /// <summary>
     /// Sets the callback for teletext packets
     /// </summary>
+    /// <param name="subChannelId">SubChannel id</param>
     /// <param name="callback">Callback to set</param>
     /// <returns></returns>
     [PreserveSig]
-    int TTxSetCallback(IAnalogTeletextCallBack callback);
+    int TTxSetCallback(int subChannelId,IAnalogTeletextCallBack callback);
 
     /// <summary>
     /// Sets the callback for the video/audio observer
     /// </summary>
+    /// <param name="subChannelId">SubChannel id</param>
     /// <param name="observer">Video/audio observer</param>
     /// <returns></returns>
     [PreserveSig]
-    int SetVideoAudioObserver(IAnalogVideoAudioObserver observer);
+    int SetVideoAudioObserver(int subChannelId, IAnalogVideoAudioObserver observer);
+
+    /// <summary>
+    /// Adds a new subchannel
+    /// </summary>
+    /// <param name="subChannelId">SubChannel id</param>
+    /// <returns></returns>
+    [PreserveSig]
+    int AddChannel(ref int subChannelId);
+
+    /// <summary>
+    /// Deletes the subchannel with the given id
+    /// </summary>
+    /// <param name="subChannelId">SubChannel id</param>
+    /// <returns></returns>
+    [PreserveSig]
+    int DeleteChannel(int subChannelId);
+
+    /// <summary>
+    /// Deletes all subchannels
+    /// </summary>
+    /// <returns></returns>
+    [PreserveSig]
+    int DeleteAllChannels();
+
   }
 
   /// <summary>
@@ -187,14 +222,6 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <returns></returns>
     [PreserveSig]
     int SetCallBack(IAnalogChannelScanCallback callback);
-
-    /// <summary>
-    /// Indicates if scanning possible = Scanner is receiving teletext
-    /// </summary>
-    /// <param name="yesNo">true, if receiving teletext; false otherwise</param>
-    /// <returns></returns>
-    [PreserveSig]
-    int IsScanningPossible(out bool yesNo);
 
   };
 

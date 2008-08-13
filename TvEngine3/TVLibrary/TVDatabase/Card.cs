@@ -337,8 +337,8 @@ namespace TvDatabase
       IList tuninfos = chan.ReferringTuningDetail();
       // whatever the # of tuningdetails , one is enough to know about the channel's Type
       TuningDetail tuninfo = (TuningDetail)tuninfos[0];
-      if (tuninfo.ChannelType != 0) return true; // then referring card must be Not Analog
-      return false;
+      //if (tuninfo.ChannelType != 0) return true; // then referring card must be Not Analog
+      return true;
     }
 
     #endregion

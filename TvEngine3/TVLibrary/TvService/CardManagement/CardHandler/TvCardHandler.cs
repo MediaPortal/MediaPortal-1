@@ -194,7 +194,6 @@ namespace TvService
     {
       get
       {
-        if (Type == CardType.Analog) return false;
         if (IsLocal == false)
         {
           try

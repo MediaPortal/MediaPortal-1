@@ -499,7 +499,7 @@ namespace TvService
           tmpUser = _tvController.GetUserForCard(card.Id);//added by joboehl - Allows the CurrentDbChannel bellow to work when TVServer and client are on different machines
           if ((isCardInUse == false) ||
                _tvController.CurrentDbChannel(ref tmpUser) == recording.Channel.IdChannel ||
-               (_tvController.IsTunedToTransponder(card.Id, card.TuningDetail) && _tvController.Type(card.Id) != CardType.Analog))
+               (_tvController.IsTunedToTransponder(card.Id, card.TuningDetail) ))
           {
             // use the recommended card.
             cardInfo = card;
@@ -517,7 +517,7 @@ namespace TvService
         //first try, find a card which is already tuned to the correct transponder
         foreach (CardDetail card in freeCards)
         {
-          if (_tvController.IsTunedToTransponder(card.Id, card.TuningDetail) && _tvController.Type(card.Id) != CardType.Analog)
+          if (_tvController.IsTunedToTransponder(card.Id, card.TuningDetail))
           {
             cardInfo = card;
             Log.Write("Scheduler : record on free card:{0} priority:{1}", cardInfo.Id, cardInfo.Card.Priority);

@@ -116,42 +116,37 @@ namespace TvLibrary.Implementations.Analog
           try
           {
             _scanner = _card.GetChannelScanner();
-            bool possible;
-            _scanner.IsScanningPossible(out possible);
-            if (possible)
+            _event = new ManualResetEvent(false);
+            _scanner.SetCallBack(this);
+            _scanner.Start();
+            _event.WaitOne(settings.TimeOutAnalog * 1000, true);
+
+            IntPtr serviceName;
+            _scanner.GetChannel(out serviceName);
+            _scanner.Stop();
+            string channelName = DvbTextConverter.Convert(serviceName, "");
+
+            int pos = channelName.LastIndexOf("teletext", StringComparison.InvariantCultureIgnoreCase);
+            if (pos != -1)
             {
-              _event = new ManualResetEvent(false);
-              _scanner.SetCallBack(this);
-              _scanner.Start();
-              _event.WaitOne(settings.TimeOutAnalog * 1000, true);
-
-              IntPtr serviceName;
-              _scanner.GetChannel(out serviceName);
-              _scanner.Stop();
-              string channelName = DvbTextConverter.Convert(serviceName, "");
-
-              int pos = channelName.LastIndexOf("teletext", StringComparison.InvariantCultureIgnoreCase);
-              if (pos != -1)
+              channelName = channelName.Substring(0, pos);
+            }
+            //Some times channel name includes program name after :
+            pos = channelName.LastIndexOf(":");
+            if (pos != -1)
+            {
+              channelName = channelName.Substring(0, pos);
+            }
+            channelName = channelName.TrimEnd(new char[] { '\'', '\"', '´', '`' });
+            channelName = channelName.Trim();
+            if (channelName != "")
+            {
+              channel.Name = "";
+              for (int x = 0; x < channelName.Length; ++x)
               {
-                channelName = channelName.Substring(0, pos);
-              }
-              //Some times channel name includes program name after :
-              pos = channelName.LastIndexOf(":");
-              if (pos != -1)
-              {
-                channelName = channelName.Substring(0, pos);
-              }
-              channelName = channelName.TrimEnd(new char[] { '\'', '\"', '´', '`' });
-              channelName = channelName.Trim();
-              if (channelName != "")
-              {
-                channel.Name = "";
-                for (int x = 0; x < channelName.Length; ++x)
-                {
-                  char k = channelName[x];
-                  if (k < (char)32 || k > (char)127) break;
-                  channel.Name += k.ToString();
-                }
+                char k = channelName[x];
+                if (k < (char)32 || k > (char)127) break;
+                channel.Name += k.ToString();
               }
             }
           }

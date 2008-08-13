@@ -66,7 +66,8 @@ namespace TvLibrary.Implementations.Analog
       _filterTvAudioTuner = filterTvAudioTuner;
       _mpFileWriter = mpFileWriter;
       _mpRecord = (IMPRecord)_mpFileWriter;
-      _subChannelId = 0;
+      _mpRecord.AddChannel(ref _subChannelId);
+      _subChannelId = subchnnelId;
     }
     #endregion
 
@@ -81,7 +82,10 @@ namespace TvLibrary.Implementations.Analog
       Log.Log.WriteFile("analog subch:{0} OnBeforeTune", _subChannelId);
       if (IsTimeShifting)
       {
-        _mpRecord.PauseTimeShifting(1);
+        if (_subChannelId >= 0)
+        {
+          _mpRecord.PauseTimeShifting(_subChannelId, 1);
+        }
       }
     }
 
@@ -94,7 +98,10 @@ namespace TvLibrary.Implementations.Analog
       Log.Log.WriteFile("analog subch:{0} OnAfterTune", _subChannelId);
       if (IsTimeShifting)
       {
-        _mpRecord.PauseTimeShifting(0);
+        if (_subChannelId >= 0)
+        {
+          _mpRecord.PauseTimeShifting(_subChannelId, 0);
+        }
       }
     }
 
@@ -126,6 +133,11 @@ namespace TvLibrary.Implementations.Analog
 
     public override void OnGraphStop()
     {
+      if (_mpRecord != null)
+      {
+        _mpRecord.StopRecord(_subChannelId);
+        _mpRecord.StopTimeShifting(_subChannelId);
+      }
     }
 
     public override void OnGraphStopped()
@@ -148,10 +160,10 @@ namespace TvLibrary.Implementations.Analog
       Log.Log.WriteFile("analog:SetTimeShiftFileName:{0}", fileName);
       Log.Log.WriteFile("analog:SetTimeShiftFileName: uses .ts");
       ScanParameters _parameters = _card.Parameters;
-      _mpRecord.SetVideoAudioObserver(this);
-      _mpRecord.SetTimeShiftParams(_parameters.MinimumFiles, _parameters.MaximumFiles, _parameters.MaximumFileSize);
-      _mpRecord.SetTimeShiftFileName(fileName);
-      _mpRecord.StartTimeShifting();
+      _mpRecord.SetVideoAudioObserver(_subChannelId, this);
+      _mpRecord.SetTimeShiftParams(_subChannelId, _parameters.MinimumFiles, _parameters.MaximumFiles, _parameters.MaximumFileSize);
+      _mpRecord.SetTimeShiftFileName(_subChannelId, fileName);
+      _mpRecord.StartTimeShifting(_subChannelId);
       _dateTimeShiftStarted = DateTime.Now;
       return true;
     }
@@ -162,9 +174,9 @@ namespace TvLibrary.Implementations.Analog
     /// <returns></returns>
     protected override void OnStopTimeShifting()
     {
-      Log.Log.WriteFile("Analog: StopTimeShifting()");
-      _mpRecord.SetVideoAudioObserver(null);
-      _mpRecord.StopTimeShifting();
+      Log.Log.WriteFile("analog: StopTimeShifting()");
+      _mpRecord.SetVideoAudioObserver(_subChannelId, null);
+      _mpRecord.StopTimeShifting(_subChannelId);
     }
 
     /// <summary>
@@ -182,15 +194,15 @@ namespace TvLibrary.Implementations.Analog
       Log.Log.WriteFile("analog:StartRecord({0})", fileName);
       if (transportStream)
       {
-        Log.Log.WriteFile("dvb:SetRecording: uses .ts");
-        _mpRecord.SetRecordingMode(TimeShiftingMode.TransportStream);
+        Log.Log.WriteFile("analog:SetRecording: uses .ts");
+        _mpRecord.SetRecordingMode(_subChannelId, TimeShiftingMode.TransportStream);
       } else
       {
-        Log.Log.WriteFile("dvb:SetRecording: uses .mpg");
-        _mpRecord.SetRecordingMode(TimeShiftingMode.ProgramStream);
+        Log.Log.WriteFile("analog:SetRecording: uses .mpg");
+        _mpRecord.SetRecordingMode(_subChannelId, TimeShiftingMode.ProgramStream);
       }
-      _mpRecord.SetRecordingFileName(fileName);
-      _mpRecord.StartRecord();
+      _mpRecord.SetRecordingFileName(_subChannelId, fileName);
+      _mpRecord.StartRecord(_subChannelId );
     }
 
     /// <summary>
@@ -200,7 +212,7 @@ namespace TvLibrary.Implementations.Analog
     protected override void OnStopRecording()
     {
       Log.Log.WriteFile("analog:StopRecord()");
-      _mpRecord.StopRecord();
+      _mpRecord.StopRecord(_subChannelId);
       if (_card.SupportsQualityControl && IsTimeShifting)
       {
         _card.Quality.StartPlayback();
@@ -325,22 +337,29 @@ namespace TvLibrary.Implementations.Analog
       {
         if (_grabTeletext)
         {
-          _mpRecord.TTxSetCallback(this);
+          _mpRecord.TTxSetCallback(_subChannelId, this);
         } else
         {
-          _mpRecord.TTxSetCallback(null);
+          _mpRecord.TTxSetCallback(_subChannelId, null);
         }
       } else
       {
         _grabTeletext = false;
-        _mpRecord.TTxSetCallback(null);
+        _mpRecord.TTxSetCallback(_subChannelId, null);
       }
     }
     #endregion
 
     #region OnDecompose
+    /// <summary>
+    /// Decomposes this subchannel
+    /// </summary>
     protected override void OnDecompose()
     {
+      if (_mpRecord != null)
+      {
+        _mpRecord.DeleteChannel(_subChannelId);
+      }
     }
     #endregion
 

@@ -343,6 +343,21 @@ namespace TvService
         if (atscChannelNew.PhysicalChannel != atscChannelCurrent.PhysicalChannel) return true;
         return false;
       }
+
+      AnalogChannel analogChannelNew = transponder2 as AnalogChannel;
+      if (analogChannelNew != null)
+      {
+        AnalogChannel analogChannelCurrent = transponder1 as AnalogChannel;
+        if (analogChannelNew.IsTv != analogChannelCurrent.IsTv) return true;
+        if (analogChannelNew.IsRadio != analogChannelCurrent.IsRadio) return true;
+        if (analogChannelNew.Country.Id != analogChannelCurrent.Country.Id) return true;
+        if (analogChannelNew.VideoSource != analogChannelCurrent.VideoSource) return true;
+        if (analogChannelNew.TunerSource != analogChannelCurrent.TunerSource) return true;
+        if (analogChannelNew.ChannelNumber != analogChannelCurrent.ChannelNumber) return true;
+        if (analogChannelNew.Frequency != analogChannelCurrent.Frequency) return true;
+        return false;
+      }
+
       return false;
     }
   }

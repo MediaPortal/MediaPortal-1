@@ -83,7 +83,7 @@ namespace TvLibrary.Implementations.Analog
     private class MpFileWriter { }
     #endregion
 
-    #region variables    
+    #region variables
     private DsDevice _audioDevice;
     private DsDevice _crossBarDevice;
     private DsDevice _captureDevice;
@@ -129,11 +129,11 @@ namespace TvLibrary.Implementations.Analog
     #region ctor
     public TvCardAnalog(DsDevice device)
       : base(device)
-    {                  
+    {
       _parameters = new ScanParameters();
       _previousChannel = null;
-      _mapSubChannels = new Dictionary<int, BaseSubChannel>();      
-      _supportsSubChannels = false;
+      _mapSubChannels = new Dictionary<int, BaseSubChannel>();
+      _supportsSubChannels = true;
       _minChannel = 0;
       _maxChannel = 128;
       _camType = CamType.Default;
@@ -157,7 +157,8 @@ namespace TvLibrary.Implementations.Analog
         if (_graphState == GraphState.Idle)
         {
           BuildGraph();
-          RunGraph();
+          // Use Dummy subchannel ID which isn't possible. We need to start the graph and check the abilities of the tuner.
+          RunGraph(-1);
         }
         IAMTVTuner tuner = _filterTvTuner as IAMTVTuner;
         AMTunerModeType tunerModes;
@@ -174,34 +175,33 @@ namespace TvLibrary.Implementations.Analog
     /// <returns></returns>
     public override void StopGraph()
     {
-      {
-        if (!CheckThreadId()) return;
-        FilterState state;
-        if (_graphBuilder == null) return;
-        (_graphBuilder as IMediaControl).GetState(10, out state);
+      if (!CheckThreadId()) return;
+      FreeAllSubChannels();
+      FilterState state;
+      if (_graphBuilder == null) return;
+      (_graphBuilder as IMediaControl).GetState(10, out state);
 
-        Log.Log.WriteFile("analog: StopGraph state:{0}", state);
-        _isScanning = false;
-        int hr = 0;
-        if (_tsFileSink != null)
-        {
-          IMPRecord record = _tsFileSink as IMPRecord;
-          record.StopTimeShifting();
-          record.StopRecord();
-        }
-        if (state == FilterState.Stopped)
-        {
-          _graphState = GraphState.Created;
-          return;
-        }
-        hr = (_graphBuilder as IMediaControl).Stop();
-        if (hr < 0 || hr > 1)
-        {
-          Log.Log.WriteFile("analog: RunGraph returns:0x{0:X}", hr);
-          throw new TvException("Unable to stop graph");
-        }
-        Log.Log.WriteFile("analog: Graph stopped");
+      Log.Log.WriteFile("analog: StopGraph state:{0}", state);
+      _isScanning = false;
+      int hr = 0;
+      if (_tsFileSink != null)
+      {
+        IMPRecord record = _tsFileSink as IMPRecord;
+        record.StopTimeShifting(_subChannelId);
+        record.StopRecord(_subChannelId);
       }
+      if (state == FilterState.Stopped)
+      {
+        _graphState = GraphState.Created;
+        return;
+      }
+      hr = (_graphBuilder as IMediaControl).Stop();
+      if (hr < 0 || hr > 1)
+      {
+        Log.Log.WriteFile("analog: RunGraph returns:0x{0:X}", hr);
+        throw new TvException("Unable to stop graph");
+      }
+      Log.Log.WriteFile("analog: Graph stopped");
     }
     #endregion
 
@@ -274,6 +274,7 @@ namespace TvLibrary.Implementations.Analog
     {
       get
       {
+        if (!CheckThreadId()) return null;
         return new AnalogScanning(this);
       }
     }
@@ -293,17 +294,17 @@ namespace TvLibrary.Implementations.Analog
       {
         BuildGraph();
       }
-      RunGraph();
       BaseSubChannel subChannel;
-      if (_mapSubChannels.ContainsKey(0))
+      if (_mapSubChannels.ContainsKey(subChannelId))
       {
-        subChannel = _mapSubChannels[0];
+        subChannel = _mapSubChannels[subChannelId];
       }
       else
       {
-        subChannel = new AnalogSubChannel(this, 0, _filterTvTuner, _filterTvAudioTuner, _pinVBI, _tsFileSink);
-        _mapSubChannels[0] = subChannel;
+        subChannelId = GetNewSubChannel(channel);
+        subChannel = _mapSubChannels[subChannelId];
       }
+      RunGraph(subChannel.SubChannelId);
       subChannel.CurrentChannel = channel;
       subChannel.OnBeforeTune();
       PerformTuning(channel);
@@ -311,6 +312,23 @@ namespace TvLibrary.Implementations.Analog
       return subChannel;
     }
     #endregion
+
+    #region subchannel management
+    /// <summary>
+    /// Allocates a new instance of TvDvbChannel which handles the new subchannel
+    /// </summary>
+    /// <returns>handle for to the subchannel</returns>
+    protected int GetNewSubChannel(IChannel channel)
+    {
+      int id = _subChannelId++;
+      Log.Log.Info("analog:GetNewSubChannel:{0} #{1}", _mapSubChannels.Count, id);
+
+      AnalogSubChannel subChannel = new AnalogSubChannel(this, id, _filterTvTuner, _filterTvAudioTuner, _pinVBI, _tsFileSink);
+      _mapSubChannels[id] = subChannel;
+      return id;
+    }
+    #endregion
+
 
     #region quality control
     /// <summary>
@@ -770,8 +788,7 @@ namespace TvLibrary.Implementations.Analog
         }
         Log.Log.WriteFile("analog: Graph is built");
         _graphState = GraphState.Created;
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Log.Write(ex);
         Dispose();
@@ -794,8 +811,7 @@ namespace TvLibrary.Implementations.Analog
       try
       {
         hr = _graphBuilder.AddSourceFilterForMoniker(_tunerDevice.Mon, null, _tunerDevice.Name, out tmp);
-      }
-      catch (Exception)
+      } catch (Exception)
       {
         Log.Log.WriteFile("analog: cannot add filter to graph");
         return;
@@ -837,8 +853,7 @@ namespace TvLibrary.Implementations.Analog
       {
         devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSTVAudio);
         devices = DeviceSorter.Sort(devices, _tunerDevice, _audioDevice, _crossBarDevice, _captureDevice, _videoEncoderDevice, _audioEncoderDevice, _multiplexerDevice);
-      }
-      catch (Exception)
+      } catch (Exception)
       {
         Log.Log.WriteFile("analog: AddTvAudioFilter no tv audio devices found");
         Release.ComObject("crossbar audio tuner pinin", pinIn);
@@ -860,8 +875,7 @@ namespace TvLibrary.Implementations.Analog
         {
           //add tv audio tuner to graph
           hr = _graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
-        }
-        catch (Exception)
+        } catch (Exception)
         {
           Log.Log.WriteFile("analog: cannot add filter to graph");
           continue;
@@ -970,8 +984,7 @@ namespace TvLibrary.Implementations.Analog
       {
         devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSCrossbar);
         devices = DeviceSorter.Sort(devices, _tunerDevice, _audioDevice, _crossBarDevice, _captureDevice, _videoEncoderDevice, _audioEncoderDevice, _multiplexerDevice);
-      }
-      catch (Exception)
+      } catch (Exception)
       {
         Log.Log.WriteFile("analog: AddCrossBarFilter no crossbar devices found");
         return;
@@ -992,8 +1005,7 @@ namespace TvLibrary.Implementations.Analog
         {
           //add the crossbar to the graph
           hr = _graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
-        }
-        catch (Exception)
+        } catch (Exception)
         {
           Log.Log.WriteFile("analog: cannot add filter to graph");
           continue;
@@ -1067,8 +1079,7 @@ namespace TvLibrary.Implementations.Analog
       {
         devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSCapture); //shouldn't be VideoInputDevice
         devices = DeviceSorter.Sort(devices, _tunerDevice, _audioDevice, _crossBarDevice, _captureDevice, _videoEncoderDevice, _audioEncoderDevice, _multiplexerDevice);
-      }
-      catch (Exception)
+      } catch (Exception)
       {
         Log.Log.WriteFile("analog: AddTvCaptureFilter no tvcapture devices found");
         return;
@@ -1100,8 +1111,7 @@ namespace TvLibrary.Implementations.Analog
         {
           // add video capture filter to graph
           hr = _graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
-        }
-        catch (Exception)
+        } catch (Exception)
         {
           Log.Log.WriteFile("analog: cannot add filter to graph");
           continue;
@@ -1475,8 +1485,7 @@ namespace TvLibrary.Implementations.Analog
         {
           Marshal.FreeCoTaskMem(pmt);
         }
-      }
-      catch (Exception)
+      } catch (Exception)
       {
         Log.Log.Info("  VideoCaptureDevice.getStreamConfigSetting() FAILED ");
       }
@@ -1554,8 +1563,7 @@ namespace TvLibrary.Implementations.Analog
           Marshal.FreeCoTaskMem(pmt);
         }
         return (returnValue);
-      }
-      catch (Exception)
+      } catch (Exception)
       {
         Log.Log.Info("  VideoCaptureDevice.:setStreamConfigSetting() FAILED ");
       }
@@ -1575,8 +1583,7 @@ namespace TvLibrary.Implementations.Analog
             bmiHeader = (BitmapInfoHeader)obj;
             return new Size(bmiHeader.Width, bmiHeader.Height);
           }
-        }
-        catch (Exception)
+        } catch (Exception)
         {
         }
       }
@@ -1601,8 +1608,7 @@ namespace TvLibrary.Implementations.Analog
               bmiHeader.Height = FrameSize.Height;
               setStreamConfigSetting(_interfaceStreamConfigVideoCapture, "BmiHeader", bmiHeader);
             }
-          }
-          catch (Exception)
+          } catch (Exception)
           {
             Log.Log.Info("VideoCaptureDevice:FAILED:could not set capture  Framesize to {0}x{1}!", FrameSize.Width, FrameSize.Height);
           }
@@ -1623,8 +1629,7 @@ namespace TvLibrary.Implementations.Analog
             long avgTimePerFrame = (long)(10000000d / FrameRate);
             setStreamConfigSetting(_interfaceStreamConfigVideoCapture, "AvgTimePerFrame", avgTimePerFrame);
             Log.Log.Info("VideoCaptureDevice: capture FrameRate done :{0}", FrameRate);
-          }
-          catch (Exception)
+          } catch (Exception)
           {
             Log.Log.Info("VideoCaptureDevice:captureFAILED:could not set FrameRate to {0}!", FrameRate);
           }
@@ -2179,8 +2184,7 @@ namespace TvLibrary.Implementations.Analog
           devices[nr++] = devicesHW[i];
         for (int i = 0; i < devicesSW.Length; ++i)
           devices[nr++] = devicesSW[i];
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Log.WriteFile("analog: AddTvMultiPlexer no multiplexer devices found (Exception) " + ex.Message);
         return false;
@@ -2201,8 +2205,7 @@ namespace TvLibrary.Implementations.Analog
         {
           //add multiplexer to graph
           hr = _graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
-        }
-        catch (Exception)
+        } catch (Exception)
         {
           Log.Log.WriteFile("analog: cannot add filter to graph");
           continue;
@@ -2288,8 +2291,7 @@ namespace TvLibrary.Implementations.Analog
       {
         devices = DsDevice.GetDevicesOfCat(AMKSEncoder);
         devices = DeviceSorter.Sort(devices, _tunerDevice, _audioDevice, _crossBarDevice, _captureDevice, _videoEncoderDevice, _audioEncoderDevice, _multiplexerDevice);
-      }
-      catch (Exception)
+      } catch (Exception)
       {
         Log.Log.WriteFile("analog: AddTvEncoderFilter no encoder devices found (Exception)");
         return false;
@@ -2320,8 +2322,7 @@ namespace TvLibrary.Implementations.Analog
         {
           //add encoder filter to graph
           hr = _graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
-        }
-        catch (Exception)
+        } catch (Exception)
         {
           Log.Log.WriteFile("analog: cannot add filter {0} to graph", devices[i].Name);
           continue;
@@ -2537,8 +2538,7 @@ namespace TvLibrary.Implementations.Analog
           _pinVBI = pinVBI;
           return;
         }
-      }
-      catch (COMException ex)
+      } catch (COMException ex)
       {
         if (ex.ErrorCode.Equals(unchecked((Int32)0x80070490)))
         {
@@ -2828,8 +2828,7 @@ namespace TvLibrary.Implementations.Analog
         {
           //add compressor filter to graph
           hr = _graphBuilder.AddSourceFilterForMoniker(audioDevices[i].Mon, null, audioDevices[i].Name, out tmp);
-        }
-        catch (Exception)
+        } catch (Exception)
         {
           Log.Log.WriteFile("analog: cannot add filter {0} to graph", audioDevices[i].Name);
           continue;
@@ -2927,8 +2926,7 @@ namespace TvLibrary.Implementations.Analog
         {
           //add compressor filter to graph
           hr = _graphBuilder.AddSourceFilterForMoniker(videoDevices[i].Mon, null, videoDevices[i].Name, out tmp);
-        }
-        catch (Exception)
+        } catch (Exception)
         {
           Log.Log.WriteFile("analog: cannot add filter {0} to graph", videoDevices[i].Name);
           continue;
@@ -3246,8 +3244,7 @@ namespace TvLibrary.Implementations.Analog
           Log.Log.WriteFile("analog:AddMpegMuxer, connected pinaudio->mpeg muxer");
         }
         return true;
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         throw new TvException("Cyberlink MPEG Muxer filter (mpgmux.ax) not installed " + ex.Message);
       }
@@ -3278,12 +3275,12 @@ namespace TvLibrary.Implementations.Analog
     /// <summary>
     /// Methods which starts the graph
     /// </summary>
-    private void RunGraph()
+    private void RunGraph(int subChannel)
     {
       if (!CheckThreadId()) return;
-      if (_mapSubChannels.ContainsKey(0))
+      if (_mapSubChannels.ContainsKey(subChannel))
       {
-        _mapSubChannels[0].OnGraphStarted();
+        _mapSubChannels[subChannel].OnGraphStart();
       }
       FilterState state;
       (_graphBuilder as IMediaControl).GetState(10, out state);
@@ -3296,9 +3293,9 @@ namespace TvLibrary.Implementations.Analog
         Log.Log.WriteFile("analog: RunGraph returns:0x{0:X}", hr);
         throw new TvException("Unable to start graph");
       }
-      if (_mapSubChannels.ContainsKey(0))
+      if (_mapSubChannels.ContainsKey(subChannel))
       {
-        _mapSubChannels[0].OnGraphStarted();
+        _mapSubChannels[subChannel].OnGraphStarted();
       }
     }
 
