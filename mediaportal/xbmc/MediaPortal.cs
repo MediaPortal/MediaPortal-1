@@ -1100,8 +1100,10 @@ public class MediaPortalApp : D3DApp, IRender
         }
         if (xmlreader.GetValueAsBool("general", "restartonresume", false))
         {
-          File.Delete(Config.GetFile(Config.Dir.Config, "mediaportal.running"));
           Log.Info("Main: OnResume - prepare for restart!");
+          File.Delete(Config.GetFile(Config.Dir.Config, "mediaportal.running"));
+          Log.Info("Main: OnResume - saving settings...");
+          Settings.SaveCache();
           Process restartScript = new Process();
           restartScript.EnableRaisingEvents = false;
           restartScript.StartInfo.WorkingDirectory = Config.GetFolder(Config.Dir.Base);
