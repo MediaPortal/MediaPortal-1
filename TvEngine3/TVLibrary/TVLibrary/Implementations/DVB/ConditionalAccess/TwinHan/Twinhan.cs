@@ -365,16 +365,27 @@ namespace TvLibrary.Implementations.DVB
         if (propertySet != null)
         {
           Guid propertyGuid = THBDA_TUNER;
-          int hr = propertySet.Set(propertyGuid, 0, _ptrOutBuffer2, 0x18, _thbdaBuf, thbdaLen);
-          int back = Marshal.ReadInt32(_ptrDwBytesReturned);
-          if (hr != 0)
+          int failedAttempts = 0;
+          while(true)
           {
-            Log.Log.WriteFile("Twinhan:  CAM failed 0x{0:X}", hr);
-          }
-          else
-          {
-            Log.Log.WriteFile("Twinhan:  CAM returned ok 0x{0:X}", hr);
-            suceeded = true;
+            int hr = propertySet.Set(propertyGuid, 0, _ptrOutBuffer2, 0x18, _thbdaBuf, thbdaLen);
+            if (hr != 0)
+            {
+              failedAttempts++;
+              Log.Log.WriteFile("Twinhan:  CAM failed 0x{0:X}", hr);
+              if (((uint)hr) == ((uint)0x8007001F) && failedAttempts < 10)
+              {
+                Log.Log.Debug(" sleep and then retry again, failedAttempts: {0}", failedAttempts);
+                System.Threading.Thread.Sleep(100);
+                continue;
+              }
+            }
+            else
+            {
+              Log.Log.WriteFile("Twinhan:  CAM returned ok 0x{0:X}", hr);
+              suceeded = true;
+            }
+            break;
           }
           Marshal.ReleaseComObject(propertySet);
         }

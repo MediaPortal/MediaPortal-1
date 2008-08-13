@@ -122,8 +122,8 @@ namespace TvLibrary.Implementations
         IBaseFilter networkDVBS = FilterGraphTools.AddFilterFromClsid(graphBuilder, networkProviderClsId, "DVBS Network Provider");
 
         tuningSpace = (ITuningSpace)new DVBSTuningSpace();
-        tuningSpace.put_UniqueName("DVBC TuningSpace");
-        tuningSpace.put_FriendlyName("DVBC TuningSpace");
+        tuningSpace.put_UniqueName("DVBS TuningSpace");
+        tuningSpace.put_FriendlyName("DVBS TuningSpace");
         tuningSpace.put__NetworkType(typeof(DVBSNetworkProvider).GUID);
         ((IDVBSTuningSpace)tuningSpace).put_SystemType(DVBSystemType.Satellite);
 

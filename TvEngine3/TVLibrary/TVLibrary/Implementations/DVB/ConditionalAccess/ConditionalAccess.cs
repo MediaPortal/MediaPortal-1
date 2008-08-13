@@ -259,6 +259,11 @@ namespace TvLibrary.Implementations.DVB
         {
           return false;
         }
+        if (_twinhan != null)
+        {
+          if (_twinhan.IsCamPresent())
+            return false;
+        }
         return true;
       }
     }
