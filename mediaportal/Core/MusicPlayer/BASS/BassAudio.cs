@@ -1540,7 +1540,7 @@ namespace MediaPortal.Player
             // StreamCreateFile causes problems with Multisession disks, so use StreamCreate with driveindex and track index
             int driveindex = _cdDriveLetters.IndexOf(filePath.Substring(0, 1));
             int tracknum = Convert.ToInt16(filePath.Substring(filePath.IndexOf(".cda") - 2, 2));
-            stream = BassCd.BASS_CD_StreamCreate(driveindex, tracknum, streamFlags);
+            stream = BassCd.BASS_CD_StreamCreate(driveindex, tracknum - 1, streamFlags);
             if (stream == 0)
               Log.Error("BASS: CD: {0}.", Enum.GetName(typeof(BASSErrorCode), Bass.BASS_ErrorGetCode()));
           }
