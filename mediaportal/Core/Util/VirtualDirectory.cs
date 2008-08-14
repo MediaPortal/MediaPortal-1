@@ -295,13 +295,20 @@ namespace MediaPortal.Util
         {
           string coverArt = Utils.GetCoverArtName(item.Path, "folder");
           string largeCoverArt = Utils.GetLargeCoverArtName(item.Path, "folder");
+          bool coverArtExists = false;
           if (System.IO.File.Exists(coverArt))
           {
             item.IconImage = coverArt;
+            coverArtExists = true;
           }
           if (System.IO.File.Exists(largeCoverArt))
           {
             item.IconImageBig = largeCoverArt;
+          }
+          // Fix for Mantis issue 0001465: folder.jpg in main shares view only displayed when list view is used
+          else if(coverArtExists)
+          {
+            item.IconImageBig = coverArt;
           }
         }
         items.Add(item);
@@ -2153,13 +2160,20 @@ namespace MediaPortal.Util
         {
           string coverArt = Utils.GetCoverArtName(item.Path, "folder");
           string largeCoverArt = Utils.GetLargeCoverArtName(item.Path, "folder");
+          bool coverArtExists = false;
           if (System.IO.File.Exists(coverArt))
           {
             item.IconImage = coverArt;
+            coverArtExists = true;
           }
           if (System.IO.File.Exists(largeCoverArt))
           {
             item.IconImageBig = largeCoverArt;
+          }
+          // Fix for Mantis issue 0001465: folder.jpg in main shares view only displayed when list view is used
+          else if (coverArtExists)
+          {
+            item.IconImageBig = coverArt;
           }
         }
         items.Add(item);

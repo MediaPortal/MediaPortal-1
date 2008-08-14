@@ -466,17 +466,26 @@ namespace MediaPortal.GUI.Video
 
       if (handler.CurrentLevel < handler.MaxLevels)
       {
-        if (handler.CurrentLevelWhere.ToLower() == "genre")        
+        if (handler.CurrentLevelWhere.ToLower() == "genre")
+        {
           SetGenreThumbs(itemlist);
-        
-        if (handler.CurrentLevelWhere.ToLower() == "actor")        
+        }
+        else if (handler.CurrentLevelWhere.ToLower() == "actor")
+        {
           SetActorThumbs(itemlist);
-        
-        if (handler.CurrentLevelWhere.ToLower() == "title")        
-          SetIMDBThumbs(itemlist);        
+        }
+        //if (handler.CurrentLevelWhere.ToLower() == "title")        
+        else
+        {
+          // Assign thumbnails also for the custom views. Bugfix for Mantis 0001471: 
+          // Cover image thumbs missing in My Videos when view Selection is by "watched"
+          SetIMDBThumbs(itemlist);
+        }
       }
       else
+      {
         SetIMDBThumbs(itemlist);
+      }
 
       OnSort();
 
