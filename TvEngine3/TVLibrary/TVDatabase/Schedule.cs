@@ -215,6 +215,23 @@ namespace TvDatabase
     }
 
     /// <summary>
+    /// Is schedule a manual one
+    /// </summary>
+    public bool IsManual
+    {
+      get 
+      {
+        if (scheduleType != (int)ScheduleRecordingType.Once)
+        {
+          return false;
+        }
+
+        System.TimeSpan ts = (endTime - startTime);
+        return (ts.TotalHours == 24); 
+      }      
+    }
+
+    /// <summary>
     /// Property relating to database column programName
     /// </summary>
     public string ProgramName
@@ -329,8 +346,9 @@ namespace TvDatabase
     /// Static method to retrieve all instances that are stored in the database in one call
     /// </summary>
     public static IList ListAll()
-    {
-      return Broker.RetrieveList(typeof(Schedule));
+    {      
+      IList res = Broker.RetrieveList(typeof(Schedule));      
+      return res;
     }
 
     /// <summary>
@@ -374,6 +392,34 @@ namespace TvDatabase
         }
         isChanged = false;
       }
+    }
+
+    /// <summary>
+    /// Retreives the first found instance of a 'Series' typed schedule given its Channel,Title
+    /// </summary>
+    /// <param name="IdChannel">Channel id to look for</param>
+    /// <param name="title">Title we wanna look for</param>    
+    /// <returns>schedule instance or null</returns>
+    public static Schedule RetrieveSeries(int idChannel, string programName)
+    {
+      //select * from 'foreigntable'
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Schedule));
+
+      // 
+      sb.AddConstraint(Operator.NotEquals, "scheduleType", 0);
+      sb.AddConstraint(Operator.Equals, "idChannel", idChannel);
+      sb.AddConstraint(Operator.Equals, "programName", programName);      
+      // passing true indicates that we'd like a list of elements, i.e. that no primary key
+      // constraints from the type being retrieved should be added to the statement
+      SqlStatement stmt = sb.GetStatement(true);
+
+      // execute the statement/query and create a collection of User instances from the result set
+      IList getList = ObjectFactory.GetCollection(typeof(Schedule), stmt.Execute());
+      if (getList.Count != 0) return (Schedule)getList[0];
+      else return null;
+
+      // TODO In the end, a GentleList should be returned instead of an arraylist
+      //return new GentleList( typeof(ChannelMap), this );
     }
 
     /// <summary>

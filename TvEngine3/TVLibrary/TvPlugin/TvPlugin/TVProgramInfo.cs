@@ -178,8 +178,10 @@ namespace TvPlugin
       IList schedules = Schedule.ListAll();
       bool isRecording = false;
       bool isSeries = false;
+      Schedule recordingNowSchedule;
       foreach (Schedule schedule in schedules)
       {
+        /*
         if (schedule.Canceled != Schedule.MinSchedule) continue;
         if (schedule.IsRecordingProgram(currentProgram, true))
         {
@@ -190,7 +192,28 @@ namespace TvPlugin
             isRecording = true;
             break;
           }
+        }*/
+
+        VirtualCard card = null;
+        if (schedule.IsManual)
+        {
+          isRecording = TVHome.IsRecordingSchedule(schedule, null, out card);
         }
+        else
+        {
+          isRecording = TVHome.IsRecordingSchedule(schedule, currentProgram, out card);
+        }
+        
+        if (isRecording)
+        {
+          if ((ScheduleRecordingType)schedule.ScheduleType != ScheduleRecordingType.Once)
+          {
+            isSeries = true;
+          }
+          recordingNowSchedule = schedule;
+          break;
+        }
+
       }
       if (isRecording)
       {
@@ -241,9 +264,17 @@ namespace TvPlugin
           logo = "defaultVideoBig.png";
         }
         Schedule recordingSchedule;
-        if (IsRecordingProgram(episode, out recordingSchedule, false))
+        bool isRecPrg = IsRecordingProgram(episode, out recordingSchedule, false);
+        /*
+        bool isRecPrgNow = false;
+        if (!isRecPrg)
         {
-          if (false == recordingSchedule.IsSerieIsCanceled(episode.StartTime))
+          isRecPrgNow = TVHome.IsRecordingSchedule();
+        }*/
+
+        if (isRecPrg)
+        {
+          if (!recordingSchedule.IsSerieIsCanceled(episode.StartTime))
           {
             if (recordingSchedule.ReferringConflicts().Count > 0)
             {
@@ -253,9 +284,15 @@ namespace TvPlugin
             {
               item.PinImage = Thumbs.TvRecordingIcon;
             }
-          }
+          }                    
           item.TVTag = recordingSchedule;
         }
+        else if (isRecording)
+        {
+          int i = 0;
+        }
+
+
         item.MusicTag = episode;
         item.ThumbnailImage = logo;
         item.IconImageBig = logo;
@@ -285,6 +322,21 @@ namespace TvPlugin
       foreach (Schedule schedule in schedules)
       {
         if (schedule.Canceled != Schedule.MinSchedule) continue;
+
+        /*if (schedule.IsManual)
+        {
+          Schedule manual = schedule.Clone();
+          manual.ProgramName = program.Title;
+          manual.EndTime = program.EndTime;
+          manual.StartTime = program.StartTime;
+          if (manual.IsRecordingProgram(program, filterCanceledRecordings))
+          {
+            recordingSchedule = schedule;
+            return true;
+          }
+        }
+        else 
+        */
         if (schedule.IsRecordingProgram(program, filterCanceledRecordings))
         {
           recordingSchedule = schedule;

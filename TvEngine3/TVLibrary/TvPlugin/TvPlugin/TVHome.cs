@@ -385,6 +385,15 @@ namespace TvPlugin
     {
       TvServer server = new TvServer();
 
+      if (prg != null)
+      {
+        if (prg.IdChannel != rec.IdChannel)
+        {
+          card = null;
+          return false;
+        }
+      }
+
       bool isRec = false;
       bool isCardRec = server.IsRecording(rec.ReferencedChannel().Name, out card);
 
@@ -446,6 +455,35 @@ namespace TvPlugin
       return isRec;
     }
 
+    /*
+    /// <summary>
+    /// Deletes a single or a complete schedule.
+    /// The user is being prompted if the schedule is currently recording.
+    /// If the schedule is currently recording, then this is stopped also.
+    /// </summary>
+    /// <param name="Channel">channel which schedule id to be deleted</param>
+    /// <param name="Program">current program</param>
+    /// <param name="deleteEntireSchedule">true if the complete schedule is to be removed.</param>
+    /// <param name="supressPrompt">true if no prompt is needed.</param>
+    /// <returns>true if the schedule was deleted, otherwise false</returns>
+    public static bool PromptAndDeleteRecordingSchedule(Channel ch, Program program, bool deleteEntireSchedule, bool supressPrompt)
+    {
+      bool isRecording;
+      VirtualCard tvcard = new VirtualCard(TVHome.Card.User, RemoteControl.HostName);
+      isRecording = tvcard.IsRecording;
+
+      if (isRecording)
+      {
+        Schedule rec = Schedule.Retrieve(tvcard.RecordingScheduleId);
+        return PromptAndDeleteRecordingSchedule(rec.IdSchedule, program, deleteEntireSchedule, supressPrompt);
+      }
+      else
+      {
+        return false;
+      }
+
+    }
+    */
     /// <summary>
     /// Deletes a single or a complete schedule.
     /// The user is being prompted if the schedule is currently recording.
@@ -534,7 +572,7 @@ namespace TvPlugin
           if (typeOnce)
           {
 
-            Schedule parentSeriesSchedule = Schedule.RetrieveSeries(s.ReferencedChannel().IdChannel, s.ProgramName, s.StartTime, s.EndTime);
+            Schedule parentSeriesSchedule = Schedule.RetrieveSeries(s.ReferencedChannel().IdChannel, s.ProgramName);
             if (parentSeriesSchedule != null)
             {
               CanceledSchedule canceledSchedule = new CanceledSchedule(parentSeriesSchedule.IdSchedule, program.StartTime);
@@ -882,6 +920,7 @@ namespace TvPlugin
 
     public static bool ManualRecord(Channel channel)
     {
+      
       if (GUIWindowManager.ActiveWindowEx == (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
       {
         MediaPortal.GUI.Library.Log.Info("send message to fullscreen tv");
@@ -890,49 +929,58 @@ namespace TvPlugin
         msg.TargetWindowId = (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN;
         GUIGraphicsContext.SendMessage(msg);
         return false;
-      }
-
+      }     
+      
       MediaPortal.GUI.Library.Log.Info("TVHome:Record action");
       TvServer server = new TvServer();
 
       VirtualCard card;
       if (false == server.IsRecording(channel.Name, out card))
       {
-        TvBusinessLayer layer = new TvBusinessLayer();
-        Program prog = channel.CurrentProgram;
-        if (prog != null)
+        bool alreadyRec = (lastActiveRecChannelId == Navigator.Channel.IdChannel);
+        if (!alreadyRec)
         {
-          GUIDialogMenuBottomRight pDlgOK = (GUIDialogMenuBottomRight)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT);
-          if (pDlgOK != null)
+          TvBusinessLayer layer = new TvBusinessLayer();
+          Program prog = channel.CurrentProgram;
+          if (prog != null)
           {
-            pDlgOK.Reset();
-            pDlgOK.SetHeading(605);//my tv
-            pDlgOK.AddLocalizedString(875); //current program
-            pDlgOK.AddLocalizedString(876); //till manual stop
-            pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
-            switch (pDlgOK.SelectedId)
+            GUIDialogMenuBottomRight pDlgOK = (GUIDialogMenuBottomRight)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT);
+            if (pDlgOK != null)
             {
-              case 875:
-                {
-                  //record current program                  
-                  StartRecordingSchedule(channel, false);
-                  return true;
-                }
-                break;
+              pDlgOK.Reset();
+              pDlgOK.SetHeading(605);//my tv
+              pDlgOK.AddLocalizedString(875); //current program
+              pDlgOK.AddLocalizedString(876); //till manual stop
+              pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
+              switch (pDlgOK.SelectedId)
+              {
+                case 875:
+                  {
+                    //record current program                  
+                    StartRecordingSchedule(channel, false);
+                    lastActiveRecChannelId = Navigator.Channel.IdChannel;
+                    lastRecordTime = DateTime.Now;
+                    return true;
+                  }
 
-              case 876:
-                {
-                  //manual
-                  StartRecordingSchedule(channel, true);
-                  return true;
-                }
-                break;
+                case 876:
+                  {
+                    //manual
+                    StartRecordingSchedule(channel, true);
+                    lastActiveRecChannelId = Navigator.Channel.IdChannel;
+                    lastRecordTime = DateTime.Now;
+                    return true;
+                  }
+              }
             }
           }
         }//if (prog != null)
         else
         {
+          //manual record
           StartRecordingSchedule(channel, true);
+          lastActiveRecChannelId = Navigator.Channel.IdChannel;
+          lastRecordTime = DateTime.Now;
           return true;
 
         }
@@ -943,7 +991,7 @@ namespace TvPlugin
         PromptAndDeleteRecordingSchedule(s.IdSchedule, s.ReferencedChannel().CurrentProgram, false, true);
         return false;
       }
-      return false;
+      return false;      
     }
 
     public override void OnAction(Action action)
@@ -1870,69 +1918,8 @@ namespace TvPlugin
 
     private void OnRecord()
     {
-      //record now.
-      //Are we recording this channel already?
-      TvBusinessLayer layer = new TvBusinessLayer();
-      TvServer server = new TvServer();
-      VirtualCard card;
-
-      if (false == server.IsRecording(Navigator.Channel.Name, out card))
-      {
-        // check if we are already recording this channel
-        // simply using server.IsRecording, is not always enough - race condition.
-        bool alreadyRec = (lastActiveRecChannelId == Navigator.Channel.IdChannel);
-        if (!alreadyRec)
-        {
-          //no then start recording
-          Program prog = Navigator.Channel.CurrentProgram;
-          if (prog != null)
-          {
-            GUIDialogMenuBottomRight pDlgOK = (GUIDialogMenuBottomRight)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT);
-            if (pDlgOK != null)
-            {
-              pDlgOK.SetHeading(605);//my tv
-              pDlgOK.AddLocalizedString(875); //current program
-              pDlgOK.AddLocalizedString(876); //till manual stop
-              pDlgOK.DoModal(this.GetID);
-              switch (pDlgOK.SelectedId)
-              {
-                case 875:
-                  {
-                    StartRecordingSchedule(Navigator.Channel, false);
-
-                    lastActiveRecChannelId = Navigator.Channel.IdChannel;
-                    lastRecordTime = DateTime.Now;
-                  }
-                  break;
-
-                case 876:
-                  {
-                    StartRecordingSchedule(Navigator.Channel, true);
-
-                    lastActiveRecChannelId = Navigator.Channel.IdChannel;
-                    lastRecordTime = DateTime.Now;
-                  }
-                  break;
-              }
-            }
-          }
-          else
-          {
-            //manual record
-            StartRecordingSchedule(Navigator.Channel, true);
-
-            lastActiveRecChannelId = Navigator.Channel.IdChannel;
-            lastRecordTime = DateTime.Now;
-          }
-        }
-      }
-      else
-      {
-        Schedule sched = Schedule.Retrieve(card.RecordingScheduleId);
-        PromptAndDeleteRecordingSchedule(sched.IdSchedule, sched.ReferencedChannel().CurrentProgram, false, true);
-        //DeleteRecordingSchedule(Schedule.Retrieve(card.RecordingScheduleId));        
-      }
-      UpdateStateOfRecButton();
+      ManualRecord(Navigator.Channel);
+      UpdateStateOfRecButton();      
     }
 
     /// <summary>

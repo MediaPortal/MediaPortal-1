@@ -1476,11 +1476,18 @@ namespace TvPlugin
         dlg.AddLocalizedString(100748); // Program Information
       if (File.Exists(GUIGraphicsContext.Skin + @"\mytvtuningdetails.xml") && !g_Player.IsTVRecording)
         dlg.AddLocalizedString(200041); // tuning details
-
-      if (!g_Player.IsTVRecording)
+      
+      VirtualCard vc;
+      TvServer server = new TvServer();
+      if (server.IsRecording(TVHome.Navigator.Channel.Name, out vc))      
       {
-        dlg.AddLocalizedString(601);    //Record Now
+        dlg.AddLocalizedString(265);    //stop rec.
       }
+      else
+      {
+        dlg.AddLocalizedString(601);    //Record Now        
+      }
+
       dlg.AddLocalizedString(970);    // Previous window
 
       if (TVHome.Card.IsOwner() && !TVHome.Card.IsRecording && TVHome.Card.SupportsQualityControl() && !g_Player.IsTVRecording)
@@ -1628,9 +1635,9 @@ namespace TvPlugin
           ShowProgramInfo();
           break;
 
-        case 601: // RecordNow
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORD, GUIWindowManager.ActiveWindow, 0, 0, 0, 0, null);
-          this.OnMessage(msg);
+        case 601: // RecordNow          
+        case 265: // StopRec.          
+          TVHome.ManualRecord(TVHome.Navigator.Channel);                    
           break;
 
         case 200042: // Linked channels

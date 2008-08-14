@@ -96,7 +96,8 @@ namespace TvPlugin
     DateTime _viewingTime = DateTime.Now;
     int _channelOffset = 0;
     List<Channel> _channelList = new List<Channel>();
-    IList _recordingList = new ArrayList();
+    IList _recordingList = new ArrayList();    
+
     int _timePerBlock = 30; // steps of 30 minutes
     int _channelCount = 5;
     int _numberOfBlocks = 4;
@@ -1551,7 +1552,7 @@ namespace TvPlugin
         DateTime dt = Utils.longtodate(iEnd);
         //dt=dt.AddMinutes(_timePerBlock);
         long iProgEnd = Utils.datetolong(dt);
-        Program prog = new Program(channel.IdChannel, Utils.longtodate(iStart), Utils.longtodate(iProgEnd), GUILocalizeStrings.Get(736), "", "", false, DateTime.MinValue, string.Empty, string.Empty, -1, string.Empty, -1);
+        Program prog = new Program(channel.IdChannel, Utils.longtodate(iStart), Utils.longtodate(iProgEnd), GUILocalizeStrings.Get(736), "", "", false, DateTime.MinValue, string.Empty, string.Empty, -1, string.Empty, -1);        
         programs.Add(prog);      
       }
 
@@ -1602,13 +1603,18 @@ namespace TvPlugin
               }
               else
               {
-                if (record.ProgramName.ToLower().IndexOf("manuel (") > -1) //do we have a manually started recording ?
-                {
-                  record.ProgramName = program.Title;
-                  record.EndTime = program.EndTime;
-                  record.StartTime = program.StartTime;                  
+                if (record.IsManual) //do we have a manually started recording ?
+                {                
+                  Schedule manual = record.Clone();
+                  manual.ProgramName = program.Title;
+                  manual.EndTime = program.EndTime;
+                  manual.StartTime = program.StartTime;                    
+                  isRecPrg = manual.IsRecordingProgram(program, true);                  
                 }
-                isRecPrg = record.IsRecordingProgram(program, true);
+                else
+                {
+                  isRecPrg = record.IsRecordingProgram(program, true);
+                }
               }              
             }
                                    
@@ -2560,17 +2566,33 @@ namespace TvPlugin
               // here a check is needed of _currentTitle == Recorder.CurrentTVRecording.Title
               bool recMatchFound = false;
               foreach (Schedule rec in _recordingList)
-              {
-                if (rec.ProgramName.Equals(_currentProgram.Title) && rec.ScheduleType != 3 && rec.ScheduleType != 4)
+              {                
+                VirtualCard card = null;
+
+                //first lets find out if we have any EPG data on the selected item or not.
+                IList prgList = Program.RetrieveByTitleAndTimesInterval(_currentProgram.Title, _currentProgram.StartTime, _currentProgram.EndTime);
+                bool isRec = false;
+
+                if (rec.IdChannel == _currentProgram.IdChannel)
+                {
+                  if (prgList != null && prgList.Count > 0)
+                  {
+                    isRec = TVHome.IsRecordingSchedule(rec, _currentProgram, out card);
+                  }
+                  else
+                  {
+                    isRec = TVHome.IsRecordingSchedule(rec, null, out card);
+                  } 
+                }                
+                
+                if (isRec)
                 {
                   recMatchFound = true;
 
-                  TvServer server = new TvServer();
-                  VirtualCard card;
+                  TvServer server = new TvServer();                  
+                  string fileName = "";
 
-                  string fileName = "";                  
-                  bool isRec = TVHome.IsRecordingSchedule(rec, null, out card);      
-                  if (isRec)
+                  if (card != null)
                   {
                     fileName = card.RecordingFileName;
                   }
