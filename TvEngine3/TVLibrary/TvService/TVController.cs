@@ -2603,6 +2603,58 @@ namespace TvService
     }
 
     /// <summary>
+    /// Returns a dictionary of channels that are timeshfiting and recording.
+    /// </summary>
+    /// <param name="currentRecChannels"></param>
+    /// <param name="currentTSChannels"></param>
+    /// <param name="currentUnavailChannels"></param>
+    /// <param name="currentAvailChannels"></param>
+    public Dictionary <int, ChannelState> GetAllTimeshiftingAndRecordingChannels()
+    {
+      Dictionary<int, ChannelState> result = new Dictionary<int, ChannelState>();
+      Dictionary<int, ITvCardHandler>.Enumerator enumerator = _cards.GetEnumerator();
+
+      while (enumerator.MoveNext())
+      {
+        KeyValuePair<int, ITvCardHandler> keyPair = enumerator.Current;
+        ITvCardHandler tvcard = keyPair.Value;
+        User[] users = tvcard.Users.GetUsers();
+        string tmpChannel = string.Empty;
+
+        if (users == null || users.Length == 0)
+          continue;
+
+        for (int i = 0; i < users.Length; ++i)
+        {
+          User user = users[i];
+          tmpChannel = tvcard.CurrentChannelName(ref user);
+          if (tmpChannel == null || tmpChannel == string.Empty)
+            continue;
+          else
+          {
+            int IdChannel = tvcard.CurrentDbChannel(ref user);
+            if (tvcard.Recorder.IsRecording(ref user))
+            {              
+              if (result.ContainsKey(IdChannel))              
+              {
+                result.Remove(IdChannel);
+              }
+              result.Add(IdChannel, ChannelState.recording);
+            }
+            else if (tvcard.TimeShifter.IsTimeShifting(ref user))
+            {
+              if (!result.ContainsKey(IdChannel))
+              {
+                result.Add(IdChannel, ChannelState.timeshifting);
+              }
+            }            
+          }
+        }
+      }
+      return result;
+    }
+
+    /// <summary>
     /// Fetches all channels with backbuffer
     /// </summary>
     /// <param name="currentRecChannels"></param>
@@ -2720,7 +2772,7 @@ namespace TvService
 
       if (allocation != null)
       {
-        channelStates = allocation.GetChannelStates(_cards, tvChannelList, ref user, true);
+        channelStates = allocation.GetChannelStates(_cards, tvChannelList, ref user, true, this);
       }            
 
       return channelStates;
@@ -2960,7 +3012,7 @@ namespace TvService
           }
         }
 
-        allocation.SetChannelStates(_cards, _tvChannelListGroups, true);
+        allocation.SetChannelStates(_cards, _tvChannelListGroups, true, this);
       }
     }
 
