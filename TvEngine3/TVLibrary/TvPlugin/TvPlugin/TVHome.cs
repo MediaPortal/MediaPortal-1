@@ -974,17 +974,16 @@ namespace TvPlugin
               }
             }
           }
-        }//if (prog != null)
-        else
-        {
-          //manual record
-          StartRecordingSchedule(channel, true);
-          lastActiveRecChannelId = Navigator.Channel.IdChannel;
-          lastRecordTime = DateTime.Now;
-          return true;
-
-        }
-      }//if (false == server.IsRecording(channel, out Card))
+          else
+          {
+            //manual record
+            StartRecordingSchedule(channel, true);
+            lastActiveRecChannelId = Navigator.Channel.IdChannel;
+            lastRecordTime = DateTime.Now;
+            return true;
+          }
+        }    
+      }
       else
       {
         Schedule s = Schedule.Retrieve(card.RecordingScheduleId);
