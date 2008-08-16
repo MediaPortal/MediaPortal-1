@@ -58,8 +58,6 @@ namespace MediaPortal.Configuration.Sections
       this.label2 = new System.Windows.Forms.Label();
       this.label1 = new System.Windows.Forms.Label();
       this.cbWaitForTvService = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.label3 = new System.Windows.Forms.Label();
-      this.label4 = new System.Windows.Forms.Label();
       this.label5 = new System.Windows.Forms.Label();
       this.label6 = new System.Windows.Forms.Label();
       this.groupBox1.SuspendLayout();
@@ -68,8 +66,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Controls.Add(this.label4);
-      this.groupBox1.Controls.Add(this.label3);
       this.groupBox1.Controls.Add(this.nudDelay);
       this.groupBox1.Controls.Add(this.label2);
       this.groupBox1.Controls.Add(this.label1);
@@ -109,33 +105,14 @@ namespace MediaPortal.Configuration.Sections
       // cbWaitForTvService
       // 
       this.cbWaitForTvService.AutoSize = true;
+      this.cbWaitForTvService.Enabled = false;
       this.cbWaitForTvService.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbWaitForTvService.Location = new System.Drawing.Point(30, 28);
+      this.cbWaitForTvService.Location = new System.Drawing.Point(30, 25);
       this.cbWaitForTvService.Name = "cbWaitForTvService";
-      this.cbWaitForTvService.Size = new System.Drawing.Size(251, 17);
+      this.cbWaitForTvService.Size = new System.Drawing.Size(242, 17);
       this.cbWaitForTvService.TabIndex = 4;
-      this.cbWaitForTvService.Text = "Wait until TvServer has started (only single seat)";
+      this.cbWaitForTvService.Text = "Wait until TvServer has started (autodetected)";
       this.cbWaitForTvService.UseVisualStyleBackColor = true;
-      // 
-      // label3
-      // 
-      this.label3.AutoSize = true;
-      this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.label3.Location = new System.Drawing.Point(9, 29);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(18, 13);
-      this.label3.TabIndex = 8;
-      this.label3.Text = "1.";
-      // 
-      // label4
-      // 
-      this.label4.AutoSize = true;
-      this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.label4.Location = new System.Drawing.Point(9, 53);
-      this.label4.Name = "label4";
-      this.label4.Size = new System.Drawing.Size(18, 13);
-      this.label4.TabIndex = 9;
-      this.label4.Text = "2.";
       // 
       // label5
       // 
@@ -155,14 +132,14 @@ namespace MediaPortal.Configuration.Sections
       this.label6.TabIndex = 6;
       this.label6.Text = "This can be usefull if you start MP with Windows automatically";
       // 
-      // StartupDelay
+      // GeneralStartupDelay
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.label6);
       this.Controls.Add(this.label5);
       this.Controls.Add(this.groupBox1);
-      this.Name = "StartupDelay";
+      this.Name = "GeneralStartupDelay";
       this.Size = new System.Drawing.Size(347, 297);
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
@@ -175,8 +152,6 @@ namespace MediaPortal.Configuration.Sections
     #endregion
 
     private System.Windows.Forms.GroupBox groupBox1;
-    private System.Windows.Forms.Label label4;
-    private System.Windows.Forms.Label label3;
     private System.Windows.Forms.NumericUpDown nudDelay;
     private System.Windows.Forms.Label label2;
     private System.Windows.Forms.Label label1;
