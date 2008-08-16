@@ -30,7 +30,7 @@ namespace SetupTv.Sections
     {
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TvRecording));
       this.tabControl1 = new System.Windows.Forms.TabControl();
-      this.tabPage1 = new System.Windows.Forms.TabPage();
+      this.tpSettings = new System.Windows.Forms.TabPage();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
       this.numericUpDownPostRec = new System.Windows.Forms.NumericUpDown();
       this.numericUpDownPreRec = new System.Windows.Forms.NumericUpDown();
@@ -41,7 +41,7 @@ namespace SetupTv.Sections
       this.label3 = new System.Windows.Forms.Label();
       this.label2 = new System.Windows.Forms.Label();
       this.label1 = new System.Windows.Forms.Label();
-      this.tabPage2 = new System.Windows.Forms.TabPage();
+      this.tpCustom = new System.Windows.Forms.TabPage();
       this.groupBox2 = new System.Windows.Forms.GroupBox();
       this.label15 = new System.Windows.Forms.Label();
       this.groupBox3 = new System.Windows.Forms.GroupBox();
@@ -56,7 +56,7 @@ namespace SetupTv.Sections
       this.label6 = new System.Windows.Forms.Label();
       this.label5 = new System.Windows.Forms.Label();
       this.comboBoxMovies = new System.Windows.Forms.ComboBox();
-      this.tabPage3 = new System.Windows.Forms.TabPage();
+      this.tpDiskQuota = new System.Windows.Forms.TabPage();
       this.mpLabel5 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.enableDiskQuota = new System.Windows.Forms.CheckBox();
       this.mpNumericTextBoxDiskQuota = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
@@ -67,19 +67,20 @@ namespace SetupTv.Sections
       this.labelTotalDiskSpace = new System.Windows.Forms.Label();
       this.label10 = new System.Windows.Forms.Label();
       this.label11 = new System.Windows.Forms.Label();
-      this.tabPage4 = new System.Windows.Forms.TabPage();
+      this.tpRecording = new System.Windows.Forms.TabPage();
+      this.groupBoxRecordSettings = new System.Windows.Forms.GroupBox();
+      this.pictureBox1 = new System.Windows.Forms.PictureBox();
       this.labelTSFolder = new System.Windows.Forms.Label();
+      this.comboBoxCards = new System.Windows.Forms.ComboBox();
       this.labelRecFormat = new System.Windows.Forms.Label();
       this.label23 = new System.Windows.Forms.Label();
+      this.textBoxFolder = new System.Windows.Forms.TextBox();
       this.comboBoxRecordingFormat = new System.Windows.Forms.ComboBox();
+      this.label13 = new System.Windows.Forms.Label();
       this.buttonTimeShiftBrowse = new System.Windows.Forms.Button();
+      this.buttonBrowse = new System.Windows.Forms.Button();
       this.label22 = new System.Windows.Forms.Label();
       this.textBoxTimeShiftFolder = new System.Windows.Forms.TextBox();
-      this.pictureBox1 = new System.Windows.Forms.PictureBox();
-      this.buttonBrowse = new System.Windows.Forms.Button();
-      this.label13 = new System.Windows.Forms.Label();
-      this.textBoxFolder = new System.Windows.Forms.TextBox();
-      this.comboBoxCards = new System.Windows.Forms.ComboBox();
       this.tpRecordImport = new System.Windows.Forms.TabPage();
       this.btnRemoveInvalidFiles = new System.Windows.Forms.Button();
       this.btnImport = new System.Windows.Forms.Button();
@@ -88,20 +89,19 @@ namespace SetupTv.Sections
       this.lblRecFolders = new System.Windows.Forms.Label();
       this.cbRecPaths = new System.Windows.Forms.ComboBox();
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-      this.groupBoxRecordSettings = new System.Windows.Forms.GroupBox();
       this.tabControl1.SuspendLayout();
-      this.tabPage1.SuspendLayout();
+      this.tpSettings.SuspendLayout();
       this.groupBox1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPostRec)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPreRec)).BeginInit();
-      this.tabPage2.SuspendLayout();
+      this.tpCustom.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.groupBox3.SuspendLayout();
-      this.tabPage3.SuspendLayout();
-      this.tabPage4.SuspendLayout();
+      this.tpDiskQuota.SuspendLayout();
+      this.tpRecording.SuspendLayout();
+      this.groupBoxRecordSettings.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
       this.tpRecordImport.SuspendLayout();
-      this.groupBoxRecordSettings.SuspendLayout();
       this.SuspendLayout();
       // 
       // tabControl1
@@ -109,27 +109,28 @@ namespace SetupTv.Sections
       this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.tabControl1.Controls.Add(this.tabPage1);
-      this.tabControl1.Controls.Add(this.tabPage2);
-      this.tabControl1.Controls.Add(this.tabPage3);
-      this.tabControl1.Controls.Add(this.tabPage4);
+      this.tabControl1.Controls.Add(this.tpSettings);
+      this.tabControl1.Controls.Add(this.tpCustom);
+      this.tabControl1.Controls.Add(this.tpDiskQuota);
+      this.tabControl1.Controls.Add(this.tpRecording);
       this.tabControl1.Controls.Add(this.tpRecordImport);
       this.tabControl1.Location = new System.Drawing.Point(3, 3);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
       this.tabControl1.Size = new System.Drawing.Size(465, 400);
       this.tabControl1.TabIndex = 0;
+      this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
       // 
-      // tabPage1
+      // tpSettings
       // 
-      this.tabPage1.Controls.Add(this.groupBox1);
-      this.tabPage1.Location = new System.Drawing.Point(4, 22);
-      this.tabPage1.Name = "tabPage1";
-      this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage1.Size = new System.Drawing.Size(457, 374);
-      this.tabPage1.TabIndex = 0;
-      this.tabPage1.Text = "Settings";
-      this.tabPage1.UseVisualStyleBackColor = true;
+      this.tpSettings.Controls.Add(this.groupBox1);
+      this.tpSettings.Location = new System.Drawing.Point(4, 22);
+      this.tpSettings.Name = "tpSettings";
+      this.tpSettings.Padding = new System.Windows.Forms.Padding(3);
+      this.tpSettings.Size = new System.Drawing.Size(457, 374);
+      this.tpSettings.TabIndex = 0;
+      this.tpSettings.Text = "Settings";
+      this.tpSettings.UseVisualStyleBackColor = true;
       // 
       // groupBox1
       // 
@@ -252,16 +253,16 @@ namespace SetupTv.Sections
       this.label1.TabIndex = 0;
       this.label1.Text = "Start recording";
       // 
-      // tabPage2
+      // tpCustom
       // 
-      this.tabPage2.Controls.Add(this.groupBox2);
-      this.tabPage2.Location = new System.Drawing.Point(4, 22);
-      this.tabPage2.Name = "tabPage2";
-      this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage2.Size = new System.Drawing.Size(457, 374);
-      this.tabPage2.TabIndex = 1;
-      this.tabPage2.Text = "Custom paths and filenames";
-      this.tabPage2.UseVisualStyleBackColor = true;
+      this.tpCustom.Controls.Add(this.groupBox2);
+      this.tpCustom.Location = new System.Drawing.Point(4, 22);
+      this.tpCustom.Name = "tpCustom";
+      this.tpCustom.Padding = new System.Windows.Forms.Padding(3);
+      this.tpCustom.Size = new System.Drawing.Size(457, 374);
+      this.tpCustom.TabIndex = 1;
+      this.tpCustom.Text = "Custom paths and filenames";
+      this.tpCustom.UseVisualStyleBackColor = true;
       // 
       // groupBox2
       // 
@@ -414,24 +415,24 @@ namespace SetupTv.Sections
       this.comboBoxMovies.TabIndex = 0;
       this.comboBoxMovies.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
       // 
-      // tabPage3
+      // tpDiskQuota
       // 
-      this.tabPage3.Controls.Add(this.mpLabel5);
-      this.tabPage3.Controls.Add(this.enableDiskQuota);
-      this.tabPage3.Controls.Add(this.mpNumericTextBoxDiskQuota);
-      this.tabPage3.Controls.Add(this.label14);
-      this.tabPage3.Controls.Add(this.comboBoxDrive);
-      this.tabPage3.Controls.Add(this.labelFreeDiskspace);
-      this.tabPage3.Controls.Add(this.label9);
-      this.tabPage3.Controls.Add(this.labelTotalDiskSpace);
-      this.tabPage3.Controls.Add(this.label10);
-      this.tabPage3.Controls.Add(this.label11);
-      this.tabPage3.Location = new System.Drawing.Point(4, 22);
-      this.tabPage3.Name = "tabPage3";
-      this.tabPage3.Size = new System.Drawing.Size(457, 374);
-      this.tabPage3.TabIndex = 2;
-      this.tabPage3.Text = "Disk quota";
-      this.tabPage3.UseVisualStyleBackColor = true;
+      this.tpDiskQuota.Controls.Add(this.mpLabel5);
+      this.tpDiskQuota.Controls.Add(this.enableDiskQuota);
+      this.tpDiskQuota.Controls.Add(this.mpNumericTextBoxDiskQuota);
+      this.tpDiskQuota.Controls.Add(this.label14);
+      this.tpDiskQuota.Controls.Add(this.comboBoxDrive);
+      this.tpDiskQuota.Controls.Add(this.labelFreeDiskspace);
+      this.tpDiskQuota.Controls.Add(this.label9);
+      this.tpDiskQuota.Controls.Add(this.labelTotalDiskSpace);
+      this.tpDiskQuota.Controls.Add(this.label10);
+      this.tpDiskQuota.Controls.Add(this.label11);
+      this.tpDiskQuota.Location = new System.Drawing.Point(4, 22);
+      this.tpDiskQuota.Name = "tpDiskQuota";
+      this.tpDiskQuota.Size = new System.Drawing.Size(457, 374);
+      this.tpDiskQuota.TabIndex = 2;
+      this.tpDiskQuota.Text = "Disk quota";
+      this.tpDiskQuota.UseVisualStyleBackColor = true;
       // 
       // mpLabel5
       // 
@@ -530,15 +531,46 @@ namespace SetupTv.Sections
       this.label11.Tag = "";
       this.label11.Text = "Free diskspace:";
       // 
-      // tabPage4
+      // tpRecording
       // 
-      this.tabPage4.Controls.Add(this.groupBoxRecordSettings);
-      this.tabPage4.Location = new System.Drawing.Point(4, 22);
-      this.tabPage4.Name = "tabPage4";
-      this.tabPage4.Size = new System.Drawing.Size(457, 374);
-      this.tabPage4.TabIndex = 3;
-      this.tabPage4.Text = "Recording folders";
-      this.tabPage4.UseVisualStyleBackColor = true;
+      this.tpRecording.Controls.Add(this.groupBoxRecordSettings);
+      this.tpRecording.Location = new System.Drawing.Point(4, 22);
+      this.tpRecording.Name = "tpRecording";
+      this.tpRecording.Size = new System.Drawing.Size(457, 374);
+      this.tpRecording.TabIndex = 3;
+      this.tpRecording.Text = "Recording folders";
+      this.tpRecording.UseVisualStyleBackColor = true;
+      // 
+      // groupBoxRecordSettings
+      // 
+      this.groupBoxRecordSettings.Controls.Add(this.pictureBox1);
+      this.groupBoxRecordSettings.Controls.Add(this.labelTSFolder);
+      this.groupBoxRecordSettings.Controls.Add(this.comboBoxCards);
+      this.groupBoxRecordSettings.Controls.Add(this.labelRecFormat);
+      this.groupBoxRecordSettings.Controls.Add(this.label23);
+      this.groupBoxRecordSettings.Controls.Add(this.textBoxFolder);
+      this.groupBoxRecordSettings.Controls.Add(this.comboBoxRecordingFormat);
+      this.groupBoxRecordSettings.Controls.Add(this.label13);
+      this.groupBoxRecordSettings.Controls.Add(this.buttonTimeShiftBrowse);
+      this.groupBoxRecordSettings.Controls.Add(this.buttonBrowse);
+      this.groupBoxRecordSettings.Controls.Add(this.label22);
+      this.groupBoxRecordSettings.Controls.Add(this.textBoxTimeShiftFolder);
+      this.groupBoxRecordSettings.Location = new System.Drawing.Point(6, 3);
+      this.groupBoxRecordSettings.Name = "groupBoxRecordSettings";
+      this.groupBoxRecordSettings.Size = new System.Drawing.Size(445, 365);
+      this.groupBoxRecordSettings.TabIndex = 26;
+      this.groupBoxRecordSettings.TabStop = false;
+      this.groupBoxRecordSettings.Text = "Card settings";
+      // 
+      // pictureBox1
+      // 
+      this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+      this.pictureBox1.Location = new System.Drawing.Point(23, 19);
+      this.pictureBox1.Name = "pictureBox1";
+      this.pictureBox1.Size = new System.Drawing.Size(33, 23);
+      this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+      this.pictureBox1.TabIndex = 18;
+      this.pictureBox1.TabStop = false;
       // 
       // labelTSFolder
       // 
@@ -551,6 +583,18 @@ namespace SetupTv.Sections
       this.labelTSFolder.TabIndex = 25;
       this.labelTSFolder.Text = "Using a Timeshift folder on a dedicated disk will improve your performance \r\n(e.g" +
           ". with many simultaneous clients / recordings)";
+      // 
+      // comboBoxCards
+      // 
+      this.comboBoxCards.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxCards.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxCards.FormattingEnabled = true;
+      this.comboBoxCards.Location = new System.Drawing.Point(87, 0);
+      this.comboBoxCards.Name = "comboBoxCards";
+      this.comboBoxCards.Size = new System.Drawing.Size(352, 21);
+      this.comboBoxCards.TabIndex = 0;
+      this.comboBoxCards.SelectedIndexChanged += new System.EventHandler(this.comboBoxCards_SelectedIndexChanged);
       // 
       // labelRecFormat
       // 
@@ -573,6 +617,16 @@ namespace SetupTv.Sections
       this.label23.TabIndex = 23;
       this.label23.Text = "Recording format:";
       // 
+      // textBoxFolder
+      // 
+      this.textBoxFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxFolder.Location = new System.Drawing.Point(23, 186);
+      this.textBoxFolder.Name = "textBoxFolder";
+      this.textBoxFolder.Size = new System.Drawing.Size(326, 20);
+      this.textBoxFolder.TabIndex = 2;
+      this.textBoxFolder.TextChanged += new System.EventHandler(this.textBoxFolder_TextChanged);
+      // 
       // comboBoxRecordingFormat
       // 
       this.comboBoxRecordingFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
@@ -588,6 +642,15 @@ namespace SetupTv.Sections
       this.comboBoxRecordingFormat.TabIndex = 22;
       this.comboBoxRecordingFormat.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged_1);
       // 
+      // label13
+      // 
+      this.label13.AutoSize = true;
+      this.label13.Location = new System.Drawing.Point(20, 168);
+      this.label13.Name = "label13";
+      this.label13.Size = new System.Drawing.Size(88, 13);
+      this.label13.TabIndex = 3;
+      this.label13.Text = "Recording folder:";
+      // 
       // buttonTimeShiftBrowse
       // 
       this.buttonTimeShiftBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -598,6 +661,17 @@ namespace SetupTv.Sections
       this.buttonTimeShiftBrowse.Text = "...";
       this.buttonTimeShiftBrowse.UseVisualStyleBackColor = true;
       this.buttonTimeShiftBrowse.Click += new System.EventHandler(this.buttonTimeShiftBrowse_Click);
+      // 
+      // buttonBrowse
+      // 
+      this.buttonBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonBrowse.Location = new System.Drawing.Point(355, 186);
+      this.buttonBrowse.Name = "buttonBrowse";
+      this.buttonBrowse.Size = new System.Drawing.Size(23, 20);
+      this.buttonBrowse.TabIndex = 4;
+      this.buttonBrowse.Text = "...";
+      this.buttonBrowse.UseVisualStyleBackColor = true;
+      this.buttonBrowse.Click += new System.EventHandler(this.buttonBrowse_Click);
       // 
       // label22
       // 
@@ -617,58 +691,6 @@ namespace SetupTv.Sections
       this.textBoxTimeShiftFolder.Size = new System.Drawing.Size(326, 20);
       this.textBoxTimeShiftFolder.TabIndex = 19;
       this.textBoxTimeShiftFolder.TextChanged += new System.EventHandler(this.textBoxTimeShiftFolder_TextChanged);
-      // 
-      // pictureBox1
-      // 
-      this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-      this.pictureBox1.Location = new System.Drawing.Point(23, 19);
-      this.pictureBox1.Name = "pictureBox1";
-      this.pictureBox1.Size = new System.Drawing.Size(33, 23);
-      this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-      this.pictureBox1.TabIndex = 18;
-      this.pictureBox1.TabStop = false;
-      // 
-      // buttonBrowse
-      // 
-      this.buttonBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonBrowse.Location = new System.Drawing.Point(355, 186);
-      this.buttonBrowse.Name = "buttonBrowse";
-      this.buttonBrowse.Size = new System.Drawing.Size(23, 20);
-      this.buttonBrowse.TabIndex = 4;
-      this.buttonBrowse.Text = "...";
-      this.buttonBrowse.UseVisualStyleBackColor = true;
-      this.buttonBrowse.Click += new System.EventHandler(this.buttonBrowse_Click);
-      // 
-      // label13
-      // 
-      this.label13.AutoSize = true;
-      this.label13.Location = new System.Drawing.Point(20, 168);
-      this.label13.Name = "label13";
-      this.label13.Size = new System.Drawing.Size(88, 13);
-      this.label13.TabIndex = 3;
-      this.label13.Text = "Recording folder:";
-      // 
-      // textBoxFolder
-      // 
-      this.textBoxFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.textBoxFolder.Location = new System.Drawing.Point(23, 186);
-      this.textBoxFolder.Name = "textBoxFolder";
-      this.textBoxFolder.Size = new System.Drawing.Size(326, 20);
-      this.textBoxFolder.TabIndex = 2;
-      this.textBoxFolder.TextChanged += new System.EventHandler(this.textBoxFolder_TextChanged);
-      // 
-      // comboBoxCards
-      // 
-      this.comboBoxCards.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.comboBoxCards.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxCards.FormattingEnabled = true;
-      this.comboBoxCards.Location = new System.Drawing.Point(87, 0);
-      this.comboBoxCards.Name = "comboBoxCards";
-      this.comboBoxCards.Size = new System.Drawing.Size(352, 21);
-      this.comboBoxCards.TabIndex = 0;
-      this.comboBoxCards.SelectedIndexChanged += new System.EventHandler(this.comboBoxCards_SelectedIndexChanged);
       // 
       // tpRecordImport
       // 
@@ -750,33 +772,13 @@ namespace SetupTv.Sections
       this.cbRecPaths.Location = new System.Drawing.Point(30, 43);
       this.cbRecPaths.Name = "cbRecPaths";
       this.cbRecPaths.Size = new System.Drawing.Size(355, 21);
+      this.cbRecPaths.Sorted = true;
       this.cbRecPaths.TabIndex = 1;
       this.cbRecPaths.SelectedIndexChanged += new System.EventHandler(this.cbRecPaths_SelectedIndexChanged);
       // 
       // openFileDialog1
       // 
       this.openFileDialog1.FileName = "openFileDialog1";
-      // 
-      // groupBoxRecordSettings
-      // 
-      this.groupBoxRecordSettings.Controls.Add(this.pictureBox1);
-      this.groupBoxRecordSettings.Controls.Add(this.labelTSFolder);
-      this.groupBoxRecordSettings.Controls.Add(this.comboBoxCards);
-      this.groupBoxRecordSettings.Controls.Add(this.labelRecFormat);
-      this.groupBoxRecordSettings.Controls.Add(this.label23);
-      this.groupBoxRecordSettings.Controls.Add(this.textBoxFolder);
-      this.groupBoxRecordSettings.Controls.Add(this.comboBoxRecordingFormat);
-      this.groupBoxRecordSettings.Controls.Add(this.label13);
-      this.groupBoxRecordSettings.Controls.Add(this.buttonTimeShiftBrowse);
-      this.groupBoxRecordSettings.Controls.Add(this.buttonBrowse);
-      this.groupBoxRecordSettings.Controls.Add(this.label22);
-      this.groupBoxRecordSettings.Controls.Add(this.textBoxTimeShiftFolder);
-      this.groupBoxRecordSettings.Location = new System.Drawing.Point(6, 3);
-      this.groupBoxRecordSettings.Name = "groupBoxRecordSettings";
-      this.groupBoxRecordSettings.Size = new System.Drawing.Size(445, 365);
-      this.groupBoxRecordSettings.TabIndex = 26;
-      this.groupBoxRecordSettings.TabStop = false;
-      this.groupBoxRecordSettings.Text = "Card settings";
       // 
       // TvRecording
       // 
@@ -786,24 +788,24 @@ namespace SetupTv.Sections
       this.Name = "TvRecording";
       this.Size = new System.Drawing.Size(474, 412);
       this.tabControl1.ResumeLayout(false);
-      this.tabPage1.ResumeLayout(false);
+      this.tpSettings.ResumeLayout(false);
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPostRec)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPreRec)).EndInit();
-      this.tabPage2.ResumeLayout(false);
+      this.tpCustom.ResumeLayout(false);
       this.groupBox2.ResumeLayout(false);
       this.groupBox2.PerformLayout();
       this.groupBox3.ResumeLayout(false);
       this.groupBox3.PerformLayout();
-      this.tabPage3.ResumeLayout(false);
-      this.tabPage3.PerformLayout();
-      this.tabPage4.ResumeLayout(false);
+      this.tpDiskQuota.ResumeLayout(false);
+      this.tpDiskQuota.PerformLayout();
+      this.tpRecording.ResumeLayout(false);
+      this.groupBoxRecordSettings.ResumeLayout(false);
+      this.groupBoxRecordSettings.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
       this.tpRecordImport.ResumeLayout(false);
       this.tpRecordImport.PerformLayout();
-      this.groupBoxRecordSettings.ResumeLayout(false);
-      this.groupBoxRecordSettings.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -811,8 +813,8 @@ namespace SetupTv.Sections
     #endregion
 
     private System.Windows.Forms.TabControl tabControl1;
-    private System.Windows.Forms.TabPage tabPage1;
-    private System.Windows.Forms.TabPage tabPage2;
+    private System.Windows.Forms.TabPage tpSettings;
+    private System.Windows.Forms.TabPage tpCustom;
     private System.Windows.Forms.GroupBox groupBox1;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAutoDelete;
     private System.Windows.Forms.Label label4;
@@ -828,7 +830,7 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label6;
     private System.Windows.Forms.Label label5;
     private System.Windows.Forms.ComboBox comboBoxMovies;
-    private System.Windows.Forms.TabPage tabPage3;
+    private System.Windows.Forms.TabPage tpDiskQuota;
     private System.Windows.Forms.Label label14;
     private System.Windows.Forms.Label labelFreeDiskspace;
     private System.Windows.Forms.Label labelTotalDiskSpace;
@@ -841,7 +843,7 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel3;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel4;
-    private System.Windows.Forms.TabPage tabPage4;
+    private System.Windows.Forms.TabPage tpRecording;
     private System.Windows.Forms.ComboBox comboBoxCards;
     private System.Windows.Forms.Button buttonBrowse;
     private System.Windows.Forms.Label label13;

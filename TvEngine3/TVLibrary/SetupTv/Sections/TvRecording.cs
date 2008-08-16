@@ -332,7 +332,7 @@ namespace SetupTv.Sections
       textBoxTimeShiftFolder.Text = info.card.TimeShiftFolder;
       if (textBoxFolder.Text == "")
       {
-        textBoxFolder.Text = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\recordings", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)); 
+        textBoxFolder.Text = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\recordings", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
         if (!Directory.Exists(textBoxFolder.Text))
           Directory.CreateDirectory(textBoxFolder.Text);
       }
@@ -387,8 +387,6 @@ namespace SetupTv.Sections
       if (comboBoxCards.Items.Count > 0)
         comboBoxCards.SelectedIndex = 0;
       UpdateDriveInfo(false);
-
-      LoadDbImportSettings();
 
       base.OnSectionActivated();
     }
@@ -475,6 +473,14 @@ namespace SetupTv.Sections
       Setting setting = layer.GetSetting("diskQuotaEnabled");
       setting.Value = ((CheckBox)sender).Checked.ToString();
       setting.Persist();
+    }
+
+    private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      if (tabControl1.SelectedTab.Name == "tpRecordImport")
+      {
+        LoadDbImportSettings();
+      }
     }
 
     #endregion
@@ -629,8 +635,8 @@ namespace SetupTv.Sections
 
     private void LoadDbImportSettings()
     {
+      cbRecPaths.Items.Clear();
       GetRecordingsFromDb();
-
       try
       {
         IList allCards = Card.ListAll();
