@@ -94,17 +94,12 @@
       <posX>500</posX>
       <posY>65</posY>
       <label>Repeating date</label>
-      <textXOff>10</textXOff>
       <onleft>8</onleft>
       <onright>7</onright>
       <onup>22</onup>
       <ondown>24</ondown>
       <width>190</width>
       <height>32</height>
-      <AltTextureFocus>togglebutton-off-focus.png</AltTextureFocus>
-      <AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
-      <textureFocus>togglebutton-on-focus.png</textureFocus>
-      <textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
     </control>
     <control>
       <description>ShowAddedDatesButton</description>

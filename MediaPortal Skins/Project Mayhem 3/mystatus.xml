@@ -54,15 +54,17 @@
       <textcolor>FFFFFFFF</textcolor>
     </control>
     <control>
+      <description>button group</description>
       <type>group</type>
-      <description>group element</description>
-      <animation>FlyInFromLeft</animation>
+      <posX>5</posX>
+      <posY>125</posY>
+      <layout>StackLayout</layout>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
       <control>
         <description>preferences</description>
         <type>button</type>
         <id>2</id>
-        <posX>5</posX>
-        <posY>117</posY>
         <label>1957</label>
         <onleft>2</onleft>
         <onright>10</onright>
@@ -73,8 +75,6 @@
         <description>status details</description>
         <type>button</type>
         <id>3</id>
-        <posX>5</posX>
-        <posY>161</posY>
         <label>1972</label>
         <onleft>2</onleft>
         <onright>10</onright>
@@ -85,8 +85,6 @@
         <description>next page</description>
         <type>button</type>
         <id>4</id>
-        <posX>5</posX>
-        <posY>195</posY>
         <label>1975</label>
         <onleft>2</onleft>
         <onright>10</onright>

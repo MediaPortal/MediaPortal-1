@@ -3,9 +3,11 @@
   <id>14</id>
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
+  <define>#background.image:background3.png</define>
+  <define>#header.image:Back_setting.png</define>
   <define>#header.label:2</define>
   <controls>
-    <import>common.settings.xml</import>
+    <import>common.window.xml</import>
     <control>
       <description>Shuffle Playlist on load</description>
       <type>checkmark</type>

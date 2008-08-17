@@ -3,57 +3,37 @@
   <id>2600</id>
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
+  <define>#background.image:background3.png</define>
+  <define>#header.image:Back_weather.png</define>
   <define>#header.label:8</define>
-  <define>#selecteditem:-</define>
   <controls>
     <import>common.window.xml</import>
     <control>
-      <description>BG</description>
-      <type>image</type>
-      <id>1</id>
-      <width>720</width>
-      <height>576</height>
-      <texture>background3.png</texture>
-    </control>
-    <control>
-      <description>BG</description>
-      <type>image</type>
-      <id>1</id>
-      <width>720</width>
-      <height>107</height>
-      <texture>Back_weather.png</texture>
-    </control>
-    <control>
+      <description>button group</description>
       <type>group</type>
-      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <description>group element</description>
-      <layout>StackLayout</layout>
       <posX>5</posX>
       <posY>125</posY>
+      <layout>StackLayout</layout>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
       <control>
         <description>Switch Button</description>
         <type>button</type>
         <id>2</id>
         <label>716</label>
         <onup>17</onup>
-        <alignY>center</alignY>
       </control>
       <control>
         <description>Refresh Button</description>
         <type>button</type>
         <id>3</id>
         <label>184</label>
-        <alignY>center</alignY>
       </control>
       <control>
         <description>View Button</description>
         <type>button</type>
         <id>4</id>
         <label>185</label>
-        <alignY>center</alignY>
       </control>
       <control>
         <description>weather location select</description>
@@ -61,7 +41,6 @@
         <id>5</id>
         <label>1028</label>
         <ondown>2</ondown>
-        <alignY>center</alignY>
       </control>
     </control>
     <control>

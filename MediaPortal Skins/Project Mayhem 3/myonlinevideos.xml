@@ -16,12 +16,13 @@
     <import>common.facade.xml</import>
     <import>common.window.xml</import>
     <control>
+      <description>button group</description>
       <type>group</type>
-      <description>group element</description>
-      <animation>FlyInFromLeft</animation>
       <posX>5</posX>
       <posY>125</posY>
       <layout>StackLayout</layout>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
       <control>
         <type>button</type>
         <description>View button</description>

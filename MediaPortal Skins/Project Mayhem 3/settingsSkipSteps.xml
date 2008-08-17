@@ -3,14 +3,11 @@
   <id>708</id>
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
+  <define>#background.image:background3.png</define>
+  <define>#header.image:Back_setting.png</define>
+  <define>#header.label:6025</define>
   <controls>
-    <control>
-      <description>background image</description>
-      <type>image</type>
-      <id>1</id>
-      <width>720</width>
-      <height>576</height>
-    </control>
+    <import>common.window.xml</import>
     <control>
       <type>image</type>
       <description>MP Logo</description>
@@ -18,15 +15,6 @@
       <posX>32</posX>
       <posY>24</posY>
       <texture>mplogo.png</texture>
-    </control>
-    <control>
-      <type>label</type>
-      <description>Setup skip steps</description>
-      <id>1</id>
-      <posX>32</posX>
-      <posY>96</posY>
-      <label>6025</label>
-      <font>font18</font>
     </control>
     <control>
       <type>label</type>

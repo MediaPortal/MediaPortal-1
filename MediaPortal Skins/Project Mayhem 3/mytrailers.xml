@@ -3,50 +3,40 @@
   <id>5900</id>
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
+  <define>#background.image:background3.png</define>
+  <define>#header.image:</define>
   <define>#header.label:5900</define>
   <controls>
     <import>common.window.xml</import>
+    <import>common.time.xml</import>
     <control>
-      <type>image</type>
-      <description>BackGround</description>
-      <id>1</id>
-      <texture>background3.png</texture>
-    </control>
-    <control>
-      <type>togglebutton</type>
-      <description>Plot</description>
-      <id>5</id>
+      <description>button group</description>
+      <type>group</type>
       <posX>5</posX>
-      <posY>157</posY>
-      <onleft>4</onleft>
-      <onright>4</onright>
-      <onup>3</onup>
-      <ondown>6</ondown>
-      <label>207</label>
-      <width>190</width>
-      <height>32</height>
-      <textureFocus>togglebutton-on-focus.png</textureFocus>
-      <textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
-      <AltTextureFocus>togglebutton-off-focus.png</AltTextureFocus>
-      <AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
-    </control>
-    <control>
-      <type>togglebutton</type>
-      <description>Cast</description>
-      <id>6</id>
-      <posX>5</posX>
-      <posY>189</posY>
-      <onleft>4</onleft>
-      <onright>4</onright>
-      <onup>5</onup>
-      <ondown>2</ondown>
-      <label>206</label>
-      <width>190</width>
-      <height>32</height>
-      <textureFocus>togglebutton-on-focus.png</textureFocus>
-      <textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
-      <AltTextureFocus>togglebutton-off-focus.png</AltTextureFocus>
-      <AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
+      <posY>125</posY>
+      <layout>StackLayout</layout>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <control>
+        <description>Plot</description>
+        <type>togglebutton</type>
+        <id>5</id>
+        <onleft>4</onleft>
+        <onright>4</onright>
+        <onup>3</onup>
+        <ondown>6</ondown>
+        <label>207</label>
+      </control>
+      <control>
+        <description>Cast</description>
+        <type>togglebutton</type>
+        <id>6</id>
+        <onleft>4</onleft>
+        <onright>4</onright>
+        <onup>5</onup>
+        <ondown>2</ondown>
+        <label>206</label>
+      </control>
     </control>
     <control>
       <type>fadelabel</type>

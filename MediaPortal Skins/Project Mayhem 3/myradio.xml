@@ -3,35 +3,19 @@
   <id>30</id>
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
+  <define>#background.image:background3.png</define>
+  <define>#header.image:Back_music.png</define>
   <define>#header.label:666</define>
   <controls>
     <import>common.window.xml</import>
     <control>
-      <description>background image</description>
-      <type>image</type>
-      <id>1</id>
-      <width>720</width>
-      <height>576</height>
-      <texture>background3.png</texture>
-    </control>
-    <control>
-      <description>background image</description>
-      <type>image</type>
-      <id>1</id>
-      <width>720</width>
-      <height>107</height>
-      <texture>Back_music.png</texture>
-    </control>
-    <control>
+      <description>button group</description>
       <type>group</type>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="slide" time="250" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="500" end="0,-300">WindowClose</animation>
-      <description>group element</description>
       <posX>5</posX>
       <posY>125</posY>
       <layout>StackLayout</layout>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
       <control>
         <description>View-As</description>
         <type>button</type>
@@ -41,7 +25,6 @@
         <onright>50</onright>
         <onup>17</onup>
         <ondown>3</ondown>
-        <alignY>center</alignY>
       </control>
       <control>
         <description>Sort</description>
@@ -50,7 +33,6 @@
         <onright>50</onright>
         <onup>2</onup>
         <ondown>6</ondown>
-        <alignY>center</alignY>
       </control>
       <control>
         <description>Previous</description>
@@ -62,7 +44,6 @@
         <onup>3</onup>
         <ondown>7</ondown>
         <action>15</action>
-        <alignY>center</alignY>
       </control>
       <control>
         <description>Next</description>
@@ -74,7 +55,6 @@
         <onup>6</onup>
         <ondown>8</ondown>
         <action>14</action>
-        <alignY>center</alignY>
       </control>
       <control>
         <description>Radio Guide</description>
@@ -86,7 +66,6 @@
         <onup>7</onup>
         <ondown>99</ondown>
         <hyperlink>762</hyperlink>
-        <alignY>center</alignY>
       </control>
     </control>
     <import>common.facade.xml</import>

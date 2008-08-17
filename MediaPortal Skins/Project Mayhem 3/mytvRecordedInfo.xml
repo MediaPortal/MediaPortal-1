@@ -16,13 +16,13 @@
       <texture>background3.png</texture>
     </control>
     <control>
+      <description>button group</description>
       <type>group</type>
-      <layout>StackLayout</layout>
-      <description>group element</description>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
       <posX>5</posX>
       <posY>125</posY>
+      <layout>StackLayout</layout>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
       <control>
         <description>Keep</description>
         <type>button</type>
@@ -31,7 +31,6 @@
         <onup>2</onup>
         <ondown>2</ondown>
         <onright>10</onright>
-        <alignY>center</alignY>
       </control>
     </control>
     <control>

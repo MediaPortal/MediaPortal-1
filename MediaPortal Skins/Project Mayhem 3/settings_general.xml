@@ -3,68 +3,41 @@
   <id>705</id>
   <defaultcontrol>10</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
+  <define>#background.image:background3.png</define>
+  <define>#header.image:Back_setting.png</define>
   <define>#header.label:128</define>
-  <define>#header.hover:hover_settings.png</define>
   <controls>
-    <import>common.settings.xml</import>
+    <import>common.window.xml</import>
     <control>
-      <type>image</type>
-      <description>BG</description>
-      <id>1</id>
-      <width>720</width>
-      <height>576</height>
-      <texture>background3.png</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <description>BG</description>
-      <id>1</id>
-      <width>720</width>
-      <height>107</height>
-      <texture>Back_setting.png</texture>
-    </control>
-    <control>
+      <description>button group</description>
       <type>group</type>
-      <description>group element</description>
-      <animation>FlyInFromLeft</animation>
       <posX>5</posX>
       <posY>125</posY>
       <layout>StackLayout</layout>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
       <control>
         <description>Skin</description>
         <type>selectbutton</type>
         <id>10</id>
-        <width>190</width>
         <label>166</label>
         <onup>99</onup>
         <ondown>11</ondown>
-        <alignY>center</alignY>
-      </control>
+     </control>
       <control>
         <description>Language</description>
         <type>selectbutton</type>
         <id>11</id>
         <label>248</label>
-        <width>190</width>
         <onup>10</onup>
         <ondown>12</ondown>
         <onright>99</onright>
-        <alignY>center</alignY>
       </control>
       <control>
         <description>Start in fullscreen mode</description>
         <type>togglebutton</type>
         <id>12</id>
-        <width>190</width>
-        <height>32</height>
-        <textcolor>White</textcolor>
-        <colordiffuse>White</colordiffuse>
-        <disabledcolor>#60ffffff</disabledcolor>
         <label>1047</label>
-        <AltTextureFocus>togglebutton-off-focus.png</AltTextureFocus>
-        <AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
-        <textureFocus>togglebutton-on-focus.png</textureFocus>
-        <textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
         <onup>11</onup>
         <ondown>13</ondown>
       </control>
@@ -72,16 +45,7 @@
         <description>Screensaver</description>
         <type>togglebutton</type>
         <id>13</id>
-        <width>190</width>
-        <height>32</height>
-        <textcolor>White</textcolor>
-        <colordiffuse>White</colordiffuse>
-        <disabledcolor>#60ffffff</disabledcolor>
         <label>360</label>
-        <AltTextureFocus>togglebutton-off-focus.png</AltTextureFocus>
-        <AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
-        <textureFocus>togglebutton-on-focus.png</textureFocus>
-        <textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
         <onup>12</onup>
         <ondown>21</ondown>
       </control>

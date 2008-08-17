@@ -3,37 +3,21 @@
   <id>500</id>
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
+  <define>#background.image:background3.png</define>
+  <define>#header.image:Back_music.png</define>
   <define>#header.label:136</define>
   <controls>
     <import>common.window.xml</import>
     <control>
-      <description>background image</description>
-      <type>image</type>
-      <id>1</id>
-      <width>720</width>
-      <height>576</height>
-      <texture>background3.png</texture>
-    </control>
-    <control>
-      <description>background image</description>
-      <type>image</type>
-      <id>1</id>
-      <width>720</width>
-      <height>107</height>
-      <texture>Back_music.png</texture>
-    </control>
-    <control>
+      <description>button group</description>
       <type>group</type>
-      <description>group element</description>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="slide" time="250" start="0,-300">WindowOpen</animation>
-      <animation effect="slide" time="500" end="800,0">WindowClose</animation>
       <posX>5</posX>
       <posY>125</posY>
       <layout>StackLayout</layout>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
       <control>
-        <description>View-As button</description>
+        <description>View-As</description>
         <type>button</type>
         <id>2</id>
         <label>100</label>
@@ -41,10 +25,9 @@
         <onright>50</onright>
         <onup>17</onup>
         <ondown>20</ondown>
-        <alignY>center</alignY>
       </control>
       <control>
-        <description>Shuffle button</description>
+        <description>Shuffle</description>
         <type>button</type>
         <id>20</id>
         <label>191</label>
@@ -53,10 +36,9 @@
         <onup>2</onup>
         <ondown>21</ondown>
         <onup>2</onup>
-        <alignY>center</alignY>
       </control>
       <control>
-        <description>Save button</description>
+        <description>Save</description>
         <type>button</type>
         <id>21</id>
         <label>190</label>
@@ -64,7 +46,6 @@
         <onright>50</onright>
         <onup>20</onup>
         <ondown>22</ondown>
-        <alignY>center</alignY>
       </control>
       <control>
         <description>Clear button</description>
@@ -75,7 +56,6 @@
         <onright>50</onright>
         <onup>21</onup>
         <ondown>28</ondown>
-        <alignY>center</alignY>
       </control>
       <!--       <control>
         <description>Play button</description>
@@ -86,14 +66,12 @@
         <onright>50</onright>
         <onup>22</onup>
         <ondown>28</ondown>
-        <alignY>center</alignY>
       </control> -->
       <control>
         <description>scrobble mode button</description>
         <type>button</type>
         <id>28</id>
         <label>33001</label>
-        <alignY>center</alignY>
         <onleft>28</onleft>
         <onright>50</onright>
         <onup>22</onup>
@@ -104,7 +82,6 @@
         <type>button</type>
         <id>29</id>
         <label>Scrobbler: Username</label>
-        <alignY>center</alignY>
         <onleft>29</onleft>
         <onright>50</onright>
         <onup>28</onup>
@@ -114,19 +91,12 @@
         <description>last.fm button</description>
         <type>togglebutton</type>
         <id>27</id>
-        <!--         <width>190</width> -->
-        <!--         <textXOff>10</textXOff> -->
         <label>33000</label>
         <height>32</height>
-        <AltTextureFocus>togglebutton-off-focus.png</AltTextureFocus>
-        <AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
-        <textureFocus>togglebutton-on-focus.png</textureFocus>
-        <textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
         <onleft>24</onleft>
         <onright>50</onright>
         <onup>29</onup>
         <ondown>26</ondown>
-        <alignY>center</alignY>
       </control>
       <control>
         <description>Now Playing button</description>
@@ -138,7 +108,6 @@
         <ondown>99</ondown>
         <onleft>26</onleft>
         <onright>50</onright>
-        <alignY>center</alignY>
       </control>
     </control>
     <control>

@@ -3,24 +3,11 @@
   <id>12</id>
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
-  <define>#header.label:Picture Setup</define>
+  <define>#background.image:background3.png</define>
+  <define>#header.image:Back_setting.png</define>
+  <define>#header.label:1</define>
   <controls>
-    <import>common.settings.xml</import>
-    <control>
-      <description>background image</description>
-      <type>image</type>
-      <id>1</id>
-      <width>720</width>
-      <height>576</height>
-    </control>
-    <control>
-      <description>background image</description>
-      <type>image</type>
-      <id>1</id>
-      <width>720</width>
-      <height>107</height>
-      <texture>Back_setting.png</texture>
-    </control>
+    <import>common.window.xml</import>
     <control>
       <type>image</type>
       <description>MP Logo</description>
@@ -28,15 +15,6 @@
       <posX>32</posX>
       <posY>24</posY>
       <texture>mplogo.png</texture>
-    </control>
-    <control>
-      <type>label</type>
-      <description>Setup My Pictures</description>
-      <id>1</id>
-      <posX>32</posX>
-      <posY>110</posY>
-      <label>1</label>
-      <font>font18</font>
     </control>
     <control>
       <description>Speed label</description>

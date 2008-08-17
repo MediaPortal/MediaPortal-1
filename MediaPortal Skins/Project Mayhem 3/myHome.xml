@@ -5,6 +5,7 @@
   <allowoverlay>no</allowoverlay>
   <autohidetopbar>no</autohidetopbar>
   <controls>
+    <import>common.time.xml</import>
     <control>
       <description>background image</description>
       <type>image</type>
@@ -235,45 +236,6 @@
       <onright>50</onright>
       <onup>50</onup>
       <ondown>98</ondown>
-      <animation effect="fade" time="800" delay="250">WindowOpen</animation>
-      <animation effect="fade" time="800" delay="250">WindowClose</animation>
-    </control>
-    <control>
-      <description>Date</description>
-      <type>label</type>
-      <id>200</id>
-      <posX>595</posX>
-      <posY>75</posY>
-      <label>#date</label>
-      <align>right</align>
-      <font>font13</font>
-      <textcolor>ffffffff</textcolor>
-      <animation effect="fade" time="800" delay="250">WindowOpen</animation>
-      <animation effect="fade" time="800" delay="250">WindowClose</animation>
-    </control>
-    <control>
-      <description>suffix label</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>599</posX>
-      <posY>75</posY>
-      <label>|</label>
-      <align>left</align>
-      <font>font13</font>
-      <textcolor>7A7979</textcolor>
-      <animation effect="fade" time="800" delay="250">WindowOpen</animation>
-      <animation effect="fade" time="800" delay="250">WindowClose</animation>
-    </control>
-    <control>
-      <description>Time</description>
-      <type>label</type>
-      <id>201</id>
-      <posX>605</posX>
-      <posY>75</posY>
-      <label>#time</label>
-      <align>left</align>
-      <font>font13</font>
-      <textcolor>7A7979</textcolor>
       <animation effect="fade" time="800" delay="250">WindowOpen</animation>
       <animation effect="fade" time="800" delay="250">WindowClose</animation>
     </control>

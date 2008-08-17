@@ -3,15 +3,18 @@
   <id>700</id>
   <defaultcontrol>24</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
+  <define>#background.image:background4.png</define>
+  <define>#header.image:Back_setting.png</define>
   <define>#header.label:6014</define>
-  <define>#header.hover:hover_my tv.png</define>
   <controls>
-    <import>common.settings.xml</import>
+    <import>common.window.xml</import>
     <control>
       <type>group</type>
       <layout>GridLayout(2, 6, 52, 8, 1)</layout>
       <posX>56</posX>
       <posY>151</posY>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
       <control>
         <type>button</type>
         <id>24</id>

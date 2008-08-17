@@ -3,68 +3,58 @@
   <id>8001</id>
   <defaultcontrol>26</defaultcontrol>
   <allowoverlay>no</allowoverlay>
+  <define>#background.image:background3.png</define>
+  <define>#header.image:Back_email.png</define>
+  <define>#header.label:8000</define>
   <controls>
+    <import>common.window.xml</import>
     <control>
-      <description>background image</description>
-      <type>image</type>
-      <id>1</id>
-      <width>720</width>
-      <height>576</height>
-      <texture>background3.png</texture>
-    </control>
-    <control>
-      <description>BG</description>
-      <type>image</type>
-      <id>1</id>
-      <width>720</width>
-      <height>107</height>
-      <texture>Back_email.png</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>1</id>
-      <posX>60</posX>
-      <posY>20</posY>
-      <texture>mail_logo.png</texture>
-    </control>
-    <control>
-      <description>Show HTML Button</description>
-      <type>button</type>
-      <id>25</id>
+      <description>button group</description>
+      <type>group</type>
       <posX>5</posX>
-      <posY>117</posY>
-      <width>175</width>
-      <label>8034</label>
-      <onleft>25</onleft>
-      <onright>24</onright>
-      <onup>20</onup>
-      <ondown>26</ondown>
-    </control>
-    <control>
-      <description>Mail Read Button</description>
-      <type>button</type>
-      <id>26</id>
-      <posX>5</posX>
-      <posY>151</posY>
-      <width>175</width>
-      <label>8021</label>
-      <onleft>26</onleft>
-      <onright>24</onright>
-      <onup>25</onup>
-      <ondown>27</ondown>
-    </control>
-    <control>
-      <description>Attachments</description>
-      <type>button</type>
-      <id>27</id>
-      <posX>5</posX>
-      <posY>185</posY>
-      <width>175</width>
-      <label>8022</label>
-      <onleft>27</onleft>
-      <onright>24</onright>
-      <onup>26</onup>
-      <ondown>51</ondown>
+      <posY>125</posY>
+      <layout>StackLayout</layout>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <control>
+        <description>Show HTML Button</description>
+        <type>button</type>
+        <id>25</id>
+        <posX>5</posX>
+        <posY>117</posY>
+        <width>175</width>
+        <label>8034</label>
+        <onleft>25</onleft>
+        <onright>24</onright>
+        <onup>20</onup>
+        <ondown>26</ondown>
+      </control>
+      <control>
+        <description>Mail Read Button</description>
+        <type>button</type>
+        <id>26</id>
+        <posX>5</posX>
+        <posY>151</posY>
+        <width>175</width>
+        <label>8021</label>
+        <onleft>26</onleft>
+        <onright>24</onright>
+        <onup>25</onup>
+        <ondown>27</ondown>
+      </control>
+      <control>
+        <description>Attachments</description>
+        <type>button</type>
+        <id>27</id>
+        <posX>5</posX>
+        <posY>185</posY>
+        <width>175</width>
+        <label>8022</label>
+        <onleft>27</onleft>
+        <onright>24</onright>
+        <onup>26</onup>
+        <ondown>51</ondown>
+      </control>
     </control>
     <control>
       <description>Message label</description>

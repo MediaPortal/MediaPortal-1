@@ -3,22 +3,61 @@
   <id>760</id>
   <defaultcontrol>3</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
+  <define>#background.image:background3.png</define>
+  <define>#header.image:Back_recorder.png</define>
+  <define>#header.label:</define>
   <controls>
+    <import>common.window.xml</import>
     <control>
-      <description>background image</description>
-      <type>image</type>
-      <id>1</id>
-      <width>720</width>
-      <height>576</height>
-      <texture>background3.png</texture>
-    </control>
-    <control>
-      <description>background image</description>
-      <type>image</type>
-      <id>1</id>
-      <width>720</width>
-      <height>107</height>
-      <texture>Back_recorder.png</texture>
+      <description>button group</description>
+      <type>group</type>
+      <posX>5</posX>
+      <posY>125</posY>
+      <layout>StackLayout</layout>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <control>
+        <description>Video</description>
+        <type>button</type>
+        <id>2</id>
+        <label>2101</label>
+        <onleft>2</onleft>
+        <onright>20</onright>
+        <onup>17</onup>
+        <ondown>3</ondown>
+      </control>
+      <control>
+        <type>button</type>
+        <description>Audio</description>
+        <id>3</id>
+        <onup>17</onup>
+        <label>2102</label>
+      </control>
+      <control>
+        <type>button</type>
+        <description>Data</description>
+        <id>4</id>
+        <label>2103</label>
+      </control>
+      <control>
+        <type>button</type>
+        <description>cd info</description>
+        <id>5</id>
+        <label>2123</label>
+      </control>
+      <control>
+        <type>button</type>
+        <description>rw format</description>
+        <id>6</id>
+        <label>2114</label>
+      </control>
+      <control>
+        <type>button</type>
+        <description>cd eject</description>
+        <id>7</id>
+        <ondown>3</ondown>
+        <label>2126</label>
+      </control>
     </control>
     <control>
       <type>label</type>
@@ -85,61 +124,6 @@
       <textureUpFocus>-</textureUpFocus>
       <textureDown>-</textureDown>
       <textureDownFocus>-</textureDownFocus>
-    </control>
-    <control>
-      <type>group</type>
-      <description>group element</description>
-      <animation>FlyInFromLeft</animation>
-      <posX>5</posX>
-      <posY>125</posY>
-      <layout>StackLayout</layout>
-      <control>
-        <description>Video</description>
-        <type>button</type>
-        <id>2</id>
-        <label>2101</label>
-        <onleft>2</onleft>
-        <onright>20</onright>
-        <onup>17</onup>
-        <ondown>3</ondown>
-      </control>
-      <control>
-        <type>button</type>
-        <description>Audio</description>
-        <id>3</id>
-        <onup>17</onup>
-        <alignY>center</alignY>
-        <label>2102</label>
-      </control>
-      <control>
-        <type>button</type>
-        <description>Data</description>
-        <id>4</id>
-        <alignY>center</alignY>
-        <label>2103</label>
-      </control>
-      <control>
-        <type>button</type>
-        <description>cd info</description>
-        <id>5</id>
-        <alignY>center</alignY>
-        <label>2123</label>
-      </control>
-      <control>
-        <type>button</type>
-        <description>rw format</description>
-        <id>6</id>
-        <alignY>center</alignY>
-        <label>2114</label>
-      </control>
-      <control>
-        <type>button</type>
-        <description>cd eject</description>
-        <id>7</id>
-        <ondown>3</ondown>
-        <alignY>center</alignY>
-        <label>2126</label>
-      </control>
     </control>
     <control>
       <type>listcontrol</type>

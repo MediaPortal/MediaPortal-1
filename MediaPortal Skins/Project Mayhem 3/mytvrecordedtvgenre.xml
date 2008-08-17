@@ -3,47 +3,20 @@
   <id>605</id>
   <defaultcontrol>3</defaultcontrol>
   <allowoverlay>no</allowoverlay>
+  <define>#background.image:background3.png</define>
+  <define>#header.image:Back_video.png</define>
   <define>#header.label:652</define>
+  <define>#header.label:</define>
   <controls>
     <import>common.window.xml</import>
     <control>
-      <description>background image</description>
-      <type>image</type>
-      <id>1</id>
-      <width>720</width>
-      <height>576</height>
-      <texture>background3.png</texture>
-    </control>
-    <control>
-      <description>background image</description>
-      <type>image</type>
-      <id>1</id>
-      <width>720</width>
-      <height>107</height>
-      <texture>Back_video.png</texture>
-    </control>
-    <control>
-      <description>Number of Files Label</description>
-      <type>label</type>
-      <id>12</id>
-      <posX>545</posX>
-      <posY>526</posY>
-      <label>#itemcount</label>
-      <align>right</align>
-      <font>font10</font>
-      <textcolor>FFFFFFFF</textcolor>
-      <visible>no</visible>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-    </control>
-    <control>
+      <description>button group</description>
       <type>group</type>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <description>group element</description>
-      <layout>StackLayout</layout>
       <posX>5</posX>
       <posY>125</posY>
+      <layout>StackLayout</layout>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
       <control>
         <type>sortbutton</type>
         <id>3</id>
@@ -52,7 +25,6 @@
         <onright>10</onright>
         <onup>5</onup>
         <ondown>5</ondown>
-        <alignY>center</alignY>
       </control>
       <control>
         <description>All,Genre,Channel button</description>
@@ -63,7 +35,6 @@
         <onright>10</onright>
         <onup>3</onup>
         <ondown>6</ondown>
-        <alignY>center</alignY>
       </control>
       <control>
         <description>cleanup button</description>
@@ -74,7 +45,6 @@
         <onright>10</onright>
         <onup>5</onup>
         <ondown>99</ondown>
-        <alignY>center</alignY>
       </control>
     </control>
     <control>

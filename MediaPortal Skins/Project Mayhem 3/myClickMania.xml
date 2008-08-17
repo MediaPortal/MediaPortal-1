@@ -3,34 +3,20 @@
   <id>5555</id>
   <defaultcontrol>10</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
+  <define>#background.image:background3.png</define>
+  <define>#header.image:</define>
+  <define>#header.label:#cm_title</define>
   <controls>
+    <import>common.window.xml</import>
     <import>common.time.xml</import>
-    <control>
-      <description>BackGround</description>
-      <type>image</type>
-      <id>1</id>
-      <width>720</width>
-      <height>576</height>
-      <texture>background3.png</texture>
-    </control>
-    <control>
-      <description>plugin title</description>
-      <type>label</type>
-      <id>31</id>
-      <posX>56</posX>
-      <posY>32</posY>
-      <label>#cm_title</label>
-      <font>font18</font>
-      <textcolor>20ffffff</textcolor>
-    </control>
-
     <control>
       <description>button group</description>
       <type>group</type>
-      <layout>StackLayout</layout>
       <posX>5</posX>
       <posY>125</posY>
-      <animation>FlyInFromLeft</animation>
+      <layout>StackLayout</layout>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
       <control>
         <description>New Game</description>
         <type>button</type>

@@ -467,6 +467,12 @@
     <colordiffuse>ffffffff</colordiffuse>
   </control>
   <control>
+    <description>default textboxscrollup</description>
+    <type>textboxscrollup</type>
+    <font>font13</font>
+    <textcolor>FFFFFFFF</textcolor>
+  </control>
+  <control>
     <description>default progress control</description>
     <type>progress</type>
     <id>20</id>

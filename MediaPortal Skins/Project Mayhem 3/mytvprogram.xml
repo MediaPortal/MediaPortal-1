@@ -3,65 +3,20 @@
   <id>748</id>
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>no</allowoverlay>
+  <define>#background.image:background3.png</define>
+  <define>#header.image:</define>
   <define>#header.label:1037</define>
-  <define>#selecteditem:</define>
   <controls>
     <import>common.window.xml</import>
+    <import>common.time.xml</import>
     <control>
-      <description>BG</description>
-      <type>image</type>
-      <id>1</id>
-      <width>720</width>
-      <height>576</height>
-      <texture>background3.png</texture>
-    </control>
-    <control>
-      <description>Date</description>
-      <type>label</type>
-      <id>200</id>
-      <posX>595</posX>
-      <posY>75</posY>
-      <label>#date</label>
-      <align>right</align>
-      <font>font12</font>
-      <textcolor>ffffffff</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-    </control>
-    <control>
-      <description>suffix label</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>599</posX>
-      <posY>76</posY>
-      <label>|</label>
-      <align>left</align>
-      <font>FONT13</font>
-      <textcolor>7A7979</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-    </control>
-    <control>
-      <description>Time</description>
-      <type>label</type>
-      <id>201</id>
-      <posX>605</posX>
-      <posY>75</posY>
-      <label>#time</label>
-      <align>left</align>
-      <font>font12</font>
-      <textcolor>7A7979</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-    </control>
-    <control>
+      <description>button group</description>
       <type>group</type>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <layout>StackLayout</layout>
-      <description>group element</description>
       <posX>5</posX>
       <posY>125</posY>
+      <layout>StackLayout</layout>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
       <control>
         <description>Record</description>
         <type>button</type>
@@ -94,15 +49,6 @@
         <type>togglebutton</type>
         <id>5</id>
         <label>1040</label>
-        <width>190</width>
-        <height>32</height>
-        <textcolor>White</textcolor>
-        <colordiffuse>White</colordiffuse>
-        <disabledcolor>#60ffffff</disabledcolor>
-        <AltTextureFocus>togglebutton-off-focus.png</AltTextureFocus>
-        <AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
-        <textureFocus>togglebutton-on-focus.png</textureFocus>
-        <textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
         <onup>4</onup>
         <ondown>6</ondown>
         <onright>10</onright>
@@ -222,7 +168,6 @@
       <width>430</width>
       <height>80</height>
       <label>#TV.RecordedTV.Description</label>
-      <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>

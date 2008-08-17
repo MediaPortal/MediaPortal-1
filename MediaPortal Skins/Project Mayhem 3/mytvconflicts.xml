@@ -16,20 +16,6 @@
       <texture>background3.png</texture>
     </control>
     <control>
-      <description>Number of Files Label</description>
-      <type>label</type>
-      <id>12</id>
-      <posX>545</posX>
-      <posY>526</posY>
-      <label>#itemcount</label>
-      <align>right</align>
-      <font>font10</font>
-      <textcolor>FFFFFFFF</textcolor>
-      <visible>no</visible>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-    </control>
-    <control>
       <type>group</type>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>

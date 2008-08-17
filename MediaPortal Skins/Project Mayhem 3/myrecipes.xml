@@ -2,9 +2,10 @@
 <window>
   <id>750</id>
   <defaultcontrol>3</defaultcontrol>
-  <define>#header.hover:hover_my recipes.png</define>
   <allowoverlay>yes</allowoverlay>
+  <define>#header.label:10</define>
   <controls>
+    <import>common.window.xml</import>
     <control>
       <description>BG</description>
       <type>image</type>
@@ -20,34 +21,6 @@
       <width>720</width>
       <height>107</height>
       <texture>Back_recipes.png</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>1</id>
-      <posX>60</posX>
-      <posY>20</posY>
-      <texture>recipies_logo.png</texture>
-    </control>
-    <control>
-      <description>My recepies text label</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>60</posX>
-      <posY>50</posY>
-      <label>10</label>
-      <font>font18</font>
-      <align>left</align>
-      <textcolor>ffffffff</textcolor>
-    </control>
-    <control>
-      <description>Number of Files Label</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>260</posX>
-      <posY>530</posY>
-      <label>#itemcount</label>
-      <align>left</align>
-      <textcolor>ffffffff</textcolor>
     </control>
     <control>
       <description>Selected item Label</description>
@@ -76,15 +49,17 @@
       <onright>9</onright>
     </control>
     <control>
+      <description>button group</description>
       <type>group</type>
-      <description>group element</description>
-      <animation>FlyInFromLeft</animation>
+      <posX>5</posX>
+      <posY>125</posY>
+      <layout>StackLayout</layout>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
       <control>
         <description>back button</description>
         <type>button</type>
         <id>2</id>
-        <posX>5</posX>
-        <posY>117</posY>
         <label>712</label>
         <onleft>2</onleft>
         <onright>9</onright>
@@ -95,8 +70,6 @@
         <description>search button type</description>
         <type>button</type>
         <id>3</id>
-        <posX>5</posX>
-        <posY>151</posY>
         <label>2051</label>
         <onleft>3</onleft>
         <onright>10</onright>
@@ -107,8 +80,6 @@
         <description>search button</description>
         <type>button</type>
         <id>5</id>
-        <posX>5</posX>
-        <posY>185</posY>
         <label>137</label>
         <onleft>5</onleft>
         <onright>10</onright>
@@ -119,8 +90,6 @@
         <description>favor button</description>
         <type>button</type>
         <id>6</id>
-        <posX>5</posX>
-        <posY>219</posY>
         <label>2013</label>
         <onleft>6</onleft>
         <onright>10</onright>
@@ -131,8 +100,6 @@
         <description>delete button</description>
         <type>button</type>
         <id>7</id>
-        <posX>5</posX>
-        <posY>253</posY>
         <label>2005</label>
         <onleft>7</onleft>
         <onright>10</onright>
@@ -143,8 +110,6 @@
         <description>print button</description>
         <type>button</type>
         <id>8</id>
-        <posX>5</posX>
-        <posY>287</posY>
         <label>2011</label>
         <onleft>8</onleft>
         <onright>10</onright>

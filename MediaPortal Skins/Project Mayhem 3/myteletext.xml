@@ -3,25 +3,11 @@
   <id>7700</id>
   <defaultcontrol>502</defaultcontrol>
   <allowoverlay>no</allowoverlay>
+  <define>#background.image:background3.png</define>
+  <define>#header.image:Back_teletext.png</define>
+  <define>#header.label:134</define>
   <controls>
-    <control>
-      <description>BG</description>
-      <type>image</type>
-      <id>1</id>
-      <width>720</width>
-      <height>576</height>
-    </control>
-    <control>
-      <type>image</type>
-      <id>501</id>
-      <posX>60</posX>
-      <posY>20</posY>
-      <width>397</width>
-      <height>70</height>
-      <texture>teletext_logo.png</texture>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-    </control>
+    <import>common.window.xml</import>
     <control>
       <description>tele-text rendering image</description>
       <type>image</type>
@@ -57,30 +43,27 @@
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
     <control>
+      <description>button group</description>
       <type>group</type>
+      <posX>5</posX>
+      <posY>125</posY>
+      <layout>StackLayout</layout>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
-      <description>group element</description>
       <control>
         <description>Page100</description>
         <type>button</type>
         <id>502</id>
-        <posX>60</posX>
-        <posY>97</posY>
         <label>590</label>
         <onup>17</onup>
         <ondown>503</ondown>
         <onright>502</onright>
-        <width>170</width>
       </control>
       <control>
         <description>Page200</description>
         <type>button</type>
         <id>503</id>
-        <posX>60</posX>
-        <posY>131</posY>
         <label>591</label>
-        <width>170</width>
         <onup>502</onup>
         <ondown>504</ondown>
         <onright>503</onright>
@@ -89,10 +72,7 @@
         <description>Page300</description>
         <type>button</type>
         <id>504</id>
-        <posX>60</posX>
-        <posY>165</posY>
         <label>592</label>
-        <width>170</width>
         <onup>503</onup>
         <ondown>505</ondown>
         <onright>504</onright>
@@ -101,16 +81,7 @@
         <description>hidden mode</description>
         <type>togglebutton</type>
         <id>505</id>
-        <posX>60</posX>
-        <posY>199</posY>
         <label>593</label>
-        <width>170</width>
-        <height>32</height>
-        <textXOff>10</textXOff>
-        <AltTextureFocus>togglebutton-off-focus.png</AltTextureFocus>
-        <AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
-        <textureFocus>togglebutton-on-focus.png</textureFocus>
-        <textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
         <onup>504</onup>
         <ondown>506</ondown>
         <onright>505</onright>
@@ -119,9 +90,7 @@
         <description>subpage</description>
         <type>selectbutton</type>
         <id>506</id>
-        <posY>233</posY>
         <label>594</label>
-        <width>170</width>
         <onup>505</onup>
         <ondown>507</ondown>
         <onright>506</onright>
@@ -168,10 +137,7 @@
         <description>Fullscreen</description>
         <type>button</type>
         <id>507</id>
-        <posX>60</posX>
-        <posY>267</posY>
         <label>595</label>
-        <width>170</width>
         <onup>506</onup>
         <ondown>502</ondown>
         <onright>507</onright>
