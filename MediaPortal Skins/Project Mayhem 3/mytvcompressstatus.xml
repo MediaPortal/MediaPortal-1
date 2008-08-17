@@ -3,17 +3,12 @@
   <id>613</id>
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>no</allowoverlay>
+  <define>#background.image:background3.png</define>
+  <define>#header.image:</define>
   <define>#header.label:126</define>
   <controls>
     <import>common.window.xml</import>
-    <control>
-      <description>BG</description>
-      <type>image</type>
-      <id>1</id>
-      <width>720</width>
-      <height>576</height>
-      <texture>background3.png</texture>
-    </control>
+    <import>common.time.xml</import>
     <control>
       <description>button group</description>
       <type>group</type>
@@ -31,7 +26,6 @@
         <onright>10</onright>
         <onup>17</onup>
         <ondown>3</ondown>
-        <alignY>center</alignY>
       </control>
       <control>
         <type>sortbutton</type>
@@ -41,7 +35,6 @@
         <onright>10</onright>
         <onup>2</onup>
         <ondown>5</ondown>
-        <alignY>center</alignY>
       </control>
       <control>
         <description>Clear button</description>
@@ -52,7 +45,6 @@
         <onright>10</onright>
         <onup>2</onup>
         <ondown>99</ondown>
-        <alignY>center</alignY>
       </control>
     </control>
     <control>
@@ -163,7 +155,6 @@
         <centered>yes</centered>
         <textureFocus>tv_green_border.png</textureFocus>
       </control>
-      <import>common.time.xml</import>
     </control>
   </controls>
 </window>

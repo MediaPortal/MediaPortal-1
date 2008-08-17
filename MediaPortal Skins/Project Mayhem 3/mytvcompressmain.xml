@@ -3,18 +3,12 @@
   <id>609</id>
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>no</allowoverlay>
+  <define>#background.image:background3.png</define>
+  <define>#header.image:</define>
   <define>#header.label:894</define>
   <controls>
     <import>common.window.xml</import>
     <import>common.time.xml</import>
-    <control>
-      <description>BG</description>
-      <type>image</type>
-      <id>1</id>
-      <width>720</width>
-      <height>576</height>
-      <texture>background3.png</texture>
-    </control>
     <control>
       <description>description line#1 Label</description>
       <type>label</type>
@@ -93,7 +87,6 @@
         <onup>17</onup>
         <ondown>3</ondown>
         <hyperlink>611</hyperlink>
-        <alignY>center</alignY>
       </control>
       <control>
         <description>Compress</description>
@@ -105,7 +98,6 @@
         <onup>2</onup>
         <ondown>4</ondown>
         <hyperlink>612</hyperlink>
-        <alignY>center</alignY>
       </control>
       <control>
         <description>Settings button</description>
@@ -117,7 +109,6 @@
         <onright>4</onright>
         <onup>3</onup>
         <ondown>5</ondown>
-        <alignY>center</alignY>
       </control>
       <control>
         <description>Status</description>
@@ -129,7 +120,6 @@
         <onup>4</onup>
         <ondown>99</ondown>
         <hyperlink>613</hyperlink>
-        <alignY>center</alignY>
       </control>
     </control>
   </controls>

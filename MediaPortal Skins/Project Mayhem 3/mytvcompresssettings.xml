@@ -3,18 +3,12 @@
   <id>610</id>
   <defaultcontrol>3</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
+  <define>#background.image:background3.png</define>
+  <define>#header.image:</define>
   <define>#header.label:5</define>
   <controls>
     <import>common.window.xml</import>
     <import>common.time.xml</import>
-    <control>
-      <description>BG</description>
-      <type>image</type>
-      <id>1</id>
-      <width>720</width>
-      <height>576</height>
-      <texture>background3.png</texture>
-    </control>
     <control>
       <description>Type label</description>
       <type>label</type>
