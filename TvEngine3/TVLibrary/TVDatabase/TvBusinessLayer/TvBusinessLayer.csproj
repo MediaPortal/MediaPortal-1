@@ -45,10 +45,6 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DirectShowLib, Version=2.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\DirectShowLib\bin\Release\DirectShowLib.dll</HintPath>
-    </Reference>
     <Reference Include="Gentle.Common, Version=1.2.9.1285, Culture=neutral, PublicKeyToken=80b5de62e27be49b">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\references\Gentle.Common.dll</HintPath>
@@ -77,6 +73,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\DirectShowLib\DirectShowLib.csproj">
+      <Project>{0D1BA455-CE59-4133-8EAA-1A1E82F8AA12}</Project>
+      <Name>DirectShowLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj">
       <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
       <Name>TvLibrary.Interfaces</Name>
