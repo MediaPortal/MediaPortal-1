@@ -855,26 +855,39 @@ namespace TvEngine
 
     string CorrectEpisodeNum(string episodenum)
     {
-      int p = 0;
-      int t = 0;
-      string epnum = episodenum;
+      if(episodenum == "")
+        return episodenum;
 
-      if(epnum == "")
-        return epnum;
-
-      int slashpos = epnum.IndexOf("/", 0);
-      if( slashpos == -1)
+      // Find format of the episode number
+      int slashpos = episodenum.IndexOf("/", 0);
+      if (slashpos == -1)
       {
-        p = Convert.ToInt32(epnum) + 1;
-        epnum = Convert.ToString(p);
-      } 
+        // No slash found => assume it's just a plain number
+        try
+        {
+          int epnum = Convert.ToInt32(episodenum);
+          return Convert.ToString(epnum + 1);
+        }
+        catch (Exception)
+        {
+          Log.WriteFile("XMLTVImport::CorrectEpisodeNum, could not parse '{0}' as plain number", episodenum);
+        }
+      }
       else
       {
-        p = Convert.ToInt32(epnum.Substring(0, slashpos)) + 1;
-        t = Convert.ToInt32(epnum.Substring(slashpos + 1, epnum.Length - (slashpos + 1)));
-        epnum = Convert.ToString(p) + "/" + Convert.ToString(t);
+        try
+        {
+          // Slash found -> assume it's formatted as <episode number>/<episodes>
+          int epnum = Convert.ToInt32(episodenum.Substring(0, slashpos));
+          int epcount = Convert.ToInt32(episodenum.Substring(slashpos + 1));
+          return Convert.ToString(epnum + 1) + "/" + Convert.ToString(epcount);
+        }
+        catch (Exception)
+        {
+          Log.WriteFile("XMLTVImport::CorrectEpisodeNum, could not parse '{0}' as episode/episodes", episodenum);
+        }
       }
-      return epnum;
+      return "";
     }
 
     int GetTimeOffset(string timeZone)
