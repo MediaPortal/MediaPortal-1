@@ -30,6 +30,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
+
 using MediaPortal.Util;
 using MediaPortal.Configuration;
 using MediaPortal.Localisation;
@@ -57,7 +58,7 @@ namespace MediaPortal.GUI.Library
 
     public static void Dispose()
     {
-      if(_stringProvider != null)
+      if (_stringProvider != null)
         _stringProvider.Dispose();
     }
     #endregion
@@ -225,10 +226,10 @@ namespace MediaPortal.GUI.Library
           sortedLanguages.Add(culture.EnglishName, culture.EnglishName);
 
         _languages = new string[sortedLanguages.Count];
-        
+
         for (int i = 0; i < sortedLanguages.Count; i++)
         {
-          _languages[i] = (string) sortedLanguages.GetByIndex(i);
+          _languages[i] = (string)sortedLanguages.GetByIndex(i);
         }
       }
 
