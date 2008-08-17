@@ -56,7 +56,7 @@ namespace MediaPortal.DeployTool
       Type type = Type.GetTypeFromProgID(PROGID_AUTHORIZED_APPLICATION);
       INetFwAuthorizedApplication auth = Activator.CreateInstance(type) as INetFwAuthorizedApplication;
       auth.Name = title;
-      if (!File.Exists(applicationPath)) 
+      if (!File.Exists(applicationPath))
         return false;
       auth.ProcessImageFileName = applicationPath;
       auth.Scope = scope;
@@ -175,8 +175,22 @@ namespace MediaPortal.DeployTool
 
       INetFwMgr fwMgr = GetFirewallManager();
 
-      //If firewall is not enabled, no need to configure it
-      if (fwMgr.LocalPolicy.CurrentProfile.FirewallEnabled == false)
+      bool fwEnable;
+      try
+      {
+        fwEnable = fwMgr.LocalPolicy.CurrentProfile.FirewallEnabled;
+      }
+      catch
+      {
+#if DEBUG
+        MessageBox.Show("Firewall service disabled, exception catched !", "fwMgr.LocalPolicy.CurrentProfile.FirewallEnabled", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+#endif
+        //Exception raised because firewall service is disable
+        fwEnable = false;
+      }
+
+      //If firewall service is stopped/disabled, no need to configure it
+      if (fwEnable == false)
       {
         result.state = CheckState.CONFIGURED;
         return result;
