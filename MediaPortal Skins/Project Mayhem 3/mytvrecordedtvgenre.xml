@@ -6,7 +6,6 @@
   <define>#background.image:background3.png</define>
   <define>#header.image:Back_video.png</define>
   <define>#header.label:652</define>
-  <define>#header.label:</define>
   <controls>
     <import>common.window.xml</import>
     <control>
