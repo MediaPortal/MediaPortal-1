@@ -83,6 +83,17 @@ namespace MediaPortal.GUI.Library
     //      set{_listViewType = value;}
     //  }
 
+    protected void InitControl(GUIControl cntl)
+    {
+      if (cntl != null)
+      {
+        cntl.GetID = GetID;
+        cntl.WindowId = WindowId;
+        cntl.ParentControl = this;
+        if (base.Animations.Count != 0) cntl.Animations.AddRange(base.Animations);
+      }
+    }
+
     /// <summary>
     /// Property to get/set the list control
     /// </summary>
@@ -92,12 +103,7 @@ namespace MediaPortal.GUI.Library
       set
       {
         _viewList = value;
-        if (_viewList != null)
-        {
-          _viewList.GetID = GetID;
-          _viewList.WindowId = WindowId;
-          _viewList.ParentControl = this;
-        }
+        InitControl(_viewList);
       }
     }
 
@@ -110,12 +116,7 @@ namespace MediaPortal.GUI.Library
       set
       {
         _viewPlayList = value;
-        if (_viewPlayList != null)
-        {
-          _viewPlayList.GetID = GetID;
-          _viewPlayList.WindowId = WindowId;
-          _viewPlayList.ParentControl = this;
-        }
+        InitControl(_viewPlayList);
       }
     }
 
@@ -128,12 +129,7 @@ namespace MediaPortal.GUI.Library
       set
       {
         _viewAlbum = value;
-        if (_viewAlbum != null)
-        {
-          _viewAlbum.GetID = GetID;
-          _viewAlbum.WindowId = WindowId;
-          _viewAlbum.ParentControl = this;
-        }
+        InitControl(_viewAlbum);
       }
     }
 
@@ -146,12 +142,7 @@ namespace MediaPortal.GUI.Library
       set
       {
         _viewFilmStrip = value;
-        if (_viewFilmStrip != null)
-        {
-          _viewFilmStrip.GetID = GetID;
-          _viewFilmStrip.WindowId = WindowId;
-          _viewFilmStrip.ParentControl = this;
-        }
+        InitControl(_viewFilmStrip);
       }
     }
 
@@ -164,12 +155,7 @@ namespace MediaPortal.GUI.Library
       set
       {
         _viewThumbnail = value;
-        if (_viewThumbnail != null)
-        {
-          _viewThumbnail.GetID = GetID;
-          _viewThumbnail.WindowId = WindowId;
-          _viewThumbnail.ParentControl = this;
-        }
+        InitControl(_viewThumbnail);
       }
     }
 
@@ -184,13 +170,7 @@ namespace MediaPortal.GUI.Library
         if (_currentViewMode != value)
         {
           _currentViewMode = value;
-          GUIControl ctl = null;
-          if (_currentViewMode == ViewMode.AlbumView) ctl = AlbumListView;
-          else if (_currentViewMode == ViewMode.List) ctl = _viewList;
-          else if (_currentViewMode == ViewMode.Filmstrip) ctl = _viewFilmStrip;
-          else if (_currentViewMode == ViewMode.Playlist) ctl = _viewPlayList;
-          else ctl = _viewThumbnail;
-
+          GUIControl ctl = CurrentView;
           if (ctl != null)
           {
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_REFRESH, 0, 0, ctl.GetID, 0, 0, null);
@@ -204,20 +184,42 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
+    /// Property to get the current view 
+    /// </summary>
+    public GUIControl CurrentView
+    {
+      get
+      {
+        switch(_currentViewMode)
+        {
+          case ViewMode.AlbumView:  return AlbumListView;
+          case ViewMode.List:       return _viewList;
+          case ViewMode.Filmstrip:  return _viewFilmStrip;
+          case ViewMode.Playlist:   return _viewPlayList;
+          case ViewMode.LargeIcons:
+          case ViewMode.SmallIcons: return _viewThumbnail;
+        }
+        return null;
+      }
+    }
+
+
+    /// <summary>
     /// Render. This will render the current selected view 
     /// </summary>
     public override void Render(float timePassed)
     {
-      if (_currentViewMode == ViewMode.AlbumView && AlbumListView != null)
-        AlbumListView.Render(timePassed);
-      else if (_currentViewMode == ViewMode.List && _viewList != null)
-        _viewList.Render(timePassed);
-      else if (_currentViewMode == ViewMode.Filmstrip && _viewFilmStrip != null)
-        _viewFilmStrip.Render(timePassed);
-      else if (_currentViewMode == ViewMode.Playlist && _viewPlayList != null)
-        _viewPlayList.Render(timePassed);
-      else if (_viewThumbnail != null)
-        _viewThumbnail.Render(timePassed);
+      GUIControl cntl = CurrentView;
+      if (cntl != null)
+      {
+        uint currentTime = (uint)(DXUtil.Timer(DirectXTimer.GetAbsoluteTime) * 1000.0);
+        if (GUIGraphicsContext.Animations)
+        {
+          cntl.UpdateVisibility();
+          cntl.DoRender(timePassed, currentTime);
+        }
+        else cntl.Render(timePassed);
+      }
       base.Render(timePassed);
     }
 
@@ -324,31 +326,15 @@ namespace MediaPortal.GUI.Library
     {
       controlID = -1;
       focused = false;
-      if (_currentViewMode == ViewMode.Filmstrip && _viewFilmStrip != null)
-        return _viewFilmStrip.HitTest(x, y, out controlID, out focused);
-      else if (_currentViewMode == ViewMode.List && _viewList != null)
-        return _viewList.HitTest(x, y, out controlID, out focused);
-      else if ((_currentViewMode == ViewMode.SmallIcons || _currentViewMode == ViewMode.LargeIcons) && _viewThumbnail != null)
-        return _viewThumbnail.HitTest(x, y, out controlID, out focused);
-      else if (_currentViewMode == ViewMode.AlbumView && _viewAlbum != null)
-        return _viewAlbum.HitTest(x, y, out controlID, out focused);
-      else if (_currentViewMode == ViewMode.Playlist && _viewPlayList != null)
-        return _viewPlayList.HitTest(x, y, out controlID, out focused);
+      GUIControl cntl = CurrentView;
+      if (cntl != null) return cntl.HitTest(x, y, out controlID, out focused);
       return false;
     }
 
     public override void OnAction(Action action)
     {
-      if (_currentViewMode == ViewMode.Filmstrip && _viewFilmStrip != null)
-        _viewFilmStrip.OnAction(action);
-      else if (_currentViewMode == ViewMode.List && _viewList != null)
-        _viewList.OnAction(action);
-      else if ((_currentViewMode == ViewMode.SmallIcons || _currentViewMode == ViewMode.LargeIcons) && _viewThumbnail != null)
-        _viewThumbnail.OnAction(action);
-      else if (_currentViewMode == ViewMode.AlbumView && _viewAlbum != null)
-        _viewAlbum.OnAction(action);
-      else if (_currentViewMode == ViewMode.Playlist && _viewPlayList != null)
-        _viewPlayList.OnAction(action);
+      GUIControl cntl = CurrentView;
+      if (cntl != null) cntl.OnAction(action);
     }
 
     public override bool OnMessage(GUIMessage message)
@@ -384,16 +370,10 @@ namespace MediaPortal.GUI.Library
         RouteMessage(message);
         return true;
       }
-      if (_currentViewMode == ViewMode.Filmstrip && _viewFilmStrip != null)
-        return _viewFilmStrip.OnMessage(message);
-      if (_currentViewMode == ViewMode.List && _viewList != null)
-        return _viewList.OnMessage(message);
-      else if ((_currentViewMode == ViewMode.SmallIcons || _currentViewMode == ViewMode.LargeIcons) && _viewThumbnail != null)
-        return _viewThumbnail.OnMessage(message);
-      else if (_currentViewMode == ViewMode.AlbumView && _viewAlbum != null)
-        return _viewAlbum.OnMessage(message);
-      else if (_currentViewMode == ViewMode.Playlist && _viewPlayList != null)
-        return _viewPlayList.OnMessage(message);
+      
+      GUIControl cntl = CurrentView;
+      if (cntl != null) return cntl.OnMessage(message);
+      
       return false;
     }
 
@@ -413,16 +393,9 @@ namespace MediaPortal.GUI.Library
 
     public override bool CanFocus()
     {
-      if (_currentViewMode == ViewMode.Filmstrip && _viewFilmStrip != null)
-        return _viewFilmStrip.CanFocus();
-      if (_currentViewMode == ViewMode.List && _viewList != null)
-        return _viewList.CanFocus();
-      else if ((_currentViewMode == ViewMode.SmallIcons || _currentViewMode == ViewMode.LargeIcons) && _viewThumbnail != null)
-        _viewThumbnail.CanFocus();
-      else if (_currentViewMode == ViewMode.AlbumView && _viewAlbum != null)
-        _viewAlbum.CanFocus();
-      else if (_currentViewMode == ViewMode.Playlist && _viewPlayList != null)
-        _viewPlayList.CanFocus();
+      GUIControl cntl = CurrentView;
+      if (cntl != null) return cntl.CanFocus();
+      
       return true;
     }
 
@@ -430,46 +403,22 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        if (_currentViewMode == ViewMode.Filmstrip && _viewFilmStrip != null)
-          return _viewFilmStrip.Focus;
-        else if (_currentViewMode == ViewMode.List && _viewList != null)
-          return _viewList.Focus;
-        else if ((_currentViewMode == ViewMode.SmallIcons || _currentViewMode == ViewMode.LargeIcons) && _viewThumbnail != null)
-          return _viewThumbnail.Focus;
-        else if (_currentViewMode == ViewMode.AlbumView && _viewAlbum != null)
-          return _viewAlbum.Focus;
-        else if (_currentViewMode == ViewMode.Playlist && _viewPlayList != null)
-          return _viewPlayList.Focus;
+        GUIControl cntl = CurrentView;
+        if (cntl != null) return cntl.Focus;
         return false;
       }
       set
       {
-        if (_currentViewMode == ViewMode.Filmstrip && _viewFilmStrip != null)
-          _viewFilmStrip.Focus = value;
-        else if (_currentViewMode == ViewMode.List && _viewList != null)
-          _viewList.Focus = value;
-        else if ((_currentViewMode == ViewMode.SmallIcons || _currentViewMode == ViewMode.LargeIcons) && _viewThumbnail != null)
-          _viewThumbnail.Focus = value;
-        else if (_currentViewMode == ViewMode.AlbumView && _viewAlbum != null)
-          _viewAlbum.Focus = value;
-        else if (_currentViewMode == ViewMode.Playlist && _viewPlayList != null)
-          _viewPlayList.Focus = value;
+        GUIControl cntl = CurrentView;
+        if (cntl != null) cntl.Focus = value;
       }
     }
 
     public override bool InControl(int x, int y, out int controlID)
     {
       controlID = -1;
-      if (_currentViewMode == ViewMode.Filmstrip && _viewFilmStrip != null)
-        return _viewFilmStrip.InControl(x, y, out controlID);
-      else if (_currentViewMode == ViewMode.List && _viewList != null)
-        return _viewList.InControl(x, y, out controlID);
-      else if ((_currentViewMode == ViewMode.SmallIcons || _currentViewMode == ViewMode.LargeIcons) && _viewThumbnail != null)
-        return _viewThumbnail.InControl(x, y, out controlID);
-      else if (_currentViewMode == ViewMode.AlbumView && _viewAlbum != null)
-        return _viewAlbum.InControl(x, y, out controlID);
-      else if (_currentViewMode == ViewMode.Playlist && _viewPlayList != null)
-        return _viewPlayList.InControl(x, y, out controlID);
+      GUIControl cntl = CurrentView;
+      if (cntl != null) return cntl.InControl(x, y, out controlID);
       return false;
     }
 
@@ -707,50 +656,14 @@ namespace MediaPortal.GUI.Library
 
     public override void DoUpdate()
     {
-      if (_currentViewMode == ViewMode.List && _viewList != null)
+      GUIControl cntl = CurrentView;
+      if (cntl != null)
       {
-        _viewList.XPosition = XPosition;
-        _viewList.YPosition = YPosition;
-        _viewList.Width = Width;
-        _viewList.Height = Height;
-        _viewList.DoUpdate();
-      }
-      if (_currentViewMode == ViewMode.AlbumView && _viewAlbum != null)
-      {
-        _viewAlbum.XPosition = XPosition;
-        _viewAlbum.YPosition = YPosition;
-        _viewAlbum.Width = Width;
-        _viewAlbum.Height = Height;
-        _viewAlbum.DoUpdate();
-      }
-
-
-      if ((_currentViewMode == ViewMode.LargeIcons || _currentViewMode == ViewMode.SmallIcons) && _viewThumbnail != null)
-      {
-        _viewThumbnail.XPosition = XPosition;
-        _viewThumbnail.YPosition = YPosition;
-        _viewThumbnail.Width = Width;
-        _viewThumbnail.Height = Height;
-        _viewThumbnail.DoUpdate();
-      }
-
-
-      if (_currentViewMode == ViewMode.Filmstrip && _viewFilmStrip != null)
-      {
-        _viewFilmStrip.XPosition = XPosition;
-        _viewFilmStrip.YPosition = YPosition;
-        _viewFilmStrip.Width = Width;
-        _viewFilmStrip.Height = Height;
-        _viewFilmStrip.DoUpdate();
-      }
-
-      if (_currentViewMode == ViewMode.Playlist && _viewPlayList != null)
-      {
-        _viewPlayList.XPosition = XPosition;
-        _viewPlayList.YPosition = YPosition;
-        _viewPlayList.Width = Width;
-        _viewPlayList.Height = Height;
-        _viewPlayList.DoUpdate();
+        cntl.XPosition = XPosition;
+        cntl.YPosition = YPosition;
+        cntl.Width = Width;
+        cntl.Height = Height;
+        cntl.DoUpdate();
       }
     }
 
