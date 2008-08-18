@@ -67,17 +67,15 @@ namespace SetupTv.Sections
       List<String> codes = languages.GetLanguageCodes();
       List<String> list = languages.GetLanguages();
 
-
-      int index = 0;
       TvBusinessLayer layer = new TvBusinessLayer();
       Setting setting = layer.GetSetting("radioLanguages");
 
       string values = "";
-      foreach (string lang in list)
+      for (int j = 0; j < list.Count; j++)
       {
-        ListViewItem item = mpListView2.Items.Add(lang);
-        item.Tag = codes[index];
-        index++;
+        ListViewItem item = new ListViewItem(new string[] { list[j], codes[j] });
+        mpListView2.Items.Add(item);
+        item.Tag = codes[j];
         if (setting.Value == "")
         {
           values += item.Tag;

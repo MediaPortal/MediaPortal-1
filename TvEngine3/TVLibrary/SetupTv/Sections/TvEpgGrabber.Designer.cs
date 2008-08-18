@@ -42,6 +42,7 @@ namespace SetupTv.Sections
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpListView2 = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpListView1 = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
@@ -177,10 +178,11 @@ namespace SetupTv.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.mpListView2.CheckBoxes = true;
       this.mpListView2.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader2});
+            this.columnHeader2,
+            this.columnHeader4});
       this.mpListView2.Location = new System.Drawing.Point(254, 51);
       this.mpListView2.Name = "mpListView2";
-      this.mpListView2.Size = new System.Drawing.Size(217, 317);
+      this.mpListView2.Size = new System.Drawing.Size(217, 312);
       this.mpListView2.TabIndex = 11;
       this.mpListView2.UseCompatibleStateImageBehavior = false;
       this.mpListView2.View = System.Windows.Forms.View.Details;
@@ -188,7 +190,12 @@ namespace SetupTv.Sections
       // columnHeader2
       // 
       this.columnHeader2.Text = "Language";
-      this.columnHeader2.Width = 180;
+      this.columnHeader2.Width = 152;
+      // 
+      // columnHeader4
+      // 
+      this.columnHeader4.Text = "ID";
+      this.columnHeader4.Width = 36;
       // 
       // mpLabel1
       // 
@@ -213,7 +220,7 @@ namespace SetupTv.Sections
       this.mpListView1.LargeImageList = this.imageList1;
       this.mpListView1.Location = new System.Drawing.Point(10, 51);
       this.mpListView1.Name = "mpListView1";
-      this.mpListView1.Size = new System.Drawing.Size(208, 317);
+      this.mpListView1.Size = new System.Drawing.Size(208, 312);
       this.mpListView1.SmallImageList = this.imageList1;
       this.mpListView1.TabIndex = 9;
       this.mpListView1.UseCompatibleStateImageBehavior = false;
@@ -224,12 +231,12 @@ namespace SetupTv.Sections
       // columnHeader1
       // 
       this.columnHeader1.Text = "Name";
-      this.columnHeader1.Width = 100;
+      this.columnHeader1.Width = 125;
       // 
       // columnHeader3
       // 
       this.columnHeader3.Text = "Types";
-      this.columnHeader3.Width = 90;
+      this.columnHeader3.Width = 61;
       // 
       // mpLabelChannelCount
       // 
@@ -272,6 +279,7 @@ namespace SetupTv.Sections
 		private System.Windows.Forms.ColumnHeader columnHeader1;
 		private System.Windows.Forms.ColumnHeader columnHeader3;
 		private MediaPortal.UserInterface.Controls.MPLabel mpLabelChannelCount;
+    private System.Windows.Forms.ColumnHeader columnHeader4;
 
   }
 }

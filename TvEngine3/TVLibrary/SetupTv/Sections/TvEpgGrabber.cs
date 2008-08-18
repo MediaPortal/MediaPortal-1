@@ -40,12 +40,12 @@ using MediaPortal.UserInterface.Controls;
 namespace SetupTv.Sections
 {
 
-  
+
   public partial class TvEpgGrabber : SectionSettings
   {
 
     bool _loaded = false;
-    
+
     private MPListViewStringColumnSorter lvwColumnSorter;
     public TvEpgGrabber()
       : this("TV Epg grabber")
@@ -70,17 +70,15 @@ namespace SetupTv.Sections
       List<String> codes = languages.GetLanguageCodes();
       List<String> list = languages.GetLanguages();
 
-      
-      int index = 0;
       TvBusinessLayer layer = new TvBusinessLayer();
       Setting setting = layer.GetSetting("epgLanguages");
 
       string values = "";
-      foreach (string lang in list)
+      for (int j = 0; j < list.Count; j++)
       {
-        ListViewItem item = mpListView2.Items.Add(lang);
-        item.Tag = codes[index];
-        index++;
+        ListViewItem item = new ListViewItem(new string[] { list[j], codes[j] });
+        mpListView2.Items.Add(item);
+        item.Tag = codes[j];
         if (setting.Value == "")
         {
           values += item.Tag;
@@ -103,7 +101,7 @@ namespace SetupTv.Sections
         setting.Persist();
         //DatabaseManager.Instance.SaveChanges();
       }
-      
+
     }
     public override void OnSectionDeActivated()
     {
@@ -221,7 +219,7 @@ namespace SetupTv.Sections
       List<String> codes = languages.GetLanguageCodes();
       TvBusinessLayer layer = new TvBusinessLayer();
       Setting setting = layer.GetSetting("epgLanguages");
-      setting.Value="";
+      setting.Value = "";
       foreach (string code in codes)
       {
         setting.Value += code;
@@ -249,7 +247,7 @@ namespace SetupTv.Sections
 
     public override void SaveSettings()
     {
-      if (false==_loaded) return;
+      if (false == _loaded) return;
       TvBusinessLayer layer = new TvBusinessLayer();
       Setting setting = layer.GetSetting("epgLanguages");
       setting.Value = ",";
