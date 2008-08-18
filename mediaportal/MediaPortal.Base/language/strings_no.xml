@@ -1655,6 +1655,7 @@
     <String id="100762" prefix="Min ">Radio guide</String>
     <String id="100770" prefix="Min ">Utforsker</String>
     <String id="101000">tastatur</String>
+    <String id="101002">Virituelt tastatur</String>
     <String id="102000">Velg dialog</String>
     <String id="102001" prefix="Min ">Musikk/info</String>
     <String id="102002">Dialog OK</String>
