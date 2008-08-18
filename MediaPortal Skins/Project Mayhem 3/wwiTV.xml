@@ -3,30 +3,19 @@
   <id>6900</id>
   <defaultcontrol>6</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
+  <define>#background.image:background3.png</define>
+  <define>#header.image:Back_wwitv.png</define>
+  <define>#header.label:#Header</define>
   <controls>
+    <import>common.window.xml</import>
     <control>
-      <description>BackGround</description>
-      <type>image</type>
-      <id>1</id>
-      <width>720</width>
-      <height>576</height>
-      <texture>background3.png</texture>
-    </control>
-    <control>
-      <description>BG</description>
-      <type>image</type>
-      <id>1</id>
-      <width>720</width>
-      <height>107</height>
-      <texture>Back_wwitv.png</texture>
-    </control>
-    <control>
+      <description>button group</description>
       <type>group</type>
-      <description>group element</description>
-      <animation>FlyInFromLeft</animation>
       <posX>5</posX>
       <posY>125</posY>
       <layout>StackLayout</layout>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
       <control>
         <description>Select favorites</description>
         <type>button</type>
@@ -92,17 +81,6 @@
         <ondown>99</ondown>
         <align>left</align>
       </control>
-    </control>
-    <control>
-      <description>Current category</description>
-      <type>label</type>
-      <id>5</id>
-      <posX>280</posX>
-      <posY>120</posY>
-      <label>#Header</label>
-      <font>font16</font>
-      <align>left</align>
-      <textcolor>ffffffff</textcolor>
     </control>
     <control>
       <description>Channels</description>

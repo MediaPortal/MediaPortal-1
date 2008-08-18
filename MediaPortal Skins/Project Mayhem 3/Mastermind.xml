@@ -8,6 +8,7 @@
   <define>#header.image:</define>
   <define>#header.label:Mastermind</define>
   <controls>
+    <import>common.window.xml</import>
     <control>
       <description>button group</description>
       <type>group</type>

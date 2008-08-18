@@ -3,41 +3,11 @@
   <id>757</id>
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
+  <define>#background.image:background3.png</define>
+  <define>#header.image:Back_status.png</define>
+  <define>#header.label:1962</define>
   <controls>
-    <control>
-      <description>background image</description>
-      <type>image</type>
-      <id>1</id>
-      <width>720</width>
-      <height>576</height>
-      <texture>background3.png</texture>
-    </control>
-    <control>
-      <description>BG</description>
-      <type>image</type>
-      <id>1</id>
-      <width>720</width>
-      <height>107</height>
-      <texture>Back_status.png</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>1</id>
-      <posX>60</posX>
-      <posY>20</posY>
-      <texture>status_logo.png</texture>
-    </control>
-    <control>
-      <description>mystatus text label</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>240</posX>
-      <posY>70</posY>
-      <label>1962</label>
-      <font>font16</font>
-      <align>right</align>
-      <textcolor>ffffffff</textcolor>
-    </control>
+    <import>common.window.xml</import>
     <control>
       <description>Interval</description>
       <type>label</type>
@@ -76,12 +46,7 @@
       <posY>157</posY>
       <height>32</height>
       <width>190</width>
-      <textXOff>10</textXOff>
       <label>1971</label>
-      <AltTextureFocus>togglebutton-off-focus.png</AltTextureFocus>
-      <AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
-      <textureFocus>togglebutton-on-focus.png</textureFocus>
-      <textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
       <onright>2</onright>
       <onleft>2</onleft>
       <onup>4</onup>

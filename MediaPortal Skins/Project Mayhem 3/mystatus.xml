@@ -2,43 +2,12 @@
 <window>
   <id>755</id>
   <defaultcontrol>2</defaultcontrol>
-  <define>#header.hover:hover_my status.png</define>
   <allowoverlay>yes</allowoverlay>
+  <define>#background.image:background3.png</define>
+  <define>#header.image:Back_status.png</define>
+  <define>#header.label:1950</define>
   <controls>
-    <control>
-      <description>BG</description>
-      <type>image</type>
-      <id>1</id>
-      <width>720</width>
-      <height>576</height>
-      <texture>background3.png</texture>
-    </control>
-    <control>
-      <description>BG</description>
-      <type>image</type>
-      <id>1</id>
-      <width>720</width>
-      <height>107</height>
-      <texture>Back_status.png</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>1</id>
-      <posX>60</posX>
-      <posY>20</posY>
-      <texture>status_logo.png</texture>
-    </control>
-    <control>
-      <description>My status text label</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>250</posX>
-      <posY>70</posY>
-      <label>1950</label>
-      <font>font16</font>
-      <align>right</align>
-      <textcolor>ffffffff</textcolor>
-    </control>
+    <import>common.window.xml</import>
     <control>
       <description>Status Detail Panel</description>
       <type>textbox</type>

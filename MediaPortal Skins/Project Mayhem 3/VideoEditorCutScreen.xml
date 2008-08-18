@@ -3,34 +3,11 @@
   <id>170602</id>
   <defaultcontrol>100</defaultcontrol>
   <allowoverlay>no</allowoverlay>
+  <define>#background.image:background3.png</define>
+  <define>#header.image:Back_videoeditor.png</define>
+  <define>#header.label:2095</define>
   <controls>
-    <control>
-      <description>BG</description>
-      <type>image</type>
-      <id>1</id>
-      <width>720</width>
-      <height>576</height>
-      <texture>background3.png</texture>
-    </control>
-    <control>
-      <description>BG</description>
-      <type>image</type>
-      <id>1</id>
-      <width>720</width>
-      <height>107</height>
-      <texture>Back_videoeditor.png</texture>
-    </control>
-    <control>
-      <type>button</type>
-      <description>cut</description>
-      <id>24</id>
-      <posX>5</posX>
-      <posY>107</posY>
-      <onup>25</onup>
-      <ondown>25</ondown>
-      <onright>100</onright>
-      <label>2095</label>
-    </control>
+    <import>common.window.xml</import>
     <control>
       <type>button</type>
       <id>25</id>

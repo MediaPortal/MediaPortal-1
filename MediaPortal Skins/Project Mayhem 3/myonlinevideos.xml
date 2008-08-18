@@ -3,18 +3,13 @@
   <id>4755</id>
   <defaultcontrol>50</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
+  <define>#background.image:background3.png</define>
+  <define>#header.image:</define>
   <define>#header.label:MyOnlineVideos</define>
   <controls>
-    <control>
-      <type>image</type>
-      <description>BackGround</description>
-      <id>1</id>
-      <width>720</width>
-      <height>576</height>
-      <texture>background3.png</texture>
-    </control>
-    <import>common.facade.xml</import>
     <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <import>common.facade.xml</import>
     <control>
       <description>button group</description>
       <type>group</type>

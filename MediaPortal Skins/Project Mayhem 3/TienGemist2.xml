@@ -2,29 +2,11 @@
   <id>6801</id>
   <defaultcontrol>10</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
+  <define>#background.image:background3.png</define>
+  <define>#header.image:Back_itv.png</define>
   <define>#header.label:Programma</define>
   <controls>
     <import>common.window.xml</import>
-    <control>
-      <description>BG</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>0</posX>
-      <posY>0</posY>
-      <width>720</width>
-      <height>576</height>
-      <texture>background3.png</texture>
-    </control>
-    <control>
-      <description>BG</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>0</posX>
-      <posY>0</posY>
-      <width>720</width>
-      <height>107</height>
-      <texture>Back_itv.png</texture>
-    </control>
     <control>
       <type>group</type>
       <description>group element</description>

@@ -3,127 +3,81 @@
   <id>9562</id>
   <defaultcontrol>10</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
+  <define>#background.image:background3.png</define>
+  <define>#header.image:</define>
+  <define>#header.label:X10 Home Automation</define>
   <controls>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
     <control>
-      <description>BG</description>
-      <type>image</type>
-      <id>1</id>
-      <width>720</width>
-      <height>576</height>
-    </control>
-    <control>
-      <type>image</type>
-      <id>3</id>
-      <posX>60</posX>
-      <posY>20</posY>
-      <texture>x10_logo.png</texture>
-    </control>
-    <control>
-      <description>X10 Plugin</description>
-      <type>label</type>
-      <id>0</id>
-      <posX>150</posX>
-      <posY>70</posY>
-      <label>X10 Home Automation</label>
-      <font>font16</font>
-      <align>left</align>
-      <textcolor>ffffffff</textcolor>
-    </control>
-    <control>
-      <description>location select</description>
-      <type>selectbutton</type>
-      <id>2</id>
-      <posY>97</posY>
-      <label>Select location</label>
-      <onup>2</onup>
-      <ondown>10</ondown>
-    </control>
-    <control>
-      <description>On Button</description>
-      <type>button</type>
-      <id>10</id>
-      <posX>60</posX>
-      <posY>131</posY>
-      <label>On</label>
-      <onleft>50</onleft>
-      <onright>50</onright>
-      <onup>2</onup>
-      <ondown>11</ondown>
-    </control>
-    <control>
-      <description>Off Button</description>
-      <type>button</type>
-      <id>11</id>
-      <posX>60</posX>
-      <posY>165</posY>
-      <label>Off</label>
-      <onleft>50</onleft>
-      <onright>50</onright>
-      <onup>10</onup>
-      <ondown>12</ondown>
-    </control>
-    <control>
-      <description>Bright Button</description>
-      <type>button</type>
-      <id>12</id>
-      <posX>60</posX>
-      <posY>199</posY>
-      <label>Bright</label>
-      <onleft>50</onleft>
-      <onright>50</onright>
-      <onup>11</onup>
-      <ondown>13</ondown>
-    </control>
-    <control>
-      <description>Dim Button</description>
-      <type>button</type>
-      <id>13</id>
-      <posX>60</posX>
-      <posY>233</posY>
-      <label>Dim</label>
-      <onleft>50</onleft>
-      <onright>50</onright>
-      <onup>12</onup>
-      <ondown>15</ondown>
-    </control>
-    <control>
-      <description>This room On</description>
-      <type>button</type>
-      <id>15</id>
-      <posX>60</posX>
-      <posY>267</posY>
-      <label>This location On</label>
-      <onleft>50</onleft>
-      <onright>50</onright>
-      <onup>13</onup>
-      <ondown>16</ondown>
-    </control>
-    <control>
-      <description>This room Off</description>
-      <type>button</type>
-      <id>16</id>
-      <posX>60</posX>
-      <posY>301</posY>
-      <label>This location Off</label>
-      <onleft>50</onleft>
-      <onright>50</onright>
-      <onup>15</onup>
-      <ondown>20</ondown>
-    </control>
-    <control>
-      <description>This room Dim</description>
-      <type>button</type>
-      <id>17</id>
-      <posX>60</posX>
-      <posY>335</posY>
-      <label>This location -50%</label>
-      <onleft>50</onleft>
-      <onright>50</onright>
-      <onup>16</onup>
-      <ondown>2</ondown>
-    </control>
-    <!--
-    <control>
+      <description>button group</description>
+      <type>group</type>
+      <posX>5</posX>
+      <posY>125</posY>
+      <layout>StackLayout</layout>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <control>
+        <description>location select</description>
+        <type>selectbutton</type>
+        <id>2</id>
+        <posY>97</posY>
+        <label>Select location</label>
+        <onup>2</onup>
+        <ondown>10</ondown>
+      </control>
+      <control>
+        <description>On Button</description>
+        <type>button</type>
+        <id>10</id>
+        <label>On</label>
+        <onright>50</onright>
+      </control>
+      <control>
+        <description>Off Button</description>
+        <type>button</type>
+        <id>11</id>
+        <label>Off</label>
+        <onright>50</onright>
+      </control>
+      <control>
+        <description>Bright Button</description>
+        <type>button</type>
+        <id>12</id>
+        <label>Bright</label>
+        <onright>50</onright>
+      </control>
+      <control>
+        <description>Dim Button</description>
+        <type>button</type>
+        <id>13</id>
+        <label>Dim</label>
+        <onright>50</onright>
+      </control>
+      <control>
+        <description>This room On</description>
+        <type>button</type>
+        <id>15</id>
+        <label>This location On</label>
+        <onright>50</onright>
+      </control>
+      <control>
+        <description>This room Off</description>
+        <type>button</type>
+        <id>16</id>
+        <label>This location Off</label>
+        <onright>50</onright>
+      </control>
+      <control>
+        <description>This room Dim</description>
+        <type>button</type>
+        <id>17</id>
+        <label>This location -50%</label>
+        <onright>50</onright>
+        <ondown>2</ondown>
+      </control>
+      <!--
+      <control>
         <description>All On Button</description>
         <type>button</type>
         <id>20</id>
@@ -134,8 +88,8 @@
         <onright>50</onright>
         <onup>16</onup>
         <ondown>21</ondown>
-    </control>
-    <control>
+      </control>
+      <control>
         <description>All Off Button</description>
         <type>button</type>
         <id>21</id>
@@ -146,8 +100,8 @@
         <onright>50</onright>
         <onup>20</onup>
         <ondown>22</ondown>
-    </control>
-    <control>
+      </control>
+      <control>
         <description>All units Off Button</description>
         <type>button</type>
         <id>22</id>
@@ -158,8 +112,9 @@
         <onright>50</onright>
         <onup>21</onup>
         <ondown>2</ondown>
+      </control>
+      -->
     </control>
-    -->
     <control>
       <type>group</type>
       <description>main appliance group</description>

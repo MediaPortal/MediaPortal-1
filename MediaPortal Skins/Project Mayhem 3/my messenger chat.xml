@@ -3,23 +3,11 @@
   <id>33</id>
   <defaultcontrol>51</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
+  <define>#background.image:background3.png</define>
+  <define>#header.image:Back_messenger.png</define>
+  <define>#header.label:</define>
   <controls>
-    <control>
-      <description>BG</description>
-      <type>image</type>
-      <id>1</id>
-      <width>720</width>
-      <height>576</height>
-      <texture>background3.png</texture>
-    </control>
-    <control>
-      <description>BG</description>
-      <type>image</type>
-      <id>1</id>
-      <width>720</width>
-      <height>107</height>
-      <texture>Back_messenger.png</texture>
-    </control>
+    <import>common.window.xml</import>
     <control>
       <description>BG</description>
       <type>image</type>

@@ -3,26 +3,11 @@
   <id>32</id>
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
+  <define>#background.image:background3.png</define>
+  <define>#header.image:Back_messenger.png</define>
   <define>#header.label:902</define>
-  <define>#header.hover:hover_msn messenger.png</define>
   <controls>
     <import>common.window.xml</import>
-    <control>
-      <description>BG</description>
-      <type>image</type>
-      <id>1</id>
-      <width>720</width>
-      <height>576</height>
-      <texture>background3.png</texture>
-    </control>
-    <control>
-      <description>BG</description>
-      <type>image</type>
-      <id>1</id>
-      <width>720</width>
-      <height>107</height>
-      <texture>Back_messenger.png</texture>
-    </control>
     <control>
       <description>Selected item Label</description>
       <type>fadelabel</type>
