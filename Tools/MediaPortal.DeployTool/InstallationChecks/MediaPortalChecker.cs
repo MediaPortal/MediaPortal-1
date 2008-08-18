@@ -64,27 +64,15 @@ namespace MediaPortal.DeployTool
 
     public bool UnInstall()
     {
-      RegistryKey key;
-      string RegistryFullPathName;
-
       string[] UninstKeys = {"MediaPortal",             // 1.x
                              "MediaPortal 0.2.3.0"};    // 0.2.3.0
 
       foreach (string UnistKey in UninstKeys)
       {
-        key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + UnistKey);
-        if (key != null)
+        string keyUninstall = Utils.CheckUninstallString(UnistKey, true);
+        if (keyUninstall != null && File.Exists(keyUninstall))
         {
-          RegistryFullPathName = key.GetValue("UninstallString").ToString();
-          if (File.Exists(RegistryFullPathName))
-          {
-            key.Close();
-            Utils.UninstallNSIS(RegistryFullPathName);
-          }
-          else
-          {
-            key.DeleteSubKeyTree("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + UnistKey);
-          }
+          Utils.UninstallNSIS(keyUninstall);
         }
       }
       return true;
@@ -105,37 +93,30 @@ namespace MediaPortal.DeployTool
 
       result.state = CheckState.NOT_INSTALLED;
 
-      RegistryKey keyold = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal 0.2.3.0");
-      RegistryKey keynew = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal");
-      if (keyold != null)
+      string[] UninstKeys = {"MediaPortal",             // 1.x
+                             "MediaPortal 0.2.3.0"};    // 0.2.3.0
+
+      foreach (string UnistKey in UninstKeys)
       {
-        string MpPath = (string)keyold.GetValue("UninstallString");
-        string version = (string)keyold.GetValue("DisplayVersion");
+        RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + UnistKey);
 
-#if DEBUG
-        MessageBox.Show("Verifying MP v0.2.3.0 (MpPath=" + MpPath + ",version=" + version + ")", "Debug information", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-#endif
-
-        keyold.Close();
-        if (MpPath != null && File.Exists(MpPath))
-          result.state = CheckState.VERSION_MISMATCH;
-      }
-      else if (keynew != null)
-      {
-        string MpPath = (string)keynew.GetValue("UninstallString");
-        string version = (string)keynew.GetValue("DisplayVersion");
-
-#if DEBUG
-        MessageBox.Show("Verifying MP v1.0 (MpPath=" + MpPath + ",version=" + version + ")", "Debug information", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-#endif
-
-        keynew.Close();
-        if (MpPath != null && File.Exists(MpPath))
+        if (key != null)
         {
-          if (version == Utils.GetPackageVersion())
-            result.state = CheckState.INSTALLED;
-          else
-            result.state = CheckState.VERSION_MISMATCH;
+          string MpPath = (string)key.GetValue("UninstallString");
+          string MpVer = (string)key.GetValue("DisplayVersion");
+          key.Close();
+
+#if DEBUG
+          MessageBox.Show("Verifying tree " + UnistKey + " (MpPath=" + MpPath + ",version=" + MpVer + ")", "Debug information", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+#endif
+
+          if (MpPath != null && File.Exists(MpPath))
+          {
+            if (MpVer == Utils.GetPackageVersion())
+              result.state = CheckState.INSTALLED;
+            else
+              result.state = CheckState.VERSION_MISMATCH;
+          }
         }
       }
       return result;

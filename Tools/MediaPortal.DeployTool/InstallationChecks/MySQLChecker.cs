@@ -114,26 +114,38 @@ namespace MediaPortal.DeployTool
       }
       sr.Close();
       if (!installOk)
+      {
         return false;
+      }
       string inifile = InstallationProperties.Instance["DBMSDir"] + "\\my.ini";
       PrepareMyIni(inifile);
-      Process svcInstaller = Process.Start(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysqld-nt.exe", "--install mysqld --defaults-file=\"" + inifile + "\"");
+      string ServiceName = "MySQL";
+      string cmdExe = Environment.SystemDirectory + "\\sc.exe";
+      string cmdParam = "create " + ServiceName + " start= auto DisplayName= " + ServiceName + " binPath= \"" + InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysqld-nt.exe --defaults-file=\\\"" + inifile + "\\\" " + ServiceName + "\"";
+#if DEBUG
+      string ff = "c:\\mysql-srv.bat";
+      StreamWriter a = new StreamWriter(ff);
+      a.WriteLine("@echo off");
+      a.WriteLine(cmdExe + " " + cmdParam);
+      a.Close();
+      Process svcInstaller = Process.Start(ff);
+#else
+      Process svcInstaller = Process.Start(cmdExe, cmdParam);
+#endif
       svcInstaller.WaitForExit();
-      ServiceController ctrl = new ServiceController("mysql");
+      ServiceController ctrl = new ServiceController(ServiceName);
       try
       {
         ctrl.Start();
       }
       catch (Exception)
       {
+        MessageBox.Show("MySQL - start service exception");
         return false;
       }
-      for (int i = 1; i < 5; i++)
-      {
-        if (ctrl.Status == ServiceControllerStatus.Running) break;
-        System.Threading.Thread.Sleep(1000 * i);
-      }
-      // Service is running, but still take some time to answer network queries
+
+      ctrl.WaitForStatus(ServiceControllerStatus.Running);
+      // Service is running, but on slow machines still take some time to answer network queries
       System.Threading.Thread.Sleep(5000);
       //
       // mysqladmin.exe is used to set MySQL password
@@ -143,10 +155,15 @@ namespace MediaPortal.DeployTool
       try
       {
         mysqladmin.WaitForExit();
-        if (mysqladmin.ExitCode != 0) return false;
+        if (mysqladmin.ExitCode != 0)
+        {
+          MessageBox.Show("MySQL - set password error: " + mysqladmin.ExitCode);
+          return false;
+        }
       }
-      catch
+      catch (Exception)
       {
+        MessageBox.Show("MySQL - set password exception");
         return false;
       }
       System.Threading.Thread.Sleep(2000);
@@ -158,21 +175,23 @@ namespace MediaPortal.DeployTool
       try
       {
         mysql.WaitForExit();
-        if (mysql.ExitCode == 0)
-          return true;
-        else
+        if (mysql.ExitCode != 0)
+        {
+          MessageBox.Show("MySQL - set privileges error: " + mysql.ExitCode);
           return false;
+        }
       }
-      catch
+      catch (Exception)
       {
+        MessageBox.Show("MySQL - set privileges exception");
         return false;
       }
+      return true;
     }
 
     public bool UnInstall()
     {
-      Process mysql = Process.Start("msiexec", "/X {2FEB25F8-C3CB-49A2-AE79-DE17FFAFB5D9}");
-      mysql.WaitForExit();
+      Utils.UninstallMSI("{2FEB25F8-C3CB-49A2-AE79-DE17FFAFB5D9}");
       return true;
     }
 

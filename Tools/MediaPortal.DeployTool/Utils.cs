@@ -31,6 +31,7 @@ using System.Globalization;
 using System.Xml;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using Microsoft.Win32;
 
 namespace MediaPortal.DeployTool
 {
@@ -230,6 +231,35 @@ namespace MediaPortal.DeployTool
       File.Delete(TempFullPathName);
     }
 
+    public static void UninstallMSI(string clsid)
+    {
+      Process setup = Process.Start("msiexec.exe", "/x " + clsid + " /qn");
+      setup.WaitForExit();
+      CheckUninstallString(clsid, true);
+    }
+
+    public static string CheckUninstallString(string clsid, bool delete)
+    {
+      string strUninstall;
+      string keyPath = "SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + clsid;
+      RegistryKey key = Registry.LocalMachine.OpenSubKey(keyPath);
+      if (key != null)
+      {
+        strUninstall = key.GetValue("UninstallString").ToString();
+        if (File.Exists(strUninstall))
+        {
+          key.Close();
+          return strUninstall;
+        }
+        else
+        {
+          if (delete) key.DeleteSubKeyTree(keyPath);
+        }
+        key.Close();
+      }
+      return null;
+    }
+
     #region Operation System Version Check
     public static void CheckPrerequisites()
     {
@@ -352,7 +382,7 @@ namespace MediaPortal.DeployTool
 
     public static string GetPackageVersion()
     {
-      return "1.0 RC3";
+      return "1.0 RC2";
     }
 
   }

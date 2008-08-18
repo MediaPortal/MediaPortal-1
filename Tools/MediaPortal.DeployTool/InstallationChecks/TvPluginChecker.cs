@@ -64,20 +64,10 @@ namespace MediaPortal.DeployTool
 
     public bool UnInstall()
     {
-      string RegistryFullPathName;
-      RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal TV Server");
-      if (key != null)
+      string keyUninstall = Utils.CheckUninstallString("MediaPortal TV Server", true);
+      if (keyUninstall != null && File.Exists(keyUninstall))
       {
-        RegistryFullPathName = key.GetValue("UninstallString").ToString();
-        if (File.Exists(RegistryFullPathName))
-        {
-          key.Close();
-          Utils.UninstallNSIS(RegistryFullPathName);
-        }
-        else
-        {
-          key.DeleteSubKeyTree("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal TV Server");
-        }
+        Utils.UninstallNSIS(keyUninstall);
       }
       return true;
     }

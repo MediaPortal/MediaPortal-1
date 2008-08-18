@@ -102,8 +102,7 @@ namespace MediaPortal.DeployTool
     }
     public bool UnInstall()
     {
-      Process setup = Process.Start("msiexec", "/X {2AFFFDD7-ED85-4A90-8C52-5DA9EBDC9B8F}");
-      setup.WaitForExit();
+      Utils.UninstallMSI("{2AFFFDD7-ED85-4A90-8C52-5DA9EBDC9B8F}");
       return true;
     }
     public CheckResult CheckStatus()
