@@ -620,6 +620,7 @@ Section Uninstall
 
   ; remove Start Menu shortcuts
   Delete "$SMPROGRAMS\$StartMenuGroup\uninstall TV-Server.lnk"
+  Delete "$SMPROGRAMS\$StartMenuGroup\Help.url"
   Delete "$SMPROGRAMS\$StartMenuGroup\web site.url"
   RMDir "$SMPROGRAMS\$StartMenuGroup"
 

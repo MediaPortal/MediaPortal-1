@@ -812,6 +812,7 @@ Section Uninstall
   Delete "$SMPROGRAMS\$StartMenuGroup\MediaPortal TestTool.lnk"
   Delete "$SMPROGRAMS\$StartMenuGroup\MediaPortal Logs Collector.lnk"
   Delete "$SMPROGRAMS\$StartMenuGroup\uninstall MediaPortal.lnk"
+  Delete "$SMPROGRAMS\$StartMenuGroup\Help.url"
   Delete "$SMPROGRAMS\$StartMenuGroup\web site.url"
   RMDir "$SMPROGRAMS\$StartMenuGroup"
 
