@@ -356,9 +356,9 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.Controls.Add(this.mpCheckBoxPrefAudioOverLang);
       this.mpGroupBox1.Controls.Add(this.mpCheckBoxPrefAC3);
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox1.Location = new System.Drawing.Point(16, 290);
+      this.mpGroupBox1.Location = new System.Drawing.Point(16, 301);
       this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(432, 79);
+      this.mpGroupBox1.Size = new System.Drawing.Size(432, 75);
       this.mpGroupBox1.TabIndex = 9;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Audio stream settings";
@@ -368,7 +368,7 @@ namespace MediaPortal.Configuration.Sections
       this.enableAudioDualMonoModes.AutoSize = true;
       this.enableAudioDualMonoModes.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
       this.enableAudioDualMonoModes.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.enableAudioDualMonoModes.Location = new System.Drawing.Point(9, 43);
+      this.enableAudioDualMonoModes.Location = new System.Drawing.Point(9, 41);
       this.enableAudioDualMonoModes.Name = "enableAudioDualMonoModes";
       this.enableAudioDualMonoModes.Size = new System.Drawing.Size(386, 30);
       this.enableAudioDualMonoModes.TabIndex = 12;
@@ -381,7 +381,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpCheckBoxPrefAudioOverLang.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.mpCheckBoxPrefAudioOverLang.AutoSize = true;
       this.mpCheckBoxPrefAudioOverLang.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpCheckBoxPrefAudioOverLang.Location = new System.Drawing.Point(239, 22);
+      this.mpCheckBoxPrefAudioOverLang.Location = new System.Drawing.Point(239, 18);
       this.mpCheckBoxPrefAudioOverLang.Name = "mpCheckBoxPrefAudioOverLang";
       this.mpCheckBoxPrefAudioOverLang.Size = new System.Drawing.Size(172, 17);
       this.mpCheckBoxPrefAudioOverLang.TabIndex = 11;
@@ -393,7 +393,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpCheckBoxPrefAC3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.mpCheckBoxPrefAC3.AutoSize = true;
       this.mpCheckBoxPrefAC3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpCheckBoxPrefAC3.Location = new System.Drawing.Point(9, 22);
+      this.mpCheckBoxPrefAC3.Location = new System.Drawing.Point(9, 18);
       this.mpCheckBoxPrefAC3.Name = "mpCheckBoxPrefAC3";
       this.mpCheckBoxPrefAC3.Size = new System.Drawing.Size(110, 17);
       this.mpCheckBoxPrefAC3.TabIndex = 7;
@@ -497,7 +497,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox2.Location = new System.Drawing.Point(16, 16);
       this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(432, 286);
+      this.groupBox2.Size = new System.Drawing.Size(432, 284);
       this.groupBox2.TabIndex = 2;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "Preferred audio languages";
@@ -523,7 +523,7 @@ namespace MediaPortal.Configuration.Sections
       // mpButtonDownAudioLang
       // 
       this.mpButtonDownAudioLang.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpButtonDownAudioLang.Location = new System.Drawing.Point(289, 257);
+      this.mpButtonDownAudioLang.Location = new System.Drawing.Point(289, 255);
       this.mpButtonDownAudioLang.Name = "mpButtonDownAudioLang";
       this.mpButtonDownAudioLang.Size = new System.Drawing.Size(46, 20);
       this.mpButtonDownAudioLang.TabIndex = 5;
@@ -534,7 +534,7 @@ namespace MediaPortal.Configuration.Sections
       // mpButtonUpAudioLang
       // 
       this.mpButtonUpAudioLang.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpButtonUpAudioLang.Location = new System.Drawing.Point(237, 257);
+      this.mpButtonUpAudioLang.Location = new System.Drawing.Point(237, 255);
       this.mpButtonUpAudioLang.Name = "mpButtonUpAudioLang";
       this.mpButtonUpAudioLang.Size = new System.Drawing.Size(46, 20);
       this.mpButtonUpAudioLang.TabIndex = 4;
@@ -578,7 +578,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpListViewPreferredAudioLang.HideSelection = false;
       this.mpListViewPreferredAudioLang.Location = new System.Drawing.Point(239, 40);
       this.mpListViewPreferredAudioLang.Name = "mpListViewPreferredAudioLang";
-      this.mpListViewPreferredAudioLang.Size = new System.Drawing.Size(183, 211);
+      this.mpListViewPreferredAudioLang.Size = new System.Drawing.Size(183, 209);
       this.mpListViewPreferredAudioLang.TabIndex = 1;
       this.mpListViewPreferredAudioLang.UseCompatibleStateImageBehavior = false;
       this.mpListViewPreferredAudioLang.View = System.Windows.Forms.View.Details;
@@ -609,7 +609,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpListViewAvailAudioLang.HideSelection = false;
       this.mpListViewAvailAudioLang.Location = new System.Drawing.Point(6, 40);
       this.mpListViewAvailAudioLang.Name = "mpListViewAvailAudioLang";
-      this.mpListViewAvailAudioLang.Size = new System.Drawing.Size(183, 211);
+      this.mpListViewAvailAudioLang.Size = new System.Drawing.Size(183, 209);
       this.mpListViewAvailAudioLang.TabIndex = 0;
       this.mpListViewAvailAudioLang.UseCompatibleStateImageBehavior = false;
       this.mpListViewAvailAudioLang.View = System.Windows.Forms.View.Details;
@@ -643,7 +643,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox4.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox4.Location = new System.Drawing.Point(16, 308);
       this.mpGroupBox4.Name = "mpGroupBox4";
-      this.mpGroupBox4.Size = new System.Drawing.Size(465, 60);
+      this.mpGroupBox4.Size = new System.Drawing.Size(432, 60);
       this.mpGroupBox4.TabIndex = 10;
       this.mpGroupBox4.TabStop = false;
       this.mpGroupBox4.Text = "Subtitle settings";
