@@ -205,6 +205,7 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPLabel label1;
     private MediaPortal.UserInterface.Controls.MPButton buttonRemoveFile;
     private ListBox imagesListBox;
+    private MediaPortal.UserInterface.Controls.MPButton mpDelete;
 
     ArrayList conflictFiles = new ArrayList();
 
@@ -303,6 +304,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPage8 = new System.Windows.Forms.TabPage();
       this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpDelete = new MediaPortal.UserInterface.Controls.MPButton();
       this._fuzzyMatchingCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpButton1 = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpComboBox1 = new MediaPortal.UserInterface.Controls.MPComboBox();
@@ -513,6 +515,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Controls.Add(this.mpDelete);
       this.groupBox2.Controls.Add(this._fuzzyMatchingCheckBox);
       this.groupBox2.Controls.Add(this.mpButton1);
       this.groupBox2.Controls.Add(this.mpComboBox1);
@@ -529,6 +532,17 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "Internet database search settings";
       // 
+      // mpDelete
+      // 
+      this.mpDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpDelete.Location = new System.Drawing.Point(339, 252);
+      this.mpDelete.Name = "mpDelete";
+      this.mpDelete.Size = new System.Drawing.Size(72, 26);
+      this.mpDelete.TabIndex = 9;
+      this.mpDelete.Text = "Delete";
+      this.mpDelete.UseVisualStyleBackColor = true;
+      this.mpDelete.Click += new System.EventHandler(this.mpDelete_Click);
+      // 
       // _fuzzyMatchingCheckBox
       // 
       this._fuzzyMatchingCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -536,7 +550,7 @@ namespace MediaPortal.Configuration.Sections
       this._fuzzyMatchingCheckBox.Checked = true;
       this._fuzzyMatchingCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
       this._fuzzyMatchingCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this._fuzzyMatchingCheckBox.Location = new System.Drawing.Point(206, 272);
+      this._fuzzyMatchingCheckBox.Location = new System.Drawing.Point(6, 314);
       this._fuzzyMatchingCheckBox.Name = "_fuzzyMatchingCheckBox";
       this._fuzzyMatchingCheckBox.Size = new System.Drawing.Size(205, 17);
       this._fuzzyMatchingCheckBox.TabIndex = 0;
@@ -547,7 +561,7 @@ namespace MediaPortal.Configuration.Sections
       // mpButton1
       // 
       this.mpButton1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpButton1.Location = new System.Drawing.Point(339, 299);
+      this.mpButton1.Location = new System.Drawing.Point(339, 286);
       this.mpButton1.Name = "mpButton1";
       this.mpButton1.Size = new System.Drawing.Size(72, 24);
       this.mpButton1.TabIndex = 6;
@@ -561,7 +575,7 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.mpComboBox1.BorderColor = System.Drawing.Color.Empty;
       this.mpComboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpComboBox1.Location = new System.Drawing.Point(138, 299);
+      this.mpComboBox1.Location = new System.Drawing.Point(138, 286);
       this.mpComboBox1.Name = "mpComboBox1";
       this.mpComboBox1.Size = new System.Drawing.Size(195, 21);
       this.mpComboBox1.TabIndex = 5;
@@ -570,7 +584,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.mpLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.mpLabel1.AutoSize = true;
-      this.mpLabel1.Location = new System.Drawing.Point(3, 303);
+      this.mpLabel1.Location = new System.Drawing.Point(3, 290);
       this.mpLabel1.Name = "mpLabel1";
       this.mpLabel1.Size = new System.Drawing.Size(105, 13);
       this.mpLabel1.TabIndex = 4;
@@ -579,7 +593,7 @@ namespace MediaPortal.Configuration.Sections
       // bDatabaseDown
       // 
       this.bDatabaseDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.bDatabaseDown.Location = new System.Drawing.Point(73, 265);
+      this.bDatabaseDown.Location = new System.Drawing.Point(73, 252);
       this.bDatabaseDown.Name = "bDatabaseDown";
       this.bDatabaseDown.Size = new System.Drawing.Size(58, 26);
       this.bDatabaseDown.TabIndex = 3;
@@ -590,7 +604,7 @@ namespace MediaPortal.Configuration.Sections
       // bDatabaseUp
       // 
       this.bDatabaseUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.bDatabaseUp.Location = new System.Drawing.Point(6, 265);
+      this.bDatabaseUp.Location = new System.Drawing.Point(6, 252);
       this.bDatabaseUp.Name = "bDatabaseUp";
       this.bDatabaseUp.Size = new System.Drawing.Size(61, 26);
       this.bDatabaseUp.TabIndex = 2;
@@ -614,7 +628,7 @@ namespace MediaPortal.Configuration.Sections
       this.lvDatabase.Location = new System.Drawing.Point(6, 21);
       this.lvDatabase.MultiSelect = false;
       this.lvDatabase.Name = "lvDatabase";
-      this.lvDatabase.Size = new System.Drawing.Size(405, 238);
+      this.lvDatabase.Size = new System.Drawing.Size(405, 220);
       this.lvDatabase.TabIndex = 1;
       this.lvDatabase.UseCompatibleStateImageBehavior = false;
       this.lvDatabase.View = System.Windows.Forms.View.Details;
@@ -2817,30 +2831,36 @@ namespace MediaPortal.Configuration.Sections
         SaveSettings();
       }
     }
+    
+    private void lvDatabase_DeleteSelectedItem()
+    {
+      if (lvDatabase.SelectedIndices.Count > 0)
+      {
+        string strSub0 = lvDatabase.SelectedItems[0].SubItems[0].Text;
+        string strSub1 = lvDatabase.SelectedItems[0].SubItems[1].Text;
+        string strSub2 = lvDatabase.SelectedItems[0].SubItems[2].Text;
+        mpComboBox1.Items.Add(new ComboBoxItemDatabase(strSub0, strSub1, strSub2));
+        int index = lvDatabase.SelectedItems[0].Index;
+        lvDatabase.Items.Remove(lvDatabase.SelectedItems[0]);
+        lvDatabase.Update();
+        if (lvDatabase.Items.Count > 0)
+        {
+          if (index >= lvDatabase.Items.Count)
+          {
+            index = lvDatabase.Items.Count - 1;
+          }
+          lvDatabase.SelectedIndices.Clear();
+          lvDatabase.SelectedIndices.Add(index);
+        }
+        SaveSettings();
+      }
+    }
+
     private void lvDatabase_KeyUp(Object o, KeyEventArgs e)
     {
       if (e.KeyCode == System.Windows.Forms.Keys.Delete || e.KeyCode == System.Windows.Forms.Keys.Back)
       {
-        if (lvDatabase.SelectedIndices.Count > 0)
-        {
-          string strSub0 = lvDatabase.SelectedItems[0].SubItems[0].Text;
-          string strSub1 = lvDatabase.SelectedItems[0].SubItems[1].Text;
-          string strSub2 = lvDatabase.SelectedItems[0].SubItems[2].Text;
-          mpComboBox1.Items.Add(new ComboBoxItemDatabase(strSub0, strSub1, strSub2));
-          int index = lvDatabase.SelectedItems[0].Index;
-          lvDatabase.Items.Remove(lvDatabase.SelectedItems[0]);
-          lvDatabase.Update();
-          if (lvDatabase.Items.Count > 0)
-          {
-            if (index >= lvDatabase.Items.Count)
-            {
-              index = lvDatabase.Items.Count - 1;
-            }
-            lvDatabase.SelectedIndices.Clear();
-            lvDatabase.SelectedIndices.Add(index);
-          }
-          SaveSettings();
-        }
+        lvDatabase_DeleteSelectedItem();
       }
     }
     private void mpButton1_Click(object sender, EventArgs e)
@@ -3138,6 +3158,11 @@ namespace MediaPortal.Configuration.Sections
         VideoDatabase.SetThumbURL(CurrentMovie.ID, strImageURL);
         useLocalImage = false;
       }
+    }
+
+    private void mpDelete_Click(object sender, EventArgs e)
+    {
+      lvDatabase_DeleteSelectedItem();
     }
   }
 }
