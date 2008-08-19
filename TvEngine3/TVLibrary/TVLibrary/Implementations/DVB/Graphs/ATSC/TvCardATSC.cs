@@ -94,7 +94,7 @@ namespace TvLibrary.Implementations.DVB
         AddNetworkProviderFilter(typeof(ATSCNetworkProvider).GUID);
         CreateTuningSpace();
         AddMpeg2DemuxerToGraph();
-        AddAndConnectBDABoardFilters(_tunerDevice);
+        AddAndConnectBDABoardFilters(_device);
         AddBdaTransportFiltersToGraph();
         GetTunerSignalStatistics();
         _graphState = GraphState.Created;

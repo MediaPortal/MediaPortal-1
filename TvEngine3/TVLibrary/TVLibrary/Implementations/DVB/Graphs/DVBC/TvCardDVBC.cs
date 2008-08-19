@@ -96,7 +96,7 @@ namespace TvLibrary.Implementations.DVB
         AddNetworkProviderFilter(typeof(DVBCNetworkProvider).GUID);
         CreateTuningSpace();
         AddMpeg2DemuxerToGraph();
-        AddAndConnectBDABoardFilters(_tunerDevice);
+        AddAndConnectBDABoardFilters(_device);
         AddBdaTransportFiltersToGraph();
 
         GetTunerSignalStatistics();

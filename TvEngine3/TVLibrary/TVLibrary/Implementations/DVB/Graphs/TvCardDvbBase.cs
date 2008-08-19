@@ -584,7 +584,6 @@ namespace TvLibrary.Implementations.DVB
       for (int i = 0; i < devices.Length; i++)
       {
         IBaseFilter tmp;
-        Log.Log.WriteFile("dvb:  -{0}", devices[i].Name);
         if (device.DevicePath != devices[i].DevicePath) continue;
         if (DevicesInUse.Instance.IsUsed(devices[i])) continue;
         try
@@ -1170,7 +1169,7 @@ namespace TvLibrary.Implementations.DVB
       if (_deviceWinTvUsb != null)
       {
         DevicesInUse.Instance.Remove(_deviceWinTvUsb);
-        _tunerDevice = null;
+        _deviceWinTvUsb = null;
       }
       if (_tunerDevice != null)
       {

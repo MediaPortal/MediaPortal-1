@@ -365,9 +365,12 @@ namespace TvLibrary.Implementations.Analog
     /// </summary>
     public void ReloadQualityControlConfiguration()
     {
-      _configuration = Configuration.readConfiguration(_cardId, _name, _devicePath);
-      Configuration.writeConfiguration(_configuration);
-      _qualityControl.SetConfiguration(_configuration);
+      if (_qualityControl != null)
+      {
+        _configuration = Configuration.readConfiguration(_cardId, _name, _devicePath);
+        Configuration.writeConfiguration(_configuration);
+        _qualityControl.SetConfiguration(_configuration);
+      }
     }
 
     #endregion
@@ -386,11 +389,10 @@ namespace TvLibrary.Implementations.Analog
       }
       else
       {
-
         IAMTVTuner tvTuner = _filterTvTuner as IAMTVTuner;
         AMTunerSignalStrength signalStrength;
         tvTuner.SignalPresent(out signalStrength);
-        _tunerLocked = (signalStrength == AMTunerSignalStrength.SignalPresent);
+        _tunerLocked = (signalStrength == AMTunerSignalStrength.SignalPresent || signalStrength == AMTunerSignalStrength.HasNoSignalStrength);
       }
       if (_tunerLocked)
       {
@@ -435,6 +437,7 @@ namespace TvLibrary.Implementations.Analog
         // Stop the graph first. To ensure that the timeshift files are no longer blocked
         StopGraph();
       }
+      FreeAllSubChannels();
       // Decompose the graph
       int hr = (_graphBuilder as IMediaControl).Stop();
       FilterGraphTools.RemoveAllFilters(_graphBuilder);

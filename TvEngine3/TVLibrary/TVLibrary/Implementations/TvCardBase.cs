@@ -86,6 +86,7 @@ namespace TvLibrary.Implementations
     public TvCardBase(DsDevice device)
     {
       _graphState = GraphState.Idle;
+      _device = device;
       _tunerDevice = device;
       _name = device.Name;
       _devicePath = device.DevicePath;      
@@ -199,9 +200,14 @@ namespace TvLibrary.Implementations
     /// Indicates, if the card is present
     /// </summary>
     protected bool _cardPresent = true;
-
+    /// <summary>
+    /// The tuner device
+    /// </summary>
     protected DsDevice _tunerDevice = null;
-
+    /// <summary>
+    /// Main device of the card
+    /// </summary>
+    protected DsDevice _device = null;
     #endregion
 
     #region properties
