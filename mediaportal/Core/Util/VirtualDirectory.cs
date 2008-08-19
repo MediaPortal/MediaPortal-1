@@ -674,7 +674,7 @@ namespace MediaPortal.Util
           {
             if (!DaemonTools.IsMounted(strDir))
             {
-              //AutoPlay.StopListening();  // caused mantis bug 1444: ISO playing problems 
+              AutoPlay.StopListening();   
 
               string virtualPath;
               if (DaemonTools.Mount(strDir, out virtualPath))
@@ -683,7 +683,7 @@ namespace MediaPortal.Util
                 VirtualShare = true;
               }
               //Start listening to Volume Events.Wait 10 seconds in another thread and start listeneing again
-              //StartVolumeListener(); // caused mantis bug 1444: ISO playing problems 
+              StartVolumeListener(); 
             }
             else
             {

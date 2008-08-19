@@ -427,7 +427,7 @@ namespace MediaPortal.GUI.Video
         }
         else
         {
-          if (DaemonTools.IsMounted(_currentFolder))
+          if (DaemonTools.IsMounted(newFolderName))   // caused mantis bug 1444: ISO playing problems
             newFolderName = DaemonTools.GetVirtualDrive() + @"\";
           else
             return;
@@ -1298,7 +1298,7 @@ namespace MediaPortal.GUI.Video
       if (MountImageFile(WindowID, file))
       {
         string strDir = DaemonTools.GetVirtualDrive();
-
+        
         // Check if the mounted image is actually a DVD. If so, bypass
         // autoplay to play the DVD without user intervention
         if (System.IO.File.Exists(strDir + @"\VIDEO_TS\VIDEO_TS.IFO"))
