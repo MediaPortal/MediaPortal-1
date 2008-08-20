@@ -455,42 +455,13 @@ namespace TvPlugin
       return isRec;
     }
 
-    /*
-    /// <summary>
-    /// Deletes a single or a complete schedule.
-    /// The user is being prompted if the schedule is currently recording.
-    /// If the schedule is currently recording, then this is stopped also.
-    /// </summary>
-    /// <param name="Channel">channel which schedule id to be deleted</param>
-    /// <param name="Program">current program</param>
-    /// <param name="deleteEntireSchedule">true if the complete schedule is to be removed.</param>
-    /// <param name="supressPrompt">true if no prompt is needed.</param>
-    /// <returns>true if the schedule was deleted, otherwise false</returns>
-    public static bool PromptAndDeleteRecordingSchedule(Channel ch, Program program, bool deleteEntireSchedule, bool supressPrompt)
-    {
-      bool isRecording;
-      VirtualCard tvcard = new VirtualCard(TVHome.Card.User, RemoteControl.HostName);
-      isRecording = tvcard.IsRecording;
-
-      if (isRecording)
-      {
-        Schedule rec = Schedule.Retrieve(tvcard.RecordingScheduleId);
-        return PromptAndDeleteRecordingSchedule(rec.IdSchedule, program, deleteEntireSchedule, supressPrompt);
-      }
-      else
-      {
-        return false;
-      }
-
-    }
-    */
     /// <summary>
     /// Deletes a single or a complete schedule.
     /// The user is being prompted if the schedule is currently recording.
     /// If the schedule is currently recording, then this is stopped also.
     /// </summary>
     /// <param name="Schedule">schedule id to be deleted</param>
-    /// <param name="Program">current program</param>
+    /// <param name="Program">current program</param>    
     /// <param name="deleteEntireSchedule">true if the complete schedule is to be removed.</param>
     /// <param name="supressPrompt">true if no prompt is needed.</param>
     /// <returns>true if the schedule was deleted, otherwise false</returns>
@@ -518,28 +489,37 @@ namespace TvPlugin
           }
         }
       }
+
+      if (s.IsManual)
+      {
+        prg2Use = null;
+      }
+
       bool isRec = IsRecordingSchedule(s, prg2Use, out card);
       bool confirmed = true;
 
       if (isRec)
       {
-        GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-        if (null == dlgYesNo)
+        if (!supressPrompt)
         {
-          Log.Error("TVProgramInfo.DeleteRecordingPrompt: ERROR no GUIDialogYesNo found !!!!!!!!!!");
-          return false;
-        }
-        dlgYesNo.SetHeading(GUILocalizeStrings.Get(653)); //Delete this recording?
-        dlgYesNo.SetLine(1, GUILocalizeStrings.Get(730)); //This schedule is recording. If you delete
-        dlgYesNo.SetLine(2, GUILocalizeStrings.Get(731)); //the schedule then the recording is stopped.
-        dlgYesNo.SetLine(3, GUILocalizeStrings.Get(732)); //are you sure
-        dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
-        confirmed = dlgYesNo.IsConfirmed;
+          GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+          if (null == dlgYesNo)
+          {
+            Log.Error("TVProgramInfo.DeleteRecordingPrompt: ERROR no GUIDialogYesNo found !!!!!!!!!!");
+            return false;
+          }
+          dlgYesNo.SetHeading(GUILocalizeStrings.Get(653)); //Delete this recording?
+          dlgYesNo.SetLine(1, GUILocalizeStrings.Get(730)); //This schedule is recording. If you delete
+          dlgYesNo.SetLine(2, GUILocalizeStrings.Get(731)); //the schedule then the recording is stopped.
+          dlgYesNo.SetLine(3, GUILocalizeStrings.Get(732)); //are you sure
+          dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
+          confirmed = dlgYesNo.IsConfirmed;
+        }        
       }
 
       if (confirmed)
-      {
-        if (deleteEntireSchedule) //delete the entire schedule
+      {        
+        if (deleteEntireSchedule || s.IsManual) //delete the entire schedule
         {
           if (isRec)
           {
@@ -588,7 +568,7 @@ namespace TvPlugin
             canceledSchedule.Persist();
             server.OnNewSchedule();
           }
-        }
+        }              
         return true;
       }
       return false;

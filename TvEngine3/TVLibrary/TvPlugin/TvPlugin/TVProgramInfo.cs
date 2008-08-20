@@ -178,7 +178,6 @@ namespace TvPlugin
       IList schedules = Schedule.ListAll();
       bool isRecording = false;
       bool isSeries = false;
-      Schedule recordingNowSchedule;
       foreach (Schedule schedule in schedules)
       {
         /*
@@ -201,7 +200,9 @@ namespace TvPlugin
         }
         else
         {
-          isRecording = TVHome.IsRecordingSchedule(schedule, currentProgram, out card);
+          //isRecording = TVHome.IsRecordingSchedule(schedule, currentProgram, out card);
+          Schedule recSched;
+          isRecording = IsRecordingProgram(currentProgram, out recSched, false);
         }
         
         if (isRecording)
@@ -210,7 +211,6 @@ namespace TvPlugin
           {
             isSeries = true;
           }
-          recordingNowSchedule = schedule;
           break;
         }
 
@@ -412,6 +412,13 @@ namespace TvPlugin
 
         rec.PreRecordInterval = RecordingIntervalValues[dlg.SelectedLabel - 1];
         rec.Persist();
+
+        Schedule assocSchedule = Schedule.RetrieveOnce(rec.IdChannel, currentProgram.Title, currentProgram.StartTime, currentProgram.EndTime);
+        if (assocSchedule != null)
+        {
+          assocSchedule.PreRecordInterval = rec.PreRecordInterval;
+          assocSchedule.Persist();
+        }
         
         TvServer server = new TvServer();
         server.OnNewSchedule();
@@ -452,6 +459,13 @@ namespace TvPlugin
 
         rec.PostRecordInterval = RecordingIntervalValues[dlg.SelectedLabel - 1];
         rec.Persist();
+
+        Schedule assocSchedule = Schedule.RetrieveOnce(rec.IdChannel, currentProgram.Title, currentProgram.StartTime, currentProgram.EndTime);
+        if (assocSchedule != null)
+        {
+          assocSchedule.PostRecordInterval = rec.PostRecordInterval;
+          assocSchedule.Persist();
+        }
       }
       Update();
     }
@@ -605,10 +619,27 @@ namespace TvPlugin
     	if (IsRecordingProgram(program, out recordingSchedule, true)) // check if schedule is already existing
     	{
     		CancelProgram(program, recordingSchedule);
-    	}
+    	}       
     	else
     	{
-    		CreateProgram(program, (int)ScheduleRecordingType.Once);
+        TvServer server = new TvServer();
+        VirtualCard card;
+        if (server.IsRecording(TVHome.Navigator.CurrentChannel, out card))
+        {
+          Schedule schedFromDB = Schedule.Retrieve(card.RecordingScheduleId);
+          if (schedFromDB.IsManual)
+          {
+            TVHome.PromptAndDeleteRecordingSchedule(card.RecordingScheduleId, null, false, false);
+          }
+          else
+          {
+            CreateProgram(program, (int)ScheduleRecordingType.Once);
+          }
+        }
+        else
+        {
+    		  CreateProgram(program, (int)ScheduleRecordingType.Once);
+        }
     	}
 			Update();
     }

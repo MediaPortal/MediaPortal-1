@@ -739,18 +739,9 @@ namespace TvPlugin
       DateTime now = DateTime.Now;
 
       bool recStartEndSame = (tsRecording.TotalSeconds == 0);
+     
+      IList recordingList = Schedule.ListAll();
 
-      /*
-      bool recWithInCurrentTime = false;
-      if (recStartEndSame)
-      {
-        recWithInCurrentTime = (aRecording.StartTime <= now);
-      }
-      else
-      {
-        recWithInCurrentTime = (aRecording.StartTime <= now && aRecording.EndTime >= now);
-      }
-      */
       if (recStartEndSame)
       {
         TvServer server = new TvServer();
@@ -759,7 +750,7 @@ namespace TvPlugin
 
         if (isRec)
         {
-          if (aRecording.Title.Equals("manual"))
+          if (aRecording.IsManual)
           {
             return true;
           }
@@ -769,12 +760,22 @@ namespace TvPlugin
           if (prgList.Count > 0)
           {
 
+            Schedule sched = Schedule.Retrieve(card.RecordingScheduleId);
+
             foreach (Program prg in prgList)
-            {
-              if (aRecording.StartTime <= prg.EndTime)
+            {              
+              if (sched.IsManual)
+              {
+                TimeSpan ts = now - aRecording.EndTime;
+                if (aRecording.StartTime <= prg.EndTime && ts.TotalHours < 24) // if endtime is over 24 hrs old, then we do not consider it as a currently rec. program
+                {                
+                  return true;                
+                }
+              }
+              else if (sched.IsRecordingProgram(prg, false))
               {
                 return true;
-              }
+              }                                            
             }
           }
         }
@@ -1110,8 +1111,8 @@ namespace TvPlugin
       GUIListItem pItem = GetItem(iItem);
       if (pItem == null) return;
       if (pItem.IsFolder) return;
-      Recording rec = (Recording)pItem.TVTag;
-
+      Recording rec = (Recording)pItem.TVTag;      
+      
       GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
       if (null == dlgYesNo) return;
 
@@ -1127,7 +1128,8 @@ namespace TvPlugin
       bool activeRecDeleted = false;
       TvServer server = new TvServer(); ;
       if (isRec)
-      {        
+      { 
+        
         dlgYesNo.SetHeading(GUILocalizeStrings.Get(653));//Delete this recording?
         dlgYesNo.SetLine(1, GUILocalizeStrings.Get(730));//This schedule is recording. If you delete
         dlgYesNo.SetLine(2, GUILocalizeStrings.Get(731));//the schedule then the recording is stopped.
@@ -1137,7 +1139,7 @@ namespace TvPlugin
         {
           return;
         }        
-
+        
         IList schedulesList = Schedule.ListAll();
         if (schedulesList != null)
         {
@@ -1162,15 +1164,8 @@ namespace TvPlugin
                   {
                     g_Player.Stop();
                   }
-
-                  //TVHome.DeleteRecordingSchedule(s);                  
-                  CanceledSchedule schedule = new CanceledSchedule(s.IdSchedule, s.StartTime);
-                  schedule.Persist();
-                  server.OnNewSchedule();
-                  server.StopRecordingSchedule(s.IdSchedule);
-                
-                  activeRecDeleted = true;
-                  
+                  TVHome.PromptAndDeleteRecordingSchedule(s.IdSchedule, null, false, true);                                    
+                  activeRecDeleted = true;                  
                 }
               }
             }
@@ -1225,7 +1220,7 @@ namespace TvPlugin
           dlgOk.DoModal(GetID);
         }
       }
-
+      
       Gentle.Common.CacheManager.Clear();
 
       LoadDirectory();
