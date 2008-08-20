@@ -39,10 +39,10 @@ namespace SetupTv.Sections
   {
     private Card _card;
     private string _cardType;
-   
+
     public FormEditCard()
     {
-      InitializeComponent();     
+      InitializeComponent();
     }
 
     public Card Card
@@ -58,12 +58,12 @@ namespace SetupTv.Sections
     }
 
     public String CardType
-    {      
+    {
       set
       {
         _cardType = value;
       }
-    }   
+    }
 
     private void FormEditCard_Load(object sender, EventArgs e)
     {
@@ -80,6 +80,13 @@ namespace SetupTv.Sections
         checkBoxAllowEpgGrab.Checked = false;
         numericUpDownDecryptLimit.Enabled = false;
         checkBoxAllowEpgGrab.Enabled = false;
+      }
+
+      IList GrpList = _card.ReferringCardGroupMap();
+      if (GrpList.Count != 0)
+      {
+        checkBoxPreloadCard.Enabled = false;
+        _card.PreloadCard = false;
       }
 
       checkBoxPreloadCard.Checked = _card.PreloadCard;

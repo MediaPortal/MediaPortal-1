@@ -137,7 +137,7 @@ namespace SetupTv.Sections
       this.checkBoxAllowEpgGrab.AutoSize = true;
       this.checkBoxAllowEpgGrab.Location = new System.Drawing.Point(6, 19);
       this.checkBoxAllowEpgGrab.Name = "checkBoxAllowEpgGrab";
-      this.checkBoxAllowEpgGrab.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+      this.checkBoxAllowEpgGrab.RightToLeft = System.Windows.Forms.RightToLeft.No;
       this.checkBoxAllowEpgGrab.Size = new System.Drawing.Size(231, 17);
       this.checkBoxAllowEpgGrab.TabIndex = 0;
       this.checkBoxAllowEpgGrab.Text = "Allow this card to be used for EPG grabbing";
@@ -148,7 +148,7 @@ namespace SetupTv.Sections
       this.checkBoxPreloadCard.AutoSize = true;
       this.checkBoxPreloadCard.Location = new System.Drawing.Point(6, 19);
       this.checkBoxPreloadCard.Name = "checkBoxPreloadCard";
-      this.checkBoxPreloadCard.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+      this.checkBoxPreloadCard.RightToLeft = System.Windows.Forms.RightToLeft.No;
       this.checkBoxPreloadCard.Size = new System.Drawing.Size(171, 17);
       this.checkBoxPreloadCard.TabIndex = 0;
       this.checkBoxPreloadCard.Text = "Allow this card to be preloaded";
