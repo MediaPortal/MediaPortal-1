@@ -1745,6 +1745,7 @@
     <String id="200052">Active recordings</String>
     <String id="200053">No active recordings</String>    
     <String id="200054">Could not delete TV recording.</String>
+    <String id="200055">Live TV viewing might be disrupted.</String>
 	<String id="200059">Audio Dual Mono Mode</String>
 	<String id="200060">Stereo</String>
 	<String id="200061">Left channel to the left and right speakers</String>
