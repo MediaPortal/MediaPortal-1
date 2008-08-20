@@ -68,7 +68,10 @@ namespace TvDatabase
         card.IdServer = server.IdServer;
         return card;
       }
-      Card newCard = new Card(devicePath, name, 1, true, new DateTime(2000, 1, 1), "", server.IdServer, true, 0, "", 0, 1);
+      //
+      // Card(devicePath, name, priority, grabEPG, lastEpgGrab, recordingFolder, idServer, enabled, camType, timeshiftingFolder, recordingFormat, decryptLimit)
+      //
+      Card newCard = new Card(devicePath, name, 1, true, new DateTime(2000, 1, 1), "", server.IdServer, true, 0, "", 0, 0);
       newCard.Persist();
       return newCard;
     }
