@@ -91,6 +91,18 @@ namespace TvDatabase
     #endregion
 
     #region Public Properties
+
+    /// <summary>
+    /// Is recording a manual one
+    /// </summary>
+    public bool IsManual
+    {
+      get
+      {
+        return (Title.Equals("manual"));        
+      }
+    }
+
     /// <summary>
     /// Indicates whether the entity is changed and requires saving or not.
     /// </summary>
