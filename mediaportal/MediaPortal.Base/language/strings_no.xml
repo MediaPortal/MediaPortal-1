@@ -1746,6 +1746,7 @@
     <String id="200052">Aktive opptak</String>
     <String id="200053">Ingen aktive opptak</String>
     <String id="200054">Kunne ikke slette TV-opptaket.</String>
+    <String id="200055">Live TV visning kan bli avbrutt.</String>
 	<String id="200059">Audio Dual Mono Modus</String>
 	<String id="200060">Stereo</String>
 	<String id="200061">Venstre kanal til venstre og høyre høytaler</String>
