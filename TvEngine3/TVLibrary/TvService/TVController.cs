@@ -977,6 +977,27 @@ namespace TvService
     }    
 
     /// <summary>
+    /// This function checks whether something should be recorded at the given time.
+    /// </summary>
+    /// <param name="time">the time to check for recordings.</param>
+    /// <returns>true if any recording due to time</returns>
+    public bool IsTimeToRecord(DateTime time)
+    {
+      return _scheduler.IsTimeToRecord(time);
+    }
+
+    /// This function checks if a spedific schedule should be recorded at the given time.
+    /// </summary>
+    /// <param name="time">the time to check for recordings.</param>
+    /// <param name="recordingId">the time id of the recording.</param>
+    /// <returns>true if any recording due to time</returns>
+    public bool IsTimeToRecord(DateTime time, int scheduleId)
+    {
+      Schedule schedule = Schedule.Retrieve(scheduleId);
+      return _scheduler.IsTimeToRecord(schedule, time);
+    }
+
+    /// <summary>
     /// Returns the video stream currently associated with the card. 
     /// </summary>
     /// <returns>stream_type</returns>

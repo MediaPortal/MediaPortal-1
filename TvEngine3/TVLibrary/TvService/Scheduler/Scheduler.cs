@@ -281,16 +281,30 @@ namespace TvService
       foreach (Schedule schedule in schedules)
       {
         //if schedule has been canceled then do nothing
+        
         if (schedule.Canceled != Schedule.MinSchedule) continue;
 
         //check if its time to record this schedule.
         RecordingDetail newRecording;
-        if (IsTimeToRecord(schedule, now, out newRecording))
+        if (IsTimeToRecord(schedule, currentTime, out newRecording))
         {
           return true;
         }
       }
       return false;
+    }
+
+    /// <summary>
+    /// This function checks whether a specific schedule should be recorded at the given time.
+    /// </summary>
+    public bool IsTimeToRecord(Schedule schedule, DateTime currentTime)
+    {
+      //if schedule has been canceled then do nothing
+      if (schedule.Canceled != Schedule.MinSchedule) return false;
+      
+      //check if its time to record this schedule.
+      RecordingDetail newRecording;
+      return IsTimeToRecord(schedule, currentTime, out newRecording);
     }
 
 

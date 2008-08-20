@@ -329,6 +329,43 @@ namespace TvControl
         HandleFailure(ex);
       }
     }
+
+
+    /// <summary>
+    /// This method should be called by a client to check
+    /// if there is any upcoming recording
+    /// </summary>
+    public bool IsTimeToRecord ( DateTime time )
+    {
+      try
+      {
+        return RemoteControl.Instance.IsTimeToRecord(time);
+      }
+      catch (Exception ex)
+      {
+        HandleFailure(ex);
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// This method should be called by a client to check 
+    /// if a specific recording is due. 
+    /// </summary>
+    public bool IsTimeToRecord(DateTime time, int recordingId )
+    {
+      try
+      {
+        return RemoteControl.Instance.IsTimeToRecord(time, recordingId);
+      }
+      catch (Exception ex)
+      {
+        HandleFailure(ex);
+      }
+      return false;
+    }
+
+
     /// <summary>
     /// This method should be called by a client to indicate that
     /// there is a new or modified Schedule in the database

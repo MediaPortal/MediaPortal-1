@@ -558,6 +558,22 @@ namespace TvControl
     /// <returns>true when card is timeshifting otherwise false</returns>
     bool IsTimeShifting(ref User user);    
 
+
+    /// <summary>
+    /// This function checks whether something should be recorded at the given time.
+    /// </summary>
+    /// <param name="time">the time to check for recordings.</param>
+    /// <returns>true if any recording due to time</returns>
+    bool IsTimeToRecord(DateTime time);
+
+    /// <summary>
+    /// This function checks whether something should be recorded at the given time.
+    /// </summary>
+    /// <param name="time">the time to check for recordings.</param>
+    /// <returns>true if any recording due to time</returns>
+    bool IsTimeToRecord(DateTime time, int scheduleId );
+
+
     /// <summary>
     /// Returns if the card is currently recording or not
     /// </summary>

@@ -47,18 +47,28 @@ namespace TvPlugin
     System.Windows.Forms.Timer _timer;
     // flag indicating that notifies have been added/changed/removed
     static bool _notifiesListChanged;
+    static bool _enableNotification;
     int _preNotifyConfig;
     //list of all notifies (alert me n minutes before program starts)
     IList _notifiesList;
     IList _notifiedRecordings;
+    User _dummyuser;
 
     public TvNotifyManager()
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
         _preNotifyConfig = xmlreader.GetValueAsInt("movieplayer", "notifyTVBefore", 300);
+        _enableNotification = xmlreader.GetValueAsBool("mytv", "enableTvNotifier", true);
+      }
+     
+      
       _timer = new System.Windows.Forms.Timer();
 
       // check every 15 seconds for notifies
+      _dummyuser = new User();
+      _dummyuser.IsAdmin = false;
+      _dummyuser.Name = "Free channel checker";
       _timer.Interval = 15000;
       _timer.Enabled = true;
       _timer.Tick += new EventHandler(_timer_Tick);
@@ -93,6 +103,8 @@ namespace TvPlugin
 
     void _timer_Tick(object sender, EventArgs e)
     {
+
+      if (!_enableNotification) { return; };
       if (_notifiesListChanged)
       {
         LoadNotifies();
@@ -128,50 +140,58 @@ namespace TvPlugin
           }
         }
       }
-
-      if (g_Player.IsTV && g_Player.Playing)
+      //Log.Debug("TVPlugIn: Notifier checking for recording to start at {0}", preNotifySecs);
+      if (g_Player.IsTV && TVHome.Card.IsTimeShifting && g_Player.Playing )
       {
-        try
+        if (TVHome.TvServer.IsTimeToRecord(preNotifySecs))
         {
-          IList schedulesList = Schedule.ListAll();
-          foreach (Schedule rec in schedulesList)
+          try
           {
-            //Check if alerady notified user
-            foreach (Schedule notifiedRec in _notifiedRecordings)
+            IList schedulesList = Schedule.ListAll();
+            foreach (Schedule rec in schedulesList)
             {
-              if (rec == notifiedRec)
+              //Check if alerady notified user
+              foreach (Schedule notifiedRec in _notifiedRecordings)
               {
-                return;
-
-              }
-            }
-            //Check if timing it's time 
-            DateTime start = rec.StartTime.AddMinutes(-rec.PreRecordInterval);
-            DateTime preNotifyRec = preNotifySecs;
-            if (preNotifySecs < start) { preNotifyRec = start; };
-            if (preNotifySecs > start && rec.StartTime > DateTime.Now)
-            {
-              //check if freecard is available. 
-              if ((int)TVHome.TvServer.GetChannelState(rec.IdChannel, TVHome.Card.User) == 0) //not tunnable
-              {
-                GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-                if (pDlgOK != null)
+                if (rec == notifiedRec)
                 {
-                  _notifiedRecordings.Add(rec);
-                  pDlgOK.SetHeading(605);//my tv
-                  pDlgOK.SetLine(1, rec.ProgramName);
-                  pDlgOK.SetLine(2, "is scheduled to begin recording shortly.");
-                  pDlgOK.SetLine(3, "Your TV Viewing might be disrupted");
-                  pDlgOK.SetLine(4, "since no free card is available.");
-                  pDlgOK.DoModal(GUIWindowManager.ActiveWindowEx);
+                  return;
+
+                }
+              }
+              //Check if timing it's time 
+              Log.Debug("TVPlugIn: Notifier checking program {0}", rec.ProgramName);
+              if (TVHome.TvServer.IsTimeToRecord(preNotifySecs, rec.IdSchedule))
+              {
+                //check if freecard is available. 
+                //Log.Debug("TVPlugIn: Notify verified program {0} about to start recording. {1} / {2}", rec.ProgramName, rec.StartTime, preNotifySecs);
+                if (TVHome.Navigator.Channel.IdChannel != rec.IdChannel && (int)TVHome.TvServer.GetChannelState(rec.IdChannel, _dummyuser) == 0) //not tunnable
+                {
+                  Log.Debug("TVPlugIn: No free card available for {0}. Notifying user.", rec.ProgramName);
+                  GUIDialogNotify pDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+                  if (pDlgNotify != null)
+                  {
+                    GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TV, 0, 0, 0, 0, 0, null);
+                    string logo = Utils.GetCoverArt(Thumbs.TVChannel, TVHome.Navigator.CurrentChannel);
+                    GUIGraphicsContext.SendMessage(msg); //Send the message so the miniguide 
+                    //msg.Object = tvProg;
+                    pDlgNotify.Reset();
+                    pDlgNotify.ClearAll();
+                    pDlgNotify.SetImage(logo);
+                    _notifiedRecordings.Add(rec);
+                    pDlgNotify.SetHeading(1004);//About to start recording
+                    pDlgNotify.SetText(String.Format("{0}. {1}", rec.ProgramName, GUILocalizeStrings.Get(200055))); //TvViewing might be disrupted. 
+                    pDlgNotify.TimeOut = 10;
+                    pDlgNotify.DoModal(GUIWindowManager.ActiveWindow);
+                  }
                 }
               }
             }
           }
-        }
-        catch (Exception ex)
-        {
-          Log.Debug("Tv NotifyManager: Exception at recording notification {0}", ex.ToString());
+          catch (Exception ex)
+          {
+            Log.Debug("Tv NotifyManager: Exception at recording notification {0}", ex.ToString());
+          }
         }
       }
     }
