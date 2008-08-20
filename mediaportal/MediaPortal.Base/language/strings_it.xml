@@ -1744,6 +1744,7 @@
     <String id="200052">Registrazioni attive</String>
     <String id="200053">Nessuna registrazione attiva</String>
     <String id="200054">Impossibile cancellare la registrazione TV.</String>
+    <String id="200055">La TV in diretta potrebbe essere interrotta.</String>
     <String id="200059">Modalità audio Dual Mono</String>
     <String id="200060">Stereo</String>
     <String id="200061">Canale sinistro in uscita su entrambe le casse</String>
