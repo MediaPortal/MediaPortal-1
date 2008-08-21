@@ -255,7 +255,7 @@ namespace SetupTv.Sections
       // 
       // buttonRestart
       // 
-      this.buttonRestart.Location = new System.Drawing.Point(262, 392);
+      this.buttonRestart.Location = new System.Drawing.Point(241, 392);
       this.buttonRestart.Name = "buttonRestart";
       this.buttonRestart.Size = new System.Drawing.Size(95, 23);
       this.buttonRestart.TabIndex = 59;
@@ -265,11 +265,11 @@ namespace SetupTv.Sections
       // 
       // mpButtonReGrabEpg
       // 
-      this.mpButtonReGrabEpg.Location = new System.Drawing.Point(363, 392);
+      this.mpButtonReGrabEpg.Location = new System.Drawing.Point(343, 392);
       this.mpButtonReGrabEpg.Name = "mpButtonReGrabEpg";
-      this.mpButtonReGrabEpg.Size = new System.Drawing.Size(95, 23);
+      this.mpButtonReGrabEpg.Size = new System.Drawing.Size(115, 23);
       this.mpButtonReGrabEpg.TabIndex = 60;
-      this.mpButtonReGrabEpg.Text = "Refresh EPG";
+      this.mpButtonReGrabEpg.Text = "Refresh DVB EPG";
       this.mpButtonReGrabEpg.UseVisualStyleBackColor = true;
       this.mpButtonReGrabEpg.Click += new System.EventHandler(this.mpButtonReGrabEpg_Click);
       // 
@@ -330,7 +330,6 @@ namespace SetupTv.Sections
       this.Controls.Add(this.mpGroupBox1);
       this.Name = "TestService";
       this.Size = new System.Drawing.Size(470, 450);
-      this.Load += new System.EventHandler(this.TestService_Load);
       this.mpGroupBox1.ResumeLayout(false);
       this.mpGroupBox1.PerformLayout();
       this.ResumeLayout(false);

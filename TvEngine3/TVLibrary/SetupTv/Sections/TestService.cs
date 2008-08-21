@@ -75,6 +75,12 @@ namespace SetupTv.Sections
 
       buttonRestart.Visible = false;
       mpButtonRec.Enabled = false;
+
+      TvBusinessLayer layer = new TvBusinessLayer();
+      if (layer.GetSetting("idleEPGGrabberEnabled", "yes").Value != "yes")
+      {
+        mpButtonReGrabEpg.Enabled = false;
+      }
     }
 
     public override void OnSectionDeActivated()
@@ -85,11 +91,6 @@ namespace SetupTv.Sections
       {
         RemoteControl.Instance.EpgGrabberEnabled = false;
       }
-    }
-
-    private void TestService_Load(object sender, EventArgs e)
-    {
-
     }
 
     private void mpButtonTimeShift_Click(object sender, EventArgs e)
@@ -248,10 +249,6 @@ namespace SetupTv.Sections
       mpButtonTimeShift.Text = "Start TimeShift";
     }
 
-    private void mpCheckBoxTimeShift_CheckedChanged(object sender, EventArgs e)
-    {
-
-    }
     void UpdateCardStatus()
     {
 
@@ -455,12 +452,6 @@ namespace SetupTv.Sections
 
     private void mpButtonReGrabEpg_Click(object sender, EventArgs e)
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      if (layer.GetSetting("idleEPGGrabberEnabled", "yes").Value != "yes")
-      {
-        MessageBox.Show("EPG grabber is disabled. Please enable EPG grabbing while idle.");
-        return;
-      }
       RemoteControl.Instance.EpgGrabberEnabled = false;
       Gentle.Framework.Broker.Execute("delete from Program");
       IList channels = Channel.ListAll();
