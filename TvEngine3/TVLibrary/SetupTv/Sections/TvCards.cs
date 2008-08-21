@@ -95,6 +95,8 @@ namespace SetupTv.Sections
         Card card = (Card)item.Tag;
         CardGroupMap map = new CardGroupMap(card.IdCard, group.IdCardGroup);
         map.Persist();
+        card.PreloadCard = false;
+        card.Persist();
       }
       UpdateHybrids();
       RemoteControl.Instance.Restart();
