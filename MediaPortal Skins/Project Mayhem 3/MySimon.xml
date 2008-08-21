@@ -26,6 +26,7 @@
         <onright>2</onright>
         <onup>6</onup>
         <ondown>3</ondown>
+        <visible>!Control.IsVisible(201)</visible>
       </control>
       <control>
         <description>Level</description>
@@ -35,6 +36,7 @@
         <onright>3</onright>
         <onup>2</onup>
         <ondown>4</ondown>
+        <visible>!Control.IsVisible(201)</visible>
       </control>
       <control>
         <description>Sounds</description>
@@ -44,6 +46,7 @@
         <onright>4</onright>
         <onup>3</onup>
         <ondown>6</ondown>
+        <visible>!Control.IsVisible(201)</visible>
       </control>
       <control>
         <description>What is this?</description>
@@ -53,6 +56,24 @@
         <onright>6</onright>
         <onup>4</onup>
         <ondown>2</ondown>
+        <visible>!Control.IsVisible(201)</visible>
+      </control>
+    </control>
+
+    <control>
+      <description>dummy labels, for conditional visibility skinning</description>
+      <type>group</type>
+      <control>
+        <description>LBL_IS_PLAYING</description>
+        <type>label</type>
+        <id>201</id>
+        <label></label>
+      </control>
+      <control>
+        <description>LBL_IS_SIMON</description>
+        <type>label</type>
+        <id>202</id>
+        <label></label>
       </control>
     </control>
 
