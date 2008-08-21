@@ -1542,7 +1542,8 @@ namespace TvPlugin
 
       // the m_oActiveRecording object should always reflect the currently played back recording
       // we can not rely on filename from the method parameter, as this can be a RTSP://123455 kind of URL.
-      filename = m_oActiveRecording.FileName;
+      if (m_oActiveRecording != null) filename = m_oActiveRecording.FileName;
+
       
       if (filename.Length > 0)
       {
