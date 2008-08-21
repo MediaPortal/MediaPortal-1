@@ -106,6 +106,7 @@ namespace TvPlugin
     string _currentTitle = String.Empty;
     string _currentTime = String.Empty;
     string _currentChannel = String.Empty;
+    bool _currentRecOrNotify = false;
     long _currentStartTime = 0;
     long _currentEndTime = 0;
     Program _currentProgram = null;
@@ -1119,6 +1120,8 @@ namespace TvPlugin
 
     void SetProperties()
     {
+      bool bRecording = false;
+
       if (_channelList == null)
         return;
       if (_channelList.Count == 0)
@@ -1202,8 +1205,7 @@ namespace TvPlugin
         _currentTitle = _currentProgram.Title;
         _currentTime = strTime;
         _currentChannel = strChannel;
-
-        bool bRecording = false;
+        
         bool bSeries = false;
         bool bConflict = false;
         if (_recordingList != null)
@@ -1216,7 +1218,7 @@ namespace TvPlugin
                 bConflict = true;
               if ((ScheduleRecordingType)record.ScheduleType != ScheduleRecordingType.Once)
                 bSeries = true;
-              bRecording = true;
+              bRecording = true;              
               break;
             }
           }
@@ -1237,8 +1239,21 @@ namespace TvPlugin
           GUIControl.ShowControl(GetID, (int)Controls.IMG_REC_PIN);
         }
         else
+        {          
           GUIControl.HideControl(GetID, (int)Controls.IMG_REC_PIN);
+        }
       }
+
+      _currentRecOrNotify = bRecording;
+
+      if (!_currentRecOrNotify && _currentProgram != null)
+      {
+        if (ShouldNotifyProgram(_currentProgram))
+        {
+          _currentRecOrNotify = true;
+        }
+      }
+
     }//void SetProperties()
 
     void RenderSingleChannel(Channel channel)
@@ -2453,9 +2468,18 @@ namespace TvPlugin
           dlg.AddLocalizedString(938);// View this channel
 
         dlg.AddLocalizedString(939);// Switch mode
+        
+
         if (_currentProgram != null && _currentChannel.Length > 0 && _currentTitle.Length > 0)
         {
-          dlg.AddLocalizedString(264);// Record
+          if (!_currentRecOrNotify)
+          {
+            dlg.AddLocalizedString(264);// Record
+          }
+          else
+          {
+            dlg.AddLocalizedString(637);// Edit Recording
+          }
         }
         //dlg.AddLocalizedString(937);// Reload tvguide
 
@@ -2505,6 +2529,7 @@ namespace TvPlugin
             OnSwitchMode();
             break;
 
+          case 637: // edit recording
           case 264: // record
             OnRecordContext();
             break;

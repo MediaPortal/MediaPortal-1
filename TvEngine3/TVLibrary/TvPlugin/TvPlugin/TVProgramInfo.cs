@@ -287,11 +287,13 @@ namespace TvPlugin
           }                    
           item.TVTag = recordingSchedule;
         }
-        else if (isRecording)
+        else
         {
-          int i = 0;
+          if (episode.Notify)
+          {
+            item.PinImage = Thumbs.TvNotifyIcon;
+          }
         }
-
 
         item.MusicTag = episode;
         item.ThumbnailImage = logo;
