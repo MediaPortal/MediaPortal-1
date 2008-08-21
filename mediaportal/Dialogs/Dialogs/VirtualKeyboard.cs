@@ -80,7 +80,7 @@ namespace MediaPortal.Dialogs
     const int MAX_CHARS = 64;
 
     // Width of text box
-    float fTEXTBOX_WIDTH = 576.0f - 64.0f - 4.0f - 4.0f - 10.0f;
+    float fTEXTBOX_WIDTH = 576.0f - 64.0f - 4.0f - 4.0f - 10.0f - 80.0f;
     float BUTTON_Y_POS = 411.0f;      // button text line
     float BUTTON_X_OFFSET = 40.0f;      // space between button and text
 
@@ -89,7 +89,9 @@ namespace MediaPortal.Dialogs
 
     const int KEY_WIDTH = 34;   // width of std key in pixels
 
- 
+    //Default Skin Ratio, recalculated by VirtualKeyboard()
+    float SkinRatio = 1.0f;
+
     #endregion
 
     #region enums
@@ -472,7 +474,12 @@ namespace MediaPortal.Dialogs
       //m_fRepeatDelay   = fINITIAL_REPEAT;
       _keyTexture = null;
 
-      _keyHeight = 42.0f;
+      int tempwidth = (int)(576.0f - 64.0f - 4.0f - 4.0f - 10.0f - 80.0f);
+      GUIGraphicsContext.ScaleHorizontal(ref tempwidth);
+      fTEXTBOX_WIDTH = tempwidth;
+
+      SkinRatio = (float)GUIGraphicsContext.SkinSize.Width / 720.0f;
+      _keyHeight = 42.0f * SkinRatio;
       _maxRows = 5;
       _pressedEnter = false;
       _caretTimer = DateTime.Now;
@@ -534,7 +541,7 @@ namespace MediaPortal.Dialogs
       _currentKey = 0;
       _lastColumn = 0;
       //m_fRepeatDelay   = fINITIAL_REPEAT;
-      _keyHeight = 42.0f;
+      _keyHeight = 42.0f * SkinRatio;
       _maxRows = 5;
       _position = 0;
       _textEntered = "";
@@ -548,11 +555,11 @@ namespace MediaPortal.Dialogs
       BUTTON_Y_POS = x;      // button text line
       BUTTON_X_OFFSET = y;      // space between button and text
 
-      int width = 42;
-      GUIGraphicsContext.ScaleHorizontal(ref width);
+      int width = (int)(42 * SkinRatio);
+      GUIGraphicsContext.ScaleVertical(ref width);
       _keyHeight = width;
 
-      width = (int)(576.0f - 64.0f - 4.0f - 4.0f - 10.0f);
+      width = (int)(576.0f - 64.0f - 4.0f - 4.0f - 10.0f - 80.0f);
       GUIGraphicsContext.ScaleHorizontal(ref width);
       fTEXTBOX_WIDTH = width;
 
@@ -616,7 +623,7 @@ namespace MediaPortal.Dialogs
         for (int i = 0; i < keyRow.Count; i++)
         {
           Key key = (Key)keyRow[i];
-          int width = key.dwWidth;
+          int width = (int)(key.dwWidth * SkinRatio);
           GUIGraphicsContext.ScaleHorizontal(ref width);
           if (x >= fX + fWidthSum && x <= fX + fWidthSum + width)
           {
@@ -632,7 +639,7 @@ namespace MediaPortal.Dialogs
           // keys) and the main keyboard
           if (dwIndex == 0)
           {
-            width = GAP2_WIDTH;
+            width = (int)(GAP2_WIDTH * SkinRatio);
             GUIGraphicsContext.ScaleHorizontal(ref width);
             fWidthSum += width;
           }
@@ -789,7 +796,7 @@ namespace MediaPortal.Dialogs
       _shiftTurnedOn = false;
       _textEntered = "";
       _position = 0;
-      int height = 42;
+      int height = (int)(42 * SkinRatio);
       GUIGraphicsContext.ScaleVertical(ref height);
       _keyHeight = height;
       _maxRows = 5;
@@ -884,7 +891,6 @@ namespace MediaPortal.Dialogs
         keyRow.Add(new Key(Xkey.XK_ACCENTS, MODEKEY_WIDTH));   // Searchkeyboard
       else
         keyRow.Add(new Key(Xkey.XK_NULL, MODEKEY_WIDTH));
-        
 
       keyRow.Add(new Key(Xkey.XK_SPACE, (KEY_WIDTH * 6) + (GAP_WIDTH * 5)));
       keyRow.Add(new Key(Xkey.XK_ARROWLEFT, (KEY_WIDTH * 2) + (GAP_WIDTH * 1)));
@@ -1160,9 +1166,9 @@ namespace MediaPortal.Dialogs
       if (_textEntered.Length < MAX_CHARS)
       {
         float fWidth = 0, fHeight = 0;
-        _font18.GetTextExtent(_textEntered, ref fWidth, ref fHeight);
+        _fontSearchText.GetTextExtent(_textEntered, ref fWidth, ref fHeight);
 
-        if (fWidth < fTEXTBOX_WIDTH)
+        if (fWidth < (fTEXTBOX_WIDTH * SkinRatio))
         {
           if (_position >= _textEntered.Length)
           {
@@ -1196,9 +1202,9 @@ namespace MediaPortal.Dialogs
         if (_textEntered.Length < MAX_CHARS)
         {
           float fWidth = 0, fHeight = 0;
-          _font18.GetTextExtent(_textEntered, ref fWidth, ref fHeight);
+          _fontSearchText.GetTextExtent(_textEntered, ref fWidth, ref fHeight);
 
-          if (fWidth < fTEXTBOX_WIDTH)
+          if (fWidth < (fTEXTBOX_WIDTH * SkinRatio))
           {
             if (_position >= _textEntered.Length)
             {
@@ -1514,13 +1520,13 @@ namespace MediaPortal.Dialogs
       string strKey = GetChar(key.xKey).ToString();
       string name = (key.name.Length == 0) ? strKey : key.name;
 
-      int width = key.dwWidth - KEY_INSET + 2;
-      int height = (int)(KEY_INSET + 2);
+      int width = (int)((key.dwWidth - KEY_INSET) * SkinRatio) + 2;
+      int height = (int)(KEY_INSET * SkinRatio) + 2;
       GUIGraphicsContext.ScaleHorizontal(ref width);
       GUIGraphicsContext.ScaleVertical(ref height);
 
-      float x = fX + KEY_INSET;
-      float y = fY + KEY_INSET;
+      float x = fX + (int)(KEY_INSET * SkinRatio);
+      float y = fY + (int)(KEY_INSET * SkinRatio);
       float z = fX + width;//z
       float w = fY + _keyHeight - height;//w
 
@@ -1617,11 +1623,11 @@ namespace MediaPortal.Dialogs
     void RenderKeyboardLatin(float timePassed)
     {
       // Show text and caret
-      DrawTextBox(timePassed, 64, 208, 576, 248);
-      DrawText(68, 208);
+      DrawTextBox(timePassed, (int)(64 * SkinRatio), 208, (int)((MODEKEY_WIDTH + GAP_WIDTH * 9 + GAP2_WIDTH + KEY_WIDTH * 10 + 67.0f) * SkinRatio), 248);  //- 64.0f - 4.0f - 4.0f - 10.0f
+      DrawText((int)(82 * SkinRatio), 208);
 
 
-      int x1 = 64;
+      int x1 = (int)(64 * SkinRatio);
       int y1 = 250;
       GUIGraphicsContext.ScalePosToScreenResolution(ref x1, ref y1);
       x1 += GUIGraphicsContext.OffsetX;
@@ -1673,10 +1679,10 @@ namespace MediaPortal.Dialogs
                   break;
               }
               break;
-           /* case Xkey.XK_ACCENTS:
-              selKeyColor = COLOR_INVISIBLE;
-              selTextColor = COLOR_INVISIBLE;
-              break;*/
+            /* case Xkey.XK_ACCENTS:
+               selKeyColor = COLOR_INVISIBLE;
+               selTextColor = COLOR_INVISIBLE;
+               break;*/
           }
 
           // Highlight the current key
@@ -1685,14 +1691,14 @@ namespace MediaPortal.Dialogs
 
           RenderKey(fX + fWidthSum, fY, key, selKeyColor, selTextColor);
 
-          int width = key.dwWidth;
+          int width = (int)(key.dwWidth * SkinRatio);
           GUIGraphicsContext.ScaleHorizontal(ref width);
           fWidthSum += width;
 
           // There's a slightly larger gap between the leftmost keys (mode
           // keys) and the main keyboard
           if (dwIndex == 0)
-            width = GAP2_WIDTH;
+            width = (int)(GAP2_WIDTH * SkinRatio);
           else
             width = GAP_WIDTH;
           GUIGraphicsContext.ScaleHorizontal(ref width);
