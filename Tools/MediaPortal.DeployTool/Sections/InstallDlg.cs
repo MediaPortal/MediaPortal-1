@@ -64,14 +64,21 @@ namespace MediaPortal.DeployTool
     }
     public override DeployDialog GetNextDialog()
     {
+      int action;
       foreach (ListViewItem item in listView.Items)
       {
         IInstallationPackage package = (IInstallationPackage)item.Tag;
-        if (!PerformPackageAction(package, item))
+        action = PerformPackageAction(package, item);
+        if (action == 2)
+        {
           break;
-        item.SubItems[1].Text = Utils.GetBestTranslation("Install_stateInstalled");
-        item.SubItems[2].Text = Utils.GetBestTranslation("Install_actionNothing");
-        item.ImageIndex = 0;
+        }
+        if (action == 1)
+        {
+          item.SubItems[1].Text = Utils.GetBestTranslation("Install_stateInstalled");
+          item.SubItems[2].Text = Utils.GetBestTranslation("Install_actionNothing");
+          item.ImageIndex = 0;
+        }
       }
       PopulateListView();
       return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Finished);
@@ -205,10 +212,15 @@ namespace MediaPortal.DeployTool
         PopulateListView();
     }
 
-    private bool PerformPackageAction(IInstallationPackage package, ListViewItem item)
+    private int PerformPackageAction(IInstallationPackage package, ListViewItem item)
     {
+      //
+      // return 0: nothing to do
+      //        1: install successufull
+      //        2: install error
+      //
       CheckResult result = package.CheckStatus();
-      if (result.state != CheckState.INSTALLED)
+      if (result.state != CheckState.INSTALLED && result.state != CheckState.REMOVED && result.state != CheckState.DOWNLOADED)
       {
         switch (result.state)
         {
@@ -216,81 +228,90 @@ namespace MediaPortal.DeployTool
             if (result.needsDownload)
             {
               item.SubItems[1].Text = Utils.GetBestTranslation("Install_msgDownloading");
+              listView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
               Update();
               if (!package.Download())
               {
                 Utils.ErrorDlg(string.Format(Utils.GetBestTranslation("Install_errInstallFailed"), package.GetDisplayName()));
-                return false;
+                return 2;
               }
             }
             item.SubItems[1].Text = Utils.GetBestTranslation("Install_msgInstalling");
+            listView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
             Update();
             if (!package.Install())
             {
               Utils.ErrorDlg(string.Format(Utils.GetBestTranslation("Install_errInstallFailed"), package.GetDisplayName()));
-              return false;
+              return 2;
             }
             break;
 
           case CheckState.NOT_CONFIGURED:
             item.SubItems[1].Text = Utils.GetBestTranslation("Install_msgConfiguring");
+            listView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
             Update();
             if (!package.Install())
             {
               Utils.ErrorDlg(string.Format(Utils.GetBestTranslation("Install_errConfigureFailed"), package.GetDisplayName()));
-              return false;
+              return 2;
             }
             break;
 
           case CheckState.NOT_REMOVED:
             item.SubItems[1].Text = Utils.GetBestTranslation("Install_msgUninstalling");
+            listView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
             Update();
             if (!package.Install())
             {
               Utils.ErrorDlg(string.Format(Utils.GetBestTranslation("Install_errRemoveFailed"), package.GetDisplayName()));
-              return false;
+              return 2;
             }
             break;
 
           case CheckState.VERSION_MISMATCH:
             item.SubItems[1].Text = Utils.GetBestTranslation("Install_msgUninstalling");
+            listView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
             Update();
             if (!package.UnInstall())
             {
               Utils.ErrorDlg(string.Format(Utils.GetBestTranslation("Install_errUinstallFailed"), package.GetDisplayName()));
-              return false;
+              return 2;
             }
             if (result.needsDownload)
             {
               item.SubItems[1].Text = Utils.GetBestTranslation("Install_msgDownloading");
+              listView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
               Update();
               if (!package.Download())
               {
                 Utils.ErrorDlg(string.Format(Utils.GetBestTranslation("Install_errDownloadFailed"), package.GetDisplayName()));
-                return false;
+                return 2;
               }
             }
             item.SubItems[1].Text = Utils.GetBestTranslation("Install_msgInstalling");
+            listView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
             Update();
             if (!package.Install())
             {
               Utils.ErrorDlg(string.Format(Utils.GetBestTranslation("Install_errInstallFailed"), package.GetDisplayName()));
-              return false;
+              return 2;
             }
             break;
 
           case CheckState.NOT_DOWNLOADED:
             item.SubItems[1].Text = Utils.GetBestTranslation("Install_msgDownloading");
+            listView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
             Update();
             if (!package.Download())
             {
               Utils.ErrorDlg(string.Format(Utils.GetBestTranslation("Install_errDownloadFailed"), package.GetDisplayName()));
-              return false;
+              return 2;
             }
             break;
         }
+        return 1;
       }
-      return true;
+      return 0;
     }
   }
 }
