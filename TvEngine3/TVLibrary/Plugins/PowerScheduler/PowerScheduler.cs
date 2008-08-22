@@ -1263,8 +1263,18 @@ namespace TvEngine.PowerScheduler
 
         //check if is allowed to sleep at this time. 
         // e.g. 23:00 -> 07:00 or 01:00 -> 17:00
-        if ((Current24hHour < _settings.AllowedSleepStartTime) && (Current24hHour >= _settings.AllowedSleepStopTime) ||
-            (Current24hHour > _settings.AllowedSleepStartTime) && (Current24hHour >= _settings.AllowedSleepStopTime))
+        if (// Stop time one day after start time (23:00 -> 07:00)
+          ((_settings.AllowedSleepStartTime > _settings.AllowedSleepStopTime) 
+          && (Current24hHour < _settings.AllowedSleepStartTime) 
+          && (Current24hHour >= _settings.AllowedSleepStopTime))
+          ||
+          // Start time and stop time on the same day (01:00 -> 17:00)
+          ((_settings.AllowedSleepStartTime < _settings.AllowedSleepStopTime) 
+          &&
+          // 2 possibilities for the same day: before or after the timespan
+          ((Current24hHour < _settings.AllowedSleepStartTime) ||
+          (Current24hHour >= _settings.AllowedSleepStopTime))
+          ))
         {
           _currentDisAllowShutdownHandler = "NOT-ALLOWED-TIME";
           LogVerbose("PowerScheduler.DisAllowShutdown: not allowed hour for standby {0}", Current24hHour);
