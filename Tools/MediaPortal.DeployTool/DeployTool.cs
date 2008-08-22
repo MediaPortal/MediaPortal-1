@@ -122,6 +122,11 @@ namespace MediaPortal.DeployTool
         Close();
         return;
       }
+      if (nextButton.Text == Utils.GetBestTranslation("Install_buttonDownload") ||
+          nextButton.Text == Utils.GetBestTranslation("Install_buttonInstall"))
+      {
+        nextButton.Enabled = false;
+      }
       if (!_currentDialog.SettingsValid())
         return;
       _currentDialog.SetProperties();
@@ -138,6 +143,7 @@ namespace MediaPortal.DeployTool
       if (InstallationProperties.Instance["finished"] == "yes")
       {
         backButton.Visible = false;
+        nextButton.Enabled = true;
         nextButton.Text = Utils.GetBestTranslation("MainWindow_buttonClose");
       }
       if (InstallationProperties.Instance["Install_Dialog"] == "yes")
