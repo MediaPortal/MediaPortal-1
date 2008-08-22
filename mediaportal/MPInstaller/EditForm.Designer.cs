@@ -29,7 +29,6 @@ namespace MediaPortal.MPInstaller
         private void InitializeComponent()
         {
           this.components = new System.ComponentModel.Container();
-          System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditForm));
           this.menuStrip1 = new System.Windows.Forms.MenuStrip();
           this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
           this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -167,6 +166,7 @@ namespace MediaPortal.MPInstaller
           // 
           // newToolStripMenuItem
           // 
+          this.newToolStripMenuItem.Image = global::MPInstaller.Properties.Resources.newButton_image;
           this.newToolStripMenuItem.Name = "newToolStripMenuItem";
           this.newToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
           this.newToolStripMenuItem.Text = "New Proiect";
@@ -174,6 +174,7 @@ namespace MediaPortal.MPInstaller
           // 
           // openProiectToolStripMenuItem
           // 
+          this.openProiectToolStripMenuItem.Image = global::MPInstaller.Properties.Resources.openButton_Image;
           this.openProiectToolStripMenuItem.Name = "openProiectToolStripMenuItem";
           this.openProiectToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
           this.openProiectToolStripMenuItem.Text = "Open Project ..";
@@ -181,6 +182,7 @@ namespace MediaPortal.MPInstaller
           // 
           // sToolStripMenuItem
           // 
+          this.sToolStripMenuItem.Image = global::MPInstaller.Properties.Resources.saveButton_Image;
           this.sToolStripMenuItem.Name = "sToolStripMenuItem";
           this.sToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
           this.sToolStripMenuItem.Text = "Save Project";
@@ -718,7 +720,7 @@ namespace MediaPortal.MPInstaller
           // label12
           // 
           this.label12.AutoSize = true;
-          this.label12.Location = new System.Drawing.Point(3, 119);
+          this.label12.Location = new System.Drawing.Point(3, 114);
           this.label12.Name = "label12";
           this.label12.Size = new System.Drawing.Size(52, 13);
           this.label12.TabIndex = 13;
@@ -735,7 +737,7 @@ namespace MediaPortal.MPInstaller
             "Update"});
           this.proiectt_comboBox1.Location = new System.Drawing.Point(94, 111);
           this.proiectt_comboBox1.Name = "proiectt_comboBox1";
-          this.proiectt_comboBox1.Size = new System.Drawing.Size(114, 21);
+          this.proiectt_comboBox1.Size = new System.Drawing.Size(124, 21);
           this.proiectt_comboBox1.TabIndex = 12;
           this.proiectt_comboBox1.SelectedIndexChanged += new System.EventHandler(this.proiectt_textBox1_TextChanged);
           // 
@@ -774,7 +776,7 @@ namespace MediaPortal.MPInstaller
           // label9
           // 
           this.label9.AutoSize = true;
-          this.label9.Location = new System.Drawing.Point(395, 5);
+          this.label9.Location = new System.Drawing.Point(398, 10);
           this.label9.Name = "label9";
           this.label9.Size = new System.Drawing.Size(66, 13);
           this.label9.TabIndex = 9;
@@ -782,10 +784,13 @@ namespace MediaPortal.MPInstaller
           // 
           // proiectt_textBox5
           // 
-          this.proiectt_textBox5.Location = new System.Drawing.Point(398, 21);
+          this.proiectt_textBox5.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                      | System.Windows.Forms.AnchorStyles.Left)
+                      | System.Windows.Forms.AnchorStyles.Right)));
+          this.proiectt_textBox5.Location = new System.Drawing.Point(398, 33);
           this.proiectt_textBox5.Multiline = true;
           this.proiectt_textBox5.Name = "proiectt_textBox5";
-          this.proiectt_textBox5.Size = new System.Drawing.Size(229, 84);
+          this.proiectt_textBox5.Size = new System.Drawing.Size(242, 99);
           this.proiectt_textBox5.TabIndex = 8;
           this.proiectt_textBox5.TextChanged += new System.EventHandler(this.proiectt_textBox1_TextChanged);
           // 
@@ -800,7 +805,7 @@ namespace MediaPortal.MPInstaller
           // label5
           // 
           this.label5.AutoSize = true;
-          this.label5.Location = new System.Drawing.Point(5, 92);
+          this.label5.Location = new System.Drawing.Point(3, 88);
           this.label5.Name = "label5";
           this.label5.Size = new System.Drawing.Size(48, 13);
           this.label5.TabIndex = 6;
@@ -817,7 +822,7 @@ namespace MediaPortal.MPInstaller
           // label4
           // 
           this.label4.AutoSize = true;
-          this.label4.Location = new System.Drawing.Point(3, 66);
+          this.label4.Location = new System.Drawing.Point(3, 62);
           this.label4.Name = "label4";
           this.label4.Size = new System.Drawing.Size(73, 13);
           this.label4.TabIndex = 4;
@@ -834,7 +839,7 @@ namespace MediaPortal.MPInstaller
           // label3
           // 
           this.label3.AutoSize = true;
-          this.label3.Location = new System.Drawing.Point(3, 40);
+          this.label3.Location = new System.Drawing.Point(3, 36);
           this.label3.Name = "label3";
           this.label3.Size = new System.Drawing.Size(44, 13);
           this.label3.TabIndex = 2;
@@ -842,7 +847,7 @@ namespace MediaPortal.MPInstaller
           // 
           // proiectt_textBox1
           // 
-          this.proiectt_textBox1.Location = new System.Drawing.Point(94, 5);
+          this.proiectt_textBox1.Location = new System.Drawing.Point(94, 7);
           this.proiectt_textBox1.Name = "proiectt_textBox1";
           this.proiectt_textBox1.Size = new System.Drawing.Size(298, 20);
           this.proiectt_textBox1.TabIndex = 1;
@@ -851,7 +856,7 @@ namespace MediaPortal.MPInstaller
           // label2
           // 
           this.label2.AutoSize = true;
-          this.label2.Location = new System.Drawing.Point(3, 12);
+          this.label2.Location = new System.Drawing.Point(3, 10);
           this.label2.Name = "label2";
           this.label2.Size = new System.Drawing.Size(41, 13);
           this.label2.TabIndex = 0;
@@ -962,7 +967,7 @@ namespace MediaPortal.MPInstaller
           // newToolStripButton
           // 
           this.newToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-          this.newToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("newToolStripButton.Image")));
+          this.newToolStripButton.Image = global::MPInstaller.Properties.Resources.newButton_image;
           this.newToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
           this.newToolStripButton.Name = "newToolStripButton";
           this.newToolStripButton.Size = new System.Drawing.Size(23, 22);
@@ -972,7 +977,7 @@ namespace MediaPortal.MPInstaller
           // openToolStripButton
           // 
           this.openToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-          this.openToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("openToolStripButton.Image")));
+          this.openToolStripButton.Image = global::MPInstaller.Properties.Resources.openButton_Image;
           this.openToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
           this.openToolStripButton.Name = "openToolStripButton";
           this.openToolStripButton.Size = new System.Drawing.Size(23, 22);
@@ -982,7 +987,7 @@ namespace MediaPortal.MPInstaller
           // saveToolStripButton
           // 
           this.saveToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-          this.saveToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("saveToolStripButton.Image")));
+          this.saveToolStripButton.Image = global::MPInstaller.Properties.Resources.saveButton_Image;
           this.saveToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
           this.saveToolStripButton.Name = "saveToolStripButton";
           this.saveToolStripButton.Size = new System.Drawing.Size(23, 22);
