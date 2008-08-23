@@ -105,10 +105,20 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>MediaPortal.DeployTool.fr-FR.resx</DependentUpon>
     </Compile>
+    <Compile Include="MediaPortal.DeployTool.hr-HR.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MediaPortal.DeployTool.hr-HR.resx</DependentUpon>
+    </Compile>
     <Compile Include="MediaPortal.DeployTool.it-IT.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>MediaPortal.DeployTool.it-IT.resx</DependentUpon>
+    </Compile>
+    <Compile Include="MediaPortal.DeployTool.mk-MK.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MediaPortal.DeployTool.mk-MK.resx</DependentUpon>
     </Compile>
     <Compile Include="MediaPortal.DeployTool.nb-NO.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -199,10 +209,20 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>MediaPortal.DeployTool.fr-FR.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="MediaPortal.DeployTool.hr-HR.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.hr-HR.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.DeployTool.it-IT.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>MediaPortal.DeployTool.it-IT.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MediaPortal.DeployTool.mk-MK.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.mk-MK.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.DeployTool.nb-NO.resx">
       <SubType>Designer</SubType>
