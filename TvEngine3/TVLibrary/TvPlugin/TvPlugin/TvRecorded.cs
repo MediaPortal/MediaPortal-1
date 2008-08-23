@@ -738,9 +738,7 @@ namespace TvPlugin
       TimeSpan tsRecording = (aRecording.EndTime - aRecording.StartTime);
       DateTime now = DateTime.Now;
 
-      bool recStartEndSame = (tsRecording.TotalSeconds == 0);
-     
-      IList recordingList = Schedule.ListAll();
+      bool recStartEndSame = (tsRecording.TotalSeconds == 0);           
 
       if (recStartEndSame)
       {

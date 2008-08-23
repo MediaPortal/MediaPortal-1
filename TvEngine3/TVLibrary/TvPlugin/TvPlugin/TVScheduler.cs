@@ -924,8 +924,7 @@ namespace TvPlugin
     {
       GUIDialogDateTime dlg = (GUIDialogDateTime)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_DATETIME);
       if (dlg != null)
-      {
-        VirtualCard card;
+      {        
         IList channels = Channel.ListAll();
         dlg.SetHeading(637);
         dlg.Items.Clear();

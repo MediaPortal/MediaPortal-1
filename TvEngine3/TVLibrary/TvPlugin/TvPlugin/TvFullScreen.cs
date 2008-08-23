@@ -989,8 +989,7 @@ namespace TvPlugin
 
               _dialogBottomMenu.DoModal(GetID);
 
-              _bottomDialogMenuVisible = false;
-              Schedule rec;
+              _bottomDialogMenuVisible = false;              
               switch (_dialogBottomMenu.SelectedId)
               {
                 case 875:

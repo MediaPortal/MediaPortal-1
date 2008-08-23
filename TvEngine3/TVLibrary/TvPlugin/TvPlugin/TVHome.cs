@@ -917,7 +917,7 @@ namespace TvPlugin
       VirtualCard card;
       if (false == server.IsRecording(channel.Name, out card))
       {
-        bool alreadyRec = (lastActiveRecChannelId == Navigator.Channel.IdChannel);
+        bool alreadyRec = (lastActiveRecChannelId == channel.IdChannel);
         if (!alreadyRec)
         {
           TvBusinessLayer layer = new TvBusinessLayer();

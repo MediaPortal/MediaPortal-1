@@ -507,8 +507,7 @@ namespace TvPlugin
       //List<int> TSChannels = null;
       int SelectedID = 0;
       int CurrentChanState = 0;
-      int CurrentId = 0;
-      bool CheckChannelState = true;
+      int CurrentId = 0;      
       bool DisplayStatusInfo = true;
       string PathIconNoTune = GUIGraphicsContext.Skin + @"\Media\remote_blue.png";
       string PathIconTimeshift = GUIGraphicsContext.Skin + @"\Media\remote_yellow.png";
