@@ -14,14 +14,26 @@
     </control>
     <control>
       <type>image</type>
-      <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>
       <id>0</id>
       <posX>116</posX>
       <posY>64</posY>
       <width>546</width>
       <height>366</height>
       <texture>context_background.png</texture>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
+    </control>
+    <control>
+      <description>Time</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>500</posX>
+      <posY>75</posY>
+      <label>#time</label>
+      <align>left</align>
+      <textcolor>white</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>GFX-Heading "menu" text label</description>
@@ -41,9 +53,9 @@
       <type>label</type>
       <id>4</id>
       <posX>200</posX>
-      <posY>79</posY>
+      <posY>75</posY>
       <label>181</label>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>white</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
