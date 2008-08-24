@@ -60,7 +60,7 @@ namespace TvPlugin
       public int Speed = 1;
       public bool OsdVisible = false;
       public bool Paused = false;
-      public bool MsnVisible = false;
+      //public bool MsnVisible = false;       // msn related can be removed
       public bool ContextMenuVisible = false;
       public bool ShowStatusLine = false;
       public bool ShowTime = false;
@@ -85,7 +85,7 @@ namespace TvPlugin
     ///@
     TvZapOsd _zapWindow = null;
     TvOsd _osdWindow = null;
-    ///GUITVMSNOSD _msnWindow = null;
+    ///GUITVMSNOSD _msnWindow = null;       // msn related can be removed
     DateTime _osdTimeoutTimer;
     DateTime _zapTimeOutTimer;
     DateTime _groupTimeOutTimer;
@@ -94,7 +94,7 @@ namespace TvPlugin
     //		long				m_iZapDelay;
     bool _isOsdVisible = false;
     bool _zapOsdVisible = false;
-    bool _msnWindowVisible = false;
+    //bool _msnWindowVisible = false;       // msn related can be removed
     bool _channelInputVisible = false;
 
     long _timeOsdOnscreen;
@@ -106,7 +106,7 @@ namespace TvPlugin
     DateTime _keyPressedTimer = DateTime.Now;
     string _channelName = "";
     bool _isDialogVisible = false;
-    bool _isMsnChatPopup = false;
+    //bool _isMsnChatPopup = false;       // msn related can be removed
     GUIDialogMenu dlg;
     GUIDialogNotify _dialogNotify = null;
     GUIDialogMenuBottomRight _dialogBottomMenu = null;
@@ -230,7 +230,7 @@ namespace TvPlugin
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        _isMsnChatPopup = (xmlreader.GetValueAsInt("MSNmessenger", "popupwindow", 0) == 1);
+        //_isMsnChatPopup = (xmlreader.GetValueAsInt("MSNmessenger", "popupwindow", 0) == 1);       // msn related can be removed
         _timeOsdOnscreen = 1000 * xmlreader.GetValueAsInt("movieplayer", "osdtimeout", 5);
         //				m_iZapDelay = 1000*xmlreader.GetValueAsInt("movieplayer","zapdelay",2);
         _zapTimeOutValue = 1000 * xmlreader.GetValueAsInt("movieplayer", "zaptimeout", 5);
@@ -323,7 +323,7 @@ namespace TvPlugin
       {
         // switch back to the menu
         _isOsdVisible = false;
-        _msnWindowVisible = false;
+        //_msnWindowVisible = false;       // msn related can be removed
         GUIWindowManager.IsOsdVisible = false;
         GUIGraphicsContext.IsFullScreenVideo = false;
         GUIWindowManager.ShowPreviousWindow();
@@ -386,7 +386,7 @@ namespace TvPlugin
       }
       //@
       /*
-       * else if (_msnWindowVisible)
+       * else if (_msnWindowVisible)       // msn related can be removed
       {
         if (((action.wID == Action.ActionType.ACTION_SHOW_OSD) || (action.wID == Action.ActionType.ACTION_SHOW_GUI))) // hide the OSD
         {
@@ -492,19 +492,20 @@ namespace TvPlugin
           }
           break;
 
-        case Action.ActionType.ACTION_SHOW_MSN_OSD:
-          if (_isMsnChatPopup)
-          {
-            Log.Debug("MSN CHAT:ON");
+        // msn related can be removed
+        //case Action.ActionType.ACTION_SHOW_MSN_OSD:
+        //  if (_isMsnChatPopup)
+        //  {
+        //    Log.Debug("MSN CHAT:ON");
 
-            _msnWindowVisible = true;
-            GUIWindowManager.VisibleOsd = GUIWindow.Window.WINDOW_TVMSNOSD;
-            ///@
-            ///_msnWindow.DoModal(GetID, null);
-            _msnWindowVisible = false;
-            GUIWindowManager.IsOsdVisible = false;
-          }
-          break;
+        //    _msnWindowVisible = true;
+        //    GUIWindowManager.VisibleOsd = GUIWindow.Window.WINDOW_TVMSNOSD;
+        //    ///@
+        //    ///_msnWindow.DoModal(GetID, null);
+        //    _msnWindowVisible = false;
+        //    GUIWindowManager.IsOsdVisible = false;
+        //  }
+        //  break;
 
         case Action.ActionType.ACTION_AUTOCROP:
           {
@@ -675,7 +676,9 @@ namespace TvPlugin
 
         case Action.ActionType.ACTION_KEY_PRESSED:
           {
-            if ((action.m_key != null) && (!_msnWindowVisible))
+            // msn related can be removed
+            //if ((action.m_key != null) && (!_msnWindowVisible))
+            if (action.m_key != null)
               OnKeyCode((char)action.m_key.KeyChar);
 
             _messageBoxVisible = false;
@@ -1084,7 +1087,7 @@ namespace TvPlugin
                 if (!Recorder.NeedChannelSwitchForRecording(rec)) return true;
 
                 _messageBoxVisible = false;
-                _msnWindowVisible = false;
+                _msnWindowVisible = false;     // msn related can be removed
                 GUIWindowManager.IsOsdVisible = false;
                 if (_zapOsdVisible)
                 {
@@ -1100,7 +1103,7 @@ namespace TvPlugin
                   _isOsdVisible = false;
                   GUIWindowManager.IsOsdVisible = false;
                 }
-                if (_msnWindowVisible)
+                if (_msnWindowVisible)     // msn related can be removed
                 {
                   GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _msnWindow.GetID, 0, 0, GetID, 0, null);
                   _msnWindow.OnMessage(msg);	// Send a de-init msg to the OSD
@@ -1220,52 +1223,54 @@ namespace TvPlugin
           }
           break;
         #endregion
+        // msn related can be removed
+        //#region case GUI_MSG_MSN_CLOSECONVERSATION
 
-        #region case GUI_MSG_MSN_CLOSECONVERSATION
+        //case GUIMessage.MessageType.GUI_MSG_MSN_CLOSECONVERSATION:
+        //  if (_msnWindowVisible)
+        //  {
+        //    ///@
+        //    /// GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _msnWindow.GetID, 0, 0, GetID, 0, null);
+        //    ///_msnWindow.OnMessage(msg);	// Send a de-init msg to the OSD
+        //  }
+        //  _msnWindowVisible = false;
+        //  GUIWindowManager.IsOsdVisible = false;
+        //  break;
 
-        case GUIMessage.MessageType.GUI_MSG_MSN_CLOSECONVERSATION:
-          if (_msnWindowVisible)
-          {
-            ///@
-            /// GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _msnWindow.GetID, 0, 0, GetID, 0, null);
-            ///_msnWindow.OnMessage(msg);	// Send a de-init msg to the OSD
-          }
-          _msnWindowVisible = false;
-          GUIWindowManager.IsOsdVisible = false;
-          break;
+        //#endregion
 
-        #endregion
+        // msn related can be removed
+        //#region case GUI_MSG_MSN_STATUS_MESSAGE
 
-        #region case GUI_MSG_MSN_STATUS_MESSAGE
+        //case GUIMessage.MessageType.GUI_MSG_MSN_STATUS_MESSAGE:
 
-        case GUIMessage.MessageType.GUI_MSG_MSN_STATUS_MESSAGE:
+        //#endregion
 
-        #endregion
+        // msn related can be removed
+        //#region case GUI_MSG_MSN_MESSAGE
+        //case GUIMessage.MessageType.GUI_MSG_MSN_MESSAGE:
+        //  if (_isOsdVisible && _isMsnChatPopup)
+        //  {
+        //    GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _osdWindow.GetID, 0, 0, GetID, 0, null);
+        //    _osdWindow.OnMessage(msg);	// Send a de-init msg to the OSD
+        //    _isOsdVisible = false;
+        //    GUIWindowManager.IsOsdVisible = false;
 
-        #region case GUI_MSG_MSN_MESSAGE
-        case GUIMessage.MessageType.GUI_MSG_MSN_MESSAGE:
-          if (_isOsdVisible && _isMsnChatPopup)
-          {
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _osdWindow.GetID, 0, 0, GetID, 0, null);
-            _osdWindow.OnMessage(msg);	// Send a de-init msg to the OSD
-            _isOsdVisible = false;
-            GUIWindowManager.IsOsdVisible = false;
+        //  }
 
-          }
+        //  if (!_msnWindowVisible && _isMsnChatPopup)
+        //  {
+        //    Log.Debug("MSN CHAT:ON");
+        //    _msnWindowVisible = true;
+        //    GUIWindowManager.VisibleOsd = GUIWindow.Window.WINDOW_TVMSNOSD;
+        //    ///@
+        //    ///_msnWindow.DoModal(GetID, message);
+        //    _msnWindowVisible = false;
+        //    GUIWindowManager.IsOsdVisible = false;
 
-          if (!_msnWindowVisible && _isMsnChatPopup)
-          {
-            Log.Debug("MSN CHAT:ON");
-            _msnWindowVisible = true;
-            GUIWindowManager.VisibleOsd = GUIWindow.Window.WINDOW_TVMSNOSD;
-            ///@
-            ///_msnWindow.DoModal(GetID, message);
-            _msnWindowVisible = false;
-            GUIWindowManager.IsOsdVisible = false;
-
-          }
-          break;
-        #endregion
+        //  }
+        //  break;
+        //#endregion
 
         #region case GUI_MSG_WINDOW_DEINIT
 
@@ -1280,12 +1285,13 @@ namespace TvPlugin
             _isOsdVisible = false;
             GUIWindowManager.IsOsdVisible = false;
 
-            if (_msnWindowVisible)
-            {
-              ///@
-              /// GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _msnWindow.GetID, 0, 0, GetID, 0, null);
-              ///_msnWindow.OnMessage(msg);	// Send a de-init msg to the OSD
-            }
+            // msn related can be removed
+            //if (_msnWindowVisible)
+            //{
+            //  ///@
+            //  /// GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _msnWindow.GetID, 0, 0, GetID, 0, null);
+            //  ///_msnWindow.OnMessage(msg);	// Send a de-init msg to the OSD
+            //}
 
             _isOsdVisible = false;
             GUIWindowManager.IsOsdVisible = false;
@@ -1304,7 +1310,7 @@ namespace TvPlugin
 
             _screenState.ContextMenuVisible = false;
             _screenState.MsgBoxVisible = false;
-            _screenState.MsnVisible = false;
+            //_screenState.MsnVisible = false;      // msn related can be removed
             _screenState.OsdVisible = false;
             _screenState.Paused = false;
             _screenState.ShowGroup = false;
@@ -1356,7 +1362,7 @@ namespace TvPlugin
             GUIGraphicsContext.VideoWindow = new Rectangle(GUIGraphicsContext.OverScanLeft, GUIGraphicsContext.OverScanTop, GUIGraphicsContext.OverScanWidth, GUIGraphicsContext.OverScanHeight);
             _osdWindow = (TvOsd)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVOSD);
             _zapWindow = (TvZapOsd)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVZAPOSD);
-            ///_msnWindow = (GUITVMSNOSD)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVMSNOSD);
+            ///_msnWindow = (GUITVMSNOSD)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVMSNOSD);     // msn related can be removed
 
             _lastPause = g_Player.Paused;
             _lastSpeed = g_Player.Speed;
@@ -1413,17 +1419,18 @@ namespace TvPlugin
         #region case GUI_MSG_LOSTFOCUS
         case GUIMessage.MessageType.GUI_MSG_LOSTFOCUS:
           if (_isOsdVisible) return true;
-          if (_msnWindowVisible) return true;
+          //if (_msnWindowVisible) return true;     // msn related can be removed
           if (message.SenderControlId != (int)GUIWindow.Window.WINDOW_TVFULLSCREEN) return true;
           break;
         #endregion       
       }
 
-      if (_msnWindowVisible)
-      {
-        ///@
-        ///_msnWindow.OnMessage(message);	// route messages to MSNChat window
-      }
+      // msn related can be removed
+      //if (_msnWindowVisible)
+      //{
+      //  ///@
+      //  ///_msnWindow.OnMessage(message);	// route messages to MSNChat window
+      //}
       return base.OnMessage(message);
     }
 
@@ -1452,11 +1459,13 @@ namespace TvPlugin
       if (TVHome.Card.HasTeletext && !g_Player.IsTVRecording)
         dlg.AddLocalizedString(1441); // Fullscreen teletext
       dlg.AddLocalizedString(941); // Change aspect ratio
-      if (PluginManager.IsPluginNameEnabled("MSN Messenger"))
-      {
-        dlg.AddLocalizedString(12902); // MSN Messenger
-        dlg.AddLocalizedString(902); // MSN Online contacts
-      }
+
+      // msn related can be removed
+      //if (PluginManager.IsPluginNameEnabled("MSN Messenger"))
+      //{
+      //  dlg.AddLocalizedString(12902); // MSN Messenger
+      //  dlg.AddLocalizedString(902); // MSN Online contacts
+      //}
 
       //IAudioStream[] streams = TVHome.Card.AvailableAudioStreams;
       //if (streams != null && streams.Length > 0)
@@ -1597,18 +1606,20 @@ namespace TvPlugin
           ShowAudioDualMonoModeMenu(dualMonoMode);
           break;
 
-        case 12902: // MSN Messenger
-          Log.Debug("MSN CHAT:ON");
-          _msnWindowVisible = true;
-          GUIWindowManager.VisibleOsd = GUIWindow.Window.WINDOW_TVMSNOSD;
-          //@_msnWindow.DoModal(GetID, null);
-          _msnWindowVisible = false;
-          GUIWindowManager.IsOsdVisible = false;
-          break;
+        // msn related can be removed
+        //case 12902: // MSN Messenger
+        //  Log.Debug("MSN CHAT:ON");
+        //  _msnWindowVisible = true;
+        //  GUIWindowManager.VisibleOsd = GUIWindow.Window.WINDOW_TVMSNOSD;
+        //  //@_msnWindow.DoModal(GetID, null);
+        //  _msnWindowVisible = false;
+        //  GUIWindowManager.IsOsdVisible = false;
+        //  break;
 
-        case 902: // Online contacts
-          GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MSN);
-          break;
+        // msn related can be removed
+        //case 902: // Online contacts
+        //  GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MSN);
+        //  break;
 
         case 1441: // Fullscreen teletext
           GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT);
@@ -1617,7 +1628,7 @@ namespace TvPlugin
         case 970:
           // switch back to previous window
           _isOsdVisible = false;
-          _msnWindowVisible = false;
+          //_msnWindowVisible = false;     // msn related can be removed
           GUIWindowManager.IsOsdVisible = false;
           GUIGraphicsContext.IsFullScreenVideo = false;
           GUIWindowManager.ShowPreviousWindow();
@@ -2077,11 +2088,13 @@ namespace TvPlugin
         _screenState.ZapOsdVisible = _zapOsdVisible;
         updateGUI = true;
       }
-      if (_msnWindowVisible != _screenState.MsnVisible)
-      {
-        _screenState.MsnVisible = _msnWindowVisible;
-        updateGUI = true;
-      }
+
+      // msn related can be removed
+      //if (_msnWindowVisible != _screenState.MsnVisible)
+      //{
+      //  _screenState.MsnVisible = _msnWindowVisible;
+      //  updateGUI = true;
+      //}
       if (_isDialogVisible != _screenState.ContextMenuVisible)
       {
         _screenState.ContextMenuVisible = _isDialogVisible;
@@ -2379,7 +2392,7 @@ namespace TvPlugin
         {
           if (_screenState.ContextMenuVisible ||
             _screenState.MsgBoxVisible ||
-            _screenState.MsnVisible ||
+            //_screenState.MsnVisible ||     // msn related can be removed
             _screenState.OsdVisible ||
             _screenState.Paused ||
             _screenState.ShowGroup ||
@@ -2445,7 +2458,9 @@ namespace TvPlugin
       /// msg2 = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _msnWindow.GetID, 0, 0, GetID, 0, null);
       ///_msnWindow.OnMessage(msg2);	// Send a de-init msg to the OSD
       /// msg2 = null;
-      _msnWindowVisible = false;
+
+      //_msnWindowVisible = false;     // msn related can be removed
+
       GUIWindowManager.IsOsdVisible = false;
       Log.Debug("Tvfullscreen:not viewing anymore");
       GUIWindowManager.ShowPreviousWindow();
@@ -2485,6 +2500,7 @@ namespace TvPlugin
         if (_isDialogVisible)
           dlg.Render(timePassed);
 
+        // msn related can be removed
         ///if (_msnWindowVisible)
         ///_msnWindow.Render(timePassed);
       }
@@ -2747,11 +2763,13 @@ namespace TvPlugin
       {
         return _osdWindow.GetFocusControlId();
       }
-      if (_msnWindowVisible)
-      {
-        ///@
-        ///return _msnWindow.GetFocusControlId();
-      }
+
+      // msn related can be removed
+      //if (_msnWindowVisible)
+      //{
+      //  ///@
+      //  ///return _msnWindow.GetFocusControlId();
+      //}
 
       return base.GetFocusControlId();
     }
@@ -2762,11 +2780,13 @@ namespace TvPlugin
       {
         return _osdWindow.GetControl(iControlId);
       }
-      if (_msnWindowVisible)
-      {
-        ///@
-        ///return _msnWindow.GetControl(iControlId);
-      }
+
+      // msn related can be removed
+      //if (_msnWindowVisible)
+      //{
+      //  ///@
+      //  ///return _msnWindow.GetControl(iControlId);
+      //}
 
       return base.GetControl(iControlId);
     }
