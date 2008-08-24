@@ -4,11 +4,11 @@
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>no</allowoverlay>
   <define>#background.image:background3.png</define>
-  <define>#header.image:</define>
+  <define>#header.image:Back_tv.png</define>
   <define>#header.label:652</define>
   <controls>
     <import>common.window.xml</import>
-    <import>common.time.xml</import>
+    <import>common.videowindow.xml</import>
     <control>
       <description>button group</description>
       <type>group</type>
@@ -22,39 +22,28 @@
         <type>button</type>
         <id>2</id>
         <label>100</label>
-        <onleft>2</onleft>
         <onright>10</onright>
         <onup>17</onup>
-        <ondown>3</ondown>
       </control>
       <control>
         <type>sortbutton</type>
         <id>3</id>
         <label>620</label>
-        <onleft>2</onleft>
         <onright>10</onright>
-        <onup>2</onup>
-        <ondown>5</ondown>
       </control>
       <control>
         <description>All,Genre,Channel button</description>
         <type>button</type>
         <id>5</id>
         <label>457</label>
-        <onleft>6</onleft>
         <onright>10</onright>
-        <onup>3</onup>
-        <ondown>6</ondown>
       </control>
       <control>
         <description>cleanup button</description>
         <type>button</type>
         <id>6</id>
         <label>624</label>
-        <onleft>2</onleft>
         <onright>10</onright>
-        <onup>5</onup>
-        <ondown>7</ondown>
       </control>
       <control>
         <description>compress button</description>
@@ -62,9 +51,7 @@
         <id>7</id>
         <label>896</label>
         <hyperlink>609</hyperlink>
-        <onleft>2</onleft>
         <onright>10</onright>
-        <onup>6</onup>
         <ondown>99</ondown>
       </control>
     </control>
@@ -78,7 +65,7 @@
         <type>listcontrol</type>
         <id>10</id>
         <width>445</width>
-        <height>322</height>
+        <height>260</height>
         <textXOff>15</textXOff>
         <textXOff2>420</textXOff2>
         <textYOff2>51</textYOff2>
@@ -103,6 +90,8 @@
         <description>listcontrol</description>
         <type>listcontrol</type>
         <id>11</id>
+        <width>445</width>
+        <height>260</height>
         <onleft>10</onleft>
         <onright>2</onright>
         <!--         <onup>2</onup>
@@ -157,35 +146,6 @@
       <label>#TV.RecordedTV.Genre</label>
       <align>right</align>
       <textcolor>FFB2D4F5</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-    </control>
-    <control>
-      <description>TV background</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>10</posX>
-      <posY>468</posY>
-      <width>180</width>
-      <height>108</height>
-      <colordiffuse>60ffffff</colordiffuse>
-      <texture>-</texture>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-    </control>
-    <control>
-      <description>TV preview window</description>
-      <type>videowindow</type>
-      <id>99</id>
-      <posX>30</posX>
-      <posY>422</posY>
-      <width>150</width>
-      <height>100</height>
-      <onup>7</onup>
-      <action>18</action>
-      <keepaspectratio>yes</keepaspectratio>
-      <centered>yes</centered>
-      <textureFocus>tv_green_border.png</textureFocus>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
