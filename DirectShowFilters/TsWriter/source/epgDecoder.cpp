@@ -641,7 +641,7 @@ void CEpgDecoder::DecodeExtendedEvent(byte* data, EPGEvent& epgEvent)
 			if (lang.language==language)
 			{
 				//found.
-				if (item.size()>0)
+				if (item.size()>0 && lang.event.size()<1)
 					lang.event+=item;
 				if (text.size()>0 && strcmp(item.c_str(),text.c_str())!=0)
 				{
