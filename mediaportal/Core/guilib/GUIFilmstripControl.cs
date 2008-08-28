@@ -49,83 +49,151 @@ namespace MediaPortal.GUI.Library
       SEARCH_NEXT
     } ;
 
-    [XMLSkinElement("remoteColor")]    protected long _remoteColor = 0xffff0000;
-    [XMLSkinElement("playedColor")]    protected long _playedColor = 0xffa0d0ff;
-    [XMLSkinElement("downloadColor")]  protected long _downloadColor = 0xff00ff00;
-    [XMLSkinElement("thumbPosXBig")]   protected int _positionXThumbBig = 0;
-    [XMLSkinElement("thumbPosYBig")]   protected int _positionYThumbBig = 0;
-    [XMLSkinElement("thumbWidthBig")]  protected int _widthThumbBig = 0;
-    [XMLSkinElement("thumbHeightBig")] protected int _heightThumbBig = 0;
+    [XMLSkinElement("remoteColor")]
+    protected long _remoteColor = 0xffff0000;
+    [XMLSkinElement("playedColor")]
+    protected long _playedColor = 0xffa0d0ff;
+    [XMLSkinElement("downloadColor")]
+    protected long _downloadColor = 0xff00ff00;
+    [XMLSkinElement("thumbPosXBig")]
+    protected int _positionXThumbBig = 0;
+    [XMLSkinElement("thumbPosYBig")]
+    protected int _positionYThumbBig = 0;
+    [XMLSkinElement("thumbWidthBig")]
+    protected int _widthThumbBig = 0;
+    [XMLSkinElement("thumbHeightBig")]
+    protected int _heightThumbBig = 0;
 
-    [XMLSkinElement("imageFolder")]      protected string _imageFolderName = "";
-    [XMLSkinElement("imageFolderFocus")] protected string _imageFolderNameFocus = "";
+    [XMLSkinElement("imageFolder")]
+    protected string _imageFolderName = "";
+    [XMLSkinElement("imageFolderFocus")]
+    protected string _imageFolderNameFocus = "";
 
-    [XMLSkinElement("enableFocusZoom")]  protected bool _enableFocusZoom = true;
+    [XMLSkinElement("enableFocusZoom")]
+    protected bool _enableFocusZoom = true;
 
-    [XMLSkinElement("textureUp")]        protected string _upTextureName = "";
-    [XMLSkinElement("textureDown")]      protected string _downTextureName = "";
-    [XMLSkinElement("textureUpFocus")]   protected string _upTextureNameFocus = "";
-    [XMLSkinElement("textureDownFocus")] protected string _downTextureNameFocus = "";
+    [XMLSkinElement("textureUp")]
+    protected string _upTextureName = "";
+    [XMLSkinElement("textureDown")]
+    protected string _downTextureName = "";
+    [XMLSkinElement("textureUpFocus")]
+    protected string _upTextureNameFocus = "";
+    [XMLSkinElement("textureDownFocus")]
+    protected string _downTextureNameFocus = "";
 
-    [XMLSkinElement("spinColor")]        protected long _spinControlColor;
-    [XMLSkinElement("spinAlign")]        protected Alignment _spinControlAlignment = Alignment.ALIGN_LEFT;
-    [XMLSkinElement("spinHeight")]       protected int _spinControlHeight;
-    [XMLSkinElement("spinWidth")]        protected int _spinControlWidth;
-    [XMLSkinElement("spinPosX")]         protected int _spinControlPositionX;
-    [XMLSkinElement("spinPosY")]         protected int _spinControlPositionY;
+    [XMLSkinElement("spinColor")]
+    protected long _spinControlColor;
+    [XMLSkinElement("spinAlign")]
+    protected Alignment _spinControlAlignment = Alignment.ALIGN_LEFT;
+    [XMLSkinElement("spinHeight")]
+    protected int _spinControlHeight;
+    [XMLSkinElement("spinWidth")]
+    protected int _spinControlWidth;
+    [XMLSkinElement("spinPosX")]
+    protected int _spinControlPositionX;
+    [XMLSkinElement("spinPosY")]
+    protected int _spinControlPositionY;
 
-    [XMLSkinElement("itemHeight")]       protected int _itemHeight;
-    [XMLSkinElement("itemWidth")]        protected int _itemWidth;
-    [XMLSkinElement("texturelowHeight")] protected int _textureLowHeight;
-    [XMLSkinElement("textureLowWidth")]  protected int _textureLowWidth;
-    [XMLSkinElement("textureWidth")]     protected int _textureWidth = 80;
-    [XMLSkinElement("textureHeight")]    protected int _textureHeight = 80;
-    [XMLSkinElement("thumbPosX")]        protected int _thumbNailPositionX = 8;
-    [XMLSkinElement("thumbPosY")]        protected int _thumbNailPositionY = 8;
-    [XMLSkinElement("thumbWidth")]       protected int _thumbNailWidth = 64;
-    [XMLSkinElement("thumbHeight")]      protected int _thumbNailHeight = 64;
-    [XMLSkinElement("font")]             protected string _fontName = "";
-    [XMLSkinElement("textcolor")]        protected long _textColor = 0xFFFFFFFF;
-    [XMLSkinElement("selectedColor")]    protected long _selectedColor = 0xFFFFFFFF;
+    [XMLSkinElement("itemHeight")]
+    protected int _itemHeight;
+    [XMLSkinElement("itemWidth")]
+    protected int _itemWidth;
+    [XMLSkinElement("texturelowHeight")]
+    protected int _textureLowHeight;
+    [XMLSkinElement("textureLowWidth")]
+    protected int _textureLowWidth;
+    [XMLSkinElement("textureWidth")]
+    protected int _textureWidth = 80;
+    [XMLSkinElement("textureHeight")]
+    protected int _textureHeight = 80;
+    [XMLSkinElement("thumbPosX")]
+    protected int _thumbNailPositionX = 8;
+    [XMLSkinElement("thumbPosY")]
+    protected int _thumbNailPositionY = 8;
+    [XMLSkinElement("thumbWidth")]
+    protected int _thumbNailWidth = 64;
+    [XMLSkinElement("thumbHeight")]
+    protected int _thumbNailHeight = 64;
+    [XMLSkinElement("font")]
+    protected string _fontName = "";
+    [XMLSkinElement("textcolor")]
+    protected long _textColor = 0xFFFFFFFF;
+    [XMLSkinElement("selectedColor")]
+    protected long _selectedColor = 0xFFFFFFFF;
 
-    [XMLSkinElement("scrollbarbg")]      protected string _scrollbarBackgroundName = "";
-    [XMLSkinElement("scrollbartop")]     protected string _scrollbarTopName = "";
-    [XMLSkinElement("scrollbarbottom")]  protected string _scrollbarBottomName = "";
+    [XMLSkinElement("scrollbarbg")]
+    protected string _scrollbarBackgroundName = "";
+    [XMLSkinElement("scrollbartop")]
+    protected string _scrollbarTopName = "";
+    [XMLSkinElement("scrollbarbottom")]
+    protected string _scrollbarBottomName = "";
 
-    [XMLSkinElement("folderPrefix")]     protected string _folderPrefix = "[";
-    [XMLSkinElement("folderSuffix")]     protected string _folderSuffix = "]";
+    [XMLSkinElement("scrollOffset")]
+    protected int _scrollStartOffset = 0;  // this is the offset from the first or last element on screen when scrolling should start
 
-    [XMLSkinElement("backgroundheight")] protected int _backGroundHeight;
-    [XMLSkinElement("backgroundwidth")]  protected int _backGroundWidth;
-    [XMLSkinElement("backgroundx")]      protected int _backGroundPositionX;
-    [XMLSkinElement("backgroundy")]      protected int _backGroundPositionY;
-    [XMLSkinElement("backgrounddiffuse")] protected int _backGroundDiffuseColor;
-    [XMLSkinElement("background")]       protected string _backgroundTextureName;
-    [XMLSkinElement("showBackGround")]   protected bool _showBackGround = true;
+    [XMLSkinElement("folderPrefix")]
+    protected string _folderPrefix = "[";
+    [XMLSkinElement("folderSuffix")]
+    protected string _folderSuffix = "]";
 
-    [XMLSkinElement("showInfoImage")]    protected bool _showInfoImage = true;
-    [XMLSkinElement("InfoImageheight")]  protected int _infoImageHeight;
-    [XMLSkinElement("InfoImagewidth")]   protected int _infoImageWidth;
-    [XMLSkinElement("InfoImagex")]       protected int _infoImagePositionX;
-    [XMLSkinElement("InfoImagey")]       protected int _infoImagePositionY;
-    [XMLSkinElement("InfoImagediffuse")] protected int _infoImageDiffuseColor;
-    [XMLSkinElement("InfoImage")]        protected string _infoImageName;
-    [XMLSkinElement("unfocusedAlpha")]   protected int _unfocusedAlpha = 0xFF;
-    [XMLSkinElement("frame")]            protected string _frameName = "";
-    [XMLSkinElement("showFrame")]        protected bool _showFrame = true;
-    [XMLSkinElement("showFolder")]       protected bool _showFolder = true;
-    [XMLSkinElement("frameFocus")]       protected string _frameFocusName = "";
+    [XMLSkinElement("backgroundheight")]
+    protected int _backGroundHeight;
+    [XMLSkinElement("backgroundwidth")]
+    protected int _backGroundWidth;
+    [XMLSkinElement("backgroundx")]
+    protected int _backGroundPositionX;
+    [XMLSkinElement("backgroundy")]
+    protected int _backGroundPositionY;
+    [XMLSkinElement("backgrounddiffuse")]
+    protected int _backGroundDiffuseColor;
+    [XMLSkinElement("background")]
+    protected string _backgroundTextureName;
+    [XMLSkinElement("showBackGround")]
+    protected bool _showBackGround = true;
 
-    [XMLSkinAttribute("thumbs", "flipX")] protected bool _flipX = false;
-    [XMLSkinAttribute("thumbs", "flipY")] protected bool _flipY = false;
-    [XMLSkinAttribute("thumbs", "diffuse")] protected string _diffuseFileName = "";
+    [XMLSkinElement("showInfoImage")]
+    protected bool _showInfoImage = true;
+    [XMLSkinElement("InfoImageheight")]
+    protected int _infoImageHeight;
+    [XMLSkinElement("InfoImagewidth")]
+    protected int _infoImageWidth;
+    [XMLSkinElement("InfoImagex")]
+    protected int _infoImagePositionX;
+    [XMLSkinElement("InfoImagey")]
+    protected int _infoImagePositionY;
+    [XMLSkinElement("InfoImagediffuse")]
+    protected int _infoImageDiffuseColor;
+    [XMLSkinElement("InfoImage")]
+    protected string _infoImageName;
+    [XMLSkinElement("unfocusedAlpha")]
+    protected int _unfocusedAlpha = 0xFF;
+    [XMLSkinElement("frame")]
+    protected string _frameName = "";
+    [XMLSkinElement("showFrame")]
+    protected bool _showFrame = true;
+    [XMLSkinElement("showFolder")]
+    protected bool _showFolder = true;
+    [XMLSkinElement("frameFocus")]
+    protected string _frameFocusName = "";
 
-    [XMLSkinAttribute("InfoImage", "flipX")] protected bool _flipInfoImageX = false;
-    [XMLSkinAttribute("InfoImage", "flipY")] protected bool _flipInfoImageY = false;
-    [XMLSkinAttribute("InfoImage", "diffuse")] protected string _diffuseInfoImageFileName = "";
+    [XMLSkinAttribute("thumbs", "flipX")]
+    protected bool _flipX = false;
+    [XMLSkinAttribute("thumbs", "flipY")]
+    protected bool _flipY = false;
+    [XMLSkinAttribute("thumbs", "diffuse")]
+    protected string _diffuseFileName = "";
 
-    [XMLSkinElement("textXOff")]         protected int _textXOff = 0;
-    [XMLSkinElement("textYOff")]         protected int _textYOff = 0;
+    [XMLSkinAttribute("InfoImage", "flipX")]
+    protected bool _flipInfoImageX = false;
+    [XMLSkinAttribute("InfoImage", "flipY")]
+    protected bool _flipInfoImageY = false;
+    [XMLSkinAttribute("InfoImage", "diffuse")]
+    protected string _diffuseInfoImageFileName = "";
+
+    [XMLSkinElement("textXOff")]
+    protected int _textXOff = 0;
+    [XMLSkinElement("textYOff")]
+    protected int _textYOff = 0;
 
     int _itemLowHeight;
     int _itemLowWidth;
@@ -238,23 +306,23 @@ namespace MediaPortal.GUI.Library
         anim.SetAnimations(ThumbAnimations);
         _imageFolderFocus.Add(anim);
 
-				anim = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _itemWidth, _itemHeight, _frameName);
-				anim.ParentControl = this;
-				anim.DimColor = DimColor;
-				//anim.FlipX = _flipX;
-				//anim.FlipY = _flipY;
-				anim.DiffuseFileName = _diffuseFileName;
-				anim.SetAnimations(ThumbAnimations);
-				_frameControl.Add(anim);
+        anim = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _itemWidth, _itemHeight, _frameName);
+        anim.ParentControl = this;
+        anim.DimColor = DimColor;
+        //anim.FlipX = _flipX;
+        //anim.FlipY = _flipY;
+        anim.DiffuseFileName = _diffuseFileName;
+        anim.SetAnimations(ThumbAnimations);
+        _frameControl.Add(anim);
 
-				anim = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _itemWidth, _itemHeight, _frameFocusName);
-				anim.ParentControl = this;
-				anim.DimColor = DimColor; 
-				//anim.FlipX = _flipX;
-				//anim.FlipY = _flipY;
-				anim.DiffuseFileName = _diffuseFileName;
-				anim.SetAnimations(ThumbAnimations);
-				_frameFocusControl.Add(anim);
+        anim = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _itemWidth, _itemHeight, _frameFocusName);
+        anim.ParentControl = this;
+        anim.DimColor = DimColor;
+        //anim.FlipX = _flipX;
+        //anim.FlipY = _flipY;
+        anim.DiffuseFileName = _diffuseFileName;
+        anim.SetAnimations(ThumbAnimations);
+        _frameFocusControl.Add(anim);
       }
 
       _upDownControl = new GUISpinControl(_controlId, 0, _spinControlPositionX, _spinControlPositionY, _spinControlWidth, _spinControlHeight, _upTextureName, _downTextureName, _upTextureNameFocus, _downTextureNameFocus, _fontName, _spinControlColor, GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT, _spinControlAlignment);
@@ -290,6 +358,7 @@ namespace MediaPortal.GUI.Library
 
       SetThumbDimensionsLow(_thumbNailPositionX, _thumbNailPositionY, _thumbNailWidth, _thumbNailHeight);
       SetTextureDimensions(_textureWidth, _textureHeight);
+
     }
 
     public override void ScaleToScreenResolution()
@@ -360,7 +429,6 @@ namespace MediaPortal.GUI.Library
         GUIPropertyManager.SetProperty("#selecteditem", "{" + _searchString.ToLower() + "}");
     }
 
-
     /// <summary>
     /// Method to render a single item of the filmstrip
     /// </summary>
@@ -368,8 +436,8 @@ namespace MediaPortal.GUI.Library
     /// <param name="dwPosX">x-coordinate of the item</param>
     /// <param name="dwPosY">y-coordinate of the item</param>
     /// <param name="pItem">item itself</param>
-		void RenderItem(int itemNumber, float timePassed, bool bFocus, int dwPosX, int dwPosY, GUIListItem pItem)
-		{
+    void RenderItem(int itemNumber, float timePassed, bool bFocus, int dwPosX, int dwPosY, GUIListItem pItem)
+    {
       if (_font == null) return;
       if (pItem == null) return;
       if (dwPosY < 0) return;
@@ -603,7 +671,6 @@ namespace MediaPortal.GUI.Library
         GUIGraphicsContext.ControlTransform = matrix;
       }
     }
-    
 
     /// <summary>
     /// The render method. 
@@ -1262,7 +1329,6 @@ namespace MediaPortal.GUI.Library
       _refresh = true;
     }
 
-
     /// <summary>
     /// Handle keypress events for SMS style search (key '1'..'9')
     /// </summary>
@@ -1405,8 +1471,8 @@ namespace MediaPortal.GUI.Library
       {
         _imageFolder[i].PreAllocResources();
         _imageFolderFocus[i].PreAllocResources();
-				_frameControl[i].PreAllocResources();
-				_frameFocusControl[i].PreAllocResources();
+        _frameControl[i].PreAllocResources();
+        _frameFocusControl[i].PreAllocResources();
       }
       if (_horizontalScrollbar != null) _horizontalScrollbar.PreAllocResources();
       if (_imageBackground != null) _imageBackground.PreAllocResources();
@@ -1429,16 +1495,16 @@ namespace MediaPortal.GUI.Library
         _imageFolderFocus[i].Height = _textureHeight;
       }
 
-			for (int i = 0; i < _frameControl.Count; ++i) 
+      for (int i = 0; i < _frameControl.Count; ++i)
       {
         _frameControl[i].Width = _textureWidth;
-				_frameControl[i].Height = _textureHeight;
+        _frameControl[i].Height = _textureHeight;
       }
 
-			for (int i = 0; i < _frameFocusControl.Count; ++i) 
+      for (int i = 0; i < _frameFocusControl.Count; ++i)
       {
-				_frameFocusControl[i].Width = _textureWidth;
-				_frameFocusControl[i].Height = _textureHeight;
+        _frameFocusControl[i].Width = _textureWidth;
+        _frameFocusControl[i].Height = _textureHeight;
       }
 
       float fWidth = 0, fHeight = 0;
@@ -1476,10 +1542,10 @@ namespace MediaPortal.GUI.Library
       {
         _imageFolder[i].AllocResources();
         _imageFolderFocus[i].AllocResources();
-				_frameControl[i].AllocResources();
-				_frameFocusControl[i].AllocResources();
+        _frameControl[i].AllocResources();
+        _frameFocusControl[i].AllocResources();
       }
-			if (_horizontalScrollbar != null) _horizontalScrollbar.AllocResources();
+      if (_horizontalScrollbar != null) _horizontalScrollbar.AllocResources();
       Calculate();
 
       _upDownControl.ParentID = GetID;
@@ -1500,8 +1566,8 @@ namespace MediaPortal.GUI.Library
       {
         _imageFolder[i].FreeResources();
         _imageFolderFocus[i].FreeResources();
-				_frameControl[i].FreeResources();
-				_frameFocusControl[i].FreeResources();
+        _frameControl[i].FreeResources();
+        _frameFocusControl[i].FreeResources();
       }
       if (_horizontalScrollbar != null) _horizontalScrollbar.FreeResources();
     }
@@ -1521,6 +1587,11 @@ namespace MediaPortal.GUI.Library
       action.wID = Action.ActionType.ACTION_MOVE_RIGHT;
       if (_listType == GUIListControl.ListType.CONTROL_LIST)
       {
+        //If scrolloffset larger than half the nr of items make scrolloffset that nr
+        int maxScrollOffset = _columns / 2;
+        if (_scrollStartOffset > maxScrollOffset)
+          _scrollStartOffset = maxScrollOffset;
+
         if (_scrollingRight)
         {
           _scrollingRight = false;
@@ -1530,7 +1601,8 @@ namespace MediaPortal.GUI.Library
           if (_upDownControl != null) _upDownControl.Value = iPage + 1;
         }
 
-        if (_cursorX + 1 == _columns)
+        // If cursor offset from edge or if left space smaller than scrollStartOffset
+        if (_cursorX + 1 == _columns - _scrollStartOffset && _listItems.Count - (_offset + _cursorX + 1) > _scrollStartOffset)
         {
           _offset++;
           if (!ValidItem(_cursorX))
@@ -1543,7 +1615,6 @@ namespace MediaPortal.GUI.Library
             _scrollCounter = _itemWidth;
             _scrollingRight = true;
           }
-
           OnSelectionChanged();
           return;
         }
@@ -1582,6 +1653,11 @@ namespace MediaPortal.GUI.Library
       action.wID = Action.ActionType.ACTION_MOVE_LEFT;
       if (_listType == GUIListControl.ListType.CONTROL_LIST)
       {
+        //If scrolloffset larger than half the nr of items make scrolloffset that nr
+        int maxScrollOffset = _columns / 2;
+        if (_scrollStartOffset > maxScrollOffset)
+          _scrollStartOffset = maxScrollOffset;
+
         if (_scrollingLeft)
         {
           _scrollCounter = 0;
@@ -1592,11 +1668,11 @@ namespace MediaPortal.GUI.Library
           if (_upDownControl != null) _upDownControl.Value = iPage + 1;
         }
 
-        if (_cursorX > 0)
+        if (_cursorX > 0 && (_cursorX > _scrollStartOffset || _offset == 0))
         {
           _cursorX--;
         }
-        else if (_cursorX == 0 && _offset != 0)
+        else if (_cursorX <= _scrollStartOffset && _offset != 0)
         {
           _scrollCounter = _itemWidth;
           _scrollingLeft = true;
@@ -1865,12 +1941,12 @@ namespace MediaPortal.GUI.Library
         _imageFolder[i].Width = _textureWidth;
         _imageFolderFocus[i].Height = _textureHeight;
         _imageFolderFocus[i].Width = _textureWidth;
-				_frameControl[i].Width = _textureWidth;
-				_frameControl[i].Height = _textureHeight;
-				_frameControl[i].Width = _textureWidth;
-				_frameControl[i].Height = _textureHeight;
-				_frameControl[i].Refresh();
-				_frameControl[i].Refresh();
+        _frameControl[i].Width = _textureWidth;
+        _frameControl[i].Height = _textureHeight;
+        _frameControl[i].Width = _textureWidth;
+        _frameControl[i].Height = _textureHeight;
+        _frameControl[i].Refresh();
+        _frameControl[i].Refresh();
         _imageFolder[i].Refresh();
         _imageFolderFocus[i].Refresh();
       }
@@ -1895,7 +1971,6 @@ namespace MediaPortal.GUI.Library
       iXpos = _thumbNailPositionX;
       iYpos = _thumbNailPositionY;
     }
-
 
     public int ItemWidth
     {
@@ -1929,7 +2004,6 @@ namespace MediaPortal.GUI.Library
       set { _showTexture = value; }
     }
 
-
     public int GetSelectedItem(ref string strLabel, ref string strLabel2, ref string strThumbnail)
     {
       strLabel = "";
@@ -1952,7 +2026,6 @@ namespace MediaPortal.GUI.Library
       }
       return iItem;
     }
-
 
     public void ShowBigIcons(bool bOnOff)
     {
@@ -1977,7 +2050,6 @@ namespace MediaPortal.GUI.Library
       Calculate();
       _refresh = true;
     }
-
 
     public void GetThumbDimensionsBig(ref int iXpos, ref int iYpos, ref int iWidth, ref int iHeight)
     {
@@ -2120,7 +2192,6 @@ namespace MediaPortal.GUI.Library
         return _imageFolder[0].FileName;
       }
     }
-
 
     public int TextureWidthBig
     {
@@ -2315,7 +2386,6 @@ namespace MediaPortal.GUI.Library
       get { return _horizontalScrollbar; }
     }
 
-
     public override bool Focus
     {
       get { return IsFocused; }
@@ -2418,7 +2488,6 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-
     public int InfoImageX
     {
       get { return _infoImagePositionX; }
@@ -2506,7 +2575,6 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-
     /// <summary>
     /// Method to store(save) the current control rectangle
     /// </summary>
@@ -2519,8 +2587,8 @@ namespace MediaPortal.GUI.Library
       {
         _imageFolder[i].StorePosition();
         _imageFolderFocus[i].StorePosition();
-				_frameControl[i].StorePosition();
-				_frameFocusControl[i].StorePosition();
+        _frameControl[i].StorePosition();
+        _frameFocusControl[i].StorePosition();
       }
       if (_horizontalScrollbar != null) _horizontalScrollbar.StorePosition();
 
@@ -2540,8 +2608,8 @@ namespace MediaPortal.GUI.Library
       {
         _imageFolder[i].ReStorePosition();
         _imageFolderFocus[i].ReStorePosition();
-				_frameControl[i].ReStorePosition();
-				_frameFocusControl[i].ReStorePosition();
+        _frameControl[i].ReStorePosition();
+        _frameFocusControl[i].ReStorePosition();
       }
       if (_horizontalScrollbar != null) _horizontalScrollbar.ReStorePosition();
 
@@ -2644,8 +2712,8 @@ namespace MediaPortal.GUI.Library
         {
           _imageFolder[i].DimColor = value;
           _imageFolderFocus[i].DimColor = value;
-					_frameControl[i].DimColor = value;
-					_frameFocusControl[i].DimColor = value;
+          _frameControl[i].DimColor = value;
+          _frameFocusControl[i].DimColor = value;
         }
         if (_horizontalScrollbar != null) _horizontalScrollbar.DimColor = value;
         foreach (GUIListItem item in _listItems) item.DimColor = value;
