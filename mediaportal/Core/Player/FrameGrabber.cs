@@ -141,7 +141,10 @@ namespace MediaPortal
         if (rgbSurface == null || rgbSurface.Disposed || rgbSurface.Description.Height != height || rgbSurface.Description.Width != width)
         {
           Log.Debug("FrameGrabber: Creating new frame grabbing surface");
-          rgbSurface = GUIGraphicsContext.DX9Device.CreateOffscreenPlainSurface(width, height, Format.A8R8G8B8, Pool.Default);
+          // Bug fix for Mantis issue: 0001571: AutoCropperr is not working with EVR
+          // StrectRect in DXUtils.dll is not working between offscreen surface and EVR provided surface
+          //rgbSurface = GUIGraphicsContext.DX9Device.CreateOffscreenPlainSurface(width, height, Format.A8R8G8B8, Pool.Default);
+          rgbSurface = GUIGraphicsContext.DX9Device.CreateRenderTarget(width, height, Format.A8R8G8B8, MultiSampleType.None, 0, true);
         }
         unsafe
         {
