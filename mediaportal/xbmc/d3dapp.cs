@@ -780,6 +780,8 @@ namespace MediaPortal
       }
       else
       {
+        graphicsSettings.DisplayMode = Manager.Adapters[0].CurrentDisplayMode;  
+
         presentParams.MultiSample = graphicsSettings.FullscreenMultisampleType;
         presentParams.MultiSampleQuality = graphicsSettings.FullscreenMultisampleQuality;
         presentParams.AutoDepthStencilFormat = graphicsSettings.FullscreenDepthStencilBufferFormat;
