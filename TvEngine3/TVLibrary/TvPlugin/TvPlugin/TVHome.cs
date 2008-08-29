@@ -94,7 +94,8 @@ namespace TvPlugin
     DateTime _dtlastTime = DateTime.Now;
     TvCropManager _cropManager = new TvCropManager();
     TvNotifyManager _notifyManager = new TvNotifyManager();
-    static string[] _preferredLanguages;
+    //static string[] _preferredLanguages;
+    static List<string> _preferredLanguages;
     static bool _usertsp = true;
     static string _recordingpath = "";
     static string _timeshiftingpath = "";
@@ -514,11 +515,11 @@ namespace TvPlugin
           dlgYesNo.SetLine(3, GUILocalizeStrings.Get(732)); //are you sure
           dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
           confirmed = dlgYesNo.IsConfirmed;
-        }        
+        }
       }
 
       if (confirmed)
-      {        
+      {
         if (deleteEntireSchedule || s.IsManual) //delete the entire schedule
         {
           if (isRec)
@@ -568,7 +569,7 @@ namespace TvPlugin
             canceledSchedule.Persist();
             server.OnNewSchedule();
           }
-        }              
+        }
         return true;
       }
       return false;
@@ -767,8 +768,24 @@ namespace TvPlugin
         if (strValue.Equals("panscan")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.PanScan43;
 
         string preferredLanguages = xmlreader.GetValueAsString("tvservice", "preferredaudiolanguages", "");
-        _preferredLanguages = preferredLanguages.Split(';');
+        //_preferredLanguages = preferredLanguages.Split(';');
+        _preferredLanguages = new List<string>();
+        Log.Debug("TVHome.LoadSettings(): Preferred Audio Languages: " + preferredLanguages);
 
+        MediaPortal.StringTokenizer st = new MediaPortal.StringTokenizer(preferredLanguages, ";");
+        while (st.HasMore)
+        {
+          string lang = st.NextToken();
+          if (lang.Length != 3)
+          {
+            Log.Warn("Language {0} is not in the correct format!", lang);
+          }
+          else
+          {
+            _preferredLanguages.Add(lang);
+            Log.Info("Prefered language {0} is {1}", _preferredLanguages.Count, lang);
+          }
+        }
         _usertsp = xmlreader.GetValueAsBool("tvservice", "usertsp", true);
         _recordingpath = xmlreader.GetValueAsString("tvservice", "recordingpath", "");
         _timeshiftingpath = xmlreader.GetValueAsString("tvservice", "timeshiftingpath", "");
@@ -900,7 +917,7 @@ namespace TvPlugin
 
     public static bool ManualRecord(Channel channel)
     {
-      
+
       if (GUIWindowManager.ActiveWindowEx == (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
       {
         MediaPortal.GUI.Library.Log.Info("send message to fullscreen tv");
@@ -909,15 +926,15 @@ namespace TvPlugin
         msg.TargetWindowId = (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN;
         GUIGraphicsContext.SendMessage(msg);
         return false;
-      }     
-      
+      }
+
       MediaPortal.GUI.Library.Log.Info("TVHome:Record action");
       TvServer server = new TvServer();
 
       VirtualCard card;
       if (false == server.IsRecording(channel.Name, out card))
       {
-        bool alreadyRec = (lastActiveRecChannelId == channel.IdChannel);
+        bool alreadyRec = (lastActiveRecChannelId == Navigator.Channel.IdChannel);
         if (!alreadyRec)
         {
           TvBusinessLayer layer = new TvBusinessLayer();
@@ -962,7 +979,7 @@ namespace TvPlugin
             lastRecordTime = DateTime.Now;
             return true;
           }
-        }    
+        }
       }
       else
       {
@@ -970,7 +987,7 @@ namespace TvPlugin
         PromptAndDeleteRecordingSchedule(s.IdSchedule, s.ReferencedChannel().CurrentProgram, false, true);
         return false;
       }
-      return false;      
+      return false;
     }
 
     public override void OnAction(Action action)
@@ -1858,6 +1875,7 @@ namespace TvPlugin
             if (!System.IO.File.Exists(strLogo))
             {
               strLogo = "defaultVideoBig.png";
+
             }
             item.IconImage = strLogo;
             if (isRecording)
@@ -1898,7 +1916,7 @@ namespace TvPlugin
     private void OnRecord()
     {
       ManualRecord(Navigator.Channel);
-      UpdateStateOfRecButton();      
+      UpdateStateOfRecButton();
     }
 
     /// <summary>
@@ -2236,7 +2254,7 @@ namespace TvPlugin
 
       if (_preferredLanguages != null)
       {
-        Log.Debug("TVHome.GetPreferedAudioStreamIndex(): preferred LANG(s):{0} preferAC3:{1} preferAudioTypeOverLang:{2}", String.Join(";", _preferredLanguages), _preferAC3, _preferAudioTypeOverLang);
+        Log.Debug("TVHome.GetPreferedAudioStreamIndex(): preferred LANG(s):{0} preferAC3:{1} preferAudioTypeOverLang:{2}", String.Join(";", _preferredLanguages.ToArray()), _preferAC3, _preferAudioTypeOverLang);
       }
       else
       {
@@ -2250,6 +2268,7 @@ namespace TvPlugin
         return 0;
       }
 
+      int priority = int.MaxValue;
       for (int i = 0; i < streams.Length; i++)
       {
         //tag the first found ac3 and mpeg indexes
@@ -2265,31 +2284,26 @@ namespace TvPlugin
         //now find the ones based on LANG prefs.
         if (_preferredLanguages != null)
         {
-          for (int j = 0; j < _preferredLanguages.Length; j++)
+          int index = _preferredLanguages.IndexOf(streams[i].Language);
+          langSel = streams[i].Language;
+          //Log.Debug(streams[i].Language + " Pref index " + index);
+          Log.Debug("Stream {0} lang {1}, preffered index {2}", i, langSel, index);
+
+          if (index >= 0 && index < priority)
           {
-            if (_preferredLanguages[j].Length == 0) continue;
-            langSel = _preferredLanguages[j];
-            if (langSel.Contains(streams[i].Language) && langSel.Length > 0)
+            if ((streams[i].StreamType == AudioStreamType.AC3)) //is the audio track an AC3 track ?
             {
-              if ((streams[i].StreamType == AudioStreamType.AC3)) //is the audio track an AC3 track ?
-              {
-                if (idxLangAc3 == -1)
-                {
-                  idxLangAc3 = i;
-                  ac3BasedOnLang = langSel;
-                }
-              }
-              else //audiotrack is mpeg
-              {
-                if (idxLangmpeg == -1)
-                {
-                  idxLangmpeg = i;
-                  mpegBasedOnLang = langSel;
-                }
-              }
+              idxLangAc3 = i;
+              ac3BasedOnLang = langSel;
             }
-            if (idxLangAc3 > -1 && idxLangmpeg > -1) break;
-          } //for loop
+            else //audiotrack is mpeg
+            {
+              idxLangmpeg = i;
+              mpegBasedOnLang = langSel;
+            }
+            Log.Debug("Setting as pref");
+            priority = index;
+          }
         }
         if (idxFirstAc3 > -1 && idxFirstmpeg > -1 && idxLangAc3 > -1 && idxLangmpeg > -1) break;
       }
