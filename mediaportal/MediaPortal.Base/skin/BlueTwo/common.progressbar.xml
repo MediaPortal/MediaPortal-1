@@ -5,9 +5,9 @@
       <description>progressbar background</description>
       <type>image</type>
       <id>104</id>
-      <posX>35</posX>
+      <posX>21</posX>
       <posY>20</posY>
-      <width>665</width>
+      <width>679</width>
       <height>40</height>
       <texture>osd_bg_top.png</texture>
       <visible>no</visible>
