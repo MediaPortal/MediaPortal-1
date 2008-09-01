@@ -25,6 +25,8 @@
 
 #region Usings
 using System;
+using System.Collections;
+using System.Collections.Specialized;
 using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
@@ -284,7 +286,14 @@ namespace TvEngine.PowerScheduler
         return;
       try
       {
-        ChannelServices.RegisterChannel(new HttpChannel(31457), false);
+        ListDictionary channelProperties = new ListDictionary();
+        channelProperties.Add("port", 31457);
+        channelProperties.Add("exclusiveAddressUse", false);
+        HttpChannel channel = new HttpChannel(channelProperties,
+                                              new SoapClientFormatterSinkProvider(),
+                                              new SoapServerFormatterSinkProvider());
+
+        ChannelServices.RegisterChannel(channel, false);
       }
       catch (RemotingException) { }
       catch (System.Net.Sockets.SocketException) { }
