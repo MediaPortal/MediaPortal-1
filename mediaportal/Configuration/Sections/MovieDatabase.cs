@@ -206,6 +206,7 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPButton buttonRemoveFile;
     private ListBox imagesListBox;
     private MediaPortal.UserInterface.Controls.MPButton mpDelete;
+    private LinkLabel linkLabel1;
 
     ArrayList conflictFiles = new ArrayList();
 
@@ -219,8 +220,6 @@ namespace MediaPortal.Configuration.Sections
     {
       // This call is required by the Windows Form Designer.
       InitializeComponent();
-
-      cbTitle.DropDownStyle = ComboBoxStyle.DropDownList;
     }
 
     private string[] Extensions
@@ -389,6 +388,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.btnDelete = new MediaPortal.UserInterface.Controls.MPButton();
       this.btnSave = new MediaPortal.UserInterface.Controls.MPButton();
+      this.linkLabel1 = new System.Windows.Forms.LinkLabel();
       this.groupBox1.SuspendLayout();
       this.tabControl1.SuspendLayout();
       this.tabPage8.SuspendLayout();
@@ -433,7 +433,7 @@ namespace MediaPortal.Configuration.Sections
       this.actorsCheckBox.AutoSize = true;
       this.actorsCheckBox.Location = new System.Drawing.Point(16, 262);
       this.actorsCheckBox.Name = "actorsCheckBox";
-      this.actorsCheckBox.Size = new System.Drawing.Size(106, 17);
+      this.actorsCheckBox.Size = new System.Drawing.Size(104, 17);
       this.actorsCheckBox.TabIndex = 4;
       this.actorsCheckBox.Text = "Download actors";
       this.actorsCheckBox.UseVisualStyleBackColor = true;
@@ -444,7 +444,7 @@ namespace MediaPortal.Configuration.Sections
       this.skipCheckBox.AutoSize = true;
       this.skipCheckBox.Location = new System.Drawing.Point(16, 241);
       this.skipCheckBox.Name = "skipCheckBox";
-      this.skipCheckBox.Size = new System.Drawing.Size(163, 17);
+      this.skipCheckBox.Size = new System.Drawing.Size(161, 17);
       this.skipCheckBox.TabIndex = 1;
       this.skipCheckBox.Text = "Skip files already in database";
       this.skipCheckBox.UseVisualStyleBackColor = true;
@@ -515,6 +515,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Controls.Add(this.linkLabel1);
       this.groupBox2.Controls.Add(this.mpDelete);
       this.groupBox2.Controls.Add(this._fuzzyMatchingCheckBox);
       this.groupBox2.Controls.Add(this.mpButton1);
@@ -1466,6 +1467,19 @@ namespace MediaPortal.Configuration.Sections
       this.btnSave.UseVisualStyleBackColor = true;
       this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
       // 
+      // linkLabel1
+      // 
+      this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.linkLabel1.AutoSize = true;
+      this.linkLabel1.Location = new System.Drawing.Point(339, 316);
+      this.linkLabel1.Name = "linkLabel1";
+      this.linkLabel1.Size = new System.Drawing.Size(72, 13);
+      this.linkLabel1.TabIndex = 11;
+      this.linkLabel1.TabStop = true;
+      this.linkLabel1.Text = "more scripts...";
+      this.linkLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+      this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel_LinkClicked);
+      // 
       // MovieDatabase
       // 
       this.Controls.Add(this.tabControl1);
@@ -1858,12 +1872,12 @@ namespace MediaPortal.Configuration.Sections
       tbPlotOutline.Text = movie.PlotOutline;
       tbMPAARating.Text = movie.MPARating;
       tbDuration.Text = movie.RunTime.ToString();
-      
-      if (movie.Watched > 0) 
-          cbWatched.Checked = true;
-      else 
-          cbWatched.Checked = false;
-      
+
+      if (movie.Watched > 0)
+        cbWatched.Checked = true;
+      else
+        cbWatched.Checked = false;
+
       if (pictureBox1.Image != null)
       {
         pictureBox1.Image.Dispose();
@@ -1874,7 +1888,7 @@ namespace MediaPortal.Configuration.Sections
       {
         listViewAllActors.Items.Add(item.Text);
       }
-      
+
       foreach (ListViewItem item in listViewGenres.Items)
       {
         listViewAllGenres.Items.Add(item.Text);
@@ -1989,7 +2003,7 @@ namespace MediaPortal.Configuration.Sections
         }
       }
 
-      if(listViewAllGenres.Items.Count == 0)
+      if (listViewAllGenres.Items.Count == 0)
       {
         ArrayList genres = new ArrayList();
         VideoDatabase.GetGenres(genres);
@@ -2027,8 +2041,8 @@ namespace MediaPortal.Configuration.Sections
           {
             if (item.Text == actor)
             {
-                add = false;
-                break;
+              add = false;
+              break;
             }
           }
 
@@ -2140,10 +2154,10 @@ namespace MediaPortal.Configuration.Sections
 
       if (find_file.ShowDialog(this) == DialogResult.OK)
       {
-          foreach(String file in find_file.FileNames)
-          {
-              listViewFiles.Items.Add(file);
-          }
+        foreach (String file in find_file.FileNames)
+        {
+          listViewFiles.Items.Add(file);
+        }
       }
     }
 
@@ -2280,12 +2294,12 @@ namespace MediaPortal.Configuration.Sections
         Log.Info("Adding file:{0}", file);
         id = VideoDatabase.AddMovieFile(file);
         VirtualDirectory dir = new VirtualDirectory();
-        dir.SetExtensions( MediaPortal.Util.Utils.VideoExtensions);
+        dir.SetExtensions(MediaPortal.Util.Utils.VideoExtensions);
         ArrayList items = dir.GetDirectoryUnProtected(path, true);
         foreach (GUIListItem item in items)
         {
           if (item.IsFolder) continue;
-          if ( MediaPortal.Util.Utils.ShouldStack(item.Path, file) && item.Path != file)
+          if (MediaPortal.Util.Utils.ShouldStack(item.Path, file) && item.Path != file)
           {
             string strPath, strFileName;
 
@@ -2392,7 +2406,7 @@ namespace MediaPortal.Configuration.Sections
       string strFilename = string.Empty;
       string strPath = string.Empty;
       MediaPortal.Util.Utils.Split(listViewFiles.Items[0].Text, out strPath, out strFilename);
-      
+
       DirectoryInfo di = new DirectoryInfo(strPath);
       FileInfo[] jpgFiles = di.GetFiles("*.jpg");
 
@@ -2400,20 +2414,20 @@ namespace MediaPortal.Configuration.Sections
 
       foreach (FileInfo file in jpgFiles)
       {
-          ComboBoxArt art = new ComboBoxArt(String.Format("Local Picture {0}", count), file.FullName);
-          imagesListBox.Items.Add(art);
-          ++count;
+        ComboBoxArt art = new ComboBoxArt(String.Format("Local Picture {0}", count), file.FullName);
+        imagesListBox.Items.Add(art);
+        ++count;
       }
 
       jpgFiles = di.GetFiles("*.jpeg");
 
       foreach (FileInfo file in jpgFiles)
       {
-          ComboBoxArt art = new ComboBoxArt(String.Format("Local Picture {0}", count), file.FullName);
-          imagesListBox.Items.Add(art);
-          ++count;
+        ComboBoxArt art = new ComboBoxArt(String.Format("Local Picture {0}", count), file.FullName);
+        imagesListBox.Items.Add(art);
+        ++count;
       }
-      
+
       IMPawardsSearch impSearch = new IMPawardsSearch();
       impSearch.Search(CurrentMovie.Title);
 
@@ -2438,14 +2452,14 @@ namespace MediaPortal.Configuration.Sections
         }
       }
 
-      if (imagesListBox.Items.Count  == 0)
+      if (imagesListBox.Items.Count == 0)
       {
-          imagesListBox.Items.Clear();
-          imagesListBox.Items.Add(new ComboBoxArt("No results found...", ""));
+        imagesListBox.Items.Clear();
+        imagesListBox.Items.Add(new ComboBoxArt("No results found...", ""));
       }
       else
       {
-          imagesListBox.Enabled = true;
+        imagesListBox.Enabled = true;
       }
 
       imagesListBox.SelectedIndex = 0;
@@ -2657,10 +2671,6 @@ namespace MediaPortal.Configuration.Sections
         skipCheckBox.Checked = xmlreader.GetValueAsBool("moviedatabase", "scanskipexisting", false);
         actorsCheckBox.Checked = xmlreader.GetValueAsBool("moviedatabase", "getactors", true);
         bool imdbFound = false;
-        bool ofdbFound = false;
-        bool frdbFound = false;
-        bool filmAffinityFound = false;
-        bool movieMeterFound = false;
         bool cspvFound = false;
 
         if (iNumber > 0)
@@ -2681,14 +2691,6 @@ namespace MediaPortal.Configuration.Sections
               lvDatabase.Items[i].SubItems.Add(strLimit);
               if (strDatabase == "IMDB")
                 imdbFound = true;
-              else if (strDatabase == "OFDB")
-                ofdbFound = true;
-              else if (strDatabase == "FRDB")
-                frdbFound = true;
-              else if (strDatabase == "FilmAffinity")
-                filmAffinityFound = true;
-              else if (strDatabase == "MovieMeter")
-                movieMeterFound = true;
               else if (strDatabase == "Script")
                 cspvFound = true;
             }
@@ -2697,24 +2699,12 @@ namespace MediaPortal.Configuration.Sections
         if (!imdbFound)
           mpComboBox1.Items.Add(new ComboBoxItemDatabase("IMDB", "english", "25"));
 
-        if (!ofdbFound)
-          mpComboBox1.Items.Add(new ComboBoxItemDatabase("OFDB", "german", "25"));
-
-        if (!frdbFound)
-          mpComboBox1.Items.Add(new ComboBoxItemDatabase("FRDB", "french", "25"));
-
-        if (!filmAffinityFound)
-          mpComboBox1.Items.Add(new ComboBoxItemDatabase("FilmAffinity", "spanish", "20"));
-
-        if (!movieMeterFound)
-          mpComboBox1.Items.Add(new ComboBoxItemDatabase("MovieMeter", "dutch", "20"));
-
         //if (!cspvFound)
         //{
         //  mpComboBox1.Items.Add(new ComboBoxItemDatabase("Script", "n/a", "20"));
         //}
 
-        DirectoryInfo di = Config.GetSubDirectoryInfo(Config.Dir.Base,"scripts\\imdb");
+        DirectoryInfo di = Config.GetSubDirectoryInfo(Config.Dir.Base, "scripts\\imdb");
         FileInfo[] fileList = di.GetFiles("*.csscript", SearchOption.AllDirectories);
         foreach (FileInfo f in fileList)
         {
@@ -2831,7 +2821,7 @@ namespace MediaPortal.Configuration.Sections
         SaveSettings();
       }
     }
-    
+
     private void lvDatabase_DeleteSelectedItem()
     {
       if (lvDatabase.SelectedIndices.Count > 0)
@@ -3000,7 +2990,7 @@ namespace MediaPortal.Configuration.Sections
       }
       else
       {
-        dvdLabel = "DVD#" + Convert.ToString(discNr); 
+        dvdLabel = "DVD#" + Convert.ToString(discNr);
       }
       return true;
     }
@@ -3015,16 +3005,16 @@ namespace MediaPortal.Configuration.Sections
 
       if (listViewFiles.Items.Count > 0)
       {
-          string strFilename = string.Empty;
-          string strPath = string.Empty;
-          MediaPortal.Util.Utils.Split(listViewFiles.Items[0].Text, out strPath, out strFilename);
-          dlg.InitialDirectory = strPath;
+        string strFilename = string.Empty;
+        string strPath = string.Empty;
+        MediaPortal.Util.Utils.Split(listViewFiles.Items[0].Text, out strPath, out strFilename);
+        dlg.InitialDirectory = strPath;
       }
       else
-      { 
+      {
         // start in current folder
         dlg.InitialDirectory = ".";
-      }      
+      }
 
       // open dialog
       if (dlg.ShowDialog(this) == DialogResult.OK)
@@ -3163,6 +3153,11 @@ namespace MediaPortal.Configuration.Sections
     private void mpDelete_Click(object sender, EventArgs e)
     {
       lvDatabase_DeleteSelectedItem();
+    }
+
+    private void linkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    {
+      HelpSystem.ShowHelp(this.ToString());
     }
   }
 }
