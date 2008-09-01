@@ -49,6 +49,7 @@ namespace MediaPortal.Plugins.Process
         shutModeComboBox.SelectedIndex = reader.GetValueAsInt("psclientplugin", "shutdownmode", 1);
         forceCheckBox.Checked = reader.GetValueAsBool("psclientplugin", "forceshutdown", false);
         enableShutdownCheckBox.Checked = reader.GetValueAsBool("psclientplugin", "shutdownenabled", false);
+        idleNumericUpDown.Value = reader.GetValueAsInt("psclientplugin", "idletimeout", 5);
       }
     }
 
