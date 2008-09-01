@@ -2,14 +2,10 @@ using System;
 using System.Collections;
 using MediaPortal.GUI.Library;
 using MediaPortal.Dialogs;
-using MediaPortal.Util;
 using MediaPortal.Configuration;
 using MediaPortal.Profile;
-using System.Text;
 using TvControl;
 using TvDatabase;
-using Gentle.Common;
-using Gentle.Framework;
 
 namespace TvPlugin
 {
@@ -22,12 +18,12 @@ namespace TvPlugin
 
     public TvSetup()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_SETTINGS_TVENGINE;
+      GetID = (int)Window.WINDOW_SETTINGS_TVENGINE;
     }
 
     private void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _hostName = xmlreader.GetValueAsString("tvservice", "hostname", "");
       }
@@ -35,7 +31,7 @@ namespace TvPlugin
 
     private void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlreader.SetValue("tvservice", "hostname", _hostName);
       }
@@ -46,20 +42,32 @@ namespace TvPlugin
       return Load(GUIGraphicsContext.Skin + @"\TvServerSetup.xml");
     }
 
+    private static void SwitchToHomeView()
+    {
+      bool basicHome;
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        basicHome = xmlreader.GetValueAsBool("general", "startbasichome", false);
+      }
+
+      int homeWindow = basicHome ? (int) Window.WINDOW_SECOND_HOME : (int) GUIWindow.Window.WINDOW_HOME;
+      GUIWindowManager.ActivateWindow(homeWindow);
+    }
+
     public override void OnAction(Action action)
     {
-      //switch (action.wID)
-      //{
-      //  case Action.ActionType.ACTION_PREVIOUS_MENU:
-      //    {
-      //      GUIWindowManager.ShowPreviousWindow();
-      //      return;
-      //    }
-      //}
+      switch (action.wID)
+      {
+        case Action.ActionType.ACTION_PREVIOUS_MENU:
+          {
+            SwitchToHomeView();
+            return;
+          }
+      }
       base.OnAction(action);
     }
 
-    protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       if (control == btnChange)
       {
@@ -131,11 +139,7 @@ namespace TvPlugin
       }
       else if (control == btnBack)
       {
-        bool basicHome;
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-          basicHome = xmlreader.GetValueAsBool("general", "startbasichome", false);
-        int homeWindow = basicHome ? (int)GUIWindow.Window.WINDOW_SECOND_HOME : (int)GUIWindow.Window.WINDOW_HOME;
-        GUIWindowManager.ActivateWindow(homeWindow);
+        SwitchToHomeView();
       }
       base.OnClicked(controlId, control, actionType);
     }
@@ -158,8 +162,10 @@ namespace TvPlugin
     protected bool GetKeyboard(ref string strLine)
     {
       VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
-      if (null == keyboard)
+      if (keyboard == null )
+      {
         return false;
+      }
       keyboard.Reset();
       keyboard.Text = strLine;
       keyboard.DoModal(GetID);
