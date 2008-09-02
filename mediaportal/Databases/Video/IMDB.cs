@@ -43,6 +43,8 @@ namespace MediaPortal.Video.Database
   /// </summary>
   public class IMDB : IEnumerable
   {
+    #region interfaces and classes
+
     public interface IProgress
     {
       void OnProgress(string line1, string line2, string line3, int percent);
@@ -65,7 +67,10 @@ namespace MediaPortal.Video.Database
       bool OnScanIterating(int count);
       bool OnScanIterated(int count);
     }
-    // class that represents URL and Title of a search result
+
+    /// <summary>
+    /// class that represents URL and Title of a search result
+    /// </summary>
     public class IMDBUrl
     {
       string m_strURL = "";
@@ -103,10 +108,8 @@ namespace MediaPortal.Video.Database
         get { return m_strIMDBURL; }
         set { m_strIMDBURL = value; }
       }
-    }; // END class IMDBUrl
+    }
 
-
-    // do not know, what this class does ;-)
     public class IMDBEnumerator : IEnumerator
     {
       private int position = -1;
@@ -154,9 +157,12 @@ namespace MediaPortal.Video.Database
           return t.elements[position];
         }
       }
-    } // END class IMDBEnumerator
+    }
 
-    // internal vars
+    #endregion
+
+    #region internal vars
+
     // list of the search results, containts objects of IMDBUrl
     ArrayList elements = new ArrayList();
 
@@ -165,21 +171,24 @@ namespace MediaPortal.Video.Database
     string[] aDatabases;		// contains the name of the database, e.g. IMDB
 
     IProgress m_progress;
-    // constructor
+
+    #endregion
+
+    #region ctor
     public IMDB()
-      : this(null)
-    {
-    }
+      : this(null) { }
 
     public IMDB(IProgress progress)
     {
-
       m_progress = progress;
       // load the settings
       LoadSettings();
-    } // END constructor
+    }
+    #endregion
 
-    // load settings from mediaportal.xml
+    /// <summary>
+    /// load settings from mediaportal.xml
+    /// </summary>
     private void LoadSettings()
     {
       // getting available databases and limits
@@ -234,33 +243,38 @@ namespace MediaPortal.Video.Database
           }
         }
       }
-    } // END LoadSettings()
+    }
 
-    // count the elements
+    /// <summary>
+    /// count the elements
+    /// </summary>
     public int Count
     {
       get { return elements.Count; }
-    } // END Count
+    }
 
-    //??
     public IMDB.IMDBUrl this[int index]
     {
       get { return (IMDB.IMDBUrl)elements[index]; }
-    } // END IMDB.IMDBUrl this[int index]
+    }
 
-    //??
     public IMDBEnumerator GetEnumerator() // non-IEnumerable version
     {
       return new IMDBEnumerator(this);
-    } // END IMDBEnumerator GetEnumerator()
+    }
 
-    //??
-    IEnumerator IEnumerable.GetEnumerator() // IEnumerable version
+    #region IEnumerable Member
+    IEnumerator IEnumerable.GetEnumerator()
     {
       return (IEnumerator)new IMDBEnumerator(this);
-    } // END IEnumerable.GetEnumerator()
+    }
+    #endregion
 
-    // trys to get a webpage from the specified url and returns the content as string
+    #region helper methods to get infos
+
+    /// <summary>
+    /// trys to get a webpage from the specified url and returns the content as string
+    /// </summary>
     private string GetPage(string strURL, string strEncode, out string absoluteUri)
     {
       string strBody = "";
@@ -322,9 +336,11 @@ namespace MediaPortal.Video.Database
         }
       }
       return strBody;
-    } // END GetPage()
+    }
 
-    // cuts end of sting after strWord
+    /// <summary>
+    /// cuts end of sting after strWord
+    /// </summary>
     void RemoveAllAfter(ref string strLine, string strWord)
     {
       int iPos = strLine.IndexOf(strWord);
@@ -332,9 +348,11 @@ namespace MediaPortal.Video.Database
       {
         strLine = strLine.Substring(0, iPos);
       }
-    } // END RemoveAllAfter()
+    }
 
-    // make a searchstring out of the filename
+    /// <summary>
+    /// make a searchstring out of the filename
+    /// </summary>
     string GetSearchString(string strMovie)
     {
       string strURL = strMovie;
@@ -448,9 +466,15 @@ namespace MediaPortal.Video.Database
 
       // return the new formatted string
       return strTmp;
-    } // END GetSearchString()
+    }
 
-    // this method switches between the different databases to get the search results
+    #endregion
+
+    #region methods to get movie infos from different databases
+
+    /// <summary>
+    /// this method switches between the different databases to get the search results
+    /// </summary>
     public void Find(string strMovie)
     {
       try
@@ -543,9 +567,68 @@ namespace MediaPortal.Video.Database
       catch (Exception)
       {
       }
-    } // END Find()
+    }
 
-    #region actors
+    /// <summary>
+    /// this method switches between the different databases to fetche the search result into movieDetails
+    /// </summary>
+    public bool GetDetails(IMDB.IMDBUrl url, ref IMDBMovie movieDetails)
+    {
+      try
+      {
+        /*
+        // extract host from url, to find out which mezhod should be called
+        int		iStart = url.URL.IndexOf(".")+1;
+        int		iEnd = url.URL.IndexOf(".",iStart);
+        if ((iStart<0) || (iEnd<0))
+        {
+          // could not extract hostname!
+          Log.Info("Movie DB lookup GetDetails(): could not extract hostname from {0}",url.URL);
+          return false;
+        }
+        string	strHost = url.URL.Substring(iStart,iEnd-iStart).ToUpper();*/
+        switch (url.Database)
+        {
+          case "IMDB":
+            return GetDetailsIMDB(url, ref movieDetails);
+          default:
+            // Script support script.csscript
+            string grabberFileName = Config.GetSubFolder(Config.Dir.Base, "scripts\\imdb") + @"\" + url.Database + ".csscript";
+            if (File.Exists(grabberFileName))
+            {
+              try
+              {
+                AsmHelper script = new AsmHelper(CSScriptLibrary.CSScript.Load(grabberFileName, null, false));
+                IIMDBScriptGrabber grabber = (IIMDBScriptGrabber)script.CreateObject("Grabber");
+                grabber.GetDetails(url, ref movieDetails);
+              }
+              catch (Exception ex)
+              {
+                Log.Info("Script garbber error GetDetails() file: {0}, message : {1}", grabberFileName, ex.Message);
+                return false;
+              }
+              return true;
+            }
+            else
+            {
+              // unsupported database?
+              Log.Error("Movie database lookup GetDetails()- database not supported: {0}", url.Database);
+              return false;
+            }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Movie database lookup GetDetails()- exception: {0}", url.Database);
+        return false;
+      }
+      return false;
+    }
+
+    #endregion
+
+    #region methods to get actor infos
+
     public void FindActor(string strActor)
     {
       string strURL;
@@ -582,7 +665,7 @@ namespace MediaPortal.Video.Database
       strURL = String.Format("http://us.imdb.com/find?q={0};nm=on;mx=20", strSearch);
       FindIMDBActor(strURL, strActor);
 
-    } // END FindActor()
+    }
 
     private void FindIMDBActor(string strURL, string strActor)
     {
@@ -630,6 +713,7 @@ namespace MediaPortal.Video.Database
         Log.Error("exception for imdb lookup of {0} err:{1} stack:{2}", strURL, ex.Message, ex.StackTrace);
       }
     }
+
     public bool GetActorDetails(IMDB.IMDBUrl url, out IMDBActor actor)
     {
       actor = new IMDBActor();
@@ -849,64 +933,11 @@ namespace MediaPortal.Video.Database
       return false;
     }
 
-
     #endregion
-    // this method switches between the different databases to fetche the search result into movieDetails
-    public bool GetDetails(IMDB.IMDBUrl url, ref IMDBMovie movieDetails)
-    {
-      try
-      {
-        /*
-        // extract host from url, to find out which mezhod should be called
-        int		iStart = url.URL.IndexOf(".")+1;
-        int		iEnd = url.URL.IndexOf(".",iStart);
-        if ((iStart<0) || (iEnd<0))
-        {
-          // could not extract hostname!
-          Log.Info("Movie DB lookup GetDetails(): could not extract hostname from {0}",url.URL);
-          return false;
-        }
-        string	strHost = url.URL.Substring(iStart,iEnd-iStart).ToUpper();*/
-        switch (url.Database)
-        {
-          case "IMDB":
-            return GetDetailsIMDB(url, ref movieDetails);
-          default:
-            // Script support script.csscript
-            string grabberFileName = Config.GetSubFolder(Config.Dir.Base, "scripts\\imdb") + @"\" + url.Database + ".csscript";
-            if (File.Exists(grabberFileName))
-            {
-              try
-              {
-                AsmHelper script = new AsmHelper(CSScriptLibrary.CSScript.Load(grabberFileName, null, false));
-                IIMDBScriptGrabber grabber = (IIMDBScriptGrabber)script.CreateObject("Grabber");
-                grabber.GetDetails(url, ref movieDetails);
-              }
-              catch (Exception ex)
-              {
-                Log.Info("Script garbber error GetDetails() file: {0}, message : {1}", grabberFileName, ex.Message);
-                return false;
-              }
-              return true;
-            }
-            else
-            {
-              // unsupported database?
-              Log.Error("Movie database lookup GetDetails()- database not supported: {0}", url.Database);
-              return false;
-            }
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("Movie database lookup GetDetails()- exception: {0}", url.Database);
-        return false;
-      }
-      return false;
-    } // END GetDetails()
 
 
-    #region IMDB
+    #region IMDB movie partsing, could/should be replaced by external script
+
     private void FindIMDB(string strURL, int iLimit)
     {
       int iCount = 0;
@@ -1330,6 +1361,7 @@ namespace MediaPortal.Video.Database
       return strTitle.Trim();
 
     }
+
     string ParseGenresIMDB(string strBody, int iGenre, string url)
     {
       string strTmp;
@@ -1501,7 +1533,7 @@ namespace MediaPortal.Video.Database
       return false;
     }
     #endregion
-  } // END class IMDB
+  }
 
 
   /// <summary>
@@ -1514,5 +1546,4 @@ namespace MediaPortal.Video.Database
     string GetName();
     string GetLanguage();
   }
-
-}// END namespace
+}
