@@ -36,7 +36,7 @@ namespace SetupTv
   public static class HelpSystem
   {
     static string helpReferencesFile = String.Format(@"{0}\HelpReferences.xml", Log.GetPathName());
-    private const string helpReferencesURL = @"http://install.team-mediaportal.com/HelpReferences_TVServer.xml";
+    private const string helpReferencesURL = @"http://install.team-mediaportal.com/MP1/HelpReferences_TVServer.xml";
 
     public static void ShowHelp(string sectionName)
     {
