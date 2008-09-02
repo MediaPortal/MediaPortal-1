@@ -24,8 +24,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using System.Net;
@@ -38,12 +36,11 @@ namespace SetupTv
   public static class HelpSystem
   {
     static string helpReferencesFile = String.Format(@"{0}\HelpReferences.xml", Log.GetPathName());
-    static string helpReferencesTemp = String.Format(@"{0}_temp", helpReferencesFile);
-    static string helpReferencesURL = @"http://install.team-mediaportal.com/HelpReferences_TVServer.xml";
+    private const string helpReferencesURL = @"http://install.team-mediaportal.com/HelpReferences_TVServer.xml";
 
     public static void ShowHelp(string sectionName)
     {
-      if (!System.IO.File.Exists(helpReferencesFile))
+      if (!File.Exists(helpReferencesFile))
       {
         MessageBox.Show("No help reference found.\r\nPlease update your help references by pressing 'Update Help' on Project Section.");
         return;
@@ -55,16 +52,19 @@ namespace SetupTv
       XmlNode generalNode = doc.SelectSingleNode("/helpsystem/general");
       XmlNodeList sectionNodes = doc.SelectNodes("/helpsystem/sections/section");
 
-      for (int i = 0; i < sectionNodes.Count; i++)
+      if (sectionNodes != null)
       {
-        XmlNode sectionNode = sectionNodes[i];
-        if (sectionNode.Attributes["name"].Value == sectionName)
+        for (int i = 0; i < sectionNodes.Count; i++)
         {
-          System.Diagnostics.Process.Start(
-            String.Format(@"{0}{1}",
-            generalNode.Attributes["baseurl"].Value,
-            sectionNode.Attributes["suburl"].Value));
-          return;
+          XmlNode sectionNode = sectionNodes[i];
+          if (sectionNode.Attributes["name"].Value == sectionName)
+          {
+            System.Diagnostics.Process.Start(
+              String.Format(@"{0}{1}",
+                            generalNode.Attributes["baseurl"].Value,
+                            sectionNode.Attributes["suburl"].Value));
+            return;
+          }
         }
       }
 
@@ -74,6 +74,8 @@ namespace SetupTv
 
     public static void UpdateHelpReferences()
     {
+      string helpReferencesTemp = Path.GetTempFileName();
+
       Application.DoEvents();
       try
       {
@@ -89,9 +91,9 @@ namespace SetupTv
           Application.DoEvents();
           using (Stream resStream = response.GetResponseStream())
           {
-            using (System.IO.TextReader tin = new StreamReader(resStream))
+            using (TextReader tin = new StreamReader(resStream))
             {
-              using (System.IO.TextWriter tout = System.IO.File.CreateText(helpReferencesTemp))
+              using (TextWriter tout = File.CreateText(helpReferencesTemp))
               {
                 while (true)
                 {
@@ -104,8 +106,8 @@ namespace SetupTv
           }
         }
 
-        System.IO.File.Delete(helpReferencesFile);
-        System.IO.File.Move(helpReferencesTemp, helpReferencesFile);
+        File.Delete(helpReferencesFile);
+        File.Move(helpReferencesTemp, helpReferencesFile);
 
         MessageBox.Show("HelpReferences update succeeded.");
       }
