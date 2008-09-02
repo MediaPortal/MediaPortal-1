@@ -897,14 +897,14 @@ namespace TvPlugin
       if (type != g_Player.MediaType.TV && type != g_Player.MediaType.Radio) return;
 
       //gemx: fix for 0001181: Videoplayback does not work if tvservice.exe is not running 
-      if (!TVHome.Connected) return;
-
-      //GUIWindow currentWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-      //if (currentWindow.IsTv) return;
+      if (!TVHome.Connected) return;      
       if (TVHome.Card.IsTimeShifting == false) return;
-      if (TVHome.Card.IsRecording == true) return;
+
+      //tv off
+      Log.Info("TVHome:turn tv off");
+      SaveSettings();
       TVHome.Card.User.Name = new User().Name;
-      TVHome.Card.StopTimeShifting();
+      TVHome.Card.StopTimeShifting();                                          
 
       if (type == g_Player.MediaType.Radio || type == g_Player.MediaType.TV)
       {
@@ -1471,14 +1471,9 @@ namespace TvPlugin
         if (TVHome.Card.IsTimeShifting && g_Player.IsTV && g_Player.Playing)
         {
           //tv off
-          Log.Info("TVHome:turn tv off");
-          SaveSettings();
-          g_Player.Stop();
-          TVHome.Card.User.Name = new User().Name;
-          TVHome.Card.StopTimeShifting();
-          benchClock.Stop();
+          g_Player.Stop();         
           Log.Warn("TVHome.OnClicked(): EndTvOff {0} ms", benchClock.ElapsedMilliseconds.ToString());
-
+          benchClock.Stop();
           return;
         }
         else
@@ -1498,8 +1493,7 @@ namespace TvPlugin
               Log.Warn("TVHome.OnClicked: Stop Called - {0} ms", benchClock.ElapsedMilliseconds.ToString());
               g_Player.Stop(true);
             }
-          }
-          SaveSettings();
+          }          
         }
 
         // turn tv on/off        
