@@ -488,11 +488,11 @@ namespace MediaPortal.GUI.Library
       if (_sleeper > 0) _sleeper--;
 
       int iScrollYOffset = 0;
-      if (true == _scrollingDown)
+      if (_scrollingDown)
       {
         iScrollYOffset = -(_itemHeight - _scrollCounter);
       }
-      if (true == _scrollingUp)
+      if (_scrollingUp)
       {
         iScrollYOffset = _itemHeight - _scrollCounter;
       }
@@ -571,7 +571,7 @@ namespace MediaPortal.GUI.Library
           {
             int dwPosX = _positionX + iCol * _itemWidth;
             int iItem = iRow * _columnCount + iCol + _offset;
-            if (iItem < _listItems.Count)
+            if (iItem >= 0 && iItem < _listItems.Count)
             {
               GUIListItem pItem = _listItems[iItem];
               bool bFocus = (_cursorX == iCol && _cursorY == iRow);
@@ -590,7 +590,7 @@ namespace MediaPortal.GUI.Library
           {
             int dwPosX = _positionX + iCol * _itemWidth;
             int iItem = _rowCount * _columnCount + iCol + _offset;
-            if (iItem < _listItems.Count)
+            if (iItem >= 0 && iItem < _listItems.Count)
             {
               GUIListItem pItem = _listItems[iItem];
               RenderItem(timePassed, 0, false, dwPosX, dwPosY, pItem, i == 0);
@@ -1671,7 +1671,13 @@ namespace MediaPortal.GUI.Library
       newviewport.Height = (int)(fHeight);
       newviewport.MinZ = 0.0f;
       newviewport.MaxZ = 1.0f;
-      GUIGraphicsContext.DX9Device.Viewport = newviewport;
+
+      // Sanity check for the ViewPort values. 
+      // Fix for Mantis issue: 0001580: GUIThumbnailPanel causes flickering GUI on some cases
+      if (!(newviewport.X >= 0 && newviewport.Y >= 0 && newviewport.Width >= 0 && newviewport.Height >= 0))
+      {
+        return;
+      }
 
       if (!bScroll)
       {
@@ -1784,6 +1790,13 @@ namespace MediaPortal.GUI.Library
     void OnPageUp()
     {
       int iItemsPerPage = _rowCount * _columnCount;
+      
+      // Sanity check, we shouldnt do anything if there arent more than one page of items
+      if (iItemsPerPage > _listItems.Count)
+      {
+        return;
+      }
+      
       if (_offset >= iItemsPerPage)
       {
         _offset -= iItemsPerPage;
@@ -1806,6 +1819,12 @@ namespace MediaPortal.GUI.Library
     {
       int iItemsPerPage = _rowCount * _columnCount;
       int lastPageOffset = (CalculateRows(_listItems.Count) - _rowCount)*_columnCount;
+
+      // Sanity check, shouldnt scroll when there isnt enough items.
+      if (iItemsPerPage > _listItems.Count)
+      {
+        return;
+      }
 
       if (_offset + iItemsPerPage <= lastPageOffset)
       {
