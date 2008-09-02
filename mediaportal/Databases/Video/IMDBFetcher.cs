@@ -25,9 +25,8 @@
 
 using System;
 using System.Threading;
-using System.Collections.Generic;
 using System.Collections;
-using System.Text;
+
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 
@@ -165,7 +164,7 @@ namespace MediaPortal.Video.Database
           MediaPortal.Util.Utils.FileDelete(coverArt);
           line1 = GUILocalizeStrings.Get(1009);
           OnProgress(line1, movieDetails.Title, string.Empty, -1);
-         //Only get actors if we really want to.
+          //Only get actors if we really want to.
           if (getActors)
           {
             _fetchActorsInMovie();
