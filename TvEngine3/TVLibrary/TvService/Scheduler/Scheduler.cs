@@ -687,9 +687,7 @@ namespace TvService
         if (_controller.SupportsSubChannels(recording.CardInfo.Id) == false)
         {
           _controller.StopTimeShifting(ref _user);
-        }
-       
-        _tvController.Fire(this, new TvServerEventArgs(TvServerEventType.RecordingEnded, new VirtualCard(_user), _user, recording.Schedule, recording.Recording));
+        }               
         
         //DatabaseManager.Instance.SaveChanges();
 
@@ -714,6 +712,7 @@ namespace TvService
 
         Log.Write("Scheduler: stop record {0} {1}-{2} {3}", recording.Channel.Name, recording.RecordingStartDateTime, recording.EndTime, recording.Schedule.ProgramName);
         _controller.StopRecording(ref _user);
+        _tvController.Fire(this, new TvServerEventArgs(TvServerEventType.RecordingEnded, new VirtualCard(_user), _user, recording.Schedule, recording.Recording));
       }
       catch (Exception ex)
       {
