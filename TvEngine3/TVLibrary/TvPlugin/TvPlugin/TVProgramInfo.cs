@@ -202,7 +202,7 @@ namespace TvPlugin
         {
           //isRecording = TVHome.IsRecordingSchedule(schedule, currentProgram, out card);
           Schedule recSched;
-          isRecording = IsRecordingProgram(currentProgram, out recSched, false);
+          isRecording = IsRecordingProgram(currentProgram, out recSched, true);
         }
         
         if (isRecording)
@@ -264,7 +264,7 @@ namespace TvPlugin
           logo = "defaultVideoBig.png";
         }
         Schedule recordingSchedule;
-        bool isRecPrg = IsRecordingProgram(episode, out recordingSchedule, false);
+        bool isRecPrg = IsRecordingProgram(episode, out recordingSchedule, true);
         /*
         bool isRecPrgNow = false;
         if (!isRecPrg)
