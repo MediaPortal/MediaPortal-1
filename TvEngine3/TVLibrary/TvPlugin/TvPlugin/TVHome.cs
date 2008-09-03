@@ -196,6 +196,8 @@ namespace TvPlugin
     {
       while (true)
       {
+        if (TVHome.Connected)
+        {
         bool isTS = TVHome.Card.IsTimeShifting;
         if (TVHome.Connected && isTS)
         {
@@ -273,6 +275,7 @@ namespace TvPlugin
 
           }
         }
+      }
         Thread.Sleep(HEARTBEAT_INTERVAL * 1000); //sleep for 5 secs. before sending heartbeat again
       }
     }
