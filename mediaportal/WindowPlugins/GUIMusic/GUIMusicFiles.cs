@@ -1249,6 +1249,30 @@ namespace MediaPortal.GUI.Music
         if (tag.Artist.Length > 0)
           strArtistName = tag.Artist;
       }
+      if (!isfolder && strAlbumName.Length == 0 && strArtistName.Length == 0)
+      {
+        System.IO.FileInfo fI = new System.IO.FileInfo(filename);
+        string dir = fI.Directory.FullName;
+
+        if (dir.Length > 0)
+        {
+          string strFolderThumb = string.Empty;
+          strFolderThumb = MediaPortal.Util.Utils.GetLocalFolderThumbForDir(dir);
+
+          if (System.IO.File.Exists(strFolderThumb))
+          {
+            return strFolderThumb;
+          }
+          else
+          {
+            if (_createMissingFolderThumbCache)
+            {
+              FolderThumbCacher thumbworker = new FolderThumbCacher(dir, false);
+            }
+          }
+        }
+        return string.Empty;
+      }
 
       // use covert art thumbnail for albums
       string strThumb = Util.Utils.GetAlbumThumbName(strArtistName, strAlbumName);
