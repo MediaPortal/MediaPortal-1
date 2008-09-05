@@ -19,6 +19,7 @@
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
+    <import>common.play.osd.xml</import>
     <control>
       <description>TV Logo</description>
       <type>image</type>
