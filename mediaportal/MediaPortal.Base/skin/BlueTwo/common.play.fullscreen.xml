@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <controls>
-    <import>common.progressbar.xml</import>
+    <import>common.play.progressbar.xml</import>
     <control>
       <description>bar image</description>
       <type>image</type>

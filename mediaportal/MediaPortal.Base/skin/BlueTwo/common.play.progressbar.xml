@@ -2,7 +2,7 @@
 <window>
   <controls>
     <control>
-      <description>progressbar background</description>
+      <description>osd background on top</description>
       <type>image</type>
       <id>104</id>
       <posX>21</posX>
@@ -15,7 +15,7 @@
       <animation effect="fade" time="250">windowopen</animation>
     </control>
     <control>
-      <description>background</description>
+      <description>progress bar background</description>
       <type>image</type>
       <id>105</id>
       <posX>109</posX>
@@ -28,7 +28,7 @@
       <animation effect="fade" time="250">windowopen</animation>
     </control>
     <control>
-      <description>Progress Bar</description>
+      <description>progress bar</description>
       <type>progress</type>
       <id>1</id>
       <posX>99</posX>
@@ -49,9 +49,9 @@
       <align>center</align>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
+      <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
-      <visible>no</visible>
     </control>
     <control>
       <description>End Time Info</description>
@@ -63,24 +63,9 @@
       <align>center</align>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
       <visible>no</visible>
-    </control>
-    <!--
-    <control>
-      <description>Current Time Info</description>
-      <type>label</type>
-      <id>110</id>
-      <posX>650</posX>
-      <posY>40</posY>
-      <label>#time</label>
-      <align>center</align>
-      <font>font13</font>
-      <textcolor>FF071422</textcolor>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
-    -->
   </controls>
 </window>
