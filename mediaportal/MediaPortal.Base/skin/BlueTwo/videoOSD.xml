@@ -3,19 +3,12 @@
   <id>2901</id>
   <defaultcontrol>213</defaultcontrol>
   <allowoverlay>no</allowoverlay>
+  <define>#play.progressbar.percentage:#percentage</define>
+  <define>#play.progressbar.currentplaytime:#currentplaytime</define>
+  <define>#play.progressbar.currentremaining:#currentremaining</define>
+  <define>#play.osd.background:osd_bg_video.png</define>
   <controls>
-    <control>
-      <description>background</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>20</posX>
-      <posY>330</posY>
-      <width>400</width>
-      <height>230</height>
-      <texture>osd_bg_video.png</texture>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
-    </control>
+    <import>common.play.progressbar.xml</import>
     <import>common.play.osd.xml</import>
     <control>
       <description>TV Logo</description>

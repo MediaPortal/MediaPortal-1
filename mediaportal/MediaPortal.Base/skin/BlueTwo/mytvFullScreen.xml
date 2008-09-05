@@ -3,10 +3,11 @@
   <id>602</id>
   <defaultcontrol>13</defaultcontrol>
   <allowoverlay>no</allowoverlay>
-  <define>#percentage:#TV.View.Percentage</define>
-  <define>#currentplaytime:#TV.View.start</define>
-  <define>#currentremaining:#TV.View.stop</define>
+  <define>#play.progressbar.percentage:#TV.View.Percentage</define>
+  <define>#play.progressbar.currentplaytime:#TV.View.start</define>
+  <define>#play.progressbar.currentremaining:#TV.View.stop</define>
   <controls>
+    <import>common.play.progressbar.xml</import>
     <import>common.play.fullscreen.xml</import>
     <control>
       <description>channelname</description>

@@ -17,53 +17,50 @@
     <control>
       <description>progress bar background</description>
       <type>image</type>
-      <id>105</id>
       <posX>109</posX>
       <posY>29</posY>
       <width>404</width>
       <height>20</height>
       <texture>osd_progress_background.png</texture>
-      <visible>no</visible>
+      <visible>Control.IsVisible(104)</visible>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
     <control>
       <description>progress bar</description>
       <type>progress</type>
-      <id>1</id>
       <posX>99</posX>
       <posY>30</posY>
       <width>401</width>
       <height>20</height>
-      <label>#percentage</label>
+      <label>#play.progressbar.percentage</label>
+      <visible>Control.IsVisible(104)</visible>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
     <control>
       <description>Start Time Info</description>
       <type>label</type>
-      <id>101</id>
       <posX>70</posX>
       <posY>40</posY>
-      <label>#currentplaytime</label>
+      <label>#play.progressbar.currentplaytime</label>
       <align>center</align>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
-      <visible>no</visible>
+      <visible>Control.IsVisible(104)</visible>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
     <control>
       <description>End Time Info</description>
       <type>label</type>
-      <id>102</id>
       <posX>560</posX>
       <posY>40</posY>
-      <label>#currentremaining</label>
+      <label>#play.progressbar.currentremaining</label>
       <align>center</align>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
-      <visible>no</visible>
+      <visible>Control.IsVisible(104)</visible>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>

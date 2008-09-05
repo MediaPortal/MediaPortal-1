@@ -3,7 +3,11 @@
   <id>2005</id>
   <defaultcontrol>13</defaultcontrol>
   <allowoverlay>no</allowoverlay>
+  <define>#play.progressbar.percentage:#percentage</define>
+  <define>#play.progressbar.currentplaytime:#currentplaytime</define>
+  <define>#play.progressbar.currentremaining:#currentremaining</define>
   <controls>
+    <import>common.play.progressbar.xml</import>
     <import>common.play.fullscreen.xml</import>
  <!--  will be removed later if no issues occur
  <control>
