@@ -43,6 +43,8 @@ namespace MediaPortal.Video.Database
   /// </summary>
   public class IMDB : IEnumerable
   {
+    public static string ScriptDirectory = Config.GetSubFolder(Config.Dir.Config, "scripts\\MovieInfo");
+
     #region interfaces and classes
 
     public interface IProgress
@@ -80,9 +82,9 @@ namespace MediaPortal.Video.Database
 
       public IMDBUrl(string strURL, string strTitle, string strDB)
       {
-        m_strURL = strURL;
-        m_strTitle = strTitle;
-        m_strDatabase = strDB;
+        URL = strURL;
+        Title = strTitle;
+        Database = strDB;
       }
 
       public string URL
@@ -516,56 +518,39 @@ namespace MediaPortal.Video.Database
           // only do a search if requested
           if (aLimits[i] > 0)
           {
-            switch (aDatabases[i].ToUpper())
+            // Script support script.csscript
+            string grabberFileName = ScriptDirectory + @"\" + aDatabases[i] + ".csscript";
+            if (!File.Exists(grabberFileName))
             {
-              case "IMDB":
-                // IMDB support
-                line1 = GUILocalizeStrings.Get(984) + ":IMDB";
-                if (m_progress != null)
-                  m_progress.OnProgress(line1, line2, line3, percent);
-                strURL = "http://us.imdb.com/Tsearch?title=" + strSearch;
-                FindIMDB(strURL, aLimits[i]);
-                percent += 100 / aDatabases.Length;
-                if (m_progress != null)
-                  m_progress.OnProgress(line1, line2, line3, percent);
-                // END IMDB support
-                break;
+              Log.Error("Movie database lookup Find()- grabber script not found: {0}", grabberFileName);
+              return;
+            }
 
-              default:
-                // Script support script.csscript
-                string grabberFileName = Config.GetSubFolder(Config.Dir.Base, "scripts\\imdb") + @"\" + aDatabases[i] + ".csscript";
-                line1 = GUILocalizeStrings.Get(984) + ": Script " + aDatabases[i];
-                if (File.Exists(grabberFileName))
-                {
-                  if (m_progress != null)
-                    m_progress.OnProgress(line1, line2, line3, percent);
-                  try
-                  {
-                    Environment.CurrentDirectory = Config.GetFolder(Config.Dir.Base);
-                    AsmHelper script = new AsmHelper(CSScriptLibrary.CSScript.Load(grabberFileName, null, false));
-                    IIMDBScriptGrabber grabber = (IIMDBScriptGrabber)script.CreateObject("Grabber");
-                    grabber.FindFilm(strSearch, aLimits[i], elements);
-                    percent += 100 / aDatabases.Length;
-                    if (m_progress != null)
-                      m_progress.OnProgress(line1, line2, line3, percent);
-                  }
-                  catch (Exception ex)
-                  {
-                    Log.Info("Script garbber error file: {0}, message : {1}", grabberFileName, ex.Message);
-                  }
-                }
-                else
-                {
-                  // unsupported database?
-                  Log.Error("Movie database lookup - database not supported: {0}", aDatabases[i].ToUpper());
-                }
-                break;
+            line1 = GUILocalizeStrings.Get(984) + ": Script " + aDatabases[i];
+
+            if (m_progress != null)
+              m_progress.OnProgress(line1, line2, line3, percent);
+            try
+            {
+              Environment.CurrentDirectory = Config.GetFolder(Config.Dir.Base);
+              AsmHelper script = new AsmHelper(CSScriptLibrary.CSScript.Load(grabberFileName, null, false));
+              IIMDBScriptGrabber grabber = (IIMDBScriptGrabber)script.CreateObject("Grabber");
+              grabber.FindFilm(strSearch, aLimits[i], elements);
+              percent += 100/aDatabases.Length;
+              if (m_progress != null)
+                m_progress.OnProgress(line1, line2, line3, percent);
+            }
+            catch (Exception ex)
+            {
+              Log.Info("Movie database lookup Find() - file: {0}, message : {1}", grabberFileName, ex.Message);
+              return;
             }
           }
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Info("Movie database lookup Find() - Exception: {0}", ex.Message);
       }
     }
 
@@ -574,6 +559,8 @@ namespace MediaPortal.Video.Database
     /// </summary>
     public bool GetDetails(IMDB.IMDBUrl url, ref IMDBMovie movieDetails)
     {
+      string grabberFileName = ScriptDirectory + @"\" + url.Database + ".csscript";
+
       try
       {
         /*
@@ -587,42 +574,32 @@ namespace MediaPortal.Video.Database
           return false;
         }
         string	strHost = url.URL.Substring(iStart,iEnd-iStart).ToUpper();*/
-        switch (url.Database)
+
+        // Script support script.csscript
+        if (!File.Exists(grabberFileName))
         {
-          case "IMDB":
-            return GetDetailsIMDB(url, ref movieDetails);
-          default:
-            // Script support script.csscript
-            string grabberFileName = Config.GetSubFolder(Config.Dir.Base, "scripts\\imdb") + @"\" + url.Database + ".csscript";
-            if (File.Exists(grabberFileName))
-            {
-              try
-              {
-                AsmHelper script = new AsmHelper(CSScriptLibrary.CSScript.Load(grabberFileName, null, false));
-                IIMDBScriptGrabber grabber = (IIMDBScriptGrabber)script.CreateObject("Grabber");
-                grabber.GetDetails(url, ref movieDetails);
-              }
-              catch (Exception ex)
-              {
-                Log.Info("Script garbber error GetDetails() file: {0}, message : {1}", grabberFileName, ex.Message);
-                return false;
-              }
-              return true;
-            }
-            else
-            {
-              // unsupported database?
-              Log.Error("Movie database lookup GetDetails()- database not supported: {0}", url.Database);
-              return false;
-            }
+          Log.Error("Movie database lookup GetDetails()- grabber script not found: {0}", grabberFileName);
+          return false;
+        }
+
+        try
+        {
+          AsmHelper script = new AsmHelper(CSScriptLibrary.CSScript.Load(grabberFileName, null, false));
+          IIMDBScriptGrabber grabber = (IIMDBScriptGrabber)script.CreateObject("Grabber");
+          grabber.GetDetails(url, ref movieDetails);
+          return true;
+        }
+        catch (Exception ex)
+        {
+          Log.Info("Movie database lookup GetDetails() - file: {0}, message : {1}", grabberFileName, ex.Message);
+          return false;
         }
       }
       catch (Exception ex)
       {
-        Log.Error("Movie database lookup GetDetails()- exception: {0}", url.Database);
+        Log.Error("Movie database lookup GetDetails() - file: {0}, message : {1}", grabberFileName, ex.Message);
         return false;
       }
-      return false;
     }
 
     #endregion
@@ -931,473 +908,6 @@ namespace MediaPortal.Video.Database
         //Log.Info("IMDB.GetActorDetails({0} exception:{1} {2} {3}", url.URL,ex.Message,ex.Source,ex.StackTrace);
       }
       return false;
-    }
-
-    #endregion
-
-
-    #region IMDB movie partsing, could/should be replaced by external script
-
-    private void FindIMDB(string strURL, int iLimit)
-    {
-      int iCount = 0;
-      string strTitle;
-      try
-      {
-        string absoluteUri;
-        string strBody = GetPage(strURL, "utf-8", out absoluteUri);
-
-        // Mars Warrior @ 03-sep-2004.
-        // First try to find an Exact Match. If no exact match found, just look
-        // for any match and add all those to the list. This narrows it down more easily...
-        int iStartOfMovieList = strBody.IndexOf("Popular Titles");
-        if (iStartOfMovieList < 0) iStartOfMovieList = strBody.IndexOf("Exact Matches");
-        if (iStartOfMovieList < 0) iStartOfMovieList = strBody.IndexOf("Partial Matches");
-        if (iStartOfMovieList < 0) iStartOfMovieList = strBody.IndexOf("Approx Matches");
-
-        int endOfTitleList = strBody.IndexOf("Suggestions For Improving Your Results");
-        if (iStartOfMovieList < 0)
-        {
-          int iMovieTitle = strBody.IndexOf("<title>");
-          int iOverview = strBody.IndexOf("Overview");
-          int iMovieGenre = strBody.IndexOf("Genre:");
-          int iMoviePlot = strBody.IndexOf("Plot");
-
-          if (iMovieTitle >= 0 && iOverview >= 0 && iMoviePlot >= 0)
-          {
-            int iEnd = strBody.IndexOf("<", iMovieTitle + 7);
-            if (iEnd > 0)
-            {
-              iMovieTitle += "<title>".Length;
-              strTitle = strBody.Substring(iMovieTitle, iEnd - iMovieTitle);
-              strTitle = MediaPortal.Util.Utils.stripHTMLtags(strTitle);
-              HTMLUtil htmlUtil = new HTMLUtil();
-              htmlUtil.ConvertHTMLToAnsi(strTitle, out strTitle);
-              IMDBUrl url = new IMDBUrl(strURL, strTitle + " (imdb)", "IMDB");
-              elements.Add(url);
-            }
-          }
-          return;
-        }
-
-        iStartOfMovieList += "<table>".Length;
-        int iEndOfMovieList = strBody.IndexOf("Suggestions For Improving Your Results"); //strBody.IndexOf("</table>", iStartOfMovieList);
-
-        if (iEndOfMovieList < 0)
-        {
-          iEndOfMovieList = strBody.Length;
-        }
-        if (endOfTitleList < iEndOfMovieList && endOfTitleList > iStartOfMovieList)
-        {
-          iEndOfMovieList = endOfTitleList;
-        }
-        strBody = strBody.Substring(iStartOfMovieList, iEndOfMovieList - iStartOfMovieList);
-        while ((true) && (iCount < iLimit))
-        {
-          ////<A HREF="/Title?0167261">Lord of the Rings: The Two Towers, The (2002)</A>
-          int iAHREF = strBody.IndexOf("<a href=");
-          if (iAHREF >= 0)
-          {
-            int iEndAHREF = strBody.IndexOf("</a>");
-            if (iEndAHREF >= 0)
-            {
-              iAHREF += "<a href=.".Length;
-              string strAHRef = strBody.Substring(iAHREF, iEndAHREF - iAHREF);
-              int iURL = strAHRef.IndexOf(">");
-              if (iURL > 0)
-              {
-                strTitle = "";
-                strURL = strAHRef.Substring(0, iURL);
-                if (strURL[strURL.Length - 1] == '\"')
-                  strURL = strURL.Substring(0, strURL.Length - 1);
-                iURL++;
-                int iURLEnd = strAHRef.IndexOf("<", iURL);
-                if (iURLEnd > 0)
-                {
-                  strTitle = strAHRef.Substring(iURL, iURLEnd - iURL);
-                }
-                else
-                  strTitle = strAHRef.Substring(iURL);
-
-                int onclick = strURL.IndexOf(" onclick");
-                if (onclick >= 0)
-                  strURL = strURL.Substring(0, onclick - 1);
-                strURL = String.Format("http://us.imdb.com{0}", strURL);
-                HTMLUtil htmlUtil = new HTMLUtil();
-                htmlUtil.ConvertHTMLToAnsi(strTitle, out strTitle);
-
-
-                int endTagLength = "</a>".Length;
-                int posNextTag = strBody.IndexOf("<", iEndAHREF + endTagLength);
-                if (posNextTag > 0)
-                {
-                  string strSub = strBody.Substring(iEndAHREF + endTagLength, posNextTag - (iEndAHREF + endTagLength));
-                  strTitle += strSub;
-                }
-                // to avoid including of &nbsp; 
-                if ((strTitle.IndexOf("\n") < 0) && (strTitle.IndexOf("&nbsp;") < 0))
-                {
-                  IMDBUrl url = new IMDBUrl(strURL, strTitle + " (imdb)", "IMDB");
-                  elements.Add(url);
-                }
-                iCount++;
-              }
-              if (iEndAHREF + 1 >= strBody.Length)
-                break;
-              iStartOfMovieList = iEndAHREF + 1;
-              strBody = strBody.Substring(iEndAHREF + 1);
-            }
-            else
-            {
-              break;
-            }
-          }
-          else
-          {
-            break;
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("exception for imdb lookup of {0} err:{1} stack:{2}", strURL, ex.Message, ex.StackTrace);
-      }
-    }
-
-    private bool GetDetailsIMDB(IMDB.IMDBUrl url, ref IMDBMovie movieDetails)
-    {
-      try
-      {
-
-        int iStart = 0;
-        int iEnd = 0;
-        movieDetails.Reset();
-        // add databaseinfo
-        movieDetails.Database = "IMDB";
-
-        string strAbsURL;
-        string strBody = GetPage(url.URL, "utf-8", out strAbsURL);
-        if (strBody == null || strBody.Length == 0)
-          return false;
-
-        int iPos = strAbsURL.IndexOf("/title/");
-        if (iPos > 0)
-        {
-          iPos += "/title/".Length;
-          movieDetails.IMDBNumber = strAbsURL.Substring(iPos);
-          int pos = movieDetails.IMDBNumber.IndexOf("/");
-          if (pos > 0)
-            movieDetails.IMDBNumber = movieDetails.IMDBNumber.Substring(0, pos);
-        }
-
-        url.Title = url.Title.Trim();
-        // cut of " (imdb)"
-        iEnd = url.Title.IndexOf("(");
-        if (iEnd >= 0)
-          movieDetails.Title = url.Title.Substring(0, iEnd);
-        else
-          movieDetails.Title = url.Title;
-        movieDetails.Title = movieDetails.Title.Trim();
-        string movieTitle = System.Web.HttpUtility.HtmlEncode(movieDetails.Title);
-        int iDirectedBy = strBody.IndexOf("Director");
-        int iCredits = strBody.IndexOf("Writer");
-        int iGenre = strBody.IndexOf("Genre:");
-        int iTagLine = strBody.IndexOf("Tagline:</h5>");
-        int iPlotOutline = strBody.IndexOf("Plot Outline:</h5>");
-        int iPlotSummary = strBody.IndexOf("Plot Summary:</h5>");
-        int iPlot = strBody.IndexOf("<a href=\"plotsummary");
-        int iImage = strBody.IndexOf("<img border=\"0\" alt=\"" + movieTitle + "\" title=\"" + movieTitle + "\" src=\"");
-        if (iImage >= 0)
-        {
-          iImage += ("<img border=\"0\" alt=\"" + movieTitle + "\" title=\"" + movieTitle + "\" src=\"").Length;
-        }
-        int iRating = strBody.IndexOf("User Rating:</b>");
-        int iCred = strBody.IndexOf("<table class=\"cast\">");
-        int iTop = strBody.IndexOf("Top 250:");
-        int iYear = strBody.IndexOf("/Sections/Years/");
-        if (iYear >= 0)
-        {
-          iYear += "/Sections/Years/".Length;
-          string strYear = strBody.Substring(iYear, 4);
-          movieDetails.Year = System.Int32.Parse(strYear);
-        }
-
-        if (iDirectedBy >= 0)
-          movieDetails.Director = ParseAHREFIMDB(strBody, iDirectedBy, url.URL).Trim();
-
-        if (iCredits >= 0)
-          movieDetails.WritingCredits = ParseAHREFIMDB(strBody, iCredits, url.URL).Trim();
-
-        if (iGenre >= 0)
-          movieDetails.Genre = ParseGenresIMDB(strBody, iGenre, url.URL).Trim();
-
-        if (iRating >= 0) // and votes
-        {
-          iRating += "User Rating:</b>".Length;
-          iStart = strBody.IndexOf("<b>", iRating);
-          if (iStart >= 0)
-          {
-            iStart += "<b>".Length;
-            iEnd = strBody.IndexOf("/", iStart);
-
-            // set rating
-            string strRating = strBody.Substring(iStart, iEnd - iStart);
-            if (strRating != string.Empty)
-              strRating = strRating.Replace('.', ',');
-            try
-            {
-              movieDetails.Rating = (float)System.Double.Parse(strRating);
-              if (movieDetails.Rating > 10.0f)
-                movieDetails.Rating /= 10.0f;
-            }
-            catch (Exception)
-            {
-            }
-
-            if (movieDetails.Rating != 0.0f)
-            {
-              // now, votes
-              movieDetails.Votes = "0";
-              iStart = strBody.IndexOf("(", iEnd + 2);
-              if (iStart > 0)
-              {
-                iEnd = strBody.IndexOf(" votes</a>)", iStart);
-                if (iEnd > 0)
-                {
-                  iStart += "(<a href=\"ratings\">".Length; // skip the parantese and link before votes
-                  movieDetails.Votes = strBody.Substring(iStart, iEnd - iStart).Trim();
-                }
-              }
-            }
-          }
-        }
-
-        if (iTop >= 0) // top rated movie :)
-        {
-          iTop += "top 250:".Length + 2; // jump space and #
-          iEnd = strBody.IndexOf("</a>", iTop);
-          string strTop = strBody.Substring(iTop, iEnd - iTop);
-          movieDetails.Top250 = System.Int32.Parse(strTop);
-        }
-        if (iTagLine >= 0)
-        {
-          iTagLine += "Tagline:</h5>".Length;
-          iEnd = strBody.IndexOf("<", iTagLine);
-          movieDetails.TagLine = strBody.Substring(iTagLine, iEnd - iTagLine).Trim();
-          movieDetails.TagLine = MediaPortal.Util.Utils.stripHTMLtags(movieDetails.TagLine);
-          movieDetails.TagLine = HttpUtility.HtmlDecode(movieDetails.TagLine);  // Remove HTML entities like &#189;
-        }
-
-        if (iPlotOutline < 0)
-        {
-          if (iPlotSummary > 0)
-          {
-            iPlotSummary += "Plot Summary:</h5>".Length;
-            iEnd = strBody.IndexOf("<", iPlotSummary);
-            movieDetails.PlotOutline = strBody.Substring(iPlotSummary, iEnd - iPlotSummary).Trim();
-            movieDetails.PlotOutline = MediaPortal.Util.Utils.stripHTMLtags(movieDetails.PlotOutline);
-            movieDetails.PlotOutline = HttpUtility.HtmlDecode(movieDetails.PlotOutline);  // remove HTML entities
-          }
-        }
-        else
-        {
-          iPlotOutline += "Plot Outline:</h5>".Length;
-          iEnd = strBody.IndexOf("<", iPlotOutline);
-          movieDetails.PlotOutline = strBody.Substring(iPlotOutline, iEnd - iPlotOutline).Trim();
-          movieDetails.PlotOutline = MediaPortal.Util.Utils.stripHTMLtags(movieDetails.PlotOutline);
-          movieDetails.PlotOutline = HttpUtility.HtmlDecode(movieDetails.PlotOutline);  // remove HTML entities
-          movieDetails.Plot = movieDetails.PlotOutline.Trim();
-          movieDetails.Plot = HttpUtility.HtmlDecode(movieDetails.Plot);  // remove HTML entities
-        }
-
-        if (iImage >= 0)
-        {
-          iEnd = strBody.IndexOf("\"", iImage);
-          //movieDetails.ThumbURL = strBody.Substring(iImage, iEnd - iImage).Trim();
-        }
-
-        //plot
-        if (iPlot >= 0)
-        {
-          string strPlotURL = url.URL + "plotsummary";
-          try
-          {
-            string absoluteUri;
-            string strPlotHTML = GetPage(strPlotURL, "utf-8", out absoluteUri);
-
-            if (0 != strPlotHTML.Length)
-            {
-
-              int iPlotStart = strPlotHTML.IndexOf("<p class=\"plotpar\">");
-              if (iPlotStart >= 0)
-              {
-                iPlotStart += "<p class=\"plotpar\">".Length;
-
-                int iPlotEnd = strPlotHTML.IndexOf("<i>", iPlotStart); // ends with <i> for person who wrote it or
-                if (iPlotEnd < 0) iPlotEnd = strPlotHTML.IndexOf("</p>", iPlotStart); // </p> for end of paragraph
-
-                if (iPlotEnd >= 0)
-                {
-                  movieDetails.Plot = strPlotHTML.Substring(iPlotStart, iPlotEnd - iPlotStart);
-                  movieDetails.Plot = MediaPortal.Util.Utils.stripHTMLtags(movieDetails.Plot);
-                  movieDetails.Plot = HttpUtility.HtmlDecode(movieDetails.Plot);  // remove HTML entities
-                }
-              }
-            }
-          }
-          catch (Exception ex)
-          {
-            Log.Error("exception for imdb lookup of {0} err:{1} stack:{2}", strPlotURL, ex.Message, ex.StackTrace);
-          }
-        }
-
-        //cast
-        string RegCastBlock = "<table class=\"cast\">.*?</table>";
-        string RegActorAndRole = "td class=\"nm\"><a href=./name.*?>(?<actor>.*?)</a><.*?<td class=\"char\">(?<role>.*?)<";
-
-        Match castBlock = Regex.Match(strBody, RegCastBlock);
-
-        // These are some fallback methods to find the block with the cast, in case something changes on IMDB, these may work reasonably well anyway...
-        if (!castBlock.Success)
-          castBlock = Regex.Match(strBody, @"redited\scast.*?</table>");
-        if (!castBlock.Success)
-          castBlock = Regex.Match(strBody, @"first\sbilled\sonly.*?</table>");
-        if (!castBlock.Success)
-          castBlock = Regex.Match(strBody, @"redited\scast.*?more");
-        if (!castBlock.Success)
-          castBlock = Regex.Match(strBody, @"first\sbilled\sonly.*?more");
-
-        string strCastBlock = castBlock.Value;
-
-        MatchCollection mc = Regex.Matches(strCastBlock, RegActorAndRole);
-        string strActor = string.Empty;
-        string strRole = string.Empty;
-
-        foreach (Match m in mc)
-        {
-          strActor = string.Empty;
-          strActor = m.Groups["actor"].Value;
-          strActor = MediaPortal.Util.Utils.stripHTMLtags(strActor).Trim();
-          strActor = HttpUtility.HtmlDecode(strActor);
-
-          strRole = string.Empty;
-          strRole = m.Groups["role"].Value;
-          strRole = MediaPortal.Util.Utils.stripHTMLtags(strRole).Trim();
-          strRole = HttpUtility.HtmlDecode(strRole);
-
-          movieDetails.Cast += strActor;
-          if (strRole != string.Empty)
-            movieDetails.Cast += " as " + strRole;
-
-          movieDetails.Cast += "\n";
-        }
-
-        int iRunTime = strBody.IndexOf("Runtime:");
-        if (iRunTime > 0)
-        {
-          iRunTime += "Runtime:</h5>".Length;
-          string runtime = "";
-          while (!Char.IsDigit(strBody[iRunTime]) && iRunTime + 1 < strBody.Length)
-            iRunTime++;
-          if (iRunTime < strBody.Length)
-          {
-            while (Char.IsDigit(strBody[iRunTime]) && iRunTime + 1 < strBody.Length)
-            {
-              runtime += strBody[iRunTime];
-              iRunTime++;
-            }
-            try
-            {
-              movieDetails.RunTime = Int32.Parse(runtime);
-            }
-            catch (Exception) { }
-          }
-        }
-
-        int mpaa = strBody.IndexOf("MPAA</a>:</h5>");
-        if (mpaa > 0)
-        {
-          mpaa += "MPAA</a>:</h5>".Length;
-          int mpaaEnd = strBody.IndexOf("</div>", mpaa);
-          if (mpaaEnd > 0)
-          {
-            movieDetails.MPARating = strBody.Substring(mpaa, mpaaEnd - mpaa);
-          }
-        }
-
-
-        return true;
-      }
-      catch (Exception ex)
-      {
-        Log.Error("exception for imdb lookup of {0} err:{1} stack:{2}", url.URL, ex.Message, ex.StackTrace);
-      }
-      return false;
-    }
-
-    string ParseAHREFIMDB(string strBody, int iahref, string strURL)
-    {
-      int iStart = strBody.IndexOf("<a href=\"", iahref);
-      if (iStart < 0)
-        iStart = strBody.IndexOf("<A HREF=\"", iahref);
-      if (iStart < 0)
-        return "";
-
-      int iEnd = strBody.IndexOf("</a>", iStart);
-      if (iEnd < 0)
-        iEnd = strBody.IndexOf("</A>", iStart);
-      if (iEnd < 0)
-        return "";
-
-      iStart += "<a href=\"".Length;
-      int iSep = strBody.IndexOf(">", iStart);
-      string strurl = strBody.Substring(iStart, (iSep - iStart) - 1);
-      iSep++;
-      string strTitle = strBody.Substring(iSep, iEnd - iSep);
-      strTitle = MediaPortal.Util.Utils.stripHTMLtags(strTitle);
-      HTMLUtil htmlUtil = new HTMLUtil();
-      htmlUtil.ConvertHTMLToAnsi(strTitle, out strTitle);
-      strTitle = strTitle.Trim();
-      return strTitle.Trim();
-
-    }
-
-    string ParseGenresIMDB(string strBody, int iGenre, string url)
-    {
-      string strTmp;
-      string strTitle = "";
-      string strHRef = strBody.Substring(iGenre);
-      int iSlash = strHRef.IndexOf(" / ");
-      int iEnd = 0;
-      int iStart = 0;
-      if (iSlash >= 0)
-      {
-        int iRealEnd = strHRef.IndexOf(">more<");
-        if (iRealEnd < 0)
-          iRealEnd = strHRef.IndexOf("</div>");
-        while (iSlash < iRealEnd)
-        {
-          iStart = iEnd + 2;
-          iEnd = iSlash;
-          int iLen = iEnd - iStart;
-          if (iLen < 0)
-            break;
-          strTmp = strHRef.Substring(iStart, iLen);
-          strTitle = strTitle + ParseAHREFIMDB(strTmp, 0, "") + " / ";
-
-          iSlash = strHRef.IndexOf(" / ", iEnd + 2);
-          if (iSlash < 0)
-            iSlash = iRealEnd;
-        }
-      }
-      // last genre
-      iEnd += 2;
-      strTmp = strHRef.Substring(iEnd);
-      strTitle = strTitle + ParseAHREFIMDB(strTmp, 0, "");
-      HTMLUtil htmlUtil = new HTMLUtil();
-      htmlUtil.ConvertHTMLToAnsi(strTitle, out strTitle);
-
-      return strTitle;
     }
 
     #endregion
