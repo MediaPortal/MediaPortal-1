@@ -121,6 +121,12 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("textXOff")]         protected int _textXOff = 0;
     [XMLSkinElement("textYOff")]         protected int _textYOff = 0;
 
+    [XMLSkinElement("zoomXPixels")]      protected int _zoomXPixels = 0;
+    [XMLSkinElement("zoomYPixels")]      protected int _zoomYPixels = 0;
+    [XMLSkinElement("hideUnfocusTexture")]  protected bool _hideUnfocusTexture = false;
+    [XMLSkinElement("renderFocusText")]    protected bool _renderFocusText = true;
+    [XMLSkinElement("renderUnfocusText")]    protected bool _renderUnfocusText = true;
+
     [XMLSkinElement("unfocusedAlpha")]   protected int _unfocusedAlpha = 0xFF;
 
     bool _showTexture = true;
@@ -318,6 +324,19 @@ namespace MediaPortal.GUI.Library
       GUIButtonControl btn = _listButtons[iButton];
       if (btn == null) return;
 
+      btn.Width = _textureWidth;
+      btn.Height = _textureHeight;
+
+      if (bFocus && Focus)
+      {
+        Viewport view = GUIGraphicsContext.DX9Device.Viewport;
+        view.Width = (_columnCount * _itemWidth) + _zoomXPixels;
+        view.Height = (_rowCount * _itemHeight) + _zoomYPixels + (_zoomYPixels / 2);
+        view.X -= _zoomXPixels / 2;
+        view.Y -= _zoomYPixels / 2;
+        GUIGraphicsContext.DX9Device.Viewport = view;
+      }
+
       float fTextPosY = (float)dwPosY + (float)_textureHeight;
 
       long dwColor = _textColor;
@@ -339,27 +358,33 @@ namespace MediaPortal.GUI.Library
           btn.ColourDiffuse = 0xffffffff;
           btn.Focus = true;
           btn.SetPosition(dwPosX, dwPosY);
-          if (true == _showTexture) btn.Render(timePassed);
+          //if (true == _showTexture) btn.Render(timePassed);
           return;
         }
-        if (fTextPosY >= _positionY) RenderText((float)dwPosX + _textXOff, fTextPosY + _textYOff, dwColor, pItem.Label, true);
+        if (fTextPosY >= _positionY && _renderFocusText) RenderText((float)dwPosX + _textXOff, fTextPosY + _textYOff + _zoomYPixels, dwColor, pItem.Label, true);
       }
       else
       {
         if (buttonOnly)
         {
           btn.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
+          if (!btn.Focus)
+            btn.SetPosition(dwPosX, dwPosY);
           btn.Focus = false;
-          btn.SetPosition(dwPosX, dwPosY);
-          if (true == _showTexture) btn.Render(timePassed);
+          if (!_hideUnfocusTexture)
+            btn.Render(timePassed);
           return;
         }
-        if (fTextPosY >= _positionY) RenderText((float)dwPosX+_textXOff, fTextPosY+_textYOff, dwColor, pItem.Label, false);
+        if (fTextPosY >= _positionY && _renderUnfocusText)
+        {
+
+          RenderText((float)dwPosX + _textXOff, fTextPosY + _textYOff, dwColor, pItem.Label, false);
+        }
       }
 
       // Set oversized value
       int iOverSized = 0;
-      if (bFocus && Focus && _enableFocusZoom)
+      if (bFocus && Focus && _enableFocusZoom && _zoomXPixels == 0 && _zoomYPixels == 0)
       {
         iOverSized = (_thumbNailWidth + _thumbNailHeight) / THUMBNAIL_OVERSIZED_DIVIDER;
       }
@@ -411,6 +436,12 @@ namespace MediaPortal.GUI.Library
           pImage.DimColor = DimColor;
           if (bFocus || !Focus) pImage.ColourDiffuse = 0xffffffff;
           else pImage.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
+          if (bFocus && (_zoomXPixels != 0 || _zoomYPixels != 0))
+          {
+            pImage.Width = _textureWidth + _zoomXPixels - 4;
+            pImage.Height = _textureHeight + _zoomYPixels - 4;
+            pImage.SetPosition(dwPosX - (_zoomXPixels/2), dwPosY-(_zoomYPixels/2));
+          }
           pImage.Render(timePassed);
         }
       }
@@ -456,6 +487,18 @@ namespace MediaPortal.GUI.Library
             pImage.Render(timePassed);
           }
         }
+      }
+      if (bFocus && Focus)
+      {
+        btn.Width = _textureWidth + _zoomXPixels;
+        btn.Height = _textureHeight + _zoomYPixels;
+        btn.SetPosition(dwPosX - (_zoomXPixels / 2), dwPosY - (_zoomYPixels / 2));
+        btn.Render(timePassed);
+      }
+      else
+      {
+        btn.Width = _textureWidth;
+        btn.Height = _textureHeight;
       }
     }
 
@@ -1376,6 +1419,7 @@ namespace MediaPortal.GUI.Library
         GUIButtonControl btn = new GUIButtonControl(_parentControlId, _controlId, _positionX, _positionY, _textureWidth, _textureHeight, _imageFolderNameFocus, _imageFolderName);
         btn.ParentControl = this;
         btn.AllocResources();
+
         _listButtons.Add(btn);
       }
     }
