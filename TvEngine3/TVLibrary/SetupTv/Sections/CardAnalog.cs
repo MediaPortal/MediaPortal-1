@@ -43,6 +43,8 @@ namespace SetupTv.Sections
     bool _isScanning = false;
     bool _stopScanning = false;
     bool _qualityControlSupported = false;
+    string _cardName;
+    string _devicePath;
     Configuration _configuration;
 
     public CardAnalog()
@@ -107,11 +109,14 @@ namespace SetupTv.Sections
       TvBusinessLayer layer = new TvBusinessLayer();
       mpComboBoxCountry.SelectedIndex = Int32.Parse(layer.GetSetting("analog" + _cardNumber.ToString() + "Country", "0").Value);
       mpComboBoxSource.SelectedIndex = Int32.Parse(layer.GetSetting("analog" + _cardNumber.ToString() + "Source", "0").Value);
-      _configuration = Configuration.readConfiguration(_cardNumber, RemoteControl.Instance.CardName(_cardNumber), RemoteControl.Instance.CardDevice(_cardNumber));
-      customValue.Value = _configuration.CustomQualityValue;
-      customValuePeak.Value = _configuration.CustomPeakQualityValue;
-      SetBitRateModes();
-      SetBitRate();
+      if (String.IsNullOrEmpty(_cardName) || String.IsNullOrEmpty(_devicePath))
+      {
+        _configuration = Configuration.readConfiguration(_cardNumber, _cardName, _devicePath);
+        customValue.Value = _configuration.CustomQualityValue;
+        customValuePeak.Value = _configuration.CustomPeakQualityValue;
+        SetBitRateModes();
+        SetBitRate();
+      }
     }
 
     private void SetBitRateModes()
@@ -678,6 +683,8 @@ namespace SetupTv.Sections
         if (RemoteControl.Instance.SupportsQualityControl(_cardNumber))
         {
           _qualityControlSupported = true;
+          _cardName = RemoteControl.Instance.CardName(_cardNumber);
+          _devicePath = RemoteControl.Instance.CardDevice(_cardNumber);
           if (RemoteControl.Instance.SupportsBitRateModes(_cardNumber))
           {
             bitRateModeGroup.Enabled = true;
@@ -710,6 +717,11 @@ namespace SetupTv.Sections
             customValue.Enabled = false;
             customValuePeak.Enabled = false;
           }
+          _configuration = Configuration.readConfiguration(_cardNumber, _cardName, _devicePath);
+          customValue.Value = _configuration.CustomQualityValue;
+          customValuePeak.Value = _configuration.CustomPeakQualityValue;
+          SetBitRateModes();
+          SetBitRate();
         }
         else
         {
