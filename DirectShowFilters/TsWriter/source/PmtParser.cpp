@@ -135,7 +135,8 @@ bool CPmtParser::DecodePmt(CSection sections, int &pcr_pid, vector<PidInfo2>& pi
     pidInfo2.rawDescriptorSize=ES_info_length;
     if (pidInfo2.streamType!=SERVICE_TYPE_DVB_SUBTITLES2)
       pidInfo2.logicalStreamType=stream_type;
-    if (pidInfo2.streamType==SERVICE_TYPE_DVB_SUBTITLES2 && ES_info_length <= 3)
+    //ITV HD check, we now force this by program number to avoid issues with some australian broadcasts.
+    if (pidInfo2.streamType==SERVICE_TYPE_DVB_SUBTITLES2 && program_number==10510)
     {
       pidInfo2.streamType=SERVICE_TYPE_VIDEO_H264;
       pidInfo2.logicalStreamType=SERVICE_TYPE_VIDEO_H264;
