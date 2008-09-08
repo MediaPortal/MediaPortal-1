@@ -85,6 +85,7 @@ namespace TvEngine
     string _errorMessage = "";
     Stats _status = new Stats();
     int _backgroundDelay = 0;
+    TvBusinessLayer layer = new TvBusinessLayer();
 
     static bool _isImporting = false;
     public XMLTVImport()
@@ -155,9 +156,7 @@ namespace TvEngine
         _errorMessage = "already importing...";
         return false;
       }
-      _isImporting = true;
-
-      TvBusinessLayer layer = new TvBusinessLayer();
+      _isImporting = true;      
 
       bool result = false;
       XmlTextReader xmlReader = null;
@@ -205,7 +204,6 @@ namespace TvEngine
 
       ArrayList Programs = new ArrayList();
       Dictionary<int, ChannelPrograms> dChannelPrograms = new Dictionary<int, ChannelPrograms>();
-
       try
       {
         Log.WriteFile("xmltv import {0}", fileName);
@@ -755,7 +753,7 @@ namespace TvEngine
 
                 List<Program> importProgs = new List<Program>(progChan.programs.Count);
                 for (int i = 0 ; i < progChan.programs.Count ; ++i)
-                {
+                {                  
                   Program prog = (Program)progChan.programs[i];
                   // don't import programs which have already ended...
                   if (prog.EndTime > dtStartDate)
@@ -810,7 +808,7 @@ namespace TvEngine
                 Log.Info("XMLTVImport: Inserting {0} programs for {1}", importProgs.Count.ToString(), progChan.Name);
                 layer.InsertPrograms(importProgs, ThreadPriority.BelowNormal);
               }
-            }
+            }           
               #endregion
 
             //TVDatabase.RemoveOverlappingPrograms();
