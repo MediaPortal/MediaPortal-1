@@ -145,6 +145,9 @@ namespace TvLibrary.Implementations.DVB
       if (_isHauppauge == false) return;
       bool hiBand = BandTypeConverter.IsHiBand(channel, parameters);
       int antennaNr = BandTypeConverter.GetAntennaNr(channel);
+      //hack - bypass diseqc settings for single LNB implementations
+      if (antennaNr == 0) return;
+      //end of hack
 
       //bit 0	(1)	: 0=low band, 1 = hi band
       //bit 1 (2) : 0=vertical, 1 = horizontal
