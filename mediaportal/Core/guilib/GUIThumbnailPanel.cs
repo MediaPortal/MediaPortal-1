@@ -330,10 +330,12 @@ namespace MediaPortal.GUI.Library
       if (bFocus && Focus)
       {
         Viewport view = GUIGraphicsContext.DX9Device.Viewport;
-        view.Width = (_columnCount * _itemWidth) + _zoomXPixels;
+        view.Width = (_columnCount * _itemWidth) + _zoomXPixels + (_zoomXPixels / 2); ;
         view.Height = (_rowCount * _itemHeight) + _zoomYPixels + (_zoomYPixels / 2);
         view.X -= _zoomXPixels / 2;
         view.Y -= _zoomYPixels / 2;
+        if (view.X < 0) view.X = 0;
+        if (view.Y < 0) view.Y = 0;
         GUIGraphicsContext.DX9Device.Viewport = view;
       }
 
@@ -584,6 +586,10 @@ namespace MediaPortal.GUI.Library
         }
       }
 
+      int focusButton = -1;
+      int focusX = -1;
+      int focusY = -1;
+      GUIListItem focusItem = null;
       for (int i = 0; i < 2; ++i)
       {
         if (_scrollingUp)
@@ -607,6 +613,8 @@ namespace MediaPortal.GUI.Library
         }
 
         // render main panel
+
+
         for (int iRow = 0; iRow < _rowCount; iRow++)
         {
           dwPosY = _positionY + iRow * _itemHeight + iScrollYOffset;
@@ -618,13 +626,21 @@ namespace MediaPortal.GUI.Library
             {
               GUIListItem pItem = _listItems[iItem];
               bool bFocus = (_cursorX == iCol && _cursorY == iRow);
-              RenderItem(timePassed, iRow * _columnCount + iCol, bFocus, dwPosX, dwPosY, pItem, i == 0);
+              if (!bFocus)
+                RenderItem(timePassed, iRow * _columnCount + iCol, bFocus, dwPosX, dwPosY, pItem, i == 0);
+              if (bFocus)
+              {
+                focusButton = iRow * _columnCount + iCol;
+                focusX = dwPosX;
+                focusY = dwPosY;
+                focusItem = pItem;
+              }
               if (iItem < iStartItem) iStartItem = iItem;
               if (iItem > iEndItem) iEndItem = iItem;
             }
           }
         }
-
+ 
         if (_scrollingDown)
         {
           // render item on bottom
@@ -642,6 +658,11 @@ namespace MediaPortal.GUI.Library
             }
           }
         }
+      }
+      if (focusButton != -1 && focusX != -1 && focusY != -1 && focusItem != null)
+      {
+        RenderItem(timePassed, focusButton, true, focusX, focusY, focusItem, true);
+        RenderItem(timePassed, focusButton, true, focusX, focusY, focusItem, false);
       }
 
       GUIGraphicsContext.DX9Device.Viewport = oldview;
