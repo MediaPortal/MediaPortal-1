@@ -267,16 +267,16 @@ namespace TvService
       strInput = Utils.ReplaceTag(strInput, "%start%", Utils.MakeFileName(Program.StartTime.ToShortTimeString()), "unknown");
       strInput = Utils.ReplaceTag(strInput, "%end%", Utils.MakeFileName(Program.EndTime.ToShortTimeString()), "unknown");
       strInput = Utils.ReplaceTag(strInput, "%genre%", Utils.MakeFileName(Program.Genre), "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%startday%", Utils.MakeFileName(Program.StartTime.Day.ToString()), "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%startmonth%", Utils.MakeFileName(Program.StartTime.Month.ToString()), "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%startyear%", Utils.MakeFileName(Program.StartTime.Year.ToString()), "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%starthh%", Utils.MakeFileName(Program.StartTime.Hour.ToString()), "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%startmm%", Utils.MakeFileName(Program.StartTime.Minute.ToString()), "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%endday%", Utils.MakeFileName(Program.EndTime.Day.ToString()), "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%endmonth%", Utils.MakeFileName(Program.EndTime.Month.ToString()), "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%startyear%", Utils.MakeFileName(Program.EndTime.Year.ToString()), "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%endhh%", Utils.MakeFileName(Program.EndTime.Hour.ToString()), "unknown");
-      strInput = Utils.ReplaceTag(strInput, "%endmm%", Utils.MakeFileName(Program.EndTime.Minute.ToString()), "unknown");
+      strInput = Utils.ReplaceTag(strInput, "%startday%", Utils.MakeFileName(Program.StartTime.ToString("dd")), "unknown");
+      strInput = Utils.ReplaceTag(strInput, "%startmonth%", Utils.MakeFileName(Program.StartTime.ToString("MM")), "unknown");
+      strInput = Utils.ReplaceTag(strInput, "%startyear%", Utils.MakeFileName(Program.StartTime.ToString("yyyy")), "unknown");
+      strInput = Utils.ReplaceTag(strInput, "%starthh%", Utils.MakeFileName(Program.StartTime.ToString("HH")), "unknown");
+      strInput = Utils.ReplaceTag(strInput, "%startmm%", Utils.MakeFileName(Program.StartTime.ToString("mm")), "unknown");
+      strInput = Utils.ReplaceTag(strInput, "%endday%", Utils.MakeFileName(Program.EndTime.ToString("dd")), "unknown");
+      strInput = Utils.ReplaceTag(strInput, "%endmonth%", Utils.MakeFileName(Program.EndTime.ToString("MM")), "unknown");
+      strInput = Utils.ReplaceTag(strInput, "%endyear%", Utils.MakeFileName(Program.EndTime.ToString("yyyy")), "unknown");
+      strInput = Utils.ReplaceTag(strInput, "%endhh%", Utils.MakeFileName(Program.EndTime.ToString("HH")), "unknown");
+      strInput = Utils.ReplaceTag(strInput, "%endmm%", Utils.MakeFileName(Program.EndTime.ToString("mm")), "unknown");
 
       int index = strInput.LastIndexOf('\\');
       if (index != -1)
