@@ -990,6 +990,8 @@ namespace MediaPortal.GUI.Library
     public static int TranslateWindowString(string strWindow)
     {
       int wWindowID = (int)GUIWindow.Window.WINDOW_INVALID;
+      if (int.TryParse(strWindow, out wWindowID)) return wWindowID;
+
       if (strWindow.Equals("home")) wWindowID = (int)GUIWindow.Window.WINDOW_HOME;
       else if (strWindow.Equals("myprograms")) wWindowID = (int)GUIWindow.Window.WINDOW_FILES;
       else if (strWindow.Equals("mypictures")) wWindowID = (int)GUIWindow.Window.WINDOW_PICTURES;
