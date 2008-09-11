@@ -113,7 +113,6 @@ namespace MediaPortal.Player
     static bool _reEntrant = false;
     bool _drawVideoAllowed = true;
     int _debugStep = 0;
-    int _renderDrop = 0;
     GUIImage _blackImage;
 
     FrameGrabber grabber = FrameGrabber.GetInstance();
@@ -839,30 +838,7 @@ namespace MediaPortal.Player
         {
           GUIGraphicsContext.DX9Device.EndScene();
         }
-        // for DVD menus ( Mantis bug: 1399 )
-        if (GUIGraphicsContext.IsPlayingVideo && GUIGraphicsContext.Vmr9FPS == 0f)
-        {
-          GUIGraphicsContext.DX9Device.Present(); 
-        }
-        else 
-        {
-          // Present only if we are not "behind" > 17ms which corresponds to (1000ms / max 60FPS)
-          // If we loose more than 5 Frames however (because the system cannot cope with screens like EPG)
-          // we draw the GUI anyway to make sure the screen stays up to date.        
-          if (timePassed >= 0.17)
-          {
-            _renderDrop += 1;
-          }
-          if (timePassed < 0.17 || _renderDrop % 5 == 0)
-          {
-            GUIGraphicsContext.DX9Device.Present();
-            _renderDrop = 0;
-          }
-          else
-          {
-            Log.Debug("Planescene.InternalPresentSurface: timePassed = {0} - dropped {1} frame(s)", timePassed, _renderDrop);
-          }
-        }
+        GUIGraphicsContext.DX9Device.Present(); 
         _debugStep = 17;
       }
       catch (DeviceLostException)
