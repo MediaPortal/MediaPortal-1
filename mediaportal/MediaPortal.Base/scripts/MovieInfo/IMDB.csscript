@@ -1,0 +1,696 @@
+//css_reference "core.dll";
+//css_reference "Databases.dll";
+//css_reference "utils.dll";
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+using System.IO;
+using System.Net;
+using System.Collections;
+using System.Web;
+using System.Xml;
+using System.Text.RegularExpressions;
+using MediaPortal.Util;
+
+class Grabber : MediaPortal.Video.Database.IIMDBScriptGrabber
+{
+  public Grabber()
+    {
+    }
+  void MediaPortal.Video.Database.IIMDBScriptGrabber.FindFilm(string strSearch, int iLimit, ArrayList elements)
+  {
+    	int iCount = 0;
+	string strTitle;
+	try
+	{
+		string absoluteUri;
+		string strURL = "http://us.imdb.com/Tsearch?title=" + strSearch;
+		string strBody = GetPage(strURL, "utf-8", out absoluteUri);
+		
+		string strBodyExact = "";
+		string strBodyPopular = "";
+
+		bool bFoundExact = false;
+		bool bFoundPop = false;
+
+		int iStartOfMovieExactList = 0;
+		int iStartOfMovieList = 0;
+		
+		iStartOfMovieList = strBody.IndexOf("Popular Titles");
+		if (iStartOfMovieList >= 0)
+		{
+			strBodyPopular = strBody;
+			bFoundPop = true;
+			iStartOfMovieExactList = strBody.IndexOf("Titles (Exact Matches)");
+			if (iStartOfMovieExactList >= 0)
+			{
+				strBodyExact = strBody;
+				bFoundExact = true;
+			}
+		}
+		if (iStartOfMovieList <= 0)
+		{
+			bFoundExact = true;
+            strBodyExact = strBody;
+            iStartOfMovieExactList = strBody.IndexOf("Titles (Exact Matches)");
+            iStartOfMovieList = iStartOfMovieExactList;
+		}
+
+		int endOfTitleList = strBody.IndexOf("Suggestions For Improving Your Results");
+		if (iStartOfMovieList <= 0)
+		{
+			int iMovieTitle = strBody.IndexOf("<title>");
+			int iOverview = strBody.IndexOf("Overview");
+			int iMovieGenre = strBody.IndexOf("Genre:");
+			int iMoviePlot = strBody.IndexOf("Plot");
+
+			if (iMovieTitle >= 0 && iOverview >= 0 && iMoviePlot >= 0)
+			{
+				int iEnd = strBody.IndexOf("<", iMovieTitle + 7);
+				if (iEnd > 0)
+				{
+					iMovieTitle += "<title>".Length;
+					strTitle = strBody.Substring(iMovieTitle, iEnd - iMovieTitle);
+					strTitle = MediaPortal.Util.Utils.stripHTMLtags(strTitle);
+					HTMLUtil htmlUtil = new HTMLUtil();
+					htmlUtil.ConvertHTMLToAnsi(strTitle, out strTitle);
+					MediaPortal.Video.Database.IMDB.IMDBUrl url = new MediaPortal.Video.Database.IMDB.IMDBUrl(absoluteUri, strTitle + " (IMDB_With_AKA)", "IMDB");
+					elements.Add(url);
+				}
+			}
+			return;
+		}
+		
+		
+
+		if (bFoundPop == true)
+		{
+			iStartOfMovieList += "<table>".Length;
+			int iEndOfMovieList = strBodyPopular.IndexOf("</table>", iStartOfMovieList);
+
+			if (iEndOfMovieList < 0) iEndOfMovieList = strBodyPopular.Length;
+			if (endOfTitleList < iEndOfMovieList && endOfTitleList > iStartOfMovieList) iEndOfMovieList = endOfTitleList;
+			
+			strBodyPopular = strBodyPopular.Substring(iStartOfMovieList, iEndOfMovieList - iStartOfMovieList);
+			while (true)
+			{
+				Match imdbEntry = Regex.Match(strBodyPopular, @"<tr>[\s]*
+					<td[^>]*>.*?</td>[\s]*
+					<td[^>]*>.*?</td>[\s]*
+					<td[^>]*>.*?
+					<a\shref=""(?<tt>/title/tt[0-9]*/)[^>]*>(?<title>.*?)</a>
+					(?<options>.*?)[\s]*
+					(?(?=<br>)(?<aka><br>.*?))
+					</td>[\s]*
+					</tr>",
+					RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline | RegexOptions.Compiled);
+
+				bool bSkipThisEntry = false;
+
+				while (imdbEntry.Success)
+				{
+					string imdbTitle = imdbEntry.Groups["title"].Value.Replace("\"", "");
+					string imdbURL = imdbEntry.Groups["tt"].Value;
+					string imdbOptions = Regex.Replace(imdbEntry.Groups["options"].Value, @"<(.|\n)*?>", String.Empty,
+														RegexOptions.IgnoreCase | RegexOptions.Compiled).Trim();
+
+					bSkipThisEntry = imdbOptions.Contains("(TV)") |
+						imdbOptions.Contains("(TV series)") |
+						imdbOptions.Contains("(VG)") |
+						imdbOptions.Contains("(V)") |
+						imdbOptions.Contains("(promotional title)") |
+						imdbOptions.Contains("(working title)") |
+						imdbOptions.Contains("(poster title)") |
+						imdbOptions.Contains("(promotional abbreviation)") |
+						imdbOptions.Contains("(short title)") |
+						imdbOptions.Contains("(video title)") |
+						imdbOptions.Contains("(original script title)") |
+						imdbOptions.Contains("(video box title)") |
+						imdbOptions.Contains("(new title)") |
+						imdbOptions.Contains("(DVD box title)");
+					 if (bSkipThisEntry == false)
+					 {
+						 MediaPortal.Video.Database.IMDB.IMDBUrl url = new MediaPortal.Video.Database.IMDB.IMDBUrl("http://us.imdb.com" + imdbURL, imdbTitle + " " + imdbOptions + " (IMDB_With_AKA)", "IMDB");
+						 elements.Add(url);
+						 iCount++;
+
+						 string imdbAka = imdbEntry.Groups["aka"].Value;
+						 Match imdbAlias = Regex.Match(imdbAka, @"<br>&#160;aka\s<em>""(?<alias>.*?)""</em>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+						 while (imdbAlias.Success)
+						 {
+							 imdbTitle = imdbAlias.Groups["alias"].Value;
+							 string imdbakaOptions = Regex.Replace(imdbEntry.Groups["options"].Value, @"<(.|\n)*?>", String.Empty,
+														RegexOptions.IgnoreCase | RegexOptions.Compiled).Trim();
+							 bool bSkipThisAkaEntry = imdbakaOptions.Contains("(TV)") |
+								 imdbakaOptions.Contains("(TV series)") |
+								 imdbakaOptions.Contains("(VG)") |
+								 imdbakaOptions.Contains("(V)") |
+								 imdbakaOptions.Contains("(promotional title)") |
+								 imdbakaOptions.Contains("(working title)") |
+								 imdbakaOptions.Contains("(poster title)") |
+								 imdbakaOptions.Contains("(promotional abbreviation)") |
+								 imdbakaOptions.Contains("(short title)") |
+								 imdbakaOptions.Contains("(video title)") |
+								 imdbakaOptions.Contains("(original script title)") |
+								 imdbakaOptions.Contains("(video box title)") |
+								 imdbakaOptions.Contains("(new title)") |
+								 imdbakaOptions.Contains("(DVD box title)");
+							 if (bSkipThisAkaEntry == false)
+							 {
+								 url = new MediaPortal.Video.Database.IMDB.IMDBUrl("http://us.imdb.com" + imdbURL, imdbTitle + " " + imdbakaOptions + " (IMDB_With_AKA)", "IMDB");
+								 elements.Add(url);
+							 }
+							 imdbAlias = imdbAlias.NextMatch();
+						 }
+						 
+					 }
+					 imdbEntry = imdbEntry.NextMatch();
+					 if (iCount > iLimit) break;
+				}
+			break;
+			}
+		}
+
+		if (bFoundExact == true)
+		{
+			iStartOfMovieExactList += "<table>".Length;
+			int iEndOfMovieExactList = strBodyExact.IndexOf("</table>", iStartOfMovieExactList);
+
+			if (iEndOfMovieExactList < 0)
+			{
+				iEndOfMovieExactList = strBodyExact.Length;
+			}
+			if (endOfTitleList < iEndOfMovieExactList && endOfTitleList > iStartOfMovieExactList)
+			{
+				iEndOfMovieExactList = endOfTitleList;
+			}
+			strBodyExact = strBodyExact.Substring(iStartOfMovieExactList, iEndOfMovieExactList - iStartOfMovieExactList);
+			while (true)
+			{
+				Match imdbEntry = Regex.Match(strBodyExact, @"<tr>[\s]*
+					<td[^>]*>.*?</td>[\s]*
+					<td[^>]*>.*?</td>[\s]*
+					<td[^>]*>.*?
+					<a\shref=""(?<tt>/title/tt[0-9]*/)[^>]*>(?<title>.*?)</a>
+					(?<options>.*?)[\s]*
+					(?(?=<br>)(?<aka><br>.*?))
+					</td>[\s]*
+					</tr>",
+					 RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline | RegexOptions.Compiled);
+
+				bool bSkipThisEntry = false;
+
+				while (imdbEntry.Success)
+				{
+					string imdbTitle = imdbEntry.Groups["title"].Value.Replace("\"", "");
+					string imdbURL = imdbEntry.Groups["tt"].Value;
+					string imdbOptions = Regex.Replace(imdbEntry.Groups["options"].Value, @"<(.|\n)*?>", String.Empty,
+														RegexOptions.IgnoreCase | RegexOptions.Compiled).Trim();
+					bSkipThisEntry = imdbOptions.Contains("(TV)") |
+						imdbOptions.Contains("(TV series)") |
+						imdbOptions.Contains("(VG)") |
+						imdbOptions.Contains("(V)") |
+						imdbOptions.Contains("(promotional title)") |
+						imdbOptions.Contains("(working title)") |
+						imdbOptions.Contains("(poster title)") |
+						imdbOptions.Contains("(promotional abbreviation)") |
+						imdbOptions.Contains("(short title)") |
+						imdbOptions.Contains("(video title)") |
+						imdbOptions.Contains("(original script title)") |
+						imdbOptions.Contains("(video box title)") |
+						imdbOptions.Contains("(new title)") |
+						imdbOptions.Contains("(DVD box title)");
+
+					if (bSkipThisEntry == false)
+					{
+						MediaPortal.Video.Database.IMDB.IMDBUrl url = new MediaPortal.Video.Database.IMDB.IMDBUrl("http://us.imdb.com" + imdbURL, imdbTitle + " " + imdbOptions + " (IMDB_With_AKA)", "IMDB");
+						elements.Add(url);
+						iCount++;
+
+						string imdbAka = imdbEntry.Groups["aka"].Value;
+						Match imdbAlias = Regex.Match(imdbAka, @"<br>&#160;aka\s<em>""(?<alias>.*?)""</em>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+						while (imdbAlias.Success)
+						{
+							imdbTitle = imdbAlias.Groups["alias"].Value;
+							string imdbakaOptions = Regex.Replace(imdbEntry.Groups["options"].Value, @"<(.|\n)*?>", String.Empty,
+														RegexOptions.IgnoreCase | RegexOptions.Compiled).Trim();
+							bool bSkipThisAkaEntry = imdbakaOptions.Contains("(TV)") |
+								imdbakaOptions.Contains("(TV series)") |
+								imdbakaOptions.Contains("(VG)") |
+								imdbakaOptions.Contains("(V)") |
+								imdbakaOptions.Contains("(promotional title)") |
+								imdbakaOptions.Contains("(working title)") |
+								imdbakaOptions.Contains("(poster title)") |
+								imdbakaOptions.Contains("(promotional abbreviation)") |
+								imdbakaOptions.Contains("(short title)") |
+								imdbakaOptions.Contains("(video title)") |
+								imdbakaOptions.Contains("(original script title)") |
+								imdbakaOptions.Contains("(video box title)") |
+								imdbakaOptions.Contains("(new title)") |
+								imdbakaOptions.Contains("(DVD box title)");
+							if (bSkipThisAkaEntry == false)
+							{
+								url = new MediaPortal.Video.Database.IMDB.IMDBUrl("http://us.imdb.com" + imdbURL, imdbTitle + " " + imdbakaOptions + " (IMDB_With_AKA)", "IMDB");
+								elements.Add(url);
+								imdbAlias = imdbAlias.NextMatch();
+							}
+							
+						}
+						
+					}
+					imdbEntry = imdbEntry.NextMatch();
+					if (iCount > iLimit)
+					{
+						break;
+					}
+				}
+				break;
+			}
+			
+		}
+		//here
+	}
+	catch (Exception ex)
+	{
+		//MediaPortal.GUI.Library.Log.Error("exception for imdb lookup of {0} err:{1} stack:{2}", strSearch, ex.Message, ex.StackTrace);
+	}
+  }
+
+  bool MediaPortal.Video.Database.IIMDBScriptGrabber.GetDetails(MediaPortal.Video.Database.IMDB.IMDBUrl url, ref MediaPortal.Video.Database.IMDBMovie movieDetails)
+  {
+    try
+    {
+
+      int iStart = 0;
+      int iEnd = 0;
+      movieDetails.Reset();
+      // add databaseinfo
+      // may add an another grabber  
+      movieDetails.Database = "IMDB";
+
+      string strAbsURL;
+      string strBody = GetPage(url.URL, "utf-8", out strAbsURL);
+      if (strBody == null || strBody.Length == 0)
+        return false;
+
+      int iPos = strAbsURL.IndexOf("/title/");
+      if (iPos > 0)
+      {
+        iPos += "/title/".Length;
+        movieDetails.IMDBNumber = strAbsURL.Substring(iPos);
+        int pos = movieDetails.IMDBNumber.IndexOf("/");
+        if (pos > 0)
+          movieDetails.IMDBNumber = movieDetails.IMDBNumber.Substring(0, pos);
+      }
+
+      url.Title = url.Title.Trim();
+      // cut of " (imdb)"
+      iEnd = url.Title.IndexOf("(");
+      if (iEnd >= 0)
+        movieDetails.Title = url.Title.Substring(0, iEnd);
+      else
+        movieDetails.Title = url.Title;
+      movieDetails.Title = movieDetails.Title.Trim();
+      string movieTitle = System.Web.HttpUtility.HtmlEncode(movieDetails.Title);
+      int iDirectedBy = strBody.IndexOf("Director");
+      int iCredits = strBody.IndexOf("Writer");
+      int iGenre = strBody.IndexOf("Genre:");
+      int iTagLine = strBody.IndexOf("Tagline:</h5>");
+	  int iPlotOutline = strBody.IndexOf("<h5>Plot:</h5>");
+	  if  (iPlotOutline<1)
+          iPlotOutline = strBody.IndexOf("Plot Outline:</h5>");
+      int iPlotSummary = strBody.IndexOf("Plot Summary:</h5>");
+      int iPlot = strBody.IndexOf(">full summary");
+      int iImage = strBody.IndexOf("<img border=\"0\" alt=\"" + movieTitle + "\" title=\"" + movieTitle + "\" src=\"");
+      if (iImage >= 0)
+      {
+        iImage += ("<img border=\"0\" alt=\"" + movieTitle + "\" title=\"" + movieTitle + "\" src=\"").Length;
+      }
+      int iRating = strBody.IndexOf("User Rating:</b>");
+      int iCred = strBody.IndexOf("<table class=\"cast\">");
+      int iTop = strBody.IndexOf("Top 250:");
+      int iYear = strBody.IndexOf("/Sections/Years/");
+      if (iYear >= 0)
+      {
+        iYear += "/Sections/Years/".Length;
+        string strYear = strBody.Substring(iYear, 4);
+        movieDetails.Year = System.Int32.Parse(strYear);
+      }
+
+      if (iDirectedBy >= 0)
+        movieDetails.Director = ParseAHREFIMDB(strBody, iDirectedBy, url.URL).Trim();
+
+      if (iCredits >= 0)
+        movieDetails.WritingCredits = ParseAHREFIMDB(strBody, iCredits, url.URL).Trim();
+
+      if (iGenre >= 0)
+        movieDetails.Genre = ParseGenresIMDB(strBody, iGenre, url.URL).Trim();
+
+      if (iRating >= 0) // and votes
+      {
+        iRating += "User Rating:</b>".Length;
+        iStart = strBody.IndexOf("<b>", iRating);
+        if (iStart >= 0)
+        {
+          iStart += "<b>".Length;
+          iEnd = strBody.IndexOf("/", iStart);
+
+          // set rating
+          string strRating = strBody.Substring(iStart, iEnd - iStart);
+          if (strRating != String.Empty)
+            strRating = strRating.Replace('.', ',');
+          try
+          {
+            movieDetails.Rating = (float)System.Double.Parse(strRating);
+            if (movieDetails.Rating > 10.0f)
+              movieDetails.Rating /= 10.0f;
+          }
+          catch (Exception)
+          {
+          }
+
+          if (movieDetails.Rating != 0.0f)
+          {
+            // now, votes
+            movieDetails.Votes = "0";
+            iStart = strBody.IndexOf("(", iEnd + 2);
+            if (iStart > 0)
+            {
+              iEnd = strBody.IndexOf(" votes</a>)", iStart);
+              if (iEnd > 0)
+              {
+                iStart += "(<a href=\"ratings\">".Length; // skip the parantese and link before votes
+                movieDetails.Votes = strBody.Substring(iStart, iEnd - iStart).Trim();
+              }
+            }
+          }
+        }
+      }
+
+
+      if (iTop >= 0) // top rated movie :)
+      {
+        iTop += "top 250:".Length + 2; // jump space and #
+        iEnd = strBody.IndexOf("</a>", iTop);
+        string strTop = strBody.Substring(iTop, iEnd - iTop);
+        movieDetails.Top250 = System.Int32.Parse(strTop);
+      }
+      if (iTagLine >= 0)
+      {
+        iTagLine += "Tagline:</h5>".Length;
+        iEnd = strBody.IndexOf("<", iTagLine);
+        movieDetails.TagLine = strBody.Substring(iTagLine, iEnd - iTagLine).Trim();
+        movieDetails.TagLine = MediaPortal.Util.Utils.stripHTMLtags(movieDetails.TagLine);
+        movieDetails.TagLine = HttpUtility.HtmlDecode(movieDetails.TagLine);  // Remove HTML entities like &#189;
+      }
+
+      if (iPlotOutline < 0)
+      {
+        if (iPlotSummary > 0)
+        {
+          iPlotSummary += "Plot Summary:</h5>".Length;
+          iEnd = strBody.IndexOf("<", iPlotSummary);
+          movieDetails.PlotOutline = strBody.Substring(iPlotSummary, iEnd - iPlotSummary).Trim();
+          movieDetails.PlotOutline = MediaPortal.Util.Utils.stripHTMLtags(movieDetails.PlotOutline);
+          movieDetails.PlotOutline = HttpUtility.HtmlDecode(movieDetails.PlotOutline);  // remove HTML entities
+        }
+      }
+      else
+      {
+ 		if (strBody.IndexOf("<h5>Plot:</h5>")>0)
+		{
+		    iPlotOutline += "<h5>Plot:</h5>".Length;
+		}
+		else
+		{
+           iPlotOutline += "Plot Outline:</h5>".Length;
+		}
+        iEnd = strBody.IndexOf("<", iPlotOutline);
+        movieDetails.PlotOutline = strBody.Substring(iPlotOutline, iEnd - iPlotOutline).Trim();
+        movieDetails.PlotOutline = MediaPortal.Util.Utils.stripHTMLtags(movieDetails.PlotOutline);
+        movieDetails.PlotOutline = HttpUtility.HtmlDecode(movieDetails.PlotOutline);  // remove HTML entities
+        movieDetails.Plot = movieDetails.PlotOutline.Trim();
+        movieDetails.Plot = HttpUtility.HtmlDecode(movieDetails.Plot);  // remove HTML entities
+      }
+      
+      //plot
+      if (iPlot >= 0)
+      {
+        string strPlotURL = "http://www.imdb.com/title/"+movieDetails.IMDBNumber + "/plotsummary";
+        try
+        {
+          string absoluteUri;
+          string strPlotHTML = GetPage(strPlotURL, "utf-8", out absoluteUri);
+          if (0 != strPlotHTML.Length)
+          {
+
+            int iPlotStart = strPlotHTML.IndexOf("<p class=\"plotpar\">");
+            if (iPlotStart >= 0)
+            {
+              iPlotStart += "<p class=\"plotpar\">".Length;
+
+              int iPlotEnd = strPlotHTML.IndexOf("<i>", iPlotStart); // ends with <i> for person who wrote it or
+              if (iPlotEnd < 0) iPlotEnd = strPlotHTML.IndexOf("</p>", iPlotStart); // </p> for end of paragraph
+
+              if (iPlotEnd >= 0)
+              {
+                movieDetails.Plot = strPlotHTML.Substring(iPlotStart, iPlotEnd - iPlotStart);
+                movieDetails.Plot = MediaPortal.Util.Utils.stripHTMLtags(movieDetails.Plot);
+                movieDetails.Plot = HttpUtility.HtmlDecode(movieDetails.Plot);  // remove HTML entities
+              }
+            }
+          }
+        }
+        catch (Exception ex)
+        {
+          MediaPortal.GUI.Library.Log.Error("exception for imdb lookup of {0} err:{1} stack:{2}", strPlotURL, ex.Message, ex.StackTrace);
+        }
+      }
+
+      //cast
+      string RegCastBlock = "<table class=\"cast\">.*?</table>";
+      string RegActorAndRole = "td class=\"nm\"><a href=./name.*?>(?<actor>.*?)</a><.*?<td class=\"char\">(?<role>.*?)<";
+
+      Match castBlock = Regex.Match(strBody, RegCastBlock);
+
+      // These are some fallback methods to find the block with the cast, in case something changes on IMDB, these may work reasonably well anyway...
+      if (!castBlock.Success)
+        castBlock = Regex.Match(strBody, @"redited\scast.*?</table>");
+      if (!castBlock.Success)
+        castBlock = Regex.Match(strBody, @"first\sbilled\sonly.*?</table>");
+      if (!castBlock.Success)
+        castBlock = Regex.Match(strBody, @"redited\scast.*?more");
+      if (!castBlock.Success)
+        castBlock = Regex.Match(strBody, @"first\sbilled\sonly.*?more");
+
+      string strCastBlock = castBlock.Value;
+
+      MatchCollection mc = Regex.Matches(strCastBlock, RegActorAndRole);
+      string strActor = string.Empty;
+      string strRole = string.Empty;
+
+      foreach (Match m in mc)
+      {
+        strActor = string.Empty;
+        strActor = m.Groups["actor"].Value;
+        strActor = MediaPortal.Util.Utils.stripHTMLtags(strActor).Trim();
+        strActor = HttpUtility.HtmlDecode(strActor);
+
+        strRole = string.Empty;
+        strRole = m.Groups["role"].Value;
+        strRole = MediaPortal.Util.Utils.stripHTMLtags(strRole).Trim();
+        strRole = HttpUtility.HtmlDecode(strRole);
+
+        movieDetails.Cast += strActor;
+        if (strRole != string.Empty)
+          movieDetails.Cast += " as " + strRole;
+
+        movieDetails.Cast += "\n";
+      }
+
+      int iRunTime = strBody.IndexOf("Runtime:");
+      if (iRunTime > 0)
+      {
+        iRunTime += "Runtime:</h5>".Length;
+        string runtime = "";
+        while (!Char.IsDigit(strBody[iRunTime]) && iRunTime + 1 < strBody.Length)
+          iRunTime++;
+        if (iRunTime < strBody.Length)
+        {
+          while (Char.IsDigit(strBody[iRunTime]) && iRunTime + 1 < strBody.Length)
+          {
+            runtime += strBody[iRunTime];
+            iRunTime++;
+          }
+          try
+          {
+            movieDetails.RunTime = Int32.Parse(runtime);
+          }
+          catch (Exception) { }
+        }
+      }
+
+      int mpaa = strBody.IndexOf("MPAA</a>:</h5>");
+      if (mpaa > 0)
+      {
+        mpaa += "MPAA</a>:</h5>".Length;
+        int mpaaEnd = strBody.IndexOf("</div>", mpaa);
+        if (mpaaEnd > 0)
+        {
+          movieDetails.MPARating = strBody.Substring(mpaa, mpaaEnd - mpaa);
+        }
+      }
+
+
+      return true;
+    }
+    catch (Exception ex)
+    {
+      MediaPortal.GUI.Library.Log.Error("exception for imdb lookup of {0} err:{1} stack:{2}", url.URL, ex.Message, ex.StackTrace);
+    }
+    return false;
+  }
+
+  string MediaPortal.Video.Database.IIMDBScriptGrabber.GetName()
+  {
+    return "IMDB with AKA";
+  }
+  
+  
+  string MediaPortal.Video.Database.IIMDBScriptGrabber.GetLanguage()
+  {
+    return "EN";
+  }
+
+  private string GetPage(string strURL, string strEncode, out string absoluteUri)
+  {
+    string strBody = "";
+    absoluteUri = String.Empty;
+    Stream ReceiveStream = null;
+    StreamReader sr = null;
+    WebResponse result = null;
+    try
+    {
+      // Make the Webrequest
+      //Log.Info("IMDB: get page:{0}", strURL);
+      WebRequest req = WebRequest.Create(strURL);
+
+      result = req.GetResponse();
+      ReceiveStream = result.GetResponseStream();
+
+      // Encoding: depends on selected page
+      Encoding encode = System.Text.Encoding.GetEncoding(strEncode);
+      sr = new StreamReader(ReceiveStream, encode);
+      strBody = sr.ReadToEnd();
+
+      absoluteUri = result.ResponseUri.AbsoluteUri;
+    }
+    catch (Exception)
+    {
+      //Log.Error("Error retreiving WebPage: {0} Encoding:{1} err:{2} stack:{3}", strURL, strEncode, ex.Message, ex.StackTrace);
+    }
+    finally
+    {
+      if (sr != null)
+      {
+        try
+        {
+          sr.Close();
+        }
+        catch (Exception)
+        {
+        }
+      }
+      if (ReceiveStream != null)
+      {
+        try
+        {
+          ReceiveStream.Close();
+        }
+        catch (Exception)
+        {
+        }
+      }
+      if (result != null)
+      {
+        try
+        {
+          result.Close();
+        }
+        catch (Exception)
+        {
+        }
+      }
+    }
+    return strBody;
+  } // END GetPage()
+  string ParseAHREFIMDB(string strBody, int iahref, string strURL)
+  {
+    int iStart = strBody.IndexOf("<a href=\"", iahref);
+    if (iStart < 0)
+      iStart = strBody.IndexOf("<A HREF=\"", iahref);
+    if (iStart < 0)
+      return "";
+
+    int iEnd = strBody.IndexOf("</a>", iStart);
+    if (iEnd < 0)
+      iEnd = strBody.IndexOf("</A>", iStart);
+    if (iEnd < 0)
+      return "";
+
+    iStart += "<a href=\"".Length;
+    int iSep = strBody.IndexOf(">", iStart);
+    string strurl = strBody.Substring(iStart, (iSep - iStart) - 1);
+    iSep++;
+    string strTitle = strBody.Substring(iSep, iEnd - iSep);
+    strTitle = MediaPortal.Util.Utils.stripHTMLtags(strTitle);
+    HTMLUtil htmlUtil = new HTMLUtil();
+    htmlUtil.ConvertHTMLToAnsi(strTitle, out strTitle);
+    strTitle = strTitle.Trim();
+    return strTitle.Trim();
+
+  }
+  string ParseGenresIMDB(string strBody, int iGenre, string url)
+  {
+    string strTmp;
+    string strTitle = "";
+    string strHRef = strBody.Substring(iGenre);
+    int iSlash = strHRef.IndexOf(" / ");
+    int iEnd = 0;
+    int iStart = 0;
+    if (iSlash >= 0)
+    {
+      int iRealEnd = strHRef.IndexOf(">more<");
+      if (iRealEnd < 0)
+        iRealEnd = strHRef.IndexOf("</div>");
+      while (iSlash < iRealEnd)
+      {
+        iStart = iEnd + 2;
+        iEnd = iSlash;
+        int iLen = iEnd - iStart;
+        if (iLen < 0)
+          break;
+        strTmp = strHRef.Substring(iStart, iLen);
+        strTitle = strTitle + ParseAHREFIMDB(strTmp, 0, "") + " / ";
+
+        iSlash = strHRef.IndexOf(" / ", iEnd + 2);
+        if (iSlash < 0)
+          iSlash = iRealEnd;
+      }
+    }
+    // last genre
+    iEnd += 2;
+    strTmp = strHRef.Substring(iEnd);
+    strTitle = strTitle + ParseAHREFIMDB(strTmp, 0, "");
+    HTMLUtil htmlUtil = new HTMLUtil();
+    htmlUtil.ConvertHTMLToAnsi(strTitle, out strTitle);
+
+    return strTitle;
+  }
+  
+}

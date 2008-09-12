@@ -326,8 +326,6 @@ Section "MediaPortal core files (required)" SecCore
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\osdskin-media\*"
   SetOutPath "$MPdir.Base\Profiles"
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\Profiles\*"
-  SetOutPath "$MPdir.Base\scripts"
-  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\scripts\*"
   SetOutPath "$MPdir.Base\Tuningparameters"
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\Tuningparameters\*"
   SetOutPath "$MPdir.Base\WebEPG"
@@ -361,6 +359,9 @@ Section "MediaPortal core files (required)" SecCore
   File /nonfatal "${MEDIAPORTAL.BASE}\yac-area-codes.xml"
   SetOutPath "$MPdir.Config\xmltv"
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\xmltv\*"
+
+  SetOutPath "$MPdir.Config\scripts\MovieInfo"
+  File /nonfatal "${MEDIAPORTAL.BASE}\scripts\MovieInfo\IMDB.csscript"
 
   SetOutPath "$MPdir.CustomInputDefault"
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\InputDeviceMappings\defaults\*"
@@ -523,7 +524,6 @@ SectionEnd
   RMDir /r /REBOOTOK "$MPdir.Base\MusicPlayer"
   RMDir /r /REBOOTOK "$MPdir.Base\osdskin-media"
   RMDir /r /REBOOTOK "$MPdir.Base\Profiles"
-  RMDir /r /REBOOTOK "$MPdir.Base\scripts"
   RMDir /r /REBOOTOK "$MPdir.Base\Tuningparameters"
   RMDir /r /REBOOTOK "$MPdir.Base\WebEPG"
   RMDir /r /REBOOTOK "$MPdir.Base\Wizards"
