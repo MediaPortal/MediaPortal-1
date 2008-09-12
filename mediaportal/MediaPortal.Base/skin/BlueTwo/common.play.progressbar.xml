@@ -1,16 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <controls>
+    <!-- these elements need condition visibility for OSD IS VISIBLE -->
     <control>
       <description>osd background on top</description>
       <type>image</type>
-      <id>104</id>
       <posX>21</posX>
       <posY>20</posY>
       <width>679</width>
       <height>40</height>
       <texture>osd_bg_top.png</texture>
-      <visible>no</visible>
+      <visible>player.paused|player.rewinding|player.forwarding|Control.IsVisible(10)</visible>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -22,7 +22,7 @@
       <width>404</width>
       <height>20</height>
       <texture>osd_progress_background.png</texture>
-      <visible>Control.IsVisible(104)</visible>
+      <visible>player.paused|player.rewinding|player.forwarding|Control.IsVisible(10)</visible>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -34,7 +34,7 @@
       <width>401</width>
       <height>20</height>
       <label>#play.progressbar.percentage</label>
-      <visible>Control.IsVisible(104)</visible>
+      <visible>player.paused|player.rewinding|player.forwarding|Control.IsVisible(10)</visible>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -45,9 +45,9 @@
       <posY>40</posY>
       <label>#play.progressbar.currentplaytime</label>
       <align>center</align>
-      <font>font13</font>
-      <textcolor>FFFFFFFF</textcolor>
-      <visible>Control.IsVisible(104)</visible>
+      <font>font14</font>
+      <textcolor>white</textcolor>
+      <visible>player.paused|player.rewinding|player.forwarding|Control.IsVisible(10)</visible>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -58,11 +58,155 @@
       <posY>40</posY>
       <label>#play.progressbar.currentremaining</label>
       <align>center</align>
-      <font>font13</font>
-      <textcolor>FFFFFFFF</textcolor>
-      <visible>Control.IsVisible(104)</visible>
+      <font>font14</font>
+      <textcolor>white</textcolor>
+      <visible>player.paused|player.rewinding|player.forwarding|Control.IsVisible(10)</visible>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    
+    
+    <control>
+      <description>Current Time Info</description>
+      <type>label</type>
+      <posX>650</posX>
+      <posY>40</posY>
+      <label>#time</label>
+      <align>center</align>
+      <font>font14</font>
+      <textcolor>black</textcolor>
+      <visible>[!player.paused|!player.rewinding|!player.forwarding] + !Control.IsVisible(10)</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <!-- END OF these elements need condition visibility for OSD IS VISIBLE -->
+    <control>
+      <description>pause image</description>
+      <type>image</type>
+      <posX>604</posX>
+      <posY>22</posY>
+      <width>92</width>
+      <height>34</height>
+      <visible>player.paused+!Control.IsVisible(10)</visible>
+      <texture>video-pause.png</texture>
+      <colorkey>0</colorkey>
+      <colordiffuse>White</colordiffuse>
+      <animation effect="fade" time="250">visiblechange</animation>
+    </control>
+    <control>
+      <description>2x image</description>
+      <type>image</type>
+      <posX>590</posX>
+      <posY>17</posY>
+      <visible>player.forwarding2x+!Control.IsVisible(10)</visible>
+      <texture>video+2x.png</texture>
+      <colorkey>0</colorkey>
+      <colordiffuse>White</colordiffuse>
+      <animation effect="fade" time="250">visiblechange</animation>
+    </control>
+    <control>
+      <description>4x image</description>
+      <type>image</type>
+      <posX>590</posX>
+      <posY>17</posY>
+      <visible>player.forwarding4x+!Control.IsVisible(10)</visible>
+      <texture>video+4x.png</texture>
+      <colorkey>0</colorkey>
+      <colordiffuse>White</colordiffuse>
+      <animation effect="fade" time="250">visiblechange</animation>
+    </control>
+    <control>
+      <description>8x image</description>
+      <type>image</type>
+      <posX>590</posX>
+      <posY>17</posY>
+      <visible>player.forwarding8x</visible>
+      <texture>video+8x.png</texture>
+      <colorkey>0</colorkey>
+      <colordiffuse>White</colordiffuse>
+      <animation effect="fade" time="250">visiblechange</animation>
+    </control>
+    <control>
+      <description>16x image</description>
+      <type>image</type>
+      <posX>590</posX>
+      <posY>17</posY>
+      <visible>player.forwarding16x</visible>
+      <texture>video+16x.png</texture>
+      <colorkey>0</colorkey>
+      <colordiffuse>White</colordiffuse>
+      <animation effect="fade" time="250">visiblechange</animation>
+    </control>
+    <control>
+      <description>32x image</description>
+      <type>image</type>
+      <posX>590</posX>
+      <posY>17</posY>
+      <visible>player.forwarding32x</visible>
+      <texture>video+32x.png</texture>
+      <colorkey>0</colorkey>
+      <colordiffuse>White</colordiffuse>
+      <animation effect="fade" time="250">visiblechange</animation>
+    </control>
+    <control>
+      <description>- 2x image</description>
+      <type>image</type>
+      <id>23</id>
+      <posX>590</posX>
+      <posY>17</posY>
+      <visible>player.rewinding2x</visible>
+      <texture>video-2x.png</texture>
+      <colorkey>0</colorkey>
+      <colordiffuse>White</colordiffuse>
+      <animation effect="fade" time="250">visiblechange</animation>
+    </control>
+    <control>
+      <description>- 4x image</description>
+      <type>image</type>
+      <id>24</id>
+      <posX>590</posX>
+      <posY>17</posY>
+      <visible>player.rewinding4x</visible>
+      <texture>video-4x.png</texture>
+      <colorkey>0</colorkey>
+      <colordiffuse>White</colordiffuse>
+      <animation effect="fade" time="250">visiblechange</animation>
+    </control>
+    <control>
+      <description>- 8x image</description>
+      <type>image</type>
+      <id>25</id>
+      <posX>590</posX>
+      <posY>17</posY>
+      <visible>player.rewinding8x</visible>
+      <texture>video-8x.png</texture>
+      <colorkey>0</colorkey>
+      <colordiffuse>White</colordiffuse>
+      <animation effect="fade" time="250">visiblechange</animation>
+    </control>
+    <control>
+      <description>- 16x image</description>
+      <type>image</type>
+      <id>26</id>
+      <posX>590</posX>
+      <posY>17</posY>
+      <visible>player.rewinding16x</visible>
+      <texture>video-16x.png</texture>
+      <colorkey>0</colorkey>
+      <colordiffuse>White</colordiffuse>
+      <animation effect="fade" time="250">visiblechange</animation>
+    </control>
+    <control>
+      <description>- 32x image</description>
+      <type>image</type>
+      <id>27</id>
+      <posX>590</posX>
+      <posY>17</posY>
+      <visible>player.rewinding32x</visible>
+      <texture>video-32x.png</texture>
+      <colorkey>0</colorkey>
+      <colordiffuse>White</colordiffuse>
+      <animation effect="fade" time="250">visiblechange</animation>
     </control>
   </controls>
 </window>

@@ -13,19 +13,6 @@
       <animation effect="fade" time="250">windowopen</animation>
     </control>
     <control>
-      <description>Current Time Info</description>
-      <type>label</type>
-      <id>110</id>
-      <posX>650</posX>
-      <posY>40</posY>
-      <label>#time</label>
-      <align>center</align>
-      <font>font13</font>
-      <textcolor>FF071422</textcolor>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
-    </control>
-    <control>
       <description>Play</description>
       <type>togglebutton</type>
       <id>213</id>

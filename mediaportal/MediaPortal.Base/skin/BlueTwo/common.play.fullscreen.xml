@@ -5,13 +5,12 @@
       <description>row 1 label</description>
       <type>label</type>
       <id>10</id>
-      <posX>614</posX>
-      <posY>30</posY>
-      <width>80</width>
+      <posX>650</posX>
+      <posY>40</posY>
       <label>-</label>
-      <align>left</align>
-      <font>font13</font>
-      <textcolor>Black</textcolor>
+      <align>center</align>
+      <font>font14</font>
+      <textcolor>black</textcolor>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
     </control>
@@ -24,7 +23,7 @@
       <label>-</label>
       <align>left</align>
       <font>font13</font>
-      <textcolor>Black</textcolor>
+      <textcolor>black</textcolor>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
     </control>
@@ -37,142 +36,8 @@
       <label>-</label>
       <align>left</align>
       <font>font13</font>
-      <textcolor>Black</textcolor>
+      <textcolor>black</textcolor>
       <visible>no</visible>
-      <animation effect="fade" time="250">visiblechange</animation>
-    </control>
-    <control>
-      <description>pause image</description>
-      <type>image</type>
-      <id>16</id>
-      <posX>604</posX>
-      <posY>22</posY>
-      <width>92</width>
-      <height>34</height>
-      <visible>no</visible>
-      <texture>video-pause.png</texture>
-      <colorkey>0</colorkey>
-      <colordiffuse>White</colordiffuse>
-      <animation effect="fade" time="250">visiblechange</animation>
-    </control>
-    <control>
-      <description>2x image</description>
-      <type>image</type>
-      <id>17</id>
-      <posX>590</posX>
-      <posY>17</posY>
-      <visible>no</visible>
-      <texture>video+2x.png</texture>
-      <colorkey>0</colorkey>
-      <colordiffuse>White</colordiffuse>
-      <animation effect="fade" time="250">visiblechange</animation>
-    </control>
-    <control>
-      <description>4x image</description>
-      <type>image</type>
-      <id>18</id>
-      <posX>590</posX>
-      <posY>17</posY>
-      <visible>no</visible>
-      <texture>video+4x.png</texture>
-      <colorkey>0</colorkey>
-      <colordiffuse>White</colordiffuse>
-      <animation effect="fade" time="250">visiblechange</animation>
-    </control>
-    <control>
-      <description>8x image</description>
-      <type>image</type>
-      <id>19</id>
-      <posX>590</posX>
-      <posY>17</posY>
-      <visible>no</visible>
-      <texture>video+8x.png</texture>
-      <colorkey>0</colorkey>
-      <colordiffuse>White</colordiffuse>
-      <animation effect="fade" time="250">visiblechange</animation>
-    </control>
-    <control>
-      <description>16x image</description>
-      <type>image</type>
-      <id>20</id>
-      <posX>590</posX>
-      <posY>17</posY>
-      <visible>no</visible>
-      <texture>video+16x.png</texture>
-      <colorkey>0</colorkey>
-      <colordiffuse>White</colordiffuse>
-      <animation effect="fade" time="250">visiblechange</animation>
-    </control>
-    <control>
-      <description>32x image</description>
-      <type>image</type>
-      <id>21</id>
-      <posX>590</posX>
-      <posY>17</posY>
-      <visible>no</visible>
-      <texture>video+32x.png</texture>
-      <colorkey>0</colorkey>
-      <colordiffuse>White</colordiffuse>
-      <animation effect="fade" time="250">visiblechange</animation>
-    </control>
-    <control>
-      <description>- 2x image</description>
-      <type>image</type>
-      <id>23</id>
-      <posX>590</posX>
-      <posY>17</posY>
-      <visible>no</visible>
-      <texture>video-2x.png</texture>
-      <colorkey>0</colorkey>
-      <colordiffuse>White</colordiffuse>
-      <animation effect="fade" time="250">visiblechange</animation>
-    </control>
-    <control>
-      <description>- 4x image</description>
-      <type>image</type>
-      <id>24</id>
-      <posX>590</posX>
-      <posY>17</posY>
-      <visible>no</visible>
-      <texture>video-4x.png</texture>
-      <colorkey>0</colorkey>
-      <colordiffuse>White</colordiffuse>
-      <animation effect="fade" time="250">visiblechange</animation>
-    </control>
-    <control>
-      <description>- 8x image</description>
-      <type>image</type>
-      <id>25</id>
-      <posX>590</posX>
-      <posY>17</posY>
-      <visible>no</visible>
-      <texture>video-8x.png</texture>
-      <colorkey>0</colorkey>
-      <colordiffuse>White</colordiffuse>
-      <animation effect="fade" time="250">visiblechange</animation>
-    </control>
-    <control>
-      <description>- 16x image</description>
-      <type>image</type>
-      <id>26</id>
-      <posX>590</posX>
-      <posY>17</posY>
-      <visible>no</visible>
-      <texture>video-16x.png</texture>
-      <colorkey>0</colorkey>
-      <colordiffuse>White</colordiffuse>
-      <animation effect="fade" time="250">visiblechange</animation>
-    </control>
-    <control>
-      <description>- 32x image</description>
-      <type>image</type>
-      <id>27</id>
-      <posX>590</posX>
-      <posY>17</posY>
-      <visible>no</visible>
-      <texture>video-32x.png</texture>
-      <colorkey>0</colorkey>
-      <colordiffuse>White</colordiffuse>
       <animation effect="fade" time="250">visiblechange</animation>
     </control>
 

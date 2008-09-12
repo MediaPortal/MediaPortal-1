@@ -8,7 +8,6 @@
   <define>#play.progressbar.currentremaining:#TV.View.stop</define>
   <define>#play.osd.background:osd_bg_bottom.png</define>
   <controls>
-    <import>common.play.progressbar.xml</import>
     <import>common.play.osd.xml</import>
     <control>
       <description>TV Logo</description>
