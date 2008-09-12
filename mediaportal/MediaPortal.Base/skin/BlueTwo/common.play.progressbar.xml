@@ -75,7 +75,7 @@
       <align>center</align>
       <font>font14</font>
       <textcolor>black</textcolor>
-      <visible>[!player.paused|!player.rewinding|!player.forwarding] + !Control.IsVisible(10)</visible>
+      <visible>!player.paused+!player.rewinding+!player.forwarding+!Control.IsVisible(10)</visible>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -120,7 +120,7 @@
       <type>image</type>
       <posX>590</posX>
       <posY>17</posY>
-      <visible>player.forwarding8x</visible>
+      <visible>player.forwarding8x+!Control.IsVisible(10)</visible>
       <texture>video+8x.png</texture>
       <colorkey>0</colorkey>
       <colordiffuse>White</colordiffuse>
@@ -131,7 +131,7 @@
       <type>image</type>
       <posX>590</posX>
       <posY>17</posY>
-      <visible>player.forwarding16x</visible>
+      <visible>player.forwarding16x+!Control.IsVisible(10)</visible>
       <texture>video+16x.png</texture>
       <colorkey>0</colorkey>
       <colordiffuse>White</colordiffuse>
@@ -142,7 +142,7 @@
       <type>image</type>
       <posX>590</posX>
       <posY>17</posY>
-      <visible>player.forwarding32x</visible>
+      <visible>player.forwarding32x+!Control.IsVisible(10)</visible>
       <texture>video+32x.png</texture>
       <colorkey>0</colorkey>
       <colordiffuse>White</colordiffuse>
@@ -154,7 +154,7 @@
       <id>23</id>
       <posX>590</posX>
       <posY>17</posY>
-      <visible>player.rewinding2x</visible>
+      <visible>player.rewinding2x+!Control.IsVisible(10)</visible>
       <texture>video-2x.png</texture>
       <colorkey>0</colorkey>
       <colordiffuse>White</colordiffuse>
@@ -166,7 +166,7 @@
       <id>24</id>
       <posX>590</posX>
       <posY>17</posY>
-      <visible>player.rewinding4x</visible>
+      <visible>player.rewinding4x+!Control.IsVisible(10)</visible>
       <texture>video-4x.png</texture>
       <colorkey>0</colorkey>
       <colordiffuse>White</colordiffuse>
@@ -178,7 +178,7 @@
       <id>25</id>
       <posX>590</posX>
       <posY>17</posY>
-      <visible>player.rewinding8x</visible>
+      <visible>player.rewinding8x+!Control.IsVisible(10)</visible>
       <texture>video-8x.png</texture>
       <colorkey>0</colorkey>
       <colordiffuse>White</colordiffuse>
@@ -190,7 +190,7 @@
       <id>26</id>
       <posX>590</posX>
       <posY>17</posY>
-      <visible>player.rewinding16x</visible>
+      <visible>player.rewinding16x+!Control.IsVisible(10)</visible>
       <texture>video-16x.png</texture>
       <colorkey>0</colorkey>
       <colordiffuse>White</colordiffuse>
@@ -202,7 +202,7 @@
       <id>27</id>
       <posX>590</posX>
       <posY>17</posY>
-      <visible>player.rewinding32x</visible>
+      <visible>player.rewinding32x+!Control.IsVisible(10)</visible>
       <texture>video-32x.png</texture>
       <colorkey>0</colorkey>
       <colordiffuse>White</colordiffuse>
