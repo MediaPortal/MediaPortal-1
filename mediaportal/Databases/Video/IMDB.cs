@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Web;
@@ -44,7 +45,8 @@ namespace MediaPortal.Video.Database
   public class IMDB : IEnumerable
   {
     public static string ScriptDirectory = Config.GetSubFolder(Config.Dir.Config, "scripts\\MovieInfo");
-    public const int DEFAULT_SEARCH_LIMIT = 10;
+    public const string DEFAULT_DATABASE = "IMDB";
+    public const int DEFAULT_SEARCH_LIMIT = 25;
 
     #region interfaces and classes
 
@@ -162,6 +164,64 @@ namespace MediaPortal.Video.Database
       }
     }
 
+    public class MovieInfoDatabase
+    {
+      private string _id;
+      private int _limit = IMDB.DEFAULT_SEARCH_LIMIT;
+      private IIMDBScriptGrabber _grabber;
+
+      public string ID
+      {
+        get { return _id; }
+        set { _id = value; }
+      }
+      public int Limit
+      {
+        get { return _limit; }
+        set { _limit = value; }
+      }
+      public IIMDBScriptGrabber Grabber
+      {
+        get { return _grabber; }
+        set { _grabber = value; }
+      }
+
+      public MovieInfoDatabase(string _id, int _limit)
+      {
+        ID = _id;
+        Limit = _limit;
+
+        if (!LoadScript())
+          Grabber = null;
+      }
+
+      public bool LoadScript()
+      {
+        string scriptFileName = IMDB.ScriptDirectory + @"\" + this.ID + ".csscript";
+
+        // Script support script.csscript
+        if (!File.Exists(scriptFileName))
+        {
+          Log.Error("InfoGrabber LoadScript() - grabber script not found: {0}", scriptFileName);
+          return false;
+        }
+
+        try
+        {
+          Environment.CurrentDirectory = Config.GetFolder(Config.Dir.Base);
+          AsmHelper script = new AsmHelper(CSScriptLibrary.CSScript.Load(scriptFileName, null, false));
+          this.Grabber = (IIMDBScriptGrabber)script.CreateObject("Grabber");
+        }
+        catch (Exception ex)
+        {
+          Log.Error("InfoGrabber LoadScript() - file: {0}, message : {1}", scriptFileName, ex.Message);
+          return false;
+        }
+
+        return true;
+      }
+    }
+
     #endregion
 
     #region internal vars
@@ -169,9 +229,7 @@ namespace MediaPortal.Video.Database
     // list of the search results, containts objects of IMDBUrl
     ArrayList elements = new ArrayList();
 
-    // Arrays for multiple database support
-    int[] aLimits;		// contains the limit for searchresults
-    string[] aDatabases;		// contains the name of the database, e.g. IMDB
+    private List<MovieInfoDatabase> databaseList = new List<MovieInfoDatabase>();
 
     IProgress m_progress;
 
@@ -198,51 +256,36 @@ namespace MediaPortal.Video.Database
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         int iNumber = xmlreader.GetValueAsInt("moviedatabase", "number", 0);
+
+        databaseList.Clear();
         if (iNumber <= 0)
         {
           // no given databases in XML - setting to IMDB
-          aLimits = new int[1];
-          aDatabases = new string[1];
-          aLimits[0] = 25;
-          aDatabases[0] = "IMDB";
+          databaseList.Add(new MovieInfoDatabase(IMDB.DEFAULT_DATABASE, IMDB.DEFAULT_SEARCH_LIMIT));
         }
         else
         {
-          // initialise arrays
-          aLimits = new int[iNumber];
-          aDatabases = new string[iNumber];
           string strDatabase;
           int iLimit;
-          bool bDouble = false;
+
           // get the databases
           for (int i = 0; i < iNumber; i++)
           {
-            bDouble = false;
-            iLimit = xmlreader.GetValueAsInt("moviedatabase", "limit" + i.ToString(), 25);
             strDatabase = xmlreader.GetValueAsString("moviedatabase", "database" + i.ToString(), "IMDB");
-            // be aware of double entries!
-            for (int j = 0; j < i; j++)
+            iLimit = xmlreader.GetValueAsInt("moviedatabase", "limit" + i.ToString(), IMDB.DEFAULT_SEARCH_LIMIT);
+
+            foreach (MovieInfoDatabase db in databaseList)
             {
-              if (aDatabases[j] == strDatabase)
+              if (db.ID == strDatabase)
               {
-                // double entry found, exit search
-                bDouble = true;
-                j = i;
+                goto DoubleEntry;
               }
             }
-            // valid entry?
-            if (!bDouble)
-            {
-              // entry does not exist yet
-              aLimits[i] = iLimit;
-              aDatabases[i] = strDatabase;
-            }
-            else
-            {
-              // skip this entry
-              aLimits[i] = 0;
-              aDatabases[i] = "";
-            }
+
+            databaseList.Add(new MovieInfoDatabase(strDatabase, iLimit));
+
+            DoubleEntry:
+            continue;
           }
         }
       }
@@ -514,38 +557,30 @@ namespace MediaPortal.Video.Database
         if (m_progress != null)
           m_progress.OnProgress(line1, line2, line3, percent);
         // search the desired databases
-        for (int i = 0; i < aDatabases.Length; i++)
+        foreach (MovieInfoDatabase db in databaseList)
         {
           // only do a search if requested
-          if (aLimits[i] > 0)
+          if (db.Limit <= 0) continue;
+          if (db.Grabber == null) continue;
+
+          // load the script file as an assembly
+          // if something went wrong it returns false
+
+          line1 = GUILocalizeStrings.Get(984) + ": Script " + db.ID;
+
+          if (m_progress != null)
+            m_progress.OnProgress(line1, line2, line3, percent);
+
+          try
           {
-            // Script support script.csscript
-            string grabberFileName = ScriptDirectory + @"\" + aDatabases[i] + ".csscript";
-            if (!File.Exists(grabberFileName))
-            {
-              Log.Error("Movie database lookup Find()- grabber script not found: {0}", grabberFileName);
-              return;
-            }
-
-            line1 = GUILocalizeStrings.Get(984) + ": Script " + aDatabases[i];
-
+            db.Grabber.FindFilm(strSearch, db.Limit, elements);
+            percent += 100/databaseList.Count;
             if (m_progress != null)
               m_progress.OnProgress(line1, line2, line3, percent);
-            try
-            {
-              Environment.CurrentDirectory = Config.GetFolder(Config.Dir.Base);
-              AsmHelper script = new AsmHelper(CSScriptLibrary.CSScript.Load(grabberFileName, null, false));
-              IIMDBScriptGrabber grabber = (IIMDBScriptGrabber)script.CreateObject("Grabber");
-              grabber.FindFilm(strSearch, aLimits[i], elements);
-              percent += 100/aDatabases.Length;
-              if (m_progress != null)
-                m_progress.OnProgress(line1, line2, line3, percent);
-            }
-            catch (Exception ex)
-            {
-              Log.Info("Movie database lookup Find() - file: {0}, message : {1}", grabberFileName, ex.Message);
-              return;
-            }
+          }
+          catch (Exception ex)
+          {
+            Log.Error("Movie database lookup Find() - grabber: {0}, message : {1}", db.ID, ex.Message);
           }
         }
       }
@@ -560,8 +595,6 @@ namespace MediaPortal.Video.Database
     /// </summary>
     public bool GetDetails(IMDB.IMDBUrl url, ref IMDBMovie movieDetails)
     {
-      string grabberFileName = ScriptDirectory + @"\" + url.Database + ".csscript";
-
       try
       {
         /*
@@ -576,29 +609,24 @@ namespace MediaPortal.Video.Database
         }
         string	strHost = url.URL.Substring(iStart,iEnd-iStart).ToUpper();*/
 
-        // Script support script.csscript
-        if (!File.Exists(grabberFileName))
+        MovieInfoDatabase currentDB = null;
+        foreach (MovieInfoDatabase db in databaseList)
         {
-          Log.Error("Movie database lookup GetDetails()- grabber script not found: {0}", grabberFileName);
-          return false;
+          if (db.ID == url.Database)
+          {
+            currentDB = db;
+          }
         }
+        if (currentDB == null) return false;
+        if (currentDB.Grabber == null) return false;
 
-        try
-        {
-          AsmHelper script = new AsmHelper(CSScriptLibrary.CSScript.Load(grabberFileName, null, false));
-          IIMDBScriptGrabber grabber = (IIMDBScriptGrabber)script.CreateObject("Grabber");
-          grabber.GetDetails(url, ref movieDetails);
-          return true;
-        }
-        catch (Exception ex)
-        {
-          Log.Info("Movie database lookup GetDetails() - file: {0}, message : {1}", grabberFileName, ex.Message);
-          return false;
-        }
+
+        currentDB.Grabber.GetDetails(url, ref movieDetails);
+        return true;
       }
       catch (Exception ex)
       {
-        Log.Error("Movie database lookup GetDetails() - file: {0}, message : {1}", grabberFileName, ex.Message);
+        Log.Error("Movie database lookup GetDetails() - grabber: {0}, message : {1}", url.Database, ex.Message);
         return false;
       }
     }
