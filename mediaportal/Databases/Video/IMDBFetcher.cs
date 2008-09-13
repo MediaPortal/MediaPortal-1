@@ -568,7 +568,7 @@ namespace MediaPortal.Video.Database
     /// </summary>
     public static bool RefreshIMDB(IMDB.IProgress progress, ref IMDBMovie currentMovie, bool fuzzyMatching, bool getActors)
     {
-      Log.Info("Refreshing IMDB for {0}-{1}", currentMovie.Title, currentMovie.SearchString);
+      Log.Info("RefreshIMDB() - Refreshing MovieInfo for {0}-{1}", currentMovie.Title, currentMovie.SearchString);
       string strMovieName = currentMovie.SearchString;
       string strFileName = string.Empty;
       string path = currentMovie.Path;
@@ -768,10 +768,11 @@ namespace MediaPortal.Video.Database
       {
         progress.OnScanStart(availableFiles.Count);
       }
+
       int count = 1;
       foreach (string file in availableFiles)
       {
-        Log.Info("Scanning file:{0}", file);
+        Log.Info("Scanning file: {0}", file);
         if ((progress != null) && (!progress.OnScanIterating(count)))
         {
           success = false;
@@ -794,6 +795,7 @@ namespace MediaPortal.Video.Database
           break;
         }
       }
+
       if (progress != null)
       {
         progress.OnScanEnd();
