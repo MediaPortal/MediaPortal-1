@@ -44,6 +44,7 @@ namespace MediaPortal.Video.Database
   public class IMDB : IEnumerable
   {
     public static string ScriptDirectory = Config.GetSubFolder(Config.Dir.Config, "scripts\\MovieInfo");
+    public const int DEFAULT_SEARCH_LIMIT = 10;
 
     #region interfaces and classes
 

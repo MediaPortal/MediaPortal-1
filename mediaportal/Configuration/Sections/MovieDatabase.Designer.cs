@@ -37,8 +37,8 @@ namespace MediaPortal.Configuration.Sections
       this.tabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPage8 = new System.Windows.Forms.TabPage();
       this.groupBoxActiveGrabbers = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.listViewTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.mpDelete = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpNumericUpDownLimit = new MediaPortal.UserInterface.Controls.MPNumericUpDown();
+      this.mpDeleteGrabber = new MediaPortal.UserInterface.Controls.MPButton();
       this._fuzzyMatchingCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.bDatabaseDown = new MediaPortal.UserInterface.Controls.MPButton();
       this.bDatabaseUp = new MediaPortal.UserInterface.Controls.MPButton();
@@ -50,7 +50,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxAvailableGrabbers = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.mpButtonUpdateGrabber = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpComboBoxAvailableDatabases = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpButtonAdd = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpButtonAddGrabber = new MediaPortal.UserInterface.Controls.MPButton();
       this.tabPage2 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.tabPage1 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.cbTitle = new MediaPortal.UserInterface.Controls.MPComboBox();
@@ -128,6 +128,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabControl1.SuspendLayout();
       this.tabPage8.SuspendLayout();
       this.groupBoxActiveGrabbers.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.mpNumericUpDownLimit)).BeginInit();
       this.groupBoxAvailableGrabbers.SuspendLayout();
       this.tabPage2.SuspendLayout();
       this.tabPage1.SuspendLayout();
@@ -251,8 +252,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxActiveGrabbers
       // 
-      this.groupBoxActiveGrabbers.Controls.Add(this.listViewTextBox);
-      this.groupBoxActiveGrabbers.Controls.Add(this.mpDelete);
+      this.groupBoxActiveGrabbers.Controls.Add(this.mpNumericUpDownLimit);
+      this.groupBoxActiveGrabbers.Controls.Add(this.mpDeleteGrabber);
       this.groupBoxActiveGrabbers.Controls.Add(this._fuzzyMatchingCheckBox);
       this.groupBoxActiveGrabbers.Controls.Add(this.bDatabaseDown);
       this.groupBoxActiveGrabbers.Controls.Add(this.bDatabaseUp);
@@ -266,29 +267,38 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxActiveGrabbers.TabStop = false;
       this.groupBoxActiveGrabbers.Text = "Internet database search settings";
       // 
-      // listViewTextBox
+      // mpNumericUpDownLimit
       // 
-      this.listViewTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.listViewTextBox.BorderColor = System.Drawing.Color.Empty;
-      this.listViewTextBox.Location = new System.Drawing.Point(261, 263);
-      this.listViewTextBox.Name = "listViewTextBox";
-      this.listViewTextBox.Size = new System.Drawing.Size(98, 20);
-      this.listViewTextBox.TabIndex = 8;
-      this.listViewTextBox.Visible = false;
-      this.listViewTextBox.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.listViewTextBox_KeyPress);
-      this.listViewTextBox.Leave += new System.EventHandler(this.listViewTextBox_Leave);
+      this.mpNumericUpDownLimit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpNumericUpDownLimit.Location = new System.Drawing.Point(270, 264);
+      this.mpNumericUpDownLimit.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      this.mpNumericUpDownLimit.Name = "mpNumericUpDownLimit";
+      this.mpNumericUpDownLimit.Size = new System.Drawing.Size(98, 20);
+      this.mpNumericUpDownLimit.TabIndex = 11;
+      this.mpNumericUpDownLimit.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.mpNumericUpDownLimit.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+      this.mpNumericUpDownLimit.Visible = false;
+      this.mpNumericUpDownLimit.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.mpNumericUpDownLimit_KeyPress);
+      this.mpNumericUpDownLimit.Leave += new System.EventHandler(this.mpNumericUpDownLimit_Leave);
       // 
-      // mpDelete
+      // mpDeleteGrabber
       // 
-      this.mpDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpDelete.Location = new System.Drawing.Point(374, 259);
-      this.mpDelete.Name = "mpDelete";
-      this.mpDelete.Size = new System.Drawing.Size(72, 26);
-      this.mpDelete.TabIndex = 9;
-      this.mpDelete.Text = "Delete";
-      this.mpDelete.UseVisualStyleBackColor = true;
-      this.mpDelete.Click += new System.EventHandler(this.mpDelete_Click);
+      this.mpDeleteGrabber.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpDeleteGrabber.Location = new System.Drawing.Point(374, 259);
+      this.mpDeleteGrabber.Name = "mpDeleteGrabber";
+      this.mpDeleteGrabber.Size = new System.Drawing.Size(72, 26);
+      this.mpDeleteGrabber.TabIndex = 9;
+      this.mpDeleteGrabber.Text = "Delete";
+      this.mpDeleteGrabber.UseVisualStyleBackColor = true;
+      this.mpDeleteGrabber.Click += new System.EventHandler(this.mpDelete_Click);
       // 
       // _fuzzyMatchingCheckBox
       // 
@@ -376,7 +386,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.groupBoxAvailableGrabbers.Controls.Add(this.mpButtonUpdateGrabber);
       this.groupBoxAvailableGrabbers.Controls.Add(this.mpComboBoxAvailableDatabases);
-      this.groupBoxAvailableGrabbers.Controls.Add(this.mpButtonAdd);
+      this.groupBoxAvailableGrabbers.Controls.Add(this.mpButtonAddGrabber);
       this.groupBoxAvailableGrabbers.Dock = System.Windows.Forms.DockStyle.Bottom;
       this.groupBoxAvailableGrabbers.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxAvailableGrabbers.Location = new System.Drawing.Point(3, 318);
@@ -408,16 +418,16 @@ namespace MediaPortal.Configuration.Sections
       this.mpComboBoxAvailableDatabases.Size = new System.Drawing.Size(234, 21);
       this.mpComboBoxAvailableDatabases.TabIndex = 5;
       // 
-      // mpButtonAdd
+      // mpButtonAddGrabber
       // 
-      this.mpButtonAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpButtonAdd.Location = new System.Drawing.Point(246, 19);
-      this.mpButtonAdd.Name = "mpButtonAdd";
-      this.mpButtonAdd.Size = new System.Drawing.Size(72, 24);
-      this.mpButtonAdd.TabIndex = 6;
-      this.mpButtonAdd.Text = "Add";
-      this.mpButtonAdd.UseVisualStyleBackColor = true;
-      this.mpButtonAdd.Click += new System.EventHandler(this.mpButtonAdd_Click);
+      this.mpButtonAddGrabber.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpButtonAddGrabber.Location = new System.Drawing.Point(246, 19);
+      this.mpButtonAddGrabber.Name = "mpButtonAddGrabber";
+      this.mpButtonAddGrabber.Size = new System.Drawing.Size(72, 24);
+      this.mpButtonAddGrabber.TabIndex = 6;
+      this.mpButtonAddGrabber.Text = "Add";
+      this.mpButtonAddGrabber.UseVisualStyleBackColor = true;
+      this.mpButtonAddGrabber.Click += new System.EventHandler(this.mpButtonAdd_Click);
       // 
       // tabPage2
       // 
@@ -1238,6 +1248,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabPage8.ResumeLayout(false);
       this.groupBoxActiveGrabbers.ResumeLayout(false);
       this.groupBoxActiveGrabbers.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.mpNumericUpDownLimit)).EndInit();
       this.groupBoxAvailableGrabbers.ResumeLayout(false);
       this.tabPage2.ResumeLayout(false);
       this.tabPage1.ResumeLayout(false);
@@ -1340,7 +1351,6 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.ColumnHeader chDatabaseDB;
     private System.Windows.Forms.ColumnHeader chDatabaseLanguage;
     private System.Windows.Forms.ColumnHeader chDatabaseLimit;
-    private MediaPortal.UserInterface.Controls.MPTextBox listViewTextBox;
     private MediaPortal.UserInterface.Controls.MPCheckBox _fuzzyMatchingCheckBox;
     private MediaPortal.UserInterface.Controls.MPTextBox tbDiscNr;
     private MediaPortal.UserInterface.Controls.MPLabel label2;
@@ -1353,11 +1363,12 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPLabel label1;
     private MediaPortal.UserInterface.Controls.MPButton buttonRemoveFile;
     private System.Windows.Forms.ListBox imagesListBox;
-    private MediaPortal.UserInterface.Controls.MPButton mpDelete;
+    private MediaPortal.UserInterface.Controls.MPButton mpDeleteGrabber;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxAvailableGrabbers;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonUpdateGrabber;
     private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxAvailableDatabases;
-    private MediaPortal.UserInterface.Controls.MPButton mpButtonAdd;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonAddGrabber;
     private System.Windows.Forms.ColumnHeader chDatabaseTitle;
+    private MediaPortal.UserInterface.Controls.MPNumericUpDown mpNumericUpDownLimit;
   }
 }

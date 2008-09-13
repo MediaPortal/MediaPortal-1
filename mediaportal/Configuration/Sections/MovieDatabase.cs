@@ -1538,16 +1538,27 @@ namespace MediaPortal.Configuration.Sections
       // account for different origins
       Point origin = new Point(0, 0);
       Point lvOrigin = lvDatabase.Parent.PointToScreen(origin);
-      Point ctlOrigin = listViewTextBox.Parent.PointToScreen(origin);
+      Point ctlOrigin = mpNumericUpDownLimit.Parent.PointToScreen(origin);
 
       subItemRect.Offset(lvOrigin.X - ctlOrigin.X, lvOrigin.Y - ctlOrigin.Y);
 
       // Position and show editor
-      listViewTextBox.Bounds = subItemRect;
-      listViewTextBox.Text = item.SubItems[chDatabaseLimit.Index].Text;
-      listViewTextBox.Visible = true;
-      listViewTextBox.BringToFront();
-      listViewTextBox.Focus();
+      mpNumericUpDownLimit.Bounds = subItemRect;
+      
+      // if the value is not able to parse don't show the editor
+      int limit;
+      if (int.TryParse(item.SubItems[chDatabaseLimit.Index].Text, out limit))
+      {
+        mpNumericUpDownLimit.Value = limit;
+      }
+      else
+      {
+        mpNumericUpDownLimit.Value = IMDB.DEFAULT_SEARCH_LIMIT;
+      }
+
+      mpNumericUpDownLimit.Visible = true;
+      mpNumericUpDownLimit.BringToFront();
+      mpNumericUpDownLimit.Focus();
 
       _editItem = item;
     }
@@ -1566,12 +1577,10 @@ namespace MediaPortal.Configuration.Sections
       item.SubItems.Add(database.title);
       item.SubItems.Add(database.language);
       item.SubItems.Add(database.limit);
-      mpComboBoxAvailableDatabases.Items.Remove(database);
-      if (mpComboBoxAvailableDatabases.Items.Count > 0)
-      {
-        mpComboBoxAvailableDatabases.SelectedIndex = 0;
-      }
+
       SaveSettings();
+
+      RefreshAvailableDatabases();
     }
 
     private void mpButtonUpdateGrabber_Click(object sender, EventArgs e)
@@ -1649,18 +1658,18 @@ namespace MediaPortal.Configuration.Sections
         }
       }
 
-      RefreshAvailableDatabases();
-
       progressDialog.CloseProgress();
+
+      RefreshAvailableDatabases();
     }
 
-    private void listViewTextBox_Leave(object sender, EventArgs e)
+    private void mpNumericUpDownLimit_Leave(object sender, EventArgs e)
     {
       // cell editor losing focus
       EndEditing(true);
     }
 
-    private void listViewTextBox_KeyPress(object sender, PreviewKeyDownEventArgs e)
+    private void mpNumericUpDownLimit_KeyPress(object sender, PreviewKeyDownEventArgs e)
     {
       switch (e.KeyCode)
       {
@@ -1689,10 +1698,10 @@ namespace MediaPortal.Configuration.Sections
     {
       if (AcceptChanges && (_editItem != null))
       {
-        _editItem.SubItems[chDatabaseLimit.Index].Text = listViewTextBox.Text;
+        _editItem.SubItems[chDatabaseLimit.Index].Text = mpNumericUpDownLimit.Value.ToString();
       }
       _editItem = null;
-      listViewTextBox.Visible = false;
+      mpNumericUpDownLimit.Visible = false;
     }
 
     private void RefreshAvailableDatabases()
@@ -1725,7 +1734,7 @@ namespace MediaPortal.Configuration.Sections
             ComboBoxItemDatabase item = new ComboBoxItemDatabase();
             item.database = Path.GetFileNameWithoutExtension(f.Name);
             item.language = grabber.GetLanguage();
-            item.limit = "10";
+            item.limit = IMDB.DEFAULT_SEARCH_LIMIT.ToString();
             item.title = grabber.GetName();
 
             mpComboBoxAvailableDatabases.Items.Add(item);
@@ -1734,15 +1743,21 @@ namespace MediaPortal.Configuration.Sections
         catch (Exception ex)
         {
           //textBox3.Text = ex.Message;
-          Log.Error("Script garbber error file: {0}, message : {1}", f.FullName, ex.Message);
+          Log.Error("Script grabber error file: {0}, message : {1}", f.FullName, ex.Message);
         }
       }
 
       // set the first entry "activ"
       if (mpComboBoxAvailableDatabases.Items.Count > 0)
+      {
         mpComboBoxAvailableDatabases.SelectedIndex = 0;
-      if (lvDatabase.Items.Count > 0)
-        lvDatabase.Items[0].Selected = true;
+        mpButtonAddGrabber.Enabled = true;
+      }
+      else
+      {
+        mpButtonAddGrabber.Enabled = false;
+      }
+
     }
 
     private bool DownloadFile(string filepath, string url)
