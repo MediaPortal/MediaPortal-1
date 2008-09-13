@@ -8,11 +8,12 @@
   <define>#play.progressbar.currentremaining:#TV.View.stop</define>
   <define>#play.osd.background:osd_bg_bottom.png</define>
   <controls>
+    // progressbar should be removed if we get a new conditional visibility statement which represents _isOsdVisible
+    <import>common.play.progressbar.xml</import>
     <import>common.play.osd.xml</import>
     <control>
       <description>TV Logo</description>
       <type>image</type>
-      <id>10</id>
       <posX>40</posX>
       <posY>348</posY>
       <width>50</width>
@@ -67,7 +68,6 @@
     </control>
     <control>
       <description>Channel Name</description>
-      <id>0</id>
       <type>textbox</type>
       <width>310</width>
       <height>30</height>

@@ -4,6 +4,8 @@
     <control>
       <description>background</description>
       <type>image</type>
+      // <id>12345</id> should be removed if we get a new conditional visibility statement which represents _isOsdVisible
+      <id>12345</id>
       <posX>20</posX>
       <posY>330</posY>
       <width>400</width>
