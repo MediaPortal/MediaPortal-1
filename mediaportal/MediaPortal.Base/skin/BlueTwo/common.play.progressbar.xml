@@ -75,7 +75,9 @@
       <align>center</align>
       <font>font14</font>
       <textcolor>black</textcolor>
-      <visible>!player.paused+!player.rewinding+!player.forwarding+!Control.IsVisible(10)</visible>
+      // Mantis: 1611
+      // <visible>!player.paused+!player.rewinding+!player.forwarding+!Control.IsVisible(10)</visible>
+      <visible>0</visible>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
