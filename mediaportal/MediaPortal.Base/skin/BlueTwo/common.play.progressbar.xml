@@ -10,8 +10,7 @@
       <width>679</width>
       <height>40</height>
       <texture>osd_bg_top.png</texture>
-      // |Control.IsVisible(12345) should be removed if we get a new conditional visibility statement which represents _isOsdVisible
-      <visible>player.paused|player.rewinding|player.forwarding|Control.IsVisible(10)|Control.IsVisible(12345)</visible>
+      <visible>window.isosdvisible|player.paused|player.rewinding|player.forwarding|Control.IsVisible(10)</visible>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -23,23 +22,20 @@
       <width>404</width>
       <height>20</height>
       <texture>osd_progress_background.png</texture>
-      // |Control.IsVisible(12345) should be removed if we get a new conditional visibility statement which represents _isOsdVisible
-      <visible>player.paused|player.rewinding|player.forwarding|Control.IsVisible(10)|Control.IsVisible(12345)</visible>
+      <visible>window.isosdvisible|player.paused|player.rewinding|player.forwarding|Control.IsVisible(10)</visible>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
     <control>
       <description>progress bar</description>
       <type>progress</type>
-      // <id>1</id> should be removed if we get a new conditional visibility statement which represents _isOsdVisible
       <id>1</id>
       <posX>99</posX>
       <posY>30</posY>
       <width>401</width>
       <height>20</height>
       <label>#play.progressbar.percentage</label>
-      // |Control.IsVisible(12345) should be removed if we get a new conditional visibility statement which represents _isOsdVisible
-      <visible>player.paused|player.rewinding|player.forwarding|Control.IsVisible(10)|Control.IsVisible(12345)</visible>
+      <visible>window.isosdvisible|player.paused|player.rewinding|player.forwarding|Control.IsVisible(10)</visible>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -52,8 +48,7 @@
       <align>center</align>
       <font>font14</font>
       <textcolor>white</textcolor>
-      // |Control.IsVisible(12345) should be removed if we get a new conditional visibility statement which represents _isOsdVisible
-      <visible>player.paused|player.rewinding|player.forwarding|Control.IsVisible(10)|Control.IsVisible(12345)</visible>
+      <visible>window.isosdvisible|player.paused|player.rewinding|player.forwarding|Control.IsVisible(10)</visible>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -66,8 +61,7 @@
       <align>center</align>
       <font>font14</font>
       <textcolor>white</textcolor>
-      // |Control.IsVisible(12345) should be removed if we get a new conditional visibility statement which represents _isOsdVisible
-      <visible>player.paused|player.rewinding|player.forwarding|Control.IsVisible(10)|Control.IsVisible(12345)</visible>
+      <visible>window.isosdvisible|player.paused|player.rewinding|player.forwarding|Control.IsVisible(10)</visible>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -82,9 +76,7 @@
       <align>center</align>
       <font>font14</font>
       <textcolor>black</textcolor>
-      // Mantis: 1611
-      // <visible>!player.paused+!player.rewinding+!player.forwarding+!Control.IsVisible(10)</visible>
-      <visible>0</visible>
+      <visible>window.isosdvisible+!player.paused+!player.rewinding+!player.forwarding+!Control.IsVisible(10)</visible>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
