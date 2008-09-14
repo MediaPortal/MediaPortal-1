@@ -162,7 +162,6 @@ namespace TvPlugin
       IMG_MIN8X = 25,
       IMG_MIN16X = 26,
       IMG_MIN32X = 27,
-      LABEL_CURRENT_TIME = 22,
       OSD_VIDEOPROGRESS = 100,
       REC_LOGO = 39
     };

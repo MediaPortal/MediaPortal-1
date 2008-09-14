@@ -78,7 +78,6 @@ namespace MediaPortal.GUI.Video
       IMG_MIN8X = 25,
       IMG_MIN16X = 26,
       IMG_MIN32X = 27,
-      LABEL_CURRENT_TIME = 22,
       OSD_TIMEINFO = 100,
       PANEL1 = 101,
       PANEL2 = 150
@@ -895,7 +894,6 @@ namespace MediaPortal.GUI.Video
             HideControl(GetID, (int)Control.LABEL_ROW2);
             HideControl(GetID, (int)Control.LABEL_ROW3);
             HideControl(GetID, (int)Control.BLUE_BAR);
-            HideControl(GetID, (int)Control.LABEL_CURRENT_TIME);
 
             LoadSettings();
             GUIWindowManager.IsOsdVisible = false;
