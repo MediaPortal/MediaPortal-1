@@ -2200,6 +2200,7 @@ namespace TvPlugin
         HideControl(GetID, (int)Control.IMG_PAUSE);
       }
 
+
       int speed = g_Player.Speed;
       HideControl(GetID, (int)Control.IMG_2X);
       HideControl(GetID, (int)Control.IMG_4X);
@@ -2212,50 +2213,40 @@ namespace TvPlugin
       HideControl(GetID, (int)Control.IMG_MIN16X);
       HideControl(GetID, (int)Control.IMG_MIN32X);
 
-      if (speed != 1)
+      switch (speed)
       {
-        if (speed == 2)
-        {
+        case 2:
           ShowControl(GetID, (int)Control.IMG_2X);
-        }
-        else if (speed == 4)
-        {
+          break;
+        case 4:
           ShowControl(GetID, (int)Control.IMG_4X);
-        }
-        else if (speed == 8)
-        {
+          break;
+        case 8:
           ShowControl(GetID, (int)Control.IMG_8X);
-        }
-        else if (speed == 16)
-        {
+          break;
+        case 16:
           ShowControl(GetID, (int)Control.IMG_16X);
-        }
-        else if (speed == 32)
-        {
+          break;
+        case 32:
           ShowControl(GetID, (int)Control.IMG_32X);
-        }
-
-        if (speed == -2)
-        {
+          break;
+        case -2:
           ShowControl(GetID, (int)Control.IMG_MIN2X);
-        }
-        else if (speed == -4)
-        {
+          break;
+        case -4:
           ShowControl(GetID, (int)Control.IMG_MIN4X);
-        }
-        else if (speed == -8)
-        {
+          break;
+        case -8:
           ShowControl(GetID, (int)Control.IMG_MIN8X);
-        }
-        else if (speed == -16)
-        {
+          break;
+        case -16:
           ShowControl(GetID, (int)Control.IMG_MIN16X);
-        }
-        else if (speed == -32)
-        {
+          break;
+        case -32:
           ShowControl(GetID, (int)Control.IMG_MIN32X);
-        }
+          break;
       }
+
       HideControl(GetID, (int)Control.LABEL_ROW1);
       HideControl(GetID, (int)Control.LABEL_ROW2);
       HideControl(GetID, (int)Control.LABEL_ROW3);

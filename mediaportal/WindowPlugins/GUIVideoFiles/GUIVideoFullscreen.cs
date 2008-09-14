@@ -65,8 +65,8 @@ namespace MediaPortal.GUI.Video
       BLUE_BAR = 0,
       OSD_VIDEOPROGRESS = 1,
       LABEL_ROW1 = 10,
-      LABEL_ROW2 = 11,
-      LABEL_ROW3 = 12,
+      LABEL_ROW2 = 11, // never used, and should be used, because some skins won't support it
+      LABEL_ROW3 = 12, // never used, and should be used, because some skins won't support it
       IMG_PAUSE = 16,
       IMG_2X = 17,
       IMG_4X = 18,
@@ -1399,6 +1399,8 @@ namespace MediaPortal.GUI.Video
         HideControl(GetID, (int)Control.OSD_TIMEINFO);
         HideControl(GetID, (int)Control.OSD_VIDEOPROGRESS);
       }
+
+
       if (g_Player.Paused && !_showStep && !_showTime && !_showStatus && !_isOsdVisible && g_Player.Speed == 1)
       {
         ShowControl(GetID, (int)Control.IMG_PAUSE);
@@ -1420,50 +1422,43 @@ namespace MediaPortal.GUI.Video
       HideControl(GetID, (int)Control.IMG_MIN16X);
       HideControl(GetID, (int)Control.IMG_MIN32X);
 
-      if (iSpeed != 1 && !_showStep)
+      if (!_showStep)
       {
-        if (iSpeed == 2)
+        switch (iSpeed)
         {
-          ShowControl(GetID, (int)Control.IMG_2X);
-        }
-        else if (iSpeed == 4)
-        {
-          ShowControl(GetID, (int)Control.IMG_4X);
-        }
-        else if (iSpeed == 8)
-        {
-          ShowControl(GetID, (int)Control.IMG_8X);
-        }
-        else if (iSpeed == 16)
-        {
-          ShowControl(GetID, (int)Control.IMG_16X);
-        }
-        else if (iSpeed == 32)
-        {
-          ShowControl(GetID, (int)Control.IMG_32X);
-        }
-
-        if (iSpeed == -2)
-        {
-          ShowControl(GetID, (int)Control.IMG_MIN2X);
-        }
-        else if (iSpeed == -4)
-        {
-          ShowControl(GetID, (int)Control.IMG_MIN4X);
-        }
-        else if (iSpeed == -8)
-        {
-          ShowControl(GetID, (int)Control.IMG_MIN8X);
-        }
-        else if (iSpeed == -16)
-        {
-          ShowControl(GetID, (int)Control.IMG_MIN16X);
-        }
-        else if (iSpeed == -32)
-        {
-          ShowControl(GetID, (int)Control.IMG_MIN32X);
+          case 2:
+            ShowControl(GetID, (int)Control.IMG_2X);
+            break;
+          case 4:
+            ShowControl(GetID, (int)Control.IMG_4X);
+            break;
+          case 8:
+            ShowControl(GetID, (int)Control.IMG_8X);
+            break;
+          case 16:
+            ShowControl(GetID, (int)Control.IMG_16X);
+            break;
+          case 32:
+            ShowControl(GetID, (int)Control.IMG_32X);
+            break;
+          case -2:
+            ShowControl(GetID, (int)Control.IMG_MIN2X);
+            break;
+          case -4:
+            ShowControl(GetID, (int)Control.IMG_MIN4X);
+            break;
+          case -8:
+            ShowControl(GetID, (int)Control.IMG_MIN8X);
+            break;
+          case -16:
+            ShowControl(GetID, (int)Control.IMG_MIN16X);
+            break;
+          case -32:
+            ShowControl(GetID, (int)Control.IMG_MIN32X);
+            break;
         }
       }
+
       HideControl(GetID, (int)Control.LABEL_ROW1);
       HideControl(GetID, (int)Control.LABEL_ROW2);
       HideControl(GetID, (int)Control.LABEL_ROW3);
