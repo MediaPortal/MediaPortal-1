@@ -128,6 +128,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("renderUnfocusText")]    protected bool _renderUnfocusText = true;
 
     [XMLSkinElement("unfocusedAlpha")]   protected int _unfocusedAlpha = 0xFF;
+    [XMLSkinElement("spinCanFocus")]     protected bool _spinCanFocus = true;
 
     bool _showTexture = true;
     int _offset = 0;
@@ -399,6 +400,7 @@ namespace MediaPortal.GUI.Library
           if (pItem.ThumbnailImage == "[mpthumbs.db]")
           {
             pImage = GetThumbnail(pItem);
+            Log.Info("GEMX: {0}", pImage.FileName);
           }
           else
           {
@@ -418,6 +420,12 @@ namespace MediaPortal.GUI.Library
             pImage.DimColor = DimColor;
             if (bFocus || !Focus) pImage.ColourDiffuse = 0xffffffff;
             else pImage.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
+            if (bFocus && (_zoomXPixels != 0 || _zoomYPixels != 0))
+            {
+              pImage.Width = _textureWidth + _zoomXPixels - 4;
+              pImage.Height = _textureHeight + _zoomYPixels - 4;
+              pImage.SetPosition(dwPosX - (_zoomXPixels / 2), dwPosY - (_zoomYPixels / 2));
+            }
             pImage.Render(timePassed);
             _sleeper += SLEEP_FRAME_COUNT;
           }
@@ -467,6 +475,12 @@ namespace MediaPortal.GUI.Library
             pImage.DimColor = DimColor;
             if (bFocus || !Focus) pImage.ColourDiffuse = 0xffffffff;
             else pImage.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
+            if (bFocus && (_zoomXPixels != 0 || _zoomYPixels != 0))
+            {
+              pImage.Width = _textureWidth + _zoomXPixels - 4;
+              pImage.Height = _textureHeight + _zoomYPixels - 4;
+              pImage.SetPosition(dwPosX - (_zoomXPixels / 2), dwPosY - (_zoomYPixels / 2));
+            }
             pImage.Render(timePassed);
             _sleeper += SLEEP_FRAME_COUNT;
           }
@@ -486,6 +500,12 @@ namespace MediaPortal.GUI.Library
             pImage.DimColor = DimColor;
             if (bFocus || !Focus) pImage.ColourDiffuse = 0xffffffff;
             else pImage.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
+            if (bFocus && (_zoomXPixels != 0 || _zoomYPixels != 0))
+            {
+              pImage.Width = _textureWidth + _zoomXPixels - 4;
+              pImage.Height = _textureHeight + _zoomYPixels - 4;
+              pImage.SetPosition(dwPosX - (_zoomXPixels / 2), dwPosY - (_zoomYPixels / 2));
+            }
             pImage.Render(timePassed);
           }
         }
@@ -1503,11 +1523,13 @@ namespace MediaPortal.GUI.Library
           return;
         }
 
-        if (_controlUpDown.GetMaximum() > 1)
+        if (_controlUpDown.GetMaximum() > 1 && _spinCanFocus)
         {
           m_iSelect = GUIListControl.ListType.CONTROL_UPDOWN;
           _controlUpDown.Focus = true;
         }
+        else
+          base.OnAction(action);
         OnSelectionChanged();
       }
       else

@@ -334,7 +334,8 @@ namespace MediaPortal.GUI.Library
     public override void OnAction(Action action)
     {
       GUIControl cntl = CurrentView;
-      if (cntl != null) cntl.OnAction(action);
+      if (cntl != null)
+        cntl.OnAction(action);
     }
 
     public override bool OnMessage(GUIMessage message)

@@ -156,6 +156,8 @@ namespace MediaPortal.GUI.Library
 
     [XMLSkinElement("unfocusedAlpha")]      protected int _unfocusedAlpha = 0xFF;
 
+    [XMLSkinElement("spinCanFocus")]    protected bool _spinCanFocus = true;
+
     bool _wordWrapping = false;
 
     // Search            
@@ -1764,7 +1766,7 @@ namespace MediaPortal.GUI.Library
       action.wID = Action.ActionType.ACTION_MOVE_RIGHT;
       if (_listType == ListType.CONTROL_LIST)
       {
-        if (_upDownControl.GetMaximum() > 1)
+        if (_upDownControl.GetMaximum() > 1 && _spinCanFocus)
         {
           OnSelectionChanged();
           _listType = ListType.CONTROL_UPDOWN;
@@ -1773,6 +1775,11 @@ namespace MediaPortal.GUI.Library
           {
             _listType = ListType.CONTROL_LIST;
           }
+        }
+        else
+        {
+          base.OnAction(action);
+          OnSelectionChanged();
         }
       }
       else
