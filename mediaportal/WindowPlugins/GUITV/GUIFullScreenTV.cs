@@ -135,57 +135,31 @@ namespace MediaPortal.GUI.TV
     #region enums
     enum Control
     {
-      BLUE_BAR = 0
-    ,
-      MSG_BOX = 2
-    ,
-      MSG_BOX_LABEL1 = 3
-    ,
-      MSG_BOX_LABEL2 = 4
-    ,
-      MSG_BOX_LABEL3 = 5
-    ,
-      MSG_BOX_LABEL4 = 6
-    ,
-      LABEL_ROW1 = 10
-    ,
-      LABEL_ROW2 = 11
-    ,
-      LABEL_ROW3 = 12
-    ,
-      LABEL_CHANNEL = 14
-    ,
-      LABEL_SKIPSTEPS = 15
-    ,
-      IMG_PAUSE = 16
-    ,
-      IMG_2X = 17
-    ,
-      IMG_4X = 18
-    ,
-      IMG_8X = 19
-    ,
-      IMG_16X = 20
-    ,
-      IMG_32X = 21
-
-    ,
-      IMG_MIN2X = 23
-    ,
-      IMG_MIN4X = 24
-    ,
-      IMG_MIN8X = 25
-    ,
-      IMG_MIN16X = 26
-    ,
-      IMG_MIN32X = 27
-    ,
-      LABEL_CURRENT_TIME = 22
-    ,
-      OSD_VIDEOPROGRESS = 100
-    ,
+      BLUE_BAR = 0,
+      MSG_BOX = 2,
+      MSG_BOX_LABEL1 = 3,
+      MSG_BOX_LABEL2 = 4,
+      MSG_BOX_LABEL3 = 5,
+      MSG_BOX_LABEL4 = 6,
+      LABEL_ROW1 = 10,
+      LABEL_ROW2 = 11,
+      LABEL_ROW3 = 12,
+      LABEL_CHANNEL = 14,
+      IMG_PAUSE = 16,
+      IMG_2X = 17,
+      IMG_4X = 18,
+      IMG_8X = 19,
+      IMG_16X = 20,
+      IMG_32X = 21,
+      IMG_MIN2X = 23,
+      IMG_MIN4X = 24,
+      IMG_MIN8X = 25,
+      IMG_MIN16X = 26,
+      IMG_MIN32X = 27,
+      LABEL_CURRENT_TIME = 22,
+      OSD_VIDEOPROGRESS = 100,
       REC_LOGO = 39
-    };
+    }
     #endregion
 
     public GUIFullScreenTV()
@@ -725,7 +699,7 @@ namespace MediaPortal.GUI.TV
               _statusTimeOutTimer = DateTime.Now;
               g_Player.SeekStep(false);
               string strStatus = g_Player.GetStepDescription();
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_SKIPSTEPS, 0, 0, null);
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
               msg.Label = strStatus;
               OnMessage(msg);
             }
@@ -747,7 +721,7 @@ namespace MediaPortal.GUI.TV
               _statusTimeOutTimer = DateTime.Now;
               g_Player.SeekStep(true);
               string strStatus = g_Player.GetStepDescription();
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_SKIPSTEPS, 0, 0, null);
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
               msg.Label = strStatus;
               OnMessage(msg);
             }
@@ -1806,27 +1780,23 @@ namespace MediaPortal.GUI.TV
       HideControl(GetID, (int)Control.LABEL_ROW3);
       HideControl(GetID, (int)Control.BLUE_BAR);
       HideControl(GetID, (int)Control.LABEL_CHANNEL);
-      HideControl(GetID, (int)Control.LABEL_SKIPSTEPS);
       if (_screenState.SeekStep != 0)
       {
         ShowControl(GetID, (int)Control.BLUE_BAR);
         //ShowControl(GetID, (int)Control.LABEL_ROW1);
         //ShowControl(GetID, (int)Control.LABEL_CHANNEL);
-        ShowControl(GetID, (int)Control.LABEL_SKIPSTEPS);
       }
       if (_statusVisible)
       {
         ShowControl(GetID, (int)Control.BLUE_BAR);
         ShowControl(GetID, (int)Control.LABEL_ROW1);
         //ShowControl(GetID, (int)Control.LABEL_CHANNEL);
-        //ShowControl(GetID, (int)Control.LABEL_SKIPSTEPS);
       }
       if (_groupVisible || _channelInputVisible)
       {
         ShowControl(GetID, (int)Control.BLUE_BAR);
         ShowControl(GetID, (int)Control.LABEL_ROW1);
         ShowControl(GetID, (int)Control.LABEL_CHANNEL);
-        //ShowControl(GetID, (int)Control.LABEL_SKIPSTEPS);
       }
       HideControl(GetID, (int)Control.MSG_BOX);
       HideControl(GetID, (int)Control.MSG_BOX_LABEL1);
