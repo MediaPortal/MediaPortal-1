@@ -133,24 +133,23 @@ namespace TvLibrary.Implementations.DVB
           }
           _technoTrend = null;
 
-          Log.Log.WriteFile("Check for WinTV CI");
-          if (winTvUsbCiFilter != null)
-          {
-            Log.Log.WriteFile("WinTV CI detected");
-            _winTvCiModule = new WinTvCiModule(winTvUsbCiFilter);
-            //return;
-          }
-          //_winTvCiModule = null;
-
           Log.Log.WriteFile("Check for Hauppauge");
           _hauppauge = new Hauppauge(tunerFilter, analyzerFilter);
           if (_hauppauge.IsHauppauge)
           {
             Log.Log.WriteFile("Hauppauge card detected");
+            Log.Log.WriteFile("Check for Hauppauge WinTV CI");
+            if (winTvUsbCiFilter != null)
+            {
+              Log.Log.WriteFile("WinTV CI detected in graph - using capabilities...");
+              _winTvCiModule = new WinTvCiModule(winTvUsbCiFilter);
+              //return;
+            }
             _diSEqCMotor = new DiSEqCMotor(_hauppauge);
             return;
           }
           _hauppauge = null;
+          _winTvCiModule = null;
 
           /*Log.Log.Info("Check for anysee");
           _anysee = new anysee(tunerFilter, analyzerFilter);
@@ -315,11 +314,10 @@ namespace TvLibrary.Implementations.DVB
         }*/
         if (_winTvCiModule != null)
         {
-          //How do we check this???
-          int hr = _winTvCiModule.CAMReady();
+          int hr = _winTvCiModule.Init();
           if (hr != 0)
             return false;
-          Log.Log.Info("WinTVCI:  CAM is ready");
+          Log.Log.Info("WinTVCI:  CAM initialized");
           return true;
         }
       }
@@ -359,11 +357,6 @@ namespace TvLibrary.Implementations.DVB
       if (_digitalEveryWhere != null)
       {
         _digitalEveryWhere.OnStopGraph();
-      }
-      if (_winTvCiModule != null)
-      {
-        Log.Log.Info("dvb:  Stopping WinTVCI module");
-        _winTvCiModule.Shutdown();
       }
     }
 

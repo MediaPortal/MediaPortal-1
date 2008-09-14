@@ -82,7 +82,8 @@ namespace TvLibrary.Implementations.DVB
     #region Public functions
     public Int32 Init()
     {
-      return WinTVCI_Init(_winTvUsbCIFilter, cbOnStatus, cbOnCamInfo, cbOnAPDU, cbOnCloseMMI);
+      //return WinTVCI_Init(_winTvUsbCIFilter, cbOnStatus, cbOnCamInfo, cbOnAPDU, cbOnCloseMMI);
+      return WinTVCI_Init(_winTvUsbCIFilter, null, null, null, null);
     }
 
     public Int32 SendPMT(byte[] PMT, int pmtLength)
@@ -109,12 +110,6 @@ namespace TvLibrary.Implementations.DVB
     {
       return WinTVCI_Shutdown(_winTvUsbCIFilter);
     }
-
-    public Int32 CAMReady()
-    {
-      return WinTVCI_Init(_winTvUsbCIFilter, null, cbOnCamInfo, null, null);
-    }
-
     #endregion
   }
 }

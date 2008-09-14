@@ -22,23 +22,38 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-
 using System.Drawing;
 using System.Text;
+using System.Xml;
 using System.Windows.Forms;
 using TvControl;
-
-
 using Gentle.Common;
 using Gentle.Framework;
 using TvDatabase;
 using Microsoft.Win32;
+using DirectShowLib;
 namespace SetupTv.Sections
 {
   public partial class TvCards : SectionSettings
   {
     private bool _needRestart = false;
+    int cardId = 0;
     private Dictionary<string, CardType> cardTypes = new Dictionary<string, CardType>();
+
+    #region CardInfo class
+    public class CardInfo
+    {
+      public Card card;
+      public CardInfo(Card newcard)
+      {
+        card = newcard;
+      }
+      public override string ToString()
+      {
+        return card.Name;
+      }
+    }
+    #endregion
 
     public TvCards()
       : this("TV Cards")
@@ -86,7 +101,6 @@ namespace SetupTv.Sections
       {
         group = (CardGroup)menuItem.Tag;
       }
-
       ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
       if (indexes.Count == 0) return;
       for (int i = 0; i < indexes.Count; ++i)
@@ -105,6 +119,13 @@ namespace SetupTv.Sections
     public override void OnSectionDeActivated()
     {
       ReOrder();
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Setting s = layer.GetSetting("enableWinTVTray", "no");
+      if (checkBoxWinTVTray.Checked)
+        s.Value = "yes";
+      else
+        s.Value = "no";
+      s.Persist();
       if (_needRestart)
       {
         RemoteControl.Instance.Restart();
@@ -112,11 +133,43 @@ namespace SetupTv.Sections
       base.OnSectionDeActivated();
     }
 
+    void SaveWinTVSettings(int cardId, string name, string moniker)
+    {
+      String fileName = "WinTV-CI.xml";
+      XmlTextWriter writer = new XmlTextWriter(fileName, System.Text.Encoding.UTF8);
+      writer.Formatting = Formatting.Indented;
+      writer.Indentation = 1;
+      writer.IndentChar = (char)9;
+      writer.WriteStartDocument(true);
+      writer.WriteStartElement("configuration"); //<configuration>
+      writer.WriteAttributeString("version", "1");
+      writer.WriteStartElement("card"); //<card>
+      writer.WriteAttributeString("cardId", XmlConvert.ToString(cardId));
+      writer.WriteAttributeString("name", name);
+      writer.WriteStartElement("device"); //<device>
+      writer.WriteElementString("path", moniker);
+      writer.WriteEndElement(); //</device>
+      writer.WriteEndElement(); //</card>
+      writer.WriteEndElement(); //</configuration>
+      writer.WriteEndDocument();
+      writer.Close();
+    }
+
+    void LoadWinTVSettings()
+    {
+      string configfile = "WinTV-CI.xml";
+      XmlDocument doc = new XmlDocument();
+      doc.Load(configfile);
+      XmlNode cardNode = doc.DocumentElement.SelectSingleNode("/configuration/card");
+      cardId = int.Parse(cardNode.Attributes["cardId"].Value);
+    }
+
     public override void OnSectionActivated()
     {
       _needRestart = false;
-
       UpdateList();
+      TvBusinessLayer layer = new TvBusinessLayer();
+      checkBoxWinTVTray.Checked = (layer.GetSetting("enableWinTVTray", "no").Value == "yes");
     }
 
     void UpdateList()
@@ -129,19 +182,20 @@ namespace SetupTv.Sections
         foreach (Card card in dbsCards)
         {
           cardTypes[card.DevicePath] = RemoteControl.Instance.Type(card.IdCard);
+          mpComboBoxCard.Items.Add(new CardInfo(card));
         }
+        LoadWinTVSettings();
+        mpComboBoxCard.SelectedIndex = cardId-1;
       }
       catch (Exception)
       {
       }
-
       try
       {
         SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Card));
         sb.AddOrderByField(false, "priority");
         SqlStatement stmt = sb.GetStatement(true);
         IList cards = ObjectFactory.GetCollection(typeof(Card), stmt.Execute());
-
         for (int i = 0; i < cards.Count; ++i)
         {
           Card card = (Card)cards[i];
@@ -152,13 +206,11 @@ namespace SetupTv.Sections
           }
           ListViewItem item = mpListView1.Items.Add("", 0);
           item.SubItems.Add(card.Priority.ToString());
-
           if (card.Enabled)
           {
             item.Checked = true;
             item.Font = new Font(item.Font, FontStyle.Regular);
             item.Text = "Yes";
-
           }
           else
           {
@@ -166,14 +218,12 @@ namespace SetupTv.Sections
             item.Font = new Font(item.Font, FontStyle.Strikeout);
             item.Text = "No";
           }
-
           item.SubItems.Add(cardType);
           if (cardType.ToLower().Contains("dvb") || cardType.ToLower().Contains("atsc"))//CAM limit doesn't apply to non-digital cards
             item.SubItems.Add(card.DecryptLimit.ToString());
           else
             item.SubItems.Add("");
           item.SubItems.Add(card.Name);
-
           //check if card is really available before setting to enabled.
           bool cardPresent = RemoteControl.Instance.CardPresent(card.IdCard);
           if (!cardPresent)
@@ -184,7 +234,6 @@ namespace SetupTv.Sections
           {
             item.SubItems.Add("Yes");
           }
-
           if (cardType.ToLower().Contains("dvb") || cardType.ToLower().Contains("atsc"))//CAM limit doesn't apply to non-digital cards
           {
             if (!card.GrabEPG)
@@ -197,11 +246,11 @@ namespace SetupTv.Sections
             }
           }
           else
+          {
             item.SubItems.Add("");
-
+          }
           item.Tag = card;
         }
-
       }
       catch (Exception)
       {
@@ -209,13 +258,35 @@ namespace SetupTv.Sections
       }
       ReOrder();
       UpdateHybrids();
+      checkWinTVCI();
       UpdateMenu();
       mpListView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
     }
 
+    void checkWinTVCI()
+    {
+      //check if the hauppauge wintv usb CI module is installed
+      DsDevice[] capDevices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSCapture);
+      DsDevice usbWinTvDevice = null;
+      for (int capIndex = 0; capIndex < capDevices.Length; capIndex++)
+      {
+        if (capDevices[capIndex].Name != null)
+        {
+          if (capDevices[capIndex].Name.ToLower() == "wintvciusbbda source")
+          {
+            usbWinTvDevice = capDevices[capIndex];
+            break;
+          }
+        }
+      }
+      if (usbWinTvDevice == null)
+      {
+        tabControl1.TabPages.RemoveAt(2);
+      }
+    }
+
     private void buttonUp_Click(object sender, EventArgs e)
     {
-
       mpListView1.BeginUpdate();
       ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
       if (indexes.Count == 0) return;
@@ -301,8 +372,8 @@ namespace SetupTv.Sections
 
     private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
     {
-
     }
+
     void UpdateHybrids()
     {
       treeView1.Nodes.Clear();
@@ -371,6 +442,15 @@ namespace SetupTv.Sections
       Card card = (Card)mpListView1.SelectedItems[0].Tag;
       mpListView1.Items.Remove(mpListView1.SelectedItems[0]);
       RemoteControl.Instance.CardRemove(card.IdCard);
+    }
+
+    private void mpComboBoxCard_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      CardInfo info = (CardInfo)mpComboBoxCard.SelectedItem;
+      int _winTVCardNumber = info.card.IdCard;
+      string _winTVCardName = info.card.Name;
+      string _winTVMoniker = info.card.DevicePath;
+      SaveWinTVSettings(_winTVCardNumber, _winTVCardName, _winTVMoniker);
     }
   }
 }

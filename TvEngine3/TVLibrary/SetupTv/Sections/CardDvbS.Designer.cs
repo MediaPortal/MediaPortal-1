@@ -251,6 +251,14 @@ namespace SetupTv.Sections
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.mpTransponder4);
+      this.groupBox1.Controls.Add(this.mpTransponder3);
+      this.groupBox1.Controls.Add(this.mpTransponder2);
+      this.groupBox1.Controls.Add(this.mpTransponder1);
+      this.groupBox1.Controls.Add(this.mpDisEqc4);
+      this.groupBox1.Controls.Add(this.mpDisEqc3);
+      this.groupBox1.Controls.Add(this.mpDisEqc2);
+      this.groupBox1.Controls.Add(this.mpDisEqc1);
       this.groupBox1.Controls.Add(this.label17);
       this.groupBox1.Controls.Add(this.label16);
       this.groupBox1.Controls.Add(this.label15);
@@ -267,19 +275,11 @@ namespace SetupTv.Sections
       this.groupBox1.Controls.Add(this.mpBand1);
       this.groupBox1.Controls.Add(this.mpLabel3);
       this.groupBox1.Controls.Add(this.mpLNB4);
-      this.groupBox1.Controls.Add(this.mpTransponder4);
-      this.groupBox1.Controls.Add(this.mpDisEqc4);
       this.groupBox1.Controls.Add(this.mpLNB3);
-      this.groupBox1.Controls.Add(this.mpTransponder3);
-      this.groupBox1.Controls.Add(this.mpDisEqc3);
       this.groupBox1.Controls.Add(this.mpLNB2);
-      this.groupBox1.Controls.Add(this.mpTransponder2);
-      this.groupBox1.Controls.Add(this.mpDisEqc2);
       this.groupBox1.Controls.Add(this.mpLabel5);
       this.groupBox1.Controls.Add(this.mpLabel6);
       this.groupBox1.Controls.Add(this.mpLNB1);
-      this.groupBox1.Controls.Add(this.mpTransponder1);
-      this.groupBox1.Controls.Add(this.mpDisEqc1);
       this.groupBox1.Controls.Add(this.groupBox2);
       this.groupBox1.Location = new System.Drawing.Point(3, 11);
       this.groupBox1.Name = "groupBox1";
@@ -390,7 +390,7 @@ namespace SetupTv.Sections
             "NA Legacy",
             "NA Custom 1",
             "NA Custom 2"});
-      this.mpBand4.Location = new System.Drawing.Point(143, 110);
+      this.mpBand4.Location = new System.Drawing.Point(134, 110);
       this.mpBand4.Name = "mpBand4";
       this.mpBand4.Size = new System.Drawing.Size(152, 21);
       this.mpBand4.TabIndex = 14;
@@ -412,7 +412,7 @@ namespace SetupTv.Sections
             "NA Legacy",
             "NA Custom 1",
             "NA Custom 2"});
-      this.mpBand3.Location = new System.Drawing.Point(143, 83);
+      this.mpBand3.Location = new System.Drawing.Point(134, 83);
       this.mpBand3.Name = "mpBand3";
       this.mpBand3.Size = new System.Drawing.Size(152, 21);
       this.mpBand3.TabIndex = 10;
@@ -434,7 +434,7 @@ namespace SetupTv.Sections
             "NA Legacy",
             "NA Custom 1",
             "NA Custom 2"});
-      this.mpBand2.Location = new System.Drawing.Point(143, 56);
+      this.mpBand2.Location = new System.Drawing.Point(134, 56);
       this.mpBand2.Name = "mpBand2";
       this.mpBand2.Size = new System.Drawing.Size(152, 21);
       this.mpBand2.TabIndex = 6;
@@ -456,7 +456,7 @@ namespace SetupTv.Sections
             "NA Legacy",
             "NA Custom 1",
             "NA Custom 2"});
-      this.mpBand1.Location = new System.Drawing.Point(143, 29);
+      this.mpBand1.Location = new System.Drawing.Point(134, 29);
       this.mpBand1.Name = "mpBand1";
       this.mpBand1.Size = new System.Drawing.Size(152, 21);
       this.mpBand1.TabIndex = 2;
@@ -465,7 +465,7 @@ namespace SetupTv.Sections
       // mpLabel3
       // 
       this.mpLabel3.AutoSize = true;
-      this.mpLabel3.Location = new System.Drawing.Point(140, 10);
+      this.mpLabel3.Location = new System.Drawing.Point(131, 10);
       this.mpLabel3.Name = "mpLabel3";
       this.mpLabel3.Size = new System.Drawing.Size(35, 13);
       this.mpLabel3.TabIndex = 76;
@@ -487,7 +487,7 @@ namespace SetupTv.Sections
       // 
       this.mpTransponder4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpTransponder4.FormattingEnabled = true;
-      this.mpTransponder4.Location = new System.Drawing.Point(301, 110);
+      this.mpTransponder4.Location = new System.Drawing.Point(290, 110);
       this.mpTransponder4.Name = "mpTransponder4";
       this.mpTransponder4.Size = new System.Drawing.Size(172, 21);
       this.mpTransponder4.TabIndex = 15;
@@ -496,7 +496,7 @@ namespace SetupTv.Sections
       // 
       this.mpDisEqc4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpDisEqc4.FormattingEnabled = true;
-      this.mpDisEqc4.Location = new System.Drawing.Point(70, 110);
+      this.mpDisEqc4.Location = new System.Drawing.Point(63, 110);
       this.mpDisEqc4.Name = "mpDisEqc4";
       this.mpDisEqc4.Size = new System.Drawing.Size(67, 21);
       this.mpDisEqc4.TabIndex = 13;
@@ -517,7 +517,7 @@ namespace SetupTv.Sections
       // 
       this.mpTransponder3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpTransponder3.FormattingEnabled = true;
-      this.mpTransponder3.Location = new System.Drawing.Point(301, 83);
+      this.mpTransponder3.Location = new System.Drawing.Point(290, 83);
       this.mpTransponder3.Name = "mpTransponder3";
       this.mpTransponder3.Size = new System.Drawing.Size(172, 21);
       this.mpTransponder3.TabIndex = 11;
@@ -526,7 +526,7 @@ namespace SetupTv.Sections
       // 
       this.mpDisEqc3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpDisEqc3.FormattingEnabled = true;
-      this.mpDisEqc3.Location = new System.Drawing.Point(70, 83);
+      this.mpDisEqc3.Location = new System.Drawing.Point(63, 83);
       this.mpDisEqc3.Name = "mpDisEqc3";
       this.mpDisEqc3.Size = new System.Drawing.Size(67, 21);
       this.mpDisEqc3.TabIndex = 9;
@@ -547,7 +547,7 @@ namespace SetupTv.Sections
       // 
       this.mpTransponder2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpTransponder2.FormattingEnabled = true;
-      this.mpTransponder2.Location = new System.Drawing.Point(301, 56);
+      this.mpTransponder2.Location = new System.Drawing.Point(290, 56);
       this.mpTransponder2.Name = "mpTransponder2";
       this.mpTransponder2.Size = new System.Drawing.Size(172, 21);
       this.mpTransponder2.TabIndex = 7;
@@ -556,7 +556,7 @@ namespace SetupTv.Sections
       // 
       this.mpDisEqc2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpDisEqc2.FormattingEnabled = true;
-      this.mpDisEqc2.Location = new System.Drawing.Point(70, 56);
+      this.mpDisEqc2.Location = new System.Drawing.Point(63, 56);
       this.mpDisEqc2.Name = "mpDisEqc2";
       this.mpDisEqc2.Size = new System.Drawing.Size(67, 21);
       this.mpDisEqc2.TabIndex = 5;
@@ -564,7 +564,7 @@ namespace SetupTv.Sections
       // mpLabel5
       // 
       this.mpLabel5.AutoSize = true;
-      this.mpLabel5.Location = new System.Drawing.Point(298, 10);
+      this.mpLabel5.Location = new System.Drawing.Point(287, 10);
       this.mpLabel5.Name = "mpLabel5";
       this.mpLabel5.Size = new System.Drawing.Size(47, 13);
       this.mpLabel5.TabIndex = 66;
@@ -573,7 +573,7 @@ namespace SetupTv.Sections
       // mpLabel6
       // 
       this.mpLabel6.AutoSize = true;
-      this.mpLabel6.Location = new System.Drawing.Point(67, 10);
+      this.mpLabel6.Location = new System.Drawing.Point(60, 10);
       this.mpLabel6.Name = "mpLabel6";
       this.mpLabel6.Size = new System.Drawing.Size(47, 13);
       this.mpLabel6.TabIndex = 66;
@@ -595,7 +595,7 @@ namespace SetupTv.Sections
       // 
       this.mpTransponder1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpTransponder1.FormattingEnabled = true;
-      this.mpTransponder1.Location = new System.Drawing.Point(301, 29);
+      this.mpTransponder1.Location = new System.Drawing.Point(290, 29);
       this.mpTransponder1.Name = "mpTransponder1";
       this.mpTransponder1.Size = new System.Drawing.Size(172, 21);
       this.mpTransponder1.TabIndex = 3;
@@ -604,7 +604,7 @@ namespace SetupTv.Sections
       // 
       this.mpDisEqc1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpDisEqc1.FormattingEnabled = true;
-      this.mpDisEqc1.Location = new System.Drawing.Point(70, 29);
+      this.mpDisEqc1.Location = new System.Drawing.Point(63, 29);
       this.mpDisEqc1.Name = "mpDisEqc1";
       this.mpDisEqc1.Size = new System.Drawing.Size(67, 21);
       this.mpDisEqc1.TabIndex = 1;
