@@ -331,6 +331,7 @@ namespace MediaPortal.GUI.Library
     public const int WINDOW_NEXT = 9996;
     public const int WINDOW_PREVIOUS = 9997;
     public const int WINDOW_IS_MEDIA = 9998;
+    public const int WINDOW_IS_OSD_VISIBLE = 9999;
     //public const int WINDOW_ACTIVE_START = WINDOW_HOME;
     //public const int WINDOW_ACTIVE_END = WINDOW_PYTHON_END;
 
@@ -716,7 +717,8 @@ namespace MediaPortal.GUI.Library
       }
       else if (strCategory == "window")
       {
-        if (strTest.Substring(0, 16) == "window.isactive(")
+        if (strTest == "window.isosdvisible") ret = WINDOW_IS_OSD_VISIBLE;
+        else if (strTest.Substring(0, 16) == "window.isactive(")
         {
           int winID = TranslateWindowString(strTest.Substring(16, strTest.Length - 17));
           if (winID != (int)GUIWindow.Window.WINDOW_INVALID)
@@ -1117,6 +1119,8 @@ namespace MediaPortal.GUI.Library
         //bReturn = (pWindow && pWindow.IsMediaWindow());
         bReturn = false;
       }
+      else if (condition == WINDOW_IS_OSD_VISIBLE)
+        bReturn = GUIWindowManager.IsOsdVisible;
       else if (condition == PLAYER_MUTED)
         bReturn = (g_Player.Volume == 0);//g_stSettings.m_bMute;
       else if (condition == SYSTEM_MEDIA_DVD)
@@ -1309,6 +1313,7 @@ namespace MediaPortal.GUI.Library
             break;
         }
       }
+
       // cache return value
       if (condition1 < 0) bReturn = !bReturn;
       //CacheBool(condition1, dwContextWindow, bReturn);
