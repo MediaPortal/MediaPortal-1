@@ -35,6 +35,8 @@
 #define MAX_BUF_SIZE 8000
 #define OUTPUT_PACKET_LENGTH 0x6000e
 #define BUFFER_LENGTH        0x1000
+#define FALLBACK_PACKETS_SD		300
+#define FALLBACK_PACKETS_HD		1500
 extern void LogDebug(const char *fmt, ...) ;
 
 #define READ_SIZE (1316*30)
@@ -62,6 +64,7 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_bHoldSubtitle=false;
   m_iAudioIdx=-1;
   m_iPatVersion=-1;
+	m_receivedPackets=0;
   m_bSetAudioDiscontinuity=false;
   m_bSetVideoDiscontinuity=false;
   m_reader=NULL;  
@@ -630,6 +633,7 @@ CBuffer* CDeMultiplexer::GetAudio()
 void CDeMultiplexer::Start()
 {
   //reset some values
+	m_receivedPackets=0;
 	ResetMpeg2VideoInfo();
 	m_mpegParserTriggerFormatChange=false;
   m_bEndOfFile=false;
@@ -793,6 +797,20 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket)
 		}
 		LogDebug("DeMultiplexer: triggering OnVideoFormatChanged");
 		m_filter.OnVideoFormatChanged(streamType,m_mpeg2VideoInfo.hdr.rcSource.right,m_mpeg2VideoInfo.hdr.rcSource.bottom,m_mpeg2VideoInfo.hdr.dwPictAspectRatioX,m_mpeg2VideoInfo.hdr.dwPictAspectRatioY,m_mpeg2VideoInfo.hdr.dwBitRate,(m_mpeg2VideoInfo.hdr.dwInterlaceFlags & AMINTERLACE_IsInterlaced==AMINTERLACE_IsInterlaced));
+	}
+	else
+	{
+		if (m_mpegParserTriggerFormatChange)
+			m_receivedPackets++;
+		int packetsToFallBack=FALLBACK_PACKETS_SD;
+		if (m_pids.videoServiceType!=SERVICE_TYPE_VIDEO_MPEG2)
+			packetsToFallBack=FALLBACK_PACKETS_HD;
+		if (m_mpegParserTriggerFormatChange && m_receivedPackets>packetsToFallBack)
+		{
+			LogDebug("DeMultiplexer: Got %d packets after the channel change was detected without correct mpeg header parsing, so we trigger the format change now.");
+			m_filter.OnMediaTypeChanged(3);
+			m_mpegParserTriggerFormatChange=false;
+		}
 	}
 	#endif
 
@@ -1518,6 +1536,8 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
 		if (m_pids.VideoPid>0x1 && videoChanged)  
 		{
 			LogDebug("DeMultiplexer: We detected a new media type change which has a video stream, so we let the mpegParser trigger the event");
+			m_receivedPackets=0;
+			ResetMpeg2VideoInfo();
 			m_mpegParserTriggerFormatChange=true;
 		}
 		else

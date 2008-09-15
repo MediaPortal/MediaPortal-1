@@ -163,6 +163,7 @@ private:
   //bool m_bPreferAC3;
   int m_iAudioIdx;
   int m_iPatVersion;
+	int m_receivedPackets;
 
 	MPEG2VIDEOINFO m_mpeg2VideoInfo;
 	bool m_mpegParserTriggerFormatChange;
