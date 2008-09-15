@@ -152,7 +152,16 @@ namespace SetupTv.Sections
       List<ListViewItem> items = new List<ListViewItem>();
       foreach (ChannelMap map in maps)
       {
-        Channel channel = map.ReferencedChannel();
+        Channel channel = null;
+        try
+        {
+          channel = map.ReferencedChannel();
+        }
+        catch (Exception)
+        {
+        }
+        if (channel == null)
+          continue;
         if (channel.IsTv == false) continue;
         int imageIndex = 1;
         if (channel.FreeToAir == false)
