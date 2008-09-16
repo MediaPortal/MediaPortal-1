@@ -409,27 +409,26 @@ public class MediaPortalApp : D3DApp, IRender
             }
           }
           Application.DoEvents();
-          // CHECK if Windows MediaPlayer 9 is installed
+
+          // CHECK if Windows MediaPlayer 11 is installed
+          string WMP_Main_Ver = "11";
           Log.Info("Main: Verifying Windows Media Player");
-          using (RegistryKey subkey = Registry.LocalMachine.OpenSubKey(@"Software\Microsoft\Active Setup\Installed Components\{22d6f312-b0f6-11d0-94ab-0080c74c7e95}"))
+
+          Version aParamVersion;
+          if (FilterChecker.CheckFileVersion(Environment.SystemDirectory + "\\wmp.dll", WMP_Main_Ver + ".0.0000.0000", out aParamVersion))
           {
-            if (subkey != null)
-            {
-              if (((int)subkey.GetValue("IsInstalled")) == 1)
-              {
-                string wmpversion = (string)subkey.GetValue("Version");
-                Log.Info("Main: Windows Media Player version {0} installed", wmpversion);
-              }
-            }
-            else
-            {
-              string strLine = "Please install Windows Media Player 9 or 10\r\n";
-              strLine = strLine + "MediaPortal cannot run without Windows Media Player 9 or 10";
-              MessageBox.Show(strLine, "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
-              return;
-            }
+            Log.Info("Main: Windows Media Player version {0} installed", aParamVersion);
           }
+          else
+          {
+            string strLine = "Please install Windows Media Player " + WMP_Main_Ver + "\r\n";
+            strLine = strLine + "MediaPortal cannot run without Windows Media Player " + WMP_Main_Ver;
+            MessageBox.Show(strLine, "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return;
+          }
+
         }
+
         catch (Exception)
         {
         }
