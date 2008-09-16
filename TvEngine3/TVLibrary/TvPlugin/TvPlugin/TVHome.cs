@@ -198,14 +198,14 @@ namespace TvPlugin
       {
         if (TVHome.Connected)
         {
-        bool isTS = TVHome.Card.IsTimeShifting;
-        if (TVHome.Connected && isTS)
-        {
-          // send heartbeat to tv server each 5 sec.
-          // this way we signal to the server that we are alive thus avoid being kicked.
-          // Log.Debug("TVHome: sending HeartBeat signal to server.");
+          bool isTS = TVHome.Card.IsTimeShifting;
+          if (TVHome.Connected && isTS)
+          {
+            // send heartbeat to tv server each 5 sec.
+            // this way we signal to the server that we are alive thus avoid being kicked.
+            // Log.Debug("TVHome: sending HeartBeat signal to server.");
 
-          // when debugging we want to disable heartbeats
+            // when debugging we want to disable heartbeats
 #if !DEBUG
           try
           {
@@ -216,66 +216,66 @@ namespace TvPlugin
             Log.Error("TVHome: failed sending HeartBeat signal to server. ({0})", e.Message);
           }
 #endif
-        }
-        else if (TVHome.Connected && !isTS && !_playbackStopped && _onPageLoadDone && (!g_Player.IsMusic && !g_Player.IsDVD && !g_Player.IsRadio && !g_Player.IsVideo))
-        {
-          // check the possible reason why timeshifting has suddenly stopped
-          // maybe the server kicked the client b/c a recording on another transponder was due.
-
-          TvStoppedReason result = TVHome.Card.GetTimeshiftStoppedReason;
-          if (result != TvStoppedReason.UnknownReason)
+          }
+          else if (TVHome.Connected && !isTS && !_playbackStopped && _onPageLoadDone && (!g_Player.IsMusic && !g_Player.IsDVD && !g_Player.IsRadio && !g_Player.IsVideo))
           {
-            Log.Debug("TVHome: Timeshifting seems to have stopped - TvStoppedReason:{0}", result);
-            string errMsg = "";
+            // check the possible reason why timeshifting has suddenly stopped
+            // maybe the server kicked the client b/c a recording on another transponder was due.
 
-            switch (result)
+            TvStoppedReason result = TVHome.Card.GetTimeshiftStoppedReason;
+            if (result != TvStoppedReason.UnknownReason)
             {
-              case TvStoppedReason.HeartBeatTimeOut:
-                errMsg = GUILocalizeStrings.Get(1515);
-                break;
-              case TvStoppedReason.KickedByAdmin:
-                errMsg = GUILocalizeStrings.Get(1514);
-                break;
-              case TvStoppedReason.RecordingStarted:
-                errMsg = GUILocalizeStrings.Get(1513);
-                break;
-              case TvStoppedReason.OwnerChangedTS:
-                errMsg = GUILocalizeStrings.Get(1517);
-                break;
-              default:
-                errMsg = GUILocalizeStrings.Get(1516);
-                break;
-            }
+              Log.Debug("TVHome: Timeshifting seems to have stopped - TvStoppedReason:{0}", result);
+              string errMsg = "";
 
-            GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-
-            if (pDlgOK != null)
-            {
-
-              if (GUIWindowManager.ActiveWindow == (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
+              switch (result)
               {
-                GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV, true);
+                case TvStoppedReason.HeartBeatTimeOut:
+                  errMsg = GUILocalizeStrings.Get(1515);
+                  break;
+                case TvStoppedReason.KickedByAdmin:
+                  errMsg = GUILocalizeStrings.Get(1514);
+                  break;
+                case TvStoppedReason.RecordingStarted:
+                  errMsg = GUILocalizeStrings.Get(1513);
+                  break;
+                case TvStoppedReason.OwnerChangedTS:
+                  errMsg = GUILocalizeStrings.Get(1517);
+                  break;
+                default:
+                  errMsg = GUILocalizeStrings.Get(1516);
+                  break;
               }
 
-              pDlgOK.SetHeading(GUILocalizeStrings.Get(605) + " - " + TVHome.Navigator.CurrentChannel);//my tv
-              errMsg = errMsg.Replace("\\r", "\r");
-              string[] lines = errMsg.Split('\r');
-              //pDlgOK.SetLine(1, TVHome.Navigator.CurrentChannel);
+              GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
 
-              for (int i = 0; i < lines.Length; i++)
+              if (pDlgOK != null)
               {
-                string line = lines[i];
-                pDlgOK.SetLine(1 + i, line);
-              }
-              pDlgOK.DoModal(GUIWindowManager.ActiveWindowEx);
-            }
-            Action keyAction = new Action(Action.ActionType.ACTION_STOP, 0, 0);
-            GUIGraphicsContext.OnAction(keyAction);
-            _playbackStopped = true;
 
+                if (GUIWindowManager.ActiveWindow == (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
+                {
+                  GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV, true);
+                }
+
+                pDlgOK.SetHeading(GUILocalizeStrings.Get(605) + " - " + TVHome.Navigator.CurrentChannel);//my tv
+                errMsg = errMsg.Replace("\\r", "\r");
+                string[] lines = errMsg.Split('\r');
+                //pDlgOK.SetLine(1, TVHome.Navigator.CurrentChannel);
+
+                for (int i = 0; i < lines.Length; i++)
+                {
+                  string line = lines[i];
+                  pDlgOK.SetLine(1 + i, line);
+                }
+                pDlgOK.DoModal(GUIWindowManager.ActiveWindowEx);
+              }
+              Action keyAction = new Action(Action.ActionType.ACTION_STOP, 0, 0);
+              GUIGraphicsContext.OnAction(keyAction);
+              _playbackStopped = true;
+
+            }
           }
         }
-      }
         Thread.Sleep(HEARTBEAT_INTERVAL * 1000); //sleep for 5 secs. before sending heartbeat again
       }
     }
@@ -900,14 +900,14 @@ namespace TvPlugin
       if (type != g_Player.MediaType.TV && type != g_Player.MediaType.Radio) return;
 
       //gemx: fix for 0001181: Videoplayback does not work if tvservice.exe is not running 
-      if (!TVHome.Connected) return;      
+      if (!TVHome.Connected) return;
       if (TVHome.Card.IsTimeShifting == false) return;
 
       //tv off
       Log.Info("TVHome:turn tv off");
       SaveSettings();
       TVHome.Card.User.Name = new User().Name;
-      TVHome.Card.StopTimeShifting();                                          
+      TVHome.Card.StopTimeShifting();
 
       if (type == g_Player.MediaType.Radio || type == g_Player.MediaType.TV)
       {
@@ -1474,7 +1474,7 @@ namespace TvPlugin
         if (TVHome.Card.IsTimeShifting && g_Player.IsTV && g_Player.Playing)
         {
           //tv off
-          g_Player.Stop();         
+          g_Player.Stop();
           Log.Warn("TVHome.OnClicked(): EndTvOff {0} ms", benchClock.ElapsedMilliseconds.ToString());
           benchClock.Stop();
           return;
@@ -1496,7 +1496,7 @@ namespace TvPlugin
               Log.Warn("TVHome.OnClicked: Stop Called - {0} ms", benchClock.ElapsedMilliseconds.ToString());
               g_Player.Stop(true);
             }
-          }          
+          }
         }
 
         // turn tv on/off        
@@ -2662,10 +2662,11 @@ namespace TvPlugin
         TvServer server = new TvServer();
         VirtualCard card;
         bool cardChanged = false;
+        int newCardId = -1;
         if (wasPlaying)
         {
           // we need to stop player HERE if card has changed.        
-          int newCardId = server.TimeShiftingWouldUseCard(ref user, channel.IdChannel);
+          newCardId = server.TimeShiftingWouldUseCard(ref user, channel.IdChannel);
 
           //Added by joboehl - If any major related to the timeshifting changed during the start, restart the player.           
           if (newCardId == -1)
@@ -2689,13 +2690,34 @@ namespace TvPlugin
             }
             succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
           }
-          else
+          else //card "probably" not changed.
           {
             // PauseGraph & ContinueGraph does add a bit overhead to channel change times
             g_Player.PauseGraph();
             succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
-            SeekToEnd(true);
-            g_Player.ContinueGraph();
+
+            if (succeeded == TvResult.Succeeded)
+            {
+              if (newCardId != card.Id && TVHome.Card.Id != card.Id)
+              {
+                // we might have a situation on the server where card has changed in order to complete a 
+                // channel change. - lets check for this.
+                // if this has happened, we need to re-create graph.
+                cardChanged = true;
+                wasPlaying = false;
+                //g_Player.StopAndKeepTimeShifting();
+              }
+              else if (succeeded == TvResult.Succeeded) // no card change occured, so carry on.
+              {
+                SeekToEnd(true);
+                g_Player.ContinueGraph();
+              }
+            }
+            else
+            {
+              cardChanged = false;
+            }
+
           }
         }
         else
@@ -2762,6 +2784,8 @@ namespace TvPlugin
         Log.Debug("TvPlugin:ViewChannelandCheck Exception {0}", ex.ToString());
         //GUIWaitCursor.Hide();
         _doingChannelChange = false;
+        TVHome.Card.User.Name = new User().Name;
+        TVHome.Card.StopTimeShifting();
         return false;
       }
     }
