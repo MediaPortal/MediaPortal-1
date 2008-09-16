@@ -260,6 +260,27 @@ namespace MediaPortal.DeployTool
       return null;
     }
 
+    public static bool CheckFileVersion(string aFilePath, string aMinimumVersion, out Version aCurrentVersion)
+    {
+      aCurrentVersion = new Version(0, 0, 0, 0);
+      try
+      {
+        System.Version desiredVersion = new System.Version(aMinimumVersion);
+        FileVersionInfo fileVersion = FileVersionInfo.GetVersionInfo(aFilePath);
+        if (!string.IsNullOrEmpty(fileVersion.ProductVersion))
+        {
+          aCurrentVersion = new System.Version(fileVersion.ProductVersion);
+          return aCurrentVersion >= desiredVersion;
+        }
+        else
+          return false;
+      }
+      catch (Exception)
+      {
+        return false;
+      }
+    }
+
     #region Operation System Version Check
     public static void CheckPrerequisites()
     {

@@ -162,6 +162,7 @@ namespace MediaPortal.DeployTool
         AddPackageToListView(new OldPackageChecker());
       AddPackageToListView(new DirectX9Checker());
       AddPackageToListView(new VCRedistChecker());
+      AddPackageToListView(new WindowsMediaPlayerChecker());
       switch (InstallationProperties.Instance["InstallType"])
       {
         case "singleseat":

@@ -78,6 +78,7 @@
     <Compile Include="InstallationChecks\TvServerChecker.cs" />
     <Compile Include="InstallationChecks\DirectX9Checker.cs" />
     <Compile Include="InstallationChecks\MediaPortalChecker.cs" />
+    <Compile Include="InstallationChecks\WindowsMediaPlayerChecker.cs" />
     <Compile Include="InstallationProperties.cs" />
     <Compile Include="ManualDownload.cs">
       <SubType>Form</SubType>
