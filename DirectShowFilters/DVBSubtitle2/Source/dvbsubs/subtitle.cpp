@@ -45,9 +45,7 @@ CSubtitle::CSubtitle( int width, int height )
 
   count++;
 
-  LogDebug("CSubtitle:: CREATE count %d", count);
-
-  m_Data = NULL;
+  //LogDebug("CSubtitle:: CREATE count %d", count);
 
   m_Data = new unsigned char[ m_Bitmap.bmHeight * m_Bitmap.bmWidth *4 ];
   ZeroMemory( m_Data, m_Bitmap.bmHeight * m_Bitmap.bmWidth * 4 );
@@ -59,8 +57,8 @@ CSubtitle::CSubtitle( int width, int height )
 CSubtitle::~CSubtitle()
 {
   count--;
-  LogDebug("CSubtitle::~CSubtitle() count %d", count);
-	delete[] m_Data;
+  //LogDebug("CSubtitle::~CSubtitle() count %d", count);
+  delete[] m_Data;
 }
 
 

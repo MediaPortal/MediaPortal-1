@@ -653,7 +653,7 @@ int CDVBSubDecoder::ProcessPES( const unsigned char* data, int length, int pid )
 	{
 		PTS = Get_pes_pts(buf);
 		m_CurrentSubtitle->SetPTS( PTS );
-    LogDebugPTS( "Subtitle PTS", PTS );
+    //LogDebugPTS( "Subtitle PTS", PTS );
 
 		PES_header_data_length=buf[8];
 		i = 9 + PES_header_data_length;
@@ -724,12 +724,17 @@ int CDVBSubDecoder::ProcessPES( const unsigned char* data, int length, int pid )
 					Process_object_data_segment();
 					break;
 				case 0x14: 
-					// New Zealand's DVB stream contains these. 
+					// New Zealand DVB stream contains these. 
           // Ignore and continue processing the rest of the PES packet.
 					break;
 				case 0x80: 
 					// IMPLEMENTATION IS OPTIONAL - dvbsubs ignores it.
 					// end_of_display_set_segment(); 
+          break;
+				case 0xFF: 
+					// Brazilian DVB stream contains these. NULL packets?
+          // Ignore?
+          return 1;
 					break;
 				default:
 					LogDebug("DVBsubs: ERROR: Unknown segment %02x, length %d, data=%02x %02x %02x %02x",segment_type,segment_length,buf[i+4],buf[i+5],buf[i+6],buf[i+7]);
