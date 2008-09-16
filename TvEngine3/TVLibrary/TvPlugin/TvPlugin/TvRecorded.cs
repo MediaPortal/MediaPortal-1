@@ -792,7 +792,7 @@ namespace TvPlugin
         {
           item = new GUIListItem(aRecording.Title);
           item.TVTag = aRecording;
-          string strLogo = Utils.GetCoverArt(Thumbs.TVRecorded, Utils.SplitFilename(Path.ChangeExtension(aRecording.FileName, Utils.GetThumbExtension())));
+          string strLogo = Thumbs.TVRecorded + @"\" + Path.ChangeExtension(Utils.SplitFilename(aRecording.FileName), ".png");   
 
           if (!File.Exists(strLogo))
           {
