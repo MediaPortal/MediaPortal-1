@@ -129,6 +129,8 @@ namespace MediaPortal.Configuration.Sections
       : base("Movie Database")
     {
       InitializeComponent();
+
+      this.linkLabel1.Links.Add(0, linkLabel1.Text.Length, "http://forum.team-mediaportal.com/movie-info-grabbers-287/");
     }
     #endregion
 
@@ -2000,6 +2002,11 @@ namespace MediaPortal.Configuration.Sections
         VideoDatabase.SetThumbURL(CurrentMovie.ID, strImageURL);
         useLocalImage = false;
       }
+    }
+
+    private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    {
+      System.Diagnostics.Process.Start((string)e.Link.LinkData);
     }
   }
 }
