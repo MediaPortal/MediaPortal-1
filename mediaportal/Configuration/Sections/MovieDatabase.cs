@@ -1587,6 +1587,13 @@ namespace MediaPortal.Configuration.Sections
 
     private void mpButtonUpdateGrabber_Click(object sender, EventArgs e)
     {
+      if (!Util.Win32API.IsConnectedToInternet())
+      {
+        MessageBox.Show("Update failed. Please check your internet connection!", "", MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+        return;
+      }
+
       progressDialog = new DlgProgress();
       progressDialog.SetHeading("Updating MovieInfo grabber scripts...");
       progressDialog.TopMost = true;

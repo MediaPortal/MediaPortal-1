@@ -74,6 +74,13 @@ namespace MediaPortal.Configuration
 
     public static void UpdateHelpReferences()
     {
+      if (!Util.Win32API.IsConnectedToInternet())
+      {
+        MessageBox.Show("Update failed. Please check your internet connection!", "", MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+        return;
+      }
+
       string helpReferencesTemp = Path.GetTempFileName();
 
       Application.DoEvents();
