@@ -38,6 +38,7 @@ namespace MediaPortal.GUI.Video
     enum Controls:int
     {
       OSD_VIDEOPROGRESS = 1,
+      OSD_PAUSE = 209,
       OSD_SKIPBWD = 210,
       OSD_REWIND = 211,
       OSD_STOP = 212,
@@ -173,7 +174,7 @@ namespace MediaPortal.GUI.Video
         case Action.ActionType.ACTION_PAUSE:
           {
             // push a message through to this window to handle the remote control button
-            GUIMessage msgSet = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, GetID, (int)Controls.OSD_PLAY, (int)Controls.OSD_PLAY, 0, 0, null);
+            GUIMessage msgSet = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, GetID, (int)Controls.OSD_PAUSE, (int)Controls.OSD_PAUSE, 0, 0, null);
             OnMessage(msgSet);
             return;
           }
@@ -288,9 +289,34 @@ namespace MediaPortal.GUI.Video
               Handle_ControlSetting(iControl, message.Param1);
             }
 
+            if (iControl == (int)Controls.OSD_PAUSE)
+            {
+              g_Player.Pause();	// Pause/Un-Pause playback
+              if (g_Player.Paused)
+              {                
+                ToggleButton((int)Controls.OSD_PLAY, true);		// make sure play button is down (so it shows the pause symbol)                
+                ToggleButton((int)Controls.OSD_FFWD, false);		// pop the button back to it's up state
+                ToggleButton((int)Controls.OSD_REWIND, false);	// pop the button back to it's up state
+              }
+              else
+              {               
+                ToggleButton((int)Controls.OSD_PLAY, false);		// make sure play button is up (so it shows the play symbol)
+                if (g_Player.Speed < 1)	// are we not playing back at normal speed
+                {
+                  ToggleButton((int)Controls.OSD_REWIND, true);		// make sure out button is in the down position
+                  ToggleButton((int)Controls.OSD_FFWD, false);		// pop the button back to it's up state
+                }
+                else
+                {
+                  ToggleButton((int)Controls.OSD_REWIND, false);	// pop the button back to it's up state
+                  if (g_Player.Speed == 1)
+                    ToggleButton((int)Controls.OSD_FFWD, false);		// pop the button back to it's up state
+                }
+              }              
+            }
+
             if (iControl == (int)Controls.OSD_PLAY)
             {
-
               //TODO
               int iSpeed = g_Player.Speed;
               if (iSpeed != 1)	// we're in ffwd or rewind mode

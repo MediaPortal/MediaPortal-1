@@ -36,6 +36,7 @@ using MediaPortal.Subtitle;
 using MediaPortal.Configuration;
 using MediaPortal.Playlists;
 using Un4seen.Bass.AddOn.Cd;
+using System.Runtime.CompilerServices;
 
 namespace MediaPortal.Player
 {
@@ -46,7 +47,8 @@ namespace MediaPortal.Player
     public enum DriveType { CD, DVD };
     #endregion
 
-    #region variables
+    #region variables    
+
     static int _currentStep = 0;
     static int _currentStepIndex = -1;
     static DateTime _seekTimer = DateTime.MinValue;
@@ -404,8 +406,9 @@ namespace MediaPortal.Player
       }
     }
 
+    [MethodImpl(MethodImplOptions.Synchronized)]
     private static void doStop(bool keepTimeShifting, bool keepExclusiveModeOn)
-    {
+    {      
       if (driveSpeedReduced)
       {
         // Set the CD/DVD Speed back to Max Speed
@@ -453,7 +456,7 @@ namespace MediaPortal.Player
         CachePlayer();
         _chapters = null;
         _jumpPoints = null;
-      }
+      }      
     }
 
     public static void StopAndKeepTimeShifting()
@@ -484,6 +487,7 @@ namespace MediaPortal.Player
 
     static void CachePlayer()
     {
+      if (_player == null) return;
       if (_player.SupportsReplay)
       {
         _prevPlayer = _player;
@@ -503,7 +507,10 @@ namespace MediaPortal.Player
       {
         _currentStep = 0;
         _currentStepIndex = -1;
-        _seekTimer = DateTime.MinValue;
+        _seekTimer = DateTime.MinValue;        
+        _player.Speed = 1; //default back to 1x speed.
+        
+
         _player.Pause();
         if (VMR9Util.g_vmr9 != null)
         {
