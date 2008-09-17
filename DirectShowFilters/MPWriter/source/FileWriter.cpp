@@ -1,6 +1,6 @@
 /**
 *  FileWriter.cpp
-*  Copyright (C) 2005      nate
+*  Copyright (C) 2006-2007      nate
 *
 *  This file is part of TSFileSource, a directshow push source filter that
 *  provides an MPEG transport stream output.
@@ -23,11 +23,11 @@
 *    http://forums.dvbowners.com/
 */
 
+#pragma warning(disable : 4995)
 #include <streams.h>
 #include "FileWriter.h"
 #include <atlbase.h>
 
-extern void LogDebug(const char *fmt, ...) ;
 FileWriter::FileWriter() :
 	m_hFile(INVALID_HANDLE_VALUE),
 	m_pFileName(0),
@@ -100,10 +100,10 @@ HRESULT FileWriter::OpenFile()
 
 	// See the the file is being read.
 	m_hFile = CreateFile(W2T(m_pFileName),      // The filename
-						 GENERIC_WRITE,         // File access
-						 NULL,                  // Share access
+						 (DWORD) GENERIC_WRITE,         // File access
+						 (DWORD) NULL,                  // Share access
 						 NULL,                  // Security
-						 OPEN_ALWAYS,           // Open flags
+						 (DWORD) OPEN_ALWAYS,           // Open flags
 						 (DWORD) 0,             // More flags
 						 NULL);                 // Template
 	if (m_hFile == INVALID_HANDLE_VALUE)
@@ -119,10 +119,10 @@ HRESULT FileWriter::OpenFile()
 
 	// Try to open the file
 	m_hFile = CreateFile(W2T(m_pFileName),      // The filename
-						 GENERIC_WRITE,         // File access
-						 FILE_SHARE_READ,       // Share access
+						 (DWORD) GENERIC_WRITE,         // File access
+						 (DWORD) FILE_SHARE_READ,       // Share access
 						 NULL,                  // Security
-						 OPEN_ALWAYS,           // Open flags
+						 (DWORD) OPEN_ALWAYS,           // Open flags
 //						 (DWORD) FILE_FLAG_RANDOM_ACCESS,
 //						 (DWORD) FILE_FLAG_WRITE_THROUGH,             // More flags
 						 (DWORD) 0,             // More flags

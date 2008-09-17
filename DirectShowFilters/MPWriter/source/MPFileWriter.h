@@ -20,8 +20,6 @@
 */
 #include <map>
 #include "filewriter.h"
-#include "ProgramToTransportStream.h"
-#include "ProgramToTransportStreamRecorder.h"
 #include "TeletextGrabber.h"
 #include "AnalogVideoAudioObserver.h"
 #include "ChannelScan.h"

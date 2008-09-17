@@ -1,6 +1,6 @@
 /**
 *  MultiFileWriter.h
-*  Copyright (C) 2005      nate
+*  Copyright (C) 2006-2007      nate
 *
 *  This file is part of TSFileSource, a directshow push source filter that
 *  provides an MPEG transport stream output.
@@ -80,6 +80,7 @@ protected:
 	long m_filesAdded;
 	long m_filesRemoved;
 	long m_currentFilenameId;
+	long m_currentFileId;
 
 	long m_minTSFiles;
 	long m_maxTSFiles;

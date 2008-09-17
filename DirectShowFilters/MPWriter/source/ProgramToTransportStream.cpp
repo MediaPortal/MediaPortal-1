@@ -3,169 +3,145 @@
 #include "MemoryStreamSource.h"
 extern void LogDebug(const char *fmt, ...) ;
 
-CProgramToTransportStream::CProgramToTransportStream(void)
+CProgramToTransportStream::CProgramToTransportStream(bool recorder)
 {
-  m_bRunning=false;
-  LogDebug("CProgramToTransportStream::ctor");
-  TaskScheduler* scheduler = BasicTaskScheduler::createNew();
-  m_env = BasicUsageEnvironment::createNew(*scheduler);
-  m_outputSink=NULL;
-  m_inputSource=NULL;
-  m_tsFrames=NULL;
-  m_bSendVideoAudioObserverEvents = true;
+	m_bRunning=false;
+	LogDebug("CProgramToTransportStream::ctor");
+	TaskScheduler* scheduler = BasicTaskScheduler::createNew();
+	m_env = BasicUsageEnvironment::createNew(*scheduler);
+	m_outputSink=NULL;
+	m_inputSource=NULL;
+	m_tsFrames=NULL;
+	m_bSendVideoAudioObserverEvents = true;
+	m_bRecorder = recorder;
 }
 
 CProgramToTransportStream::~CProgramToTransportStream(void)
 {
-  LogDebug("CProgramToTransportStream::dtor");
+	LogDebug("CProgramToTransportStream::dtor");
 }
 
 void afterPlaying(void* clientData) 
 {
-  LogDebug("CProgramToTransportStream afterPlaying");
-  MPEG2TransportStreamFromPESSource* outputSink=(MPEG2TransportStreamFromPESSource*)clientData;
+	LogDebug("CProgramToTransportStream afterPlaying");
+	MPEG2TransportStreamFromPESSource* outputSink=(MPEG2TransportStreamFromPESSource*)clientData;
 }
 void CProgramToTransportStream::Initialize(char* fileNameOut)
 {
-  LogDebug("CProgramToTransportStream::Initialize %s",fileNameOut);
-  m_BufferThreadActive=false;
-  m_buffer.Clear();
-  
-  
-  m_inputSource = CMemoryStreamSource::createNew(*m_env, "",m_buffer);
-  if (m_inputSource == NULL) 
-  {
-    *m_env << "Unable to open memorystream as a byte-stream source\n";
-    return;
-  }
+	LogDebug("CProgramToTransportStream::Initialize %s",fileNameOut);
+	m_BufferThreadActive=false;
+	m_buffer.Clear();
 
-  // Create a MPEG demultiplexor that reads from that source.
-  MPEG1or2Demux* baseDemultiplexor = MPEG1or2Demux::createNew(*m_env, m_inputSource);
 
-  // Create, from this, a source that returns raw PES packets:
-  MPEG1or2DemuxedElementaryStream* pesSource = baseDemultiplexor->newRawPESStream();
-  
-  // And, from this, a filter that converts to MPEG-2 Transport Stream frames:
-  m_tsFrames  = MPEG2TransportStreamFromPESSource::createNew(*m_env, pesSource);
+	m_inputSource = CMemoryStreamSource::createNew(*m_env, "",m_buffer);
+	if (m_inputSource == NULL) 
+	{
+		*m_env << "Unable to open memorystream as a byte-stream source\n";
+		return;
+	}
 
-  m_outputSink = CMultiWriterFileSink::createNew(*m_env, fileNameOut,m_minFiles,m_maxFiles,m_maxFileSize);
-  if (m_outputSink == NULL) 
-  {
-    *m_env << "Unable to open file \"" << fileNameOut << "\" as a file sink\n";
-    return;
-  }
-  m_buffer.Clear();
-  m_iPacketsToSkip=100;
-  //StartBufferThread();
-  m_bSendVideoAudioObserverEvents = true;
-  m_bStarting=true;
-  m_bRunning=true;
+	// Create a MPEG demultiplexor that reads from that source.
+	MPEG1or2Demux* baseDemultiplexor = MPEG1or2Demux::createNew(*m_env, m_inputSource);
+
+	// Create, from this, a source that returns raw PES packets:
+	MPEG1or2DemuxedElementaryStream* pesSource = baseDemultiplexor->newRawPESStream();
+
+	// And, from this, a filter that converts to MPEG-2 Transport Stream frames:
+	m_tsFrames  = MPEG2TransportStreamFromPESSource::createNew(*m_env, pesSource);
+
+	if(m_bRecorder == false){
+		m_outputSink = CMultiWriterFileSink::createNew(*m_env, fileNameOut,m_minFiles,m_maxFiles,m_maxFileSize);
+	}else{
+		m_outputSink = CFileSinkRecorder::createNew(*m_env, fileNameOut);
+	}
+	if (m_outputSink == NULL) 
+	{
+		*m_env << "Unable to open file \"" << fileNameOut << "\" as a file sink\n";
+		return;
+	}
+	m_buffer.Clear();
+	m_iPacketsToSkip=100;
+	//StartBufferThread();
+	m_bSendVideoAudioObserverEvents = true;
+	m_bStarting=true;
+	m_bRunning=true;
 }
 void CProgramToTransportStream::Flush()
 {
- LogDebug("CProgramToTransportStream::Flush()");
- m_bSendVideoAudioObserverEvents = true;
- m_iPacketsToSkip=10;
- m_buffer.Clear();
+	LogDebug("CProgramToTransportStream::Flush()");
+	m_bSendVideoAudioObserverEvents = true;
+	m_iPacketsToSkip=10;
+	m_buffer.Clear();
+	m_outputSink->Flush();
 }
 void CProgramToTransportStream::SetTimeShiftParams( int minFiles, int maxFiles, ULONG maxFileSize)
 {
-  m_minFiles=minFiles;
-  m_maxFiles=maxFiles;
-  m_maxFileSize=maxFileSize;
+	m_minFiles=minFiles;
+	m_maxFiles=maxFiles;
+	m_maxFileSize=maxFileSize;
 }
-void CProgramToTransportStream::ClearStreams()
-{
-  LogDebug("CProgramToTransportStream::ClearStreams()");
-  m_outputSink->ClearStreams();
-}
+
 void CProgramToTransportStream::Write(byte* data, int len)
 { 
-  if (m_bRunning)
-  {
-    if (m_iPacketsToSkip>0) 
-    {
-      m_iPacketsToSkip--;
-     // LogDebug("skip:%d",m_iPacketsToSkip);
-      return;
-    }
-    m_buffer.PutBuffer(data, len, 1);
-    if (m_bStarting && m_buffer.Size()>300000)
-    {
-      m_bStarting=false;
-	  m_BufferThreadActive = true;
-      if (m_outputSink->startPlaying(*m_tsFrames, afterPlaying, m_tsFrames)==True)
-      {
-        LogDebug("CProgramToTransportStream::Thread playing()");
-      }
-      else
-      {
-        LogDebug("CProgramToTransportStream::Failed to start output sink");
-      }
-    }
-    while (m_buffer.Size()>300000)
-    {
-		if(m_bSendVideoAudioObserverEvents && m_pCallback != NULL){
-			m_bSendVideoAudioObserverEvents = false;
-			m_pCallback->OnNotify(PidType::Audio);
-			m_pCallback->OnNotify(PidType::Video);
+	if (m_bRunning)
+	{
+		if (m_iPacketsToSkip>0) 
+		{
+			m_iPacketsToSkip--;
+			// LogDebug("skip:%d",m_iPacketsToSkip);
+			return;
 		}
-	    m_env->taskScheduler().doEventLoop(); 
-    }
-  }
+		m_buffer.PutBuffer(data, len, 1);
+		if (m_bStarting && m_buffer.Size()>INTERNAL_BUFFER_SIZE)
+		{
+			m_bStarting=false;
+			m_BufferThreadActive = true;
+			if (m_outputSink->startPlaying(*m_tsFrames, afterPlaying, m_tsFrames)==True)
+			{
+				LogDebug("CProgramToTransportStream::Thread playing()");
+			}
+			else
+			{
+				LogDebug("CProgramToTransportStream::Failed to start output sink");
+			}
+			if(m_bSendVideoAudioObserverEvents && m_pCallback != NULL){
+				m_bSendVideoAudioObserverEvents = false;
+				m_pCallback->OnNotify(PidType::Audio);
+				m_pCallback->OnNotify(PidType::Video);
+			}
+		}
+		while (m_buffer.Size()>INTERNAL_BUFFER_SIZE)
+		{
+			if(m_bSendVideoAudioObserverEvents && m_pCallback != NULL){
+				m_bSendVideoAudioObserverEvents = false;
+				m_pCallback->OnNotify(PidType::Audio);
+				m_pCallback->OnNotify(PidType::Video);
+			}
+			m_env->taskScheduler().doEventLoop(); 
+		}
+	}
 }
 
 void CProgramToTransportStream::Close()
 {
-  LogDebug("CProgramToTransportStream::Close()");
-  m_bRunning=false;
-  m_buffer.Stop();
-  StopBufferThread();
-}
+	LogDebug("CProgramToTransportStream::Close()");
+	m_bRunning=false;
+	m_buffer.Stop();
+
+	LogDebug("CProgramToTransportStream::StopBufferThread()");
 
 
-void CProgramToTransportStream::StartBufferThread()
-{
-  LogDebug("CProgramToTransportStream::StartBufferThread()");
-  m_buffer.Clear();
-/*
-  if (!m_BufferThreadActive)
-	{
-		//StartThread();
-		m_BufferThreadActive = true;
+	if (m_outputSink!=NULL)
+		Medium::close(m_outputSink);
+	if (m_inputSource!=NULL)
+		Medium::close(m_inputSource);
 
-        
-    if (m_outputSink->startPlaying(*m_tsFrames, afterPlaying, m_tsFrames)==True)
-    {
-      LogDebug("CProgramToTransportStream::Thread playing()");
-    }
-    else
-    {
-      LogDebug("CProgramToTransportStream::Failed to start output sink");
-    }
-	}*/
-}
-
-void CProgramToTransportStream::StopBufferThread()
-{
-  LogDebug("CProgramToTransportStream::StopBufferThread()");
-//	if (!m_BufferThreadActive)
-//		return;
-
-  //StopThread(INFINITE);
-
-	
-  if (m_outputSink!=NULL)
-   Medium::close(m_outputSink);
-  if (m_inputSource!=NULL)
-	Medium::close(m_inputSource);
-
-  if (m_tsFrames!=NULL)
-	Medium::close(m_tsFrames);
-  m_outputSink=NULL;
-  m_inputSource=NULL;
-  m_tsFrames=NULL;
-  LogDebug("CProgramToTransportStream::Thread stopped()");
+	if (m_tsFrames!=NULL)
+		Medium::close(m_tsFrames);
+	m_outputSink=NULL;
+	m_inputSource=NULL;
+	m_tsFrames=NULL;
+	LogDebug("CProgramToTransportStream::Thread stopped()");
 
 	m_BufferThreadActive = false;
 }
@@ -174,31 +150,31 @@ void CProgramToTransportStream::ThreadProc()
 	HRESULT hr = S_OK;
 	m_BufferThreadActive = TRUE;
 
-//	BoostThread Boost;
+	//	BoostThread Boost;
 
 	//::SetThreadPriority(GetCurrentThread(),THREAD_PRIORITY_TIME_CRITICAL);
-  
-  LogDebug("CProgramToTransportStream::Thread started()");
-    
-  if (m_outputSink->startPlaying(*m_tsFrames, afterPlaying, m_tsFrames)==True)
-  {
-    LogDebug("CProgramToTransportStream::Thread playing()");
-  }
-  else
-  {
-    LogDebug("CProgramToTransportStream::Failed to start output sink");
-  }
+
+	LogDebug("CProgramToTransportStream::Thread started()");
+
+	if (m_outputSink->startPlaying(*m_tsFrames, afterPlaying, m_tsFrames)==True)
+	{
+		LogDebug("CProgramToTransportStream::Thread playing()");
+	}
+	else
+	{
+		LogDebug("CProgramToTransportStream::Failed to start output sink");
+	}
 	while (m_env!=NULL && !ThreadIsStopping(0))
 	{
 		m_env->taskScheduler().doEventLoop(); 
-			
+
 	}
-  Medium::close(m_outputSink);
-  Medium::close(m_inputSource);
-  Medium::close(m_tsFrames);
-  m_outputSink=NULL;
-  m_inputSource=NULL;
-  LogDebug("CProgramToTransportStream::Thread stopped()");
+	Medium::close(m_outputSink);
+	Medium::close(m_inputSource);
+	Medium::close(m_tsFrames);
+	m_outputSink=NULL;
+	m_inputSource=NULL;
+	LogDebug("CProgramToTransportStream::Thread stopped()");
 	m_BufferThreadActive = false;
 	return;
 }
