@@ -1824,7 +1824,7 @@ namespace TvPlugin
       if (recordingSchedules.Count == 0) return;
       Schedule sched = recordingSchedules[dlg.SelectedLabel];
       Program prg2use = Program.RetrieveByTitleAndTimes(sched.ProgramName, sched.StartTime, sched.EndTime);
-      PromptAndDeleteRecordingSchedule(sched.IdSchedule, prg2use, false, true);
+      PromptAndDeleteRecordingSchedule(sched.IdSchedule, prg2use, false, false);
       OnActiveRecordings(); //keep on showing the list until --> 1) user leaves menu, 2) no more active recordings
     }
 
