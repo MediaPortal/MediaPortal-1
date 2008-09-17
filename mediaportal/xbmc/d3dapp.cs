@@ -780,7 +780,9 @@ namespace MediaPortal
       }
       else
       {
-        graphicsSettings.DisplayMode = Manager.Adapters[0].CurrentDisplayMode;  
+        //GraphicsAdapterInfo adapterInfo = FindAdapterForScreen(GUIGraphicsContext.currentScreen);
+        //graphicsSettings.DisplayMode = Manager.Adapters[adapterInfo.AdapterOrdinal].CurrentDisplayMode;        
+        graphicsSettings.DisplayMode = Manager.Adapters[GUIGraphicsContext.currentScreenNumber].CurrentDisplayMode;
 
         presentParams.MultiSample = graphicsSettings.FullscreenMultisampleType;
         presentParams.MultiSampleQuality = graphicsSettings.FullscreenMultisampleQuality;

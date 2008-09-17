@@ -633,6 +633,7 @@ public class MediaPortalApp : D3DApp, IRender
         screenNumber = 0;
       Log.Info("currentScreenNr:" + screenNumber);
       GUIGraphicsContext.currentScreen = Screen.AllScreens[screenNumber];
+      GUIGraphicsContext.currentScreenNumber = screenNumber;
     }
     // check if MediaPortal is already running...
     Log.Info("Main: Checking for running MediaPortal instance");

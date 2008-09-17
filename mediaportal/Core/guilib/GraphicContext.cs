@@ -152,7 +152,9 @@ namespace MediaPortal.GUI.Library
     static bool _useSeparateRenderThread = false;
     public static bool _useScreenSelector = false;
     private static AdapterInformation _currentFullscreenAdapterInfo = null;
+    private static int _currentScreenNumber = -1;
     private static Screen _currentScreen = null;
+
     private static Point _screenCenterPos = new Point();
 
     [DllImport("user32.dll")]
@@ -248,6 +250,21 @@ namespace MediaPortal.GUI.Library
       set
       {
         _currentFullscreenAdapterInfo = value;
+      }
+    }
+
+    public static int currentScreenNumber
+    {
+      get
+      {
+        if (_currentScreen != null)
+          return _currentScreenNumber;
+        else
+          return -1;
+      }
+      set
+      {
+        _currentScreenNumber = value;
       }
     }
 
