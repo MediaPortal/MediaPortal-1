@@ -151,7 +151,8 @@ namespace TvLibrary.Implementations.Analog
     /// <returns>true if card can tune to the channel otherwise false</returns>
     public bool CanTune(IChannel channel)
     {
-      if ((channel as AnalogChannel) == null) return false;
+      if ((channel as AnalogChannel) == null)
+        return false;
       if (channel.IsRadio)
       {
         if (_graphState == GraphState.Idle)
@@ -163,7 +164,8 @@ namespace TvLibrary.Implementations.Analog
         IAMTVTuner tuner = _filterTvTuner as IAMTVTuner;
         AMTunerModeType tunerModes;
         tuner.GetAvailableModes(out tunerModes);
-        if ((AMTunerModeType.FMRadio & tunerModes) != 0) return true;
+        if ((AMTunerModeType.FMRadio & tunerModes) != 0)
+          return true;
         return false;
       }
       return true;
@@ -175,10 +177,12 @@ namespace TvLibrary.Implementations.Analog
     /// <returns></returns>
     public override void StopGraph()
     {
-      if (!CheckThreadId()) return;
+      if (!CheckThreadId())
+        return;
       FreeAllSubChannels();
       FilterState state;
-      if (_graphBuilder == null) return;
+      if (_graphBuilder == null)
+        return;
       (_graphBuilder as IMediaControl).GetState(10, out state);
 
       Log.Log.WriteFile("analog: StopGraph state:{0}", state);
@@ -274,7 +278,8 @@ namespace TvLibrary.Implementations.Analog
     {
       get
       {
-        if (!CheckThreadId()) return null;
+        if (!CheckThreadId())
+          return null;
         return new AnalogScanning(this);
       }
     }
@@ -428,9 +433,11 @@ namespace TvLibrary.Implementations.Analog
     /// </summary>
     virtual public void Dispose()
     {
-      if (_graphBuilder == null) return;
+      if (_graphBuilder == null)
+        return;
       Log.Log.WriteFile("analog:Dispose()");
-      if (!CheckThreadId()) return;
+      if (!CheckThreadId())
+        return;
 
       if (_graphState == GraphState.TimeShifting || _graphState == GraphState.Recording)
       {
@@ -444,27 +451,32 @@ namespace TvLibrary.Implementations.Analog
       Log.Log.WriteFile("analog:All filters removed");
       if (_filterTvTuner != null)
       {
-        while (Marshal.ReleaseComObject(_filterTvTuner) > 0) ;
+        while (Marshal.ReleaseComObject(_filterTvTuner) > 0)
+          ;
         _filterTvTuner = null;
       }
       if (_filterTvAudioTuner != null)
       {
-        while (Marshal.ReleaseComObject(_filterTvAudioTuner) > 0) ;
+        while (Marshal.ReleaseComObject(_filterTvAudioTuner) > 0)
+          ;
         _filterTvAudioTuner = null;
       }
       if (_filterCapture != null)
       {
-        while (Marshal.ReleaseComObject(_filterCapture) > 0) ;
+        while (Marshal.ReleaseComObject(_filterCapture) > 0)
+          ;
         _filterCapture = null;
       }
       if (_filterVideoEncoder != null)
       {
-        while (Marshal.ReleaseComObject(_filterVideoEncoder) > 0) ;
+        while (Marshal.ReleaseComObject(_filterVideoEncoder) > 0)
+          ;
         _filterVideoEncoder = null;
       }
       if (_filterAudioEncoder != null)
       {
-        while (Marshal.ReleaseComObject(_filterAudioEncoder) > 0) ;
+        while (Marshal.ReleaseComObject(_filterAudioEncoder) > 0)
+          ;
         _filterAudioEncoder = null;
       }
       if (_filterMpeg2Demux != null)
@@ -489,15 +501,18 @@ namespace TvLibrary.Implementations.Analog
       }
       if (_filterAnalogMpegMuxer != null)
       {
-        Release.ComObject("MPEG2 analog mux filter", _filterAnalogMpegMuxer); _filterAnalogMpegMuxer = null;
+        Release.ComObject("MPEG2 analog mux filter", _filterAnalogMpegMuxer);
+        _filterAnalogMpegMuxer = null;
       }
       if (_filterMpegMuxer != null)
       {
-        Release.ComObject("MPEG2 mux filter", _filterMpegMuxer); _filterMpegMuxer = null;
+        Release.ComObject("MPEG2 mux filter", _filterMpegMuxer);
+        _filterMpegMuxer = null;
       }
       if (_tsFileSink != null)
       {
-        Release.ComObject("tsFileSink filter", _tsFileSink); _tsFileSink = null;
+        Release.ComObject("tsFileSink filter", _tsFileSink);
+        _tsFileSink = null;
       }
       if (_filterCrossBar != null)
       {
@@ -555,7 +570,8 @@ namespace TvLibrary.Implementations.Analog
         _pinVBI = null;
       }
       _rotEntry.Dispose();
-      Release.ComObject("Graphbuilder", _graphBuilder); _graphBuilder = null;
+      Release.ComObject("Graphbuilder", _graphBuilder);
+      _graphBuilder = null;
       DevicesInUse.Instance.Remove(_tunerDevice);
       if (_audioDevice != null)
       {
@@ -667,11 +683,20 @@ namespace TvLibrary.Implementations.Analog
         {
           // no it does not. So we have situation 2, 3 or 4 and first need to add 1 or more encoder filters
           // First we try only to add encoders where the encoder pin names are the same as the
-          // output pins of the capture filters
-          if (!AddTvEncoderFilter(true))
+          // output pins of the capture filters and we search only for filter which have an mpeg2-program stream output pin
+          if (!AddTvEncoderFilter(true, true))
           {
-            //if that fails, we try any encoder filter
-            AddTvEncoderFilter(false);
+            //if that fails, we try any encoder filter with an mpeg2-program stream output pin
+            if (!AddTvEncoderFilter(false, true))
+            {
+              // If that fails, we try to add encoder where the encoder pin names are the same as the
+              // output pins of the capture filters, and now except encoders except with mpeg2-ts output pin
+              if (!AddTvEncoderFilter(true, false))
+              {
+                // If that fails, we try every encoder except encoders except with mpeg2-ts output pin
+                AddTvEncoderFilter(false, false);
+              }
+            }
           }
           // 1 or 2 encoder filters have been added. 
           // check if the encoder filters supply a mpeg-2 output pin
@@ -806,9 +831,11 @@ namespace TvLibrary.Implementations.Analog
     /// </summary>
     private void AddTvTunerFilter()
     {
-      if (!CheckThreadId()) return;
+      if (!CheckThreadId())
+        return;
       Log.Log.WriteFile("analog: AddTvTunerFilter {0}", _tunerDevice.Name);
-      if (DevicesInUse.Instance.IsUsed(_tunerDevice)) return;
+      if (DevicesInUse.Instance.IsUsed(_tunerDevice))
+        return;
       IBaseFilter tmp;
       int hr;
       try
@@ -840,7 +867,8 @@ namespace TvLibrary.Implementations.Analog
     /// </summary>
     private void AddTvAudioFilter()
     {
-      if (!CheckThreadId()) return;
+      if (!CheckThreadId())
+        return;
       //Log.Log.WriteFile("analog: AddTvAudioFilter");
       //find crossbar audio tuner input
       IPin pinIn = FindCrossBarPin(_filterCrossBar, PhysicalConnectorType.Audio_Tuner, PinDirection.Input);
@@ -872,7 +900,8 @@ namespace TvLibrary.Implementations.Analog
       {
         Log.Log.WriteFile("analog: AddTvAudioFilter try:{0} {1}", devices[i].Name, i);
         //if tv audio tuner is currently in use we can skip it
-        if (DevicesInUse.Instance.IsUsed(devices[i])) continue;
+        if (DevicesInUse.Instance.IsUsed(devices[i]))
+          continue;
         int hr;
         try
         {
@@ -945,7 +974,8 @@ namespace TvLibrary.Implementations.Analog
     /// <returns>IPin when the pin is found or null if pin is not found</returns>
     private IPin FindCrossBarPin(IBaseFilter crossbarFilter, PhysicalConnectorType connectorType, PinDirection direction)
     {
-      if (!CheckThreadId()) return null;
+      if (!CheckThreadId())
+        return null;
       //Log.Log.WriteFile("analog: FindCrossBarPin type:{0} direction:{1}", connectorType, direction);
       IAMCrossbar crossbar = crossbarFilter as IAMCrossbar;
       int inputs = 0;
@@ -953,7 +983,8 @@ namespace TvLibrary.Implementations.Analog
       crossbar.get_PinCounts(out outputs, out inputs);
       //Log.Log.WriteFile("analog: FindCrossBarPin inputs:{0} outputs:{1}", inputs, outputs);
       int maxPins = inputs;
-      if (direction == PinDirection.Output) maxPins = outputs;
+      if (direction == PinDirection.Output)
+        maxPins = outputs;
       for (int i = 0; i < maxPins; ++i)
       {
         int relatedPinIndex;
@@ -978,7 +1009,8 @@ namespace TvLibrary.Implementations.Analog
     /// </summary>
     private void AddCrossBarFilter()
     {
-      if (!CheckThreadId()) return;
+      if (!CheckThreadId())
+        return;
       //Log.Log.WriteFile("analog: AddCrossBarFilter");
       DsDevice[] devices = null;
       IBaseFilter tmp;
@@ -1002,7 +1034,8 @@ namespace TvLibrary.Implementations.Analog
       {
         Log.Log.WriteFile("analog: AddCrossBarFilter try:{0} {1}", devices[i].Name, i);
         //if crossbar is already in use then we can skip it
-        if (DevicesInUse.Instance.IsUsed(devices[i])) continue;
+        if (DevicesInUse.Instance.IsUsed(devices[i]))
+          continue;
         int hr;
         try
         {
@@ -1073,7 +1106,8 @@ namespace TvLibrary.Implementations.Analog
     /// </summary>
     private void AddTvCaptureFilter()
     {
-      if (!CheckThreadId()) return;
+      if (!CheckThreadId())
+        return;
       //Log.Log.WriteFile("analog: AddTvCaptureFilter");
       DsDevice[] devices = null;
       IBaseFilter tmp;
@@ -1108,7 +1142,8 @@ namespace TvLibrary.Implementations.Analog
         }
         Log.Log.WriteFile("analog: AddTvCaptureFilter try:{0} {1}", devices[i].Name, i);
         // if video capture filter is in use, then we can skip it
-        if (DevicesInUse.Instance.IsUsed(devices[i])) continue;
+        if (DevicesInUse.Instance.IsUsed(devices[i]))
+          continue;
         int hr;
         try
         {
@@ -1165,7 +1200,8 @@ namespace TvLibrary.Implementations.Analog
     /// <param name="mode">The crossbar mode.</param>
     private void SetupCrossBar(AnalogChannel.VideoInputType mode)
     {
-      if (!CheckThreadId()) return;
+      if (!CheckThreadId())
+        return;
       Log.Log.WriteFile("analog: SetupCrossBar:{0}", mode);
       int outputs, inputs;
       IAMCrossbar crossbar = (IAMCrossbar)_filterCrossBar;
@@ -1359,7 +1395,8 @@ namespace TvLibrary.Implementations.Analog
     /// <param name="mediaSubtype">The media subtype.</param>
     private void FindCapturePin(Guid mediaType, Guid mediaSubtype)
     {
-      if (!CheckThreadId()) return;
+      if (!CheckThreadId())
+        return;
       IEnumPins enumPins;
       // is there a multiplexer
       if (_filterMultiplexer != null)
@@ -1388,11 +1425,13 @@ namespace TvLibrary.Implementations.Analog
         IPin[] pins = new IPin[2];
         int fetched;
         enumPins.Next(1, pins, out fetched);
-        if (fetched != 1) break;
+        if (fetched != 1)
+          break;
         //first check if the pindirection matches
         PinDirection pinDirection;
         pins[0].QueryDirection(out pinDirection);
-        if (pinDirection != PinDirection.Output) continue;
+        if (pinDirection != PinDirection.Output)
+          continue;
         //next check if the pin supports the media type requested
         IEnumMediaTypes enumMedia;
         int fetchedMedia;
@@ -1401,7 +1440,8 @@ namespace TvLibrary.Implementations.Analog
         while (true)
         {
           enumMedia.Next(1, media, out fetchedMedia);
-          if (fetchedMedia != 1) break;
+          if (fetchedMedia != 1)
+            break;
           if (media[0].majorType == mediaType)
           {
             //Log.Log.WriteFile("analog: FindCapturePin major:{0}", media[0].majorType);
@@ -1642,7 +1682,8 @@ namespace TvLibrary.Implementations.Analog
 
     private void SetupCaptureFormat()
     {
-      if (_pinCapture == null) return;
+      if (_pinCapture == null)
+        return;
       Log.Log.Info("VideoCaptureDevice:get Video stream control interface (IAMStreamConfig)");
       DsGuid cat = new DsGuid(PinCategory.Capture);
       Guid iid = typeof(IAMStreamConfig).GUID;
@@ -1680,7 +1721,8 @@ namespace TvLibrary.Implementations.Analog
     /// </returns>
     private bool ConnectEncoderFilter(IBaseFilter filterEncoder, bool isVideo, bool isAudio, bool matchPinNames)
     {
-      if (!CheckThreadId()) return false;
+      if (!CheckThreadId())
+        return false;
       Log.Log.WriteFile("analog: ConnectEncoderFilter video:{0} audio:{1}", isVideo, isAudio);
       int hr;
       //find the inputs of the encoder. could be 1 or 2 inputs.
@@ -1708,7 +1750,8 @@ namespace TvLibrary.Implementations.Analog
           // check if this is an output pin
           PinDirection pinDir;
           pins[i].QueryDirection(out pinDir);
-          if (pinDir == PinDirection.Input) continue;
+          if (pinDir == PinDirection.Input)
+            continue;
           //log the pin info...
           Log.Log.WriteFile("analog:  capture pin:{0} {1}", i, FilterGraphTools.LogPinInfo(pins[i]));
           string pinName = FilterGraphTools.GetPinName(pins[i]);
@@ -1761,12 +1804,16 @@ namespace TvLibrary.Implementations.Analog
       }
       finally
       {
-        if (enumPins != null) Release.ComObject("ienumpins", enumPins);
-        if (pinInput1 != null) Release.ComObject("encoder pin0", pinInput1);
-        if (pinInput2 != null) Release.ComObject("encoder pin1", pinInput2);
+        if (enumPins != null)
+          Release.ComObject("ienumpins", enumPins);
+        if (pinInput1 != null)
+          Release.ComObject("encoder pin0", pinInput1);
+        if (pinInput2 != null)
+          Release.ComObject("encoder pin1", pinInput2);
         for (int i = 0; i < pinsAvailable; ++i)
         {
-          if (pins[i] != null) Release.ComObject("capture pin" + i.ToString(), pins[i]);
+          if (pins[i] != null)
+            Release.ComObject("capture pin" + i.ToString(), pins[i]);
         }
       }
       Log.Log.Write("analog: ConnectEncoderFilter failed (matchPinNames:{0})", matchPinNames);
@@ -1782,7 +1829,8 @@ namespace TvLibrary.Implementations.Analog
     /// <returns>true if multiplexer is connected correctly, otherwise false</returns>
     private bool ConnectMultiplexer(IBaseFilter filterMultiPlexer, bool matchPinNames)
     {
-      if (!CheckThreadId()) return false;
+      if (!CheckThreadId())
+        return false;
       //Log.Log.WriteFile("analog: ConnectMultiplexer()");
       int hr;
       // get the input pins of the multiplexer filter (can be 1 or 2 input pins)
@@ -1822,7 +1870,8 @@ namespace TvLibrary.Implementations.Analog
               // check if this is an outpin pin on the capture filter
               PinDirection pinDir;
               pins[i].QueryDirection(out pinDir);
-              if (pinDir == PinDirection.Input) continue;
+              if (pinDir == PinDirection.Input)
+                continue;
               //log the pin info
               Log.Log.WriteFile("analog:  capture pin:{0} {1} {2}", i, pinDir, FilterGraphTools.LogPinInfo(pins[i]));
               string pinName = FilterGraphTools.GetPinName(pins[i]);
@@ -1881,10 +1930,12 @@ namespace TvLibrary.Implementations.Analog
           }
           finally
           {
-            if (enumPins != null) Release.ComObject("ienumpins", enumPins);
+            if (enumPins != null)
+              Release.ComObject("ienumpins", enumPins);
             for (int i = 0; i < pinsAvailable; ++i)
             {
-              if (pins[i] != null) Release.ComObject("capture pin" + i.ToString(), pins[i]);
+              if (pins[i] != null)
+                Release.ComObject("capture pin" + i.ToString(), pins[i]);
             }
           }
         }
@@ -1908,7 +1959,8 @@ namespace TvLibrary.Implementations.Analog
               // check if this is an outpin pin on the video encoder filter
               PinDirection pinDir;
               pins[i].QueryDirection(out pinDir);
-              if (pinDir == PinDirection.Input) continue;
+              if (pinDir == PinDirection.Input)
+                continue;
               //log the pin info
               Log.Log.WriteFile("analog:  videoencoder pin:{0} {1}", i, FilterGraphTools.LogPinInfo(pins[i]));
               string pinName = FilterGraphTools.GetPinName(pins[i]);
@@ -1965,10 +2017,12 @@ namespace TvLibrary.Implementations.Analog
           }
           finally
           {
-            if (enumPins != null) Release.ComObject("ienumpins", enumPins);
+            if (enumPins != null)
+              Release.ComObject("ienumpins", enumPins);
             for (int i = 0; i < pinsAvailable; ++i)
             {
-              if (pins[i] != null) Release.ComObject("encoder pin" + i.ToString(), pins[i]);
+              if (pins[i] != null)
+                Release.ComObject("encoder pin" + i.ToString(), pins[i]);
             }
           }
         }
@@ -1992,7 +2046,8 @@ namespace TvLibrary.Implementations.Analog
               // check if this is an outpin pin on the video encoder filter
               PinDirection pinDir;
               pins[i].QueryDirection(out pinDir);
-              if (pinDir == PinDirection.Input) continue;
+              if (pinDir == PinDirection.Input)
+                continue;
               //log the pin info
               Log.Log.WriteFile("analog:   videoencoder pin:{0} {1} {2}", i, pinDir, FilterGraphTools.LogPinInfo(pins[i]));
               string pinName = FilterGraphTools.GetPinName(pins[i]);
@@ -2066,7 +2121,8 @@ namespace TvLibrary.Implementations.Analog
                 // check if this is an outpin pin on the audio encoder filter
                 PinDirection pinDir;
                 pins[i].QueryDirection(out pinDir);
-                if (pinDir == PinDirection.Input) continue;
+                if (pinDir == PinDirection.Input)
+                  continue;
                 Log.Log.WriteFile("analog: audioencoder  pin:{0} {1} {2}", i, pinDir, FilterGraphTools.LogPinInfo(pins[i]));
                 string pinName = FilterGraphTools.GetPinName(pins[i]);
                 // try to connect this output pin of the audio encoder filter to the 1st input pin
@@ -2114,18 +2170,22 @@ namespace TvLibrary.Implementations.Analog
           }
           finally
           {
-            if (enumPins != null) Release.ComObject("ienumpins", enumPins);
+            if (enumPins != null)
+              Release.ComObject("ienumpins", enumPins);
             for (int i = 0; i < pinsAvailable; ++i)
             {
-              if (pins[i] != null) Release.ComObject("audio encoder pin" + i.ToString(), pins[i]);
+              if (pins[i] != null)
+                Release.ComObject("audio encoder pin" + i.ToString(), pins[i]);
             }
           }
         }
       }
       finally
       {
-        if (pinInput1 != null) Release.ComObject("multiplexer pin0", pinInput1);
-        if (pinInput2 != null) Release.ComObject("multiplexer pin1", pinInput2);
+        if (pinInput1 != null)
+          Release.ComObject("multiplexer pin0", pinInput1);
+        if (pinInput2 != null)
+          Release.ComObject("multiplexer pin1", pinInput2);
       }
       Log.Log.Error("analog: ConnectMultiplexer failed");
       return false;
@@ -2164,7 +2224,8 @@ namespace TvLibrary.Implementations.Analog
     /// <returns>true if encoder filters are added, otherwise false</returns>
     private bool AddTvMultiPlexer(bool matchPinNames)
     {
-      if (!CheckThreadId()) return false;
+      if (!CheckThreadId())
+        return false;
       //Log.Log.WriteFile("analog: AddTvMultiPlexer");
       DsDevice[] devicesHW = null;
       DsDevice[] devicesSW = null;
@@ -2202,7 +2263,8 @@ namespace TvLibrary.Implementations.Analog
       {
         Log.Log.WriteFile("analog: AddTvMultiPlexer try:{0} {1}", devices[i].Name, i);
         // if multiplexer is in use, we can skip it
-        if (DevicesInUse.Instance.IsUsed(devices[i])) continue;
+        if (DevicesInUse.Instance.IsUsed(devices[i]))
+          continue;
         int hr;
         try
         {
@@ -2281,11 +2343,14 @@ namespace TvLibrary.Implementations.Analog
     ///
     /// </summary>
     /// <param name="matchPinNames">if set to <c>true</c> the pin names of the encoder filter should match the pin names of the capture filter.</param>
+    /// <param name="mpeg2ProgramFilter">if set to <c>true</c> than only encoders with an mpeg2 program output pins are accepted</param>
     /// <returns>true if encoder filters are added, otherwise false</returns>
-    private bool AddTvEncoderFilter(bool matchPinNames)
+    private bool AddTvEncoderFilter(bool matchPinNames, bool mpeg2ProgramFilter)
     {
-      if (!CheckThreadId()) return false;
-      Log.Log.WriteFile("analog: AddTvEncoderFilter");
+      if (!CheckThreadId())
+        return false;
+
+      Log.Log.WriteFile("analog: AddTvEncoderFilter - MatchPinNames: {0} - MPEG2ProgramFilter: {1}", matchPinNames, mpeg2ProgramFilter);
       bool finished = false;
       DsDevice[] devices = null;
       IBaseFilter tmp;
@@ -2341,14 +2406,15 @@ namespace TvLibrary.Implementations.Analog
           }
           continue;
         }
-        if (tmp == null) continue;
+        if (tmp == null)
+          continue;
         // Encoder has been added to the graph
         // Now some cards have 2 encoder types, one for mpeg-2 transport stream and one for
         // mpeg-2 program stream. We dont want the mpeg-2 transport stream !
         // So first we check the output pins...
         // and dont accept filters which have a mpeg-ts output pin..
         // get the output pin
-        bool isTsFilter = true; // now always true to eleminate other encoders not outputting mpeg-2. i.e. WinTV HVR-2200
+        bool isTsFilter = mpeg2ProgramFilter;
         IPin pinOut = DsFindPin.ByDirection(tmp, PinDirection.Output, 0);
         if (pinOut != null)
         {
@@ -2364,12 +2430,13 @@ namespace TvLibrary.Implementations.Analog
             {
               for (int media = 0; media < fetched; ++media)
               {
+
                 //check if media is mpeg-2 transport
-                /*if (mediaTypes[media].majorType == MediaType.Stream &&
+                if (mediaTypes[media].majorType == MediaType.Stream &&
                     mediaTypes[media].subType == MediaSubType.Mpeg2Transport)
                 {
                   isTsFilter = true;
-                }*/
+                }
                 //check if media is mpeg-2 program
                 if (mediaTypes[media].majorType == MediaType.Stream &&
                     mediaTypes[media].subType == MediaSubType.Mpeg2Program)
@@ -2393,7 +2460,7 @@ namespace TvLibrary.Implementations.Analog
         //if encoder has mpeg-2 ts output pin, then we skip it and continue with the next one
         if (isTsFilter)
         {
-          Log.Log.WriteFile("analog:  filter {0} does not have mpeg-2 ps output", devices[i].Name);
+          Log.Log.WriteFile("analog:  filter {0} does not have mpeg-2 ps output or is a mpeg-2 ts filters", devices[i].Name);
           if (tmp != null)
           {
             hr = _graphBuilder.RemoveFilter(tmp);
@@ -2402,12 +2469,15 @@ namespace TvLibrary.Implementations.Analog
           }
           continue;
         }
-        if (tmp == null) continue;
+        if (tmp == null)
+          continue;
         // get the input pins of the encoder (can be 1 or 2 inputs)
         IPin pin1 = DsFindPin.ByDirection(tmp, PinDirection.Input, 0);
         IPin pin2 = DsFindPin.ByDirection(tmp, PinDirection.Input, 1);
-        if (pin1 != null) Log.Log.WriteFile("analog: encoder in-pin1:{0}", FilterGraphTools.LogPinInfo(pin1));
-        if (pin2 != null) Log.Log.WriteFile("analog: encoder in-pin2:{0}", FilterGraphTools.LogPinInfo(pin2));
+        if (pin1 != null)
+          Log.Log.WriteFile("analog: encoder in-pin1:{0}", FilterGraphTools.LogPinInfo(pin1));
+        if (pin2 != null)
+          Log.Log.WriteFile("analog: encoder in-pin2:{0}", FilterGraphTools.LogPinInfo(pin2));
         // if the encoder has 2 input pins then this means it has seperate inputs for audio and video
         if (pin1 != null && pin2 != null)
         {
@@ -2451,7 +2521,8 @@ namespace TvLibrary.Implementations.Analog
                 //                success = true;
                 Log.Log.WriteFile("analog: AddTvEncoderFilter succeeded (audio encoder)");
                 // if video encoder was already added, then we're done.
-                if (_filterVideoEncoder != null) finished = true;
+                if (_filterVideoEncoder != null)
+                  finished = true;
                 tmp = null;
               }
             }
@@ -2468,8 +2539,10 @@ namespace TvLibrary.Implementations.Analog
                 //                success = true;
                 Log.Log.WriteFile("analog: AddTvEncoderFilter succeeded (video encoder)");
                 // if audio encoder was already added, then we're done.
-                if (_filterAudioEncoder != null) finished = true;
-                tmp = null; ;
+                if (_filterAudioEncoder != null)
+                  finished = true;
+                tmp = null;
+                ;
               }
             }
             DsUtils.FreeAMMediaType(media[0]);
@@ -2495,8 +2568,10 @@ namespace TvLibrary.Implementations.Analog
         {
           Log.Log.WriteFile("analog: AddTvEncoderFilter no pin1");
         }
-        if (pin1 != null) Release.ComObject("encoder pin0", pin1);
-        if (pin2 != null) Release.ComObject("encoder pin1", pin2);
+        if (pin1 != null)
+          Release.ComObject("encoder pin0", pin1);
+        if (pin2 != null)
+          Release.ComObject("encoder pin1", pin2);
         pin1 = null;
         pin2 = null;
         if (tmp != null)
@@ -2523,7 +2598,8 @@ namespace TvLibrary.Implementations.Analog
     /// </summary>
     private void FindVBIPin()
     {
-      if (!CheckThreadId()) return;
+      if (!CheckThreadId())
+        return;
       Log.Log.WriteFile("analog: FindVBIPin");
       try
       {
@@ -2548,10 +2624,11 @@ namespace TvLibrary.Implementations.Analog
           // pin on a NVTV capture filter is named VBI..
           Log.Log.WriteFile("analog: getCategory not supported by collection ? ERROR:0x{0:x} :" + ex.Message, ex.ErrorCode);
 
-          if (_filterCapture == null) return;
+          if (_filterCapture == null)
+            return;
           Log.Log.WriteFile("analog: find VBI by name");
 
-          IPin pinVBI = DsFindPin.ByName(_filterCapture, "VBI"); ;
+          IPin pinVBI = DsFindPin.ByName(_filterCapture, "VBI");
           if (pinVBI != null)
           {
             Log.Log.WriteFile("analog: pin named VBI found");
@@ -2575,7 +2652,8 @@ namespace TvLibrary.Implementations.Analog
     /// </summary>
     private void SetupTeletext()
     {
-      if (!CheckThreadId()) return;
+      if (!CheckThreadId())
+        return;
       int hr;
       Log.Log.WriteFile("analog: SetupTeletext()");
       DsDevice[] devices;
@@ -2693,7 +2771,8 @@ namespace TvLibrary.Implementations.Analog
     /// <param name="mediaSubtype">The media subtype.</param>
     private IPin FindMediaPin(IBaseFilter filter, Guid mediaType, Guid mediaSubtype)
     {
-      if (!CheckThreadId()) return null;
+      if (!CheckThreadId())
+        return null;
       IEnumPins enumPins;
       filter.EnumPins(out enumPins);
       // loop through all pins
@@ -2703,11 +2782,13 @@ namespace TvLibrary.Implementations.Analog
         IPin[] pins = new IPin[2];
         int fetched;
         enumPins.Next(1, pins, out fetched);
-        if (fetched != 1) break;
+        if (fetched != 1)
+          break;
         //first check if the pindirection matches
         PinDirection pinDirection;
         pins[0].QueryDirection(out pinDirection);
-        if (pinDirection != PinDirection.Output) continue;
+        if (pinDirection != PinDirection.Output)
+          continue;
         pinNr++;
         //next check if the pin supports the media type requested
         IEnumMediaTypes enumMedia;
@@ -2717,7 +2798,8 @@ namespace TvLibrary.Implementations.Analog
         while (true)
         {
           enumMedia.Next(1, media, out fetchedMedia);
-          if (fetchedMedia != 1) break;
+          if (fetchedMedia != 1)
+            break;
           if (media[0].majorType == mediaType)
           {
             if (media[0].subType == mediaSubtype || mediaSubtype == MediaSubType.Null)
@@ -2787,7 +2869,8 @@ namespace TvLibrary.Implementations.Analog
     /// <returns></returns>
     private bool AddAudioCompressor()
     {
-      if (!CheckThreadId()) return false;
+      if (!CheckThreadId())
+        return false;
       Log.Log.WriteFile("analog: AddAudioCompressor {0}", FilterGraphTools.LogPinInfo(_pinAnalogAudio));
       DsDevice[] devices1 = DsDevice.GetDevicesOfCat(AudioCompressorCategory);
       DsDevice[] devices2 = DsDevice.GetDevicesOfCat(LegacyAmFilterCategory);
@@ -2824,7 +2907,8 @@ namespace TvLibrary.Implementations.Analog
       Log.Log.WriteFile("analog: AddAudioCompressor found:{0} compressor", audioDevices.Length);
       for (int i = 0; i < audioDevices.Length; ++i)
       {
-        if (audioDevices[i] == null) continue;
+        if (audioDevices[i] == null)
+          continue;
         Log.Log.WriteFile("analog:  try compressor:{0}", audioDevices[i].Name);
         int hr;
         try
@@ -2847,7 +2931,8 @@ namespace TvLibrary.Implementations.Analog
           }
           continue;
         }
-        if (tmp == null) continue;
+        if (tmp == null)
+          continue;
 
         Log.Log.WriteFile("analog: connect audio pin->audio compressor");
         // check if this compressor filter has an mpeg audio output pin
@@ -2885,7 +2970,8 @@ namespace TvLibrary.Implementations.Analog
     /// <returns></returns>
     private bool AddVideoCompressor()
     {
-      if (!CheckThreadId()) return false;
+      if (!CheckThreadId())
+        return false;
       Log.Log.WriteFile("analog: AddVideoCompressor");
       DsDevice[] devices1 = DsDevice.GetDevicesOfCat(VideoCompressorCategory);
       DsDevice[] devices2 = DsDevice.GetDevicesOfCat(LegacyAmFilterCategory);
@@ -2922,7 +3008,8 @@ namespace TvLibrary.Implementations.Analog
       Log.Log.WriteFile("analog: AddVideoCompressor found:{0} compressor", videoDevices.Length);
       for (int i = 0; i < videoDevices.Length; i++)
       {
-        if (videoDevices[i] == null) continue;
+        if (videoDevices[i] == null)
+          continue;
         Log.Log.WriteFile("analog:  try compressor:{0}", videoDevices[i].Name);
         int hr;
         try
@@ -2945,7 +3032,8 @@ namespace TvLibrary.Implementations.Analog
           }
           continue;
         }
-        if (tmp == null) continue;
+        if (tmp == null)
+          continue;
         // check if this compressor filter has an mpeg audio output pin
         Log.Log.WriteFile("analog:  connect video pin->video compressor");
         IPin pinVideo = DsFindPin.ByDirection(tmp, PinDirection.Input, 0);
@@ -3117,10 +3205,13 @@ namespace TvLibrary.Implementations.Analog
 
     private void AddMpeg2Demultiplexer()
     {
-      if (!CheckThreadId()) return;
+      if (!CheckThreadId())
+        return;
       Log.Log.WriteFile("analog: AddMpeg2Demultiplexer");
-      if (_filterMpeg2Demux != null) return;
-      if (_pinCapture == null) return;
+      if (_filterMpeg2Demux != null)
+        return;
+      if (_pinCapture == null)
+        return;
       int hr = 0;
       _filterMpeg2Demux = (IBaseFilter)new MPEG2Demultiplexer();
       hr = _graphBuilder.AddFilter(_filterMpeg2Demux, "MPEG2 Demultiplexer");
@@ -3155,7 +3246,8 @@ namespace TvLibrary.Implementations.Analog
     /// <returns></returns>
     private bool AddTsFileSink()
     {
-      if (!CheckThreadId()) return false;
+      if (!CheckThreadId())
+        return false;
       Log.Log.WriteFile("analog:AddTsFileSink");
       _tsFileSink = (IBaseFilter)new MpFileWriter();
       int hr = _graphBuilder.AddFilter((IBaseFilter)_tsFileSink, "TsFileSink");
@@ -3190,7 +3282,8 @@ namespace TvLibrary.Implementations.Analog
     /// <returns></returns>
     private bool AddMpegMuxer()
     {
-      if (!CheckThreadId()) return false;
+      if (!CheckThreadId())
+        return false;
 
       Log.Log.WriteFile("analog:AddMpegMuxer()");
       try
@@ -3261,7 +3354,8 @@ namespace TvLibrary.Implementations.Analog
     /// <param name="isTv">true, when tv is on; false for radio</param>
     private void UpdatePinVideo(bool isTv)
     {
-      if (isTv == _pinVideoConnected) return;
+      if (isTv == _pinVideoConnected)
+        return;
       _pinVideoConnected = isTv;
       if (_pinVideoConnected)
       {
@@ -3280,14 +3374,16 @@ namespace TvLibrary.Implementations.Analog
     /// </summary>
     private void RunGraph(int subChannel)
     {
-      if (!CheckThreadId()) return;
+      if (!CheckThreadId())
+        return;
       if (_mapSubChannels.ContainsKey(subChannel))
       {
         _mapSubChannels[subChannel].OnGraphStart();
       }
       FilterState state;
       (_graphBuilder as IMediaControl).GetState(10, out state);
-      if (state == FilterState.Running) return;
+      if (state == FilterState.Running)
+        return;
       Log.Log.WriteFile("analog: RunGraph");
       int hr = 0;
       hr = (_graphBuilder as IMediaControl).Run();
@@ -3443,9 +3539,11 @@ namespace TvLibrary.Implementations.Analog
 
     private void UpdateMinMaxChannel()
     {
-      if (_filterTvTuner == null) return;
+      if (_filterTvTuner == null)
+        return;
       IAMTVTuner tvTuner = _filterTvTuner as IAMTVTuner;
-      if (tvTuner == null) return;
+      if (tvTuner == null)
+        return;
       tvTuner.ChannelMinMax(out _minChannel, out _maxChannel);
     }
     #endregion
