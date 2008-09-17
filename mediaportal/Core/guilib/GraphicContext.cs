@@ -260,7 +260,7 @@ namespace MediaPortal.GUI.Library
         if (_currentScreen != null)
           return _currentScreenNumber;
         else
-          return -1;
+          return 0;
       }
       set
       {
