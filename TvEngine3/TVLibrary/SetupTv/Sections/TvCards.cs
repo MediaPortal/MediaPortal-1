@@ -452,5 +452,12 @@ namespace SetupTv.Sections
       string _winTVMoniker = info.card.DevicePath;
       SaveWinTVSettings(_winTVCardNumber, _winTVCardName, _winTVMoniker);
     }
+
+    private void linkLabelHybridCard_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    {
+      string Url = "http://www.team-mediaportal.com/manual/TV-Server/Configuration/TVServers/HybridCards";
+      System.Diagnostics.ProcessStartInfo sInfo = new System.Diagnostics.ProcessStartInfo(Url);
+      System.Diagnostics.Process.Start(sInfo);
+    }
   }
 }

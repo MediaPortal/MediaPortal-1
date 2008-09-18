@@ -79,6 +79,8 @@ namespace SetupTv.Sections
       this.label2 = new System.Windows.Forms.Label();
       this.label1 = new System.Windows.Forms.Label();
       this.tabControl1 = new System.Windows.Forms.TabControl();
+      this.labelHybridCard = new System.Windows.Forms.Label();
+      this.linkLabelHybridCard = new System.Windows.Forms.LinkLabel();
       this.contextMenuStrip2.SuspendLayout();
       this.contextMenuStrip1.SuspendLayout();
       this.tabPage2.SuspendLayout();
@@ -95,20 +97,20 @@ namespace SetupTv.Sections
       this.contextMenuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.placeInHybridCardToolStripMenuItem});
       this.contextMenuStrip2.Name = "contextMenuStrip2";
-      this.contextMenuStrip2.Size = new System.Drawing.Size(153, 26);
+      this.contextMenuStrip2.Size = new System.Drawing.Size(151, 26);
       // 
       // placeInHybridCardToolStripMenuItem
       // 
       this.placeInHybridCardToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newToolStripMenuItem});
       this.placeInHybridCardToolStripMenuItem.Name = "placeInHybridCardToolStripMenuItem";
-      this.placeInHybridCardToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+      this.placeInHybridCardToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
       this.placeInHybridCardToolStripMenuItem.Text = "Place in group";
       // 
       // newToolStripMenuItem
       // 
       this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-      this.newToolStripMenuItem.Size = new System.Drawing.Size(105, 22);
+      this.newToolStripMenuItem.Size = new System.Drawing.Size(96, 22);
       this.newToolStripMenuItem.Text = "new";
       // 
       // imageList1
@@ -123,19 +125,19 @@ namespace SetupTv.Sections
             this.deleteCardToolStripMenuItem,
             this.deleteEntireHybridCardToolStripMenuItem});
       this.contextMenuStrip1.Name = "contextMenuStrip1";
-      this.contextMenuStrip1.Size = new System.Drawing.Size(205, 48);
+      this.contextMenuStrip1.Size = new System.Drawing.Size(204, 48);
       // 
       // deleteCardToolStripMenuItem
       // 
       this.deleteCardToolStripMenuItem.Name = "deleteCardToolStripMenuItem";
-      this.deleteCardToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
+      this.deleteCardToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
       this.deleteCardToolStripMenuItem.Text = "Delete card";
       this.deleteCardToolStripMenuItem.Click += new System.EventHandler(this.deleteCardToolStripMenuItem_Click);
       // 
       // deleteEntireHybridCardToolStripMenuItem
       // 
       this.deleteEntireHybridCardToolStripMenuItem.Name = "deleteEntireHybridCardToolStripMenuItem";
-      this.deleteEntireHybridCardToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
+      this.deleteEntireHybridCardToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
       this.deleteEntireHybridCardToolStripMenuItem.Text = "Delete entire hybrid card";
       this.deleteEntireHybridCardToolStripMenuItem.Click += new System.EventHandler(this.deleteEntireHybridCardToolStripMenuItem_Click);
       // 
@@ -255,6 +257,8 @@ namespace SetupTv.Sections
       // 
       // tabPage1
       // 
+      this.tabPage1.Controls.Add(this.linkLabelHybridCard);
+      this.tabPage1.Controls.Add(this.labelHybridCard);
       this.tabPage1.Controls.Add(this.labelCardPriority);
       this.tabPage1.Controls.Add(this.buttonRemove);
       this.tabPage1.Controls.Add(this.mpListView1);
@@ -273,11 +277,11 @@ namespace SetupTv.Sections
       // 
       this.labelCardPriority.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.labelCardPriority.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.labelCardPriority.Location = new System.Drawing.Point(8, 321);
+      this.labelCardPriority.Location = new System.Drawing.Point(6, 305);
       this.labelCardPriority.Name = "labelCardPriority";
       this.labelCardPriority.Size = new System.Drawing.Size(250, 13);
       this.labelCardPriority.TabIndex = 4;
-      this.labelCardPriority.Text = "Attention: Priority = 1 means lowest Priority";
+      this.labelCardPriority.Text = "Note1: Priority 1 means lowest priority";
       // 
       // buttonRemove
       // 
@@ -312,7 +316,7 @@ namespace SetupTv.Sections
       this.mpListView1.LargeImageList = this.imageList1;
       this.mpListView1.Location = new System.Drawing.Point(9, 11);
       this.mpListView1.Name = "mpListView1";
-      this.mpListView1.Size = new System.Drawing.Size(437, 299);
+      this.mpListView1.Size = new System.Drawing.Size(437, 282);
       this.mpListView1.SmallImageList = this.imageList1;
       this.mpListView1.TabIndex = 0;
       this.mpListView1.UseCompatibleStateImageBehavior = false;
@@ -562,6 +566,28 @@ namespace SetupTv.Sections
       this.tabControl1.TabIndex = 3;
       this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
       // 
+      // labelHybridCard
+      // 
+      this.labelHybridCard.AutoSize = true;
+      this.labelHybridCard.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+      this.labelHybridCard.Location = new System.Drawing.Point(6, 322);
+      this.labelHybridCard.Name = "labelHybridCard";
+      this.labelHybridCard.Size = new System.Drawing.Size(246, 13);
+      this.labelHybridCard.TabIndex = 5;
+      this.labelHybridCard.Text = "Note2: Configure hybrid card as described";
+      // 
+      // linkLabelHybridCard
+      // 
+      this.linkLabelHybridCard.AutoSize = true;
+      this.linkLabelHybridCard.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+      this.linkLabelHybridCard.Location = new System.Drawing.Point(251, 322);
+      this.linkLabelHybridCard.Name = "linkLabelHybridCard";
+      this.linkLabelHybridCard.Size = new System.Drawing.Size(65, 13);
+      this.linkLabelHybridCard.TabIndex = 6;
+      this.linkLabelHybridCard.TabStop = true;
+      this.linkLabelHybridCard.Text = "in the wiki";
+      this.linkLabelHybridCard.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelHybridCard_LinkClicked);
+      // 
       // TvCards
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -573,6 +599,7 @@ namespace SetupTv.Sections
       this.contextMenuStrip1.ResumeLayout(false);
       this.tabPage2.ResumeLayout(false);
       this.tabPage1.ResumeLayout(false);
+      this.tabPage1.PerformLayout();
       this.tabPage3.ResumeLayout(false);
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
@@ -634,5 +661,7 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label2;
     private System.Windows.Forms.Label label1;
     private System.Windows.Forms.TabControl tabControl1;
+    private System.Windows.Forms.LinkLabel linkLabelHybridCard;
+    private System.Windows.Forms.Label labelHybridCard;
   }
 }
