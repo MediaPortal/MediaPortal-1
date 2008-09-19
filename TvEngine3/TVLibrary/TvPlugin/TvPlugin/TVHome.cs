@@ -530,13 +530,20 @@ namespace TvPlugin
             if (assocSchedule != null)
             {
               server.StopRecordingSchedule(assocSchedule.IdSchedule);
+              if (s != null)
+              {
+                s.Delete();
+              }
             }
             else
             {
               server.StopRecordingSchedule(s.IdSchedule);
             }
           }
-          s.Delete();
+          else if (s != null)
+          {                        
+            s.Delete();            
+          }
           server.OnNewSchedule();
         }
         else //delete only a single show, keep the schedule
@@ -563,7 +570,10 @@ namespace TvPlugin
               canceledSchedule.Persist();
             }
 
-            if (!isRec) s.Delete();
+            if (!isRec && s != null)
+            {
+              s.Delete();
+            }
             server.OnNewSchedule();
           }
           else
