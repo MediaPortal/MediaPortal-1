@@ -100,16 +100,20 @@ namespace MediaPortal.GUI.Library
       _labelControl = new GUILabelControl(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName, _label, _textColor, _textAlignment, false);
       _labelControl.CacheFont = false;
       _labelControl.ParentControl = this;
+      _labelControl.SetAnimations(Animations);
       if (_fontName != "" && _fontName != "-")
         _font = GUIFontManager.GetFont(_fontName);
       if (_label.IndexOf("#") >= 0) _containsProperty = true;
     }
 
+  
     /// <summary>
     /// Renders the control.
     /// </summary>
     public override void Render(float timePassed)
     {
+      if (_labelControl == null) return;
+      
       if (GUIGraphicsContext.EditMode == false)
       {
         if (!IsVisible)
