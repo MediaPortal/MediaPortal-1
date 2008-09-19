@@ -415,6 +415,8 @@ namespace MediaPortal.GUI.Library
       strTest = strTest.ToLower();
       strTest = strTest.TrimStart(new char[] { ' ' });
       strTest = strTest.TrimEnd(new char[] { ' ' });
+      if (strTest.Length == 0) return 0;
+      
       bool bNegate = strTest[0] == '!';
       int ret = 0;
       string strCategory = "";
@@ -806,11 +808,12 @@ namespace MediaPortal.GUI.Library
       }
       else if (strTest.Length >= 13 && strTest.Substring(0, 13) == "controlgroup(")
       {
-        int groupID = Int32.Parse(strTest.Substring(13));
+        int groupPos = strTest.IndexOf(")");
+        int groupID = Int32.Parse(strTest.Substring(13, groupPos - 13));
         int controlID = 0;
         int controlPos = strTest.IndexOf(".hasfocus(");
         if (controlPos > 0)
-          controlID = Int32.Parse(strTest.Substring(controlPos + 10));
+          controlID = Int32.Parse(strTest.Substring(controlPos + 10, strTest.Length - controlPos - 11));
         if (groupID != 0)
         {
           return AddMultiInfo(new GUIInfo(bNegate ? -CONTROL_GROUP_HAS_FOCUS : CONTROL_GROUP_HAS_FOCUS, groupID, controlID));
@@ -1338,11 +1341,11 @@ namespace MediaPortal.GUI.Library
 
           break;
         case CONTROL_GROUP_HAS_FOCUS:
-          //GUIWindow pWindow = GUIWindowManager.GetWindow(dwContextWindow);
-          //if (null==pWindow) pWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-          //if (pWindow!=null) 
-          //  bReturn = pWindow.ControlGroupHasFocus(info.m_data1, info.m_data2);
-          bReturn = false;
+          GUIWindow win = GUIWindowManager.GetWindow(dwContextWindow);
+          if (win == null) win = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
+          if (win != null)
+            bReturn = win.ControlGroupHasFocus(info.m_data1, info.m_data2);
+          //bReturn = false;
 
           break;
         case PLUGIN_IS_ENABLED:
