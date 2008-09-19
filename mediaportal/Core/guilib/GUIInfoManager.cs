@@ -1341,11 +1341,11 @@ namespace MediaPortal.GUI.Library
 
           break;
         case CONTROL_GROUP_HAS_FOCUS:
-          GUIWindow win = GUIWindowManager.GetWindow(dwContextWindow);
-          if (win == null) win = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-          if (win != null)
-            bReturn = win.ControlGroupHasFocus(info.m_data1, info.m_data2);
-          //bReturn = false;
+        //  GUIWindow win = GUIWindowManager.GetWindow(dwContextWindow);
+        //  if (win == null) win = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
+        //  if (win != null)
+        //    bReturn = win.ControlGroupHasFocus(info.m_data1, info.m_data2);
+          bReturn = false;
 
           break;
         case PLUGIN_IS_ENABLED:
