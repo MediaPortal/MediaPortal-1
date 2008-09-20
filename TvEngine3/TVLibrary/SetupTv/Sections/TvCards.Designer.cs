@@ -97,20 +97,20 @@ namespace SetupTv.Sections
       this.contextMenuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.placeInHybridCardToolStripMenuItem});
       this.contextMenuStrip2.Name = "contextMenuStrip2";
-      this.contextMenuStrip2.Size = new System.Drawing.Size(151, 26);
+      this.contextMenuStrip2.Size = new System.Drawing.Size(153, 26);
       // 
       // placeInHybridCardToolStripMenuItem
       // 
       this.placeInHybridCardToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newToolStripMenuItem});
       this.placeInHybridCardToolStripMenuItem.Name = "placeInHybridCardToolStripMenuItem";
-      this.placeInHybridCardToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
+      this.placeInHybridCardToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
       this.placeInHybridCardToolStripMenuItem.Text = "Place in group";
       // 
       // newToolStripMenuItem
       // 
       this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-      this.newToolStripMenuItem.Size = new System.Drawing.Size(96, 22);
+      this.newToolStripMenuItem.Size = new System.Drawing.Size(105, 22);
       this.newToolStripMenuItem.Text = "new";
       // 
       // imageList1
@@ -125,19 +125,19 @@ namespace SetupTv.Sections
             this.deleteCardToolStripMenuItem,
             this.deleteEntireHybridCardToolStripMenuItem});
       this.contextMenuStrip1.Name = "contextMenuStrip1";
-      this.contextMenuStrip1.Size = new System.Drawing.Size(204, 48);
+      this.contextMenuStrip1.Size = new System.Drawing.Size(205, 48);
       // 
       // deleteCardToolStripMenuItem
       // 
       this.deleteCardToolStripMenuItem.Name = "deleteCardToolStripMenuItem";
-      this.deleteCardToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+      this.deleteCardToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
       this.deleteCardToolStripMenuItem.Text = "Delete card";
       this.deleteCardToolStripMenuItem.Click += new System.EventHandler(this.deleteCardToolStripMenuItem_Click);
       // 
       // deleteEntireHybridCardToolStripMenuItem
       // 
       this.deleteEntireHybridCardToolStripMenuItem.Name = "deleteEntireHybridCardToolStripMenuItem";
-      this.deleteEntireHybridCardToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+      this.deleteEntireHybridCardToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
       this.deleteEntireHybridCardToolStripMenuItem.Text = "Delete entire hybrid card";
       this.deleteEntireHybridCardToolStripMenuItem.Click += new System.EventHandler(this.deleteEntireHybridCardToolStripMenuItem_Click);
       // 
@@ -291,7 +291,7 @@ namespace SetupTv.Sections
       this.labelHybridCard.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
       this.labelHybridCard.Location = new System.Drawing.Point(6, 322);
       this.labelHybridCard.Name = "labelHybridCard";
-      this.labelHybridCard.Size = new System.Drawing.Size(252, 13);
+      this.labelHybridCard.Size = new System.Drawing.Size(359, 20);
       this.labelHybridCard.TabIndex = 5;
       this.labelHybridCard.Text = "Note2: Configure hybrid cards as described";
       // 
