@@ -51,6 +51,8 @@ namespace SetupTv.Sections
       this.tabPage2 = new System.Windows.Forms.TabPage();
       this.treeView1 = new System.Windows.Forms.TreeView();
       this.tabPage1 = new System.Windows.Forms.TabPage();
+      this.linkLabelHybridCard = new System.Windows.Forms.LinkLabel();
+      this.labelHybridCard = new System.Windows.Forms.Label();
       this.labelCardPriority = new System.Windows.Forms.Label();
       this.buttonRemove = new System.Windows.Forms.Button();
       this.mpListView1 = new MediaPortal.UserInterface.Controls.MPListView();
@@ -79,8 +81,6 @@ namespace SetupTv.Sections
       this.label2 = new System.Windows.Forms.Label();
       this.label1 = new System.Windows.Forms.Label();
       this.tabControl1 = new System.Windows.Forms.TabControl();
-      this.labelHybridCard = new System.Windows.Forms.Label();
-      this.linkLabelHybridCard = new System.Windows.Forms.LinkLabel();
       this.contextMenuStrip2.SuspendLayout();
       this.contextMenuStrip1.SuspendLayout();
       this.tabPage2.SuspendLayout();
@@ -273,13 +273,35 @@ namespace SetupTv.Sections
       this.tabPage1.Text = "Cards";
       this.tabPage1.UseVisualStyleBackColor = true;
       // 
+      // linkLabelHybridCard
+      // 
+      this.linkLabelHybridCard.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.linkLabelHybridCard.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+      this.linkLabelHybridCard.Location = new System.Drawing.Point(238, 322);
+      this.linkLabelHybridCard.Name = "linkLabelHybridCard";
+      this.linkLabelHybridCard.Size = new System.Drawing.Size(65, 13);
+      this.linkLabelHybridCard.TabIndex = 6;
+      this.linkLabelHybridCard.TabStop = true;
+      this.linkLabelHybridCard.Text = "in the wiki";
+      this.linkLabelHybridCard.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelHybridCard_LinkClicked);
+      // 
+      // labelHybridCard
+      // 
+      this.labelHybridCard.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.labelHybridCard.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+      this.labelHybridCard.Location = new System.Drawing.Point(6, 322);
+      this.labelHybridCard.Name = "labelHybridCard";
+      this.labelHybridCard.Size = new System.Drawing.Size(252, 13);
+      this.labelHybridCard.TabIndex = 5;
+      this.labelHybridCard.Text = "Note2: Configure hybrid cards as described";
+      // 
       // labelCardPriority
       // 
       this.labelCardPriority.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.labelCardPriority.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.labelCardPriority.Location = new System.Drawing.Point(6, 305);
+      this.labelCardPriority.Location = new System.Drawing.Point(6, 303);
       this.labelCardPriority.Name = "labelCardPriority";
-      this.labelCardPriority.Size = new System.Drawing.Size(250, 13);
+      this.labelCardPriority.Size = new System.Drawing.Size(256, 13);
       this.labelCardPriority.TabIndex = 4;
       this.labelCardPriority.Text = "Note1: Priority 1 means lowest priority";
       // 
@@ -566,28 +588,6 @@ namespace SetupTv.Sections
       this.tabControl1.TabIndex = 3;
       this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
       // 
-      // labelHybridCard
-      // 
-      this.labelHybridCard.AutoSize = true;
-      this.labelHybridCard.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
-      this.labelHybridCard.Location = new System.Drawing.Point(6, 322);
-      this.labelHybridCard.Name = "labelHybridCard";
-      this.labelHybridCard.Size = new System.Drawing.Size(246, 13);
-      this.labelHybridCard.TabIndex = 5;
-      this.labelHybridCard.Text = "Note2: Configure hybrid card as described";
-      // 
-      // linkLabelHybridCard
-      // 
-      this.linkLabelHybridCard.AutoSize = true;
-      this.linkLabelHybridCard.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
-      this.linkLabelHybridCard.Location = new System.Drawing.Point(251, 322);
-      this.linkLabelHybridCard.Name = "linkLabelHybridCard";
-      this.linkLabelHybridCard.Size = new System.Drawing.Size(65, 13);
-      this.linkLabelHybridCard.TabIndex = 6;
-      this.linkLabelHybridCard.TabStop = true;
-      this.linkLabelHybridCard.Text = "in the wiki";
-      this.linkLabelHybridCard.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelHybridCard_LinkClicked);
-      // 
       // TvCards
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -599,7 +599,6 @@ namespace SetupTv.Sections
       this.contextMenuStrip1.ResumeLayout(false);
       this.tabPage2.ResumeLayout(false);
       this.tabPage1.ResumeLayout(false);
-      this.tabPage1.PerformLayout();
       this.tabPage3.ResumeLayout(false);
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
