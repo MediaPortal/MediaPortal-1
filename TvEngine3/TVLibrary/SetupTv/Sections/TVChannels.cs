@@ -513,21 +513,30 @@ namespace SetupTv.Sections
 
     private void mpListView1_AfterLabelEdit(object sender, LabelEditEventArgs e)
     {
-      try
-      {
-        int oldIndex = e.Item;
-        ListViewItem item = mpListView1.Items[oldIndex];
-        int newIndex = (Int32.Parse(e.Label) - 1);
-        if (newIndex == oldIndex) return;
+      int oldIndex = e.Item;
+      ListViewItem item = mpListView1.Items[oldIndex];
 
+      /* chemelli: 
+       * works only for channels name equal to numbers.
+       * Now fixed but commented out
+       * (What is needed for ?)
+       */
+      int newIndex = 0;
+      if (Int32.TryParse(e.Label, out newIndex))
+      {
+        if ((newIndex - 1) == oldIndex) return;
         mpListView1.Items.RemoveAt(oldIndex);
-        mpListView1.Items.Insert(newIndex, item);
+        mpListView1.Items.Insert((newIndex - 1), item);
         ReOrder();
         e.CancelEdit = true;
       }
-      catch (Exception)
-      {
-      }
+      /* chemelli: end of block
+       */
+
+      Channel channel = (Channel)mpListView1.Items[oldIndex].Tag;
+      channel.Name = e.Label;
+      channel.DisplayName = e.Label;
+      channel.Persist();
     }
 
     private void mpButtonEdit_Click(object sender, EventArgs e)
@@ -548,7 +557,7 @@ namespace SetupTv.Sections
             detail.Persist();
           }
         }
-        OnSectionActivated();
+        mpListView1.Items[indexes[0]].Text = channel.DisplayName;
       }
     }
 
