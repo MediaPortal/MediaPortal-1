@@ -143,7 +143,6 @@ namespace TvLibrary.Implementations.DVB
             {
               Log.Log.WriteFile("WinTV CI detected in graph - using capabilities...");
               _winTvCiModule = new WinTvCiModule(winTvUsbCiFilter);
-              //return;
             }
             _diSEqCMotor = new DiSEqCMotor(_hauppauge);
             return;
@@ -164,9 +163,16 @@ namespace TvLibrary.Implementations.DVB
           if (_conexant.IsConexant)
           {
             Log.Log.WriteFile("Conexant BDA card detected");
+            Log.Log.WriteFile("Check for Hauppauge WinTV CI");
+            if (winTvUsbCiFilter != null)
+            {
+              Log.Log.WriteFile("WinTV CI detected in graph - using capabilities...");
+              _winTvCiModule = new WinTvCiModule(winTvUsbCiFilter);
+            }
             return;
           }
           _conexant = null;
+          _winTvCiModule = null;
 
           Log.Log.WriteFile("Check for Generic DVB-S card");
           _genericbdas = new GenericBDAS(tunerFilter, analyzerFilter);
