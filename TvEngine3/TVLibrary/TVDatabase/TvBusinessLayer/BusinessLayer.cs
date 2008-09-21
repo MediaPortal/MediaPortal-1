@@ -221,10 +221,6 @@ namespace TvDatabase
       {
         channelType = 2;
       }
-      else if (channel is DVBIPChannel)
-      {
-        channelType = 7;
-      }
       else // must be ATSCChannel  or AnalogChannel
       {
         channelType = 1;
@@ -484,23 +480,6 @@ namespace TvDatabase
             dvbtChannel.AudioPid = detail.AudioPid;
             dvbtChannel.LogicalChannelNumber = detail.ChannelNumber;
             return dvbtChannel;
-          case 7: //DVBIPChannel
-            DVBIPChannel dvbipChannel = new DVBIPChannel();
-            dvbipChannel.FreeToAir = detail.FreeToAir;
-            dvbipChannel.IsRadio = detail.IsRadio;
-            dvbipChannel.IsTv = detail.IsTv;
-            dvbipChannel.Name = detail.Name;
-            dvbipChannel.NetworkId = detail.NetworkId;
-            dvbipChannel.PcrPid = detail.PcrPid;
-            dvbipChannel.PmtPid = detail.PmtPid;
-            dvbipChannel.Provider = detail.Provider;
-            dvbipChannel.ServiceId = detail.ServiceId;
-            dvbipChannel.TransportId = detail.TransportId;
-            dvbipChannel.VideoPid = detail.VideoPid;
-            dvbipChannel.AudioPid = detail.AudioPid;
-            dvbipChannel.LogicalChannelNumber = detail.ChannelNumber;
-            dvbipChannel.Url = detail.Url;
-            return dvbipChannel;
         }
       }
       return null;
@@ -614,24 +593,6 @@ namespace TvDatabase
             dvbtChannel.AudioPid = detail.AudioPid;
             tvChannels.Add(dvbtChannel);
             break;
-          case 7: //DVBIPChannel
-            DVBIPChannel dvbipChannel = new DVBIPChannel();
-            dvbipChannel.FreeToAir = detail.FreeToAir;
-            dvbipChannel.IsRadio = detail.IsRadio;
-            dvbipChannel.IsTv = detail.IsTv;
-            dvbipChannel.Name = detail.Name;
-            dvbipChannel.NetworkId = detail.NetworkId;
-            dvbipChannel.PcrPid = detail.PcrPid;
-            dvbipChannel.PmtPid = detail.PmtPid;
-            dvbipChannel.Provider = detail.Provider;
-            dvbipChannel.ServiceId = detail.ServiceId;
-            dvbipChannel.TransportId = detail.TransportId;
-            dvbipChannel.VideoPid = detail.VideoPid;
-            dvbipChannel.AudioPid = detail.AudioPid;
-            dvbipChannel.LogicalChannelNumber = detail.ChannelNumber;
-            dvbipChannel.Url = detail.Url;
-            tvChannels.Add(dvbipChannel);
-            break;
         }
       }
       return tvChannels;
@@ -717,7 +678,6 @@ namespace TvDatabase
       int innerFecRate = (int)BinaryConvolutionCodeRate.RateNotSet;
       int pilot = (int)Pilot.NotSet;
       int rollOff = (int)RollOff.NotSet;
-      string url = "";
 
       AnalogChannel analogChannel = tvChannel as AnalogChannel;
       if (analogChannel != null)
@@ -782,14 +742,6 @@ namespace TvDatabase
         channelType = 4;
       }
 
-      DVBIPChannel dvbipChannel = tvChannel as DVBIPChannel;
-      if (dvbipChannel != null)
-      {
-        url = dvbipChannel.Url;
-        channelNumber = dvbipChannel.LogicalChannelNumber;
-        channelType = 7;
-      }
-
       DVBBaseChannel dvbChannel = tvChannel as DVBBaseChannel;
       if (dvbChannel != null)
       {
@@ -812,7 +764,7 @@ namespace TvDatabase
                               channelType, channelNumber, (int)channelFrequency, country, isRadio, isTv,
                               networkId, transportId, serviceId, pmtPid, freeToAir,
                               modulation, polarisation, symbolRate, diseqc, switchFrequency,
-                              bandwidth, majorChannel, minorChannel, pcrPid, videoInputType, tunerSource, videoPid, audioPid, band, satIndex, innerFecRate, pilot, rollOff, url, 0);
+                              bandwidth, majorChannel, minorChannel, pcrPid, videoInputType, tunerSource, videoPid, audioPid, band, satIndex, innerFecRate, pilot, rollOff, "", 0);
       detail.Persist();
       return detail;
     }
@@ -850,7 +802,6 @@ namespace TvDatabase
       int innerFecRate = (int)BinaryConvolutionCodeRate.RateNotSet;
       int pilot = (int)Pilot.NotSet;
       int rollOff = (int)RollOff.NotSet;
-      string url = "";
 
       AnalogChannel analogChannel = tvChannel as AnalogChannel;
       if (analogChannel != null)
@@ -912,14 +863,6 @@ namespace TvDatabase
         bandwidth = dvbtChannel.BandWidth;
         channelNumber = dvbtChannel.LogicalChannelNumber;
         channelType = 4;
-      }
-
-      DVBIPChannel dvbipChannel = tvChannel as DVBIPChannel;
-      if (dvbipChannel != null)
-      {
-        url = dvbipChannel.Url;
-        channelNumber = dvbipChannel.LogicalChannelNumber;
-        channelType = 7;
       }
 
       DVBBaseChannel dvbChannel = tvChannel as DVBBaseChannel;
@@ -971,7 +914,6 @@ namespace TvDatabase
       detail.InnerFecRate = innerFecRate;
       detail.Pilot = pilot;
       detail.RollOff = rollOff;
-      detail.Url = url;
       detail.Persist();
       return detail;
     }
