@@ -483,7 +483,7 @@ namespace MediaPortal.GUI.Library
             pImage.Render(timePassed);
             _sleeper += SLEEP_FRAME_COUNT;
           }
-          if (null != pImage)
+          else if (null != pImage)
           {
             if (pImage.TextureHeight == 0 && pImage.TextureWidth == 0)
             {
