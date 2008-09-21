@@ -971,7 +971,7 @@
     <String id="1514">Timeshifting stopped by an\radministrator</String>
     <String id="1515">Timeshifting stopped by the\rTV-server</String>
     <String id="1516">Timeshifting stopped for an\runknown reason</String>
-    <String id="1517">Timeshifting stopped byn\ranother user</String>
+    <String id="1517">Timeshifting stopped by\ranother user</String>
     <String id="1950" prefix="My ">Status</String>
     <String id="1951">Harddisk</String>
     <String id="1952">Fan</String>

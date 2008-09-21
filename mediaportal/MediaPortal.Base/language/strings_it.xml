@@ -971,6 +971,7 @@
     <String id="1514">Buffer TV fermato da un\ramministratore</String>
     <String id="1515">Buffer TV fermato dal\rServer TV</String>
     <String id="1516">Buffer TV fermato per una\rragione sconosciuta</String>
+    <String id="1517">Buffer TV fermato da un\raltro utente</String>
     <String id="1950" prefix="Il Mio ">Stato</String>
     <String id="1951">Hard Disk</String>
     <String id="1952">Ventola</String>
