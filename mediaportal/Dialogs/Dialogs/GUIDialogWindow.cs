@@ -203,7 +203,7 @@ namespace MediaPortal.Dialogs
             GUIGraphicsContext.Overlay = base.IsOverlayAllowed;
             GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
             //QueueAnimation(AnimationType.WindowOpen);
-            base.OnMessage(message);
+            //base.OnMessage(message);
             return true;
           }
 
