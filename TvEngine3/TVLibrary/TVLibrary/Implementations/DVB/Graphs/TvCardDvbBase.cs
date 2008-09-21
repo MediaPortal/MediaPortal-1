@@ -97,6 +97,7 @@ namespace TvLibrary.Implementations.DVB
     protected bool tunerOnly = false;
     WinTvCiModule winTvCiHandler = null;
     protected bool _cardUsesRealCAM = true;
+    protected bool matchDevicePath = true;
     #endregion
 
     #region ctor
@@ -620,6 +621,7 @@ namespace TvLibrary.Implementations.DVB
         {
           // Got it !
           _filterTuner = tmp;
+          Log.Log.WriteFile("dvb:  using [Tuner]: {0}", devices[i].Name);
           _tunerDevice = devices[i];
           DevicesInUse.Instance.Add(devices[i]);
           Log.Log.WriteFile("dvb:  Render [Network provider]->[Tuner] OK");
@@ -668,64 +670,14 @@ namespace TvLibrary.Implementations.DVB
       if (false == skipCaptureFilter)
       {
         Log.Log.WriteFile("dvb:  Find BDA receiver");
-        // Then enumerate BDA Receiver Components category to found a filter connecting 
-        // to the tuner and the MPEG2 Demux
-        devices = DsDevice.GetDevicesOfCat(FilterCategory.BDAReceiverComponentsCategory);
-        string guidBdaMPEFilter = @"\{8e60217d-a2ee-47f8-b0c5-0f44c55f66dc}";
-        string guidBdaSlipDeframerFilter = @"\{03884cb6-e89a-4deb-b69e-8dc621686e6a}";
-        for (int i = 0; i < devices.Length; i++)
+        Log.Log.WriteFile("dvb:  match Capture by Tuner device path");
+        AddBDARendererToGraph(device);
+        if (_filterCapture == null)
         {
-          if (devices[i].DevicePath.ToLower().IndexOf(guidBdaMPEFilter) >= 0) continue;
-          if (devices[i].DevicePath.ToLower().IndexOf(guidBdaSlipDeframerFilter) >= 0) continue;
-          IBaseFilter tmp;
-          Log.Log.WriteFile("dvb:  -{0}", devices[i].Name);
-          if (DevicesInUse.Instance.IsUsed(devices[i])) continue;
-          try
-          {
-            hr = _graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
-          }
-          catch (Exception)
-          {
-            continue;
-          }
-          if (hr != 0)
-          {
-            if (tmp != null)
-            {
-              Log.Log.Error("dvb:  Failed to add bda receiver: {0}. Is it in use?", devices[i].Name);
-              _graphBuilder.RemoveFilter(tmp);
-              Release.ComObject("bda receiver", tmp);
-            }
-            continue;
-          }
-          //render [Tuner]->[Capture]
-          hr = _capBuilder.RenderStream(null, null, _filterTuner, null, tmp);
-          if (hr == 0)
-          {
-            Log.Log.WriteFile("dvb:  Render [Tuner]->[Capture] AOK");
-            // render [Capture]->[Inf Tee]
-            if (AddWinTvCIModule(tmp))
-            {
-              _filterCapture = tmp;
-              _captureDevice = devices[i];
-              DevicesInUse.Instance.Add(devices[i]);
-              Log.Log.WriteFile("dvb:  OK");
-              break;
-            }
-            else
-            {
-              Log.Log.Error("dvb:  Render->main inftee demux failed");
-              hr = _graphBuilder.RemoveFilter(tmp);
-              Release.ComObject("bda receiver", tmp);
-            }
-          }
-          else
-          {
-            // Try another...
-            Log.Log.WriteFile("dvb:  Looking for another bda receiver...");
-            hr = _graphBuilder.RemoveFilter(tmp);
-            Release.ComObject("bda receiver", tmp);
-          }
+          Log.Log.WriteFile("dvb:  Match by device path failed - trying alternative method");
+          matchDevicePath = false;
+          Log.Log.WriteFile("dvb:  match Capture filter by Tuner device connection");
+          AddBDARendererToGraph(device);
         }
       }
       if (_filterCapture == null)
@@ -753,6 +705,85 @@ namespace TvLibrary.Implementations.DVB
       ConnectMpeg2DemuxToInfTee();
       AddTsWriterFilterToGraph();
       _conditionalAccess = new ConditionalAccess(_filterTuner, _filterTsWriter, _filterWinTvUsb, this,_cardUsesRealCAM);
+    }
+
+    /// <summary>
+    /// adds the BDA renderer filter to the graph by elimination
+    /// then tries to match tuner & render filters if successful then connects them.
+    /// </summary>
+    protected void AddBDARendererToGraph(DsDevice device)
+    {
+      if (!CheckThreadId()) return;
+      if (_filterCapture != null) return;
+      DsDevice[] devices;
+      int hr = 0;
+      devices = DsDevice.GetDevicesOfCat(FilterCategory.BDAReceiverComponentsCategory);
+      string guidBdaMPEFilter = @"\{8e60217d-a2ee-47f8-b0c5-0f44c55f66dc}";
+      string guidBdaSlipDeframerFilter = @"\{03884cb6-e89a-4deb-b69e-8dc621686e6a}";
+      for (int i = 0; i < devices.Length; i++)
+      {
+        if (devices[i].DevicePath.ToLower().IndexOf(guidBdaMPEFilter) >= 0) continue;
+        if (devices[i].DevicePath.ToLower().IndexOf(guidBdaSlipDeframerFilter) >= 0) continue;
+        IBaseFilter tmp;
+        string deviceIdDelimter = @"#{";
+        Log.Log.WriteFile("dvb:  -{0}", devices[i].Name);
+        //Make sure the BDA Receiver Component is on the same physical device as the BDA Source Filter.
+        //This is done by checking the DeviceId and DeviceInstance part of the DevicePath.
+        if (true == matchDevicePath)
+        {
+          if (device.DevicePath.Remove(device.DevicePath.IndexOf(deviceIdDelimter)) != devices[i].DevicePath.Remove(devices[i].DevicePath.IndexOf(deviceIdDelimter)))
+          {
+            continue;
+          }
+        }
+        if (DevicesInUse.Instance.IsUsed(devices[i])) continue;
+        try
+        {
+          hr = _graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
+        }
+        catch (Exception)
+        {
+          continue;
+        }
+        if (hr != 0)
+        {
+          if (tmp != null)
+          {
+            Log.Log.Error("dvb:  Failed to add bda receiver: {0}. Is it in use?", devices[i].Name);
+            _graphBuilder.RemoveFilter(tmp);
+            Release.ComObject("bda receiver", tmp);
+          }
+          continue;
+        }
+        //render [Tuner]->[Capture]
+        hr = _capBuilder.RenderStream(null, null, _filterTuner, null, tmp);
+        if (hr == 0)
+        {
+          Log.Log.WriteFile("dvb:  Render [Tuner]->[Capture] AOK");
+          // render [Capture]->[Inf Tee]
+          if (AddWinTvCIModule(tmp))
+          {
+            _filterCapture = tmp;
+            _captureDevice = devices[i];
+            DevicesInUse.Instance.Add(devices[i]);
+            Log.Log.WriteFile("dvb:  OK");
+            break;
+          }
+          else
+          {
+            Log.Log.Error("dvb:  Render->main inftee demux failed");
+            hr = _graphBuilder.RemoveFilter(tmp);
+            Release.ComObject("bda receiver", tmp);
+          }
+        }
+        else
+        {
+          // Try another...
+          Log.Log.WriteFile("dvb:  Looking for another bda receiver...");
+          hr = _graphBuilder.RemoveFilter(tmp);
+          Release.ComObject("bda receiver", tmp);
+        }
+      }
     }
 
     /// <summary>
