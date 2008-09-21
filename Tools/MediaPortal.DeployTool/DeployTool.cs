@@ -115,7 +115,7 @@ namespace MediaPortal.DeployTool
         {
           Process process = new Process();
           process.StartInfo.FileName = "explorer.exe";
-          process.StartInfo.Arguments = System.Environment.CurrentDirectory;
+          process.StartInfo.Arguments = "/e, " + Application.StartupPath;
           process.StartInfo.UseShellExecute = true;
           process.Start();
         }
