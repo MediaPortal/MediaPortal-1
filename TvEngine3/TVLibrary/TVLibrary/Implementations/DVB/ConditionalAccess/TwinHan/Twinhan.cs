@@ -200,7 +200,7 @@ namespace TvLibrary.Implementations.DVB
     public bool IsTwinhanCard()
     {
       if (_initialized) return _isTwinHanCard;
-      Log.Log.WriteFile("Twinhan:  Check for twinhan driver");
+      //Log.Log.WriteFile("Twinhan:  Check for twinhan driver");
       bool success = false;
       try
       {

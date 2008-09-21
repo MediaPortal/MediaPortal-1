@@ -174,6 +174,7 @@ namespace TvLibrary.Implementations.DVB
           _conexant = null;
           _winTvCiModule = null;
 
+
           Log.Log.WriteFile("Check for Generic DVB-S card");
           _genericbdas = new GenericBDAS(tunerFilter, analyzerFilter);
           if (_genericbdas.IsGenericBDAS)
@@ -182,6 +183,16 @@ namespace TvLibrary.Implementations.DVB
             return;
           }
           _genericbdas = null;
+
+          //Final WinTV-CI check for DVB-T hybrid cards
+          Log.Log.WriteFile("Check for Hauppauge WinTV CI");
+          if (winTvUsbCiFilter != null)
+          {
+            Log.Log.WriteFile("WinTV CI detected in graph - using capabilities...");
+            _winTvCiModule = new WinTvCiModule(winTvUsbCiFilter);
+            return;
+          }
+          _winTvCiModule = null;
         }
 
         //ATSC checks
