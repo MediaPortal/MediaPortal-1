@@ -640,7 +640,7 @@ namespace MediaPortal.GUI.Library
         }
         _diffuseTexture = null;
         Cleanup();
-        base.FreeResources();
+        //base.FreeResources();
       }
     }
 
@@ -1161,7 +1161,7 @@ namespace MediaPortal.GUI.Library
             base.Render(timePassed);
             return;
           }
-          IsVisible = true;
+          //IsVisible = true;
           AllocResources();
           _reCalculate = true;
         }
