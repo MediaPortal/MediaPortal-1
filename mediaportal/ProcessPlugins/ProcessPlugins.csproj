@@ -293,122 +293,9 @@
       <DependentUpon>SetupForm.cs</DependentUpon>
     </Compile>
     <Compile Include="DirecTV Serial Control\TunerPlugin.cs" />
-    <Compile Include="ExternalDisplay\BitmapConverter.cs" />
-    <Compile Include="ExternalDisplay\ByteArray.cs" />
-    <Compile Include="ExternalDisplay\Drivers\BaseDisplay.cs" />
-    <Compile Include="ExternalDisplay\Drivers\Clipboard.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ExternalDisplay\Drivers\CrystalFontz634.cs" />
-    <Compile Include="ExternalDisplay\Drivers\DebugForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ExternalDisplay\DisplayHandler.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ExternalDisplay\Drivers\DM140GINK.cs" />
-    <Compile Include="ExternalDisplay\Drivers\FicSpectra.cs" />
-    <Compile Include="ExternalDisplay\Drivers\iMONLCDg.cs">
-    </Compile>
-    <Compile Include="ExternalDisplay\Drivers\MatrixGX.cs" />
-    <Compile Include="ExternalDisplay\Drivers\MatrixMX.cs" />
-    <Compile Include="ExternalDisplay\Drivers\ScaleoEV.cs" />
-    <Compile Include="ExternalDisplay\ExternalDisplay.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ExternalDisplay\Drivers\Girder.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ExternalDisplay\Drivers\HD44780.cs" />
-    <Compile Include="ExternalDisplay\HighPerformanceCounter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ExternalDisplay\IDisplay.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ExternalDisplay\Drivers\iMON.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ExternalDisplay\IO.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ExternalDisplay\Drivers\LCDHypeWrapper.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ExternalDisplay\Drivers\MediaPad.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ExternalDisplay\Drivers\None.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ExternalDisplay\Drivers\NoritakeGU7000.cs" />
-    <Compile Include="ExternalDisplay\PropertyBrowser.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ExternalDisplay\Settings.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ExternalDisplay\Setting\Alignment.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ExternalDisplay\Setting\AndCondition.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ExternalDisplay\Setting\Condition.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ExternalDisplay\Setting\FixedValue.cs" />
-    <Compile Include="ExternalDisplay\Setting\Image.cs" />
-    <Compile Include="ExternalDisplay\Setting\IsNullCondition.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ExternalDisplay\Setting\Line.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ExternalDisplay\Setting\Message.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ExternalDisplay\Setting\NotNullCondition.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ExternalDisplay\Setting\OrCondition.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ExternalDisplay\Setting\Parse.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ExternalDisplay\Setting\PerformanceCounter.cs" />
-    <Compile Include="ExternalDisplay\Setting\Property.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ExternalDisplay\Setting\Text.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ExternalDisplay\Setting\TextProgressBar.cs" />
-    <Compile Include="ExternalDisplay\Setting\Value.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ExternalDisplay\SetupForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ExternalDisplay\Status.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ExternalDisplay\Drivers\T6963C.cs" />
-    <Compile Include="ExternalDisplay\Drivers\VLSYSLis2.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="DiskManagement\DiskManagement.cs" />
     <Compile Include="DiskManagement\EpisodeManagement.cs" />
     <Compile Include="DiskManagement\RecordingManagement.cs" />
-    <Compile Include="ExternalDisplay\VFD_Control\Debugging.cs" />
-    <Compile Include="ExternalDisplay\VFD_Control\DebuggingDeclarations.cs" />
-    <Compile Include="ExternalDisplay\VFD_Control\DeviceManagement.cs" />
-    <Compile Include="ExternalDisplay\VFD_Control\DeviceManagementDeclarations.cs" />
-    <Compile Include="ExternalDisplay\VFD_Control\FileIODeclarations.cs" />
-    <Compile Include="ExternalDisplay\VFD_Control\Hid.cs" />
-    <Compile Include="ExternalDisplay\VFD_Control\HidDeclarations.cs" />
-    <Compile Include="ExternalDisplay\VFD_Control\VFD_Control.cs" />
     <Compile Include="HCWBlaster\HCWBlaster.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -481,15 +368,6 @@
     <EmbeddedResource Include="CallerId\ISDN\ISDNSetupForm.resx">
       <DependentUpon>ISDNSetupForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ExternalDisplay\Drivers\DebugForm.resx">
-      <DependentUpon>DebugForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ExternalDisplay\PropertyBrowser.resx">
-      <DependentUpon>PropertyBrowser.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ExternalDisplay\SetupForm.resx">
-      <DependentUpon>SetupForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="HCWBlaster\HCWBlasterSetupForm.resx">
       <DependentUpon>HCWBlasterSetupForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -520,10 +398,6 @@
     <EmbeddedResource Include="Audioscrobbler\AudioscrobblerDisabled.gif" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="ExternalDisplay\lcd.gif" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="ExternalDisplay\lcd_deactivated.gif" />
     <EmbeddedResource Include="PowerScheduler\PowerSchedulerSetupForm.resx">
       <DependentUpon>PowerSchedulerSetupForm.cs</DependentUpon>
       <SubType>Designer</SubType>
