@@ -186,7 +186,7 @@ bool CDiskRecorder::Start()
 													NULL);                 // Template
 			if (m_hFile == INVALID_HANDLE_VALUE)
 			{
-				LogDebug("unable to create file:'%s' %d",m_szFileName, GetLastError());
+				LogDebug("Recorder:unable to create file:'%s' %d",m_szFileName, GetLastError());
 				return false;
 			}
 		}
@@ -539,7 +539,7 @@ void CDiskRecorder::WriteToRecording(byte* buffer, int len)
             }//of if (ERROR_FILE_TOO_LARGE == GetLastError())
 						else
 						{				 
-							LogDebug("Runable to write file:'%s' %d %d %x",m_szFileName, GetLastError(),m_iWriteBufferPos,m_hFile);
+							LogDebug("Recorder:unable to write file:'%s' %d %d %x",m_szFileName, GetLastError(),m_iWriteBufferPos,m_hFile);
 						}
           }//of if (FALSE == WriteFile(m_hFile, (PVOID)m_pWriteBuffer, (DWORD)m_iWriteBufferPos, &written, NULL))
 		    }//if (m_hFile!=INVALID_HANDLE_VALUE)
@@ -548,7 +548,7 @@ void CDiskRecorder::WriteToRecording(byte* buffer, int len)
 	  }
 	  catch(...)
 	  {
-		  LogDebug("Write exception");
+		  LogDebug("Recorder:Write exception");
 	  }
   }// of if (len + m_iWriteBufferPos >= RECORD_BUFFER_SIZE)
 
@@ -621,9 +621,9 @@ void CDiskRecorder::WriteLog(const char* fmt,...)
 	va_end(ap); 
 
 	if (m_recordingMode==RecordingMode::TimeShift)
-		LogDebug("DiskRecorder[TIMESHIFT] %s",logbuffer);
+		LogDebug("Recorder: TIMESHIFT %s",logbuffer);
 	else
-		LogDebug("DiskRecorder[RECORD] %s",logbuffer);
+		LogDebug("Recorder: RECORD    %s",logbuffer);
 }
 
 void CDiskRecorder::SetPcrPid(int pcrPid)
@@ -791,7 +791,7 @@ int GetPesHeader(byte* tsPacket, CTsHeader& header, PidInfo2& PidInfo)
 	}
 	if (PidInfo.NPktQ>=4) 
 	{
-		LogDebug("PesHeader Pid %x Cannot decrypt PES ( splitted in more than 4 ts packets )",header.Pid ) ;
+		LogDebug("Recorder:PesHeader Pid %x Cannot decrypt PES ( splitted in more than 4 ts packets )",header.Pid ) ;
 		return 1 ; // therefore, write packets.
 	}
 		
@@ -806,7 +806,7 @@ int GetPesHeader(byte* tsPacket, CTsHeader& header, PidInfo2& PidInfo)
 
 	if ((PidInfo.PesHeaderLength >= 7) && ((PidInfo.PesHeader[6] & 0xC0)!=0x80))
 	{
-//		LogDebug("PesHeader Pid %x ( No-PTS-DTS -4 ) Sz %d Length : %d %2.2x %2.2x %2.2x %2.2x %2.2x %2.2x %2.2x",header.Pid, (PidInfo.PesHeader[4]<<8)+PidInfo.PesHeader[5],PidInfo.PesHeaderLength,PidInfo.PesHeader[0],PidInfo.PesHeader[1],PidInfo.PesHeader[2],PidInfo.PesHeader[3],PidInfo.PesHeader[4],PidInfo.PesHeader[5],PidInfo.PesHeader[6]) ;
+//		LogDebug("Recorder:PesHeader Pid %x ( No-PTS-DTS -4 ) Sz %d Length : %d %2.2x %2.2x %2.2x %2.2x %2.2x %2.2x %2.2x",header.Pid, (PidInfo.PesHeader[4]<<8)+PidInfo.PesHeader[5],PidInfo.PesHeaderLength,PidInfo.PesHeader[0],PidInfo.PesHeader[1],PidInfo.PesHeader[2],PidInfo.PesHeader[3],PidInfo.PesHeader[4],PidInfo.PesHeader[5],PidInfo.PesHeader[6]) ;
 		return 0 ;	// Empty PES.
 	}
 
@@ -819,37 +819,37 @@ int GetPesHeader(byte* tsPacket, CTsHeader& header, PidInfo2& PidInfo)
 			case 0x40 : if (PidInfo.PesHeaderLength>=14)
 						{
 //							if (PidInfo.NPktQ > 1)
-//								LogDebug("PesHeader Pid %x ( Ready PTS or DTS ) Sz %d Length : %d %2.2x %2.2x, Q:%d",header.Pid, (PidInfo.PesHeader[4]<<8)+PidInfo.PesHeader[5],PidInfo.PesHeaderLength,PidInfo.PesHeader[6],PidInfo.PesHeader[7],PidInfo.NPktQ) ;
+//								LogDebug("Recorder:PesHeader Pid %x ( Ready PTS or DTS ) Sz %d Length : %d %2.2x %2.2x, Q:%d",header.Pid, (PidInfo.PesHeader[4]<<8)+PidInfo.PesHeader[5],PidInfo.PesHeaderLength,PidInfo.PesHeader[6],PidInfo.PesHeader[7],PidInfo.NPktQ) ;
 							return 1 ;	// Ready to read.
 						}
 						else
 						{
-//							LogDebug("PesHeader Pid %x ( Wait next - 1) Sz %d Length : %d %2.2x %2.2x, Q:%d",header.Pid, (PidInfo.PesHeader[4]<<8)+PidInfo.PesHeader[5],PidInfo.PesHeaderLength,PidInfo.PesHeader[6],PidInfo.PesHeader[7],PidInfo.NPktQ) ;
+//							LogDebug("Recorder:PesHeader Pid %x ( Wait next - 1) Sz %d Length : %d %2.2x %2.2x, Q:%d",header.Pid, (PidInfo.PesHeader[4]<<8)+PidInfo.PesHeader[5],PidInfo.PesHeaderLength,PidInfo.PesHeader[6],PidInfo.PesHeader[7],PidInfo.NPktQ) ;
 							return 2 ;	// Not enough data.
 						}
 
 			case 0xC0 : if (PidInfo.PesHeaderLength>=19)
 						{
 //							if (PidInfo.NPktQ > 1)
-//								LogDebug("PesHeader Pid %x ( Ready : PTS+DTS ) Sz %d Length : %d %2.2x %2.2x, Q:%d",header.Pid, (PidInfo.PesHeader[4]<<8)+PidInfo.PesHeader[5],PidInfo.PesHeaderLength,PidInfo.PesHeader[6],PidInfo.PesHeader[7],PidInfo.NPktQ) ;
+//								LogDebug("Recorder:PesHeader Pid %x ( Ready : PTS+DTS ) Sz %d Length : %d %2.2x %2.2x, Q:%d",header.Pid, (PidInfo.PesHeader[4]<<8)+PidInfo.PesHeader[5],PidInfo.PesHeaderLength,PidInfo.PesHeader[6],PidInfo.PesHeader[7],PidInfo.NPktQ) ;
 							return 1 ;	// Ready to read.
 						}
 						else
 						{
-//							LogDebug("PesHeader Pid %x ( Wait next - 2) Sz %d Length : %d %2.2x %2.2x, Q:%d",header.Pid, (PidInfo.PesHeader[4]<<8)+PidInfo.PesHeader[5],PidInfo.PesHeaderLength,PidInfo.PesHeader[6],PidInfo.PesHeader[7],PidInfo.NPktQ) ;
+//							LogDebug("Recorder:PesHeader Pid %x ( Wait next - 2) Sz %d Length : %d %2.2x %2.2x, Q:%d",header.Pid, (PidInfo.PesHeader[4]<<8)+PidInfo.PesHeader[5],PidInfo.PesHeaderLength,PidInfo.PesHeader[6],PidInfo.PesHeader[7],PidInfo.NPktQ) ;
 							return 2 ;	// Not enough data.
 						}
 			default:
 			case 0x00 :	// no PTS-DTS 
 						{
-//						LogDebug("PesHeader Pid %x ( No PTS-DTS - 3) Sz %d Length : %d %2.2x %2.2x, Q:%d",header.Pid, (PidInfo.PesHeader[4]<<8)+PidInfo.PesHeader[5],PidInfo.PesHeaderLength,PidInfo.PesHeader[6],PidInfo.PesHeader[7],PidInfo.NPktQ) ;
+//						LogDebug("Recorder:PesHeader Pid %x ( No PTS-DTS - 3) Sz %d Length : %d %2.2x %2.2x, Q:%d",header.Pid, (PidInfo.PesHeader[4]<<8)+PidInfo.PesHeader[5],PidInfo.PesHeaderLength,PidInfo.PesHeader[6],PidInfo.PesHeader[7],PidInfo.NPktQ) ;
 						return 0 ; // no PTS-DTS...
 						}
 		}
 	}
 	else
 	{
-//		LogDebug("PesHeader Pid %x ( Wait next - 5 ) Sz %d Length : %d %2.2x %2.2x %2.2x %2.2x %2.2x %2.2x %2.2x",header.Pid, (PidInfo.PesHeader[4]<<8)+PidInfo.PesHeader[5],PidInfo.PesHeaderLength,PidInfo.PesHeader[0],PidInfo.PesHeader[1],PidInfo.PesHeader[2],PidInfo.PesHeader[3],PidInfo.PesHeader[4],PidInfo.PesHeader[5],PidInfo.PesHeader[6]) ;
+//		LogDebug("Recorder:PesHeader Pid %x ( Wait next - 5 ) Sz %d Length : %d %2.2x %2.2x %2.2x %2.2x %2.2x %2.2x %2.2x",header.Pid, (PidInfo.PesHeader[4]<<8)+PidInfo.PesHeader[5],PidInfo.PesHeaderLength,PidInfo.PesHeader[0],PidInfo.PesHeader[1],PidInfo.PesHeader[2],PidInfo.PesHeader[3],PidInfo.PesHeader[4],PidInfo.PesHeader[5],PidInfo.PesHeader[6]) ;
 		return 2 ;	// Not enough data.
 	}
 }
@@ -879,7 +879,7 @@ void CDiskRecorder::WriteTs(byte* tsPacket)
 
 		m_tsHeader.Decode(tsPacket);
 		if (m_tsHeader.TScrambling)	return ;
-		if (m_tsHeader.TransportError) 	{ LogDebug("Pid %x : Transport error flag set!", m_tsHeader.Pid) ; return ; }
+		if (m_tsHeader.TransportError) 	{ LogDebug("Recorder:Pid %x : Transport error flag set!", m_tsHeader.Pid) ; return ; }
 
 		if (m_iPacketCounter>=100)
 		{
@@ -901,7 +901,7 @@ void CDiskRecorder::WriteTs(byte* tsPacket)
 
 			if (m_tsHeader.Pid==info.elementaryPid)
 			{
-				if (m_tsHeader.AdaptionFieldLength && (tsPacket[5] & 0x80)) LogDebug("Pid %x : Discontinuity header bit set!", m_tsHeader.Pid);
+				if (m_tsHeader.AdaptionFieldLength && (tsPacket[5] & 0x80)) LogDebug("Recorder:Pid %x : Discontinuity header bit set!", m_tsHeader.Pid);
 
 				if (info.ccPrev!=255)
 				{
@@ -918,21 +918,21 @@ void CDiskRecorder::WriteTs(byte* tsPacket)
 								if (PayLoadLen<0) PayLoadLen = 0 ;
 								if (((PayLoadLen) && (memcmp(info.m_Pkt+m_tsHeader.PayLoadStart, tsPacket+m_tsHeader.PayLoadStart, PayLoadLen)==0)) || (PayLoadLen==0)) 
 								{
-									LogDebug("Pid %x Same ts packet...( removed ) %x, PayLoadLen : %d", m_tsHeader.Pid, info.ccPrev, PayLoadLen) ;
+									LogDebug("Recorder:Pid %x Same ts packet...( removed ) %x, PayLoadLen : %d", m_tsHeader.Pid, info.ccPrev, PayLoadLen) ;
 									return ; 
 								}
 								else
-									LogDebug("Pid %x Continuity error...! Should be same ! %x ( prev %x ), PayLoadLen : %d", m_tsHeader.Pid, m_tsHeader.ContinuityCounter, info.ccPrev, PayLoadLen) ;
+									LogDebug("Recorder:Pid %x Continuity error...! Should be same ! %x ( prev %x ), PayLoadLen : %d", m_tsHeader.Pid, m_tsHeader.ContinuityCounter, info.ccPrev, PayLoadLen) ;
 							}
 							else
-								LogDebug("Pid %x Continuity error... %x ( prev %x )", m_tsHeader.Pid, m_tsHeader.ContinuityCounter, info.ccPrev) ;
+								LogDebug("Recorder:Pid %x Continuity error... %x ( prev %x )", m_tsHeader.Pid, m_tsHeader.ContinuityCounter, info.ccPrev) ;
 						}
 					}
 					else
 					{
 						// Check Ts packet continuity without payload.
 						if (m_tsHeader.ContinuityCounter != info.ccPrev)
-								LogDebug("Pid %x , No PayLoad, Continuity Counter should be the same ! %x ( prev %x )", m_tsHeader.Pid, m_tsHeader.ContinuityCounter, info.ccPrev) ;
+								LogDebug("Recorder:Pid %x , No PayLoad, Continuity Counter should be the same ! %x ( prev %x )", m_tsHeader.Pid, m_tsHeader.ContinuityCounter, info.ccPrev) ;
 					}
 				}
 				info.ccPrev = m_tsHeader.ContinuityCounter ;
@@ -1463,7 +1463,7 @@ void CDiskRecorder::PatchPtsDts(byte* tsPacket,CTsHeader& header,PidInfo2& PidIn
 		// 9       10        11        12      13
 		//76543210 76543210 76543210 76543210 76543210
 		//0011pppM pppppppp pppppppM pppppppp pppppppM 
-		//LogDebug("pts: org:%s new:%s start:%s", ptsorg.ToString(),pts.ToString(),startPcr.ToString()); 
+		//LogDebug("Recorder:pts: org:%s new:%s start:%s", ptsorg.ToString(),pts.ToString(),startPcr.ToString()); 
 
 		pesHeader[13]=(byte)( ((ptsPatched&0x7f)<<1) + (pesHeader[13] & 0x01));
 		ptsPatched>>=7;
@@ -1496,7 +1496,7 @@ void CDiskRecorder::PatchPtsDts(byte* tsPacket,CTsHeader& header,PidInfo2& PidIn
 			// 14       15        16        17      18
 			//76543210 76543210 76543210 76543210 76543210
 			//0001pppM pppppppp pppppppM pppppppp pppppppM 
-			//LogDebug("dts: org:%s new:%s start:%s", dtsorg.ToString(),dts.ToString(),startPcr.ToString()); 
+			//LogDebug("Recorder:dts: org:%s new:%s start:%s", dtsorg.ToString(),dts.ToString(),startPcr.ToString()); 
 			pesHeader[18]=(byte)( ((dtsPatched&0x7f)<<1) + (pesHeader[18] & 0x01));
 			dtsPatched>>=7;
 			pesHeader[17]=(byte)(   (dtsPatched&0xff));				  dtsPatched>>=8;
