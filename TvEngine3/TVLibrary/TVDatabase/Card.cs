@@ -46,6 +46,9 @@ namespace TvDatabase
     private int decryptLimit;
     [TableColumn("preload", NotNull = true)]
     private bool preloadCard;
+
+    [TableColumn("CAM", NotNull = true)]
+    private bool CAModule;
     #endregion
 
     #region Constructors
@@ -125,6 +128,15 @@ namespace TvDatabase
     {
       get { return decryptLimit; }
       set { isChanged |= decryptLimit != value; decryptLimit = value; }
+    }
+
+    /// <summary>
+    /// Property relating to database column CAM
+    /// </summary>
+    public bool CAM
+    {
+      get { return CAModule; }
+      set { isChanged |= CAModule != value; CAModule = value; }
     }
 
     /// <summary>

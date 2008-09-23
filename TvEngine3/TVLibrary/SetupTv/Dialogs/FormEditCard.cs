@@ -90,6 +90,9 @@ namespace SetupTv.Sections
       }
 
       checkBoxPreloadCard.Checked = _card.PreloadCard;
+      checkBoxCAMenabled.Checked = _card.CAM;
+
+      setCAMLimitVisibility();
     }
 
     private void mpButtonSave_Click(object sender, EventArgs e)
@@ -100,12 +103,27 @@ namespace SetupTv.Sections
         _card.GrabEPG = checkBoxAllowEpgGrab.Checked;
       }
       _card.PreloadCard = checkBoxPreloadCard.Checked;
+
+      _card.CAM = checkBoxCAMenabled.Checked;
       this.Close();
     }
 
     private void mpButtonCancel_Click(object sender, EventArgs e)
     {
       this.Close();
+    }
+
+    private void setCAMLimitVisibility ()
+    {
+      label1.Visible = checkBoxCAMenabled.Checked;
+      label3.Visible = checkBoxCAMenabled.Checked;
+      numericUpDownDecryptLimit.Visible = checkBoxCAMenabled.Checked;
+      label4.Visible = checkBoxCAMenabled.Checked;   
+    }
+
+    private void checkBoxCAMenabled_CheckedChanged(object sender, EventArgs e)
+    {
+      setCAMLimitVisibility();
     }
   }
 }

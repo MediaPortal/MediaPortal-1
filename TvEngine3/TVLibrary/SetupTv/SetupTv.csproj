@@ -497,8 +497,8 @@
       <SubType>Designer</SubType>
       <DependentUpon>SetupDatabaseForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="39_upgrade_mysql_database.sql" />
-    <EmbeddedResource Include="39_upgrade_sqlserver_database.sql" />
+    <EmbeddedResource Include="40_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="40_upgrade_sqlserver_database.sql" />
     <None Include="images\ms_sql_logo.gif" />
     <None Include="images\mysql_logo.gif" />
   </ItemGroup>

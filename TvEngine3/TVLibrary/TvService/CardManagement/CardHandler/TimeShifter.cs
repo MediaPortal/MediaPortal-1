@@ -336,7 +336,7 @@ namespace TvService
             return TvResult.UnableToStartGraph;
           }
 					fileName += ".tsbuffer";
-
+          
           if (WaitForUnScrambledSignal(ref user) == false)
           {
             Log.Write("card: channel is scrambled");
@@ -344,7 +344,7 @@ namespace TvService
             this.Stop(ref user);
             return TvResult.ChannelIsScrambled;
           }					
-
+          
           if (!WaitForTimeShiftFile(ref user, fileName))
           {
 						_cardHandler.Users.RemoveUser(user);
@@ -396,7 +396,7 @@ namespace TvService
 				{
           ((BaseSubChannel)subchannel).AudioVideoEvent -= new BaseSubChannel.AudioVideoObserverEvent(this.AudioVideoEventHandler);
 				}
-
+        
         _eventVideo.Close();
         _eventAudio.Close();
         _eventsReady = false;
@@ -430,11 +430,32 @@ namespace TvService
           if (context == null) return true;
           if (_linkageScannerEnabled)
             _cardHandler.Card.ResetLinkageScanner();
-          context.Remove(user);
+          
           if (_cardHandler.IsIdle)
           {
             _cardHandler.StopCard(user);
           }
+          else
+          {
+            if (subchannel != null)
+            {
+              Log.Debug("card not IDLE - freeing subch: {0}", subchannel.SubChannelId);
+              subchannel.StopTimeShifting();
+              _cardHandler.Card.FreeSubChannel(subchannel.SubChannelId); 
+              /*
+              if (subchannel is BaseSubChannel)
+              {
+                BaseSubChannel baseSubCh = (BaseSubChannel)subchannel;
+
+                Log.Debug("card not IDLE - freeing subch: {0}", subchannel.SubChannelId);
+                baseSubCh.Decompose();
+                //subchannel.StopTimeShifting();              
+                _cardHandler.Card.FreeSubChannel(subchannel.SubChannelId);              
+              }
+              */
+            }
+          }
+          context.Remove(user);
           return true;
         }
       }

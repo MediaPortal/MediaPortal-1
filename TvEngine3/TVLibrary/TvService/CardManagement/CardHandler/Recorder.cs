@@ -177,6 +177,7 @@ namespace TvService
             ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(user.SubChannel);
             if (subchannel == null) return false;
             subchannel.StopRecording();
+            _cardHandler.Card.FreeSubChannel(user.SubChannel);
             if (subchannel.IsTimeShifting == false || context.Users.Length <= 1)
             {
               _cardHandler.Users.RemoveUser(user);
@@ -205,6 +206,29 @@ namespace TvService
       }
       return false;
     }
+
+    /*
+    public bool IsRecordingChannel(string channelName)
+    {
+      User[] users = _cardHandler.Users.GetUsers();
+      if (users == null) return false;
+      if (users.Length == 0) return false;
+
+      for (int i = 0; i < users.Length; ++i)
+      {
+        User user = users[i];        
+        if (_cardHandler.CurrentChannelName(ref user) == null) continue;
+        if (_cardHandler.CurrentChannelName(ref user) == channelName)
+        {
+          if (_cardHandler.Recorder.IsRecording(ref user))
+          {            
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+    */
 
     /// <summary>
     /// Gets a value indicating whether this card is recording.

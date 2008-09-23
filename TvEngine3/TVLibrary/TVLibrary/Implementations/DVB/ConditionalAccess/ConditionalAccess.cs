@@ -69,9 +69,8 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="tunerFilter">The tuner filter.</param>
     /// <param name="analyzerFilter">The capture filter.</param>
     /// <param name="winTvUsbCiFilter">The WinTV CI filter.</param>
-    /// <param name="card">Determines the type of TV card</param>
-    /// <param name="useCAM">Indicates if the real cam is to be used or not</param>
-    public ConditionalAccess(IBaseFilter tunerFilter, IBaseFilter analyzerFilter, IBaseFilter winTvUsbCiFilter, TvCardDvbBase card, bool useCAM)
+    /// <param name="card">Determines the type of TV card</param>    
+    public ConditionalAccess(IBaseFilter tunerFilter, IBaseFilter analyzerFilter, IBaseFilter winTvUsbCiFilter, TvCardDvbBase card)
     {
       try
       {
@@ -82,9 +81,9 @@ namespace TvLibrary.Implementations.DVB
           TvBusinessLayer layer = new TvBusinessLayer();
           Card c = layer.GetCardByDevicePath(card.DevicePath);                    
           _decryptLimit = c.DecryptLimit;          
+          _useCam = c.CAM;
         }
 
-        _useCam = useCAM;
         _mapSubChannels = new Dictionary<int, ConditionalAccessContext>();
         if (tunerFilter == null && analyzerFilter == null) return;
         //DVB checks. Conditional Access & DiSEqC etc.
@@ -257,7 +256,12 @@ namespace TvLibrary.Implementations.DVB
     {
       if (_mapSubChannels.ContainsKey(id))
       {
+        Log.Log.WriteFile("FreeSubChannel CA: freeing sub channel : {0}", id);
         _mapSubChannels.Remove(id);
+      }
+      else
+      {
+        Log.Log.WriteFile("FreeSubChannel CA: tried to free non existing sub channel : {0}", id);
       }
     }
 
@@ -377,8 +381,21 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
+    
     /// <summary>
-    /// CA decryption limit, 0 for disable CA
+    /// CA enabled or disabled ?
+    /// </summary>
+    /// <value>Is CA enabled or disabled</value>
+    public bool UseCA
+    {
+      get
+      {
+        return _useCam;
+      }
+    }
+
+    /// <summary>
+    /// CA decryption limit, 0 for unlimited
     /// </summary>
     /// <value>The number of channels decrypting that are able to decrypt.</value>
     public int DecryptLimit
@@ -415,7 +432,11 @@ namespace TvLibrary.Implementations.DVB
             {
               if (c.Channel != null && context.Channel != null)
               {
-                if (c.Channel.Equals(context.Channel)) exists = true;
+                if (c.Channel.Equals(context.Channel))
+                {
+                  exists = true;
+                  break;
+                }
               }
             }
             if (!exists)

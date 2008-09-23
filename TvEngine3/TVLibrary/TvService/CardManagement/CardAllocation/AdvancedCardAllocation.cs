@@ -177,7 +177,7 @@ namespace TvService
             {
               //card is in use, but it is tuned to the same transponder.
               //meaning.. we can use it.
-              if (tvcard.HasCA) //does the card have a CA module, if yes then proceed to check cam decrypt limit.
+              if (tvcard.HasCA && keyPair.Value.DataBaseCard.DecryptLimit > 0) //does the card have a CA module and a CA limit, if yes then proceed to check cam decrypt limit.
               {
                 //but we must check if cam can decode the extra channel as well
 
@@ -204,7 +204,10 @@ namespace TvService
                 //and is watching a scrambled signal
                 //then we must the CAM will always be able to watch the requested channel
                 //since the users zaps
-                bool isRec = tvcard.Recorder.IsAnySubChannelRecording;
+
+                //bool isRec = tvcard.Recorder.IsAnySubChannelRecording;                                
+                bool isRec = tvcard.Recorder.IsRecording(ref user); // IsRecordingChannel(user.);                                
+
                 if (tvcard.TimeShifter.IsTimeShifting(ref user) && !isRec)
                 {
                   bool fta = isFTA(tvcard, user);

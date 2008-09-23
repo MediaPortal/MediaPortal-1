@@ -348,13 +348,13 @@ namespace TvLibrary.Implementations
     /// <summary>
     /// Does the card have a CA module.
     /// </summary>
-    /// <value>The number of channels decrypting.</value>
+    /// <value>Does the card have a CA module..</value>
     public bool HasCA
     {
       get
       {
-        if (_conditionalAccess == null) return false;
-        return (_conditionalAccess.DecryptLimit > 0);                
+        if (_conditionalAccess == null) return false;        
+        return (_conditionalAccess.UseCA);
       }
     }
 
@@ -601,8 +601,30 @@ namespace TvLibrary.Implementations
       Log.Log.Info("tvcard:FreeSubChannel:{0} #{1}", _mapSubChannels.Count, id);
       if (_mapSubChannels.ContainsKey(id))
       {
+        if (_mapSubChannels[id].IsTimeShifting)
+        {
+          Log.Log.Info("tvcard:FreeSubChannel :{0} - is timeshifting (skipped)", id);
+          return;
+        }
+
+        if (_mapSubChannels[id].IsRecording)
+        {
+          Log.Log.Info("tvcard:FreeSubChannel :{0} - is recording (skipped)", id);
+          return;
+        }        
+
         _mapSubChannels[id].Decompose();
         _mapSubChannels.Remove(id);
+
+        /*if (_conditionalAccess != null)
+        {         
+          Log.Log.Info("tvcard:FreeSubChannel CA:{0}", id);
+          _conditionalAccess.FreeSubChannel(id);
+        }*/
+      }
+      else
+      {
+        Log.Log.Info("tvcard:FreeSubChannel :{0} - sub channel not found", id);
       }
       if (_mapSubChannels.Count == 0)
       {

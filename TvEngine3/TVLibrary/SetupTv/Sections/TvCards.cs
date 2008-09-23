@@ -128,7 +128,19 @@ namespace SetupTv.Sections
       s.Persist();
       if (_needRestart)
       {
-        RemoteControl.Instance.Restart();
+        bool isAnyUserTS = false;
+        bool isRec = false;
+        bool isUserTS = false;
+        bool isRecOrTS = RemoteControl.Instance.IsAnyCardRecordingOrTimeshifting(new User(), out isUserTS, out isAnyUserTS, out isRec);
+
+        if (!isAnyUserTS && !isRec && !isRecOrTS && !isUserTS)
+        {
+          RemoteControl.Instance.Restart();
+        }
+        else
+        {
+          MessageBox.Show(this, "In order to apply new settings - please restart tvservice manually when done timeshifting / recording.");
+        }
       }
       base.OnSectionDeActivated();
     }
@@ -219,6 +231,15 @@ namespace SetupTv.Sections
             item.Text = "No";
           }
           item.SubItems.Add(cardType);
+
+          if (card.CAM)
+          {
+            item.SubItems.Add("Yes");
+          }
+          else
+          {
+            item.SubItems.Add("No");
+          }
           if (cardType.ToLower().Contains("dvb") || cardType.ToLower().Contains("atsc"))//CAM limit doesn't apply to non-digital cards
             item.SubItems.Add(card.DecryptLimit.ToString());
           else

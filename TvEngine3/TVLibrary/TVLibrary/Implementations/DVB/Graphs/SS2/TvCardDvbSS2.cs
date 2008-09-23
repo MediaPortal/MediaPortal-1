@@ -45,6 +45,13 @@ namespace TvLibrary.Implementations.DVB
   /// </summary>
   public class TvCardDvbSS2 : TvCardDvbBase, IDisposable, ITVCard, IDiSEqCController
   {
+
+    #region private consts
+
+    //private const string DEVICE_DRIVER_NAME = "TechniSat DVB-PC TV Star PCI";
+
+    #endregion
+
     #region imports
     [ComImport, Guid("fc50bed6-fe38-42d3-b831-771690091a6e")]
     class MpTsAnalyzer { }
@@ -148,6 +155,7 @@ namespace TvLibrary.Implementations.DVB
     IntPtr _ptrDisEqc;
     DiSEqCMotor _disEqcMotor;
     bool _useDISEqCMotor;
+    private int initResetTries = 0;
     #endregion
 
     #region imports
@@ -180,8 +188,8 @@ namespace TvLibrary.Implementations.DVB
         Setting setting=layer.GetSetting("dvbs"+card.IdCard.ToString()+"motorEnabled", "no");
         if (setting.Value == "yes")
           _useDISEqCMotor = true;
-      }      
-      _conditionalAccess = new ConditionalAccess(null, null, null, this, false);                 
+      }
+      _conditionalAccess = new ConditionalAccess(null, null, null, this);
       _ptrDisEqc = Marshal.AllocCoTaskMem(20);
       _disEqcMotor = new DiSEqCMotor(this);
       GetTunerCapabilities();
@@ -624,6 +632,7 @@ namespace TvLibrary.Implementations.DVB
       if (_filterB2C2Adapter == null)
       {
         Log.Log.Error("ss2:creategraph() _filterB2C2Adapter not found");
+        DevicesInUse.Instance.Remove(_tunerDevice);
         return;
       }
       Log.Log.WriteFile("ss2:creategraph() add filters to graph");
@@ -631,6 +640,7 @@ namespace TvLibrary.Implementations.DVB
       if (hr != 0)
       {
         Log.Log.Error("ss2: FAILED to add B2C2-Adapter");
+        DevicesInUse.Instance.Remove(_tunerDevice);
         return;
       }
       // get interfaces
@@ -638,23 +648,64 @@ namespace TvLibrary.Implementations.DVB
       if (_interfaceB2C2DataCtrl == null)
       {
         Log.Log.Error("ss2: cannot get IB2C2MPEG2DataCtrl3");
+        DevicesInUse.Instance.Remove(_tunerDevice);
         return;
       }
       _interfaceB2C2TunerCtrl = _filterB2C2Adapter as DVBSkyStar2Helper.IB2C2MPEG2TunerCtrl2;
       if (_interfaceB2C2TunerCtrl == null)
       {
         Log.Log.Error("ss2: cannot get IB2C2MPEG2TunerCtrl3");
+        DevicesInUse.Instance.Remove(_tunerDevice);
         return;
       }
       //=========================================================================================================
       // initialize skystar 2 tuner
       //=========================================================================================================
       Log.Log.WriteFile("ss2: Initialize Tuner()");
-      hr = _interfaceB2C2TunerCtrl.Initialize();
+      hr = _interfaceB2C2TunerCtrl.Initialize();      
       if (hr != 0)
       {
+        //System.Diagnostics.Debugger.Launch();
         Log.Log.Error("ss2: Tuner initialize failed:0x{0:X}", hr);
-        //return;
+        // if the skystar2 card is detected as analogue, it needs a device reset 
+
+        hr = (_graphBuilder as IMediaControl).Stop();
+        FreeAllSubChannels();
+        FilterGraphTools.RemoveAllFilters(_graphBuilder);
+        
+        if (_graphBuilder != null)
+        {
+          Release.ComObject("graph builder", _graphBuilder); _graphBuilder = null;
+        }        
+
+        if (_capBuilder != null)
+        {
+          Release.ComObject("capBuilder", _capBuilder); _capBuilder = null;
+        }
+
+        DevicesInUse.Instance.Remove(_tunerDevice);
+        
+        /*
+        if (initResetTries == 0)
+        {
+          Log.Log.Error("ss2: resetting driver");
+          HardwareHelperLib.HH_Lib hwHelper = new HardwareHelperLib.HH_Lib();
+          string[] deviceDriverName = new string[1];
+          deviceDriverName[0] = DEVICE_DRIVER_NAME;
+          hwHelper.SetDeviceState(deviceDriverName, false);
+          hwHelper.SetDeviceState(deviceDriverName, true);
+          initResetTries++;          
+
+          BuildGraph();
+        }
+        else
+        {
+          Log.Log.Error("ss2: resetting driver did not help");          
+          CardPresent = false;
+        }    
+        */
+        CardPresent = false;
+        return;
       }
       // call checklock once, the return value dont matter
       hr = _interfaceB2C2TunerCtrl.CheckLock();
@@ -663,6 +714,7 @@ namespace TvLibrary.Implementations.DVB
       ConnectMpeg2DemuxToInfTee();
       AddTsWriterFilterToGraph();
       SendHwPids(new ArrayList());
+      initResetTries = 0;
       _graphState = GraphState.Created;
     }
 

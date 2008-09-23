@@ -96,7 +96,6 @@ namespace TvLibrary.Implementations.DVB
     private TimeShiftingEPGGrabber _timeshiftingEPGGrabber;
     protected bool tunerOnly = false;
     WinTvCiModule winTvCiHandler = null;
-    protected bool _cardUsesRealCAM = true;
     protected bool matchDevicePath = true;
     #endregion
 
@@ -163,13 +162,16 @@ namespace TvLibrary.Implementations.DVB
     protected ITvSubChannel SubmitTuneRequest(int subChannelId, IChannel channel, ITuneRequest tuneRequest)
     {
       Log.Log.Info("dvb:Submiting tunerequest Channel:{0} subChannel:{1} ", channel.Name, subChannelId);
+      bool newSubChannel = false;
       if (_mapSubChannels.ContainsKey(subChannelId) == false)
       {
         Log.Log.Info("dvb:Getting new subchannel");
+        newSubChannel = true;
         subChannelId = GetNewSubChannel(channel);
       }
       else
       {
+        Log.Log.Info("dvb:using existing subchannel:{0}", subChannelId);
       }
       Log.Log.Info("dvb:Submit tunerequest size:{0} new:{1}", _mapSubChannels.Count, subChannelId);
       _mapSubChannels[subChannelId].CurrentChannel = channel;
@@ -185,6 +187,11 @@ namespace TvLibrary.Implementations.DVB
       if (hr != 0)
       {
         Log.Log.WriteFile("dvb:SubmitTuneRequest  returns:0x{0:X}", hr);
+        //remove subchannel.
+        if (newSubChannel)
+        {
+          _mapSubChannels.Remove(subChannelId);
+        }
         throw new TvException("Unable to tune to channel");
       }
       _lastSignalUpdate = DateTime.MinValue;
@@ -699,12 +706,12 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.WriteFile("dvb:  using only tv tuner filter...");
         ConnectMpeg2DemuxToInfTee();
         AddTsWriterFilterToGraph();
-        _conditionalAccess = new ConditionalAccess(_filterTuner, _filterTsWriter, _filterWinTvUsb, this,_cardUsesRealCAM);
+        _conditionalAccess = new ConditionalAccess(_filterTuner, _filterTsWriter, _filterWinTvUsb, this);//,_cardUsesRealCAM);
         return;
       }
       ConnectMpeg2DemuxToInfTee();
       AddTsWriterFilterToGraph();
-      _conditionalAccess = new ConditionalAccess(_filterTuner, _filterTsWriter, _filterWinTvUsb, this,_cardUsesRealCAM);
+      _conditionalAccess = new ConditionalAccess(_filterTuner, _filterTsWriter, _filterWinTvUsb, this);
     }
 
     /// <summary>
@@ -845,7 +852,6 @@ namespace TvLibrary.Implementations.DVB
       _mdplugs = MDPlugs.Create(dv);
       if (_mdplugs != null)
       {
-        _cardUsesRealCAM = true;
         Log.Log.WriteFile("dvb:add 2nd Inf Tee filter");
         _infTeeSecond = (IBaseFilter)new InfTee();
         hr = _graphBuilder.AddFilter(_infTeeSecond, "Inf Tee 2");

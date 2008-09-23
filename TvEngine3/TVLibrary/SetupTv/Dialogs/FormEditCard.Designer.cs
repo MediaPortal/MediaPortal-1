@@ -39,6 +39,7 @@ namespace SetupTv.Sections
       this.checkBoxAllowEpgGrab = new System.Windows.Forms.CheckBox();
       this.checkBoxPreloadCard = new System.Windows.Forms.CheckBox();
       this.groupBox3 = new System.Windows.Forms.GroupBox();
+      this.checkBoxCAMenabled = new System.Windows.Forms.CheckBox();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDecryptLimit)).BeginInit();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
@@ -47,7 +48,7 @@ namespace SetupTv.Sections
       // 
       // label1
       // 
-      this.label1.Location = new System.Drawing.Point(6, 16);
+      this.label1.Location = new System.Drawing.Point(3, 48);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(297, 58);
       this.label1.TabIndex = 0;
@@ -58,7 +59,7 @@ namespace SetupTv.Sections
       // label3
       // 
       this.label3.AutoSize = true;
-      this.label3.Location = new System.Drawing.Point(6, 84);
+      this.label3.Location = new System.Drawing.Point(3, 116);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(111, 13);
       this.label3.TabIndex = 2;
@@ -67,7 +68,7 @@ namespace SetupTv.Sections
       // label4
       // 
       this.label4.AutoSize = true;
-      this.label4.Location = new System.Drawing.Point(178, 84);
+      this.label4.Location = new System.Drawing.Point(175, 116);
       this.label4.Name = "label4";
       this.label4.Size = new System.Drawing.Size(121, 13);
       this.label4.TabIndex = 4;
@@ -86,7 +87,7 @@ namespace SetupTv.Sections
       // 
       // numericUpDownDecryptLimit
       // 
-      this.numericUpDownDecryptLimit.Location = new System.Drawing.Point(123, 82);
+      this.numericUpDownDecryptLimit.Location = new System.Drawing.Point(120, 114);
       this.numericUpDownDecryptLimit.Name = "numericUpDownDecryptLimit";
       this.numericUpDownDecryptLimit.Size = new System.Drawing.Size(49, 20);
       this.numericUpDownDecryptLimit.TabIndex = 5;
@@ -111,21 +112,22 @@ namespace SetupTv.Sections
       // 
       // groupBox1
       // 
+      this.groupBox1.Controls.Add(this.checkBoxCAMenabled);
       this.groupBox1.Controls.Add(this.label1);
       this.groupBox1.Controls.Add(this.label3);
       this.groupBox1.Controls.Add(this.label4);
       this.groupBox1.Controls.Add(this.numericUpDownDecryptLimit);
       this.groupBox1.Location = new System.Drawing.Point(12, 12);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(310, 112);
+      this.groupBox1.Size = new System.Drawing.Size(310, 147);
       this.groupBox1.TabIndex = 7;
       this.groupBox1.TabStop = false;
-      this.groupBox1.Text = "CAM Limit";
+      this.groupBox1.Text = "CAM Setup";
       // 
       // groupBox2
       // 
       this.groupBox2.Controls.Add(this.checkBoxAllowEpgGrab);
-      this.groupBox2.Location = new System.Drawing.Point(12, 130);
+      this.groupBox2.Location = new System.Drawing.Point(12, 165);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(310, 44);
       this.groupBox2.TabIndex = 8;
@@ -157,12 +159,24 @@ namespace SetupTv.Sections
       // groupBox3
       // 
       this.groupBox3.Controls.Add(this.checkBoxPreloadCard);
-      this.groupBox3.Location = new System.Drawing.Point(12, 180);
+      this.groupBox3.Location = new System.Drawing.Point(12, 215);
       this.groupBox3.Name = "groupBox3";
       this.groupBox3.Size = new System.Drawing.Size(310, 44);
       this.groupBox3.TabIndex = 9;
       this.groupBox3.TabStop = false;
       this.groupBox3.Text = "Preload Card";
+      // 
+      // checkBoxCAMenabled
+      // 
+      this.checkBoxCAMenabled.AutoSize = true;
+      this.checkBoxCAMenabled.Location = new System.Drawing.Point(6, 19);
+      this.checkBoxCAMenabled.Name = "checkBoxCAMenabled";
+      this.checkBoxCAMenabled.RightToLeft = System.Windows.Forms.RightToLeft.No;
+      this.checkBoxCAMenabled.Size = new System.Drawing.Size(210, 17);
+      this.checkBoxCAMenabled.TabIndex = 6;
+      this.checkBoxCAMenabled.Text = "CAM enabled and present for this card.";
+      this.checkBoxCAMenabled.UseVisualStyleBackColor = true;
+      this.checkBoxCAMenabled.CheckedChanged += new System.EventHandler(this.checkBoxCAMenabled_CheckedChanged);
       // 
       // FormEditCard
       // 
@@ -207,5 +221,6 @@ namespace SetupTv.Sections
       private System.Windows.Forms.CheckBox checkBoxAllowEpgGrab;
     private System.Windows.Forms.CheckBox checkBoxPreloadCard;
     private System.Windows.Forms.GroupBox groupBox3;
+    private System.Windows.Forms.CheckBox checkBoxCAMenabled;
   }
 }
