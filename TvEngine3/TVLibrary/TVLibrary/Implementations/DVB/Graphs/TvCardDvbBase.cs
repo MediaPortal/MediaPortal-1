@@ -79,7 +79,7 @@ namespace TvLibrary.Implementations.DVB
     protected IBaseFilter _filterTuner = null;
     protected IBaseFilter _filterCapture = null;
     protected IBaseFilter _filterTIF = null;
-    protected IBaseFilter _filterWinTvUsb = null;    
+    protected IBaseFilter _filterWinTvUsb = null;
     protected DsDevice _captureDevice = null;
     protected DsDevice _deviceWinTvUsb = null;
     protected BaseEpgGrabber _epgGrabberCallback = null;
@@ -105,14 +105,14 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public TvCardDvbBase(DsDevice device)
       : base(device)
-    {            
+    {
       _lastSignalUpdate = DateTime.MinValue;
       _mapSubChannels = new Dictionary<int, BaseSubChannel>();
       _parameters = new ScanParameters();
       _timeshiftingEPGGrabber = new TimeShiftingEPGGrabber((ITVCard)this);
       _minChannel = -1;
       _maxChannel = -1;
-      _supportsSubChannels = true;     
+      _supportsSubChannels = true;
     }
     #endregion
 
@@ -425,7 +425,7 @@ namespace TvLibrary.Implementations.DVB
         return (hr == 0);
       }
       //wintv ci usb module found
-      Log.Log.Info("dvb:  WinTv CI module deteced");
+      Log.Log.Info("dvb:  WinTv CI module detected");
       //add logic to check if WinTV device should be built with this DVB graph.
       string configfile = "WinTV-CI.xml";
       string cardname = "";
@@ -439,7 +439,7 @@ namespace TvLibrary.Implementations.DVB
       string tuner = _tunerDevice.DevicePath;
       if (tuner != cardmoniker)
       {
-        Log.Log.Info("dvb:  WinTv CI module not assigned to card: {0}", cardname);
+        Log.Log.Info("dvb:  WinTv CI module not assigned to card: {0}", _tunerDevice.Name);
         if (tunerOnly == true)
           Log.Log.Info("dvb:  Render [tuner]->[inftee]");
         else
@@ -848,7 +848,7 @@ namespace TvLibrary.Implementations.DVB
       int hr;
       DsDevice dv = _captureDevice;
       if (dv == null)
-        dv = _tunerDevice; 
+        dv = _tunerDevice;
       _mdplugs = MDPlugs.Create(dv);
       if (_mdplugs != null)
       {
@@ -861,7 +861,7 @@ namespace TvLibrary.Implementations.DVB
           throw new TvException("Unable to add  _infTeeSecond");
         }
         _mdplugs.Connectmdapifilter(_graphBuilder, ref _infTeeMain, ref _infTeeSecond, ref _filterMpeg2DemuxTif);
-      } 
+      }
       else
       {
         //connect the [inftee main] -> [TIF MPEG2 Demultiplexer]
@@ -977,7 +977,8 @@ namespace TvLibrary.Implementations.DVB
               Log.Log.Error("    unable to add BDA MPEG2 Transport Information Filter filter:0x{0:X}", hr);
               return;
             }
-          } catch (Exception)
+          }
+          catch (Exception)
           {
             Log.Log.Error("    unable to add BDA MPEG2 Transport Information Filter filter");
           }
@@ -1061,11 +1062,13 @@ namespace TvLibrary.Implementations.DVB
               tifConnected = true;
               Release.ComObject("mpeg2 demux pin" + pinNr.ToString(), pins[0]);
               continue;
-            } else
+            }
+            else
             {
               Log.Log.WriteFile("    tif not connected:0x{0:X}", hr);
             }
-          } catch (Exception)
+          }
+          catch (Exception)
           {
           }
         }
@@ -1134,9 +1137,9 @@ namespace TvLibrary.Implementations.DVB
       //In case MDPlugs exists then close and release them
       if (_mdplugs != null)
       {
-          Log.Log.Info("  Closing MDAPI Plugins");
-          _mdplugs.Close();
-          _mdplugs = null;
+        Log.Log.Info("  Closing MDAPI Plugins");
+        _mdplugs.Close();
+        _mdplugs = null;
       }
 
       Log.Log.WriteFile("  remove all filters");
@@ -1331,10 +1334,12 @@ namespace TvLibrary.Implementations.DVB
             stat.get_SignalLocked(out isLocked);
             isTunerLocked |= isLocked;
             //  Log.Log.Write("   dvb:  #{0} isTunerLocked:{1}", i,isLocked);
-          } catch (COMException)
+          }
+          catch (COMException)
           {
             //            Log.Log.WriteFile("get_SignalLocked() locked :{0}", ex);
-          } catch (Exception)
+          }
+          catch (Exception)
           {
             //            Log.Log.WriteFile("get_SignalLocked() locked :{0}", ex);
           }
@@ -1346,10 +1351,12 @@ namespace TvLibrary.Implementations.DVB
             stat.get_SignalPresent(out isPresent);
             isSignalPresent |= isPresent;
             //  Log.Log.Write("   dvb:  #{0} isSignalPresent:{1}", i, isPresent);
-          } catch (COMException)
+          }
+          catch (COMException)
           {
             //            Log.Log.WriteFile("get_SignalPresent() locked :{0}", ex);
-          } catch (Exception)
+          }
+          catch (Exception)
           {
             //            Log.Log.WriteFile("get_SignalPresent() locked :{0}", ex);
           }
@@ -1360,10 +1367,12 @@ namespace TvLibrary.Implementations.DVB
             stat.get_SignalQuality(out quality); //1-100
             if (quality > 0) signalQuality += quality;
             //   Log.Log.Write("   dvb:  #{0} signalQuality:{1}", i, quality);
-          } catch (COMException)
+          }
+          catch (COMException)
           {
             //            Log.Log.WriteFile("get_SignalQuality() locked :{0}", ex);
-          } catch (Exception)
+          }
+          catch (Exception)
           {
             //            Log.Log.WriteFile("get_SignalQuality() locked :{0}", ex);
           }
@@ -1374,10 +1383,12 @@ namespace TvLibrary.Implementations.DVB
             stat.get_SignalStrength(out strength); //1-100
             if (strength > 0) signalStrength += strength;
             //    Log.Log.Write("   dvb:  #{0} signalStrength:{1}", i, strength);
-          } catch (COMException)
+          }
+          catch (COMException)
           {
             //            Log.Log.WriteFile("get_SignalQuality() locked :{0}", ex);
-          } catch (Exception)
+          }
+          catch (Exception)
           {
             //            Log.Log.WriteFile("get_SignalQuality() locked :{0}", ex);
           }
@@ -1396,11 +1407,13 @@ namespace TvLibrary.Implementations.DVB
         if (isTunerLocked)
         {
           _signalPresent = true;
-        } else
+        }
+        else
         {
           _signalPresent = false;
         }
-      } finally
+      }
+      finally
       {
         _lastSignalUpdate = DateTime.Now;
       }
@@ -1525,7 +1538,8 @@ namespace TvLibrary.Implementations.DVB
           }
           _interfaceChannelLinkageScanner.Reset();
           return portalChannels;
-        } catch (Exception ex)
+        }
+        catch (Exception ex)
         {
           Log.Log.Write(ex);
           return new List<PortalChannel>();
@@ -1781,7 +1795,8 @@ namespace TvLibrary.Implementations.DVB
                     {
                       title = Iso6937ToUnicode.Convert(ptrTitle);
                       description = Iso6937ToUnicode.Convert(ptrDesc);
-                    } else
+                    }
+                    else
                     {
                       title = DvbTextConverter.Convert(ptrTitle, "");
                       description = DvbTextConverter.Convert(ptrDesc, "");
@@ -1799,7 +1814,8 @@ namespace TvLibrary.Implementations.DVB
                     epgProgram.Text.Add(epgLangague);
                   }
                   epgChannel.Programs.Add(epgProgram);
-                } catch (Exception ex)
+                }
+                catch (Exception ex)
                 {
                   Log.Log.Write(ex);
                 }
@@ -1814,7 +1830,8 @@ namespace TvLibrary.Implementations.DVB
           // free the epg infos in TsWriter so that the mem used gets released 
           _interfaceEpgGrabber.Reset();
           return epgChannels;
-        } catch (Exception ex)
+        }
+        catch (Exception ex)
         {
           Log.Log.Write(ex);
           return new List<EpgChannel>();
