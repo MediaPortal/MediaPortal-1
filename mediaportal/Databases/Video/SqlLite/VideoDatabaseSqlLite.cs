@@ -1669,8 +1669,8 @@ namespace MediaPortal.Video.Database
             movie.IMDBNumber = DatabaseUtility.Get(results, i, "movieinfo.IMDBID");
             long lMovieId = System.Int32.Parse(DatabaseUtility.Get(results, i, "movieinfo.idMovie"));
             movie.SearchString = String.Format("{0}", movie.Title);
-            movie.CDLabel = DatabaseUtility.Get(results, 0, "path.cdlabel");
-            movie.MPARating = DatabaseUtility.Get(results, 0, "movieinfo.mpaa");
+            movie.CDLabel = DatabaseUtility.Get(results, i, "path.cdlabel");
+            movie.MPARating = DatabaseUtility.Get(results, i, "movieinfo.mpaa");
             movie.RunTime = System.Int32.Parse(DatabaseUtility.Get(results, i, "movieinfo.runtime"));
             movie.Watched = System.Int32.Parse(DatabaseUtility.Get(results, i, "movieinfo.iswatched"));
             movie.ID = (int)lMovieId;
