@@ -93,6 +93,7 @@ namespace SetupTv.Sections
       checkBoxCAMenabled.Checked = _card.CAM;
 
       setCAMLimitVisibility();
+      this.Text += " " + _card.Name;
     }
 
     private void mpButtonSave_Click(object sender, EventArgs e)

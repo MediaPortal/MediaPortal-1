@@ -39,6 +39,7 @@ namespace SetupTv.Sections
     private bool _needRestart = false;
     int cardId = 0;
     private Dictionary<string, CardType> cardTypes = new Dictionary<string, CardType>();
+    private TabPage usbWINTV_tabpage = null;
 
     #region CardInfo class
     public class CardInfo
@@ -302,7 +303,15 @@ namespace SetupTv.Sections
       }
       if (usbWinTvDevice == null)
       {
-        tabControl1.TabPages.RemoveAt(2);
+        if (usbWINTV_tabpage == null)
+        {
+          usbWINTV_tabpage = tabControl1.TabPages[2];
+          tabControl1.TabPages.RemoveAt(2);
+        }
+      }
+      else if (usbWINTV_tabpage != null)
+      {
+        tabControl1.TabPages.Insert(2, usbWINTV_tabpage);
       }
     }
 
@@ -447,8 +456,10 @@ namespace SetupTv.Sections
     private void buttonEdit_Click(object sender, EventArgs e)
     {
       ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
-      if (indexes.Count == 0) return;
+      if (indexes == null || indexes.Count == 0) return;      
       ListViewItem item = mpListView1.Items[indexes[0]];
+      ReOrder();
+      UpdateList();
       FormEditCard dlg = new FormEditCard();
       dlg.Card = (Card)item.Tag;
       dlg.CardType = cardTypes[((Card)item.Tag).DevicePath].ToString();
