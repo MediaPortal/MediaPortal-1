@@ -206,7 +206,14 @@ namespace TvService
                 //since the users zaps
 
                 //bool isRec = tvcard.Recorder.IsAnySubChannelRecording;                                
-                bool isRec = tvcard.Recorder.IsRecording(ref user); // IsRecordingChannel(user.);                                
+                //bool isRec = tvcard.Recorder.IsRecording(ref user); // IsRecordingChannel(user.);                                
+                bool isRec = false;
+
+                Channel currentUserCh = Channel.Retrieve(user.IdChannel);
+                if (currentUserCh != null)
+                {
+                  isRec = tvcard.Recorder.IsRecordingChannel(currentUserCh.Name);
+                }
 
                 if (tvcard.TimeShifter.IsTimeShifting(ref user) && !isRec)
                 {

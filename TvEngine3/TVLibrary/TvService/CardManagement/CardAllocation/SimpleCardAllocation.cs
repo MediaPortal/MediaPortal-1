@@ -245,9 +245,15 @@ namespace TvService
 
                   for (int i = 0; i < allUsers.Count; i++)
                   {
-                    User user = allUsers[i];
+                    User user = allUsers[i];                    
+                    bool isRec = false;
 
-                    if (tvcard.TimeShifter.IsTimeShifting(ref user))
+                    Channel currentUserCh = Channel.Retrieve(user.IdChannel);
+                    if (currentUserCh != null)
+                    {
+                      isRec = tvcard.Recorder.IsRecordingChannel(currentUserCh.Name);
+                    }
+                    if (tvcard.TimeShifter.IsTimeShifting(ref user) && !isRec)                    
                     {
                       bool fta = isFTA(tvcard, user);
                       if (!fta)
@@ -521,7 +527,15 @@ namespace TvService
                 //and is watching a scrambled signal
                 //then we must the CAM will always be able to watch the requested channel
                 //since the users zaps
-                if (tvcard.TimeShifter.IsTimeShifting(ref user))
+                bool isRec = false;
+
+                Channel currentUserCh = Channel.Retrieve(user.IdChannel);
+                if (currentUserCh != null)
+                {
+                  isRec = tvcard.Recorder.IsRecordingChannel(currentUserCh.Name);
+                }
+
+                if (tvcard.TimeShifter.IsTimeShifting(ref user) && !isRec)
                 {
                   bool fta = isFTA(tvcard, user);
                   if (!fta)

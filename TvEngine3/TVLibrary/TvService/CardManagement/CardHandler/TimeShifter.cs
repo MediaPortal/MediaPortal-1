@@ -298,15 +298,15 @@ namespace TvService
             if (WaitForUnScrambledSignal(ref user) == false)
             {
               Log.Write("card: channel is scrambled");
-              _cardHandler.Users.RemoveUser(user);
               this.Stop(ref user);
+              _cardHandler.Users.RemoveUser(user);              
               return TvResult.ChannelIsScrambled;
             }					
 
 						if (!WaitForTimeShiftFile(ref user, fileName + ".tsbuffer"))
 						{
-							_cardHandler.Users.RemoveUser(user);
-							this.Stop(ref user);
+              this.Stop(ref user);
+							_cardHandler.Users.RemoveUser(user);							
 							if (_cardHandler.IsScrambled(ref user))
 							{								
 								return TvResult.ChannelIsScrambled;
@@ -331,8 +331,8 @@ namespace TvService
           bool result = subchannel.StartTimeShifting(fileName);
           if (result == false)
           {
-            _cardHandler.Users.RemoveUser(user);
-						this.Stop(ref user);
+            this.Stop(ref user);
+            _cardHandler.Users.RemoveUser(user);						
             return TvResult.UnableToStartGraph;
           }
 					fileName += ".tsbuffer";
@@ -340,15 +340,15 @@ namespace TvService
           if (WaitForUnScrambledSignal(ref user) == false)
           {
             Log.Write("card: channel is scrambled");
-            _cardHandler.Users.RemoveUser(user);
             this.Stop(ref user);
+            _cardHandler.Users.RemoveUser(user);
             return TvResult.ChannelIsScrambled;
           }					
           
           if (!WaitForTimeShiftFile(ref user, fileName))
           {
-						_cardHandler.Users.RemoveUser(user);
-						this.Stop(ref user);
+            this.Stop(ref user);
+						_cardHandler.Users.RemoveUser(user);						
             if (_cardHandler.IsScrambled(ref user))
             {              
               return TvResult.ChannelIsScrambled;

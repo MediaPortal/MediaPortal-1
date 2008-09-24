@@ -207,7 +207,7 @@ namespace TvService
       return false;
     }
 
-    /*
+    
     public bool IsRecordingChannel(string channelName)
     {
       User[] users = _cardHandler.Users.GetUsers();
@@ -216,7 +216,8 @@ namespace TvService
 
       for (int i = 0; i < users.Length; ++i)
       {
-        User user = users[i];        
+        User user = users[i];
+        if (!user.IsAdmin) continue;
         if (_cardHandler.CurrentChannelName(ref user) == null) continue;
         if (_cardHandler.CurrentChannelName(ref user) == channelName)
         {
@@ -227,8 +228,7 @@ namespace TvService
         }
       }
       return false;
-    }
-    */
+    }    
 
     /// <summary>
     /// Gets a value indicating whether this card is recording.
