@@ -641,7 +641,10 @@ namespace MediaPortal.Player
         {
           GUIGraphicsContext.ShowBackground = true;
           OnStopped();
-          _player.Stop();
+          if (_player != null)
+          {
+            _player.Stop();
+          }
           CachePlayer();
           GUIGraphicsContext.form.Invalidate(true);
           _player = null;
