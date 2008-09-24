@@ -239,6 +239,15 @@ namespace MediaPortal.GUI.Video
             _currentFolder = lastFolder;
         }
       }
+            
+      if (_currentFolder.Length > 0)
+      {
+        System.IO.DirectoryInfo dirInfo = new System.IO.DirectoryInfo(_currentFolder);
+
+        string dirName = dirInfo.Name;
+        string currentParentFolder = @dirInfo.Parent.FullName;
+        _history.Set(dirName, currentParentFolder);                
+      }
     }
 
 
