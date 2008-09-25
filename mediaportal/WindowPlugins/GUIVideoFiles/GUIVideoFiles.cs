@@ -239,7 +239,7 @@ namespace MediaPortal.GUI.Video
             _currentFolder = lastFolder;
         }
       }
-      System.Diagnostics.Debugger.Launch();
+      
       if (_currentFolder.Length > 0)
       {
         System.IO.DirectoryInfo dirInfo = new System.IO.DirectoryInfo(_currentFolder);
