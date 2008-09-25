@@ -445,6 +445,7 @@ namespace TvLibrary.Implementations.Analog
         StopGraph();
       }
       FreeAllSubChannels();
+      _previousChannel = null;
       // Decompose the graph
       int hr = (_graphBuilder as IMediaControl).Stop();
       FilterGraphTools.RemoveAllFilters(_graphBuilder);
