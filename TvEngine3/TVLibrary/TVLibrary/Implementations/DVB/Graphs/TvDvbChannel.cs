@@ -376,12 +376,12 @@ namespace TvLibrary.Implementations.DVB
           _startRecording = true;
         } else
         {
-          Log.Log.WriteFile("subch:{0} StartRecording...", _subChannelId);
+          Log.Log.WriteFile("subch:{0}-{1} tswriter StartRecording...", _subChannelId, _subChannelIndex);
           SetRecorderPids();
           hr = _tsFilterInterface.RecordStartRecord(_subChannelIndex);
           if (hr != 0)
           {
-            Log.Log.Error("subch:{0} StartRecord failed:{1:X}", _subChannelId, hr);
+            Log.Log.Error("subch:{0} tswriter StartRecord failed:{1:X}", _subChannelId, hr);
           }
           _graphState = GraphState.Recording;
         }
@@ -395,8 +395,8 @@ namespace TvLibrary.Implementations.DVB
     protected override void OnStopRecording()
     {
       if (IsRecording)
-      {
-        Log.Log.WriteFile("subch:{0} StopRecord()", _subChannelId);
+      {        
+        Log.Log.WriteFile("subch:{0}-{1} tswriter StopRecording...", _subChannelId, _subChannelIndex);
 
         if (_tsFilterInterface != null)
         {
@@ -431,6 +431,7 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.WriteFile("subch:{0} SetTimeShiftFileName fill in pids", _subChannelId);
         _startTimeShifting = false;
         SetTimeShiftPids();
+        Log.Log.WriteFile("subch:{0}-{1} tswriter StartTimeshifting...", _subChannelId, _subChannelIndex);
         _tsFilterInterface.TimeShiftStart(_subChannelIndex);
 
         Log.Log.WriteFile("Set video / audio observer");
@@ -448,11 +449,11 @@ namespace TvLibrary.Implementations.DVB
     protected override void OnStopTimeShifting()
     {
       if (_timeshiftFileName != "")
-      {
-        Log.Log.WriteFile("subch:{0} StopTimeshifting()", _subChannelId);
+      {        
+        Log.Log.WriteFile("subch:{0}-{1} tswriter StopTimeshifting...", _subChannelId, _subChannelIndex);
         if (_tsFilterInterface != null)
-        {
-          _tsFilterInterface.TimeShiftStop(_subChannelIndex);
+        {          
+          _tsFilterInterface.TimeShiftStop(_subChannelIndex);         
         }
         _graphState = GraphState.Created;
       }
