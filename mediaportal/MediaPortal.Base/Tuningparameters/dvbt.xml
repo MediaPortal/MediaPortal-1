@@ -1691,6 +1691,11 @@
     <carrier frequency="698000" bandwidth="8"></carrier>
     <carrier frequency="826000" bandwidth="8"></carrier>
   </country>
+  <country name="Germany - Löbau" offset="125">
+    <carrier frequency="522000" bandwidth="8"></carrier>
+    <carrier frequency="594000" bandwidth="8"></carrier>
+    <carrier frequency="618000" bandwidth="8"></carrier>
+  </country>
   <country name="Germany - München" offset="125">
     <carrier frequency="212500" bandwidth="10"></carrier>
     <carrier frequency="578000" bandwidth="10"></carrier>
