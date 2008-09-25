@@ -2504,6 +2504,7 @@
     <carrier frequency="834000" bandwidth="8"></carrier>
     <carrier frequency="842000" bandwidth="8"></carrier>
     <carrier frequency="850000" bandwidth="8"></carrier>
+    <carrier frequency="858000" bandwidth="8"></carrier>
 </country>
   <country name="Spain - Andalucia - Almeria">
     <carrier frequency="778000" bandwidth="8"></carrier>
@@ -2626,6 +2627,8 @@
     <carrier frequency="858000" bandwidth="8"></carrier>
   </country>
   <country name="Spain - C. Valenciana - Valencia">
+  	<carrier frequency="490000" bandwidth="8"></carrier>
+  	<carrier frequency="602000" bandwidth="8"></carrier>
     <carrier frequency="762000" bandwidth="8"></carrier>
     <carrier frequency="770000" bandwidth="8"></carrier>
     <carrier frequency="834000" bandwidth="8"></carrier>
