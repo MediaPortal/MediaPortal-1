@@ -202,11 +202,16 @@ namespace MediaPortal.Dialogs
             _prevOverlay = GUIGraphicsContext.Overlay;
             GUIGraphicsContext.Overlay = base.IsOverlayAllowed;
             GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
-            //QueueAnimation(AnimationType.WindowOpen);
             
+            GUIPropertyManager.SetProperty("#currentmoduleid", Convert.ToString(GUIWindowManager.ActiveWindow));
+            GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + GetID));
+            Log.Debug("DialogWindow: {0} init", this.ToString());
+
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, _defaultControlId, 0, 0, null);
+            OnMessage(msg);
             
-            //Restore();
-            //base.OnMessage(message);
+            OnPageLoad();
+ 
             return true;
           }
 
