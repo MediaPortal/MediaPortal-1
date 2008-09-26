@@ -81,6 +81,12 @@ void CProgramToTransportStream::SetTimeShiftParams( int minFiles, int maxFiles, 
 	m_maxFileSize=maxFileSize;
 }
 
+void CProgramToTransportStream::ClearStreams()
+{
+	LogDebug("CProgramToTransportStream::ClearStreams()");
+	m_outputSink->ClearStreams();
+}
+
 void CProgramToTransportStream::Write(byte* data, int len)
 { 
 	if (m_bRunning)
@@ -127,8 +133,39 @@ void CProgramToTransportStream::Close()
 	LogDebug("CProgramToTransportStream::Close()");
 	m_bRunning=false;
 	m_buffer.Stop();
+	StopBufferThread();
+}
 
+
+void CProgramToTransportStream::StartBufferThread()
+{
+	LogDebug("CProgramToTransportStream::StartBufferThread()");
+	m_buffer.Clear();
+	/*
+	if (!m_BufferThreadActive)
+	{
+	//StartThread();
+	m_BufferThreadActive = true;
+
+
+	if (m_outputSink->startPlaying(*m_tsFrames, afterPlaying, m_tsFrames)==True)
+	{
+	LogDebug("CProgramToTransportStream::Thread playing()");
+	}
+	else
+	{
+	LogDebug("CProgramToTransportStream::Failed to start output sink");
+	}
+	}*/
+}
+
+void CProgramToTransportStream::StopBufferThread()
+{
 	LogDebug("CProgramToTransportStream::StopBufferThread()");
+	//	if (!m_BufferThreadActive)
+	//		return;
+
+	//StopThread(INFINITE);
 
 
 	if (m_outputSink!=NULL)
@@ -183,4 +220,3 @@ void CProgramToTransportStream::SetVideoAudioObserver(IAnalogVideoAudioObserver*
 	LogDebug("CProgramToTransportStream::SetVideoAudioObserver - %x", callback);
 	m_pCallback = callback;
 }
-

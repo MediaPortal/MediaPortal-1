@@ -18,6 +18,7 @@ public:
 	// (Available in case a client wants to add extra data to the output file)
 
 	virtual void Flush();
+	void ClearStreams();
 protected:
 	CBaseFileWriterSink(UsageEnvironment& env, unsigned bufferSize,char const* perFrameFileNamePrefix, int writeBufferSize);
 	// called only by createNew()

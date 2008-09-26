@@ -11,7 +11,6 @@ CFileSinkRecorder::CFileSinkRecorder(UsageEnvironment& env, FileWriter* fid, uns
 : CBaseFileWriterSink(env,bufferSize,perFrameFileNamePrefix,RECORD_BUFFER_SIZE), fOutFid(fid)
 {
 	LogDebug("CFileSinkRecorder::ctor");
-
 }
 
 CFileSinkRecorder::~CFileSinkRecorder() 
@@ -49,7 +48,7 @@ CFileSinkRecorder* CFileSinkRecorder::createNew(UsageEnvironment& env, char cons
 
 void CFileSinkRecorder::OnTsPacket(byte* tsPacket)
 {
-	memcpy(&m_pWriteBuffer[m_iWriteBufferPos],tsPacket,188);
+	memcpy(&m_pWriteBuffer[m_iWriteBufferPos],tsPacket,TS_SIZE);
 	m_iWriteBufferPos += TS_SIZE;
 	if (m_iWriteBufferPos >= RECORD_BUFFER_SIZE)
 	{

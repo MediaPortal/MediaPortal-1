@@ -61,7 +61,7 @@ MultiFileWriter::~MultiFileWriter()
 		delete[] m_pTSRegFileName;
 
 	if (m_pCurrentTSFile)
-		delete[] m_pCurrentTSFile;
+		delete m_pCurrentTSFile;
 }
 
 HRESULT MultiFileWriter::GetFileName(LPOLESTR *lpszFileName)

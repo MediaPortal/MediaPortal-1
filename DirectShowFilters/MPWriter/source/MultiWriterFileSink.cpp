@@ -50,7 +50,7 @@ CMultiWriterFileSink* CMultiWriterFileSink::createNew(UsageEnvironment& env, cha
 
 void CMultiWriterFileSink::OnTsPacket(byte* tsPacket)
 {	
-	memcpy(&m_pWriteBuffer[m_iWriteBufferPos],tsPacket,188);
+	memcpy(&m_pWriteBuffer[m_iWriteBufferPos],tsPacket,TS_SIZE);
 	m_iWriteBufferPos += TS_SIZE;
 	if (m_iWriteBufferPos >= WRITE_BUFFER_SIZE)
 	{

@@ -9,7 +9,6 @@
 #include "FileSinkRecorder.h"
 #include "MemoryStreamSource.h" 
 #include "AnalogVideoAudioObserver.h"
-#include "FileSinkRecorder.h"
 #include "MediaSink.hh"
 
 
@@ -24,6 +23,7 @@ public:
 	virtual ~CProgramToTransportStream(void);
 	void Initialize(char* fileNameOut);
 	void SetTimeShiftParams( int minFiles, int maxFiles, ULONG maxFileSize);
+	void ClearStreams();
 	void Close();
 	void Write(byte* data, int len);
 

@@ -22,6 +22,7 @@ CBaseFileWriterSink::CBaseFileWriterSink(UsageEnvironment& env, unsigned bufferS
 
 CBaseFileWriterSink::~CBaseFileWriterSink() 
 {
+	delete [] fBuffer;
 	delete [] m_pWriteBuffer;
 }
 
@@ -58,5 +59,11 @@ void CBaseFileWriterSink::afterGettingFrame1(unsigned frameSize,struct timeval p
 void CBaseFileWriterSink::Flush()
 {
 	m_iWriteBufferPos = 0;
+}
+
+
+void CBaseFileWriterSink::ClearStreams()
+{
+    m_bDetermineNewStartPcr=true;
 }
 
