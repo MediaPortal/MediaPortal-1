@@ -737,7 +737,10 @@ namespace MediaPortal.Player
         {
           GUIGraphicsContext.ShowBackground = true;
           OnStopped();
-          _player.Stop();
+          if (_player != null)
+          {
+            _player.Stop();
+          }          
           CachePlayer();
           GUIGraphicsContext.form.Invalidate(true);
           _player = null;
@@ -800,7 +803,10 @@ namespace MediaPortal.Player
         {
           GUIGraphicsContext.ShowBackground = true;
           OnStopped();
-          _player.Stop();
+          if (_player != null)
+          {
+            _player.Stop();
+          }
           CachePlayer();
           GUIGraphicsContext.form.Invalidate(true);
           _player = null;
@@ -915,7 +921,10 @@ namespace MediaPortal.Player
         {
           GUIGraphicsContext.ShowBackground = true;
           OnStopped();
-          _player.Stop();
+          if (_player != null)
+          {
+            _player.Stop();
+          }
           CachePlayer();
           _player = null;
           GC.Collect(); GC.Collect(); GC.Collect(); GC.Collect(); //?? ms-help://MS.VSCC.v80/MS.MSDN.v80/MS.NETDEVFX.v20.de/cpref2/html/M_System_GC_Collect_1_804c5d7d.htm
@@ -1052,7 +1061,10 @@ namespace MediaPortal.Player
           }
           if (doStop)
           {
-            _player.Stop();
+            if (_player != null)
+            {
+              _player.Stop();
+            }
             CachePlayer();
             _player = null;
             GC.Collect(); GC.Collect(); GC.Collect(); GC.Collect();
