@@ -499,8 +499,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="40_upgrade_mysql_database.sql" />
     <EmbeddedResource Include="40_upgrade_sqlserver_database.sql" />
-    <None Include="images\ms_sql_logo.gif" />
-    <None Include="images\mysql_logo.gif" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="images\animation.SatDish.gif" />
