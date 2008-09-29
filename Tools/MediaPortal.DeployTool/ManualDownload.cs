@@ -41,9 +41,7 @@ namespace MediaPortal.DeployTool
     {
       this.Text = Utils.GetBestTranslation("ManualDownload_Title");
       labelHeading.Text = Utils.GetBestTranslation("ManualDownload_labelHeading");
-      labelTargetFile.Text = Utils.GetBestTranslation("ManualDownload_labelTargetFile");
       linkURL.Text = labelTargetFile.Text = Utils.GetBestTranslation("ManualDownload_linkURL");
-      labelTargetDir.Text = Utils.GetBestTranslation("ManualDownload_labelTargetDir");
       linkDir.Text = Utils.GetBestTranslation("ManualDownload_linkDir");
       labelDesc.Text = Utils.GetBestTranslation("ManualDownload_labelDesc");
       buttonContinue.Text = Utils.GetBestTranslation("ManualDownload_buttonContinue");
