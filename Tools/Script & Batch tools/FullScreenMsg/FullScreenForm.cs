@@ -5,7 +5,9 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using System.Xml;
 using Windows;
+using Microsoft.Win32;
 
 namespace FullscreenMsg
 {
@@ -150,6 +152,163 @@ namespace FullscreenMsg
       this.MainFormObj.Activate();
     }
 
+    /// <summary>
+    /// Tries to load settings of the splashscreen (color, background image...)
+    /// </summary>
+    public bool RetrieveSplashBackground()
+    {
+      ReadSplashScreenXML();
+      if (pbBackground.Image == null) ReadReferenceXML();
 
+      return pbBackground.Image != null;
+    }
+
+    /// <summary>
+    /// Tries to read the splashscreen.xml file of the currentskin
+    /// </summary>
+    private void ReadSplashScreenXML()
+    {
+      string SkinFilePath = string.Empty;
+
+      // try to find the splashscreen.xml ín the curent skin folder
+      string SkinDir = GetCurrentMpSkinFolder();
+      SkinFilePath = SkinDir + "\\splashscreen.xml";
+
+      if (!System.IO.File.Exists(SkinFilePath))
+      {
+        return; // if not found... leave
+      }
+
+
+      XmlDocument doc = new XmlDocument();
+      doc.Load(SkinFilePath);
+      XmlNodeList ControlsList = doc.DocumentElement.SelectNodes("/window/controls/control");
+
+      foreach (XmlNode Control in ControlsList)
+      {
+        if (Control.SelectSingleNode("type/text()").Value.ToLower() == "image"
+          && Control.SelectSingleNode("id/text()").Value == "1") // if the background image control is found
+        {
+          string BackgoundImageName = Control.SelectSingleNode("texture/text()").Value;
+          string BackgroundImagePath = SkinDir + "\\media\\" + BackgoundImageName;
+          if (System.IO.File.Exists(BackgroundImagePath))
+          {
+            pbBackground.Image = new Bitmap(BackgroundImagePath); // load the image as background
+          }
+          continue;
+        }
+        if (Control.SelectSingleNode("type/text()").Value.ToLower() == "label"
+          && Control.SelectSingleNode("id/text()").Value == "2") // if the center label control is found
+        {
+          if (Control.SelectSingleNode("textsize") != null) // textsize info found?
+          {
+            float TextSize = float.Parse(Control.SelectSingleNode("textsize/text()").Value);
+            lblMainLable.Font = new Font(lblMainLable.Font.FontFamily, TextSize, lblMainLable.Font.Style);
+          }
+          if (Control.SelectSingleNode("textcolor") != null) // textcolor info found?
+          {
+            Color TextColor = ColorTranslator.FromHtml(Control.SelectSingleNode("textcolor/text()").Value);
+            lblMainLable.ForeColor = TextColor;
+          }
+        }
+      }
+    }
+
+    /// <summary>
+    /// Tries to find the background of the current skin by analysing the reference.xml
+    /// </summary>
+    private void ReadReferenceXML()
+    {
+      string SkinReferenceFilePath = string.Empty;
+      string SkinDir = GetCurrentMpSkinFolder();
+
+      SkinReferenceFilePath = SkinDir + "\\references.xml";
+
+      XmlDocument doc = new XmlDocument();
+      doc.Load(SkinReferenceFilePath);
+      XmlNodeList ControlsList = doc.DocumentElement.SelectNodes("/controls/control");
+
+      foreach (XmlNode Control in ControlsList)
+      {
+        if (Control.SelectSingleNode("type/text()").Value.ToLower() == "image")
+        {
+          string BackgoundImageName = Control.SelectSingleNode("texture/text()").Value;
+          string BackgroundImagePath = SkinDir + "\\media\\" + BackgoundImageName;
+          if (System.IO.File.Exists(BackgroundImagePath))
+          {
+            pbBackground.Image = new Bitmap(BackgroundImagePath); // load the image as background
+          }
+        }
+      }
+    }
+
+
+    private string GetMpInstallationPath()
+    {
+      string AppDir = string.Empty;
+      try
+      {
+        RegistryKey MpRegKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Team MediaPortal\MediaPortal\");
+        AppDir = (string)MpRegKey.GetValue("ApplicationDir", string.Empty);
+      }
+      catch
+      { }
+      return AppDir;
+    }
+
+    private string GetMpConfigPath()
+    {
+      string ConfigDir = string.Empty;
+      try
+      {
+        RegistryKey MpRegKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Team MediaPortal\MediaPortal\");
+        ConfigDir = (string)MpRegKey.GetValue("ConfigDir", string.Empty);
+      }
+      catch
+      { }
+      return ConfigDir;
+    }
+
+    private string GetCurrentMpSkinFolder()
+    {
+      string MpSkinPath = string.Empty;
+      try
+      {
+        string mpPath = GetMpInstallationPath();
+        string mpConfigPath = GetMpConfigPath();
+
+        XmlDocument doc = new XmlDocument();
+        doc.Load(mpConfigPath + "\\mediaportal.xml");
+        XmlNodeList SectionList = doc.DocumentElement.SelectNodes("/profile/section");
+
+        foreach (XmlNode Section in SectionList)
+        {
+          try
+          {
+            if (Section.Attributes["name"].Value == "skin")
+            {
+              string MpSkinName = string.Empty;
+              foreach (XmlNode Element in Section.ChildNodes)
+              {
+                if (Element.Attributes["name"].Value == "name")
+                {
+                  MpSkinName = Element.InnerText;
+                  if(MpSkinName != string.Empty) MpSkinPath = mpPath + "\\Skin\\" + MpSkinName;
+                  break;
+                }
+              }
+              break;
+            }
+          }
+          catch (NullReferenceException err)
+          {
+          }
+        }
+
+      }
+      catch
+      { }
+      return MpSkinPath;
+    }
   }
 }

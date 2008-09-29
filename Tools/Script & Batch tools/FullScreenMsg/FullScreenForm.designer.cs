@@ -78,6 +78,7 @@
       this.MaximizeBox = false;
       this.MinimizeBox = false;
       this.Name = "frmFullScreen";
+      this.Opacity = 0;
       this.ShowIcon = false;
       this.ShowInTaskbar = false;
       this.Text = "FullScreenForm";

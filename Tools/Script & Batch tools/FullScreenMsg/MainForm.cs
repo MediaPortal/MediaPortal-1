@@ -148,13 +148,24 @@ namespace FullscreenMsg
             if (tmpArgs.ArgExists("BgImage"))
             {
               FullScreenForm.pbBackground.Image = new Bitmap(tmpArgs.Values[tmpArgs.FindArgPos("BgImage")]);
-              if (!FullScreenForm.Visible)
+              if (!FullScreenForm.Visible || FullScreenForm.Opacity==0)
               {
                 FullScreenForm.Show();
+                FullScreenForm.Update();
+                FullScreenForm.Opacity = 100;
                 this.Visible = false;
               }
             }
-
+            if (tmpArgs.ArgExists("ReadMpBackground"))
+            {
+              if (FullScreenForm.RetrieveSplashBackground())
+              {
+                FullScreenForm.Show();
+                FullScreenForm.Update();
+                FullScreenForm.Opacity = 100;
+                this.Visible = false;
+              }
+            }
             if (tmpArgs.ArgExists("ObservateMpStartup")) bool.TryParse(tmpArgs.Values[tmpArgs.FindArgPos("ObservateMpStartup")], out FullScreenForm.OberservateMPStartup);
             if (tmpArgs.ArgExists("ForceForeground")) bool.TryParse(tmpArgs.Values[tmpArgs.FindArgPos("ForceForeground")], out FullScreenForm.ForceForeground);
             if (tmpArgs.ArgExists("CloseOnWindowName")) FullScreenForm.CloseOnWindowName = tmpArgs.Values[tmpArgs.FindArgPos("CloseOnWindowName")];
