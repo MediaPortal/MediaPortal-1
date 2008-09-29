@@ -391,10 +391,12 @@ namespace MediaPortal.GUI.Library
       {
         iOverSized = (_thumbNailWidth + _thumbNailHeight) / THUMBNAIL_OVERSIZED_DIVIDER;
       }
-      
-      GUIImage pImage = pItem.Thumbnail;
+
+      GUIImage pFocusImage = null;
       if (pItem.HasThumbnail)
       {
+        GUIImage pImage = pItem.Thumbnail;
+        pFocusImage = pImage;
         if (null == pImage /*&& _sleeper==0 */&& !IsAnimating)
         {
           if (pItem.ThumbnailImage == "[mpthumbs.db]")
@@ -459,6 +461,8 @@ namespace MediaPortal.GUI.Library
       {
         if (pItem.HasIconBig)
         {
+          GUIImage pImage = pItem.IconBig;
+          pFocusImage = pImage;
           if (null == pImage /*&& _sleeper==0 */&& !IsAnimating)
           {
             pImage = new GUIImage(0, 0, _xPositionThumbNail - iOverSized + dwPosX, _yPositionThumbNail - iOverSized + dwPosY, _thumbNailWidth + 2 * iOverSized, _thumbNailHeight + 2 * iOverSized, pItem.IconImageBig, 0x0);
@@ -515,8 +519,10 @@ namespace MediaPortal.GUI.Library
         btn.Height = _textureHeight + _zoomYPixels;
         btn.SetPosition(dwPosX - (_zoomXPixels / 2), dwPosY - (_zoomYPixels / 2));
         btn.Render(timePassed);
-        if (pImage != null && _zoomXPixels == 0 && _zoomYPixels == 0)
-          pImage.Render(timePassed);
+        if (pFocusImage != null && _zoomXPixels == 0 && _zoomYPixels == 0)
+        {
+          pFocusImage.Render(timePassed);
+        }
       }
       else
       {
