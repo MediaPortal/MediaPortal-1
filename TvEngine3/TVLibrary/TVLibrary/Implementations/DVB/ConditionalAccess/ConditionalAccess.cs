@@ -179,6 +179,12 @@ namespace TvLibrary.Implementations.DVB
           if (_genericbdas.IsGenericBDAS)
           {
             Log.Log.WriteFile("Generic BDA card detected");
+            Log.Log.WriteFile("Check for Hauppauge WinTV CI");
+            if (winTvUsbCiFilter != null)
+            {
+              Log.Log.WriteFile("WinTV CI detected in graph - using capabilities...");
+              _winTvCiModule = new WinTvCiModule(winTvUsbCiFilter);
+            }
             return;
           }
           _genericbdas = null;

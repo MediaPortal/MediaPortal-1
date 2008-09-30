@@ -670,6 +670,11 @@ namespace TvLibrary.Implementations.DVB
               {
                 skipCaptureFilter = true;
               }
+              //Hauppauge Nova USB2 DVB-T workaround.
+              if (devices[i].Name == "Hauppauge Nova USB2 DVB-T TV Receiver")
+              {
+                skipCaptureFilter = true;
+              }
             }
           }
         }
