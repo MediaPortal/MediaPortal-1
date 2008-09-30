@@ -260,7 +260,7 @@ namespace MediaPortal.GUI.Library
     protected bool _autoHideTopbar = false;
     protected bool _disableTopBar = false;                      // skin file can hide Topbar when needed
     bool _isSkinLoaded = false;
-    bool _shouldRestore = false;
+    protected bool _shouldRestore = false;
     private string _lastSkin = string.Empty;
     bool _windowAllocated;
     bool _hasRendered = false;

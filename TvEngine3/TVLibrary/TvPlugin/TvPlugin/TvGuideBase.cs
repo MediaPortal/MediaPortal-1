@@ -574,6 +574,24 @@ namespace TvPlugin
               {
                 return false;
               }
+
+              if (_shouldRestore)
+              {
+                DoRestoreSkin();
+              }
+              else
+              {
+                GUIPropertyManager.SetProperty("#itemcount", string.Empty);
+                GUIPropertyManager.SetProperty("#selecteditem", string.Empty);
+                GUIPropertyManager.SetProperty("#selecteditem2", string.Empty);
+                GUIPropertyManager.SetProperty("#selectedthumb", string.Empty);
+                LoadSkin();
+                AllocResources();
+              }
+
+              InitControls();
+
+              
               base.OnMessage(message);
               ///@
               ///_notifyList = new List<TVNotify>();
