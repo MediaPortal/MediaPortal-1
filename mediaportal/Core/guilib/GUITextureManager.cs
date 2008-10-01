@@ -253,7 +253,7 @@ namespace MediaPortal.GUI.Library
                                                                     1,//mipslevels
                                                                     0,//Usage.Dynamic,
                                                                     Direct3D.Format.A8R8G8B8,
-                                                                    Pool.Managed,
+                                                                    GUIGraphicsContext.GetTexturePoolType(),
                                                                     Filter.None,
                                                                     Filter.None,
                                                                     (int)lColorKey,
@@ -338,7 +338,7 @@ namespace MediaPortal.GUI.Library
             1,//mipslevels
             0,//Usage.Dynamic,
             Direct3D.Format.A8R8G8B8,
-            Pool.Managed,
+            GUIGraphicsContext.GetTexturePoolType(),
             Filter.None,
             Filter.None,
             (int)lColorKey,
@@ -445,7 +445,7 @@ namespace MediaPortal.GUI.Library
         //        1,//mipslevels
         //        0,//Usage.Dynamic,
         //        Direct3D.Format.A8R8G8B8,
-        //        Pool.Managed,
+        //        GUIGraphicsContext.GetTexturePoolType(),
         //        Filter.None,
         //        Filter.None,
         //        (int)lColorKey,
@@ -469,7 +469,7 @@ namespace MediaPortal.GUI.Library
                                         1,//mipslevels
                                         0,//Usage.Dynamic,
                                         fmt,
-                                        Pool.Managed,
+                                        GUIGraphicsContext.GetTexturePoolType(),
                                         Filter.None,
                                         Filter.None,
                                         (int)lColorKey,
@@ -488,7 +488,7 @@ namespace MediaPortal.GUI.Library
             1,//mipslevels
             0,//Usage.Dynamic,
             fmt,
-            Pool.Managed,
+            GUIGraphicsContext.GetTexturePoolType(),
             Filter.None,
             Filter.None,
             (int)lColorKey,
@@ -514,7 +514,7 @@ namespace MediaPortal.GUI.Library
                                         1,//mipslevels
                                         0,//Usage.Dynamic,
                                         fmt,
-                                        Pool.Managed,
+                                        GUIGraphicsContext.GetTexturePoolType(),
                                         Filter.None,
                                         Filter.None,
                                         (int)lColorKey,

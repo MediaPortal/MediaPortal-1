@@ -708,7 +708,9 @@ public class MediaPortalApp : D3DApp, IRender
       if (font != null)
       {
         GUIGraphicsContext.SetScalingResolution(0, 0, false);
-        font.DrawText(80, 40, 0xffffffff, frameStats, GUIControl.Alignment.ALIGN_LEFT, -1);
+        // '\n' doesnt work with the DirectX9 Ex device, so the string is splitted into two
+        font.DrawText(80, 40, 0xffffffff, frameStatsLine1, GUIControl.Alignment.ALIGN_LEFT, -1);
+        font.DrawText(80, 55, 0xffffffff, frameStatsLine2, GUIControl.Alignment.ALIGN_LEFT, -1);
         region[0].X = m_ixpos;
         region[0].Y = 0;
         region[0].Width = 4;
@@ -1085,7 +1087,17 @@ public class MediaPortalApp : D3DApp, IRender
         Log.Info("Main: OnResume - OnResume called but !_suspended");
         return;
       }
-      GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
+
+      // Systems without DirectX9 Ex have lost graphics device in suspend/hibernate cycle
+      if (System.Environment.OSVersion.Version.Major < 6)
+      {
+        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
+      }
+      else
+      {
+        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+      }
+      
       EXECUTION_STATE oldState = EXECUTION_STATE.ES_CONTINUOUS;
       bool turnMonitorOn;
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
@@ -1114,7 +1126,9 @@ public class MediaPortalApp : D3DApp, IRender
           {
             // Maybe the scripting host is not available therefore do not wait infinitely.
             if (!restartScript.HasExited)
+            {
               restartScript.WaitForExit();
+            }
           }
           catch (Exception ex)
           {

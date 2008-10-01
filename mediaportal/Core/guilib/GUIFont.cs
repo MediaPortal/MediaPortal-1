@@ -46,7 +46,7 @@ namespace MediaPortal.GUI.Library
   {
     #region imports
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    unsafe private static extern void FontEngineInitialize(int iScreenWidth, int iScreenHeight);
+    unsafe private static extern void FontEngineInitialize(int iScreenWidth, int iScreenHeight, int poolFormat);
 
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     unsafe private static extern void FontEngineAddFont(int fontNumber, void* fontTexture, int firstChar, int endChar, float textureScale, float textureWidth, float textureHeight, float fSpacingPerChar, int maxVertices);
@@ -119,7 +119,7 @@ namespace MediaPortal.GUI.Library
       : this()
     {
       //Log.Debug("GUIFont:ctor({0}) fontengine: Initialize()", fontName);
-      FontEngineInitialize(GUIGraphicsContext.Width, GUIGraphicsContext.Height);
+      FontEngineInitialize(GUIGraphicsContext.Width, GUIGraphicsContext.Height, (int)GUIGraphicsContext.GetTexturePoolType());
       _fontName = fontName;
       _fileName = fileName;
       _fontHeight = fontHeight;
@@ -136,7 +136,7 @@ namespace MediaPortal.GUI.Library
       : this()
     {
       //Log.Debug("GUIFont:ctor({0}) fontengine: Initialize()", fontName);
-      FontEngineInitialize(GUIGraphicsContext.Width, GUIGraphicsContext.Height);
+      FontEngineInitialize(GUIGraphicsContext.Width, GUIGraphicsContext.Height,(int)GUIGraphicsContext.GetTexturePoolType());
       _fontName = fontName;
       _fileName = fileName;
       _fontStyle = style;
@@ -955,14 +955,19 @@ namespace MediaPortal.GUI.Library
 
         // Reset and load from steam
         imageStream.Position = 0;
+        Format format = Format.Dxt3;
+        if (GUIGraphicsContext.GetTexturePoolType() == Pool.Default)
+        {
+          format = Format.Unknown;
+        }
         ImageInformation info = new ImageInformation();
         _textureFont = TextureLoader.FromStream(GUIGraphicsContext.DX9Device,
                                   imageStream, (int)imageStream.Length,
                                   0, 0, //width/height
                                   1,//miplevels
                                   0,
-                                  Format.Dxt3,
-                                  Pool.Managed,
+                                  format,
+                                  GUIGraphicsContext.GetTexturePoolType(),
                                   Filter.None,
                                   Filter.None,
                                   0,
@@ -985,7 +990,7 @@ namespace MediaPortal.GUI.Library
                                           1,//miplevels
                                           0,
                                           Format.Unknown,
-                                          Pool.Managed,
+                                          GUIGraphicsContext.GetTexturePoolType(),
                                           Filter.None,
                                           Filter.None,
                                           0,

@@ -252,7 +252,7 @@ namespace MediaPortal.Util
             1,//mipslevels
             0,//Usage.Dynamic,
             Format.X8R8G8B8,
-            Pool.Managed,
+            GUIGraphicsContext.GetTexturePoolType(),
             Filter.None,
             Filter.None,
             (int)0,
@@ -315,7 +315,7 @@ namespace MediaPortal.Util
         m_vbBuffer = new VertexBuffer(typeof(CustomVertex.TransformedColoredTextured),
           4, GUIGraphicsContext.DX9Device,
           0, CustomVertex.TransformedColoredTextured.Format,
-          Pool.Managed);
+          GUIGraphicsContext.GetTexturePoolType());
 
         Direct3D.SurfaceDescription desc;
         desc = texture.GetLevelDescription(0);
@@ -467,7 +467,7 @@ namespace MediaPortal.Util
         m_vbBuffer = new VertexBuffer(typeof(CustomVertex.TransformedColoredTextured),
           4, GUIGraphicsContext.DX9Device,
           0, CustomVertex.TransformedColoredTextured.Format,
-          Pool.Managed);
+          GUIGraphicsContext.GetTexturePoolType());
 
         Direct3D.SurfaceDescription desc;
         desc = texture.GetLevelDescription(0);
@@ -619,7 +619,7 @@ namespace MediaPortal.Util
         m_vbBuffer = new VertexBuffer(typeof(CustomVertex.TransformedColoredTextured),
           4, GUIGraphicsContext.DX9Device,
           0, CustomVertex.TransformedColoredTextured.Format,
-          Pool.Managed);
+          GUIGraphicsContext.GetTexturePoolType());
 
         Direct3D.SurfaceDescription desc;
         desc = texture.GetLevelDescription(0);
@@ -782,7 +782,7 @@ namespace MediaPortal.Util
         m_vbBuffer = new VertexBuffer(typeof(CustomVertex.TransformedColoredTextured),
           4, GUIGraphicsContext.DX9Device,
           0, CustomVertex.TransformedColoredTextured.Format,
-          Pool.Managed);
+          GUIGraphicsContext.GetTexturePoolType());
 
         Direct3D.SurfaceDescription desc;
         desc = texture.GetLevelDescription(0);

@@ -131,7 +131,7 @@ namespace MediaPortal.Player
       _vertexBuffer = new VertexBuffer(typeof(CustomVertex.TransformedColoredTextured),
                                     4, GUIGraphicsContext.DX9Device,
                                     0, CustomVertex.TransformedColoredTextured.Format,
-                                    Pool.Managed);
+                                    GUIGraphicsContext.GetTexturePoolType());
 
       _blackImage = new GUIImage(0);
       _blackImage.SetFileName("black.bmp");

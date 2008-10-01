@@ -113,6 +113,7 @@ int m_iVertexBuffersUpdated=0;
 int m_iFontVertexBuffersUpdated=0;
 int m_iScreenWidth=0;
 int m_iScreenHeight=0;
+D3DPOOL m_ipoolFormat=D3DPOOL_MANAGED;
 DWORD m_alphaBlend=-1;
 
 void Log(char* txt)
@@ -137,7 +138,7 @@ void Cleanup()
 }
 
 //*******************************************************************************************************************
-void FontEngineInitialize(int screenWidth, int screenHeight)
+void FontEngineInitialize(int screenWidth, int screenHeight, int poolFormat)
 {
 	m_iScreenWidth=screenWidth;
 	m_iScreenHeight=screenHeight;
@@ -170,6 +171,14 @@ void FontEngineInitialize(int screenWidth, int screenHeight)
 		}
 		initialized=true;
 		textureCount=0;
+	}
+	if(poolFormat==0)
+	{
+		m_ipoolFormat = D3DPOOL_DEFAULT;
+	}
+    else
+	{
+		m_ipoolFormat = D3DPOOL_MANAGED;
 	}
 }
 //*******************************************************************************************************************
@@ -274,7 +283,7 @@ int FontEngineAddTexture(int hashCode, bool useAlphaBlend, void* texture)
 		m_pDevice->CreateVertexBuffer( MaxNumTextureVertices*sizeof(CUSTOMVERTEX),
 											D3DUSAGE_WRITEONLY, 
 											D3DFVF_CUSTOMVERTEX,
-											D3DPOOL_MANAGED, 
+											m_ipoolFormat, 
 											&textureData[selected].pVertexBuffer, 
 											NULL);  
 	}
@@ -291,7 +300,7 @@ int FontEngineAddTexture(int hashCode, bool useAlphaBlend, void* texture)
 	textureData[selected].pTexture->GetLevelDesc(0,&textureData[selected].desc);
 
 	m_pDevice->CreateIndexBuffer(	MaxNumTextureVertices *sizeof(WORD),
-									D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED, 
+									D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, m_ipoolFormat, 
 									&textureData[selected].pIndexBuffer, NULL ) ;
 	WORD* pIndices;
 	int triangle=0;
@@ -351,7 +360,7 @@ int FontEngineAddSurface(int hashCode, bool useAlphaBlend,void* surface)
 		m_pDevice->CreateVertexBuffer(		MaxNumTextureVertices*sizeof(CUSTOMVERTEX),
 											D3DUSAGE_WRITEONLY, 
 											D3DFVF_CUSTOMVERTEX,
-											D3DPOOL_MANAGED, 
+											m_ipoolFormat, 
 											&textureData[selected].pVertexBuffer, 
 											NULL) ;  
 	}
@@ -367,7 +376,7 @@ int FontEngineAddSurface(int hashCode, bool useAlphaBlend,void* surface)
 	textureData[selected].pTexture->GetLevelDesc(0,&textureData[selected].desc);
 
 	m_pDevice->CreateIndexBuffer(	MaxNumTextureVertices *sizeof(WORD),
-									D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED, 
+									D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, m_ipoolFormat, 
 									&textureData[selected].pIndexBuffer, NULL ) ;
 	WORD* pIndices;
 	int triangle=0;
@@ -830,12 +839,12 @@ void FontEngineAddFont( int fontNumber,void* fontTexture, int firstChar, int end
 	LPDIRECT3DVERTEXBUFFER9 g_pVB        = NULL;
 	int hr=m_pDevice->CreateVertexBuffer(	MaxNumfontVertices*sizeof(CUSTOMVERTEX),
 											D3DUSAGE_WRITEONLY, D3DFVF_CUSTOMVERTEX,
-											D3DPOOL_MANAGED, 
+											m_ipoolFormat, 
 											&g_pVB, 
 											NULL) ;
 	fontData[fontNumber].pVertexBuffer=g_pVB;
 	m_pDevice->CreateIndexBuffer(	MaxNumfontVertices *sizeof(WORD),
-									D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED, 
+									D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, m_ipoolFormat, 
 									&fontData[fontNumber].pIndexBuffer, NULL ) ;
 	WORD* pIndices;
 	int triangle=0;

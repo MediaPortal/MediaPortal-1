@@ -50,6 +50,7 @@ using MediaPortal.Playlists;
 using MediaPortal.Util;
 using Caps = Microsoft.DirectX.Direct3D.Caps;
 using CreateFlags = Microsoft.DirectX.Direct3D.CreateFlags;
+using WPFMediaKit.DirectX;
 
 namespace MediaPortal
 {
@@ -137,7 +138,8 @@ namespace MediaPortal
     protected float elapsedTime; // Time elapsed since last frame
     protected float framePerSecond = 25; // Instanteous frame rate
     protected string deviceStats; // String to hold D3D device stats
-    protected string frameStats; // String to hold frame stats
+    protected string frameStatsLine1; // 1st string to hold frame stats
+    protected string frameStatsLine2; // 2nd string to hold frame stats
     protected bool m_bNeedReset = false;
     // Overridable variables for the app
     private int minDepthBits; // Minimum number of bits needed in depth buffer
@@ -299,7 +301,8 @@ namespace MediaPortal
       frameMoving = true;
       singleStep = false;
       deviceStats = null;
-      frameStats = null;
+      frameStatsLine1 = null;
+      frameStatsLine2 = null;
       this.Text = "D3D9 Sample";
       this.ClientSize = new Size(720, 576);
       this.KeyPreview = true;
@@ -809,8 +812,10 @@ namespace MediaPortal
     /// 
     public void SwitchFullScreenOrWindowed(bool bWindowed)
     {
-      if (!useExclusiveDirectXMode || useEnhancedVideoRenderer)
+      if ((!useExclusiveDirectXMode || useEnhancedVideoRenderer))
+      {
         return;
+      }
 
       // Temporary remove the handler
       GUIGraphicsContext.DX9Device.DeviceLost -= new EventHandler(this.OnDeviceLost);
@@ -825,6 +830,10 @@ namespace MediaPortal
       try
       {
         GUIGraphicsContext.DX9Device.Reset(presentParams);
+        if (GUIGraphicsContext.IsDirectX9ExUsed())
+        {
+          GUIFontManager.InitializeDeviceObjects();
+        }
 
         if (windowed)
           Log.Debug("D3D: Switched to windowed mode successfully");
@@ -842,6 +851,10 @@ namespace MediaPortal
         try
         {
           GUIGraphicsContext.DX9Device.Reset(presentParams);
+          if (GUIGraphicsContext.IsDirectX9ExUsed())
+          {
+            GUIFontManager.InitializeDeviceObjects();
+          }
         }
         catch (Exception)
         { }
@@ -850,9 +863,10 @@ namespace MediaPortal
       GUIGraphicsContext.DX9Device.DeviceLost += new EventHandler(this.OnDeviceLost);
 
       if (windowed)
+      {
         TopMost = alwaysOnTop;
+      }
       this.Activate();
-
     }
 
 
@@ -889,12 +903,22 @@ namespace MediaPortal
       try
       {
         // Create the device
-        GUIGraphicsContext.DX9Device = new Microsoft.DirectX.Direct3D.Device(graphicsSettings.AdapterOrdinal,
-                                                                             graphicsSettings.DevType,
-                                                                             windowed ? ourRenderTarget : this,
-                                                                             createFlags | CreateFlags.MultiThreaded,
-                                                                             presentParams);
-
+        if (GUIGraphicsContext.IsDirectX9ExUsed())
+        {
+          // Vista or later, use DirectX9 Ex device
+          Log.Info("Creating DirectX9 Ex device");
+          CreateDirectX9ExDevice(createFlags);
+        }
+        else
+        {
+          Log.Info("Creating DirectX9 device");
+          GUIGraphicsContext.DX9Device = new Microsoft.DirectX.Direct3D.Device(graphicsSettings.AdapterOrdinal,
+                                                                               graphicsSettings.DevType,
+                                                                               windowed ? ourRenderTarget : this,
+                                                                               createFlags | CreateFlags.MultiThreaded,
+                                                                               presentParams);
+        }
+        
         // Cache our local objects
         //renderState = GUIGraphicsContext.DX9Device.RenderState;
         //sampleState = GUIGraphicsContext.DX9Device.SamplerState;
@@ -1001,8 +1025,9 @@ namespace MediaPortal
             return;
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error(ex);
         // If that failed, fall back to the reference rasterizer
         if (deviceInfo.DevType == DeviceType.Hardware)
           if (FindBestWindowedMode(false, true))
@@ -1025,6 +1050,62 @@ namespace MediaPortal
       }
     }
 
+    /// <summary>
+    /// Creates DirectX9 Ex device in unmanaged code as MDX is not supporting DX9 Ex 
+    /// This device type is available only in Vista or later OS
+    /// </summary>
+    private void CreateDirectX9ExDevice(CreateFlags createFlags)  
+    {
+      D3DPRESENT_PARAMETERS param = new D3DPRESENT_PARAMETERS();
+      param.Windowed = 0;
+      if (presentParams.Windowed)
+      {
+        param.Windowed = 1;
+      }
+
+      param.AutoDepthStencilFormat = presentParams.AutoDepthStencilFormat;
+      param.BackBufferCount = (uint)presentParams.BackBufferCount;
+      param.BackBufferFormat = presentParams.BackBufferFormat;
+      param.BackBufferHeight = (uint)presentParams.BackBufferHeight;
+      param.BackBufferWidth = (uint)presentParams.BackBufferWidth;
+      param.hDeviceWindow = presentParams.DeviceWindow.Handle;
+
+      param.EnableAutoDepthStencil = 0;
+      if (presentParams.EnableAutoDepthStencil)
+      {
+        param.EnableAutoDepthStencil = 1;
+      }
+
+      param.FullScreen_RefreshRateInHz = (uint)presentParams.FullScreenRefreshRateInHz;
+      param.MultiSampleType = presentParams.MultiSample;
+      param.MultiSampleQuality = presentParams.MultiSampleQuality;
+      param.PresentationInterval = (uint)presentParams.PresentationInterval;
+      param.SwapEffect = presentParams.SwapEffect;
+
+      IDirect3D9Ex m_d3dEx;
+      Direct3D.Direct3DCreate9Ex(32, out m_d3dEx);
+      IntPtr d3dEx = Marshal.GetIUnknownForObject(m_d3dEx);
+      Marshal.Release(d3dEx);
+   
+      D3DDISPLAYMODEEX displaymodeEx = new D3DDISPLAYMODEEX();
+
+      displaymodeEx.Size = (uint)Marshal.SizeOf(displaymodeEx);
+      displaymodeEx.Width = param.BackBufferWidth;
+      displaymodeEx.Height = param.BackBufferHeight;
+      displaymodeEx.Format = param.BackBufferFormat;
+      displaymodeEx.ScanLineOrdering = WPFMediaKit.DirectX.D3DSCANLINEORDERING.D3DSCANLINEORDERING_UNKNOWN;
+      IntPtr dev;
+      IntPtr prt = Marshal.AllocHGlobal(Marshal.SizeOf(displaymodeEx));
+      Marshal.StructureToPtr(displaymodeEx, prt, true);
+
+      int hr = m_d3dEx.CreateDeviceEx(graphicsSettings.AdapterOrdinal, graphicsSettings.DevType, 
+        windowed ? ourRenderTarget.Handle : this.Handle, createFlags | CreateFlags.MultiThreaded, ref param,
+        windowed ? IntPtr.Zero : prt, out dev);
+      GUIGraphicsContext.DX9Device = new Device(dev);
+      
+      // Reset must be done to get the MDX device internal state up to date
+      GUIGraphicsContext.DX9Device.Reset(presentParams);
+    }
 
     /// <summary>
     /// Displays sample exceptions to the user
@@ -1258,7 +1339,7 @@ namespace MediaPortal
 
       if (GUIGraphicsContext.Vmr9Active)
       {
-          HandleCursor();
+        HandleCursor();
 
         if ((ActiveForm != this) && (alwaysOnTop))
           this.Activate();
@@ -1302,7 +1383,7 @@ namespace MediaPortal
 #endif
       }
 
-        HandleCursor();
+      HandleCursor();
 
       if ((ActiveForm != this) && (alwaysOnTop))
         Activate();
@@ -1322,8 +1403,11 @@ namespace MediaPortal
     {
       if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST)
       {
-        if (g_Player.Playing || Recorder.IsViewing()) g_Player.Stop();
-        
+        if (g_Player.Playing || Recorder.IsViewing())
+        {
+          g_Player.Stop();
+        }
+
         //Debugger.Launch();
         try
         {
@@ -1550,16 +1634,18 @@ namespace MediaPortal
           break;
       }
 
-      frameStats = String.Format("last {0} fps ({1}x{2}), {3} {4}{5}{6} {7}",
+      frameStatsLine1 = String.Format("last {0} fps ({1}x{2}), {3} {4}{5}{6} {7}",
                                  GUIGraphicsContext.CurrentFPS.ToString("f2"),
                                  GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth,
                                  GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight,
                                  GetSleepingTime(), strFmt, strDepthFmt, strMultiSample, ShouldUseSleepingTime());
 
-      if (GUIGraphicsContext.Vmr9Active)
-        frameStats += String.Format(" VMR9 {0}", GUIGraphicsContext.Vmr9FPS.ToString("f2"));
+      frameStatsLine2 = String.Format("");
 
-      string quality = String.Format("\navg fps:{0} sync:{1} drawn:{2} dropped:{3} jitter:{4}",
+      if (GUIGraphicsContext.Vmr9Active)
+        frameStatsLine2 = String.Format("VMR9 {0} ", GUIGraphicsContext.Vmr9FPS.ToString("f2"));
+
+      string quality = String.Format("avg fps:{0} sync:{1} drawn:{2} dropped:{3} jitter:{4}",
                                      VideoRendererStatistics.AverageFrameRate.ToString("f2"),
                                      VideoRendererStatistics.AverageSyncOffset,
                                      VideoRendererStatistics.FramesDrawn,
@@ -1573,11 +1659,11 @@ namespace MediaPortal
         quality += String.Format(" Memory:{0} Mb cpu:{1}%",
               MBUsed, _perfCounterCpu.NextValue().ToString("f2"));
 #endif
-      frameStats += quality;
+      frameStatsLine2 += quality;
       //long lTotalMemory=GC.GetTotalMemory(false);
       //string memory=String.Format("\nTotal Memory allocated:{0}",Utils.GetSize(lTotalMemory) );
 
-      //frameStats+=memory;
+      //frameStatsLine2+=memory;
     }
 
     /// <summary>
@@ -1926,6 +2012,12 @@ namespace MediaPortal
                   GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
         SwitchFullScreenOrWindowed(true);
       }
+      if (GUIGraphicsContext.IsDirectX9ExUsed())
+      {
+        BuildPresentParamsFromSettings(!isMaximized);
+        GUIGraphicsContext.DX9Device.Reset(presentParams);
+      }
+
       OnDeviceReset(null, null);
     }
 
@@ -2129,9 +2221,13 @@ namespace MediaPortal
       try
       {
         if (_fromTray)
+        {
           _fromTray = false;
+        }
         else
+        {
           SavePlayerState();
+        }
         if (notifyIcon != null)
         {
           if (notifyIcon.Visible == false && this.WindowState == FormWindowState.Minimized)
@@ -2146,13 +2242,16 @@ namespace MediaPortal
                 g_Player.Volume = 0;
               }
               if (g_Player.Paused == false)
+              {
                 g_Player.Pause();
+              }
             }
-
             return;
           }
           else if (notifyIcon.Visible == true && this.WindowState != FormWindowState.Minimized)
+          {
             notifyIcon.Visible = false;
+          }
         }
         active = !(this.WindowState == FormWindowState.Minimized);
         base.OnResize(e);

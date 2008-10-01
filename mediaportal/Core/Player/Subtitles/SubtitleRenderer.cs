@@ -764,7 +764,7 @@ namespace MediaPortal.Player.Subtitles
         vertexBuffer = new VertexBuffer(typeof(CustomVertex.TransformedTextured),
                         4, GUIGraphicsContext.DX9Device,
                         0, CustomVertex.TransformedTextured.Format,
-                        Pool.Managed);
+                        GUIGraphicsContext.GetTexturePoolType());
       }
 
       if (wx0 != wx || wy0 != wy || wwidth0 != wwidth || wheight0 != wheight)

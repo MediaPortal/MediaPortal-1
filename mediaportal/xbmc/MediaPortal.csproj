@@ -264,6 +264,7 @@
     <Compile Include="d3dutil.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Direct3D.cs" />
     <Compile Include="MediaPortal.cs">
       <SubType>Form</SubType>
     </Compile>

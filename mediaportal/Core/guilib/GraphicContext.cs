@@ -154,6 +154,7 @@ namespace MediaPortal.GUI.Library
     private static AdapterInformation _currentFullscreenAdapterInfo = null;
     private static int _currentScreenNumber = -1;
     private static Screen _currentScreen = null;
+    private static bool _isDX9EXused = System.Environment.OSVersion.Version.Major >= 6; 
 
     private static Point _screenCenterPos = new Point();
 
@@ -1323,6 +1324,21 @@ namespace MediaPortal.GUI.Library
       if (windowId == (int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO) return true;
 
       return false;
+    }
+
+    static public bool IsDirectX9ExUsed()
+    {
+      return _isDX9EXused;
+    }
+    
+    static public Microsoft.DirectX.Direct3D.Pool GetTexturePoolType()
+    {
+      // DirectX9 Ex device works only with Pool.Default
+      if (IsDirectX9ExUsed())
+      {
+        return Pool.Default;
+      }
+      return Pool.Managed;
     }
 
     public static TransformMatrix ControlTransform

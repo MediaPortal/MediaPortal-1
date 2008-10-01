@@ -385,7 +385,7 @@ namespace MediaPortal.GUI.Library
           1,//mipslevels
           0,//Usage.Dynamic,
           useFormat,
-          Pool.Managed,
+          GUIGraphicsContext.GetTexturePoolType(),
           Direct3D.Filter.None,
           Direct3D.Filter.None,
           (int)0,

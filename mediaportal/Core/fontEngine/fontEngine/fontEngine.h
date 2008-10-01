@@ -11,7 +11,7 @@
 #define FONTENGINE_API __declspec(dllimport)
 #pragma message("use dllimport")
 #endif
-void FontEngineInitialize(int screenWidth, int screenHeight);
+void FontEngineInitialize(int screenWidth, int screenHeight, int poolFormat);
 int  FontEngineAddTexture(int hashCode, bool useAlphaBlend,void* texture);
 int  FontEngineAddSurface(int hashCode, bool useAlphaBlend, void* surface);
 void FontEngineRemoveTexture(int textureNo);
