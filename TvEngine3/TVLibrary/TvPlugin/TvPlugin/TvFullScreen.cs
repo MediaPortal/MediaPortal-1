@@ -2529,10 +2529,13 @@ namespace TvPlugin
       if (ts.TotalMilliseconds >= 1000)
       {
         // change channel
-        int iChannel = Int32.Parse(_channelName);
-        ChangeChannelNr(iChannel);
+        int iChannel = -1;
+        Int32.TryParse(_channelName, out iChannel);
+        if (iChannel > -1)
+        {
+          ChangeChannelNr(iChannel);
+        }
         _channelInputVisible = false;
-
         _channelName = String.Empty;
       }
     }
@@ -2615,9 +2618,13 @@ namespace TvPlugin
 
         if (_channelName.Length == 3)
         {
-          // Change channel immediately
-          int iChannel = Int32.Parse(_channelName);
-          ChangeChannelNr(iChannel);
+          // Change channel immediately          
+          int iChannel = -1;
+          Int32.TryParse(_channelName, out iChannel);
+          if (iChannel > -1)
+          {
+            ChangeChannelNr(iChannel);
+          }          
           _channelInputVisible = false;
           _channelName = "";
         }
