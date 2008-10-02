@@ -412,13 +412,12 @@ namespace MediaPortal.GUI.Library
           {
             pImage.ParentControl = this;
             pImage.KeepAspectRatio = true;
+            pImage.Centered = true;
             pImage.ZoomFromTop = !pItem.IsFolder && _zoom;
             pImage.AllocResources();
 
             pItem.Thumbnail = pImage;
-            int xOff = (_thumbNailWidth + 2 * iOverSized - pImage.RenderWidth) / 2;
-            int yOff = (_thumbNailHeight + 2 * iOverSized - pImage.RenderHeight) / 2;
-            pImage.SetPosition(_xPositionThumbNail - iOverSized + dwPosX + xOff, _yPositionThumbNail - iOverSized + dwPosY + yOff);
+            pImage.SetPosition(_xPositionThumbNail - iOverSized + dwPosX, _yPositionThumbNail - iOverSized + dwPosY);
             pImage.DimColor = DimColor;
             if (bFocus || !Focus) pImage.ColourDiffuse = 0xffffffff;
             else pImage.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
@@ -442,9 +441,8 @@ namespace MediaPortal.GUI.Library
           pImage.ZoomFromTop = !pItem.IsFolder && _zoom;
           pImage.Width = _thumbNailWidth + 2 * iOverSized;
           pImage.Height = _thumbNailHeight + 2 * iOverSized;
-          int xOff = (_thumbNailWidth + 2 * iOverSized - pImage.RenderWidth) / 2;
-          int yOff = (_thumbNailHeight + 2 * iOverSized - pImage.RenderHeight) / 2;
-          pImage.SetPosition(_xPositionThumbNail + dwPosX - iOverSized + xOff, _yPositionThumbNail - iOverSized + dwPosY + yOff);
+          pImage.Centered = true;
+          pImage.SetPosition(_xPositionThumbNail + dwPosX - iOverSized, _yPositionThumbNail - iOverSized + dwPosY);
           pImage.DimColor = DimColor;
           if (bFocus || !Focus) pImage.ColourDiffuse = 0xffffffff;
           else pImage.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
@@ -468,13 +466,12 @@ namespace MediaPortal.GUI.Library
             pImage = new GUIImage(0, 0, _xPositionThumbNail - iOverSized + dwPosX, _yPositionThumbNail - iOverSized + dwPosY, _thumbNailWidth + 2 * iOverSized, _thumbNailHeight + 2 * iOverSized, pItem.IconImageBig, 0x0);
             pImage.ParentControl = this;
             pImage.KeepAspectRatio = true;
+            pImage.Centered = true;
             pImage.ZoomFromTop = !pItem.IsFolder && _zoom;
 
             pImage.AllocResources();
             pItem.IconBig = pImage;
-            int xOff = (_thumbNailWidth + 2 * iOverSized - pImage.RenderWidth) / 2;
-            int yOff = (_thumbNailHeight + 2 * iOverSized - pImage.RenderHeight) / 2;
-            pImage.SetPosition(_xPositionThumbNail + dwPosX - iOverSized + xOff, _yPositionThumbNail - iOverSized + dwPosY + yOff);
+            pImage.SetPosition(_xPositionThumbNail + dwPosX - iOverSized, _yPositionThumbNail - iOverSized + dwPosY);
             pImage.DimColor = DimColor;
             if (bFocus || !Focus) pImage.ColourDiffuse = 0xffffffff;
             else pImage.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
@@ -495,11 +492,10 @@ namespace MediaPortal.GUI.Library
               pImage.AllocResources();
             }
             pImage.ZoomFromTop = !pItem.IsFolder && _zoom;
+            pImage.Centered = true;
             pImage.Width = _thumbNailWidth + 2 * iOverSized;
             pImage.Height = _thumbNailHeight + 2 * iOverSized;
-            int xOff = (_thumbNailWidth + 2 * iOverSized - pImage.RenderWidth) / 2;
-            int yOff = (_thumbNailHeight + 2 * iOverSized - pImage.RenderHeight) / 2;
-            pImage.SetPosition(_xPositionThumbNail - iOverSized + dwPosX + xOff, _yPositionThumbNail - iOverSized + dwPosY + yOff);
+            pImage.SetPosition(_xPositionThumbNail - iOverSized + dwPosX, _yPositionThumbNail - iOverSized + dwPosY);
             pImage.DimColor = DimColor;
             if (bFocus || !Focus) pImage.ColourDiffuse = 0xffffffff;
             else pImage.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
@@ -521,6 +517,7 @@ namespace MediaPortal.GUI.Library
         btn.Render(timePassed);
         if (pFocusImage != null && _zoomXPixels == 0 && _zoomYPixels == 0)
         {
+          pFocusImage.Centered = true;
           pFocusImage.Render(timePassed);
         }
       }
