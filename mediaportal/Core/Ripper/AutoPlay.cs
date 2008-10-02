@@ -46,6 +46,7 @@ namespace MediaPortal.Ripper
     static string m_dvd = "No";
     static string m_audiocd = "No";
 
+    static ArrayList allfiles;
     enum MediaType
     {
       UNKNOWN = 0,
@@ -73,7 +74,7 @@ namespace MediaPortal.Ripper
 
       m_dvd = "No";
       m_audiocd = "No";
-
+      allfiles = new ArrayList();
     }
 
     ~AutoPlay()
@@ -343,6 +344,11 @@ namespace MediaPortal.Ripper
 
         case MediaType.AUDIO:
           Log.Info("CD/DVD with audio inserted into drive {0}", strDrive);
+          if (m_audiocd == "Yes")
+          {
+            Log.Debug("Adding all Audio Files to Playlist");
+            PlayAudioFiles();
+          }
           break;
 
         default:
@@ -413,15 +419,18 @@ namespace MediaPortal.Ripper
 
         case MediaType.AUDIO:
           Log.Info("Audio volume inserted {0}", strDrive);
-          if (ShouldWeAutoPlay(MediaType.AUDIO))
+          if (m_audiocd == "Ask")
           {
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MUSIC_FILES);
-            msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SHOW_DIRECTORY,
-              (int)GUIWindow.Window.WINDOW_MUSIC_FILES,
-              GUIWindowManager.ActiveWindow, 0, 0, 0, 0);
-            msg.Label = strDrive;
-            msg.SendToTargetWindow = true;
-            GUIWindowManager.SendThreadMessage(msg);
+            if (ShouldWeAutoPlay(MediaType.AUDIO))
+            {
+              GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MUSIC_FILES);
+              msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SHOW_DIRECTORY,
+                (int)GUIWindow.Window.WINDOW_MUSIC_FILES,
+                GUIWindowManager.ActiveWindow, 0, 0, 0, 0);
+              msg.Label = strDrive;
+              msg.SendToTargetWindow = true;
+              GUIWindowManager.SendThreadMessage(msg);
+            }
           }
           break;
 
@@ -506,7 +515,7 @@ namespace MediaPortal.Ripper
         if (isARedBookCD(strDrive))
           return MediaType.AUDIO_CD;
 
-        ArrayList allfiles = new ArrayList();
+        allfiles.Clear();
         GetAllFiles(strDrive + "\\", ref allfiles);
         foreach (string FileName in allfiles)
         {
@@ -529,6 +538,36 @@ namespace MediaPortal.Ripper
       {
       }
       return MediaType.UNKNOWN;
+    }
+
+    private static void PlayAudioFiles()
+    {
+      PlayListPlayer playlistPlayer = PlayListPlayer.SingletonPlayer;
+
+      playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Clear();
+      foreach (string file in allfiles)
+      {
+        if (!MediaPortal.Util.Utils.IsAudio(file))
+          continue;
+
+        PlayListItem item = new PlayListItem();
+        item.FileName = file;
+        item.Type = PlayListItem.PlayListItemType.Audio;
+        playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Add(item);
+      }
+
+      // if we got a playlist
+      if (playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Count > 0)
+      {
+        // and start playing it
+        Log.Debug("Start playing Playlist");
+        playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
+        playlistPlayer.Reset();
+        playlistPlayer.Play(0);
+
+        // and activate the playlist window
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST);
+      }
     }
     #endregion
   }
