@@ -253,22 +253,7 @@ namespace MediaPortal.GUI.Library
         _currentFullscreenAdapterInfo = value;
       }
     }
-
-    public static int currentScreenNumber
-    {
-      get
-      {
-        if (_currentScreen != null)
-          return _currentScreenNumber;
-        else
-          return 0;
-      }
-      set
-      {
-        _currentScreenNumber = value;
-      }
-    }
-
+   
     /// <summary>
     /// Property to get and set current screen on witch MP is displayed
     /// </summary>

@@ -471,7 +471,7 @@ namespace MediaPortal
     /// Finds the adapter that has the specified screen on its primary monitor
     /// </summary>
     /// <returns>The adapter that has the specified screen on its primary monitor</returns>
-    GraphicsAdapterInfo FindAdapterForScreen(Screen screen)
+    public GraphicsAdapterInfo FindAdapterForScreen(Screen screen)
     {
       foreach (GraphicsAdapterInfo adapterInfo in enumerationSettings.AdapterInfoList)
       {
@@ -782,10 +782,16 @@ namespace MediaPortal
         presentParams.Windowed = true;
       }
       else
-      {
-        //GraphicsAdapterInfo adapterInfo = FindAdapterForScreen(GUIGraphicsContext.currentScreen);
-        //graphicsSettings.DisplayMode = Manager.Adapters[adapterInfo.AdapterOrdinal].CurrentDisplayMode;        
-        graphicsSettings.DisplayMode = Manager.Adapters[GUIGraphicsContext.currentScreenNumber].CurrentDisplayMode;
+      {        
+        MediaPortal.GraphicsAdapterInfo adapterInfo = FindAdapterForScreen(GUIGraphicsContext.currentScreen);
+        if (adapterInfo == null)
+        {
+          graphicsSettings.DisplayMode = Manager.Adapters[0].CurrentDisplayMode;
+        }
+        else
+        {
+          graphicsSettings.DisplayMode = Manager.Adapters[adapterInfo.AdapterOrdinal].CurrentDisplayMode;
+        }
 
         presentParams.MultiSample = graphicsSettings.FullscreenMultisampleType;
         presentParams.MultiSampleQuality = graphicsSettings.FullscreenMultisampleQuality;
