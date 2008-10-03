@@ -773,8 +773,17 @@ namespace MediaPortal
         presentParams.MultiSample = graphicsSettings.WindowedMultisampleType;
         presentParams.MultiSampleQuality = graphicsSettings.WindowedMultisampleQuality;
         presentParams.AutoDepthStencilFormat = graphicsSettings.WindowedDepthStencilBufferFormat;
-        presentParams.BackBufferWidth = ourRenderTarget.ClientRectangle.Right - ourRenderTarget.ClientRectangle.Left;
-        presentParams.BackBufferHeight = ourRenderTarget.ClientRectangle.Bottom - ourRenderTarget.ClientRectangle.Top;
+
+        if (GUIGraphicsContext.IsDirectX9ExUsed())
+        {
+          presentParams.BackBufferWidth = graphicsSettings.DisplayMode.Width;
+          presentParams.BackBufferHeight = graphicsSettings.DisplayMode.Height;
+        }
+        else
+        {
+          presentParams.BackBufferWidth = ourRenderTarget.ClientRectangle.Right - ourRenderTarget.ClientRectangle.Left;
+          presentParams.BackBufferHeight = ourRenderTarget.ClientRectangle.Bottom - ourRenderTarget.ClientRectangle.Top;
+        }
         presentParams.BackBufferFormat = graphicsSettings.BackBufferFormat;
         presentParams.PresentationInterval = PresentInterval.Default;
         presentParams.FullScreenRefreshRateInHz = 0;
@@ -2012,12 +2021,6 @@ namespace MediaPortal
                   GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
         SwitchFullScreenOrWindowed(true);
       }
-      if (GUIGraphicsContext.IsDirectX9ExUsed())
-      {
-        BuildPresentParamsFromSettings(!isMaximized);
-        GUIGraphicsContext.DX9Device.Reset(presentParams);
-      }
-
       OnDeviceReset(null, null);
     }
 
