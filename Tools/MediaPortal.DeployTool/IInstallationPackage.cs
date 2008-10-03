@@ -38,7 +38,8 @@ namespace MediaPortal.DeployTool
     DOWNLOADED,
     NOT_DOWNLOADED,
     VERSION_MISMATCH,
-    VERSION_LOOKUP_FAILED
+    VERSION_LOOKUP_FAILED,
+    SKIPPED
   }
 
   public struct CheckResult

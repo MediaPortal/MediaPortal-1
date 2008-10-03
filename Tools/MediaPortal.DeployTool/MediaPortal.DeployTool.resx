@@ -291,7 +291,7 @@ The PC will then act as dedicated TV-Server and provide other PC's in your LAN w
     <value>&lt;no action&gt;</value>
   </data>
   <data name="Install_actionUninstallDownloadInstall" xml:space="preserve">
-    <value>Uninstall previous-&gt;download-&gt;install</value>
+    <value>Uninstall previous-&gt;Download-&gt;Install</value>
   </data>
   <data name="Install_actionUninstallInstall" xml:space="preserve">
     <value>Uninstall previous-&gt;Install</value>
@@ -434,13 +434,13 @@ The PC will then act as dedicated TV-Server and provide other PC's in your LAN w
     <value>Uninstall failed</value>
   </data>
   <data name="Install_msgConfiguring" xml:space="preserve">
-    <value>Configuring</value>
+    <value>Configuring...</value>
   </data>
   <data name="Install_stateConfigured" xml:space="preserve">
     <value>Configured</value>
   </data>
   <data name="Install_stateNotConfigured" xml:space="preserve">
-    <value>Unconfigured</value>
+    <value>Not configured</value>
   </data>
   <data name="Install_stateRemoved" xml:space="preserve">
     <value>Removed</value>
@@ -502,5 +502,8 @@ Continue at your own risk!</value>
   <data name="Finished_labelHeading3_download" xml:space="preserve">
     <value>This application will now close and open the folder "MediaPortal Installation". 
 Transfer this folder to your HTPC. Start installation by running "MediaPortal.DeployTool.exe".</value>
+  </data>
+  <data name="Install_stateSkipped" xml:space="preserve">
+    <value>Skipped</value>
   </data>
 </root>

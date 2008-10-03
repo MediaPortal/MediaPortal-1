@@ -152,6 +152,11 @@ namespace MediaPortal.DeployTool
             item.SubItems.Add(Utils.GetBestTranslation("Install_actionUninstallInstall"));
           item.ImageIndex = 2;
           break;
+        case CheckState.SKIPPED:
+          item.SubItems.Add(Utils.GetBestTranslation("Install_stateSkipped"));
+          item.SubItems.Add(Utils.GetBestTranslation("Install_actionNothing"));
+          item.ImageIndex = 0;
+          break;
       }
     }
 
@@ -221,7 +226,10 @@ namespace MediaPortal.DeployTool
       //        2: install error
       //
       CheckResult result = package.CheckStatus();
-      if (result.state != CheckState.INSTALLED && result.state != CheckState.REMOVED && result.state != CheckState.DOWNLOADED)
+      if (result.state != CheckState.INSTALLED && 
+          result.state != CheckState.REMOVED && 
+          result.state != CheckState.DOWNLOADED &&
+          result.state != CheckState.SKIPPED)
       {
         switch (result.state)
         {

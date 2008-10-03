@@ -161,7 +161,7 @@ namespace MediaPortal.DeployTool
       if (InstallationProperties.Instance["ConfigureTVServerFirewall"] != "1" &&
           InstallationProperties.Instance["ConfigureMediaPortalFirewall"] != "1")
       {
-        result.state = CheckState.CONFIGURED;
+        result.state = CheckState.SKIPPED;
         return result;
       }
 
@@ -179,7 +179,7 @@ namespace MediaPortal.DeployTool
 #if DEBUG
         MessageBox.Show("Firewall service stopped!", "GetFirewallManager", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 #endif
-        result.state = CheckState.CONFIGURED;
+        result.state = CheckState.SKIPPED;
         return result;
       }
       if (!fwMgr.LocalPolicy.CurrentProfile.FirewallEnabled)
@@ -188,7 +188,7 @@ namespace MediaPortal.DeployTool
 #if DEBUG
         MessageBox.Show("Firewall service disabled!", "fwMgr.LocalPolicy.CurrentProfile.FirewallEnabled", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 #endif
-        result.state = CheckState.CONFIGURED;
+        result.state = CheckState.SKIPPED;
         return result;
       }
 

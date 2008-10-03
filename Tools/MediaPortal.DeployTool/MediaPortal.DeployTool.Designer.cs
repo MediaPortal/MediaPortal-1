@@ -386,7 +386,7 @@ namespace MediaPortal.DeployTool {
         
         /// <summary>
         ///   Looks up a localized string similar to This application will now close and open the folder &quot;MediaPortal Installation&quot;. 
-        ///Transfer this folder to your HTPC. Start installation running &quot;MediaPortal.Deploy.exe&quot;..
+        ///Transfer this folder to your HTPC. Start installation by running &quot;MediaPortal.DeployTool.exe&quot;..
         /// </summary>
         internal static string Finished_labelHeading3_download {
             get {
@@ -539,7 +539,7 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Uninstall previous-&gt;download-&gt;install.
+        ///   Looks up a localized string similar to Uninstall previous-&gt;Download-&gt;Install.
         /// </summary>
         internal static string Install_actionUninstallDownloadInstall {
             get {
@@ -665,7 +665,7 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Configuring.
+        ///   Looks up a localized string similar to Configuring....
         /// </summary>
         internal static string Install_msgConfiguring {
             get {
@@ -728,7 +728,7 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unconfigured.
+        ///   Looks up a localized string similar to Not configured.
         /// </summary>
         internal static string Install_stateNotConfigured {
             get {
@@ -764,7 +764,16 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Uninstall.
+        ///   Looks up a localized string similar to Skipped.
+        /// </summary>
+        internal static string Install_stateSkipped {
+            get {
+                return ResourceManager.GetString("Install_stateSkipped", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not installed.
         /// </summary>
         internal static string Install_stateUninstall {
             get {
