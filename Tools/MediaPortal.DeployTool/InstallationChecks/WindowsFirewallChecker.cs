@@ -24,12 +24,9 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.Win32;
 using System.IO;
 using System.Windows.Forms;
-using System.Diagnostics;
+
 using NetFwTypeLib;
 
 namespace MediaPortal.DeployTool
@@ -41,15 +38,17 @@ namespace MediaPortal.DeployTool
     private const string PROGID_AUTHORIZED_APPLICATION = "HNetCfg.FwAuthorizedApplication";
     private const string PROGID_OPEN_PORT = "HNetCfg.FWOpenPort";
 
-    private static NetFwTypeLib.INetFwMgr GetFirewallManager()
+    private static INetFwMgr GetFirewallManager()
     {
-      Type objectType = Type.GetTypeFromProgID(PROGID_FIREWALL_MANAGER);
-#if DEBUG
-      if (objectType == Type.Missing) MessageBox.Show("object type is - Missing -", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-      if (objectType == null) MessageBox.Show("object type is - Null -", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-#endif
-      return Activator.CreateInstance(objectType) as NetFwTypeLib.INetFwMgr;
-
+      try
+      {
+        Type objectType = Type.GetTypeFromProgID(PROGID_FIREWALL_MANAGER);
+        return Activator.CreateInstance(objectType) as NetFwTypeLib.INetFwMgr;
+      }
+      catch (Exception)
+      {
+        return null;
+      }
     }
     private bool AuthorizeApplication(string title, string applicationPath, NET_FW_SCOPE_ scope, NET_FW_IP_VERSION_ ipVersion)
     {
@@ -174,30 +173,26 @@ namespace MediaPortal.DeployTool
 #endif
 
       INetFwMgr fwMgr = GetFirewallManager();
-
-      bool fwEnable;
-      try
+      if (fwMgr == null)
       {
-        fwEnable = fwMgr.LocalPolicy.CurrentProfile.FirewallEnabled;
-      }
-      catch
-      {
+        //If firewall service is stopped, no need to configure it
 #if DEBUG
-        MessageBox.Show("Firewall service disabled, exception catched !", "fwMgr.LocalPolicy.CurrentProfile.FirewallEnabled", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        MessageBox.Show("Firewall service stopped!", "GetFirewallManager", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 #endif
-        //Exception raised because firewall service is disable
-        fwEnable = false;
+        result.state = CheckState.CONFIGURED;
+        return result;
       }
-
-      //If firewall service is stopped/disabled, no need to configure it
-      if (fwEnable == false)
+      if (!fwMgr.LocalPolicy.CurrentProfile.FirewallEnabled)
       {
+        //If firewall service is disabled, no need to configure it
+#if DEBUG
+        MessageBox.Show("Firewall service disabled!", "fwMgr.LocalPolicy.CurrentProfile.FirewallEnabled", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+#endif
         result.state = CheckState.CONFIGURED;
         return result;
       }
 
-      System.Collections.IEnumerator e1 = null;
-      e1 = fwMgr.LocalPolicy.CurrentProfile.AuthorizedApplications.GetEnumerator();
+      System.Collections.IEnumerator e1 = fwMgr.LocalPolicy.CurrentProfile.AuthorizedApplications.GetEnumerator();
 
       //TvService
       string apptv = InstallationProperties.Instance["TVServerDir"] + "\\TvService.exe";
@@ -218,7 +213,7 @@ namespace MediaPortal.DeployTool
           chkmp = true;
       }
 
-      if (chktv == true && chkmp == true)
+      if (chktv && chkmp)
         result.state = CheckState.CONFIGURED;
       else
         result.state = CheckState.NOT_CONFIGURED;
@@ -229,8 +224,7 @@ namespace MediaPortal.DeployTool
         {
           result.state = CheckState.NOT_CONFIGURED;
 
-          System.Collections.IEnumerator e2 = null;
-          e2 = fwMgr.LocalPolicy.CurrentProfile.GloballyOpenPorts.GetEnumerator();
+          System.Collections.IEnumerator e2 = fwMgr.LocalPolicy.CurrentProfile.GloballyOpenPorts.GetEnumerator();
 
           while (e2.MoveNext())
           {
