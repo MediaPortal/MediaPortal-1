@@ -512,6 +512,7 @@ namespace MediaPortal
         {
           adapterInfo = FindAdapterForScreen(GUIGraphicsContext.currentScreen);
           primaryDesktopDisplayMode = Manager.Adapters[adapterInfo.AdapterOrdinal].CurrentDisplayMode;
+          GUI.Library.GUIGraphicsContext.currentScreenNumber = adapterInfo.AdapterOrdinal;
         }
         foreach (GraphicsDeviceInfo deviceInfo in adapterInfo.DeviceInfoList)
         {
@@ -619,6 +620,7 @@ namespace MediaPortal
         {
           adapterInfo = FindAdapterForScreen(GUI.Library.GUIGraphicsContext.currentScreen);
           GUI.Library.GUIGraphicsContext.currentFullscreenAdapterInfo = Manager.Adapters[adapterInfo.AdapterOrdinal];
+          GUI.Library.GUIGraphicsContext.currentScreenNumber = adapterInfo.AdapterOrdinal;
         }
 
         adapterDesktopDisplayMode = Manager.Adapters[adapterInfo.AdapterOrdinal].CurrentDisplayMode;
@@ -782,17 +784,9 @@ namespace MediaPortal
         presentParams.Windowed = true;
       }
       else
-      {        
-        MediaPortal.GraphicsAdapterInfo adapterInfo = FindAdapterForScreen(GUIGraphicsContext.currentScreen);
-        if (adapterInfo == null)
-        {
-          graphicsSettings.DisplayMode = Manager.Adapters[0].CurrentDisplayMode;
-        }
-        else
-        {
-          graphicsSettings.DisplayMode = Manager.Adapters[adapterInfo.AdapterOrdinal].CurrentDisplayMode;
-        }
-
+      {                
+        graphicsSettings.DisplayMode = Manager.Adapters[GUIGraphicsContext.currentScreenNumber].CurrentDisplayMode;
+        
         presentParams.MultiSample = graphicsSettings.FullscreenMultisampleType;
         presentParams.MultiSampleQuality = graphicsSettings.FullscreenMultisampleQuality;
         presentParams.AutoDepthStencilFormat = graphicsSettings.FullscreenDepthStencilBufferFormat;
