@@ -230,10 +230,6 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath=".\source\BaseFileWriterSink.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\source\ChannelScan.cpp"
 				>
 			</File>
@@ -282,6 +278,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\source\ProgramToTransportStreamRecorder.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\source\SubChannel.cpp"
 				>
 			</File>
@@ -304,10 +304,6 @@
 			>
 			<File
 				RelativePath=".\source\AnalogVideoAudioObserver.h"
-				>
-			</File>
-			<File
-				RelativePath=".\source\BaseFileWriterSink.h"
 				>
 			</File>
 			<File
@@ -352,6 +348,10 @@
 			</File>
 			<File
 				RelativePath=".\source\ProgramToTransportStream.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\ProgramToTransportStreamRecorder.h"
 				>
 			</File>
 			<File

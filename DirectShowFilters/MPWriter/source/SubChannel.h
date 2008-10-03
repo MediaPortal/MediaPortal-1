@@ -20,6 +20,7 @@
 */
 #include "filewriter.h"
 #include "ProgramToTransportStream.h"
+#include "ProgramToTransportStreamRecorder.h"
 #include "AnalogVideoAudioObserver.h"
 #include "TeletextGrabber.h"
 
@@ -53,7 +54,7 @@ public:
 	STDMETHODIMP SetVideoAudioObserver(IAnalogVideoAudioObserver* callback);
 
 
-	CProgramToTransportStream* m_pTsRecorder;
+	CProgramToTransportStreamRecorder* m_pTsRecorder;
 	FileWriter* m_pMpegRecordWriter;
 	RecordingMode m_recordingMode;
 	char m_strRecordingFileName[1024];

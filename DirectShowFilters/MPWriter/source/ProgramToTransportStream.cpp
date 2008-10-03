@@ -3,7 +3,7 @@
 #include "MemoryStreamSource.h"
 extern void LogDebug(const char *fmt, ...) ;
 
-CProgramToTransportStream::CProgramToTransportStream(bool recorder)
+CProgramToTransportStream::CProgramToTransportStream(void)
 {
 	m_bRunning=false;
 	LogDebug("CProgramToTransportStream::ctor");
@@ -13,7 +13,6 @@ CProgramToTransportStream::CProgramToTransportStream(bool recorder)
 	m_inputSource=NULL;
 	m_tsFrames=NULL;
 	m_bSendVideoAudioObserverEvents = true;
-	m_bRecorder = recorder;
 }
 
 CProgramToTransportStream::~CProgramToTransportStream(void)
@@ -49,11 +48,7 @@ void CProgramToTransportStream::Initialize(char* fileNameOut)
 	// And, from this, a filter that converts to MPEG-2 Transport Stream frames:
 	m_tsFrames  = MPEG2TransportStreamFromPESSource::createNew(*m_env, pesSource);
 
-	if(m_bRecorder == false){
-		m_outputSink = CMultiWriterFileSink::createNew(*m_env, fileNameOut,m_minFiles,m_maxFiles,m_maxFileSize);
-	}else{
-		m_outputSink = CFileSinkRecorder::createNew(*m_env, fileNameOut);
-	}
+	m_outputSink = CMultiWriterFileSink::createNew(*m_env, fileNameOut,m_minFiles,m_maxFiles,m_maxFileSize);
 	if (m_outputSink == NULL) 
 	{
 		*m_env << "Unable to open file \"" << fileNameOut << "\" as a file sink\n";
@@ -72,7 +67,6 @@ void CProgramToTransportStream::Flush()
 	m_bSendVideoAudioObserverEvents = true;
 	m_iPacketsToSkip=10;
 	m_buffer.Clear();
-	m_outputSink->Flush();
 }
 void CProgramToTransportStream::SetTimeShiftParams( int minFiles, int maxFiles, ULONG maxFileSize)
 {
@@ -80,13 +74,11 @@ void CProgramToTransportStream::SetTimeShiftParams( int minFiles, int maxFiles, 
 	m_maxFiles=maxFiles;
 	m_maxFileSize=maxFileSize;
 }
-
 void CProgramToTransportStream::ClearStreams()
 {
 	LogDebug("CProgramToTransportStream::ClearStreams()");
 	m_outputSink->ClearStreams();
 }
-
 void CProgramToTransportStream::Write(byte* data, int len)
 { 
 	if (m_bRunning)
@@ -98,7 +90,7 @@ void CProgramToTransportStream::Write(byte* data, int len)
 			return;
 		}
 		m_buffer.PutBuffer(data, len, 1);
-		if (m_bStarting && m_buffer.Size()>INTERNAL_BUFFER_SIZE)
+		if (m_bStarting && m_buffer.Size()>300000)
 		{
 			m_bStarting=false;
 			m_BufferThreadActive = true;
@@ -110,13 +102,8 @@ void CProgramToTransportStream::Write(byte* data, int len)
 			{
 				LogDebug("CProgramToTransportStream::Failed to start output sink");
 			}
-			if(m_bSendVideoAudioObserverEvents && m_pCallback != NULL){
-				m_bSendVideoAudioObserverEvents = false;
-				m_pCallback->OnNotify(PidType::Audio);
-				m_pCallback->OnNotify(PidType::Video);
-			}
 		}
-		while (m_buffer.Size()>INTERNAL_BUFFER_SIZE)
+		while (m_buffer.Size()>300000)
 		{
 			if(m_bSendVideoAudioObserverEvents && m_pCallback != NULL){
 				m_bSendVideoAudioObserverEvents = false;
@@ -220,3 +207,4 @@ void CProgramToTransportStream::SetVideoAudioObserver(IAnalogVideoAudioObserver*
 	LogDebug("CProgramToTransportStream::SetVideoAudioObserver - %x", callback);
 	m_pCallback = callback;
 }
+

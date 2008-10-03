@@ -40,8 +40,8 @@ CSubChannel::CSubChannel(LPUNKNOWN pUnk, HRESULT *phr, int id)
 
 	m_pMpegRecordWriter = NULL;
 
-	m_pTsWriter = new CProgramToTransportStream(false);
-	m_pTsRecorder = new CProgramToTransportStream(true);
+	m_pTsWriter = new CProgramToTransportStream();
+	m_pTsRecorder = new CProgramToTransportStreamRecorder();
 
 	m_pTeletextGrabber = new CTeletextGrabber();
 
