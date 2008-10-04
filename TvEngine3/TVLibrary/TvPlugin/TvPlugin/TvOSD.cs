@@ -1554,7 +1554,7 @@ namespace TvPlugin
           long duration = (long)(g_Player.Duration);          
           endTime = Utils.SecondsToHMSString((int)duration);          
 
-          channelDisplayName = rec.ReferencedChannel().DisplayName + " (" + GUILocalizeStrings.Get(949) + ")";
+          channelDisplayName = rec.ReferencedChannel().DisplayName + " (" + GUILocalizeStrings.Get(682) + ")";
           genre = rec.Genre;
 
           double fPercent;          
