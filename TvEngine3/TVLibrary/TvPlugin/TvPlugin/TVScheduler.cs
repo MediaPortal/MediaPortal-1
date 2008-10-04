@@ -692,12 +692,12 @@ namespace TvPlugin
         dlg.AddLocalizedString(980); //Play recording from live point
       }
 
-
-      Schedule schedDB = Schedule.Retrieve(rec.IdSchedule);
-      if (schedDB.ScheduleType != (int)ScheduleRecordingType.Once)
-      {
+      //Schedule schedDB = Schedule.Retrieve(rec.IdSchedule);
+      // you should always get to the settings menu regardless of rec type
+      //if (schedDB.ScheduleType != (int)ScheduleRecordingType.Once)
+      //{
         dlg.AddLocalizedString(1048); // settings
-      }
+      //}
 
       dlg.DoModal(GetID);
       if (dlg.SelectedLabel == -1) return;
@@ -728,7 +728,7 @@ namespace TvPlugin
         case 981: //Cancel this show
           {
             Program prgFromSchedule = Program.RetrieveByTitleAndTimes(rec.ProgramName, rec.StartTime, rec.EndTime);
-            bool res = TVHome.PromptAndDeleteRecordingSchedule(schedDB.IdSchedule, prgFromSchedule, false, false);
+            bool res = TVHome.PromptAndDeleteRecordingSchedule(rec.IdSchedule, prgFromSchedule, false, false);
             if (res)
             {
               LoadDirectory();
@@ -741,9 +741,8 @@ namespace TvPlugin
 
         case 618: // delete entire recording
           {
-            Schedule recFromDB = Schedule.Retrieve(rec.IdSchedule);
             Program prgFromSchedule = Program.RetrieveByTitleAndTimes(rec.ProgramName, rec.StartTime, rec.EndTime);
-            bool res = TVHome.PromptAndDeleteRecordingSchedule(recFromDB.IdSchedule, prgFromSchedule, true, false);
+            bool res = TVHome.PromptAndDeleteRecordingSchedule(rec.IdSchedule, prgFromSchedule, true, false);
             if (res)
             {
               if (showSeries && !item.IsFolder)
@@ -764,10 +763,14 @@ namespace TvPlugin
             g_Player.Stop(true);
             if (System.IO.File.Exists(fileName))
             {
-              TvDatabase.Recording recDB = Recording.Retrieve(card.RecordingFileName);
+              TvDatabase.Recording recDB = Recording.Retrieve(fileName);
               TvRecorded.SetActiveRecording(recDB);
-              g_Player.Play(fileName, g_Player.MediaType.Recording);
-              g_Player.ShowFullScreenWindow();
+              if (g_Player.Play(fileName, g_Player.MediaType.Recording))
+							{
+								g_Player.ShowFullScreenWindow();
+								recDB.TimesWatched++;
+								recDB.Persist();
+							}
               return;
             }
             else
@@ -780,11 +783,13 @@ namespace TvPlugin
 
                 if (g_Player.Playing)
                 {
-                  TvDatabase.Recording recDB = Recording.Retrieve(card.RecordingFileName);
+									TvDatabase.Recording recDB = Recording.Retrieve(fileName);
                   TvRecorded.SetActiveRecording(recDB);
                   g_Player.SeekAbsolute(0);
-                  g_Player.SeekAbsolute(0);
+                  g_Player.SeekAbsolute(0); //why 2x?
                   g_Player.ShowFullScreenWindow();
+									recDB.TimesWatched++;
+									recDB.Persist();
                   return;
                 }
               }

@@ -975,9 +975,6 @@ namespace TvPlugin
       if (TVHome.Card != null)
         TVHome.Card.StopTimeShifting();
 
-      rec.TimesWatched++;
-      rec.Persist();
-      ///@
       int stoptime = rec.StopTime;
       if (stoptime > 0)
       {
@@ -1082,6 +1079,7 @@ namespace TvPlugin
         fileName = TVHome.TvServer.GetStreamUrlForFileName(rec.IdRecording);
       }
 
+			//should these two line also be in tvguidebase and tvscheduler?
       g_Player.currentTitle = rec.Title;
       g_Player.currentDescription = rec.Description;
 
@@ -1097,6 +1095,9 @@ namespace TvPlugin
         {
           g_Player.SeekAbsolute(stoptime);
         }
+				//if playback starts successfully then update timeswatched
+				rec.TimesWatched++;
+				rec.Persist();
         return true;
       }
 

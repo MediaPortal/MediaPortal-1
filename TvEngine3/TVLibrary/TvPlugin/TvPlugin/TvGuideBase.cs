@@ -574,24 +574,6 @@ namespace TvPlugin
               {
                 return false;
               }
-
-              if (_shouldRestore)
-              {
-                DoRestoreSkin();
-              }
-              else
-              {
-                GUIPropertyManager.SetProperty("#itemcount", string.Empty);
-                GUIPropertyManager.SetProperty("#selecteditem", string.Empty);
-                GUIPropertyManager.SetProperty("#selecteditem2", string.Empty);
-                GUIPropertyManager.SetProperty("#selectedthumb", string.Empty);
-                LoadSkin();
-                AllocResources();
-              }
-
-              InitControls();
-
-              
               base.OnMessage(message);
               ///@
               ///_notifyList = new List<TVNotify>();
@@ -2662,10 +2644,14 @@ namespace TvPlugin
                           g_Player.Stop(true);
                           if (System.IO.File.Exists(fileName))
                           {
-                            TvDatabase.Recording recDB = Recording.Retrieve(card.RecordingFileName);
+														TvDatabase.Recording recDB = Recording.Retrieve(fileName);
                             TvRecorded.SetActiveRecording(recDB);
-                            g_Player.Play(fileName, g_Player.MediaType.Recording);
-                            g_Player.ShowFullScreenWindow();
+														if (g_Player.Play(fileName, g_Player.MediaType.Recording))
+														{ 
+															g_Player.ShowFullScreenWindow();
+															recDB.TimesWatched++;
+															recDB.Persist();
+														}
                             return;
                           }
                           else
@@ -2678,11 +2664,12 @@ namespace TvPlugin
 
                               if (g_Player.Playing)
                               {
-                                TvDatabase.Recording recDB = Recording.Retrieve(card.RecordingFileName);
-                                TvRecorded.SetActiveRecording(recDB);
-                                g_Player.SeekAbsolute(0);
+																TvDatabase.Recording recDB = Recording.Retrieve(fileName);
+                                TvRecorded.SetActiveRecording(recDB);                                
                                 g_Player.SeekAbsolute(0);
                                 g_Player.ShowFullScreenWindow();
+																recDB.TimesWatched++;
+																recDB.Persist();
                                 return;
                               }
                             }
