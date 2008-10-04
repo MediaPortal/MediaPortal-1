@@ -28,7 +28,6 @@
     <Channel id="sport2@canalplus.no" siteId="88" />
     <Channel id="sporthd@canalplus.no" siteId="111" />
     <Channel id="toon@disney.no" siteId="85" />
-    <Channel id="zebra@tv2.no" siteId="107" />
   </Channels>
 
   <Listing type="Html">

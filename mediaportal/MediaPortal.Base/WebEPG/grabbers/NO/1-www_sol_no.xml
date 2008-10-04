@@ -94,7 +94,7 @@
     <Channel id="silver.no" siteId="silver" />
   </Channels>
   <Listing type="Html">
-    <Site url="http://www.sol.no/underholdning/tv/guiden/index.cgi?StartTime=0511&amp;EndTime=2900&amp;Date=[YYYY]-[MM]-[DD]&amp;Categories=*&amp;Channels=[ID]" post="" external="false" encoding="utf-8" />
+    <Site url="http://www.sol.no/underholdning/tv/guiden/index.cgi?StartTime=0500&amp;EndTime=2900&amp;Date=[YYYY]-[MM]-[DD]&amp;Categories=*&amp;Channels=[ID]" post="" external="false" encoding="utf-8" />
     <Html>
       <Template name="default">
         <SectionTemplate tags="T">
