@@ -2933,6 +2933,10 @@ public class MediaPortalApp : D3DApp, IRender
         break;
 
       case GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED:
+        if (GUIGraphicsContext.IsDirectX9ExUsed() && useEnhancedVideoRenderer)
+        {
+          return;
+        }
         bool fullscreen = (message.Param1 != 0);
         Log.Info("Main: Received DX exclusive mode switch message. Fullscreen && maximized == {0}", fullscreen && isMaximized);
         if (isMaximized == false || GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)

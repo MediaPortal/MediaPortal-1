@@ -259,8 +259,8 @@ namespace MediaPortal
     private int m_iSleepingTime = 50;
     protected bool autoHideTaskbar = true;
     private bool alwaysOnTop = false;
-    private bool useExclusiveDirectXMode;
-    private bool useEnhancedVideoRenderer;
+    protected bool useExclusiveDirectXMode;
+    protected bool useEnhancedVideoRenderer;
     private bool _disableMouseEvents = false;
 
     [DllImport("winmm.dll")]
@@ -774,16 +774,8 @@ namespace MediaPortal
         presentParams.MultiSampleQuality = graphicsSettings.WindowedMultisampleQuality;
         presentParams.AutoDepthStencilFormat = graphicsSettings.WindowedDepthStencilBufferFormat;
 
-        if (GUIGraphicsContext.IsDirectX9ExUsed())
-        {
-          presentParams.BackBufferWidth = graphicsSettings.DisplayMode.Width;
-          presentParams.BackBufferHeight = graphicsSettings.DisplayMode.Height;
-        }
-        else
-        {
-          presentParams.BackBufferWidth = ourRenderTarget.ClientRectangle.Right - ourRenderTarget.ClientRectangle.Left;
-          presentParams.BackBufferHeight = ourRenderTarget.ClientRectangle.Bottom - ourRenderTarget.ClientRectangle.Top;
-        }
+        presentParams.BackBufferWidth = ourRenderTarget.ClientRectangle.Right - ourRenderTarget.ClientRectangle.Left;
+        presentParams.BackBufferHeight = ourRenderTarget.ClientRectangle.Bottom - ourRenderTarget.ClientRectangle.Top;
         presentParams.BackBufferFormat = graphicsSettings.BackBufferFormat;
         presentParams.PresentationInterval = PresentInterval.Default;
         presentParams.FullScreenRefreshRateInHz = 0;
@@ -821,7 +813,7 @@ namespace MediaPortal
     /// 
     public void SwitchFullScreenOrWindowed(bool bWindowed)
     {
-      if ((!useExclusiveDirectXMode || useEnhancedVideoRenderer))
+      if ((!useExclusiveDirectXMode || useEnhancedVideoRenderer) && !GUIGraphicsContext.IsDirectX9ExUsed())
       {
         return;
       }
@@ -839,8 +831,9 @@ namespace MediaPortal
       try
       {
         GUIGraphicsContext.DX9Device.Reset(presentParams);
-        if (GUIGraphicsContext.IsDirectX9ExUsed())
+        if (GUIGraphicsContext.IsDirectX9ExUsed() && !useEnhancedVideoRenderer && useExclusiveDirectXMode)
         {
+          GUIFontManager.LoadFonts(Config.GetFile(Config.Dir.Skin, m_strSkin, "fonts.xml"));
           GUIFontManager.InitializeDeviceObjects();
         }
 
@@ -860,8 +853,9 @@ namespace MediaPortal
         try
         {
           GUIGraphicsContext.DX9Device.Reset(presentParams);
-          if (GUIGraphicsContext.IsDirectX9ExUsed())
+          if (GUIGraphicsContext.IsDirectX9ExUsed() && !useEnhancedVideoRenderer && useExclusiveDirectXMode)
           {
+            GUIFontManager.LoadFonts(Config.GetFile(Config.Dir.Skin, m_strSkin, "fonts.xml"));
             GUIFontManager.InitializeDeviceObjects();
           }
         }
