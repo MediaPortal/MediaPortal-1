@@ -336,26 +336,7 @@ namespace TvService
               return CardType.Analog;
             }
           }
-          if ((_card as HybridCard) != null)
-          {
-            HybridCard hybrid = (HybridCard)_card;
-            ITVCard card = hybrid.GetById(_dbsCard.IdCard);
-            if ((card as TvCardAnalog) != null) return CardType.Analog;
-            if ((card as TvCardATSC) != null) return CardType.Atsc;
-            if ((card as TvCardDVBC) != null) return CardType.DvbC;
-            if ((card as TvCardDVBS) != null) return CardType.DvbS;
-            if ((card as TvCardDvbSS2) != null) return (CardType)_card.cardType; //CardType.DvbS;
-            if ((card as TvCardDVBT) != null) return CardType.DvbT;
-            return CardType.Analog;
-          }
-          if ((_card as TvCardAnalog) != null) return CardType.Analog;
-          if ((_card as TvCardATSC) != null) return CardType.Atsc;
-          if ((_card as TvCardDVBC) != null) return CardType.DvbC;
-          if ((_card as TvCardDVBS) != null) return CardType.DvbS;
-          if ((_card as TvCardDvbSS2) != null) return (CardType)_card.cardType; //CardType.DvbS;
-          if ((_card as TvCardDVBT) != null) return CardType.DvbT;
-          if (_card.cardType == 5) return CardType.RadioWebStream;
-          return CardType.Analog;
+          return _card.CardType;
         }
         catch (Exception ex)
         {

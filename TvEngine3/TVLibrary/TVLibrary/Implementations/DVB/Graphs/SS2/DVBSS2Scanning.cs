@@ -34,14 +34,6 @@ using DirectShowLib.BDA;
 
 namespace TvLibrary.Implementations.DVB
 {
-    enum CardType
-    {
-      Analog,
-      DvbS,
-      DvbT,
-      DvbC,
-      Atsc
-    }
   /// <summary>
   /// Class which implements scanning for tv/radio channels for DVB-S SkyStar 2 cards
   /// </summary>
@@ -101,9 +93,9 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     protected override IChannel CreateNewChannel(ChannelInfo info)
     {
-      switch (_card.cardType )
+      switch (_card.CardType )
       {
-        case (int)CardType.DvbS:
+        case CardType.DvbS:
           DVBSChannel tuningChannels = (DVBSChannel)_card.CurrentChannel;
           DVBSChannel dvbsChannel = new DVBSChannel();
           dvbsChannel.Name = info.service_name;
@@ -124,7 +116,7 @@ namespace TvLibrary.Implementations.DVB
           dvbsChannel.FreeToAir = !info.scrambled;
           Log.Log.Write("Found:{0}", dvbsChannel);
           return dvbsChannel;
-        case (int)CardType.DvbC:
+        case CardType.DvbC:
           DVBCChannel tuningChannelc = (DVBCChannel)_card.CurrentChannel;
           DVBCChannel dvbcChannel = new DVBCChannel();
           dvbcChannel.Name = info.service_name;
@@ -142,7 +134,7 @@ namespace TvLibrary.Implementations.DVB
           dvbcChannel.FreeToAir = !info.scrambled;
           Log.Log.Write("Found:{0}", dvbcChannel);
           return dvbcChannel;
-        case (int)CardType.DvbT:
+        case CardType.DvbT:
           DVBTChannel tuningChannelt = (DVBTChannel)_card.CurrentChannel;
           DVBTChannel dvbtChannel = new DVBTChannel();
           dvbtChannel.Name = info.service_name;
@@ -159,7 +151,7 @@ namespace TvLibrary.Implementations.DVB
           dvbtChannel.FreeToAir = !info.scrambled;
           Log.Log.Write("Found:{0}", dvbtChannel);
           return dvbtChannel;
-        case (int)CardType.Atsc:
+        case CardType.Atsc:
           ATSCChannel tuningChannela = (ATSCChannel)_card.CurrentChannel;
           ATSCChannel atscChannel = new ATSCChannel();
           atscChannel.Name = info.service_name;

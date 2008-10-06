@@ -55,6 +55,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CardType.cs" />
     <Compile Include="ChannelLinkage\LinkedChannel.cs" />
     <Compile Include="ChannelLinkage\PortalChannel.cs" />
     <Compile Include="DvbTextConverter.cs" />

@@ -53,35 +53,6 @@ namespace TvLibrary.Implementations
   public abstract class TvCardBase
   {
 
-    #region enum
-    /// <summary>
-    /// Enumeration of all possible card types
-    /// </summary>
-    protected enum CardType
-    {
-      /// <summary>
-      /// Analog tv card
-      /// </summary>
-      Analog,
-      /// <summary>
-      /// DVB-S tv card
-      /// </summary>
-      DvbS,
-      /// <summary>
-      /// DVB-T tv card
-      /// </summary>
-      DvbT,
-      /// <summary>
-      /// DVB-C tv card
-      /// </summary>
-      DvbC,
-      /// <summary>
-      /// ATSC tv card
-      /// </summary>
-      Atsc
-    }
-    #endregion
-
     #region ctor
     public TvCardBase(DsDevice device)
     {
@@ -334,11 +305,11 @@ namespace TvLibrary.Implementations
     /// <summary>
     /// Gets/sets the card cardType
     /// </summary>
-    public virtual int cardType
+    public virtual CardType CardType
     {
       get
       {
-        return (int) _cardType;
+        return _cardType;
       }
       set
       {

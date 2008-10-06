@@ -124,6 +124,7 @@
     <Compile Include="Implementations\Helper\HResult.cs" />
     <Compile Include="Implementations\Helper\Release.cs" />
     <Compile Include="Implementations\Helper\SidHelper.cs" />
+    <Compile Include="Implementations\Hybrid\HybridCardGroup.cs" />
     <Compile Include="Implementations\Hybrid\HybridCard.cs" />
     <Compile Include="Implementations\RadioWebStream\RadioWebStreamCard.cs" />
     <Compile Include="Implementations\TvCardBase.cs" />

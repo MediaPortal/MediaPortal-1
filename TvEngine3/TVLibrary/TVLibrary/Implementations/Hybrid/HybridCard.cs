@@ -37,71 +37,36 @@ using TvLibrary.Helper;
 
 namespace TvLibrary.Implementations.Hybrid
 {
+  /// <summary>
+  /// This class is a wrapper for all cards that are part of a hybrid card group
+  /// </summary>
   public class HybridCard : ITVCard
   {
     #region variables
-    List<ITVCard> _cards = new List<ITVCard>();
-    List<int> _idCards = new List<int>();
-    int _currentCardIndex = 0;
-		protected bool _cardPresent = true;
+    /// <summary>
+    /// Hybrid card group
+    /// </summary>
+    private HybridCardGroup _group;
+    /// <summary>
+    /// Internal card
+    /// </summary>
+    private ITVCard _internalCard;
     #endregion
 
     #region ctor
     /// <summary>
     /// Initializes a new instance of the <see cref="HybridCard"/> class.
     /// </summary>
-    public HybridCard()
+    /// <param name="group">The corresponding group for this card wrapper</param>
+    /// <param name="internalCard">The internal card for this wrapper</param>
+    public HybridCard(HybridCardGroup group,ITVCard internalCard)
     {
+      this._group = group;
+      this._internalCard = internalCard;
     }
     #endregion
 
     #region methods
-    /// <summary>
-    /// Adds the specified id card.
-    /// </summary>
-    /// <param name="idCard">The id card.</param>
-    /// <param name="card">The card.</param>
-    public void Add(int idCard, ITVCard card)
-    {
-      _idCards.Add(idCard);
-      TvCardAnalog analogCard = card as TvCardAnalog;
-      if (analogCard != null)
-      {
-        analogCard.CardId = idCard;
-      }
-      _cards.Add(card);
-    }
-
-    /// <summary>
-    /// Determines whether [contains] [the specified id card].
-    /// </summary>
-    /// <param name="idCard">The id card.</param>
-    /// <returns>
-    /// 	<c>true</c> if [contains] [the specified id card]; otherwise, <c>false</c>.
-    /// </returns>
-    public bool Contains(int idCard)
-    {
-      for (int i = 0; i < _idCards.Count; ++i)
-      {
-        if (_idCards[i] == idCard) return true;
-      }
-      return false;
-    }
-
-    /// <summary>
-    /// Gets the by id.
-    /// </summary>
-    /// <param name="idCard">The id card.</param>
-    /// <returns></returns>
-    public ITVCard GetById(int idCard)
-    {
-      for (int i = 0; i < _idCards.Count; ++i)
-      {
-        if (_idCards[i] == idCard) return _cards[i];
-      }
-      return null;
-    }
-
     /// <summary>
     /// Checks if the active card is the one with given id
     /// </summary>
@@ -111,38 +76,26 @@ namespace TvLibrary.Implementations.Hybrid
     /// </returns>
     public bool IsCardIdActive(int idCard)
     {
-      return _idCards[_currentCardIndex] == idCard;
+      return _group.IsCardIdActive(idCard);
     }
     #endregion
 
     #region properties
 
-		/// <summary>
+    /// <summary>
 		/// returns true if card is currently present
 		/// </summary>
 		public bool CardPresent
 		{
 			get
 			{
-				return _cardPresent;
+        return _internalCard.CardPresent;
 			}
 			set
 			{
-				_cardPresent = value;
+        _internalCard.CardPresent = value;
 			}
 		}
-
-    /// <summary>
-    /// Gets the count.
-    /// </summary>
-    /// <value>The count.</value>
-    public int Count
-    {
-      get
-      {
-        return _cards.Count;
-      }
-    }
 
     /// <summary>
     /// Does the card have a CA module.
@@ -152,25 +105,10 @@ namespace TvLibrary.Implementations.Hybrid
     {
       get
       {
-        return (_cards[_currentCardIndex].HasCA);
+        return _internalCard.HasCA;
       }
     }
 
-    /// <summary>
-    /// Gets or sets the <see cref="TvLibrary.Interfaces.ITVCard"/> at the specified index.
-    /// </summary>
-    /// <value></value>
-    public ITVCard this[int index]
-    {
-      get
-      {
-        return _cards[index];
-      }
-      set
-      {
-        _cards[index] = value;
-      }
-    }
     /// <summary>
     /// Gets the number of channels the card is currently decrypting.
     /// </summary>
@@ -179,7 +117,7 @@ namespace TvLibrary.Implementations.Hybrid
     {
       get
       {
-        return _cards[_currentCardIndex].NumberOfChannelsDecrypting;
+        return _internalCard.NumberOfChannelsDecrypting;
       }
     }
 
@@ -191,11 +129,11 @@ namespace TvLibrary.Implementations.Hybrid
     {
       get
       {
-        return _cards[_currentCardIndex].Parameters;
+        return _group.Parameters;
       }
       set
       {
-        _cards[_currentCardIndex].Parameters = value;
+        _group.Parameters = value;
       }
     }
     #endregion
@@ -210,7 +148,7 @@ namespace TvLibrary.Implementations.Hybrid
     {
       get
       {
-        return _cards[_currentCardIndex].SupportsSubChannels;
+        return _internalCard.SupportsSubChannels;
       }
     }
 
@@ -236,11 +174,11 @@ namespace TvLibrary.Implementations.Hybrid
     {
       get
       {
-        return _cards[_currentCardIndex].Name;
+        return _internalCard.Name;
       }
       set
       {
-        _cards[_currentCardIndex].Name = value;
+        _internalCard.Name = value;
       }
     }
 
@@ -252,7 +190,7 @@ namespace TvLibrary.Implementations.Hybrid
     {
       get
       {
-        return _cards[_currentCardIndex].DevicePath;
+        return _internalCard.DevicePath;
       }
     }
 
@@ -266,11 +204,7 @@ namespace TvLibrary.Implementations.Hybrid
     /// </returns>
     public bool CanTune(IChannel channel)
     {
-      foreach (ITVCard card in _cards)
-      {
-        if (card.CanTune(channel)) return true;
-      }
-      return false;
+      return _internalCard.CanTune(channel);
     }
 
     /// <summary>
@@ -278,7 +212,7 @@ namespace TvLibrary.Implementations.Hybrid
     /// </summary>
     public void StopGraph()
     {
-      _cards[_currentCardIndex].StopGraph();
+      _group.StopGraph();
     }
 
 
@@ -290,11 +224,11 @@ namespace TvLibrary.Implementations.Hybrid
     {
       get
       {
-        return _cards[_currentCardIndex].IsEpgGrabbing;
+        return _internalCard.IsEpgGrabbing;
       }
       set
       {
-        _cards[_currentCardIndex].IsEpgGrabbing = value;
+        _group.IsEpgGrabbing = value;
       }
     }
 
@@ -306,14 +240,13 @@ namespace TvLibrary.Implementations.Hybrid
     {
       get
       {
-        return _cards[_currentCardIndex].IsScanning;
+        return _internalCard.IsScanning;
       }
       set
       {
-        _cards[_currentCardIndex].IsScanning = value;
+        _group.IsScanning = value;
       }
     }
-
 
     /// <summary>
     /// returns the min. channel number for analog cards
@@ -323,7 +256,7 @@ namespace TvLibrary.Implementations.Hybrid
     {
       get
       {
-        return _cards[_currentCardIndex].MinChannel;
+        return _internalCard.MinChannel;
       }
     }
 
@@ -335,10 +268,9 @@ namespace TvLibrary.Implementations.Hybrid
     {
       get
       {
-        return _cards[_currentCardIndex].MaxChannel;
+        return _internalCard.MaxChannel;
       }
     }
-
 
     /// <summary>
     /// Gets or sets the type of the cam.
@@ -348,11 +280,11 @@ namespace TvLibrary.Implementations.Hybrid
     {
       get
       {
-        return _cards[_currentCardIndex].CamType;
+        return _internalCard.CamType;
       }
       set
       {
-        _cards[_currentCardIndex].CamType = value;
+        _internalCard.CamType = value;
       }
     }
 
@@ -360,11 +292,11 @@ namespace TvLibrary.Implementations.Hybrid
     /// Gets/sets the card type
     /// </summary>
     /// <value></value>
-    public int cardType
+    public CardType CardType
     {
       get
       {
-        return _cards[_currentCardIndex].cardType;
+        return _internalCard.CardType;
       }
     }
 
@@ -376,23 +308,26 @@ namespace TvLibrary.Implementations.Hybrid
     {
       get
       {
-        return _cards[_currentCardIndex].DiSEqCMotor;
+        return _internalCard.DiSEqCMotor;
       }
     }
+    
     /// <summary>
     /// Starts scanning for linkage info
     /// </summary>
     public void StartLinkageScanner(BaseChannelLinkageScanner callback)
     {
-      _cards[_currentCardIndex].StartLinkageScanner(callback);
+      _group.StartLinkageScanner(callback);
     }
+    
     /// <summary>
     /// Stops/Resets the linkage scanner
     /// </summary>
     public void ResetLinkageScanner()
     {
-      _cards[_currentCardIndex].ResetLinkageScanner();
+      _group.ResetLinkageScanner();
     }
+    
     /// <summary>
     /// Returns the channel linkages grabbed
     /// </summary>
@@ -400,7 +335,7 @@ namespace TvLibrary.Implementations.Hybrid
     {
       get
       {
-        return _cards[_currentCardIndex].ChannelLinkages;
+        return _group.ChannelLinkages;
       }
     }
 
@@ -410,22 +345,25 @@ namespace TvLibrary.Implementations.Hybrid
     /// <param name="callback">The callback which gets called when epg is received or canceled.</param>
     public void GrabEpg(BaseEpgGrabber callback)
     {
-      _cards[_currentCardIndex].GrabEpg(callback);
+      _group.GrabEpg(callback);
     }
+    
     /// <summary>
     /// Start grabbing the epg while timeshifting
     /// </summary>
     public void GrabEpg()
     {
-      _cards[_currentCardIndex].GrabEpg();
+      _group.GrabEpg();
     }
+
     /// <summary>
     /// Aborts grabbing the epg
     /// </summary>
     public void AbortGrabbing()
     {
-      _cards[_currentCardIndex].AbortGrabbing();
+      _group.AbortGrabbing();
     }
+
     /// <summary>
     /// returns a list of all epg data for each channel found.
     /// </summary>
@@ -434,7 +372,7 @@ namespace TvLibrary.Implementations.Hybrid
     {
       get
       {
-        return _cards[_currentCardIndex].Epg;
+        return _group.Epg;
       }
     }
 
@@ -446,11 +384,9 @@ namespace TvLibrary.Implementations.Hybrid
     {
       get
       {
-        return _cards[_currentCardIndex].ScanningInterface;
+        return _internalCard.ScanningInterface;
       }
     }
-
-
 
     /// <summary>
     /// Tunes the specified channel.
@@ -459,24 +395,8 @@ namespace TvLibrary.Implementations.Hybrid
     /// <returns>true if succeeded else false</returns>
     public ITvSubChannel Tune(int subChannelId, IChannel channel)
     {
-      for (int i = 0; i < _cards.Count; ++i)
-      {
-        if (_cards[i].CanTune(channel))
-        {
-          _currentCardIndex = i;
-          for (int x = 0; x < _cards.Count; x++)
-          {
-            if (x != i)
-            {
-              _cards[x].Dispose();
-            }
-          }
-          return _cards[_currentCardIndex].Tune(subChannelId,channel);
-        }
-      }
-      return null;
+      return _group.Tune(subChannelId, channel);
     }
-
 
     /// <summary>
     /// Get/Set the quality
@@ -486,11 +406,11 @@ namespace TvLibrary.Implementations.Hybrid
     {
       get
       {
-        return _cards[_currentCardIndex].Quality;
+        return _internalCard.Quality;
       }
       set
       {
-        _cards[_currentCardIndex].Quality = value;
+        _internalCard.Quality = value;
       }
     }
 
@@ -502,7 +422,7 @@ namespace TvLibrary.Implementations.Hybrid
     {
       get
       {
-        return _cards[_currentCardIndex].SupportsQualityControl;
+        return _group.SupportsQualityControl;
       }
     }
 
@@ -515,7 +435,7 @@ namespace TvLibrary.Implementations.Hybrid
     {
       get
       {
-        return _cards[_currentCardIndex].IsTunerLocked;
+        return _internalCard.IsTunerLocked;
       }
     }
 
@@ -527,7 +447,7 @@ namespace TvLibrary.Implementations.Hybrid
     {
       get
       {
-        return _cards[_currentCardIndex].SignalQuality;
+        return _group.SignalQuality;
       }
     }
 
@@ -539,7 +459,7 @@ namespace TvLibrary.Implementations.Hybrid
     {
       get
       {
-        return _cards[_currentCardIndex].SignalLevel;
+        return _group.SignalLevel;
       }
     }
 
@@ -548,7 +468,7 @@ namespace TvLibrary.Implementations.Hybrid
     /// </summary>
     public void ResetSignalUpdate()
     {
-      _cards[_currentCardIndex].ResetSignalUpdate();
+      _group.ResetSignalUpdate();
     }
 
     /// <summary>
@@ -559,14 +479,11 @@ namespace TvLibrary.Implementations.Hybrid
     {
       get
       {
-        return _cards[_currentCardIndex].Context;
+        return _group.Context;
       }
       set
       {
-        for (int i = 0; i < _cards.Count; ++i)
-        {
-          _cards[i].Context = value;
-        }
+        _group.Context = value;
       }
     }
 
@@ -575,8 +492,9 @@ namespace TvLibrary.Implementations.Hybrid
     /// </summary>
     public void Dispose()
     {
-      _cards[_currentCardIndex].Dispose();
+      _internalCard.Dispose();
     }
+    
     /// <summary>
     /// Gets the sub channel.
     /// </summary>
@@ -584,8 +502,9 @@ namespace TvLibrary.Implementations.Hybrid
     /// <returns></returns>
     public ITvSubChannel GetSubChannel(int id)
     {
-      return _cards[_currentCardIndex].GetSubChannel(id);
+      return _group.GetSubChannel(id);
     }
+    
     /// <summary>
     /// Gets the sub channels.
     /// </summary>
@@ -594,16 +513,17 @@ namespace TvLibrary.Implementations.Hybrid
     {
       get
       {
-        return _cards[_currentCardIndex].SubChannels;
+        return _group.SubChannels;
       }
     }
+   
     /// <summary>
     /// Frees the sub channel.
     /// </summary>
     /// <param name="id">The id.</param>
     public void FreeSubChannel(int id)
     {
-      _cards[_currentCardIndex].FreeSubChannel(id);
+      _group.FreeSubChannel(id);
     }
 
     /// <summary>
@@ -611,7 +531,7 @@ namespace TvLibrary.Implementations.Hybrid
     /// </summary>
     public void ReloadQualityControlConfiguration()
     {
-      _cards[_currentCardIndex].ReloadQualityControlConfiguration();
+      _internalCard.ReloadQualityControlConfiguration();
     }
 
     #endregion

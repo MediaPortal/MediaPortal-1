@@ -33,6 +33,7 @@ using System.Xml;
 using System.Net;
 using System.Net.Sockets;
 using MediaPortal.UserInterface.Controls;
+using TvLibrary.Interfaces;
 using TvLibrary.Log;
 using TvControl;
 using TvDatabase;

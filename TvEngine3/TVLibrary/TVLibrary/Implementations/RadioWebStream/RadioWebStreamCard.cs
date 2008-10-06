@@ -340,11 +340,11 @@ namespace TvLibrary.Implementations.RadioWebStream
     /// <summary>
     /// Gets/sets the card cardType
     /// </summary>
-    public int cardType
+    public CardType CardType
     {
       get
       {
-        return 5; 
+        return CardType.RadioWebStream;
       }
       set
       {

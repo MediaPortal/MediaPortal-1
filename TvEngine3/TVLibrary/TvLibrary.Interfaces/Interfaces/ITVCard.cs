@@ -117,7 +117,7 @@ namespace TvLibrary.Interfaces
     /// <summary>
     /// Gets/sets the card type
     /// </summary>
-    int cardType { get;}
+    CardType CardType { get;}
 
     /// <summary>
     /// Gets the interface for controlling the diseqc motor

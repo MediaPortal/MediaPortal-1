@@ -468,17 +468,18 @@ namespace TvService
 
         Log.Info("Controller: setup hybrid cards");
         IList cardgroups = CardGroup.ListAll();
+        HybridCard hybridCard;
         foreach (CardGroup group in cardgroups)
         {
           IList cards = group.CardGroupMaps();
-          HybridCard hybridCard = new HybridCard();
+          HybridCardGroup hybridCardGroup = new HybridCardGroup(group.Name);
           foreach (CardGroupMap card in cards)
           {
             if (localcards.ContainsKey(card.IdCard))
             {
               localcards[card.IdCard].IsHybrid = true;
               Log.WriteFile("Hybrid card: " + localcards[card.IdCard].Name + " (" + group.Name + ")");
-              hybridCard.Add(card.IdCard, localcards[card.IdCard]);
+              hybridCard = hybridCardGroup.Add(card.IdCard, localcards[card.IdCard]);
               localcards[card.IdCard] = hybridCard;
             }
           }
@@ -1599,6 +1600,7 @@ namespace TvService
             return false;
           }
         }
+        
         HybridCard hybridCard = _cards[cardId].Card as HybridCard;
         if (hybridCard != null)
         {
@@ -1607,6 +1609,7 @@ namespace TvService
             return true;
           }
         }
+        
 
         if (false == _cards[cardId].TimeShifter.IsTimeShifting(ref user)) return true;
         Fire(this, new TvServerEventArgs(TvServerEventType.EndTimeShifting, GetVirtualCard(user), user));
@@ -3112,7 +3115,7 @@ namespace TvService
       {
         KeyValuePair<int, ITvCardHandler> key = enumerator.Current;
         if (key.Key == cardId) continue;
-        if (key.Value.Card == card) continue;
+        if (key.Value.Card.Context == card.Context) continue;
         key.Value.Users.RemoveUser(user);
       }
     }

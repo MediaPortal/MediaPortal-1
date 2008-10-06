@@ -30,6 +30,7 @@ using TvControl;
 using Gentle.Common;
 using Gentle.Framework;
 using TvDatabase;
+using TvLibrary.Interfaces;
 using Microsoft.Win32;
 using DirectShowLib;
 namespace SetupTv.Sections
