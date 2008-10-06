@@ -820,14 +820,25 @@ namespace MediaPortal
 
       // Temporary remove the handler
       GUIGraphicsContext.DX9Device.DeviceLost -= new EventHandler(this.OnDeviceLost);
-      GUIGraphicsContext.DX9Device.DeviceReset -= new EventHandler(this.OnDeviceReset);      
+      GUIGraphicsContext.DX9Device.DeviceReset -= new EventHandler(this.OnDeviceReset);
 
       if (bWindowed)
+      {
         Log.Debug("D3D: Switch to windowed mode - Playing media: {0}", g_Player.Playing);
+      }
       else
+      {
         Log.Debug("D3D: Switch to exclusive mode - Playing media: {0}", g_Player.Playing);
+      }
 
-      BuildPresentParamsFromSettings(bWindowed);
+      if (GUIGraphicsContext.IsDirectX9ExUsed() && (useEnhancedVideoRenderer || !useExclusiveDirectXMode))
+      {
+        BuildPresentParamsFromSettings(true);
+      }
+      else 
+      {
+        BuildPresentParamsFromSettings(bWindowed);
+      }
       try
       {
         GUIGraphicsContext.DX9Device.Reset(presentParams);
@@ -838,18 +849,33 @@ namespace MediaPortal
         }
 
         if (windowed)
+        {
           Log.Debug("D3D: Switched to windowed mode successfully");
+        }
         else
+        {
           Log.Debug("D3D: Switched to exclusive mode successfully");
+        }
       }
       catch (Exception ex)
       {
         if (windowed)
+        {
           Log.Warn("D3D: Switch to windowed mode failed - {0}", ex.ToString());
+        }
         else
+        {
           Log.Warn("D3D: Switch to exclusive mode failed - {0}", ex.ToString());
+        }
 
-        BuildPresentParamsFromSettings(!bWindowed);
+        if (GUIGraphicsContext.IsDirectX9ExUsed() && (useEnhancedVideoRenderer || !useExclusiveDirectXMode))
+        {
+          BuildPresentParamsFromSettings(true);
+        }
+        else
+        {
+          BuildPresentParamsFromSettings(!bWindowed);
+        }
         try
         {
           GUIGraphicsContext.DX9Device.Reset(presentParams);
@@ -859,8 +885,10 @@ namespace MediaPortal
             GUIFontManager.InitializeDeviceObjects();
           }
         }
-        catch (Exception)
-        { }
+        catch (Exception e)
+        {
+          Log.Warn("D3D: mode failed - {0}", e.ToString());
+        }
       }
       GUIGraphicsContext.DX9Device.DeviceReset += new EventHandler(this.OnDeviceReset);
       GUIGraphicsContext.DX9Device.DeviceLost += new EventHandler(this.OnDeviceLost);
