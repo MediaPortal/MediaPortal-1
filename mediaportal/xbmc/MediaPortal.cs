@@ -1087,14 +1087,13 @@ public class MediaPortalApp : D3DApp, IRender
         return;
       }
 
+      _onResumeRunning = true;
+
       // Systems without DirectX9 Ex have lost graphics device in suspend/hibernate cycle
-      if (System.Environment.OSVersion.Version.Major < 6)
+      if (!GUIGraphicsContext.IsDirectX9ExUsed())
       {
+        Log.Info("Main: OnResume - set GUIGraphicsContext.State.LOST");
         GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
-      }
-      else
-      {
-        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
       }
       
       EXECUTION_STATE oldState = EXECUTION_STATE.ES_CONTINUOUS;
@@ -1145,9 +1144,9 @@ public class MediaPortalApp : D3DApp, IRender
         Log.Info("Main: OnResume - Switch to home screen");
         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
       }
+      Log.Info("Main: OnResume - calling recover device");
       base.RecoverDevice();
-      // shouldn't that be set before trying to recover?
-      _onResumeRunning = true;
+      Log.Info("Main: OnResume - recover device done");
       Recorder.Stop();  // bug fix from Powerscheduler
       if (!Recorder.Running)
       {
@@ -1163,10 +1162,17 @@ public class MediaPortalApp : D3DApp, IRender
       _suspended = false;
       Log.Debug("Main: OnResume - show last active module?");
       bool result = base.ShowLastActiveModule();
-      _onResumeRunning = false;
-      ignoreContextMenuAction = false;
+
+      if (GUIGraphicsContext.IsDirectX9ExUsed())
+      {
+        Log.Info("Main: OnResume - set GUIGraphicsContext.State.RUNNING");
+        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+      }
+
       Log.Debug("Main: OnResume - autoplay start listening");
       AutoPlay.StartListening();
+      _onResumeRunning = false;
+      ignoreContextMenuAction = false;
       Log.Info("Main: OnResume - Done");
     }
   }
