@@ -349,6 +349,15 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Do you really want to abort the MediaPortal installation?.
+        /// </summary>
+        internal static string Exit_Installation {
+            get {
+                return ResourceManager.GetString("Exit_Installation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to MediaPortal is FREE - if you bought it on ebay you have been fooled!.
         /// </summary>
         internal static string Finished_labelEbay {
@@ -800,7 +809,7 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Back.
+        ///   Looks up a localized string similar to Previous.
         /// </summary>
         internal static string MainWindow_backButton {
             get {

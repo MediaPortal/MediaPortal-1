@@ -343,7 +343,7 @@ The PC will then act as dedicated TV-Server and provide other PC's in your LAN w
     <comment>Name for the title bar of the app</comment>
   </data>
   <data name="MainWindow_backButton" xml:space="preserve">
-    <value>Back</value>
+    <value>Previous</value>
   </data>
   <data name="MainWindow_buttonClose" xml:space="preserve">
     <value>Exit</value>
@@ -505,5 +505,8 @@ Transfer this folder to your HTPC. Start installation by running "MediaPortal.De
   </data>
   <data name="Install_stateSkipped" xml:space="preserve">
     <value>Skipped</value>
+  </data>
+  <data name="Exit_Installation" xml:space="preserve">
+    <value>Do you really want to abort the MediaPortal installation?</value>
   </data>
 </root>

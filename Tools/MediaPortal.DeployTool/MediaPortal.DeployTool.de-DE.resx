@@ -496,4 +496,7 @@ Fortsetzung erfolgt auf eigenes Risiko!</value>
     <value>Diese Anwendung wird jetzt beendet und das Verzeichnis "MediaPortal Installation" wird geöffnet.
 Kopieren Sie dieses Verzeichnis auf Ihren HTPC. Starten Sie "MediaPortal.DeployTool.exe" um die Installation durchzuführen.</value>
   </data>
+  <data name="Exit_Installation" xml:space="preserve">
+    <value>Installation wirklich abbrechen?</value>
+  </data>
 </root>

@@ -165,6 +165,22 @@ namespace MediaPortal.DeployTool
       nextButton.Text = Utils.GetBestTranslation("MainWindow_nextButton");
       SwitchDialog(_currentDialog);
     }
+    
+     private void exitButton_Click(object sender, System.EventArgs e)
+    {
+ 			string message = Utils.GetBestTranslation("Exit_Installation");
+		  string caption = "MediaPortal";
+			MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+			DialogResult result;
+
+			result = MessageBox.Show(this, message, caption, buttons);
+
+            if (result == DialogResult.Yes)
+            {
+                Application.Exit();
+            }
+    }
+    
 
       private void splitContainer2_Panel2_Paint(object sender, PaintEventArgs e)
       {
@@ -178,6 +194,22 @@ namespace MediaPortal.DeployTool
 
       private void splitContainer2_Panel1_Paint(object sender, PaintEventArgs e)
       {
+
+      }
+
+      private void pictureBox2_Click(object sender, EventArgs e)
+      {
+          string message = Utils.GetBestTranslation("Exit_Installation");
+          string caption = "MediaPortal";
+          MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+          DialogResult result;
+
+          result = MessageBox.Show(this, message, caption, buttons);
+
+          if (result == DialogResult.Yes)
+          {
+              Application.Exit();
+          }
 
       }
   }

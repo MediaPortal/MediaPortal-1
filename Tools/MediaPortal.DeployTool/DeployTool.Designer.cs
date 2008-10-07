@@ -31,15 +31,16 @@ namespace MediaPortal.DeployTool
         System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DeployTool));
         this.splitContainer1 = new System.Windows.Forms.SplitContainer();
         this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-        this.button3 = new System.Windows.Forms.Button();
         this.nextButton = new System.Windows.Forms.Button();
         this.backButton = new System.Windows.Forms.Button();
+        this.pictureBox2 = new System.Windows.Forms.PictureBox();
         this.pictureBox1 = new System.Windows.Forms.PictureBox();
         this.splitContainer1.Panel1.SuspendLayout();
         this.splitContainer1.Panel2.SuspendLayout();
         this.splitContainer1.SuspendLayout();
         this.splitContainer2.Panel2.SuspendLayout();
         this.splitContainer2.SuspendLayout();
+        ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
         ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
         this.SuspendLayout();
         // 
@@ -56,6 +57,7 @@ namespace MediaPortal.DeployTool
         // 
         // splitContainer1.Panel1
         // 
+        this.splitContainer1.Panel1.Controls.Add(this.pictureBox2);
         this.splitContainer1.Panel1.Controls.Add(this.pictureBox1);
         this.splitContainer1.Panel1.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         // 
@@ -87,7 +89,6 @@ namespace MediaPortal.DeployTool
         // 
         this.splitContainer2.Panel2.BackColor = System.Drawing.Color.WhiteSmoke;
         this.splitContainer2.Panel2.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_bottom;
-        this.splitContainer2.Panel2.Controls.Add(this.button3);
         this.splitContainer2.Panel2.Controls.Add(this.nextButton);
         this.splitContainer2.Panel2.Controls.Add(this.backButton);
         this.splitContainer2.Panel2.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -97,41 +98,41 @@ namespace MediaPortal.DeployTool
         this.splitContainer2.SplitterWidth = 1;
         this.splitContainer2.TabIndex = 0;
         // 
-        // button3
-        // 
-        this.button3.AutoSize = true;
-        this.button3.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        this.button3.Location = new System.Drawing.Point(33, 8);
-        this.button3.Name = "button3";
-        this.button3.Size = new System.Drawing.Size(106, 25);
-        this.button3.TabIndex = 2;
-        this.button3.Text = "Exit Installer";
-        this.button3.UseVisualStyleBackColor = true;
-        // 
         // nextButton
         // 
         this.nextButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
         this.nextButton.AutoSize = true;
-        this.nextButton.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+        this.nextButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.nextButton.Location = new System.Drawing.Point(561, 8);
         this.nextButton.Name = "nextButton";
-        this.nextButton.Size = new System.Drawing.Size(75, 23);
+        this.nextButton.Size = new System.Drawing.Size(75, 25);
         this.nextButton.TabIndex = 1;
-        this.nextButton.Text = "Next";
+        this.nextButton.Text = "next";
         this.nextButton.UseVisualStyleBackColor = true;
         this.nextButton.Click += new System.EventHandler(this.nextButton_Click);
         // 
         // backButton
         // 
         this.backButton.AutoSize = true;
-        this.backButton.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+        this.backButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.backButton.Location = new System.Drawing.Point(446, 8);
         this.backButton.Name = "backButton";
-        this.backButton.Size = new System.Drawing.Size(78, 23);
+        this.backButton.Size = new System.Drawing.Size(78, 24);
         this.backButton.TabIndex = 0;
-        this.backButton.Text = "Previous";
+        this.backButton.Text = "previous";
         this.backButton.UseVisualStyleBackColor = true;
         this.backButton.Click += new System.EventHandler(this.backButton_Click);
+        // 
+        // pictureBox2
+        // 
+        this.pictureBox2.BackColor = System.Drawing.Color.Transparent;
+        this.pictureBox2.Image = global::MediaPortal.DeployTool.Images.exit41;
+        this.pictureBox2.Location = new System.Drawing.Point(623, 12);
+        this.pictureBox2.Name = "pictureBox2";
+        this.pictureBox2.Size = new System.Drawing.Size(31, 30);
+        this.pictureBox2.TabIndex = 4;
+        this.pictureBox2.TabStop = false;
+        this.pictureBox2.Click += new System.EventHandler(this.pictureBox2_Click);
         // 
         // pictureBox1
         // 
@@ -166,6 +167,7 @@ namespace MediaPortal.DeployTool
         this.splitContainer2.Panel2.ResumeLayout(false);
         this.splitContainer2.Panel2.PerformLayout();
         this.splitContainer2.ResumeLayout(false);
+        ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
         ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
         this.ResumeLayout(false);
 
@@ -177,8 +179,8 @@ namespace MediaPortal.DeployTool
     private System.Windows.Forms.PictureBox pictureBox1;
     private System.Windows.Forms.SplitContainer splitContainer2;
     private System.Windows.Forms.Button nextButton;
-    private System.Windows.Forms.Button backButton;
-      private System.Windows.Forms.Button button3;
+      private System.Windows.Forms.Button backButton;
+      private System.Windows.Forms.PictureBox pictureBox2;
 
 
   }

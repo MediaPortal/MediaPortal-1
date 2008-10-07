@@ -129,5 +129,12 @@ namespace MediaPortal.DeployTool {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+        
+        internal static System.Drawing.Bitmap exit41 {
+            get {
+                object obj = ResourceManager.GetObject("exit41", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }
