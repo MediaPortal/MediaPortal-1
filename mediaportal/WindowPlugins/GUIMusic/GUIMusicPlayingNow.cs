@@ -107,27 +107,48 @@ namespace MediaPortal.GUI.Music
     #endregion
 
     #region Skin controls
-    [SkinControlAttribute((int)ControlIDs.LBL_CAPTION)]             protected GUILabelControl LblCaption = null;
-    [SkinControlAttribute((int)ControlIDs.IMG_COVERART)]            protected GUIImage ImgCoverArt = null;
-    [SkinControlAttribute((int)ControlIDs.PROG_TRACK)]              protected GUIProgressControl ProgTrack = null;
-    [SkinControlAttribute((int)ControlIDs.IMG_TRACK_PROGRESS_BG)]   protected GUIImage ImgTrackProgressBkGrnd = null;
-    [SkinControlAttribute((int)ControlIDs.LBL_UP_NEXT)]             protected GUILabelControl LblUpNext = null;
-    [SkinControlAttribute((int)ControlIDs.LIST_TAG_INFO)]           protected GUIListControl facadeTagInfo = null;
-    [SkinControlAttribute((int)ControlIDs.LIST_ALBUM_INFO)]         protected GUIListControl facadeAlbumInfo = null;
-    [SkinControlAttribute((int)ControlIDs.BEST_ALBUM_TRACKS)]       protected GUIFadeLabel LblBestAlbumTracks = null;
-    [SkinControlAttribute((int)ControlIDs.BEST_TAG_TRACKS)]         protected GUIFadeLabel LblBestTagTracks = null;
-    [SkinControlAttribute((int)ControlIDs.IMGLIST_UNKNOWN_TRACK1)]  protected GUIImageList ImgListUnknownTrack1 = null;
-    [SkinControlAttribute((int)ControlIDs.IMGLIST_UNKNOWN_TRACK2)]  protected GUIImageList ImgListUnknownTrack2 = null;
-    [SkinControlAttribute((int)ControlIDs.IMGLIST_UNKNOWN_TRACK3)]  protected GUIImageList ImgListUnknownTrack3 = null;
-    [SkinControlAttribute((int)ControlIDs.IMGLIST_EXISTENT_TRACK1)] protected GUIImageList ImgListExistingTrack1 = null;
-    [SkinControlAttribute((int)ControlIDs.IMGLIST_EXISTENT_TRACK2)] protected GUIImageList ImgListExistingTrack2 = null;
-    [SkinControlAttribute((int)ControlIDs.IMGLIST_EXISTENT_TRACK3)] protected GUIImageList ImgListExistingTrack3 = null;
-    [SkinControlAttribute((int)ControlIDs.IMGLIST_KNOWN_TRACK1)]    protected GUIImageList ImgListKnownTrack1 = null;
-    [SkinControlAttribute((int)ControlIDs.IMGLIST_KNOWN_TRACK2)]    protected GUIImageList ImgListKnownTrack2 = null;
-    [SkinControlAttribute((int)ControlIDs.IMGLIST_KNOWN_TRACK3)]    protected GUIImageList ImgListKnownTrack3 = null;
-    [SkinControlAttribute((int)ControlIDs.IMGLIST_FAMOUS_TRACK1)]   protected GUIImageList ImgListFamousTrack1 = null;
-    [SkinControlAttribute((int)ControlIDs.IMGLIST_FAMOUS_TRACK2)]   protected GUIImageList ImgListFamousTrack2 = null;
-    [SkinControlAttribute((int)ControlIDs.IMGLIST_FAMOUS_TRACK3)]   protected GUIImageList ImgListFamousTrack3 = null;
+    [SkinControlAttribute((int)ControlIDs.LBL_CAPTION)]
+    protected GUILabelControl LblCaption = null;
+    [SkinControlAttribute((int)ControlIDs.IMG_COVERART)]
+    protected GUIImage ImgCoverArt = null;
+    [SkinControlAttribute((int)ControlIDs.PROG_TRACK)]
+    protected GUIProgressControl ProgTrack = null;
+    [SkinControlAttribute((int)ControlIDs.IMG_TRACK_PROGRESS_BG)]
+    protected GUIImage ImgTrackProgressBkGrnd = null;
+    [SkinControlAttribute((int)ControlIDs.LBL_UP_NEXT)]
+    protected GUILabelControl LblUpNext = null;
+    [SkinControlAttribute((int)ControlIDs.LIST_TAG_INFO)]
+    protected GUIListControl facadeTagInfo = null;
+    [SkinControlAttribute((int)ControlIDs.LIST_ALBUM_INFO)]
+    protected GUIListControl facadeAlbumInfo = null;
+    [SkinControlAttribute((int)ControlIDs.BEST_ALBUM_TRACKS)]
+    protected GUIFadeLabel LblBestAlbumTracks = null;
+    [SkinControlAttribute((int)ControlIDs.BEST_TAG_TRACKS)]
+    protected GUIFadeLabel LblBestTagTracks = null;
+    [SkinControlAttribute((int)ControlIDs.IMGLIST_UNKNOWN_TRACK1)]
+    protected GUIImageList ImgListUnknownTrack1 = null;
+    [SkinControlAttribute((int)ControlIDs.IMGLIST_UNKNOWN_TRACK2)]
+    protected GUIImageList ImgListUnknownTrack2 = null;
+    [SkinControlAttribute((int)ControlIDs.IMGLIST_UNKNOWN_TRACK3)]
+    protected GUIImageList ImgListUnknownTrack3 = null;
+    [SkinControlAttribute((int)ControlIDs.IMGLIST_EXISTENT_TRACK1)]
+    protected GUIImageList ImgListExistingTrack1 = null;
+    [SkinControlAttribute((int)ControlIDs.IMGLIST_EXISTENT_TRACK2)]
+    protected GUIImageList ImgListExistingTrack2 = null;
+    [SkinControlAttribute((int)ControlIDs.IMGLIST_EXISTENT_TRACK3)]
+    protected GUIImageList ImgListExistingTrack3 = null;
+    [SkinControlAttribute((int)ControlIDs.IMGLIST_KNOWN_TRACK1)]
+    protected GUIImageList ImgListKnownTrack1 = null;
+    [SkinControlAttribute((int)ControlIDs.IMGLIST_KNOWN_TRACK2)]
+    protected GUIImageList ImgListKnownTrack2 = null;
+    [SkinControlAttribute((int)ControlIDs.IMGLIST_KNOWN_TRACK3)]
+    protected GUIImageList ImgListKnownTrack3 = null;
+    [SkinControlAttribute((int)ControlIDs.IMGLIST_FAMOUS_TRACK1)]
+    protected GUIImageList ImgListFamousTrack1 = null;
+    [SkinControlAttribute((int)ControlIDs.IMGLIST_FAMOUS_TRACK2)]
+    protected GUIImageList ImgListFamousTrack2 = null;
+    [SkinControlAttribute((int)ControlIDs.IMGLIST_FAMOUS_TRACK3)]
+    protected GUIImageList ImgListFamousTrack3 = null;
     #endregion
 
     private const int DISPLAY_LISTITEM_COUNT = 3;
@@ -155,8 +176,9 @@ namespace MediaPortal.GUI.Music
     private bool _doAlbumLookups = true;
     private bool _doTrackTagLookups = true;
     private bool _usingBassEngine = false;
-    private bool _showVisualization = false;    
+    private bool _showVisualization = false;
     private bool _enqueueDefault = true;
+    private bool _preventMonitorPowerDown = false;
     private object _imageMutex = null;
 
 
@@ -185,19 +207,20 @@ namespace MediaPortal.GUI.Music
         VizName = xmlreader.GetValueAsString("musicvisualization", "name", "None");
         ShowViz = xmlreader.GetValueAsBool("musicmisc", "showVisInNowPlaying", false);
 
-        UseID3 = xmlreader.GetValueAsBool("musicfiles", "showid3", true);       
-        
+        UseID3 = xmlreader.GetValueAsBool("musicfiles", "showid3", true);
+
         _doArtistLookups = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmthumbs", true);
         _doAlbumLookups = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmtopalbums", true);
         _doTrackTagLookups = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmtracktags", true);
         _enqueueDefault = xmlreader.GetValueAsBool("musicmisc", "enqueuenext", true);
+        _preventMonitorPowerDown = xmlreader.GetValueAsBool("musicmisc", "preventmonitorpowerdown", false);
 
         if (ShowViz && VizName != "None")
           _showVisualization = true;
         else
         {
           _showVisualization = false;
-          Log.Debug("GUIMusicPlayingNow: Viz disabled - ShowViz {0}, VizName {1}", Convert.ToString(ShowViz), VizName);          
+          Log.Debug("GUIMusicPlayingNow: Viz disabled - ShowViz {0}, VizName {1}", Convert.ToString(ShowViz), VizName);
         }
       }
 
@@ -222,6 +245,10 @@ namespace MediaPortal.GUI.Music
       if (!ControlsInitialized || type != g_Player.MediaType.Music)
         return;
 
+      // Allow Monitor to turn off again
+      if (_preventMonitorPowerDown)
+        Util.Win32API.AllowMonitorPowerdown();
+
       if (GUIWindowManager.ActiveWindow == GetID)
       {
         Log.Debug("GUIMusicPlayingNow: g_Player_PlayBackEnded for {0}", filename);
@@ -239,9 +266,13 @@ namespace MediaPortal.GUI.Music
     }
 
     void g_Player_PlayBackStopped(g_Player.MediaType type, int stoptime, string filename)
-    {      
+    {
       if (!ControlsInitialized || type != g_Player.MediaType.Music)
         return;
+
+      // Allow Monitor to turn off again
+      if (_preventMonitorPowerDown)
+        Util.Win32API.AllowMonitorPowerdown();
 
       if (GUIWindowManager.ActiveWindow == GetID)
       {
@@ -313,36 +344,36 @@ namespace MediaPortal.GUI.Music
       switch (action.wID)
       {
         case Action.ActionType.ACTION_STOP:
-          
-            if (GUIWindowManager.ActiveWindow == GetID)
-            {
-              Action act = new Action();
-              act.wID = Action.ActionType.ACTION_PREVIOUS_MENU;
-              GUIGraphicsContext.OnAction(act);
-            }
-            break;          
+
+          if (GUIWindowManager.ActiveWindow == GetID)
+          {
+            Action act = new Action();
+            act.wID = Action.ActionType.ACTION_PREVIOUS_MENU;
+            GUIGraphicsContext.OnAction(act);
+          }
+          break;
 
         // Since a ACTION_STOP action clears the player and CurrentPlaylistType type
         // we need a way to restart playback after an ACTION_STOP has been received
         case Action.ActionType.ACTION_MUSIC_PLAY:
         case Action.ActionType.ACTION_NEXT_ITEM:
         case Action.ActionType.ACTION_PAUSE:
-        case Action.ActionType.ACTION_PREV_ITEM:          
-            //if (PlaylistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_MUSIC)
-            if ((PlaylistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_MUSIC) &&
-                (PlaylistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_MUSIC_TEMP))
-            {
-              LoadAndStartPlayList();
-            }
-            break;
-          
-        case Action.ActionType.ACTION_SHOW_INFO:          
-            //OnShowContextMenu();
-            facadeTagInfo.Clear();
-            UpdateTagInfo();
-            FlipPictures();
-            break;
-          
+        case Action.ActionType.ACTION_PREV_ITEM:
+          //if (PlaylistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_MUSIC)
+          if ((PlaylistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_MUSIC) &&
+              (PlaylistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_MUSIC_TEMP))
+          {
+            LoadAndStartPlayList();
+          }
+          break;
+
+        case Action.ActionType.ACTION_SHOW_INFO:
+          //OnShowContextMenu();
+          facadeTagInfo.Clear();
+          UpdateTagInfo();
+          FlipPictures();
+          break;
+
         case Action.ActionType.ACTION_KEY_PRESSED:
           switch (action.m_key.KeyChar)
           {
@@ -472,7 +503,7 @@ namespace MediaPortal.GUI.Music
         return;
 
       if (ImgCoverArt != null)
-      {        
+      {
         if (ImagePathContainer.Count > 0)
         {
           if (ImagePathContainer.Count > 1)
@@ -500,7 +531,7 @@ namespace MediaPortal.GUI.Music
     }
 
     private void OnImageTimerTickEvent(object trash_, ElapsedEventArgs args_)
-    {      
+    {
       FlipPictures();
     }
 
@@ -674,10 +705,18 @@ namespace MediaPortal.GUI.Music
         ClearVisualizationImages();
         // notify user what he's lost here?
       }
+
+      // Prevent Monitor from being turned off, while in Now Playing
+      if (_preventMonitorPowerDown)
+        Util.Win32API.PreventMonitorPowerdown();
     }
 
     protected override void OnPageDestroy(int new_windowId)
     {
+      // Reset the Monitor Power Down State
+      if (_preventMonitorPowerDown)
+        Util.Win32API.AllowMonitorPowerdown();
+
       // Remove pending requests from the request queue
       InfoScrobbler.RemoveRequest(_lastAlbumRequest);
       InfoScrobbler.RemoveRequest(_lastArtistRequest);
@@ -685,7 +724,7 @@ namespace MediaPortal.GUI.Music
 
       ImageChangeTimer.Stop();
 
-      if (ImgCoverArt != null)      
+      if (ImgCoverArt != null)
         ImgCoverArt.FreeResources();
 
       GC.Collect();
@@ -1513,7 +1552,7 @@ namespace MediaPortal.GUI.Music
     {
       if (!ControlsInitialized || !_showVisualization || !_usingBassEngine)
         return;
-      
+
       // the solution below doesn't rotate e.g. artist pics.
 
       //if (ImgCoverArt != null)
