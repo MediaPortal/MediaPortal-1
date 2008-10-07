@@ -39,7 +39,7 @@ namespace MediaPortal.DeployTool
         // labelSourceURL
         // 
         this.labelSourceURL.AutoSize = true;
-        this.labelSourceURL.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+        this.labelSourceURL.Font = new System.Drawing.Font("Verdana", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.labelSourceURL.Location = new System.Drawing.Point(13, 13);
         this.labelSourceURL.Name = "labelSourceURL";
         this.labelSourceURL.Size = new System.Drawing.Size(96, 13);
@@ -49,7 +49,7 @@ namespace MediaPortal.DeployTool
         // labelTargetFile
         // 
         this.labelTargetFile.AutoSize = true;
-        this.labelTargetFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+        this.labelTargetFile.Font = new System.Drawing.Font("Verdana", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.labelTargetFile.Location = new System.Drawing.Point(13, 57);
         this.labelTargetFile.Name = "labelTargetFile";
         this.labelTargetFile.Size = new System.Drawing.Size(48, 13);

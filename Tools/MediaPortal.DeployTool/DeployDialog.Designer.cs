@@ -28,30 +28,30 @@ namespace MediaPortal.DeployTool
     /// </summary>
     private void InitializeComponent()
     {
-      this.labelSectionHeader = new System.Windows.Forms.Label();
-      this.SuspendLayout();
-      // 
-      // labelSectionHeader
-      // 
-      this.labelSectionHeader.AutoSize = true;
-      this.labelSectionHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.labelSectionHeader.ForeColor = System.Drawing.Color.White;
-      this.labelSectionHeader.Location = new System.Drawing.Point(4, 4);
-      this.labelSectionHeader.Name = "labelSectionHeader";
-      this.labelSectionHeader.Size = new System.Drawing.Size(142, 13);
-      this.labelSectionHeader.TabIndex = 0;
-      this.labelSectionHeader.Text = "Choose installation type";
-      // 
-      // DeployDialog
-      // 
-      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.BackColor = System.Drawing.Color.Transparent;
-      this.Controls.Add(this.labelSectionHeader);
-      this.Name = "DeployDialog";
-      this.Size = new System.Drawing.Size(664, 254);
-      this.ResumeLayout(false);
-      this.PerformLayout();
+        this.labelSectionHeader = new System.Windows.Forms.Label();
+        this.SuspendLayout();
+        // 
+        // labelSectionHeader
+        // 
+        this.labelSectionHeader.AutoSize = true;
+        this.labelSectionHeader.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+        this.labelSectionHeader.ForeColor = System.Drawing.Color.White;
+        this.labelSectionHeader.Location = new System.Drawing.Point(4, 4);
+        this.labelSectionHeader.Name = "labelSectionHeader";
+        this.labelSectionHeader.Size = new System.Drawing.Size(164, 13);
+        this.labelSectionHeader.TabIndex = 0;
+        this.labelSectionHeader.Text = "Choose installation type";
+        // 
+        // DeployDialog
+        // 
+        this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+        this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+        this.BackColor = System.Drawing.Color.Transparent;
+        this.Controls.Add(this.labelSectionHeader);
+        this.Name = "DeployDialog";
+        this.Size = new System.Drawing.Size(664, 254);
+        this.ResumeLayout(false);
+        this.PerformLayout();
 
     }
 

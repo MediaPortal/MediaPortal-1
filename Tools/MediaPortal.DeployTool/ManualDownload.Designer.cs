@@ -42,7 +42,7 @@ namespace MediaPortal.DeployTool
       // labelHeading
       // 
       this.labelHeading.AutoSize = true;
-      this.labelHeading.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+      this.labelHeading.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Bold);
       this.labelHeading.Location = new System.Drawing.Point(13, 13);
       this.labelHeading.Name = "labelHeading";
       this.labelHeading.Size = new System.Drawing.Size(284, 13);
@@ -52,7 +52,7 @@ namespace MediaPortal.DeployTool
       // labelFile
       // 
       this.labelFile.AutoSize = true;
-      this.labelFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))));
+      this.labelFile.Font = new System.Drawing.Font("Verdana", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))));
       this.labelFile.Location = new System.Drawing.Point(13, 38);
       this.labelFile.Name = "labelFile";
       this.labelFile.Size = new System.Drawing.Size(61, 13);
@@ -82,7 +82,7 @@ namespace MediaPortal.DeployTool
       // labelDir
       // 
       this.labelDir.AutoSize = true;
-      this.labelDir.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))));
+      this.labelDir.Font = new System.Drawing.Font("Verdana", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))));
       this.labelDir.Location = new System.Drawing.Point(13, 76);
       this.labelDir.Name = "labelDir";
       this.labelDir.Size = new System.Drawing.Size(101, 13);

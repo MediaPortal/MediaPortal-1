@@ -28,121 +28,126 @@ namespace MediaPortal.DeployTool
     /// </summary>
     private void InitializeComponent()
     {
-      this.labelHeading = new System.Windows.Forms.Label();
-      this.imgMS = new System.Windows.Forms.PictureBox();
-      this.imgMySQL = new System.Windows.Forms.PictureBox();
-      this.imgExists = new System.Windows.Forms.PictureBox();
-      this.rbMSSQL = new System.Windows.Forms.Label();
-      this.rbMySQL = new System.Windows.Forms.Label();
-      this.rbDBAlreadyInstalled = new System.Windows.Forms.Label();
-      ((System.ComponentModel.ISupportInitialize)(this.imgMS)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.imgMySQL)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.imgExists)).BeginInit();
-      this.SuspendLayout();
-      // 
-      // labelHeading
-      // 
-      this.labelHeading.AutoSize = true;
-      this.labelHeading.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.labelHeading.ForeColor = System.Drawing.Color.White;
-      this.labelHeading.Location = new System.Drawing.Point(4, 34);
-      this.labelHeading.Name = "labelHeading";
-      this.labelHeading.Size = new System.Drawing.Size(272, 13);
-      this.labelHeading.TabIndex = 1;
-      this.labelHeading.Text = "Please select the SQL-Server you want to use:";
-      // 
-      // imgMS
-      // 
-      this.imgMS.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      this.imgMS.Location = new System.Drawing.Point(8, 60);
-      this.imgMS.Name = "imgMS";
-      this.imgMS.Size = new System.Drawing.Size(21, 21);
-      this.imgMS.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-      this.imgMS.TabIndex = 20;
-      this.imgMS.TabStop = false;
-      this.imgMS.Click += new System.EventHandler(this.imgMS_Click);
-      // 
-      // imgMySQL
-      // 
-      this.imgMySQL.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      this.imgMySQL.Location = new System.Drawing.Point(8, 104);
-      this.imgMySQL.Name = "imgMySQL";
-      this.imgMySQL.Size = new System.Drawing.Size(21, 21);
-      this.imgMySQL.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-      this.imgMySQL.TabIndex = 21;
-      this.imgMySQL.TabStop = false;
-      this.imgMySQL.Click += new System.EventHandler(this.imgMySQL_Click);
-      // 
-      // imgExists
-      // 
-      this.imgExists.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      this.imgExists.Location = new System.Drawing.Point(8, 143);
-      this.imgExists.Name = "imgExists";
-      this.imgExists.Size = new System.Drawing.Size(21, 21);
-      this.imgExists.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-      this.imgExists.TabIndex = 22;
-      this.imgExists.TabStop = false;
-      this.imgExists.Click += new System.EventHandler(this.imgExists_Click);
-      // 
-      // rbMSSQL
-      // 
-      this.rbMSSQL.AutoSize = true;
-      this.rbMSSQL.ForeColor = System.Drawing.Color.White;
-      this.rbMSSQL.Location = new System.Drawing.Point(45, 64);
-      this.rbMSSQL.Name = "rbMSSQL";
-      this.rbMSSQL.Size = new System.Drawing.Size(148, 13);
-      this.rbMSSQL.TabIndex = 23;
-      this.rbMSSQL.Text = "Microsoft SQL-Server Express";
-      this.rbMSSQL.Click += new System.EventHandler(this.imgMS_Click);
-      // 
-      // rbMySQL
-      // 
-      this.rbMySQL.AutoSize = true;
-      this.rbMySQL.ForeColor = System.Drawing.Color.White;
-      this.rbMySQL.Location = new System.Drawing.Point(45, 108);
-      this.rbMySQL.Name = "rbMySQL";
-      this.rbMySQL.Size = new System.Drawing.Size(51, 13);
-      this.rbMySQL.TabIndex = 24;
-      this.rbMySQL.Text = "MySQL 5";
-      this.rbMySQL.Click += new System.EventHandler(this.imgMySQL_Click);
-      // 
-      // rbDBAlreadyInstalled
-      // 
-      this.rbDBAlreadyInstalled.AutoSize = true;
-      this.rbDBAlreadyInstalled.ForeColor = System.Drawing.Color.White;
-      this.rbDBAlreadyInstalled.Location = new System.Drawing.Point(45, 147);
-      this.rbDBAlreadyInstalled.Name = "rbDBAlreadyInstalled";
-      this.rbDBAlreadyInstalled.Size = new System.Drawing.Size(290, 13);
-      this.rbDBAlreadyInstalled.TabIndex = 25;
-      this.rbDBAlreadyInstalled.Text = "SQL server is already present and will be used for TV-Server";
-      this.rbDBAlreadyInstalled.Click += new System.EventHandler(this.imgExists_Click);
-      // 
-      // DBMSTypeDlg
-      // 
-      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.Controls.Add(this.rbDBAlreadyInstalled);
-      this.Controls.Add(this.rbMySQL);
-      this.Controls.Add(this.rbMSSQL);
-      this.Controls.Add(this.imgExists);
-      this.Controls.Add(this.imgMySQL);
-      this.Controls.Add(this.imgMS);
-      this.Controls.Add(this.labelHeading);
-      this.Name = "DBMSTypeDlg";
-      this.Size = new System.Drawing.Size(664, 252);
-      this.Controls.SetChildIndex(this.labelHeading, 0);
-      this.Controls.SetChildIndex(this.labelSectionHeader, 0);
-      this.Controls.SetChildIndex(this.imgMS, 0);
-      this.Controls.SetChildIndex(this.imgMySQL, 0);
-      this.Controls.SetChildIndex(this.imgExists, 0);
-      this.Controls.SetChildIndex(this.rbMSSQL, 0);
-      this.Controls.SetChildIndex(this.rbMySQL, 0);
-      this.Controls.SetChildIndex(this.rbDBAlreadyInstalled, 0);
-      ((System.ComponentModel.ISupportInitialize)(this.imgMS)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.imgMySQL)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.imgExists)).EndInit();
-      this.ResumeLayout(false);
-      this.PerformLayout();
+        this.labelHeading = new System.Windows.Forms.Label();
+        this.imgMS = new System.Windows.Forms.PictureBox();
+        this.imgMySQL = new System.Windows.Forms.PictureBox();
+        this.imgExists = new System.Windows.Forms.PictureBox();
+        this.rbMSSQL = new System.Windows.Forms.Label();
+        this.rbMySQL = new System.Windows.Forms.Label();
+        this.rbDBAlreadyInstalled = new System.Windows.Forms.Label();
+        ((System.ComponentModel.ISupportInitialize)(this.imgMS)).BeginInit();
+        ((System.ComponentModel.ISupportInitialize)(this.imgMySQL)).BeginInit();
+        ((System.ComponentModel.ISupportInitialize)(this.imgExists)).BeginInit();
+        this.SuspendLayout();
+        // 
+        // labelSectionHeader
+        // 
+        this.labelSectionHeader.Location = new System.Drawing.Point(5, 4);
+        // 
+        // labelHeading
+        // 
+        this.labelHeading.AutoSize = true;
+        this.labelHeading.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+        this.labelHeading.ForeColor = System.Drawing.Color.White;
+        this.labelHeading.Location = new System.Drawing.Point(5, 34);
+        this.labelHeading.Name = "labelHeading";
+        this.labelHeading.Size = new System.Drawing.Size(307, 13);
+        this.labelHeading.TabIndex = 1;
+        this.labelHeading.Text = "Please select the SQL-Server you want to use:";
+        // 
+        // imgMS
+        // 
+        this.imgMS.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+        this.imgMS.Location = new System.Drawing.Point(9, 60);
+        this.imgMS.Name = "imgMS";
+        this.imgMS.Size = new System.Drawing.Size(21, 21);
+        this.imgMS.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+        this.imgMS.TabIndex = 20;
+        this.imgMS.TabStop = false;
+        this.imgMS.Click += new System.EventHandler(this.imgMS_Click);
+        // 
+        // imgMySQL
+        // 
+        this.imgMySQL.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+        this.imgMySQL.Location = new System.Drawing.Point(9, 104);
+        this.imgMySQL.Name = "imgMySQL";
+        this.imgMySQL.Size = new System.Drawing.Size(21, 21);
+        this.imgMySQL.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+        this.imgMySQL.TabIndex = 21;
+        this.imgMySQL.TabStop = false;
+        this.imgMySQL.Click += new System.EventHandler(this.imgMySQL_Click);
+        // 
+        // imgExists
+        // 
+        this.imgExists.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+        this.imgExists.Location = new System.Drawing.Point(9, 143);
+        this.imgExists.Name = "imgExists";
+        this.imgExists.Size = new System.Drawing.Size(21, 21);
+        this.imgExists.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+        this.imgExists.TabIndex = 22;
+        this.imgExists.TabStop = false;
+        this.imgExists.Click += new System.EventHandler(this.imgExists_Click);
+        // 
+        // rbMSSQL
+        // 
+        this.rbMSSQL.AutoSize = true;
+        this.rbMSSQL.ForeColor = System.Drawing.Color.White;
+        this.rbMSSQL.Location = new System.Drawing.Point(52, 64);
+        this.rbMSSQL.Name = "rbMSSQL";
+        this.rbMSSQL.Size = new System.Drawing.Size(178, 13);
+        this.rbMSSQL.TabIndex = 23;
+        this.rbMSSQL.Text = "Microsoft SQL-Server Express";
+        this.rbMSSQL.Click += new System.EventHandler(this.imgMS_Click);
+        // 
+        // rbMySQL
+        // 
+        this.rbMySQL.AutoSize = true;
+        this.rbMySQL.ForeColor = System.Drawing.Color.White;
+        this.rbMySQL.Location = new System.Drawing.Point(52, 108);
+        this.rbMySQL.Name = "rbMySQL";
+        this.rbMySQL.Size = new System.Drawing.Size(57, 13);
+        this.rbMySQL.TabIndex = 24;
+        this.rbMySQL.Text = "MySQL 5";
+        this.rbMySQL.Click += new System.EventHandler(this.imgMySQL_Click);
+        // 
+        // rbDBAlreadyInstalled
+        // 
+        this.rbDBAlreadyInstalled.AutoSize = true;
+        this.rbDBAlreadyInstalled.ForeColor = System.Drawing.Color.White;
+        this.rbDBAlreadyInstalled.Location = new System.Drawing.Point(52, 147);
+        this.rbDBAlreadyInstalled.Name = "rbDBAlreadyInstalled";
+        this.rbDBAlreadyInstalled.Size = new System.Drawing.Size(357, 13);
+        this.rbDBAlreadyInstalled.TabIndex = 25;
+        this.rbDBAlreadyInstalled.Text = "SQL server is already present and will be used for TV-Server";
+        this.rbDBAlreadyInstalled.Click += new System.EventHandler(this.imgExists_Click);
+        // 
+        // DBMSTypeDlg
+        // 
+        this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 13F);
+        this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+        this.Controls.Add(this.rbDBAlreadyInstalled);
+        this.Controls.Add(this.rbMySQL);
+        this.Controls.Add(this.rbMSSQL);
+        this.Controls.Add(this.imgExists);
+        this.Controls.Add(this.imgMySQL);
+        this.Controls.Add(this.imgMS);
+        this.Controls.Add(this.labelHeading);
+        this.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+        this.Name = "DBMSTypeDlg";
+        this.Size = new System.Drawing.Size(775, 252);
+        this.Controls.SetChildIndex(this.labelHeading, 0);
+        this.Controls.SetChildIndex(this.labelSectionHeader, 0);
+        this.Controls.SetChildIndex(this.imgMS, 0);
+        this.Controls.SetChildIndex(this.imgMySQL, 0);
+        this.Controls.SetChildIndex(this.imgExists, 0);
+        this.Controls.SetChildIndex(this.rbMSSQL, 0);
+        this.Controls.SetChildIndex(this.rbMySQL, 0);
+        this.Controls.SetChildIndex(this.rbDBAlreadyInstalled, 0);
+        ((System.ComponentModel.ISupportInitialize)(this.imgMS)).EndInit();
+        ((System.ComponentModel.ISupportInitialize)(this.imgMySQL)).EndInit();
+        ((System.ComponentModel.ISupportInitialize)(this.imgExists)).EndInit();
+        this.ResumeLayout(false);
+        this.PerformLayout();
 
     }
 
