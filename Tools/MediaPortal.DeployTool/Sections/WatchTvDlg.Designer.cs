@@ -40,13 +40,14 @@ namespace MediaPortal.DeployTool
         // 
         this.labelSectionHeader.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.labelSectionHeader.Location = new System.Drawing.Point(230, 29);
+        this.labelSectionHeader.MaximumSize = new System.Drawing.Size(350, 0);
         this.labelSectionHeader.Size = new System.Drawing.Size(324, 16);
         this.labelSectionHeader.Text = "Do you want to watch TV with MediaPortal ?";
         // 
         // imgYes
         // 
         this.imgYes.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-        this.imgYes.Location = new System.Drawing.Point(233, 72);
+        this.imgYes.Location = new System.Drawing.Point(233, 78);
         this.imgYes.Name = "imgYes";
         this.imgYes.Size = new System.Drawing.Size(21, 21);
         this.imgYes.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -58,7 +59,8 @@ namespace MediaPortal.DeployTool
         // 
         this.rbYesWatchTv.AutoSize = true;
         this.rbYesWatchTv.ForeColor = System.Drawing.Color.White;
-        this.rbYesWatchTv.Location = new System.Drawing.Point(265, 76);
+        this.rbYesWatchTv.Location = new System.Drawing.Point(265, 82);
+        this.rbYesWatchTv.MaximumSize = new System.Drawing.Size(300, 0);
         this.rbYesWatchTv.Name = "rbYesWatchTv";
         this.rbYesWatchTv.Size = new System.Drawing.Size(231, 13);
         this.rbYesWatchTv.TabIndex = 17;
@@ -69,7 +71,8 @@ namespace MediaPortal.DeployTool
         // 
         this.rbNoWatchTv.AutoSize = true;
         this.rbNoWatchTv.ForeColor = System.Drawing.Color.White;
-        this.rbNoWatchTv.Location = new System.Drawing.Point(265, 136);
+        this.rbNoWatchTv.Location = new System.Drawing.Point(265, 132);
+        this.rbNoWatchTv.MaximumSize = new System.Drawing.Size(300, 0);
         this.rbNoWatchTv.Name = "rbNoWatchTv";
         this.rbNoWatchTv.Size = new System.Drawing.Size(238, 13);
         this.rbNoWatchTv.TabIndex = 19;
@@ -79,7 +82,7 @@ namespace MediaPortal.DeployTool
         // imgNo
         // 
         this.imgNo.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-        this.imgNo.Location = new System.Drawing.Point(233, 132);
+        this.imgNo.Location = new System.Drawing.Point(233, 128);
         this.imgNo.Name = "imgNo";
         this.imgNo.Size = new System.Drawing.Size(21, 21);
         this.imgNo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;

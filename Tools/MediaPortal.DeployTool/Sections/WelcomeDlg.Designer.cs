@@ -55,9 +55,9 @@ namespace MediaPortal.DeployTool
         this.labelHeading2.Location = new System.Drawing.Point(157, 75);
         this.labelHeading2.MaximumSize = new System.Drawing.Size(450, 0);
         this.labelHeading2.Name = "labelHeading2";
-        this.labelHeading2.Size = new System.Drawing.Size(433, 14);
+        this.labelHeading2.Size = new System.Drawing.Size(437, 14);
         this.labelHeading2.TabIndex = 2;
-        this.labelHeading2.Text = "This deployment tool will guide you through the installation process";
+        this.labelHeading2.Text = "This deployment tool will guide you through the installation process.";
         // 
         // labelHeading3
         // 

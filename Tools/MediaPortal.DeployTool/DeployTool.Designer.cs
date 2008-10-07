@@ -90,6 +90,7 @@ namespace MediaPortal.DeployTool
         this.splitContainer2.Panel2.Controls.Add(this.button3);
         this.splitContainer2.Panel2.Controls.Add(this.nextButton);
         this.splitContainer2.Panel2.Controls.Add(this.backButton);
+        this.splitContainer2.Panel2.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.splitContainer2.Panel2.Paint += new System.Windows.Forms.PaintEventHandler(this.splitContainer2_Panel2_Paint);
         this.splitContainer2.Size = new System.Drawing.Size(666, 293);
         this.splitContainer2.SplitterDistance = 250;
@@ -102,7 +103,7 @@ namespace MediaPortal.DeployTool
         this.button3.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.button3.Location = new System.Drawing.Point(33, 8);
         this.button3.Name = "button3";
-        this.button3.Size = new System.Drawing.Size(102, 25);
+        this.button3.Size = new System.Drawing.Size(106, 25);
         this.button3.TabIndex = 2;
         this.button3.Text = "Exit Installer";
         this.button3.UseVisualStyleBackColor = true;
@@ -126,7 +127,7 @@ namespace MediaPortal.DeployTool
         this.backButton.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.backButton.Location = new System.Drawing.Point(446, 8);
         this.backButton.Name = "backButton";
-        this.backButton.Size = new System.Drawing.Size(75, 23);
+        this.backButton.Size = new System.Drawing.Size(78, 23);
         this.backButton.TabIndex = 0;
         this.backButton.Text = "Previous";
         this.backButton.UseVisualStyleBackColor = true;

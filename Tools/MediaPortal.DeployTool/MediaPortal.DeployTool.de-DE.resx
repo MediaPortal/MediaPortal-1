@@ -118,19 +118,19 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="WatchTV_labelSectionHeader" xml:space="preserve">
-    <value>MediaPortal für TV verwenden?</value>
+    <value>Möchten Sie mit MediaPortal fernsehen?</value>
   </data>
   <data name="WatchTV_on" xml:space="preserve">
-    <value>Ja, ich möchte mit MediaPortal fernsehen.</value>
+    <value>Ja, ich besitze eine TV-Karte und möchte mit MediaPortal fernsehen.</value>
   </data>
   <data name="WatchTV_off" xml:space="preserve">
-    <value>Nein, ich möchte MediaPortal nicht zum Fernsehen benutzen.</value>
+    <value>Nein, ich möchte MediaPortal nicht zum Fernsehen verwenden.</value>
   </data>
   <data name="WatchHDTv_labelSectionHeader" xml:space="preserve">
-    <value>Möchten Sie HDTV mit MediaPortal erleben?</value>
+    <value>Möchten Sie HDTV-Sender mit MediaPortal sehen?</value>
   </data>
   <data name="WatchHDTv_yes" xml:space="preserve">
-    <value>Ja, MediaPortal soll dazu in der Lage sein.</value>
+    <value>Ja, ich benötige HDTV-Unterstützung.</value>
   </data>
   <data name="WatchHDTv_no" xml:space="preserve">
     <value>Nein, ich benötige keine HDTV-Unterstützung.</value>
@@ -142,10 +142,10 @@
     <value>Welche TV-Engine möchten Sie benutzen?</value>
   </data>
   <data name="TvEngineType_rbTvBuildIn" xml:space="preserve">
-    <value>Eingebautes TV-Modul von MediaPortal 1.0.</value>
+    <value>Das integrierte TV-Modul von MediaPortal 1.0.</value>
   </data>
   <data name="TvEngineType_rbTvEngine" xml:space="preserve">
-    <value>MediaPortal TV-Server 1.0</value>
+    <value>MediaPortal TV-Server 1.0 (empfohlen)</value>
   </data>
   <data name="TvEngineType_labelTvEngine" xml:space="preserve">
     <value>Der TV-Server 1.0 hat folgende Vorteile: 
@@ -175,7 +175,7 @@ und integriert sich völlig transparent in die Oberfläche von MediaPortal.</val
     <value>Die benutzerdefinierte Installation erlaubt die Installation von Client-/Server-Umgebungen, das Festlegen der Installationsverzeichnisse und sonstige Einstellungen.</value>
   </data>
   <data name="BaseInstallation_labelOneClickCaption" xml:space="preserve">
-    <value>1-Click-Installation</value>
+    <value>1-Klick-Installation</value>
   </data>
   <data name="BaseInstallation_labelOneClickDesc" xml:space="preserve">
     <value>Alle benötigten Anwendungen werden in ihre Standardverzeichnisse mit den Standardeinstellungen installiert. Das Datenbankpasswort lautet "MediaPortal".</value>
@@ -184,7 +184,7 @@ und integriert sich völlig transparent in die Oberfläche von MediaPortal.</val
     <value>Benutzerdefinierte Installation durchführen</value>
   </data>
   <data name="BaseInstallation_rbOneClick" xml:space="preserve">
-    <value>1-Click Installation durchführen</value>
+    <value>1-Klick Installation durchführen</value>
   </data>
   <data name="CustomInstallation_labelSectionHeader" xml:space="preserve">
     <value>Bitte wählen Sie die gewünschte Konfiguration aus</value>
@@ -196,10 +196,10 @@ und integriert sich völlig transparent in die Oberfläche von MediaPortal.</val
     <value>Es wird nur MediaPortal 1.0 installiert. Zum Fernsehen verbindet sich MediaPortal mit einem TV-Server in Ihrem Netzwerk.</value>
   </data>
   <data name="CustomInstallation_rbSingleSeat" xml:space="preserve">
-    <value>MediaPortal "Single Seat" Installation (alles auf einem Rechner)</value>
+    <value>MediaPortal "Einzelplatz"-Installation (alles auf einem Rechner)</value>
   </data>
   <data name="CustomInstallation_labelSingleSeat" xml:space="preserve">
-    <value>Diese Auswahl ist die richtige, wenn Sie MediaPortal und den TV-Server auf einem PC installieren wollen.</value>
+    <value>Diese Auswahl ist die richtige wenn Sie MediaPortal und den TV-Server auf einem PC installieren wollen.</value>
   </data>
   <data name="CustomInstallation_rbTvServerMaster" xml:space="preserve">
     <value>MediaPortal dedizierter TV-Server (Master Server mit SQL Server, ohne MediaPortal)</value>
@@ -230,10 +230,10 @@ Dieser PC versorgt andere PCs mit MediaPortal in Ihrem Netzwerk.</value>
     <value>Passwort des Benutzers im SQL Server</value>
   </data>
   <data name="DBMSSettings_msgSelectDir" xml:space="preserve">
-    <value>Wählen Sie das Installationsverzeichnis für den SQL-Server aus.</value>
+    <value>Wählen Sie das Installationsverzeichnis für den SQL-Server.</value>
   </data>
   <data name="DBMSType_labelHeading" xml:space="preserve">
-    <value>Bitte wählen Sie den zu installierenden SQL-Server Typ aus:</value>
+    <value>Bitte wählen Sie den zu installierenden SQL-Server Typ:</value>
   </data>
   <data name="DBMSType_rbMSSQL" xml:space="preserve">
     <value>Microsoft SQL-Server 2005</value>
@@ -242,7 +242,7 @@ Dieser PC versorgt andere PCs mit MediaPortal in Ihrem Netzwerk.</value>
     <value>MySQL 5</value>
   </data>
   <data name="DBMSType_rbDBAlreadyInstalled" xml:space="preserve">
-    <value>Es ist bereits ein SQL Server vorhanden. Der TV-Server soll diesen verwenden.</value>
+    <value>Es ist bereits ein SQL Server vorhanden und dieser soll verwendet werden.</value>
   </data>
   <data name="Finished_labelHeading1" xml:space="preserve">
     <value>Herzlichen Glückwunsch !</value>
@@ -347,7 +347,7 @@ Dieser PC versorgt andere PCs mit MediaPortal in Ihrem Netzwerk.</value>
     <value>Beenden</value>
   </data>
   <data name="MainWindow_labelAppHeading" xml:space="preserve">
-    <value>Diese Anwendung wird Sie durch die Installation von MediaPortal und aller benötigten Komponenten führen.</value>
+    <value>Diese Anwendung wird Sie durch die Installation von MediaPortal und aller benötigten Komponenten leiten.</value>
   </data>
   <data name="MainWindow_nextButton" xml:space="preserve">
     <value>Weiter</value>
@@ -386,7 +386,7 @@ Dieser PC versorgt andere PCs mit MediaPortal in Ihrem Netzwerk.</value>
     <value>MediaPortal Installationsverzeichnis:</value>
   </data>
   <data name="MPSettings_msgSelectDir" xml:space="preserve">
-    <value>Wählen Sie das Installationsverzeichnis für die MediaPortal Installation aus.</value>
+    <value>Wählen Sie das Installationsverzeichnis für die MediaPortal Installation.</value>
   </data>
   <data name="TvServerSettings_buttonBrowse" xml:space="preserve">
     <value>Durchsuchen</value>
@@ -404,7 +404,7 @@ Dieser PC versorgt andere PCs mit MediaPortal in Ihrem Netzwerk.</value>
     <value>TV-Server Installationsverzeichnis:</value>
   </data>
   <data name="TvServerSettings_msgSelectDir" xml:space="preserve">
-    <value>Wählen Sie das Verzeichnis für die TV-Server Installation aus.</value>
+    <value>Wählen Sie das Verzeichnis für die TV-Server Installation.</value>
   </data>
   <data name="Welcome_labelHeading1" xml:space="preserve">
     <value>Vielen Dank, dass Sie sich für MediaPortal entschieden haben!</value>
@@ -413,7 +413,7 @@ Dieser PC versorgt andere PCs mit MediaPortal in Ihrem Netzwerk.</value>
     <value>Diese Anwendung wird Sie durch den Installationsvorgang begleiten.</value>
   </data>
   <data name="Welcome_labelHeading3" xml:space="preserve">
-    <value>Bitte wählen Sie Ihre Srache aus:</value>
+    <value>Bitte wählen Sie Ihre Sprache:</value>
   </data>
   <data name="Finished_labelEbay" xml:space="preserve">
     <value>MediaPortal ist freie, kostenlose GPL-Software!</value>
@@ -474,10 +474,10 @@ Möchten sie die Installations-Schritte jetzt durchführen, oder lediglich die b
     <value>Klicken Sie "Herunterladen" um den Internet-Download der nötigen Dateien jetzt zu starten.</value>
   </data>
   <data name="OS_Support" xml:space="preserve">
-    <value>Ihr Betriebssystem wird nicht von MediaPortal unterstützt.</value>
+    <value>Ihr Betriebssystem wird leider nicht von MediaPortal unterstützt.</value>
   </data>
   <data name="OS_Warning" xml:space="preserve">
-    <value>Ihr Betriebsystem wird nicht unterstützt, weil MS einige benötigte Hotfixes nicht veröffentlicht hat.
+    <value>Ihr Betriebsystem wird leider nicht unterstützt. Mirosoft stellt für Ihr System nicht alle benötigten Hotfixe bereit.
 Fortsetzung erfolgt auf eigenes Risiko.</value>
   </data>
   <data name="DownloadSettings_failed" xml:space="preserve">

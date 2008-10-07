@@ -42,14 +42,15 @@ namespace MediaPortal.DeployTool
         // labelSectionHeader
         // 
         this.labelSectionHeader.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        this.labelSectionHeader.Location = new System.Drawing.Point(198, 39);
+        this.labelSectionHeader.Location = new System.Drawing.Point(230, 29);
+        this.labelSectionHeader.MaximumSize = new System.Drawing.Size(350, 0);
         this.labelSectionHeader.Size = new System.Drawing.Size(345, 16);
         this.labelSectionHeader.Text = "Do you want to watch HDTV with MediaPortal ?";
         // 
         // imgYesHD
         // 
         this.imgYesHD.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-        this.imgYesHD.Location = new System.Drawing.Point(265, 78);
+        this.imgYesHD.Location = new System.Drawing.Point(233, 78);
         this.imgYesHD.Name = "imgYesHD";
         this.imgYesHD.Size = new System.Drawing.Size(21, 21);
         this.imgYesHD.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -60,7 +61,7 @@ namespace MediaPortal.DeployTool
         // imgNoHD
         // 
         this.imgNoHD.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-        this.imgNoHD.Location = new System.Drawing.Point(265, 128);
+        this.imgNoHD.Location = new System.Drawing.Point(233, 128);
         this.imgNoHD.Name = "imgNoHD";
         this.imgNoHD.Size = new System.Drawing.Size(21, 21);
         this.imgNoHD.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -71,7 +72,7 @@ namespace MediaPortal.DeployTool
         // imgMaybeHD
         // 
         this.imgMaybeHD.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-        this.imgMaybeHD.Location = new System.Drawing.Point(265, 176);
+        this.imgMaybeHD.Location = new System.Drawing.Point(233, 178);
         this.imgMaybeHD.Name = "imgMaybeHD";
         this.imgMaybeHD.Size = new System.Drawing.Size(21, 21);
         this.imgMaybeHD.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -84,7 +85,8 @@ namespace MediaPortal.DeployTool
         this.rbYesHD.AutoSize = true;
         this.rbYesHD.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.rbYesHD.ForeColor = System.Drawing.Color.White;
-        this.rbYesHD.Location = new System.Drawing.Point(297, 82);
+        this.rbYesHD.Location = new System.Drawing.Point(265, 82);
+        this.rbYesHD.MaximumSize = new System.Drawing.Size(350, 0);
         this.rbYesHD.Name = "rbYesHD";
         this.rbYesHD.Size = new System.Drawing.Size(283, 13);
         this.rbYesHD.TabIndex = 16;
@@ -96,7 +98,8 @@ namespace MediaPortal.DeployTool
         this.rbNoHD.AutoSize = true;
         this.rbNoHD.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.rbNoHD.ForeColor = System.Drawing.Color.White;
-        this.rbNoHD.Location = new System.Drawing.Point(296, 132);
+        this.rbNoHD.Location = new System.Drawing.Point(265, 132);
+        this.rbNoHD.MaximumSize = new System.Drawing.Size(350, 0);
         this.rbNoHD.Name = "rbNoHD";
         this.rbNoHD.Size = new System.Drawing.Size(286, 13);
         this.rbNoHD.TabIndex = 17;
@@ -108,7 +111,8 @@ namespace MediaPortal.DeployTool
         this.rbMaybeHD.AutoSize = true;
         this.rbMaybeHD.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.rbMaybeHD.ForeColor = System.Drawing.Color.White;
-        this.rbMaybeHD.Location = new System.Drawing.Point(297, 180);
+        this.rbMaybeHD.Location = new System.Drawing.Point(265, 182);
+        this.rbMaybeHD.MaximumSize = new System.Drawing.Size(350, 0);
         this.rbMaybeHD.Name = "rbMaybeHD";
         this.rbMaybeHD.Size = new System.Drawing.Size(193, 13);
         this.rbMaybeHD.TabIndex = 18;
