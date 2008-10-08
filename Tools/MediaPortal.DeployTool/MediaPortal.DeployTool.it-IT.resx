@@ -225,14 +225,13 @@ Se esiste un file corrotto, verrà cancellato ora.</value>
     <value>Congratulazioni !</value>
   </data>
   <data name="Finished_labelHeading2_download" xml:space="preserve">
-    <value>Avete scaticato con successo tutti i componenti per MediaPortal</value>
+    <value>Avete scaricato con successo tutti i componenti</value>
   </data>
   <data name="Finished_labelHeading2_install" xml:space="preserve">
     <value>Avete completato con successo l'installazione di MediaPortal</value>
   </data>
   <data name="Finished_labelHeading3_download" xml:space="preserve">
-    <value>Questo programma adesso si chiuderà e aprirà la cartella "MediaPortal Installation".
-Copiate questa cartella sul vostro HTPC. Cominciate l'installazione lanciando "MediaPortal.Deploy.exe".</value>
+    <value>Chiudendo questo programma, si aprirà la cartella "MediaPortal Installation". Copiatela sul vostro HTPC e installate lanciando "MediaPortal.Deploy.exe".</value>
   </data>
   <data name="Finished_labelHeading3_install" xml:space="preserve">
     <value>Qui sotto potete trovare alcuni link utili per ricevere l'aiuto iniziale su MediaPortal</value>
