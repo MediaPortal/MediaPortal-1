@@ -40,7 +40,7 @@ namespace MediaPortal.DeployTool
         // 
         // labelSectionHeader
         // 
-        this.labelSectionHeader.Location = new System.Drawing.Point(120, 0);
+        this.labelSectionHeader.Location = new System.Drawing.Point(197, 0);
         this.labelSectionHeader.Size = new System.Drawing.Size(254, 13);
         this.labelSectionHeader.Text = "Which TV-Engine do you want to use ?";
         // 
@@ -49,7 +49,7 @@ namespace MediaPortal.DeployTool
         this.labelTV3.AutoSize = true;
         this.labelTV3.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F);
         this.labelTV3.ForeColor = System.Drawing.Color.White;
-        this.labelTV3.Location = new System.Drawing.Point(190, 77);
+        this.labelTV3.Location = new System.Drawing.Point(197, 77);
         this.labelTV3.MaximumSize = new System.Drawing.Size(475, 0);
         this.labelTV3.Name = "labelTV3";
         this.labelTV3.Size = new System.Drawing.Size(436, 169);
@@ -58,8 +58,9 @@ namespace MediaPortal.DeployTool
         // 
         // imgTVE2
         // 
+        this.imgTVE2.Cursor = System.Windows.Forms.Cursors.Hand;
         this.imgTVE2.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-        this.imgTVE2.Location = new System.Drawing.Point(223, 23);
+        this.imgTVE2.Location = new System.Drawing.Point(200, 23);
         this.imgTVE2.Name = "imgTVE2";
         this.imgTVE2.Size = new System.Drawing.Size(21, 21);
         this.imgTVE2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -69,8 +70,9 @@ namespace MediaPortal.DeployTool
         // 
         // imgTVE3
         // 
+        this.imgTVE3.Cursor = System.Windows.Forms.Cursors.Hand;
         this.imgTVE3.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-        this.imgTVE3.Location = new System.Drawing.Point(223, 50);
+        this.imgTVE3.Location = new System.Drawing.Point(200, 50);
         this.imgTVE3.Name = "imgTVE3";
         this.imgTVE3.Size = new System.Drawing.Size(21, 21);
         this.imgTVE3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -81,9 +83,10 @@ namespace MediaPortal.DeployTool
         // rbTV2
         // 
         this.rbTV2.AutoSize = true;
+        this.rbTV2.Cursor = System.Windows.Forms.Cursors.Hand;
         this.rbTV2.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.rbTV2.ForeColor = System.Drawing.Color.White;
-        this.rbTV2.Location = new System.Drawing.Point(251, 26);
+        this.rbTV2.Location = new System.Drawing.Point(230, 26);
         this.rbTV2.Name = "rbTV2";
         this.rbTV2.Size = new System.Drawing.Size(220, 13);
         this.rbTV2.TabIndex = 22;
@@ -93,9 +96,10 @@ namespace MediaPortal.DeployTool
         // rbTV3
         // 
         this.rbTV3.AutoSize = true;
+        this.rbTV3.Cursor = System.Windows.Forms.Cursors.Hand;
         this.rbTV3.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.rbTV3.ForeColor = System.Drawing.Color.White;
-        this.rbTV3.Location = new System.Drawing.Point(251, 54);
+        this.rbTV3.Location = new System.Drawing.Point(230, 54);
         this.rbTV3.Name = "rbTV3";
         this.rbTV3.Size = new System.Drawing.Size(158, 13);
         this.rbTV3.TabIndex = 23;

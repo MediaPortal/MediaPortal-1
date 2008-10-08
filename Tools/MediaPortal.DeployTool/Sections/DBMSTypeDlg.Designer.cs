@@ -49,7 +49,7 @@ namespace MediaPortal.DeployTool
         this.labelHeading.AutoSize = true;
         this.labelHeading.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.labelHeading.ForeColor = System.Drawing.Color.White;
-        this.labelHeading.Location = new System.Drawing.Point(5, 34);
+        this.labelHeading.Location = new System.Drawing.Point(5, 4);
         this.labelHeading.Name = "labelHeading";
         this.labelHeading.Size = new System.Drawing.Size(307, 13);
         this.labelHeading.TabIndex = 1;
@@ -57,8 +57,9 @@ namespace MediaPortal.DeployTool
         // 
         // imgMS
         // 
+        this.imgMS.Cursor = System.Windows.Forms.Cursors.Hand;
         this.imgMS.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-        this.imgMS.Location = new System.Drawing.Point(9, 60);
+        this.imgMS.Location = new System.Drawing.Point(25, 40);
         this.imgMS.Name = "imgMS";
         this.imgMS.Size = new System.Drawing.Size(21, 21);
         this.imgMS.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -68,8 +69,9 @@ namespace MediaPortal.DeployTool
         // 
         // imgMySQL
         // 
+        this.imgMySQL.Cursor = System.Windows.Forms.Cursors.Hand;
         this.imgMySQL.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-        this.imgMySQL.Location = new System.Drawing.Point(9, 104);
+        this.imgMySQL.Location = new System.Drawing.Point(25, 110);
         this.imgMySQL.Name = "imgMySQL";
         this.imgMySQL.Size = new System.Drawing.Size(21, 21);
         this.imgMySQL.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -79,8 +81,9 @@ namespace MediaPortal.DeployTool
         // 
         // imgExists
         // 
+        this.imgExists.Cursor = System.Windows.Forms.Cursors.Hand;
         this.imgExists.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-        this.imgExists.Location = new System.Drawing.Point(9, 143);
+        this.imgExists.Location = new System.Drawing.Point(25, 180);
         this.imgExists.Name = "imgExists";
         this.imgExists.Size = new System.Drawing.Size(21, 21);
         this.imgExists.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -91,10 +94,12 @@ namespace MediaPortal.DeployTool
         // rbMSSQL
         // 
         this.rbMSSQL.AutoSize = true;
+        this.rbMSSQL.Cursor = System.Windows.Forms.Cursors.Hand;
+        this.rbMSSQL.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.rbMSSQL.ForeColor = System.Drawing.Color.White;
-        this.rbMSSQL.Location = new System.Drawing.Point(52, 64);
+        this.rbMSSQL.Location = new System.Drawing.Point(50, 44);
         this.rbMSSQL.Name = "rbMSSQL";
-        this.rbMSSQL.Size = new System.Drawing.Size(178, 13);
+        this.rbMSSQL.Size = new System.Drawing.Size(201, 13);
         this.rbMSSQL.TabIndex = 23;
         this.rbMSSQL.Text = "Microsoft SQL-Server Express";
         this.rbMSSQL.Click += new System.EventHandler(this.imgMS_Click);
@@ -102,10 +107,12 @@ namespace MediaPortal.DeployTool
         // rbMySQL
         // 
         this.rbMySQL.AutoSize = true;
+        this.rbMySQL.Cursor = System.Windows.Forms.Cursors.Hand;
+        this.rbMySQL.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.rbMySQL.ForeColor = System.Drawing.Color.White;
-        this.rbMySQL.Location = new System.Drawing.Point(52, 108);
+        this.rbMySQL.Location = new System.Drawing.Point(52, 114);
         this.rbMySQL.Name = "rbMySQL";
-        this.rbMySQL.Size = new System.Drawing.Size(57, 13);
+        this.rbMySQL.Size = new System.Drawing.Size(61, 13);
         this.rbMySQL.TabIndex = 24;
         this.rbMySQL.Text = "MySQL 5";
         this.rbMySQL.Click += new System.EventHandler(this.imgMySQL_Click);
@@ -113,10 +120,12 @@ namespace MediaPortal.DeployTool
         // rbDBAlreadyInstalled
         // 
         this.rbDBAlreadyInstalled.AutoSize = true;
+        this.rbDBAlreadyInstalled.Cursor = System.Windows.Forms.Cursors.Hand;
+        this.rbDBAlreadyInstalled.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.rbDBAlreadyInstalled.ForeColor = System.Drawing.Color.White;
-        this.rbDBAlreadyInstalled.Location = new System.Drawing.Point(52, 147);
+        this.rbDBAlreadyInstalled.Location = new System.Drawing.Point(52, 184);
         this.rbDBAlreadyInstalled.Name = "rbDBAlreadyInstalled";
-        this.rbDBAlreadyInstalled.Size = new System.Drawing.Size(357, 13);
+        this.rbDBAlreadyInstalled.Size = new System.Drawing.Size(403, 13);
         this.rbDBAlreadyInstalled.TabIndex = 25;
         this.rbDBAlreadyInstalled.Text = "SQL server is already present and will be used for TV-Server";
         this.rbDBAlreadyInstalled.Click += new System.EventHandler(this.imgExists_Click);
@@ -125,6 +134,7 @@ namespace MediaPortal.DeployTool
         // 
         this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 13F);
         this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+        this.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_middle_empty;
         this.Controls.Add(this.rbDBAlreadyInstalled);
         this.Controls.Add(this.rbMySQL);
         this.Controls.Add(this.rbMSSQL);

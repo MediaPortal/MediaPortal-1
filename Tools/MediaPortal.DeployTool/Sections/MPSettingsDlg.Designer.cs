@@ -42,6 +42,8 @@ namespace MediaPortal.DeployTool
         // buttonBrowse
         // 
         this.buttonBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+        this.buttonBrowse.Cursor = System.Windows.Forms.Cursors.Hand;
+        this.buttonBrowse.ForeColor = System.Drawing.Color.White;
         this.buttonBrowse.Location = new System.Drawing.Point(514, 66);
         this.buttonBrowse.Name = "buttonBrowse";
         this.buttonBrowse.Size = new System.Drawing.Size(115, 23);
@@ -55,6 +57,7 @@ namespace MediaPortal.DeployTool
         this.textBoxDir.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                     | System.Windows.Forms.AnchorStyles.Right)));
         this.textBoxDir.Location = new System.Drawing.Point(10, 68);
+        this.textBoxDir.MaximumSize = new System.Drawing.Size(490, 0);
         this.textBoxDir.Name = "textBoxDir";
         this.textBoxDir.Size = new System.Drawing.Size(486, 21);
         this.textBoxDir.TabIndex = 13;
@@ -84,6 +87,7 @@ namespace MediaPortal.DeployTool
         this.checkBoxFirewall.AutoSize = true;
         this.checkBoxFirewall.Checked = true;
         this.checkBoxFirewall.CheckState = System.Windows.Forms.CheckState.Checked;
+        this.checkBoxFirewall.Cursor = System.Windows.Forms.Cursors.Hand;
         this.checkBoxFirewall.ForeColor = System.Drawing.Color.White;
         this.checkBoxFirewall.Location = new System.Drawing.Point(12, 117);
         this.checkBoxFirewall.Name = "checkBoxFirewall";
@@ -96,6 +100,7 @@ namespace MediaPortal.DeployTool
         // 
         this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 13F);
         this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+        this.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_middle_empty;
         this.Controls.Add(this.checkBoxFirewall);
         this.Controls.Add(this.buttonBrowse);
         this.Controls.Add(this.textBoxDir);
@@ -104,6 +109,7 @@ namespace MediaPortal.DeployTool
         this.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.Name = "MPSettingsDlg";
         this.Size = new System.Drawing.Size(723, 172);
+        this.Load += new System.EventHandler(this.MPSettingsDlg_Load);
         this.Controls.SetChildIndex(this.labelSectionHeader, 0);
         this.Controls.SetChildIndex(this.labelHeading, 0);
         this.Controls.SetChildIndex(this.labelInstDir, 0);

@@ -118,5 +118,10 @@ namespace MediaPortal.DeployTool
       catch (Exception) { }
       DialogResult = DialogResult.Cancel;
     }
+
+      private void HTTPDownload_Load(object sender, EventArgs e)
+      {
+
+      }
   }
 }

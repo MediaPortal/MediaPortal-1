@@ -49,6 +49,7 @@ namespace MediaPortal.DeployTool
         // 
         // imgYesHD
         // 
+        this.imgYesHD.Cursor = System.Windows.Forms.Cursors.Hand;
         this.imgYesHD.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
         this.imgYesHD.Location = new System.Drawing.Point(233, 78);
         this.imgYesHD.Name = "imgYesHD";
@@ -60,6 +61,7 @@ namespace MediaPortal.DeployTool
         // 
         // imgNoHD
         // 
+        this.imgNoHD.Cursor = System.Windows.Forms.Cursors.Hand;
         this.imgNoHD.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
         this.imgNoHD.Location = new System.Drawing.Point(233, 128);
         this.imgNoHD.Name = "imgNoHD";
@@ -71,6 +73,7 @@ namespace MediaPortal.DeployTool
         // 
         // imgMaybeHD
         // 
+        this.imgMaybeHD.Cursor = System.Windows.Forms.Cursors.Hand;
         this.imgMaybeHD.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
         this.imgMaybeHD.Location = new System.Drawing.Point(233, 178);
         this.imgMaybeHD.Name = "imgMaybeHD";
@@ -83,6 +86,7 @@ namespace MediaPortal.DeployTool
         // rbYesHD
         // 
         this.rbYesHD.AutoSize = true;
+        this.rbYesHD.Cursor = System.Windows.Forms.Cursors.Hand;
         this.rbYesHD.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.rbYesHD.ForeColor = System.Drawing.Color.White;
         this.rbYesHD.Location = new System.Drawing.Point(265, 82);
@@ -96,6 +100,7 @@ namespace MediaPortal.DeployTool
         // rbNoHD
         // 
         this.rbNoHD.AutoSize = true;
+        this.rbNoHD.Cursor = System.Windows.Forms.Cursors.Hand;
         this.rbNoHD.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.rbNoHD.ForeColor = System.Drawing.Color.White;
         this.rbNoHD.Location = new System.Drawing.Point(265, 132);
@@ -109,6 +114,7 @@ namespace MediaPortal.DeployTool
         // rbMaybeHD
         // 
         this.rbMaybeHD.AutoSize = true;
+        this.rbMaybeHD.Cursor = System.Windows.Forms.Cursors.Hand;
         this.rbMaybeHD.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.rbMaybeHD.ForeColor = System.Drawing.Color.White;
         this.rbMaybeHD.Location = new System.Drawing.Point(265, 182);

@@ -93,5 +93,10 @@ namespace MediaPortal.DeployTool
           textBoxDir.Text = dlg.SelectedPath + "\\MediaPortal";
       }
     }
+
+      private void MPSettingsDlg_Load(object sender, EventArgs e)
+      {
+
+      }
   }
 }

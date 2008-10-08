@@ -89,6 +89,11 @@ namespace MediaPortal.DeployTool
       rbDownloadOnlyChecked = true;
     }
 
+      private void labelSectionHeader_Click(object sender, EventArgs e)
+      {
+
+      }
+
 
   }
 }

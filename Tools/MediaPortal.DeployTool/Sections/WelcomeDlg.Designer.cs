@@ -72,6 +72,7 @@ namespace MediaPortal.DeployTool
         // 
         // cbLanguage
         // 
+        this.cbLanguage.Cursor = System.Windows.Forms.Cursors.Hand;
         this.cbLanguage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
         this.cbLanguage.Font = new System.Drawing.Font("Verdana", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.cbLanguage.FormattingEnabled = true;

@@ -78,5 +78,10 @@ namespace MediaPortal.DeployTool
       else
         DialogResult = DialogResult.OK;
     }
+
+      private void ManualDownload_Load(object sender, EventArgs e)
+      {
+
+      }
   }
 }

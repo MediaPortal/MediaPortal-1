@@ -44,9 +44,11 @@ namespace MediaPortal.DeployTool
         this.labelSectionHeader.MaximumSize = new System.Drawing.Size(350, 0);
         this.labelSectionHeader.Size = new System.Drawing.Size(348, 112);
         this.labelSectionHeader.Text = resources.GetString("labelSectionHeader.Text");
+        this.labelSectionHeader.Click += new System.EventHandler(this.labelSectionHeader_Click);
         // 
         // imgInstallNow
         // 
+        this.imgInstallNow.Cursor = System.Windows.Forms.Cursors.Hand;
         this.imgInstallNow.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
         this.imgInstallNow.Location = new System.Drawing.Point(200, 164);
         this.imgInstallNow.Name = "imgInstallNow";
@@ -58,6 +60,7 @@ namespace MediaPortal.DeployTool
         // 
         // imgDownloadOnly
         // 
+        this.imgDownloadOnly.Cursor = System.Windows.Forms.Cursors.Hand;
         this.imgDownloadOnly.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
         this.imgDownloadOnly.Location = new System.Drawing.Point(200, 199);
         this.imgDownloadOnly.Name = "imgDownloadOnly";
@@ -70,6 +73,7 @@ namespace MediaPortal.DeployTool
         // rbInstallNow
         // 
         this.rbInstallNow.AutoSize = true;
+        this.rbInstallNow.Cursor = System.Windows.Forms.Cursors.Hand;
         this.rbInstallNow.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.rbInstallNow.ForeColor = System.Drawing.Color.White;
         this.rbInstallNow.Location = new System.Drawing.Point(230, 168);
@@ -82,6 +86,7 @@ namespace MediaPortal.DeployTool
         // rbDownloadOnly
         // 
         this.rbDownloadOnly.AutoSize = true;
+        this.rbDownloadOnly.Cursor = System.Windows.Forms.Cursors.Hand;
         this.rbDownloadOnly.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.rbDownloadOnly.ForeColor = System.Drawing.Color.White;
         this.rbDownloadOnly.Location = new System.Drawing.Point(230, 203);

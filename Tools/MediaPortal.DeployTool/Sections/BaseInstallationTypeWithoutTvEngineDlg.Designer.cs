@@ -42,6 +42,7 @@ namespace MediaPortal.DeployTool
         // 
         // labelSectionHeader
         // 
+        this.labelSectionHeader.Location = new System.Drawing.Point(179, 0);
         this.labelSectionHeader.Size = new System.Drawing.Size(309, 13);
         this.labelSectionHeader.Text = "Please choose which setup you want to install:";
         this.labelSectionHeader.Visible = false;
@@ -49,9 +50,10 @@ namespace MediaPortal.DeployTool
         // rbAdvanced
         // 
         this.rbAdvanced.AutoSize = true;
+        this.rbAdvanced.Cursor = System.Windows.Forms.Cursors.Hand;
         this.rbAdvanced.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.rbAdvanced.ForeColor = System.Drawing.Color.White;
-        this.rbAdvanced.Location = new System.Drawing.Point(210, 199);
+        this.rbAdvanced.Location = new System.Drawing.Point(230, 199);
         this.rbAdvanced.Name = "rbAdvanced";
         this.rbAdvanced.Size = new System.Drawing.Size(153, 13);
         this.rbAdvanced.TabIndex = 20;
@@ -61,9 +63,10 @@ namespace MediaPortal.DeployTool
         // rbOneClick
         // 
         this.rbOneClick.AutoSize = true;
+        this.rbOneClick.Cursor = System.Windows.Forms.Cursors.Hand;
         this.rbOneClick.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.rbOneClick.ForeColor = System.Drawing.Color.White;
-        this.rbOneClick.Location = new System.Drawing.Point(210, 85);
+        this.rbOneClick.Location = new System.Drawing.Point(230, 85);
         this.rbOneClick.Name = "rbOneClick";
         this.rbOneClick.Size = new System.Drawing.Size(153, 13);
         this.rbOneClick.TabIndex = 21;
@@ -72,8 +75,9 @@ namespace MediaPortal.DeployTool
         // 
         // imgOneClick
         // 
+        this.imgOneClick.Cursor = System.Windows.Forms.Cursors.Hand;
         this.imgOneClick.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-        this.imgOneClick.Location = new System.Drawing.Point(182, 81);
+        this.imgOneClick.Location = new System.Drawing.Point(200, 81);
         this.imgOneClick.Name = "imgOneClick";
         this.imgOneClick.Size = new System.Drawing.Size(21, 21);
         this.imgOneClick.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -131,8 +135,9 @@ namespace MediaPortal.DeployTool
         // 
         // imgAdvanced
         // 
+        this.imgAdvanced.Cursor = System.Windows.Forms.Cursors.Hand;
         this.imgAdvanced.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-        this.imgAdvanced.Location = new System.Drawing.Point(182, 195);
+        this.imgAdvanced.Location = new System.Drawing.Point(200, 195);
         this.imgAdvanced.Name = "imgAdvanced";
         this.imgAdvanced.Size = new System.Drawing.Size(21, 21);
         this.imgAdvanced.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;

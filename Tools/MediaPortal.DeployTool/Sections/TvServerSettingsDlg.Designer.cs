@@ -42,6 +42,7 @@ namespace MediaPortal.DeployTool
         // buttonBrowse
         // 
         this.buttonBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+        this.buttonBrowse.Cursor = System.Windows.Forms.Cursors.Hand;
         this.buttonBrowse.Location = new System.Drawing.Point(524, 64);
         this.buttonBrowse.Name = "buttonBrowse";
         this.buttonBrowse.Size = new System.Drawing.Size(120, 23);
@@ -84,6 +85,7 @@ namespace MediaPortal.DeployTool
         this.checkBoxFirewall.AutoSize = true;
         this.checkBoxFirewall.Checked = true;
         this.checkBoxFirewall.CheckState = System.Windows.Forms.CheckState.Checked;
+        this.checkBoxFirewall.Cursor = System.Windows.Forms.Cursors.Hand;
         this.checkBoxFirewall.ForeColor = System.Drawing.Color.White;
         this.checkBoxFirewall.Location = new System.Drawing.Point(10, 118);
         this.checkBoxFirewall.Name = "checkBoxFirewall";
@@ -96,6 +98,7 @@ namespace MediaPortal.DeployTool
         // 
         this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 13F);
         this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+        this.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_middle_empty;
         this.Controls.Add(this.checkBoxFirewall);
         this.Controls.Add(this.buttonBrowse);
         this.Controls.Add(this.textBoxDir);

@@ -46,6 +46,7 @@ namespace MediaPortal.DeployTool
         // 
         // imgYes
         // 
+        this.imgYes.Cursor = System.Windows.Forms.Cursors.Hand;
         this.imgYes.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
         this.imgYes.Location = new System.Drawing.Point(233, 78);
         this.imgYes.Name = "imgYes";
@@ -58,6 +59,7 @@ namespace MediaPortal.DeployTool
         // rbYesWatchTv
         // 
         this.rbYesWatchTv.AutoSize = true;
+        this.rbYesWatchTv.Cursor = System.Windows.Forms.Cursors.Hand;
         this.rbYesWatchTv.ForeColor = System.Drawing.Color.White;
         this.rbYesWatchTv.Location = new System.Drawing.Point(265, 82);
         this.rbYesWatchTv.MaximumSize = new System.Drawing.Size(300, 0);
@@ -70,6 +72,7 @@ namespace MediaPortal.DeployTool
         // rbNoWatchTv
         // 
         this.rbNoWatchTv.AutoSize = true;
+        this.rbNoWatchTv.Cursor = System.Windows.Forms.Cursors.Hand;
         this.rbNoWatchTv.ForeColor = System.Drawing.Color.White;
         this.rbNoWatchTv.Location = new System.Drawing.Point(265, 132);
         this.rbNoWatchTv.MaximumSize = new System.Drawing.Size(300, 0);
@@ -81,6 +84,7 @@ namespace MediaPortal.DeployTool
         // 
         // imgNo
         // 
+        this.imgNo.Cursor = System.Windows.Forms.Cursors.Hand;
         this.imgNo.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
         this.imgNo.Location = new System.Drawing.Point(233, 128);
         this.imgNo.Name = "imgNo";

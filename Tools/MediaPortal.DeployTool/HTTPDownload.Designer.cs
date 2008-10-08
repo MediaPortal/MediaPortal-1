@@ -28,6 +28,7 @@ namespace MediaPortal.DeployTool
     /// </summary>
     private void InitializeComponent()
     {
+        System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(HTTPDownload));
         this.labelSourceURL = new System.Windows.Forms.Label();
         this.labelTargetFile = new System.Windows.Forms.Label();
         this.labelURL = new System.Windows.Forms.Label();
@@ -40,9 +41,9 @@ namespace MediaPortal.DeployTool
         // 
         this.labelSourceURL.AutoSize = true;
         this.labelSourceURL.Font = new System.Drawing.Font("Verdana", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        this.labelSourceURL.Location = new System.Drawing.Point(13, 13);
+        this.labelSourceURL.Location = new System.Drawing.Point(15, 13);
         this.labelSourceURL.Name = "labelSourceURL";
-        this.labelSourceURL.Size = new System.Drawing.Size(96, 13);
+        this.labelSourceURL.Size = new System.Drawing.Size(102, 13);
         this.labelSourceURL.TabIndex = 0;
         this.labelSourceURL.Text = "Download URL:";
         // 
@@ -50,42 +51,42 @@ namespace MediaPortal.DeployTool
         // 
         this.labelTargetFile.AutoSize = true;
         this.labelTargetFile.Font = new System.Drawing.Font("Verdana", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        this.labelTargetFile.Location = new System.Drawing.Point(13, 57);
+        this.labelTargetFile.Location = new System.Drawing.Point(15, 57);
         this.labelTargetFile.Name = "labelTargetFile";
-        this.labelTargetFile.Size = new System.Drawing.Size(48, 13);
+        this.labelTargetFile.Size = new System.Drawing.Size(54, 13);
         this.labelTargetFile.TabIndex = 1;
         this.labelTargetFile.Text = "Target:";
         // 
         // labelURL
         // 
         this.labelURL.AutoSize = true;
-        this.labelURL.Location = new System.Drawing.Point(13, 35);
+        this.labelURL.Location = new System.Drawing.Point(15, 35);
         this.labelURL.Name = "labelURL";
-        this.labelURL.Size = new System.Drawing.Size(35, 13);
+        this.labelURL.Size = new System.Drawing.Size(41, 13);
         this.labelURL.TabIndex = 2;
         this.labelURL.Text = "label3";
         // 
         // labelTarget
         // 
         this.labelTarget.AutoSize = true;
-        this.labelTarget.Location = new System.Drawing.Point(13, 80);
+        this.labelTarget.Location = new System.Drawing.Point(15, 80);
         this.labelTarget.Name = "labelTarget";
-        this.labelTarget.Size = new System.Drawing.Size(35, 13);
+        this.labelTarget.Size = new System.Drawing.Size(41, 13);
         this.labelTarget.TabIndex = 3;
         this.labelTarget.Text = "label3";
         // 
         // progressBar
         // 
-        this.progressBar.Location = new System.Drawing.Point(16, 110);
+        this.progressBar.Location = new System.Drawing.Point(19, 110);
         this.progressBar.Name = "progressBar";
-        this.progressBar.Size = new System.Drawing.Size(454, 23);
+        this.progressBar.Size = new System.Drawing.Size(530, 23);
         this.progressBar.TabIndex = 4;
         // 
         // buttonCancel
         // 
-        this.buttonCancel.Location = new System.Drawing.Point(204, 146);
+        this.buttonCancel.Location = new System.Drawing.Point(238, 146);
         this.buttonCancel.Name = "buttonCancel";
-        this.buttonCancel.Size = new System.Drawing.Size(98, 23);
+        this.buttonCancel.Size = new System.Drawing.Size(114, 23);
         this.buttonCancel.TabIndex = 5;
         this.buttonCancel.Text = "Cancel";
         this.buttonCancel.UseVisualStyleBackColor = true;
@@ -93,9 +94,9 @@ namespace MediaPortal.DeployTool
         // 
         // HTTPDownload
         // 
-        this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+        this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 13F);
         this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-        this.ClientSize = new System.Drawing.Size(494, 196);
+        this.ClientSize = new System.Drawing.Size(576, 196);
         this.ControlBox = false;
         this.Controls.Add(this.buttonCancel);
         this.Controls.Add(this.progressBar);
@@ -103,13 +104,16 @@ namespace MediaPortal.DeployTool
         this.Controls.Add(this.labelURL);
         this.Controls.Add(this.labelTargetFile);
         this.Controls.Add(this.labelSourceURL);
+        this.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+        this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
         this.MaximizeBox = false;
         this.MinimizeBox = false;
         this.Name = "HTTPDownload";
         this.ShowInTaskbar = false;
         this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
         this.Text = "Downloading file...";
+        this.Load += new System.EventHandler(this.HTTPDownload_Load);
         this.ResumeLayout(false);
         this.PerformLayout();
 
