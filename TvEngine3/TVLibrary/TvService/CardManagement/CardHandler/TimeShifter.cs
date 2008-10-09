@@ -620,7 +620,7 @@ namespace TvService
         }
       }
 
-      Log.Write("card: WaitForTimeShiftFile - new observer based method didn't work");      
+      Log.Write("card: WaitForTimeShiftFile");      
       return false;
     }
   }
