@@ -99,6 +99,7 @@ namespace SetupTv.Sections
       this.buttonMaster.TabIndex = 2;
       this.buttonMaster.Text = "Set as master server";
       this.buttonMaster.UseVisualStyleBackColor = true;
+      this.buttonMaster.Visible = false;
       this.buttonMaster.Click += new System.EventHandler(this.buttonMaster_Click);
       // 
       // button1
