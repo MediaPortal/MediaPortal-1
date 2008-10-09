@@ -498,4 +498,10 @@ Fortsett på egen risiko!</value>
     <value>Programmet vil nå avslutte, for deretter å åpne folderen "MediaPortal Installation".
 Overfør denne folderen til din HTPC. Start installasjonen ved å kjøre "MediaPortal.DeployTool.exe"</value>
   </data>
+  <data name="Install_stateSkipped" xml:space="preserve">
+    <value>Hoppet over</value>
+  </data>
+  <data name="Exit_Installation" xml:space="preserve">
+    <value>Vil du virkelig avslutte installasjonen av MediaPortal?</value>
+  </data>
 </root>
