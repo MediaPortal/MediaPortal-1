@@ -291,6 +291,9 @@ namespace TvService
             _eventVideo = new ManualResetEvent(false);
             _eventsReady = true;
           }
+
+          Log.Write("card: CAM enabled : {0}", _cardHandler.HasCA);
+
           if (subchannel == null) return TvResult.UnknownChannel;          
 
           if (subchannel.IsTimeShifting)
@@ -524,6 +527,12 @@ namespace TvService
       {
         if (_cardHandler.IsScrambled(ref user))
         {
+          if (!_cardHandler.HasCA)
+          {
+            Log.Write("card:   return scrambled, since card has no CAM.");
+            return false;
+          }
+
           Log.Write("card:   scrambled, sleep 100");
           System.Threading.Thread.Sleep(100);
           TimeSpan timeOut = DateTime.Now - timeStart;
@@ -562,14 +571,10 @@ namespace TvService
 			}
       Log.Write("card: WaitForTimeShiftFile");
       if (!WaitForUnScrambledSignal(ref user)) return false;
-      int wait = _waitForTimeshifting * 1000; // in ms
-      int waitForFile = wait / 2;
-      int waitForEvent = waitForFile;
-
+      int waitForEvent = _waitForTimeshifting * 1000; // in ms           
 
       DateTime timeStart = DateTime.Now;
-      ulong fileSize = 0;
-			ulong initialFileSize = 0;
+
       if (_cardHandler.Card.SubChannels.Length <= 0) return false;
       IChannel channel = _cardHandler.Card.SubChannels[0].CurrentChannel;
       bool isRadio = channel.IsRadio;
@@ -577,15 +582,11 @@ namespace TvService
       if (isRadio)
       {
         minTimeShiftFile = 100 * 1024;//100Kb
-      } else
-      {
-        waitForEvent = waitForEvent / 2;
       }
 
       if (isRadio)
       {
         Log.Write("card: WaitForTimeShiftFile - waiting _eventAudio");
-
         // wait for audio PID to be seen
         if (_eventAudio.WaitOne(waitForEvent, true))
         {
@@ -602,7 +603,6 @@ namespace TvService
       else
       {
         Log.Write("card: WaitForTimeShiftFile - waiting _eventAudio & _eventVideo");
-
         // block until video & audio PIDs are seen or the timeout is reached
         if (_eventAudio.WaitOne(waitForEvent, true))
         {
