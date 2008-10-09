@@ -175,7 +175,7 @@ namespace MediaPortal.DeployTool
     public static string LocalizeDownloadFile(string filename, string downloadtype, string prg)
     {
       string LangCode = System.Globalization.CultureInfo.CurrentCulture.ThreeLetterWindowsLanguageName;
-      string LangCodeExt = System.Globalization.CultureInfo.CurrentCulture.NativeName;
+      string LangCodeExt = System.Globalization.CultureInfo.CurrentCulture.Name;
       string NewFileName = filename;
 
       if (LangCode != "ENU")
