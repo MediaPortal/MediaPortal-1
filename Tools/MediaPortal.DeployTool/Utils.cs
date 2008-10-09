@@ -133,20 +133,19 @@ namespace MediaPortal.DeployTool
       return String.Empty;
     }
 
-    public static DialogResult DownloadFile(string prg)
+    public static DialogResult DownloadFile(string FileName, string prg)
     {
       DialogResult result;
-      string FileName = LocalizeDownloadFile(Utils.GetDownloadString(prg, "FILE"), Utils.GetDownloadString(prg, "TYPE"), prg);
 
       if (Utils.GetDownloadString(prg, "TYPE") == "Manual")
       {
         ManualDownload dlg = new ManualDownload();
-        result = dlg.ShowDialog(Utils.GetDownloadString(prg, "URL"), FileName, Application.StartupPath + "\\deploy");
+        result = dlg.ShowDialog(Utils.GetDownloadString(prg, "URL"), Path.GetFileName(FileName), Application.StartupPath + "\\deploy");
       }
       else
       {
         HTTPDownload dlg = new HTTPDownload();
-        result = dlg.ShowDialog(Utils.GetDownloadString(prg, "URL"), Application.StartupPath + "\\deploy\\" + FileName, GetUserAgentOsString());
+        result = dlg.ShowDialog(Utils.GetDownloadString(prg, "URL"), FileName, GetUserAgentOsString());
       }
       return result;
     }
@@ -163,10 +162,10 @@ namespace MediaPortal.DeployTool
           if (FileInfo.Length > 10000)
             break;
           else
-            result = DownloadFile(prg);
+            result = DownloadFile(FileName, prg);
         }
         else
-          result = DownloadFile(prg);
+          result = DownloadFile(FileName, prg);
         if (result == DialogResult.Cancel) break;
       }
       return result;

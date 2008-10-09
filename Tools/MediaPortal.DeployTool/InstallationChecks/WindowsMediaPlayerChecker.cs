@@ -44,15 +44,13 @@ namespace MediaPortal.DeployTool
     public bool Download()
     {
       string prg = "WindowsMediaPlayer";
-      string FileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
       DialogResult result;
-      result = Utils.RetryDownloadFile(FileName, prg);
+      result = Utils.RetryDownloadFile(InstallationProperties.Instance["Wmp11FileName"], prg);
       return (result == DialogResult.OK);
     }
     public bool Install()
     {
-      string exe = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString("WindowsMediaPlayer", "FILE");
-      Process setup = Process.Start(exe, "/q");
+      Process setup = Process.Start(InstallationProperties.Instance["Wmp11FileName"], "/q");
       try
       {
         setup.WaitForExit();
@@ -72,7 +70,9 @@ namespace MediaPortal.DeployTool
     {
       CheckResult result;
       string prg = "WindowsMediaPlayer";
-      result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + Utils.LocalizeDownloadFile(Utils.GetDownloadString(prg, "FILE"), Utils.GetDownloadString(prg, "TYPE"), prg));
+      string FileName = Application.StartupPath + "\\deploy\\" + Utils.LocalizeDownloadFile(Utils.GetDownloadString(prg, "FILE"), Utils.GetDownloadString(prg, "TYPE"), prg);
+      InstallationProperties.Instance.Set("Wmp11FileName", FileName);
+      result.needsDownload = !File.Exists(FileName);
       if (InstallationProperties.Instance["InstallType"] == "download_only")
       {
         if (result.needsDownload == false)
