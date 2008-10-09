@@ -136,13 +136,7 @@ namespace MediaPortal.DeployTool
     public static DialogResult DownloadFile(string prg)
     {
       DialogResult result;
-      string FileName;
-
-      //Ack for SQL2005 native language download
-      if (prg == "MSSQLExpress" + InstallationProperties.Instance["Sql2005Download"])
-        FileName = LocalizeDownloadFile(Utils.GetDownloadString(prg, "FILE"), Utils.GetDownloadString(prg, "TYPE"));
-      else
-        FileName = Utils.GetDownloadString(prg, "FILE");
+      string FileName = LocalizeDownloadFile(Utils.GetDownloadString(prg, "FILE"), Utils.GetDownloadString(prg, "TYPE"), prg);
 
       if (Utils.GetDownloadString(prg, "TYPE") == "Manual")
       {
@@ -178,14 +172,25 @@ namespace MediaPortal.DeployTool
       return result;
     }
 
-    public static string LocalizeDownloadFile(string filename, string downloadtype)
+    public static string LocalizeDownloadFile(string filename, string downloadtype, string prg)
     {
       string LangCode = System.Globalization.CultureInfo.CurrentCulture.ThreeLetterWindowsLanguageName;
-      string NewFileName = "";
-      if (LangCode == "ENU" || downloadtype == "Manual")
-        NewFileName = filename;
-      else
-        NewFileName = filename.Split('.')[0] + "_" + LangCode + ".exe";
+      string LangCodeExt = System.Globalization.CultureInfo.CurrentCulture.NativeName;
+      string NewFileName = filename;
+
+      if (LangCode != "ENU")
+      {
+        // SQL2005 native language download
+        if ((prg == "MSSQLExpress" + InstallationProperties.Instance["Sql2005Download"]) && downloadtype != "Manual")
+        {
+          NewFileName = filename.Split('.')[0] + "_" + LangCode + ".exe";
+        }
+        // WMP11 native language download
+        if (prg == "WindowsMediaPlayer")
+        {
+          NewFileName = filename.Split('.')[0] + "-" + LangCodeExt + ".exe";
+        }
+      }
       return NewFileName;
     }
 
