@@ -1470,14 +1470,29 @@ namespace TvPlugin
         TimeSpan ts = DateTime.Now - _RecIconLastCheck;
         if (ts.TotalSeconds > 15)
         {
+          bool isRecording = false;
           VirtualCard card;
           TvServer server = new TvServer();
-          imgRecIcon.Visible = server.IsRecording(GetChannelName(), out card);
+
+          if (server.IsRecording(GetChannelName(), out card))
+          {
+            if (g_Player.IsTVRecording)
+            {
+              Recording rec = TvRecorded.ActiveRecording();
+              if (rec != null)
+                isRecording = TvRecorded.IsLiveRecording();
+            }
+            else
+              isRecording = true;
+          }
+
+          imgRecIcon.Visible = isRecording;
           _RecIconLastCheck = DateTime.Now;
           Log.Info("OSD.SetRecorderStatus = {0}", imgRecIcon.Visible);
         }
       }
     }
+
 
     void UpdateProgressBar()
     {                              

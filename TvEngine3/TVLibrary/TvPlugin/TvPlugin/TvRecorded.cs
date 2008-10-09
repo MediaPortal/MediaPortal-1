@@ -213,6 +213,7 @@ namespace TvPlugin
     public static void SetActiveRecording(Recording rec)
     {
       m_oActiveRecording = rec;
+      m_bIsLiveRecording = IsRecordingActual(rec);
     }    
 
     public static bool IsLiveRecording()
