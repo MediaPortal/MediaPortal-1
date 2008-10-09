@@ -188,7 +188,14 @@ namespace MediaPortal.DeployTool
         // WMP11 native language download
         if (prg == "WindowsMediaPlayer")
         {
-          NewFileName = filename.Split('.')[0] + "-" + LangCodeExt + ".exe";
+          if (Utils.Check64bit())
+          {
+            NewFileName = filename.Replace("x86", "x64").Split('.')[0] + "-ENU.exe";
+          }
+          else
+          {
+            NewFileName = filename.Split('.')[0] + "-" + LangCodeExt + ".exe";
+          }
         }
       }
       return NewFileName;
