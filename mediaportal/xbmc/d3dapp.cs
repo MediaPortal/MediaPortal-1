@@ -842,7 +842,7 @@ namespace MediaPortal
       try
       {
         GUIGraphicsContext.DX9Device.Reset(presentParams);
-        if (GUIGraphicsContext.IsDirectX9ExUsed() && !useEnhancedVideoRenderer && useExclusiveDirectXMode)
+        if (GUIGraphicsContext.IsDirectX9ExUsed() && !useEnhancedVideoRenderer)
         {
           GUIFontManager.LoadFonts(Config.GetFile(Config.Dir.Skin, m_strSkin, "fonts.xml"));
           GUIFontManager.InitializeDeviceObjects();
@@ -879,7 +879,7 @@ namespace MediaPortal
         try
         {
           GUIGraphicsContext.DX9Device.Reset(presentParams);
-          if (GUIGraphicsContext.IsDirectX9ExUsed() && !useEnhancedVideoRenderer && useExclusiveDirectXMode)
+          if (GUIGraphicsContext.IsDirectX9ExUsed() && !useEnhancedVideoRenderer)
           {
             GUIFontManager.LoadFonts(Config.GetFile(Config.Dir.Skin, m_strSkin, "fonts.xml"));
             GUIFontManager.InitializeDeviceObjects();
