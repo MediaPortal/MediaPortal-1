@@ -172,7 +172,7 @@ namespace MediaPortal.MPInstaller
         foreach (string fil in openFileDialog1.FileNames)
         {
           if (Path.GetFullPath(fil).ToLower().IndexOf("skin\\") == 0)
-            subtype = "BlueTwo";
+            subtype = "Blue3";
           else
           {
 

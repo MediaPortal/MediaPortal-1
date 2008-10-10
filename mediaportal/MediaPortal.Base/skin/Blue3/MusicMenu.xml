@@ -1,0 +1,83 @@
+<?xml version="1.0" standalone="yes"?>
+<window>
+	<id>8888</id>
+	<defaultcontrol>3</defaultcontrol>
+	<allowoverlay>no</allowoverlay>
+	<disabletopbar>no</disabletopbar>
+	<controls>
+		<control>
+			<description>BG</description>
+			<type>image</type>
+			<id>1</id>
+			<texture>Animations\Background_stage.png</texture>
+			<width>720</width>
+			<height>576</height>
+</control>
+<control>
+      <description>seperator animation</description>
+      <type>animation</type>
+      <posX>230</posX>
+      <posY>160</posY>
+       <width>250</width>
+	  <height>250</height>
+      <textures>Animations\Guitar\guitar_0010000.png;Animations\Guitar\guitar_0010001.png;Animations\Guitar\guitar_0010002.png;Animations\Guitar\guitar_0010003.png;Animations\Guitar\guitar_0010004.png;Animations\Guitar\guitar_0010005.png;Animations\Guitar\guitar_0010006.png;Animations\Guitar\guitar_0010007.png;Animations\Guitar\guitar_0010008.png;Animations\Guitar\guitar_0010009.png;Animations\Guitar\guitar_0010010.png;Animations\Guitar\guitar_0010011.png;Animations\Guitar\guitar_0010012.png;Animations\Guitar\guitar_0010013.png;Animations\Guitar\guitar_0010014.png;Animations\Guitar\guitar_0010015.png;Animations\Guitar\guitar_0010016.png;Animations\Guitar\guitar_0010017.png;Animations\Guitar\guitar_0010018.png;Animations\Guitar\guitar_0010019.png;Animations\Guitar\guitar_0010020.png;Animations\Guitar\guitar_0010021.png;Animations\Guitar\guitar_0010022.png;Animations\Guitar\guitar_0010023.png;Animations\Guitar\guitar_0010024.png;Animations\Guitar\guitar_0010025.png;Animations\Guitar\guitar_0010026.png;Animations\Guitar\guitar_0010027.png;Animations\Guitar\guitar_0010028.png;Animations\Guitar\guitar_0010029.png
+</textures>
+      <Duration>0:0:2.0</Duration>
+      <RepeatBehavior>0</RepeatBehavior>
+      <FillBehavior>HoldEnd</FillBehavior>
+    </control>
+
+ <control>
+      <description>seperator animation</description>
+      <type>animation</type>
+<posX>18</posX>
+      <posY>105</posY>
+      <width>210</width>
+	  <height>205</height>
+      <textures>Animations\musicvideo\musicvideo0001.png;Animations\musicvideo\musicvideo0002.png;Animations\musicvideo\musicvideo0003.png;Animations\musicvideo\musicvideo0004.png;Animations\musicvideo\musicvideo0005.png;Animations\musicvideo\musicvideo0006.png;Animations\musicvideo\musicvideo0007.png;Animations\musicvideo\musicvideo0008.png;Animations\musicvideo\musicvideo0009.png;Animations\musicvideo\musicvideo0010.png;Animations\musicvideo\musicvideo0011.png;Animations\musicvideo\musicvideo0012.png;Animations\musicvideo\musicvideo0013.png;Animations\musicvideo\musicvideo0014.png;Animations\musicvideo\musicvideo0015.png;Animations\musicvideo\musicvideo0016.png;Animations\musicvideo\musicvideo0017.png;Animations\musicvideo\musicvideo0018.png;Animations\musicvideo\musicvideo0019.png;Animations\musicvideo\musicvideo0020.png;Animations\musicvideo\musicvideo0021.png;Animations\musicvideo\musicvideo0022.png;Animations\musicvideo\musicvideo0023.png;Animations\musicvideo\musicvideo0024.png;Animations\musicvideo\musicvideo0025.png;Animations\musicvideo\musicvideo0026.png;Animations\musicvideo\musicvideo0027.png
+			</textures>
+      <Duration>0:0:2.0</Duration>
+      <RepeatBehavior>0</RepeatBehavior>
+      <FillBehavior>HoldEnd</FillBehavior>
+    </control>
+<control>
+      <description>seperator animation</description>
+      <type>animation</type>
+<posX>156</posX>
+      <posY>85</posY>
+      <width>180</width>
+	  <height>175</height>
+      <textures>Animations\musicvideo\musicvideo0001.png;Animations\musicvideo\musicvideo0002.png;Animations\musicvideo\musicvideo0003.png;Animations\musicvideo\musicvideo0004.png;Animations\musicvideo\musicvideo0005.png;Animations\musicvideo\musicvideo0006.png;Animations\musicvideo\musicvideo0007.png;Animations\musicvideo\musicvideo0008.png;Animations\musicvideo\musicvideo0009.png;Animations\musicvideo\musicvideo0010.png;Animations\musicvideo\musicvideo0011.png;Animations\musicvideo\musicvideo0012.png;Animations\musicvideo\musicvideo0013.png;Animations\musicvideo\musicvideo0014.png;Animations\musicvideo\musicvideo0015.png;Animations\musicvideo\musicvideo0016.png;Animations\musicvideo\musicvideo0017.png;Animations\musicvideo\musicvideo0018.png;Animations\musicvideo\musicvideo0019.png;Animations\musicvideo\musicvideo0020.png;Animations\musicvideo\musicvideo0021.png;Animations\musicvideo\musicvideo0022.png;Animations\musicvideo\musicvideo0023.png;Animations\musicvideo\musicvideo0024.png;Animations\musicvideo\musicvideo0025.png;Animations\musicvideo\musicvideo0026.png;Animations\musicvideo\musicvideo0027.png
+			</textures>
+      <Duration>0:0:2.0</Duration>
+      <RepeatBehavior>0</RepeatBehavior>
+      <FillBehavior>HoldEnd</FillBehavior>
+    </control>
+     <control>
+      <description>seperator animation</description>
+      <type>animation</type>
+     <posX>508</posX>
+      <posY>115</posY>
+      <width>200</width>
+	  <height>195</height>
+      <textures>Animations\musicvideo2\musicvideo0001.png;Animations\musicvideo2\musicvideo0002.png;Animations\musicvideo2\musicvideo0003.png;Animations\musicvideo2\musicvideo0004.png;Animations\musicvideo2\musicvideo0005.png;Animations\musicvideo2\musicvideo0006.png;Animations\musicvideo2\musicvideo0007.png;Animations\musicvideo2\musicvideo0008.png;Animations\musicvideo2\musicvideo0009.png;Animations\musicvideo2\musicvideo0010.png;Animations\musicvideo2\musicvideo0011.png;Animations\musicvideo2\musicvideo0012.png;Animations\musicvideo2\musicvideo0013.png;Animations\musicvideo2\musicvideo0014.png;Animations\musicvideo2\musicvideo0015.png;Animations\musicvideo2\musicvideo0016.png;Animations\musicvideo2\musicvideo0017.png;Animations\musicvideo2\musicvideo0018.png;Animations\musicvideo2\musicvideo0019.png;Animations\musicvideo2\musicvideo0020.png;Animations\musicvideo2\musicvideo0021.png;Animations\musicvideo2\musicvideo0022.png;Animations\musicvideo2\musicvideo0023.png;Animations\musicvideo2\musicvideo0024.png;Animations\musicvideo2\musicvideo0025.png;Animations\musicvideo2\musicvideo0026.png;Animations\musicvideo2\musicvideo0027.png
+			</textures>
+      <Duration>0:0:2.0</Duration>
+      <RepeatBehavior>0</RepeatBehavior>
+      <FillBehavior>HoldEnd</FillBehavior>
+    </control>
+     <control>
+      <description>seperator animation</description>
+      <type>animation</type>
+     <posX>420</posX>
+      <posY>95</posY>
+      <width>180</width>
+	  <height>175</height>
+      <textures>Animations\musicvideo2\musicvideo0001.png;Animations\musicvideo2\musicvideo0002.png;Animations\musicvideo2\musicvideo0003.png;Animations\musicvideo2\musicvideo0004.png;Animations\musicvideo2\musicvideo0005.png;Animations\musicvideo2\musicvideo0006.png;Animations\musicvideo2\musicvideo0007.png;Animations\musicvideo2\musicvideo0008.png;Animations\musicvideo2\musicvideo0009.png;Animations\musicvideo2\musicvideo0010.png;Animations\musicvideo2\musicvideo0011.png;Animations\musicvideo2\musicvideo0012.png;Animations\musicvideo2\musicvideo0013.png;Animations\musicvideo2\musicvideo0014.png;Animations\musicvideo2\musicvideo0015.png;Animations\musicvideo2\musicvideo0016.png;Animations\musicvideo2\musicvideo0017.png;Animations\musicvideo2\musicvideo0018.png;Animations\musicvideo2\musicvideo0019.png;Animations\musicvideo2\musicvideo0020.png;Animations\musicvideo2\musicvideo0021.png;Animations\musicvideo2\musicvideo0022.png;Animations\musicvideo2\musicvideo0023.png;Animations\musicvideo2\musicvideo0024.png;Animations\musicvideo2\musicvideo0025.png;Animations\musicvideo2\musicvideo0026.png;Animations\musicvideo2\musicvideo0027.png
+			</textures>
+      <Duration>0:0:2.0</Duration>
+      <RepeatBehavior>0</RepeatBehavior>
+      <FillBehavior>HoldEnd</FillBehavior>
+    </control>
+	</controls>
+</window>

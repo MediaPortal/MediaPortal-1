@@ -211,10 +211,12 @@ namespace MediaPortal.Configuration.Sections
         if (currentSkin == "NoSkin")
         {
           //Change default skin based on screen aspect ratio
-          if (screenRatio > 1.5)
-            currentSkin = "BlueTwo wide";
-          else
-            currentSkin = "BlueTwo";
+
+// no wide version yet available
+//if (screenRatio > 1.5)
+//  currentSkin = "Blue3 wide";
+//else
+            currentSkin = "Blue3";
         }
 
         //
@@ -240,7 +242,7 @@ namespace MediaPortal.Configuration.Sections
       }
       using (Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        string prevSkin = xmlwriter.GetValueAsString("skin", "name", "BlueTwo");
+        string prevSkin = xmlwriter.GetValueAsString("skin", "name", "Blue3");
         if (prevSkin != listViewAvailableSkins.SelectedItems[0].Text)
         {
           xmlwriter.SetValueAsBool("general", "dontshowskinversion", false);
@@ -249,7 +251,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("skin", "name", listViewAvailableSkins.SelectedItems[0].Text);
         // Set language
         string prevLanguage = xmlwriter.GetValueAsString("skin", "language", "English");
-        string skin = xmlwriter.GetValueAsString("skin", "name", "BlueTwo");
+        string skin = xmlwriter.GetValueAsString("skin", "name", "Blue3");
         if (prevLanguage != languageComboBox.Text)
         {
           Util.Utils.DeleteFiles(Config.GetSubFolder(Config.Dir.Skin, skin + @"\fonts"), "*");

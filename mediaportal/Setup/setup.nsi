@@ -582,6 +582,7 @@ SectionEnd
   ; skins
   RMDir /r /REBOOTOK "$MPdir.Skin\BlueTwo"
   RMDir /r /REBOOTOK "$MPdir.Skin\BlueTwo wide"
+  RMDir /r /REBOOTOK "$MPdir.Skin\Blue3"
   RMDir "$MPdir.Skin"
 
   ; Remove Files in MP Root Directory

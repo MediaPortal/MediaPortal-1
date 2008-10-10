@@ -157,16 +157,16 @@ namespace MediaPortal
 			}
       checkBoxIgnoreMsg.Visible = _nagCount > 4 ? true : false;
 
-			string versionBlueTwoSkin="";
+			string versionBlue3Skin="";
 			string versionSkin="";
-			string filename= Config.GetFile(Config.Dir.Skin, "BlueTwo\\references.xml");
+			string filename= Config.GetFile(Config.Dir.Skin, "Blue3\\references.xml");
 			if(File.Exists(filename))
 			{	
 				XmlDocument doc=new XmlDocument();
 				doc.Load(filename);
 				XmlNode node=doc.SelectSingleNode("/controls/skin/version");
 				if (node!=null && node.InnerText!=null)
-					versionBlueTwoSkin=node.InnerText;
+					versionBlue3Skin=node.InnerText;
 			}
       filename = Config.GetFile(Config.Dir.Skin, skin, "references.xml");
 			if(File.Exists(filename))
@@ -177,7 +177,7 @@ namespace MediaPortal
 				if (node!=null && node.InnerText!=null)
 					versionSkin=node.InnerText;
 			}
-			if (versionBlueTwoSkin==versionSkin) return true;
+			if (versionBlue3Skin==versionSkin) return true;
 			return false;
 		}
 	}

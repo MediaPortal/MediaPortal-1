@@ -1,0 +1,111 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>3000</id>
+  <defaultcontrol>2</defaultcontrol>
+  <controls>
+    <control>
+      <description>play time label</description>
+      <type>label</type>
+      <id>2</id>
+      <posX>220</posX>
+      <posY>490</posY>
+      <label>#currentplaytime</label>
+      <align>left</align>
+      <font>font60</font>
+      <textcolor>20ffffff</textcolor>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+    <control>
+      <description>play logo</description>
+      <type>image</type>
+      <id>3</id>
+      <posX>212</posX>
+      <posY>460</posY>
+      <width>36</width>
+	  <height>42</height>
+      <texture>logo_play.png</texture>       
+      <visible>player.playing</visible>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+    <control>
+      <description>Pause logo</description>
+      <type>image</type>
+      <id>4</id>
+      <posX>212</posX>
+      <posY>460</posY>
+      <width>36</width>
+	  <height>42</height>
+      <texture>logo_pause.png</texture>
+      <visible>player.paused</visible>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+    <control>
+      <description>FF logo</description>
+      <type>image</type>
+      <id>7</id>
+      <posX>212</posX>
+      <posY>460</posY>
+      <width>36</width>
+	  <height>42</height>
+      <texture>logo_fastforward.png</texture>
+      <visible>player.forwarding</visible>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+    <control>
+      <description>RW logo</description>
+      <type>image</type>
+      <id>8</id>
+      <posX>212</posX>
+      <posY>460</posY>
+      <width>36</width>
+	  <height>42</height>
+      <texture>logo_rewind.png</texture>
+      <visible>player.rewinding</visible>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+    <control>
+      <description>scrolling info label</description>
+      <type>fadelabel</type>
+      <width>140</width>
+      <height>30</height>
+      <posX>55</posX>
+      <posY>547</posY>
+      <font>font12</font>
+      <label>#Play.Current.Title\r#Play.Current.Genre\r#Play.Current.Year\r#Play.Current.Director</label>
+      <textcolor>EFFFFFFF</textcolor>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <id>5</id>
+    </control>
+    <control>
+      <description>video rectangle</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>49</posX>
+	  <posY>419</posY>
+      <width>161</width>
+      <height>124</height>
+      <texture>Picture_cover.png</texture>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+    <control>
+      <description>video preview window</description>
+      <type>videowindow</type>
+      <id>1</id>
+      <posX>56</posX>
+      <posY>425</posY>
+      <width>145</width>
+      <height>111</height>
+      <action>18</action>
+      <textureFocus>tv_green_border.png</textureFocus>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+  </controls>
+</window>

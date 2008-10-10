@@ -60,7 +60,7 @@ namespace MediaPortal
   public class D3DApp : UserInterface.Controls.MPForm
   {
     private const int MILLI_SECONDS_TIMER = 1;
-    protected string m_strSkin = "BlueTwo";
+    protected string m_strSkin = "Blue3";
     public static string _strSkinOverride = string.Empty;
     protected string m_strLanguage = "english";
 

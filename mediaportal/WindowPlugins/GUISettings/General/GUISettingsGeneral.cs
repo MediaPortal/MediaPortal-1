@@ -176,7 +176,7 @@ namespace WindowPlugins.GUISettings
       string currentSkin = "";
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        currentSkin = xmlreader.GetValueAsString("skin", "name", "BlueTwo");
+        currentSkin = xmlreader.GetValueAsString("skin", "name", "Blue3");
       }
 
       GUIControl.ClearControl(GetID, btnSkin.GetID);

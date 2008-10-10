@@ -1,0 +1,145 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>3011</id>
+  <defaultcontrol>8</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <controls>
+    <control>
+      <description>background image</description>
+      <type>image</type>
+      <id>0</id>
+      <texture>context_background.png</texture>
+      <width>360</width>
+      <height>260</height>
+      <posX>200</posX>
+      <posY>135</posY>
+    </control>
+    <control>
+      <description>exit button</description>
+      <type>button</type>
+      <id>2</id>
+      <posX>507</posX>
+      <posY>146</posY>
+      <width>31</width>
+      <height>31</height>
+      <textureFocus>dialogue_shutdown_focus.png</textureFocus>
+      <textureNoFocus>dialogue_shutdown_nofocus.png</textureNoFocus>
+      <label>-</label>
+      <ondown>6</ondown>
+      <onup>34</onup>
+    </control>
+    <control>
+      <description>Heading text label</description>
+      <type>label</type>
+      <id>4</id>
+      <posX>284</posX>
+      <posY>150</posY>
+      <width>240</width>
+      <label>11000</label>
+      <font>font13</font>
+      <textcolor>FFFFFFFF</textcolor>
+    </control>
+    <control>
+      <description>Capture device text label</description>
+      <type>label</type>
+      <id>5</id>
+      <posX>245</posX>
+      <posY>178</posY>
+      <width>240</width>
+      <font>font13</font>
+      <textcolor>FFFFFFFF</textcolor>
+    </control>
+    <control>
+      <description>Crop label top</description>
+      <type>label</type>
+      <id>6</id>
+      <posX>290</posX>
+      <posY>206</posY>
+      <label>11001</label>
+      <font>font13</font>
+      <textcolor>FFFFFFFF</textcolor>
+    </control>
+    <control>
+      <description>Cropselect top</description>
+      <type>spincontrol</type>
+      <id>8</id>
+      <posX>438</posX>
+      <posY>209</posY>
+      <onup>20</onup>
+      <ondown>12</ondown>
+      <onleft>2</onleft>
+      <onright>2</onright>
+      <textcolor>FFFFFFFF</textcolor>
+      <align>right</align>
+    </control>
+    <control>
+      <description>Crop label bottom</description>
+      <type>label</type>
+      <id>10</id>
+      <posX>290</posX>
+      <posY>232</posY>
+      <label>11002</label>
+      <font>font13</font>
+      <textcolor>FFFFFFFF</textcolor>
+    </control>
+    <control>
+      <description>Cropselect bottom</description>
+      <type>spincontrol</type>
+      <id>12</id>
+      <posX>438</posX>
+      <posY>236</posY>
+      <onup>8</onup>
+      <ondown>16</ondown>
+      <onleft>2</onleft>
+      <onright>2</onright>
+      <textcolor>FFFFFFFF</textcolor>
+      <align>right</align>
+    </control>
+    <control>
+      <description>Crop label left</description>
+      <type>label</type>
+      <id>14</id>
+      <posX>290</posX>
+      <posY>259</posY>
+      <label>11003</label>
+      <font>font13</font>
+      <textcolor>FFFFFFFF</textcolor>
+    </control>
+    <control>
+      <description>Cropselect left</description>
+      <type>spincontrol</type>
+      <id>16</id>
+      <posX>438</posX>
+      <posY>263</posY>
+      <onup>12</onup>
+      <ondown>20</ondown>
+      <onleft>2</onleft>
+      <onright>2</onright>
+      <textcolor>FFFFFFFF</textcolor>
+      <align>right</align>
+    </control>
+    <control>
+      <description>Crop label right</description>
+      <type>label</type>
+      <id>18</id>
+      <posX>290</posX>
+      <posY>286</posY>
+      <label>11004</label>
+      <font>font13</font>
+      <textcolor>FFFFFFFF</textcolor>
+    </control>
+    <control>
+      <description>Cropselect right</description>
+      <type>spincontrol</type>
+      <id>20</id>
+      <posX>438</posX>
+      <posY>290</posY>
+      <onup>16</onup>
+      <ondown>8</ondown>
+      <onleft>2</onleft>
+      <onright>2</onright>
+      <textcolor>FFFFFFFF</textcolor>
+      <align>right</align>
+    </control>
+  </controls>
+</window>

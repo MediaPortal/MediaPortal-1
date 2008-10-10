@@ -657,7 +657,7 @@ public class MediaPortalApp : D3DApp, IRender
         if (_strSkinOverride.Length > 0)
           m_strSkin = _strSkinOverride;
         else
-          m_strSkin = xmlreader.GetValueAsString("skin", "name", "BlueTwo");
+          m_strSkin = xmlreader.GetValueAsString("skin", "name", "Blue3");
         m_strLanguage = xmlreader.GetValueAsString("skin", "language", "English");
         _autoHideMouse = xmlreader.GetValueAsBool("general", "autohidemouse", true);
         GUIGraphicsContext.MouseSupport = xmlreader.GetValueAsBool("general", "mousesupport", false);
@@ -669,7 +669,7 @@ public class MediaPortalApp : D3DApp, IRender
     }
     catch (Exception)
     {
-      m_strSkin = "BlueTwo";
+      m_strSkin = "Blue3";
       m_strLanguage = "English";
     }
     SetStyle(ControlStyles.Opaque, true);

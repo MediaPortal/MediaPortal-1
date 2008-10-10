@@ -1888,7 +1888,7 @@ namespace MediaPortal.Util
           {
             using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
             {
-              currentSkin = Application.StartupPath + @"\skin\" + xmlreader.GetValueAsString("skin", "name", "BlueTwo");
+              currentSkin = Application.StartupPath + @"\skin\" + xmlreader.GetValueAsString("skin", "name", "Blue3");
             }
           }
 

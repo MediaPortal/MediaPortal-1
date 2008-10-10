@@ -1,0 +1,114 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>2017</id>
+  <defaultcontrol>11</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <controls>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>110</posX>
+      <posY>78</posY>
+      <width>500</width>
+      <height>490</height>
+      <texture>context_background.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Heading text label</description>
+      <type>label</type>
+      <id>4</id>
+      <posX>160</posX>
+      <posY>120</posY>
+      <label></label>
+      <font>font16</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <description>options listcontrol</description>
+      <type>listcontrol</type>
+      <id>3</id>
+      <posX>160</posX>
+      <posY>165</posY>
+      <width>400</width>
+      <height>200</height>
+      <textXOff>25</textXOff>
+      <textYOff>2</textYOff>
+      <textXOff2>380</textXOff2>
+      <textYOff2>29</textYOff2>
+      <textXOff3>70</textXOff3>
+      <textYOff3>29</textYOff3>
+      <IconXOff>12</IconXOff>
+      <PinIconXOff>45</PinIconXOff>
+      <PinIconYOff>19</PinIconYOff>
+      <spinPosX>473</spinPosX>
+      <spinPosY>328</spinPosY>
+      <itemWidth>35</itemWidth>
+      <itemHeight>35</itemHeight>
+      <textureFocus>recording_background_focus.png</textureFocus>
+      <textureNoFocus>recording_background_nofocus.png</textureNoFocus>
+      <spaceBetweenItems>5</spaceBetweenItems>
+      <textureHeight>50</textureHeight>
+      <keepaspectratio>no</keepaspectratio>
+      <font2>font10</font2>
+      <font3>font10</font3>
+
+      <ondown>11</ondown>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <description>Skip new Recording</description>
+      <type>button</type>
+      <id>11</id>
+      <posX>170</posX>
+      <posY>358</posY>
+      <width>370</width>
+      <label>1110</label>
+      <onup>3</onup>
+      <ondown>12</ondown>
+    </control>
+
+    <control>
+      <description>Skip conflicting Recording</description>
+      <type>button</type>
+      <id>12</id>
+      <posX>170</posX>
+      <posY>398</posY>
+      <width>370</width>
+      <label>1111</label>
+      <onup>11</onup>
+      <ondown>13</ondown>
+    </control>
+
+    <control>
+      <description>Keep Conflict</description>
+      <type>button</type>
+      <id>13</id>
+      <posX>170</posX>
+      <posY>438</posY>
+      <width>370</width>
+      <label>1112</label>
+      <onup>12</onup>
+      <ondown>14</ondown>
+    </control>
+
+    <control>
+      <description>Skip conflicting Episode</description>
+      <type>button</type>
+      <id>14</id>
+      <posX>170</posX>
+      <posY>478</posY>
+      <width>370</width>
+      <label>1113</label>
+      <onup>13</onup>
+      <ondown>3</ondown>
+    </control>
+
+  </controls>
+</window>
