@@ -42,23 +42,23 @@
   <ItemGroup>
     <Reference Include="Bass.Net">
       <Name>Bass.Net</Name>
-      <HintPath>..\..\..\..\..\..\svnroot\mediaportal\trunk\mediaportal\xbmc\bin\Release\Bass.Net.dll</HintPath>
+      <HintPath>..\xbmc\bin\Release\Bass.Net.dll</HintPath>
     </Reference>
     <Reference Include="Core">
       <Name>Core</Name>
-      <HintPath>..\..\..\..\..\..\svnroot\mediaportal\trunk\mediaportal\xbmc\bin\Release\Core.dll</HintPath>
+      <HintPath>..\xbmc\bin\Release\Core.dll</HintPath>
     </Reference>
     <Reference Include="Dialogs">
       <Name>Dialogs</Name>
-      <HintPath>..\..\..\..\..\..\svnroot\mediaportal\trunk\mediaportal\xbmc\bin\Release\plugins\Windows\Dialogs.dll</HintPath>
+      <HintPath>..\xbmc\bin\Release\plugins\Windows\Dialogs.dll</HintPath>
     </Reference>
     <Reference Include="LibDriverCoreClient">
       <Name>LibDriverCoreClient</Name>
-      <HintPath>..\..\..\..\..\..\svnroot\mediaportal\trunk\mediaportal\xbmc\bin\Release\LibDriverCoreClient.dll</HintPath>
+      <HintPath>..\xbmc\bin\Release\LibDriverCoreClient.dll</HintPath>
     </Reference>
     <Reference Include="RemotePlugins">
       <Name>RemotePlugins</Name>
-      <HintPath>..\..\..\..\..\..\svnroot\mediaportal\trunk\mediaportal\xbmc\bin\Release\RemotePlugins.dll</HintPath>
+      <HintPath>..\xbmc\bin\Release\RemotePlugins.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
@@ -77,11 +77,11 @@
     </Reference>
     <Reference Include="TVCapture">
       <Name>TVCapture</Name>
-      <HintPath>..\..\..\..\..\..\svnroot\mediaportal\trunk\mediaportal\xbmc\bin\Release\TVCapture.dll</HintPath>
+      <HintPath>..\xbmc\bin\Release\TVCapture.dll</HintPath>
     </Reference>
     <Reference Include="Utils">
       <Name>Utils</Name>
-      <HintPath>..\..\..\..\..\..\svnroot\mediaportal\trunk\mediaportal\xbmc\bin\Release\Utils.dll</HintPath>
+      <HintPath>..\xbmc\bin\Release\Utils.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
