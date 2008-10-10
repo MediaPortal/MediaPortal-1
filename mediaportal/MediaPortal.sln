@@ -210,7 +210,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WatchDog", "WatchDog\WatchD
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExternalDisplayPlugin", "ExternalDisplayPlugin\ExternalDisplayPlugin.csproj", "{3A167A4C-9AAA-45E0-B6F5-DD60B5E9ED70}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CybrDisplayPlugin", "CybrDisplayPlugin\CybrDisplayPlugin.csproj", "{8635D515-A5D4-4FB7-BD30-71770651E18B}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.Debug = "False"
@@ -641,22 +641,18 @@ Global
 		{2B094D86-DD1A-4DDD-95D2-56A57E714C4E}.UseCaptureDefintionsRelease|Any CPU.Build.0 = Release|Any CPU
 		{2B094D86-DD1A-4DDD-95D2-56A57E714C4E}.UseCaptureDefintionsRelease|x86.ActiveCfg = Release|x86
 		{2B094D86-DD1A-4DDD-95D2-56A57E714C4E}.UseCaptureDefintionsRelease|x86.Build.0 = Release|x86
-		{3A167A4C-9AAA-45E0-B6F5-DD60B5E9ED70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3A167A4C-9AAA-45E0-B6F5-DD60B5E9ED70}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3A167A4C-9AAA-45E0-B6F5-DD60B5E9ED70}.Debug|x86.ActiveCfg = Debug|x86
-		{3A167A4C-9AAA-45E0-B6F5-DD60B5E9ED70}.Debug|x86.Build.0 = Debug|x86
-		{3A167A4C-9AAA-45E0-B6F5-DD60B5E9ED70}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3A167A4C-9AAA-45E0-B6F5-DD60B5E9ED70}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3A167A4C-9AAA-45E0-B6F5-DD60B5E9ED70}.Release|x86.ActiveCfg = Release|x86
-		{3A167A4C-9AAA-45E0-B6F5-DD60B5E9ED70}.Release|x86.Build.0 = Release|x86
-		{3A167A4C-9AAA-45E0-B6F5-DD60B5E9ED70}.UseCaptureCardDefinitions|Any CPU.ActiveCfg = UseCaptureCardDefinitions|Any CPU
-		{3A167A4C-9AAA-45E0-B6F5-DD60B5E9ED70}.UseCaptureCardDefinitions|Any CPU.Build.0 = UseCaptureCardDefinitions|Any CPU
-		{3A167A4C-9AAA-45E0-B6F5-DD60B5E9ED70}.UseCaptureCardDefinitions|x86.ActiveCfg = UseCaptureCardDefinitions|x86
-		{3A167A4C-9AAA-45E0-B6F5-DD60B5E9ED70}.UseCaptureCardDefinitions|x86.Build.0 = UseCaptureCardDefinitions|x86
-		{3A167A4C-9AAA-45E0-B6F5-DD60B5E9ED70}.UseCaptureDefintionsRelease|Any CPU.ActiveCfg = UseCaptureDefintionsRelease|Any CPU
-		{3A167A4C-9AAA-45E0-B6F5-DD60B5E9ED70}.UseCaptureDefintionsRelease|Any CPU.Build.0 = UseCaptureDefintionsRelease|Any CPU
-		{3A167A4C-9AAA-45E0-B6F5-DD60B5E9ED70}.UseCaptureDefintionsRelease|x86.ActiveCfg = UseCaptureDefintionsRelease|x86
-		{3A167A4C-9AAA-45E0-B6F5-DD60B5E9ED70}.UseCaptureDefintionsRelease|x86.Build.0 = UseCaptureDefintionsRelease|x86
+		{8635D515-A5D4-4FB7-BD30-71770651E18B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8635D515-A5D4-4FB7-BD30-71770651E18B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8635D515-A5D4-4FB7-BD30-71770651E18B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8635D515-A5D4-4FB7-BD30-71770651E18B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8635D515-A5D4-4FB7-BD30-71770651E18B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8635D515-A5D4-4FB7-BD30-71770651E18B}.Release|x86.ActiveCfg = Release|Any CPU
+		{8635D515-A5D4-4FB7-BD30-71770651E18B}.UseCaptureCardDefinitions|Any CPU.ActiveCfg = Release|Any CPU
+		{8635D515-A5D4-4FB7-BD30-71770651E18B}.UseCaptureCardDefinitions|Any CPU.Build.0 = Release|Any CPU
+		{8635D515-A5D4-4FB7-BD30-71770651E18B}.UseCaptureCardDefinitions|x86.ActiveCfg = Release|Any CPU
+		{8635D515-A5D4-4FB7-BD30-71770651E18B}.UseCaptureDefintionsRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{8635D515-A5D4-4FB7-BD30-71770651E18B}.UseCaptureDefintionsRelease|Any CPU.Build.0 = Release|Any CPU
+		{8635D515-A5D4-4FB7-BD30-71770651E18B}.UseCaptureDefintionsRelease|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -668,7 +664,7 @@ Global
 		{5B8BC37B-44EB-4736-8B27-0960F3E03822} = {D214B2BD-4CA7-45CD-9EC5-CF7CC244C03A}
 		{D213045F-E672-421B-B92A-78F512AAF784} = {D214B2BD-4CA7-45CD-9EC5-CF7CC244C03A}
 		{05789B6D-8173-4709-991B-34234041D393} = {D214B2BD-4CA7-45CD-9EC5-CF7CC244C03A}
-		{3A167A4C-9AAA-45E0-B6F5-DD60B5E9ED70} = {D214B2BD-4CA7-45CD-9EC5-CF7CC244C03A}
+		{8635D515-A5D4-4FB7-BD30-71770651E18B} = {D214B2BD-4CA7-45CD-9EC5-CF7CC244C03A}
 		{47B8906A-5EC9-4641-811E-8BC0EAF97DDD} = {2600F94F-B223-4FDD-8D93-73AC573F6D50}
 		{67D44FEB-AC41-4B93-AC1D-876318CDD16B} = {2600F94F-B223-4FDD-8D93-73AC573F6D50}
 		{F7CB2A9F-004E-4667-BEAF-782F1C28E2D3} = {2600F94F-B223-4FDD-8D93-73AC573F6D50}

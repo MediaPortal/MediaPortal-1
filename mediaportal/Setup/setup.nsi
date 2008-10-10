@@ -437,7 +437,7 @@ Section "MediaPortal core files (required)" SecCore
   File "..\ExternalPlayers\bin\${BUILD_TYPE}\ExternalPlayers.*"
   SetOutPath "$MPdir.Plugins\process"
   File "..\ProcessPlugins\bin\${BUILD_TYPE}\ProcessPlugins.*"
-  File "..\ExternalDisplayPlugin\bin\${BUILD_TYPE}\ExternalDisplayPlugin.*"
+  File "..\CybrDisplayPlugin\bin\${BUILD_TYPE}\CybrDisplayPlugin.*"
   SetOutPath "$MPdir.Plugins\subtitle"
   File "..\SubtitlePlugins\bin\${BUILD_TYPE}\SubtitlePlugins.*"
   SetOutPath "$MPdir.Plugins\Windows"
@@ -565,7 +565,7 @@ SectionEnd
 
   RMDir /r /REBOOTOK "$MPdir.Plugins\process\LCDDrivers"
   Delete /REBOOTOK "$MPdir.Plugins\process\ProcessPlugins.dll"
-  Delete /REBOOTOK "$MPdir.Plugins\process\ExternalDisplayPlugin.dll"
+  Delete /REBOOTOK "$MPdir.Plugins\process\CybrDisplayPlugin.dll"
   Delete /REBOOTOK "$MPdir.Plugins\process\PowerSchedulerClientPlugin.dll"
   RMDir "$MPdir.Plugins\process"
 

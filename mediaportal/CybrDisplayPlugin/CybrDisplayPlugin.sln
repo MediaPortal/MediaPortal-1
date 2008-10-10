@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CybrDisplayPlugin", "CybrDisplayPlugin.csproj", "{8635D515-A5D4-4FB7-BD30-71770651E18B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8635D515-A5D4-4FB7-BD30-71770651E18B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8635D515-A5D4-4FB7-BD30-71770651E18B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8635D515-A5D4-4FB7-BD30-71770651E18B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8635D515-A5D4-4FB7-BD30-71770651E18B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

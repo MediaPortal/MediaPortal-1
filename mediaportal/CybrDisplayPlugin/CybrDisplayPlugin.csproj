@@ -1,0 +1,354 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectType>local</ProjectType>
+    <ProjectVersion>7.10.3077</ProjectVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{8635D515-A5D4-4FB7-BD30-71770651E18B}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <AssemblyName>CybrDisplayPlugin</AssemblyName>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugSymbols>true</DebugSymbols>
+    <NoStdLib>false</NoStdLib>
+    <Optimize>false</Optimize>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DefineConstants>TRACE</DefineConstants>
+    <DebugSymbols>false</DebugSymbols>
+    <NoStdLib>false</NoStdLib>
+    <Optimize>true</Optimize>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>none</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Bass.Net">
+      <Name>Bass.Net</Name>
+      <HintPath>..\..\..\..\..\..\svnroot\mediaportal\trunk\mediaportal\xbmc\bin\Release\Bass.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="Core">
+      <Name>Core</Name>
+      <HintPath>..\..\..\..\..\..\svnroot\mediaportal\trunk\mediaportal\xbmc\bin\Release\Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Dialogs">
+      <Name>Dialogs</Name>
+      <HintPath>..\..\..\..\..\..\svnroot\mediaportal\trunk\mediaportal\xbmc\bin\Release\plugins\Windows\Dialogs.dll</HintPath>
+    </Reference>
+    <Reference Include="LibDriverCoreClient">
+      <Name>LibDriverCoreClient</Name>
+      <HintPath>..\..\..\..\..\..\svnroot\mediaportal\trunk\mediaportal\xbmc\bin\Release\LibDriverCoreClient.dll</HintPath>
+    </Reference>
+    <Reference Include="RemotePlugins">
+      <Name>RemotePlugins</Name>
+      <HintPath>..\..\..\..\..\..\svnroot\mediaportal\trunk\mediaportal\xbmc\bin\Release\RemotePlugins.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.Xml</Name>
+    </Reference>
+    <Reference Include="TVCapture">
+      <Name>TVCapture</Name>
+      <HintPath>..\..\..\..\..\..\svnroot\mediaportal\trunk\mediaportal\xbmc\bin\Release\TVCapture.dll</HintPath>
+    </Reference>
+    <Reference Include="Utils">
+      <Name>Utils</Name>
+      <HintPath>..\..\..\..\..\..\svnroot\mediaportal\trunk\mediaportal\xbmc\bin\Release\Utils.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\BaseDisplay.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\BitmapConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\ByteArray.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\CybrDisplay.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\DisplayHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Drivers\CFontz.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Drivers\CFontz_AdvancedSetupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Drivers\DebugForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Drivers\DebugForm_AdvancedSetupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Drivers\GenericSerial.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Drivers\GenericSerial_AdvancedSetupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Drivers\iMONDisplay.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Drivers\iMONLCDg.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Drivers\iMONLCDg_AdvancedSetupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Drivers\iMONLCDg_FontEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Drivers\iMONLCDg_IconEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Drivers\IOWarrior.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Drivers\IOWarrior_AdvancedSetupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Drivers\ISession.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Drivers\LCDHypeWrapper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Drivers\LCDHypeWrapper_AdvancedSetupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Drivers\LCDHypeWrapper_SetupPickerForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Drivers\MatrixGX.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Drivers\MatrixGX_AdvancedSetupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Drivers\MatrixMX.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Drivers\MatrixMX_AdvancedSetupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Drivers\MCEDisplay.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Drivers\MD8800.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Drivers\MD8800_AdvancedSetupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Drivers\VLSYS_AdvancedSetupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Drivers\VLSYS_Mplay.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Drivers\xPL_Connector.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Drivers\xPL_Connector_AdvancedSetupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\GUI_SettingsBacklight.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\GUI_SettingsDisplayControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\GUI_SettingsDisplayOptions.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\GUI_SettingsEqualizer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\GUI_SettingsKeyPad.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\GUI_SettingsMain.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\GUI_SettingsRemote.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\IDisplay.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\MessageEditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Properties\Resources.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\PropertyBrowser.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Settings.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Setting\Alignment.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Setting\AndCondition.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Setting\Condition.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Setting\FixedValue.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Setting\Image.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Setting\IsNullCondition.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Setting\Line.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Setting\Message.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Setting\NotNullCondition.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Setting\OrCondition.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Setting\Parse.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Setting\PerformanceCounter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Setting\Property.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Setting\Text.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Setting\TextProgressBar.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Setting\Value.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\SetupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Status.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\Win32Functions.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CybrDisplayPlugin\XMLUTILS.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Global.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MCEDisplay_Interop\IMediaStatusSession.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MCEDisplay_Interop\IMediaStatusSink.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MCEDisplay_Interop\MediaStatusPropertyTag.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="xPL\IPAddresses.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="xPL\structXPLMsg.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="xPL\structXplSection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="xPL\xAPMsg.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="xPL\xplConfigTypes.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="xPL\XplListener.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="xPL\XplMessageTypes.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="xPL\XplMsg.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="xPL\XplSchema.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="xPL\XplSource.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <EmbeddedResource Include="CybrDisplayPlugin.Drivers.CFontz_AdvancedSetupForm.resources" />
+    <EmbeddedResource Include="CybrDisplayPlugin.Drivers.DebugForm.resources" />
+    <EmbeddedResource Include="CybrDisplayPlugin.Drivers.GenericSerial_AdvancedSetupForm.resources" />
+    <EmbeddedResource Include="CybrDisplayPlugin.Drivers.iMONLCDg_AdvancedSetupForm.resources" />
+    <EmbeddedResource Include="CybrDisplayPlugin.Drivers.iMONLCDg_IconEdit.resources" />
+    <EmbeddedResource Include="CybrDisplayPlugin.Drivers.IOWarrior_AdvancedSetupForm.resources" />
+    <EmbeddedResource Include="CybrDisplayPlugin.Drivers.LCDHypeWrapper_AdvancedSetupForm.resources" />
+    <EmbeddedResource Include="CybrDisplayPlugin.Drivers.MatrixGX_AdvancedSetupForm.resources" />
+    <EmbeddedResource Include="CybrDisplayPlugin.Drivers.MatrixMX_AdvancedSetupForm.resources" />
+    <EmbeddedResource Include="CybrDisplayPlugin.Drivers.MD8800_AdvancedSetupForm.resources" />
+    <EmbeddedResource Include="CybrDisplayPlugin.Drivers.VLSYS_AdvancedSetupForm.resources" />
+    <EmbeddedResource Include="CybrDisplayPlugin.Drivers.xPL_Connector_AdvancedSetupForm.resources" />
+    <EmbeddedResource Include="CybrDisplayPlugin.lcd.gif" />
+    <EmbeddedResource Include="CybrDisplayPlugin.lcd_deactivated.gif" />
+    <EmbeddedResource Include="CybrDisplayPlugin.MessageEditForm.resources" />
+    <EmbeddedResource Include="CybrDisplayPlugin.Properties.Resources.resources" />
+    <EmbeddedResource Include="CybrDisplayPlugin.PropertyBrowser.resources" />
+    <EmbeddedResource Include="CybrDisplayPlugin.SetupForm.resources" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>
