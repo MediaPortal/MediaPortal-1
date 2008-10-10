@@ -472,9 +472,51 @@ namespace SetupTv.Sections
 
     private void buttonRemove_Click(object sender, EventArgs e)
     {
-      Card card = (Card)mpListView1.SelectedItems[0].Tag;
-      mpListView1.Items.Remove(mpListView1.SelectedItems[0]);
-      RemoteControl.Instance.CardRemove(card.IdCard);
+      Card card = (Card)mpListView1.SelectedItems[0].Tag;      
+    
+      DialogResult res =  MessageBox.Show(this, "Are you sure you want to delete this card along with all the channel mappings ? (channels will not be deleted)", "Delete card ?", MessageBoxButtons.YesNo);
+      
+      if (res == DialogResult.Yes)
+      {
+        if (card.ReferringCardGroupMap().Count > 0)
+        {
+          for (int i = card.ReferringCardGroupMap().Count - 1; i > -1; i--)
+          {
+            CardGroupMap map = (CardGroupMap)card.ReferringCardGroupMap()[i];
+            map.Remove();
+          }
+        }
+
+        if (card.ReferringChannelMap().Count > 0)
+        {
+          for (int i = card.ReferringChannelMap().Count - 1; i > -1; i--)
+          {
+            ChannelMap map = (ChannelMap)card.ReferringChannelMap()[i];
+            map.Remove();
+          }
+        }
+
+        RemoteControl.Instance.CardRemove(card.IdCard);
+        card = null;
+        try
+        {
+          card = TvDatabase.Card.Retrieve(card.IdCard);
+        }
+        catch 
+        {
+          //ignore
+        }
+
+        if (card == null)
+        {
+          mpListView1.Items.Remove(mpListView1.SelectedItems[0]);
+          _needRestart = true;
+        }
+        else
+        {
+          MessageBox.Show(this, "Card could not be deleted", "delete card failure");
+        }
+      }
     }
 
     private void mpComboBoxCard_SelectedIndexChanged(object sender, EventArgs e)

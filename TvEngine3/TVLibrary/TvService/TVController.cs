@@ -843,14 +843,23 @@ namespace TvService
     public void CardRemove(int cardId)
     {
 
-      if (ValidateTvControllerParams(cardId)) return;
+      if (ValidateTvControllerParams(cardId))
+      {
+        Card card = Card.Retrieve(cardId);
+        if (card != null)
+        {
+          card.Remove();
+        }
+        return;
+      }
 
-      if (!IsLocal(cardId))
+      /*if (!IsLocal(cardId))
       {
         RemoteControl.HostName = _cards[cardId].DataBaseCard.ReferencedServer().HostName;
         RemoteControl.Instance.CardRemove(cardId);
         return;
       }
+      */
 
       string devicePath = _cards[cardId].Card.DevicePath;
       if (devicePath.Length > 0)
