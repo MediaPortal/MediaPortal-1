@@ -98,6 +98,9 @@ AutoCloseWindow true
 ;SilentInstall silent
 
 Section
+  IfFileExists "$INSTDIR\*.*" 0 +2
+    RMDir "$INSTDIR"
+
   SetOutPath $INSTDIR
   File /r /x .svn /x *.pdb /x *.vshost.exe "${svn_DeployTool}\bin\Release\*"
 
