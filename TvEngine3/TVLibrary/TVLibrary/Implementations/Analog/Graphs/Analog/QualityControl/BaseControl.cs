@@ -149,8 +149,16 @@ namespace TvLibrary.Implementations.Analog.QualityControl
     /// </summary>
     public void StartPlayback()
     {
-      _bitRateMode = _configuration.PlaybackQualityMode;
-      _qualityType = _configuration.PlaybackQualityType;
+      if (_configuration != null)
+      {
+        _bitRateMode = _configuration.PlaybackQualityMode;
+        _qualityType = _configuration.PlaybackQualityType;
+      }
+      else
+      {
+        _bitRateMode = VIDEOENCODER_BITRATE_MODE.NotSet;
+        _qualityType = QualityType.Default;
+      }
       ApplyQuality();
     }
 
@@ -159,8 +167,16 @@ namespace TvLibrary.Implementations.Analog.QualityControl
     /// </summary>
     public void StartRecord()
     {
-      _bitRateMode = _configuration.RecordQualityMode;
-      _qualityType = _configuration.RecordQualityType;
+      if (_configuration != null)
+      {
+        _bitRateMode = _configuration.RecordQualityMode;
+        _qualityType = _configuration.RecordQualityType;
+      }
+      else
+      {
+        _bitRateMode = VIDEOENCODER_BITRATE_MODE.ConstantBitRate;
+        _qualityType = QualityType.Default;
+      }
       ApplyQuality();
     }
 
