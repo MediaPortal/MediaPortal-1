@@ -1139,7 +1139,9 @@ namespace TvEngine.PowerScheduler
     /// </summary>
     private void FreeTVCards()
     {
-      if (_cardsStopped)
+      // Bav: moved logic to Service1.cs, because controller.Deinit() is stopping all plugins (including Powerscheduler)
+      return;
+      /*if (_cardsStopped)
         return;
       // only free tuner cards if reinitialization is enabled in settings
       if (_settings.GetSetting("ReinitializeController").Get<bool>())
@@ -1153,6 +1155,7 @@ namespace TvEngine.PowerScheduler
           _reinitializeController = true;
         }
       }
+      */
     }
 
     /// <summary>
@@ -1160,6 +1163,9 @@ namespace TvEngine.PowerScheduler
     /// </summary>
     private void ReinitializeController()
     {
+      // Bav: moved logic to Service1.cs, because Reinit is never called due to earlier call of controller.Deinit() which is stopping all plugins (including Powerscheduler)
+      return;
+      /*
       if (!_reinitializeController)
         return;
       // only reinitialize controller if enabled in settings
@@ -1174,6 +1180,7 @@ namespace TvEngine.PowerScheduler
           _cardsStopped = false;
         }
       }
+       */
     }
 
     #endregion

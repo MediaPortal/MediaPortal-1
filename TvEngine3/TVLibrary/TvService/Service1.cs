@@ -42,7 +42,7 @@ using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Tcp;
 using System.Xml;
-
+using TvDatabase;
 using TvLibrary.Log;
 using TvControl;
 using TvEngine.Interfaces;
@@ -59,6 +59,7 @@ namespace TvService
     bool _priorityApplied = false;
     TVController _controller;
     List<PowerEventHandler> _powerEventHandlers;
+    private bool _reinitializeController = false;
 
     #endregion
 
@@ -192,7 +193,7 @@ namespace TvService
 
     Thread _powerEventThread;
     uint _powerEventThreadId;
-
+    
     [StructLayout(LayoutKind.Sequential)]
     private struct MSG
     {
@@ -501,8 +502,24 @@ namespace TvService
 
     private bool OnPowerEventHandler(PowerEventType powerStatus)
     {
+      Log.Debug("OnPowerEventHandler: PowerStatus: {0}", powerStatus);
+      
       switch (powerStatus)
       {
+        case PowerEventType.StandBy:
+        case PowerEventType.Suspend:
+          if ((!_reinitializeController) && (_controller != null))
+          {
+            TvBusinessLayer layer = new TvBusinessLayer();
+            bool bSetting = Convert.ToBoolean(layer.GetSetting("PowerSchedulerReinitializeController", "false").Value);
+            if (bSetting)
+            {
+              _reinitializeController = true;
+              Log.Debug("OnPowerEventHandler: Stopping Controller");
+              _controller.DeInit();
+            }
+          }
+          return true;        
         case PowerEventType.QuerySuspend:
         case PowerEventType.QueryStandBy:
           if (_controller != null)
@@ -527,6 +544,13 @@ namespace TvService
         case PowerEventType.ResumeCritical:
         case PowerEventType.ResumeSuspend:
           //OnStart(null);
+          if ((_reinitializeController) && (_controller != null))
+          {
+            _reinitializeController = false;
+            Log.Debug("OnPowerEventHandler: Starting Controller");
+            _controller.Restart();
+          }
+        
           return true;
       }
       return true;
