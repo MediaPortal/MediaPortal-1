@@ -81,32 +81,40 @@ namespace TestApp
         int quality = _currentCard.SignalQuality;
         if (quality < 0) quality = 0;
         if (quality > 100) quality = 100;
-        if (_currentCard.SubChannels[0].CurrentChannel != null)
-          labelChannel.Text = _currentCard.SubChannels[0].CurrentChannel.ToString();
-        else
-          labelChannel.Text = "";
-        progressBarQuality.Value = quality;
-        buttonScan.Enabled = true;// (_currentCard.IsTunerLocked);
-        buttonTimeShift.Enabled = (_currentCard.IsTunerLocked && (_currentCard.SubChannels[0].IsRecording == false));
-        buttonRecord.Enabled = (_currentCard.SubChannels[0].IsTimeShifting || _currentCard.SubChannels[0].IsRecording);
-        button3.Enabled = (_currentCard.IsTunerLocked && (_currentCard.SubChannels[0].IsRecording == false));
-        button2.Enabled = (_currentCard.SubChannels[0].IsTimeShifting || _currentCard.SubChannels[0].IsRecording);
-        btnEPG.Enabled = _currentCard.IsTunerLocked;
-        if (_currentCard.SubChannels[0].IsRecording)
-          buttonRecord.Text = "Stop recording";
-        else
-          buttonRecord.Text = "Record";
+        if (_currentCard.SubChannels.Length > 0)
+        {
+          if (_currentCard.SubChannels[0].CurrentChannel != null)
+            labelChannel.Text = _currentCard.SubChannels[0].CurrentChannel.ToString();
+          else
+            labelChannel.Text = "";
+          progressBarQuality.Value = quality;
+          buttonScan.Enabled = true;// (_currentCard.IsTunerLocked);
+          buttonTimeShift.Enabled = (_currentCard.IsTunerLocked && (_currentCard.SubChannels[0].IsRecording == false));
+          buttonRecord.Enabled = (_currentCard.SubChannels[0].IsTimeShifting || _currentCard.SubChannels[0].IsRecording);
+          buttonTimeShiftTS.Enabled = (_currentCard.IsTunerLocked && (_currentCard.SubChannels[0].IsRecording == false));
+          buttonRecordMpg.Enabled = (_currentCard.SubChannels[0].IsTimeShifting || _currentCard.SubChannels[0].IsRecording);
+          btnEPG.Enabled = _currentCard.IsTunerLocked;
+          if (_currentCard.SubChannels[0].IsRecording)
+            buttonRecord.Text = "Stop recording";
+          else
+            buttonRecord.Text = "Record";
 
-        if (_currentCard.SubChannels[0].IsTimeShifting)
-          buttonTimeShift.Text = "Stop timeshifting";
-        else
-          buttonTimeShift.Text = "Timeshift";
+          if (_currentCard.SubChannels[0].IsTimeShifting)
+            buttonTimeShift.Text = "Stop timeshifting";
+          else
+            buttonTimeShift.Text = "Timeshift";
 
-        if (_currentCard.SubChannels[0].IsReceivingAudioVideo)
-          labelScrambled.Text = "no";
-        else
-          labelScrambled.Text = "yes";
-      }
+          if (_currentCard.SubChannels[0].IsReceivingAudioVideo)
+            labelScrambled.Text = "no";
+          else
+            labelScrambled.Text = "yes";
+        } else {
+          buttonTimeShift.Enabled = _currentCard.IsTunerLocked;
+          buttonTimeShiftTS.Enabled = _currentCard.IsTunerLocked;
+          buttonRecord.Enabled = false;
+          buttonRecordMpg.Enabled = false;
+        }
+      } 
     }
 
     private void buttonTune_Click(object sender, EventArgs e)
@@ -129,7 +137,7 @@ namespace TestApp
         if ((_currentCard as TvCardAnalog) != null)
         {
           FormAnalogChannel dlg = new FormAnalogChannel();
-          if (_currentCard.SubChannels[0].CurrentChannel != null)
+          if ((_currentCard.SubChannels.Length > 0) && (_currentCard.SubChannels[0].CurrentChannel != null))
             dlg.Channel = _currentCard.SubChannels[0].CurrentChannel;
 
           dlg.ShowDialog();
@@ -210,8 +218,8 @@ namespace TestApp
           return;
       }
       timer1.Enabled = false;
-      button3.Enabled = false;
-      button2.Enabled = false;
+      buttonTimeShiftTS.Enabled = false;
+      buttonRecordMpg.Enabled = false;
       buttonTimeShift.Enabled = false;
       buttonRecord.Enabled = false;
       buttonTune.Enabled = false;
@@ -388,7 +396,7 @@ namespace TestApp
       UpdatePage(pageNumber, subPageNumber);
     }
 
-    private void button3_Click(object sender, EventArgs e)
+    private void buttonTimeShiftTS_Click(object sender, EventArgs e)
     {
       if (_currentCard.SubChannels[0].IsTimeShifting)
       {
@@ -396,12 +404,12 @@ namespace TestApp
         //_player = null;
         _currentCard.SubChannels[0].StopTimeShifting();
         _stopStreaming = true;
-        button3.Text = "Timeshift .ts";
+        buttonTimeShiftTS.Text = "Timeshift .ts";
         MessageBox.Show(this, "Stopped .ts timeshifting");
         return;
       }
       _currentCard.SubChannels[0].StartTimeShifting("live.ts");
-      button3.Text = "Stop .ts timeshift";
+      buttonTimeShiftTS.Text = "Stop .ts timeshift";
 
       //_player = new Player();
       //_player.Play(_currentCard.TimeShiftFileName,this);
@@ -418,17 +426,17 @@ namespace TestApp
       //MessageBox.Show(this,"Timeshifting to live.ts");
     }
 
-    private void button2_Click(object sender, EventArgs e)
+    private void buttonRecordMpg_Click(object sender, EventArgs e)
     {
       if (_currentCard.SubChannels[0].IsRecording)
       {
         _currentCard.SubChannels[0].StopRecording();
-        button2.Text = "Record .mpg";
+        buttonRecordMpg.Text = "Record .mpg";
         MessageBox.Show(this, "Stopped recording");
         return;
       }
       _currentCard.SubChannels[0].StartRecording(false, "recording.mpg");
-      button2.Text = "Stop .mpg record";
+      buttonRecordMpg.Text = "Stop .mpg record";
       MessageBox.Show(this, "Recording to recording.mpg");
     }
 

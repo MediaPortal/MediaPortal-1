@@ -49,8 +49,8 @@ namespace TestApp
       this.label6 = new System.Windows.Forms.Label();
       this.button1 = new System.Windows.Forms.Button();
       this.pictureBox1 = new System.Windows.Forms.PictureBox();
-      this.button2 = new System.Windows.Forms.Button();
-      this.button3 = new System.Windows.Forms.Button();
+      this.buttonRecordMpg = new System.Windows.Forms.Button();
+      this.buttonTimeShiftTS = new System.Windows.Forms.Button();
       this.label7 = new System.Windows.Forms.Label();
       this.labelScrambled = new System.Windows.Forms.Label();
       this.pictureBox2 = new System.Windows.Forms.PictureBox();
@@ -243,25 +243,25 @@ namespace TestApp
       this.pictureBox1.TabIndex = 18;
       this.pictureBox1.TabStop = false;
       // 
-      // button2
+      // buttonRecordMpg
       // 
-      this.button2.Location = new System.Drawing.Point(653, 36);
-      this.button2.Name = "button2";
-      this.button2.Size = new System.Drawing.Size(96, 23);
-      this.button2.TabIndex = 20;
-      this.button2.Text = "Record .mpg";
-      this.button2.UseVisualStyleBackColor = true;
-      this.button2.Click += new System.EventHandler(this.button2_Click);
+      this.buttonRecordMpg.Location = new System.Drawing.Point(653, 36);
+      this.buttonRecordMpg.Name = "buttonRecordMpg";
+      this.buttonRecordMpg.Size = new System.Drawing.Size(96, 23);
+      this.buttonRecordMpg.TabIndex = 20;
+      this.buttonRecordMpg.Text = "Record .mpg";
+      this.buttonRecordMpg.UseVisualStyleBackColor = true;
+      this.buttonRecordMpg.Click += new System.EventHandler(this.buttonRecordMpg_Click);
       // 
-      // button3
+      // buttonTimeShiftTS
       // 
-      this.button3.Location = new System.Drawing.Point(553, 39);
-      this.button3.Name = "button3";
-      this.button3.Size = new System.Drawing.Size(94, 23);
-      this.button3.TabIndex = 19;
-      this.button3.Text = "TimeShift .ts";
-      this.button3.UseVisualStyleBackColor = true;
-      this.button3.Click += new System.EventHandler(this.button3_Click);
+      this.buttonTimeShiftTS.Location = new System.Drawing.Point(553, 39);
+      this.buttonTimeShiftTS.Name = "buttonTimeShiftTS";
+      this.buttonTimeShiftTS.Size = new System.Drawing.Size(94, 23);
+      this.buttonTimeShiftTS.TabIndex = 19;
+      this.buttonTimeShiftTS.Text = "TimeShift .ts";
+      this.buttonTimeShiftTS.UseVisualStyleBackColor = true;
+      this.buttonTimeShiftTS.Click += new System.EventHandler(this.buttonTimeShiftTS_Click);
       // 
       // label7
       // 
@@ -327,8 +327,8 @@ namespace TestApp
       this.Controls.Add(this.pictureBox2);
       this.Controls.Add(this.labelScrambled);
       this.Controls.Add(this.label7);
-      this.Controls.Add(this.button2);
-      this.Controls.Add(this.button3);
+      this.Controls.Add(this.buttonRecordMpg);
+      this.Controls.Add(this.buttonTimeShiftTS);
       this.Controls.Add(this.pictureBox1);
       this.Controls.Add(this.button1);
       this.Controls.Add(this.label6);
@@ -382,8 +382,8 @@ namespace TestApp
     private System.Windows.Forms.Label label6;
     private System.Windows.Forms.Button button1;
     private System.Windows.Forms.PictureBox pictureBox1;
-    private System.Windows.Forms.Button button2;
-    private System.Windows.Forms.Button button3;
+    private System.Windows.Forms.Button buttonRecordMpg;
+    private System.Windows.Forms.Button buttonTimeShiftTS;
     private System.Windows.Forms.Label label7;
     private System.Windows.Forms.Label labelScrambled;
     private System.Windows.Forms.PictureBox pictureBox2;
