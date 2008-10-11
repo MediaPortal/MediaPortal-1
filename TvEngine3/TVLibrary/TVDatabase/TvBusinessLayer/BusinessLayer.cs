@@ -336,6 +336,37 @@ namespace TvDatabase
     }
     
     /// <summary>
+    /// Checks if a file doesnt exist and then returns the filename preceded by a CRLF combination.
+    /// If the file does exist a empty string is returned.
+    /// </summary>
+    /// <returns>A String that contains the name of the not existing file </returns>
+    String FileNotExistsString(String fileName)
+    {
+      if (!System.IO.File.Exists(fileName))
+        return "\r\n"+fileName;
+      else
+        return "";
+    }
+
+    /// <summary>
+    /// Checks several files that are needed for using the gentle framework for the database.
+    /// If some files are not present in the working folder an System.IO.FileNotFoundException exception is thrown
+    /// </summary>
+    void checkGentleFiles()
+    {
+      String filesNotFound = "";
+      filesNotFound += FileNotExistsString("Gentle.config");
+      filesNotFound += FileNotExistsString("Gentle.Framework.dll");
+      filesNotFound += FileNotExistsString("Gentle.Provider.MySQL.dll");
+      filesNotFound += FileNotExistsString("Gentle.Provider.SQLServer.dll");
+
+      if (!filesNotFound.Equals(""))
+      {
+        throw new System.IO.FileNotFoundException("Files not found:" + filesNotFound);
+      }
+    }
+
+    /// <summary>
     /// gets a value from the database table "Setting"
     /// </summary>
     /// <returns>A Setting object with the stored value, if it doesnt exist the given default string will be the value</returns>
@@ -344,8 +375,17 @@ namespace TvDatabase
       if (defaultValue == null) return null;
       if (tagName == null) return null;
       if (tagName == "") return null;
+      SqlBuilder sb;
+      try
+      {
+        sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Setting));
+      }
+      catch (TypeInitializationException e)
+      {
+        checkGentleFiles();// Try to throw a more meaningfull exception
+        throw e;// else re-throw the original error
+      }
 
-      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Setting));
       sb.AddConstraint(Operator.Equals, "tag", tagName);
       SqlStatement stmt = sb.GetStatement(true);
       IList settingsFound = ObjectFactory.GetCollection(typeof(Setting), stmt.Execute());
@@ -364,7 +404,17 @@ namespace TvDatabase
     /// <returns>A Setting object with the stored value, if it doesnt exist a empty string will be the value</returns>
     public Setting GetSetting(string tagName)
     {
-      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Setting));
+      SqlBuilder sb;
+      try
+      {
+        sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Setting));
+      }
+      catch (TypeInitializationException e)
+      {
+        checkGentleFiles();// Try to throw a more meaningfull exception
+        throw e;// else re-throw the original error
+      }
+
       sb.AddConstraint(Operator.Equals, "tag", tagName);
       SqlStatement stmt = sb.GetStatement(true);
       IList settingsFound = ObjectFactory.GetCollection(typeof(Setting), stmt.Execute());
