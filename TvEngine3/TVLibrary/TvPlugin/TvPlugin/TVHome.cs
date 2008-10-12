@@ -3008,12 +3008,21 @@ namespace TvPlugin
 
       bool tsFileExists = System.IO.File.Exists(timeshiftFileName);
 
-      if (!tsFileExists && !_usertsp)
+      if (!tsFileExists && !_usertsp) //should we avoid RTSP mode (only meant for debugging purposes or when RTSP does not work.)
       {
-
         if (_timeshiftingpath.Length > 0)
         {
-          timeshiftFileName = _timeshiftingpath + "\\" + Path.GetFileName(timeshiftFileName);
+          string path = Path.GetDirectoryName(timeshiftFileName);
+          int index = path.LastIndexOf("\\");
+
+          if (index == -1)
+          {
+            timeshiftFileName = TVHome.TimeshiftingPath() + "\\" + Path.GetFileName(timeshiftFileName);
+          }
+          else
+          {
+            timeshiftFileName = TVHome.TimeshiftingPath() + path.Substring(index) + "\\" + Path.GetFileName(timeshiftFileName);
+          }
         }
         else
         {
@@ -3022,6 +3031,15 @@ namespace TvPlugin
         }
         tsFileExists = System.IO.File.Exists(timeshiftFileName);
       }
+
+
+
+
+
+
+
+
+
 
       if (tsFileExists && !forceRtsp)
       {
