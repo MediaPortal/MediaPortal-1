@@ -385,6 +385,13 @@ public class MediaPortalApp : D3DApp, IRender
                     strLine = strLine + "Current version installed:" + strVersion + "\r\n\r\n";
                     strLine = strLine + "MediaPortal cannot run without DirectX 9.0c\r\n";
                     strLine = strLine + "http://www.microsoft.com/directx";
+#if !DEBUG
+                    if (splashScreen != null)
+                    {
+                      splashScreen.Stop();
+                      splashScreen = null;
+                    }
+#endif
                     MessageBox.Show(strLine, "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                   }
@@ -421,6 +428,13 @@ public class MediaPortalApp : D3DApp, IRender
           }
           else
           {
+#if !DEBUG
+            if (splashScreen != null)
+            {
+              splashScreen.Stop();
+              splashScreen = null;
+            }
+#endif
             string strLine = "Please install Windows Media Player " + WMP_Main_Ver + "\r\n";
             strLine = strLine + "MediaPortal cannot run without Windows Media Player " + WMP_Main_Ver;
             MessageBox.Show(strLine, "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -527,6 +541,13 @@ public class MediaPortalApp : D3DApp, IRender
       msg += "just delete the whole directory mentioned above and reconfigure MediaPortal.";
       string msg2 = "\n\n\nDo you want to open your local file now?";
       Log.Error(msg);
+#if !DEBUG
+      if (splashScreen != null)
+      {
+        splashScreen.Stop();
+        splashScreen = null;
+      }
+#endif
       DialogResult result = MessageBox.Show(msg + msg2, "MediaPortal - Update Conflict", MessageBoxButtons.YesNo, MessageBoxIcon.Stop);
       try
       {

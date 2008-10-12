@@ -264,6 +264,12 @@
     <Compile Include="d3dutil.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="FullScreenSplashScreen.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FullScreenSplashScreen.Designer.cs">
+      <DependentUpon>FullScreenSplashScreen.cs</DependentUpon>
+    </Compile>
     <Compile Include="Direct3D.cs" />
     <Compile Include="MediaPortal.cs">
       <SubType>Form</SubType>
@@ -292,6 +298,10 @@
     <EmbeddedResource Include="D3DSettingsForm.resx">
       <DependentUpon>D3DSettingsForm.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FullScreenSplashScreen.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>FullScreenSplashScreen.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.resx">
       <DependentUpon>MediaPortal.cs</DependentUpon>

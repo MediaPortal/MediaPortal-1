@@ -26,7 +26,10 @@
 using System.ComponentModel;
 using System.Threading;
 using System.Windows.Forms;
+using System;
+using System.Xml;
 using MediaPortal.GUI.Library;
+using MediaPortal.Configuration;
 
 namespace MediaPortal
 {
@@ -44,6 +47,7 @@ namespace MediaPortal
     public string Version;
     private bool stopRequested = false;
     private SplashForm frm;
+    private FullScreenSplashScreen frmFull;
     private string info;
 
     public SplashScreen()
@@ -74,7 +78,8 @@ namespace MediaPortal
     /// </summary>
     public bool isStopped()
     {
-        return (frm == null);
+      // do only return the state of the normal splashscreen to allow mp to work during the delay stop phase of the fullscreen splash
+      return (frm == null); 
     }
     /// <summary>
     /// Set the contents of the information label of the splash screen
@@ -92,12 +97,37 @@ namespace MediaPortal
     /// This method is started in a background thread by the <see cref="Run"/> method.</remarks>
     private void DoRun()
     {
-      string oldInfo=null;
+      try
+      {
+        bool useFullScreenSplash = true;
+        bool startFullScreen = true;
+
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        {
+          useFullScreenSplash = xmlreader.GetValueAsBool("general", "usefullscreensplash", true);
+          startFullScreen = xmlreader.GetValueAsBool("general", "startfullscreen", true);
+        }
+
+        if (useFullScreenSplash && startFullScreen) ShowFullScreenSplashScreen();
+        else ShowNormalSplash();
+      }
+      catch (Exception e)
+      {
+        Log.Error("Error during splashscreen handling: {0}", e.Message);
+      }
+    }
+
+    /// <summary>
+    /// handles the normal splash screen
+    /// </summary>
+    private void ShowNormalSplash()
+    {
       frm = new SplashForm();
       frm.SetVersion(Version);
       frm.Show();
       frm.Update();
       frm.FadeIn();
+      string oldInfo = null;
       while (!stopRequested && frm.Focused) //run until stop of splashscreen is requested
       {
         if (oldInfo != info)
@@ -113,6 +143,57 @@ namespace MediaPortal
       frm = null;
     }
 
+    /// <summary>
+    /// handles the fullscreen splash
+    /// </summary>
+    private void ShowFullScreenSplashScreen()
+    {
+      frmFull = new FullScreenSplashScreen();
+      Cursor.Hide();
+
+      //frmFull.pbBackground.Image = new System.Drawing.Bitmap(GetBackgroundImagePath());
+      frmFull.RetrieveSplashScreenInfo();
+
+      frmFull.Left = (Screen.PrimaryScreen.Bounds.Width / 2 - frmFull.Width / 2) + 1;
+      frmFull.Top = (Screen.PrimaryScreen.Bounds.Height / 2 - frmFull.Height / 2) + 1;
+
+      frmFull.lblMain.Parent = frmFull.pbBackground;
+      frmFull.lblVersion .Parent = frmFull.lblMain;
+      frmFull.lblCVS.Parent = frmFull.lblMain;
+
+      frmFull.SetVersion(Version);
+      frmFull.Show();
+
+      frmFull.Update();
+      //frmFull.FadeIn(); // remarked because without it the start looks faster (more powerful and responding)
+      frmFull.Opacity = 100;
+      
+      string oldInfo = null;
+      bool delayedStopAllowed = false;
+      int stopRequestTime = 0; 
+      while (!delayedStopAllowed && frmFull.Focused) //run until stop of splashscreen is requested
+      {
+        if (stopRequested && stopRequestTime == 0) // store the current time when stop of the splashscreen is requested
+        {
+          stopRequestTime = System.Environment.TickCount;
+          frmFull.TopMost = false; // allow the splashscreen to be overlayed by other windows (like the mp main screen)
+        }
+        if ((stopRequestTime != 0) && ((System.Environment.TickCount - 5000) > stopRequestTime)) delayedStopAllowed = true; // if stop is requested for more than 5sec ... leave the loop
+
+        if (oldInfo != info)
+        {
+          frmFull.SetInformation(info);
+          oldInfo = info;
+        }
+        Thread.Sleep(25);
+      }
+
+      Cursor.Show();
+      frmFull.Close();
+      frmFull = null;
+    }
+
+    
     /// <summary>
     /// Summary description for SplashScreen.
     /// </summary>

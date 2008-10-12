@@ -172,6 +172,7 @@ namespace MediaPortal.Configuration.Sections
       this.settingsCheckedListBox.Items.AddRange(new object[] {
             "Start with basic home screen",
             "Start MediaPortal in fullscreen mode",
+            "Use alternative fullscreen Splashscreen (only if started in fullscreen mode)",
             "Autosize window mode to skin (breaks teletext)",
             "Keep MediaPortal always on top",
             "Hide taskbar in fullscreen mode",

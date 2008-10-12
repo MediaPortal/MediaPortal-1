@@ -89,25 +89,26 @@ namespace MediaPortal.Configuration.Sections
     string[][] sectionEntries = new string[][] { 
       new string[] { "general", "startbasichome", "false" },            // 0 Start with basic home screen
       new string[] { "general", "startfullscreen", "true" },            // 1 Start MediaPortal in fullscreen mode
-      new string[] { "general", "autosize", "false" },                  // 2 Autosize window mode to skin
-      new string[] { "general", "alwaysontop", "false" },               // 3 Keep MediaPortal always on top
-      new string[] { "general", "hidetaskbar", "false" },               // 4 Hide taskbar in fullscreen mode      
-      new string[] { "general", "autostart", "false" },                 // 5 Autostart MediaPortal on Windows startup
-      new string[] { "general", "minimizeonstartup", "false" },         // 6 Minimize to tray on start up
-      new string[] { "general", "minimizeonexit", "false" },            // 7 Minimize to tray on GUI exit
-      new string[] { "general", "mousesupport", "false" },              // 8 Show special mouse controls (scrollbars, etc)      
-      new string[] { "general", "hideextensions", "true" },             // 9 Hide file extensions like .mp3, .avi, .mpg,...
-      new string[] { "general", "enableguisounds", "true" },            // 10 Enable GUI sound effects
-      new string[] { "general", "animations", "true" },                 // 11 Enable animations / transitions	  
-	    new string[] { "general", "baloontips", "false" },                // 12 Disable Windows tray area's balloon tips (for all apps)
-	    new string[] { "general", "screensaver", "false" },               // 13 Blank screen in fullscreen mode when MediaPortal is idle
-      new string[] { "general", "turnoffmonitor", "false" },            // 14 Turn off monitor when blanking screen	    
-      new string[] { "general", "turnmonitoronafterresume", "true" },   // 15 Turn monitor/tv on when resuming from standby
-      new string[] { "general", "enables3trick", "true" },              // 16 Allow S3 standby although wake up devices are present
-      new string[] { "general", "restartonresume", "false" },           // 17 Restart MediaPortal on resume (avoids stuttering playback with nvidia)
-      new string[] { "general", "showlastactivemodule", "false" },      // 18 Show last active module when starting / resuming from standby
-      new string[] { "comskip", "automaticskip", "false" },             // 19 Automatically skip commercials for videos with ComSkip data available
-      new string[] { "screenselector", "usescreenselector", "false" }   // 20 Use screenselector to choose on which screen MP should start
+      new string[] { "general", "usefullscreensplash", "true" },        // 2 Use screenselector to choose on which screen MP should start
+      new string[] { "general", "autosize", "false" },                  // 3 Autosize window mode to skin
+      new string[] { "general", "alwaysontop", "false" },               // 4 Keep MediaPortal always on top
+      new string[] { "general", "hidetaskbar", "false" },               // 5 Hide taskbar in fullscreen mode      
+      new string[] { "general", "autostart", "false" },                 // 6 Autostart MediaPortal on Windows startup
+      new string[] { "general", "minimizeonstartup", "false" },         // 7 Minimize to tray on start up
+      new string[] { "general", "minimizeonexit", "false" },            // 8 Minimize to tray on GUI exit
+      new string[] { "general", "mousesupport", "false" },              // 9 Show special mouse controls (scrollbars, etc)      
+      new string[] { "general", "hideextensions", "true" },             // 10 Hide file extensions like .mp3, .avi, .mpg,...
+      new string[] { "general", "enableguisounds", "true" },            // 11 Enable GUI sound effects
+      new string[] { "general", "animations", "true" },                 // 12 Enable animations / transitions	  
+	    new string[] { "general", "baloontips", "false" },                // 13 Disable Windows tray area's balloon tips (for all apps)
+	    new string[] { "general", "screensaver", "false" },               // 14 Blank screen in fullscreen mode when MediaPortal is idle
+      new string[] { "general", "turnoffmonitor", "false" },            // 15 Turn off monitor when blanking screen	    
+      new string[] { "general", "turnmonitoronafterresume", "true" },   // 16 Turn monitor/tv on when resuming from standby
+      new string[] { "general", "enables3trick", "true" },              // 17 Allow S3 standby although wake up devices are present
+      new string[] { "general", "restartonresume", "false" },           // 18 Restart MediaPortal on resume (avoids stuttering playback with nvidia)
+      new string[] { "general", "showlastactivemodule", "false" },      // 19 Show last active module when starting / resuming from standby
+      new string[] { "comskip", "automaticskip", "false" },             // 20 Automatically skip commercials for videos with ComSkip data available
+      new string[] { "screenselector", "usescreenselector", "false" },
       
       //new string[] { "general", "autohidemouse", "true" }, 
       //new string[] { "general", "dblclickasrightclick", "false" },
