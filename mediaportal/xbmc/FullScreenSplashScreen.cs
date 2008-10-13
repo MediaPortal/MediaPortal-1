@@ -181,11 +181,17 @@ namespace MediaPortal
             if (tmpscreen.DeviceName.Contains("DISPLAY" + ScreenNumber)) // if the selected Display is found
             {
               this.Location = new Point(tmpscreen.Bounds.X, tmpscreen.Bounds.Y); // set the form position into this screen
+              this.Size = new Size(tmpscreen.Bounds.Width + 1, tmpscreen.Bounds.Height + 1);
             }
           }
         }
+        else
+        {
+          this.Location = new Point(0, 0);
+          this.Size = new Size(Screen.FromHandle(this.Handle).Bounds.Width + 1, Screen.FromHandle(this.Handle).Bounds.Height + 1);
+        }
       }
-      this.WindowState = FormWindowState.Maximized; // fill the screen
+      //this.WindowState = FormWindowState.Maximized; // fill the screen
     }
   }
 }

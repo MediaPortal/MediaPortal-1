@@ -95,14 +95,18 @@
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(284, 264);
+      this.ControlBox = false;
       this.Controls.Add(this.lblVersion);
       this.Controls.Add(this.lblCVS);
       this.Controls.Add(this.lblMain);
       this.Controls.Add(this.pbBackground);
+      this.DoubleBuffered = true;
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+      this.MaximizeBox = false;
       this.Name = "FullScreenSplashScreen";
       this.Opacity = 0;
       this.ShowInTaskbar = false;
+      this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
       this.Text = "FullScreenSplashScreen";
       this.TopMost = true;
       this.Load += new System.EventHandler(this.FullScreenSplashScreen_Load);
