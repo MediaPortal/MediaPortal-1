@@ -43,6 +43,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ManualDownloadFileMissing.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ManualDownloadFileMissing.Designer.cs">
+      <DependentUpon>ManualDownloadFileMissing.cs</DependentUpon>
+    </Compile>
     <Compile Include="HTTPDownload.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -115,6 +121,11 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>MediaPortal.DeployTool.it-IT.resx</DependentUpon>
+    </Compile>
+    <Compile Include="MediaPortal.DeployTool.ja-JP.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MediaPortal.DeployTool.ja-JP.resx</DependentUpon>
     </Compile>
     <Compile Include="MediaPortal.DeployTool.mk-MK.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -190,6 +201,10 @@
       <SubType>Designer</SubType>
       <DependentUpon>ManualDownload.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ManualDownloadFileMissing.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ManualDownloadFileMissing.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.DeployTool.da-DK.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
@@ -219,6 +234,11 @@
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>MediaPortal.DeployTool.it-IT.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MediaPortal.DeployTool.ja-JP.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.ja-JP.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.DeployTool.mk-MK.resx">
       <SubType>Designer</SubType>
