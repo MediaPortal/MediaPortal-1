@@ -182,11 +182,26 @@ namespace MediaPortal.DeployTool
         result.state = CheckState.SKIPPED;
         return result;
       }
-      if (!fwMgr.LocalPolicy.CurrentProfile.FirewallEnabled)
+
+      try
       {
-        //If firewall service is disabled, no need to configure it
+        if (!fwMgr.LocalPolicy.CurrentProfile.FirewallEnabled)
+        {
+          //If firewall service is disabled, no need to configure it
 #if DEBUG
-        MessageBox.Show("Firewall service disabled!", "fwMgr.LocalPolicy.CurrentProfile.FirewallEnabled", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+          MessageBox.Show("Firewall service disabled!", "fwMgr.LocalPolicy.CurrentProfile.FirewallEnabled",
+                          MessageBoxButtons.OK, MessageBoxIcon.Warning);
+#endif
+          result.state = CheckState.SKIPPED;
+          return result;
+        }
+      }
+      catch (Exception)
+      {
+        // If a 3rd party firewall is active, an exception is throw
+#if DEBUG
+        MessageBox.Show("3rd party firewall service detected!", "fwMgr.LocalPolicy.CurrentProfile.FirewallEnabled",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
 #endif
         result.state = CheckState.SKIPPED;
         return result;
