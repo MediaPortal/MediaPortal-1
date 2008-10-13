@@ -137,6 +137,7 @@ namespace TvPlugin
 
     string lastChannelWithNoSignal = string.Empty;
     VideoRendererStatistics.State videoState = VideoRendererStatistics.State.VideoPresent;
+    List<MediaPortal.GUI.Library.Geometry.Type> _allowedArModes = new List<MediaPortal.GUI.Library.Geometry.Type>();
     #endregion
 
     #region enums
@@ -234,7 +235,21 @@ namespace TvPlugin
         //				m_iZapDelay = 1000*xmlreader.GetValueAsInt("movieplayer","zapdelay",2);
         _zapTimeOutValue = 1000 * xmlreader.GetValueAsInt("movieplayer", "zaptimeout", 5);
         _byIndex = xmlreader.GetValueAsBool("mytv", "byindex", true);
-        if (!TVHome.settingsLoaded)
+        if (xmlreader.GetValueAsBool("mytv", "allowarzoom", true))
+            _allowedArModes.Add(MediaPortal.GUI.Library.Geometry.Type.Zoom);
+        if (xmlreader.GetValueAsBool("mytv", "allowarstretch", true))
+            _allowedArModes.Add(MediaPortal.GUI.Library.Geometry.Type.Stretch);
+        if (xmlreader.GetValueAsBool("mytv", "allowarnormal", true))
+            _allowedArModes.Add(MediaPortal.GUI.Library.Geometry.Type.Normal);
+        if (xmlreader.GetValueAsBool("mytv", "allowaroriginal", true))
+            _allowedArModes.Add(MediaPortal.GUI.Library.Geometry.Type.Original);
+        if (xmlreader.GetValueAsBool("mytv", "allowarletterbox", true))
+            _allowedArModes.Add(MediaPortal.GUI.Library.Geometry.Type.LetterBox43);
+        if (xmlreader.GetValueAsBool("mytv", "allowarpanscan", true))
+            _allowedArModes.Add(MediaPortal.GUI.Library.Geometry.Type.PanScan43);
+        if (xmlreader.GetValueAsBool("mytv", "allowarzoom149", true))
+            _allowedArModes.Add(MediaPortal.GUI.Library.Geometry.Type.Zoom14to9);
+          if (!TVHome.settingsLoaded)
         {
           string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "normal");
           if (strValue.Equals("zoom")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom;
@@ -552,90 +567,26 @@ namespace TvPlugin
             _statusVisible = true;
             _statusTimeOutTimer = DateTime.Now;
             string status = "";
-            List<MediaPortal.GUI.Library.Geometry.Type> allowedModes = new List<MediaPortal.GUI.Library.Geometry.Type>();
-
-            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-            {
-              if (xmlreader.GetValueAsBool("mytv", "allowarzoom", true))
-              {
-                allowedModes.Add(MediaPortal.GUI.Library.Geometry.Type.Zoom);
-              }
-              if (xmlreader.GetValueAsBool("mytv", "allowarstretch", true))
-              {
-                allowedModes.Add(MediaPortal.GUI.Library.Geometry.Type.Stretch);
-              }
-              if (xmlreader.GetValueAsBool("mytv", "allowarnormal", true))
-              {
-                allowedModes.Add(MediaPortal.GUI.Library.Geometry.Type.Normal);
-              }
-              if (xmlreader.GetValueAsBool("mytv", "allowaroriginal", true))
-              {
-                allowedModes.Add(MediaPortal.GUI.Library.Geometry.Type.Original);
-              }
-              if (xmlreader.GetValueAsBool("mytv", "allowarletterbox", true))
-              {
-                allowedModes.Add(MediaPortal.GUI.Library.Geometry.Type.LetterBox43);
-              }
-              if (xmlreader.GetValueAsBool("mytv", "allowarpanscan", true))
-              {
-                allowedModes.Add(MediaPortal.GUI.Library.Geometry.Type.PanScan43);
-              }
-              if (xmlreader.GetValueAsBool("mytv", "allowarzoom149", true))
-              {
-                allowedModes.Add(MediaPortal.GUI.Library.Geometry.Type.Zoom14to9);
-              }
-            }
 
             MediaPortal.GUI.Library.Geometry.Type arMode = GUIGraphicsContext.ARType;
 
             bool foundMode = false;
-            for (int i = 0; i < allowedModes.Count; i++)
+            for (int i = 0; i < _allowedArModes.Count; i++)
             {
-              if (allowedModes[i] == arMode)
+              if (_allowedArModes[i] == arMode)
               {
-                arMode = allowedModes[(i + 1) % allowedModes.Count]; // select next allowed mode
+                arMode = _allowedArModes[(i + 1) % _allowedArModes.Count]; // select next allowed mode
                 foundMode = true;
                 break;
               }
             }
-            if (!foundMode && allowedModes.Count > 0)
+            if (!foundMode && _allowedArModes.Count > 0)
             {
-              arMode = allowedModes[0];
+              arMode = _allowedArModes[0];
             }
 
             GUIGraphicsContext.ARType = arMode;
-
-            switch (GUIGraphicsContext.ARType)
-            {
-              case MediaPortal.GUI.Library.Geometry.Type.Stretch:
-                status = GUILocalizeStrings.Get(942); // "Stretch";
-                break;
-
-              case MediaPortal.GUI.Library.Geometry.Type.Normal:
-                status = GUILocalizeStrings.Get(943); //"Normal";
-                break;
-
-              case MediaPortal.GUI.Library.Geometry.Type.Original:
-                status = GUILocalizeStrings.Get(944); //"Original";
-                break;
-
-              case MediaPortal.GUI.Library.Geometry.Type.LetterBox43:
-                status = GUILocalizeStrings.Get(945); //"Letterbox 4:3";
-                break;
-
-              case MediaPortal.GUI.Library.Geometry.Type.PanScan43:
-                status = GUILocalizeStrings.Get(946); //"Pan and Scan 4:3";
-                break;
-
-              case MediaPortal.GUI.Library.Geometry.Type.Zoom:
-                status = GUILocalizeStrings.Get(947); //"Zoom";
-                break;
-
-              case MediaPortal.GUI.Library.Geometry.Type.Zoom14to9:
-                status = GUILocalizeStrings.Get(1190); //"Zoom 14:9";
-                break;
-            }
-
+            status = Utils.GetAspectRatioLocalizedString(arMode);
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
             msg.Label = status;
             OnMessage(msg);
@@ -1808,92 +1759,34 @@ namespace TvPlugin
       dlg.Reset();
       dlg.SetHeading(941); // Change aspect ratio
 
-      dlg.AddLocalizedString(942); // Stretch
-      dlg.AddLocalizedString(943); // Normal
-      dlg.AddLocalizedString(944); // Original
-      dlg.AddLocalizedString(945); // Letterbox
-      dlg.AddLocalizedString(946); // Pan and scan
-      dlg.AddLocalizedString(947); // Zoom
-      dlg.AddLocalizedString(1190); //14:9
-      switch (GUIGraphicsContext.ARType)
-      {
-        case Geometry.Type.Stretch:
-          dlg.SelectedLabel = 0;
-          break;
-        case Geometry.Type.Normal:
-          dlg.SelectedLabel = 1;
-          break;
-        case Geometry.Type.Original:
-          dlg.SelectedLabel = 2;
-          break;
-        case Geometry.Type.LetterBox43:
-          dlg.SelectedLabel = 3;
-          break;
-        case Geometry.Type.PanScan43:
-          dlg.SelectedLabel = 4;
-          break;
-        case Geometry.Type.Zoom:
-          dlg.SelectedLabel = 5;
-          break;
-        case Geometry.Type.Zoom14to9:
-          dlg.SelectedLabel = 6;
-          break;
-      }
+      // Add the allowed zoom  modes
+      if(_allowedArModes.Contains(Geometry.Type.Stretch)) dlg.AddLocalizedString(942); // Stretch
+      if(_allowedArModes.Contains(Geometry.Type.Normal)) dlg.AddLocalizedString(943); // Normal
+      if(_allowedArModes.Contains(Geometry.Type.Original)) dlg.AddLocalizedString(944); // Original
+      if(_allowedArModes.Contains(Geometry.Type.LetterBox43)) dlg.AddLocalizedString(945); // Letterbox
+      if(_allowedArModes.Contains(Geometry.Type.PanScan43)) dlg.AddLocalizedString(946); // Pan and scan
+      if(_allowedArModes.Contains(Geometry.Type.Zoom)) dlg.AddLocalizedString(947); // Zoom
+      if(_allowedArModes.Contains(Geometry.Type.Zoom14to9)) dlg.AddLocalizedString(1190); //14:9
+      
+      // set the focus to currently used mode
+      dlg.SelectedLabel = dlg.IndexOfItem(Utils.GetAspectRatioLocalizedString(GUIGraphicsContext.ARType));
+      // show dialog and wait for result       
       _isDialogVisible = true;
-
       dlg.DoModal(GetID);
       _isDialogVisible = false;
 
       if (dlg.SelectedId == -1) return;
       _statusTimeOutTimer = DateTime.Now;
+      
       string strStatus = "";
-      switch (dlg.SelectedId)
-      {
-        case 942: // Stretch
-          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Stretch;
-          strStatus = "Stretch";
-          SaveSettings();
-          break;
 
-        case 943: // Normal
-          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Normal;
-          strStatus = "Normal";
-          SaveSettings();
-          break;
+      GUIGraphicsContext.ARType = Utils.GetAspectRatioByLangID(dlg.SelectedId);
+      strStatus = GUILocalizeStrings.Get(dlg.SelectedId);
+      SaveSettings();
 
-        case 944: // Original
-          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Original;
-          strStatus = "Original";
-          SaveSettings();
-          break;
-
-        case 945: // Letterbox
-          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.LetterBox43;
-          strStatus = "Letterbox 4:3";
-          SaveSettings();
-          break;
-
-        case 946: // Pan and scan
-          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.PanScan43;
-          strStatus = "PanScan 4:3";
-          SaveSettings();
-          break;
-
-        case 947: // Zoom
-          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom;
-          strStatus = "Zoom";
-          SaveSettings();
-          break;
-        case 1190: //14:9
-          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom14to9;
-          strStatus = "Zoom 14:9";
-          SaveSettings();
-          break;
-      }
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
       msg.Label = strStatus;
       OnMessage(msg);
-
     }
 
     void ShowAudioLanguageMenu()
