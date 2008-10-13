@@ -181,7 +181,7 @@ namespace TvPlugin
         {
           if (GUIGraphicsContext.ShowBackground)
           {
-            // stop timeshifting & viewing... 
+            // stop timeshifting & viewing...
 
             TVHome.Card.StopTimeShifting();
           }
@@ -693,7 +693,6 @@ namespace TvPlugin
       }
 
       //Schedule schedDB = Schedule.Retrieve(rec.IdSchedule);
-      // you should always get to the settings menu regardless of rec type
       //if (schedDB.ScheduleType != (int)ScheduleRecordingType.Once)
       //{
         dlg.AddLocalizedString(1048); // settings
@@ -763,14 +762,17 @@ namespace TvPlugin
             g_Player.Stop(true);
             if (System.IO.File.Exists(fileName))
             {
-              TvDatabase.Recording recDB = Recording.Retrieve(fileName);
-              TvRecorded.SetActiveRecording(recDB);
               if (g_Player.Play(fileName, g_Player.MediaType.Recording))
-							{
-								g_Player.ShowFullScreenWindow();
-								recDB.TimesWatched++;
-								recDB.Persist();
-							}
+              {
+                g_Player.SeekAbsolute(0);
+                g_Player.ShowFullScreenWindow();
+                TvDatabase.Recording recDB = Recording.Retrieve(fileName);
+                TvRecorded.SetActiveRecording(recDB);
+                g_Player.currentTitle = recDB.Title;
+                g_Player.currentDescription = recDB.Description;
+                recDB.TimesWatched++;
+                recDB.Persist();
+              }
               return;
             }
             else
@@ -783,13 +785,14 @@ namespace TvPlugin
 
                 if (g_Player.Playing)
                 {
-									TvDatabase.Recording recDB = Recording.Retrieve(fileName);
-                  TvRecorded.SetActiveRecording(recDB);
                   g_Player.SeekAbsolute(0);
-                  g_Player.SeekAbsolute(0); //why 2x?
                   g_Player.ShowFullScreenWindow();
-									recDB.TimesWatched++;
-									recDB.Persist();
+                  TvDatabase.Recording recDB = Recording.Retrieve(fileName);
+                  TvRecorded.SetActiveRecording(recDB);
+                  g_Player.currentTitle = recDB.Title;
+                  g_Player.currentDescription = recDB.Description;
+                  recDB.TimesWatched++;
+                  recDB.Persist();
                   return;
                 }
               }

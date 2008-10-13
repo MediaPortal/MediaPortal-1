@@ -1235,7 +1235,7 @@ namespace TvPlugin
                 bConflict = true;
               if ((ScheduleRecordingType)record.ScheduleType != ScheduleRecordingType.Once)
                 bSeries = true;
-              bRecording = true;              
+              bRecording = true;
               break;
             }
           }
@@ -1256,7 +1256,7 @@ namespace TvPlugin
           GUIControl.ShowControl(GetID, (int)Controls.IMG_REC_PIN);
         }
         else
-        {          
+        {
           GUIControl.HideControl(GetID, (int)Controls.IMG_REC_PIN);
         }
       }
@@ -1591,7 +1591,7 @@ namespace TvPlugin
       if (programs.Count > 0)
       {
         int iProgram = 0;
-        int iPreviousEndXPos = 0;               
+        int iPreviousEndXPos = 0;
 
         foreach (Program program in programs)
         {
@@ -1624,32 +1624,32 @@ namespace TvPlugin
           bool bConflict = false;
 
           foreach (Schedule record in _recordingList)
-          {                                    
+          {
             bool isRecPrg = false;
             if (channel.IdChannel == record.ReferencedChannel().IdChannel)
-            {                          
+            {
               if (noEPG)
-              {                               
+              {
                 VirtualCard card;
                 isRecPrg = (TVHome.IsRecordingSchedule(record, null, out card));
               }
               else
               {
                 if (record.IsManual) //do we have a manually started recording ?
-                {                
+                {
                   Schedule manual = record.Clone();
                   manual.ProgramName = program.Title;
                   manual.EndTime = program.EndTime;
-                  manual.StartTime = program.StartTime;                    
-                  isRecPrg = manual.IsRecordingProgram(program, true);                  
+                  manual.StartTime = program.StartTime;
+                  isRecPrg = manual.IsRecordingProgram(program, true);
                 }
                 else
                 {
                   isRecPrg = record.IsRecordingProgram(program, true);
                 }
-              }              
+              }
             }
-                                   
+
             if (isRecPrg)
             {
               if (record.ReferringConflicts().Count != 0)
@@ -1667,7 +1667,7 @@ namespace TvPlugin
           for (int iBlok = 0 ; iBlok < _numberOfBlocks ; iBlok++)
           {
             float fWidthEnd = (float)width;
-            DateTime dtBlokEnd = dtBlokStart.AddMinutes(_timePerBlock - 1); //
+            DateTime dtBlokEnd = dtBlokStart.AddMinutes(_timePerBlock - 1);
             if (program.RunningAt(dtBlokStart, dtBlokEnd))
             {
               //dtBlokEnd = dtBlokStart.AddSeconds(_timePerBlock * 60);
@@ -2624,14 +2624,14 @@ namespace TvPlugin
                   else
                   {
                     isRec = TVHome.IsRecordingSchedule(rec, null, out card);
-                  } 
-                }                
+                  }
+                }
                 
                 if (isRec)
                 {
                   recMatchFound = true;
 
-                  TvServer server = new TvServer();                  
+                  TvServer server = new TvServer();
                   string fileName = "";
 
                   if (card != null)
@@ -2661,14 +2661,17 @@ namespace TvPlugin
                           g_Player.Stop(true);
                           if (System.IO.File.Exists(fileName))
                           {
-														TvDatabase.Recording recDB = Recording.Retrieve(fileName);
-                            TvRecorded.SetActiveRecording(recDB);
-														if (g_Player.Play(fileName, g_Player.MediaType.Recording))
-														{ 
-															g_Player.ShowFullScreenWindow();
-															recDB.TimesWatched++;
-															recDB.Persist();
-														}
+                            if (g_Player.Play(fileName, g_Player.MediaType.Recording))
+                            {
+                              g_Player.SeekAbsolute(0);
+                              g_Player.ShowFullScreenWindow();
+                              TvDatabase.Recording recDB = Recording.Retrieve(fileName);
+                              TvRecorded.SetActiveRecording(recDB);
+                              g_Player.currentTitle = recDB.Title;
+                              g_Player.currentDescription = recDB.Description;
+                              recDB.TimesWatched++;
+                              recDB.Persist();
+                            }
                             return;
                           }
                           else
@@ -2678,21 +2681,21 @@ namespace TvPlugin
                             if (url.Length > 0)
                             {
                               g_Player.Play(url, g_Player.MediaType.Recording);
-
                               if (g_Player.Playing)
                               {
-																TvDatabase.Recording recDB = Recording.Retrieve(fileName);
-                                TvRecorded.SetActiveRecording(recDB);                                
                                 g_Player.SeekAbsolute(0);
                                 g_Player.ShowFullScreenWindow();
-																recDB.TimesWatched++;
-																recDB.Persist();
+                                TvDatabase.Recording recDB = Recording.Retrieve(fileName);
+                                TvRecorded.SetActiveRecording(recDB);
+                                g_Player.currentTitle = recDB.Title;
+                                g_Player.currentDescription = recDB.Description;
+                                recDB.TimesWatched++;
+                                recDB.Persist();
                                 return;
                               }
                             }
                           }
                         }
-
                         return;
 
                       case 980: // Play recording from live point
@@ -2819,12 +2822,12 @@ namespace TvPlugin
         GUIWindow tvHome = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TV);
         if ((tvHome != null) && (tvHome.GetID != GUIWindowManager.ActiveWindow))
         {
-          //tvHome.OnAction(new Action(Action.ActionType.ACTION_RECORD, 0, 0));          
+          //tvHome.OnAction(new Action(Action.ActionType.ACTION_RECORD, 0, 0));
           bool didRecStart = TVHome.ManualRecord(_currentProgram.ReferencedChannel());
           //refresh view.
           if (didRecStart)
           {
-            _recordingExpected = _currentProgram.ReferencedChannel();            
+            _recordingExpected = _currentProgram.ReferencedChannel();
           }
         }
       }

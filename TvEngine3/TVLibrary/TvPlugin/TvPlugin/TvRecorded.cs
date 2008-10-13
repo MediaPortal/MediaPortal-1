@@ -304,7 +304,7 @@ namespace TvPlugin
     /// <summary>
     /// This function replaces g_player.ShowFullScreenWindowTV
     /// </summary>
-    ///<returns></returns>        
+    ///<returns></returns>
     private static bool ShowFullScreenWindowTVHandler()
     {
       if (g_Player.IsTVRecording)
@@ -323,7 +323,7 @@ namespace TvPlugin
     /// <summary>
     /// This function replaces g_player.ShowFullScreenWindowVideo
     /// </summary>
-    ///<returns></returns>        
+    ///<returns></returns>
     private static bool ShowFullScreenWindowVideoHandler()
     {
       if (g_Player.IsTVRecording)
@@ -662,7 +662,7 @@ namespace TvPlugin
                 if (add)
                 {
                   // Add new list item for this recording
-                  //GUIListItem item = BuildItemFromRecording(rec);                
+                  //GUIListItem item = BuildItemFromRecording(rec);
                   itemlist.Add(it);
                 }
                 else
@@ -739,7 +739,7 @@ namespace TvPlugin
       TimeSpan tsRecording = (aRecording.EndTime - aRecording.StartTime);
       DateTime now = DateTime.Now;
 
-      bool recStartEndSame = (tsRecording.TotalSeconds == 0);           
+      bool recStartEndSame = (tsRecording.TotalSeconds == 0);
 
       if (recStartEndSame)
       {
@@ -762,19 +762,19 @@ namespace TvPlugin
             Schedule sched = Schedule.Retrieve(card.RecordingScheduleId);
 
             foreach (Program prg in prgList)
-            {              
+            {
               if (sched.IsManual)
               {
                 TimeSpan ts = now - aRecording.EndTime;
                 if (aRecording.StartTime <= prg.EndTime && ts.TotalHours < 24) // if endtime is over 24 hrs old, then we do not consider it as a currently rec. program
-                {                
-                  return true;                
+                {
+                  return true;
                 }
               }
               else if (sched.IsRecordingProgram(prg, false))
               {
                 return true;
-              }                                            
+              }
             }
           }
         }
@@ -1050,10 +1050,8 @@ namespace TvPlugin
       {
         if (TVHome.RecordingPath().Length > 0)
         {
-
           string path = Path.GetDirectoryName(fileName);
           int index = path.LastIndexOf("\\");
-
 
           if (index == -1)
           {
@@ -1080,7 +1078,6 @@ namespace TvPlugin
         fileName = TVHome.TvServer.GetStreamUrlForFileName(rec.IdRecording);
       }
 
-			//should these two line also be in tvguidebase and tvscheduler?
       g_Player.currentTitle = rec.Title;
       g_Player.currentDescription = rec.Description;
 
@@ -1089,19 +1086,17 @@ namespace TvPlugin
       {
         if (Utils.IsVideo(fileName))
         {
-          g_Player.ShowFullScreenWindow();
           g_Player.SeekAbsolute(0);
+          g_Player.ShowFullScreenWindow();
         }
         if (stoptime > 0)
         {
           g_Player.SeekAbsolute(stoptime);
         }
-				//if playback starts successfully then update timeswatched
-				rec.TimesWatched++;
-				rec.Persist();
+        rec.TimesWatched++;
+        rec.Persist();
         return true;
       }
-
       return false;
     }
 
@@ -1111,7 +1106,7 @@ namespace TvPlugin
       GUIListItem pItem = GetItem(iItem);
       if (pItem == null) return;
       if (pItem.IsFolder) return;
-      Recording rec = (Recording)pItem.TVTag;      
+      Recording rec = (Recording)pItem.TVTag;
       
       GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
       if (null == dlgYesNo) return;
@@ -1126,10 +1121,9 @@ namespace TvPlugin
       dlgYesNo.SetDefaultToYes(false);
       bool isRec = IsRecordingActual(rec);
       bool activeRecDeleted = false;
-      TvServer server = new TvServer(); ;
+      TvServer server = new TvServer();
       if (isRec)
-      { 
-        
+      {
         dlgYesNo.SetHeading(GUILocalizeStrings.Get(653));//Delete this recording?
         dlgYesNo.SetLine(1, GUILocalizeStrings.Get(730));//This schedule is recording. If you delete
         dlgYesNo.SetLine(2, GUILocalizeStrings.Get(731));//the schedule then the recording is stopped.
@@ -1138,8 +1132,8 @@ namespace TvPlugin
         if (!dlgYesNo.IsConfirmed)
         {
           return;
-        }        
-        
+        }
+
         IList schedulesList = Schedule.ListAll();
         if (schedulesList != null)
         {
@@ -1164,14 +1158,13 @@ namespace TvPlugin
                   {
                     g_Player.Stop();
                   }
-                  TVHome.PromptAndDeleteRecordingSchedule(s.IdSchedule, null, false, true);                                    
-                  activeRecDeleted = true;                  
+                  TVHome.PromptAndDeleteRecordingSchedule(s.IdSchedule, null, false, true);
+                  activeRecDeleted = true;
                 }
               }
             }
           }
         }
-
       }
       else
       {
@@ -1220,7 +1213,7 @@ namespace TvPlugin
           dlgOk.DoModal(GetID);
         }
       }
-      
+
       Gentle.Common.CacheManager.Clear();
 
       LoadDirectory();
@@ -1249,7 +1242,7 @@ namespace TvPlugin
       dlg.Add(new GUIListItem(GUILocalizeStrings.Get(676))); // Only watched recordings?
       dlg.Add(new GUIListItem(GUILocalizeStrings.Get(200044))); // Only invalid recordings?
       dlg.Add(new GUIListItem(GUILocalizeStrings.Get(200045))); // Both?
-      if (currentShow != "") dlg.Add(new GUIListItem(GUILocalizeStrings.Get(200049))); // Only watched recordings from this folder. 
+      if (currentShow != "") dlg.Add(new GUIListItem(GUILocalizeStrings.Get(200049))); // Only watched recordings from this folder.
       dlg.Add(new GUIListItem(GUILocalizeStrings.Get(222))); // Cancel?
       dlg.DoModal(GetID);
       if (dlg.SelectedLabel < 0) return;
@@ -1544,7 +1537,6 @@ namespace TvPlugin
       // we can not rely on filename from the method parameter, as this can be a RTSP://123455 kind of URL.
       if (m_oActiveRecording != null) filename = m_oActiveRecording.FileName;
 
-      
       if (filename.Length > 0)
       {
         FileInfo f = new FileInfo(filename);
@@ -1554,8 +1546,8 @@ namespace TvPlugin
       TvBusinessLayer layer = new TvBusinessLayer();
       Recording rec = layer.GetRecordingByFileName(filename);
       if (rec != null)
-      {       
-        if (stoptime >= g_Player.Duration) { stoptime = 0; }; //temporary workaround before end of stream get's properly implemented        
+      {
+        if (stoptime >= g_Player.Duration) { stoptime = 0; }; //temporary workaround before end of stream get's properly implemented
         rec.StopTime = stoptime;
         rec.Persist();
       }
@@ -1642,7 +1634,5 @@ namespace TvPlugin
     //  TVDatabase.PlayedRecordedTV(rec);
     //}
     #endregion
-
-
   }
 }
