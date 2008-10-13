@@ -300,6 +300,7 @@ namespace MediaPortal.Util
       {
         if (strPath.ToLower().IndexOf("live.tv") >= 0) return true;
         if (strPath.ToLower().IndexOf("live.ts") >= 0) return true;
+        if (strPath.ToLower().IndexOf("ts.tsbuffer") >= 0) return true;
       }
       catch (Exception) { }
       return false;
@@ -2509,6 +2510,36 @@ namespace MediaPortal.Util
         catch { }
       }
       return result;
+    }
+
+    public static string GetAspectRatioLocalizedString(MediaPortal.GUI.Library.Geometry.Type aspectRatioType)
+    {
+      switch (aspectRatioType)
+      {
+        case MediaPortal.GUI.Library.Geometry.Type.Stretch:
+            return GUILocalizeStrings.Get(942);
+
+        case MediaPortal.GUI.Library.Geometry.Type.Normal:
+            return GUILocalizeStrings.Get(943);
+
+        case MediaPortal.GUI.Library.Geometry.Type.Original:
+            return GUILocalizeStrings.Get(944);
+
+        case MediaPortal.GUI.Library.Geometry.Type.LetterBox43:
+            return GUILocalizeStrings.Get(945);
+
+        case MediaPortal.GUI.Library.Geometry.Type.PanScan43:
+            return GUILocalizeStrings.Get(946);
+
+        case MediaPortal.GUI.Library.Geometry.Type.Zoom:
+            return GUILocalizeStrings.Get(947);
+
+        case MediaPortal.GUI.Library.Geometry.Type.Zoom14to9:
+            return GUILocalizeStrings.Get(1190);
+
+        default:
+            return GUILocalizeStrings.Get(943);
+      }
     }
 
     public static string GetAspectRatio(MediaPortal.GUI.Library.Geometry.Type aspectRatioType)

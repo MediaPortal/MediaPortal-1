@@ -234,6 +234,47 @@ namespace MediaPortal.Dialogs
       set { showQuickNumbers = value; }
     }
 
+    public int IndexOfItem(int iLocalizedString)
+    {
+      int index = 0;
+      foreach (GUIListItem pItem in listItems)
+      {
+          if (showQuickNumbers)
+          {
+              int labelIndex = listItems.IndexOf(pItem) + 1;
+              if (pItem.Label.Equals(labelIndex.ToString()+ " " + GUILocalizeStrings.Get(iLocalizedString)))
+                  index = listItems.IndexOf(pItem);
+          }
+          else
+          {
+              if (pItem.Label.Equals(GUILocalizeStrings.Get(iLocalizedString)))
+                  index = listItems.IndexOf(pItem);
+          }
+      }
+      return index;
+    }
+
+    public int IndexOfItem(string strItemLable)
+    {
+      int index = 0;
+      foreach (GUIListItem pItem in listItems)
+      {
+          if (showQuickNumbers)
+          {
+              int labelIndex = listItems.IndexOf(pItem) + 1;
+              if (pItem.Label.Equals(labelIndex.ToString() + " " + strItemLable))
+                  index = listItems.IndexOf(pItem);
+          }
+          else
+          {
+              if (pItem.Label.Equals(strItemLable))
+                  index = listItems.IndexOf(pItem);
+          }
+      }
+      return index;
+    }
+
+
     public void AddLocalizedString(int iLocalizedString)
     {
       int iItemIndex = listItems.Count + 1;
