@@ -322,7 +322,6 @@ namespace MediaPortal.GUI.Library
                                 int iShadowHeight,
                                 long dwShadowColor)
     {
-
       for (int x = -iShadowWidth ; x < iShadowWidth ; x++)
       {
         for (int y = -iShadowHeight ; y < iShadowHeight ; y++)
@@ -340,7 +339,6 @@ namespace MediaPortal.GUI.Library
         FontEnginePresent3D(ID);
       }
     }
-
 
     #region RTL handling
     private string reverse(string a)
@@ -696,7 +694,7 @@ namespace MediaPortal.GUI.Library
           char c = text[i];
           if (c < _StartCharacter || c >= _EndCharacter)
           {
-            GUIFontManager.DrawText(_d3dxFont, xpos, ypos, color, text, maxWidth);
+            GUIFontManager.DrawText(_d3dxFont, xpos, ypos, color, text, maxWidth, _fontHeight);
             return;
           }
         }
@@ -712,7 +710,6 @@ namespace MediaPortal.GUI.Library
           return;
         }
       }
-
     }
 
     /// <summary>
@@ -766,7 +763,7 @@ namespace MediaPortal.GUI.Library
         char c = text[i];
         if (c < _StartCharacter || c >= _EndCharacter)
         {
-          GUIFontManager.MeasureText(_d3dxFont, text, ref textwidth, ref textheight);
+          GUIFontManager.MeasureText(_d3dxFont, text, ref textwidth, ref textheight, _fontHeight);
           return;
         }
       }
