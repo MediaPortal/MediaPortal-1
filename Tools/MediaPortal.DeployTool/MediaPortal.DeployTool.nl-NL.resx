@@ -454,7 +454,7 @@ installatie later uit te voeren?
 (mogelijk op een PC zonder internetverbinding)</value>
   </data>
   <data name="DownloadOnly_no" xml:space="preserve">
-    <value>Allen de benodigde onderdelen downloaden</value>
+    <value>Alleen de benodigde onderdelen downloaden</value>
   </data>
   <data name="DownloadOnly_yes" xml:space="preserve">
     <value>Start de installatie nu</value>
