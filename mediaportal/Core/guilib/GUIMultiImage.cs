@@ -27,11 +27,13 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Diagnostics;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
 using MediaPortal.Util;
 using Microsoft.DirectX.Direct3D;
+
 
 namespace MediaPortal.GUI.Library
 {
@@ -286,8 +288,6 @@ namespace MediaPortal.GUI.Library
       if (!m_directoryLoaded)
         LoadDirectory();
 
-
-
       // Randomize or sort our images if necessary
       //if (m_randomized)
       //  random_shuffle(m_files.begin(), m_files.end());
@@ -376,8 +376,7 @@ namespace MediaPortal.GUI.Library
       m_currentImage = 0;
       base.FreeResources();
     }
-
-
+    
     public override bool CanFocus()
     {
       return false;
@@ -399,14 +398,14 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-
     public void LoadDirectory()
     {
       // Load any images from our texture bundle first
       m_files.Clear();
 
       // don't load any images if our path is empty
-      if (m_currentPath.Length == 0) return;
+      if (m_currentPath.Length == 0)
+        return;
 
       // check to see if we have a single image or a folder of images
       if (MediaPortal.Util.Utils.IsPicture(m_currentPath))
@@ -415,14 +414,40 @@ namespace MediaPortal.GUI.Library
       }
       else
       { // folder of images
-        string folder = GUIGraphicsContext.Skin + @"\media\animations\" + m_currentPath;
-        string[] files = System.IO.Directory.GetFiles(folder);
-        for (int i = 0; i < files.Length; ++i)
+        try
         {
-          if (MediaPortal.Util.Utils.IsPicture(files[i]))
+          string imageFolder = string.Empty;
+          // try to use the provided folder as an absolute path
+          if (Directory.Exists(m_currentPath))
+            imageFolder = m_currentPath;
+
+          // if that didnt work, try to use relative pathing into the skin\media folder
+          if (imageFolder.Trim().Length == 0)
           {
-            m_files.Add(files[i]);
+            imageFolder = GUIGraphicsContext.Skin + @"\media\animations\" + m_currentPath;
+            // if the folder doesnt exist, we have an invalid field, exit
+            if (!Directory.Exists(imageFolder))
+              return;
           }
+
+          // load the image files
+          string[] files = Directory.GetFiles(imageFolder);
+          for (int i = 0; i < files.Length; ++i)
+          {
+            if (MediaPortal.Util.Utils.IsPicture(files[i]))
+            {
+              m_files.Add(files[i]);
+            }
+          }
+        }
+        // if there was some other error accessing the folder, quit
+        catch (UnauthorizedAccessException)
+        {
+          return;
+        }
+        catch (IOException)
+        {
+          return;
         }
       }
 
