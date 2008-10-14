@@ -24,18 +24,10 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
-using System.Windows.Forms;
-using System.Collections.Specialized;
-using System.Resources;
 
-namespace MediaPortal.DeployTool
+namespace MediaPortal.DeployTool.Sections
 {
-  public partial class WatchTVDlg : DeployDialog, IDeployDialog
+  public partial class WatchTVDlg : DeployDialog
   {
     bool rbYesChecked;
 
@@ -47,7 +39,7 @@ namespace MediaPortal.DeployTool
       InitializeComponent();
       type = DialogType.WatchTV;
       labelSectionHeader.Text = "";
-      imgYes.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
+      imgYes.Image = Images.Choose_button_on;
       rbYesChecked = true;
       UpdateUI();
     }
@@ -63,9 +55,10 @@ namespace MediaPortal.DeployTool
     public override DeployDialog GetNextDialog()
     {
       if (rbYesChecked)
+      {
         return DialogFlowHandler.Instance.GetDialogInstance(DialogType.WatchHDTv);
-      else
-        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.BASE_INSTALLATION_TYPE_WITHOUT_TVENGINE);
+      }
+      return DialogFlowHandler.Instance.GetDialogInstance(DialogType.BASE_INSTALLATION_TYPE_WITHOUT_TVENGINE);
     }
 
     public override bool SettingsValid()
@@ -77,15 +70,15 @@ namespace MediaPortal.DeployTool
 
     private void imgYes_Click(object sender, EventArgs e)
     {
-      imgYes.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
-      imgNo.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      imgYes.Image = Images.Choose_button_on;
+      imgNo.Image = Images.Choose_button_off;
       rbYesChecked = true;
     }
 
     private void imgNo_Click(object sender, EventArgs e)
     {
-      imgYes.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      imgNo.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
+      imgYes.Image = Images.Choose_button_off;
+      imgNo.Image = Images.Choose_button_on;
       rbYesChecked = false;
     }
   }

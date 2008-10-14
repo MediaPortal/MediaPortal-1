@@ -23,10 +23,8 @@
 
 #endregion
 
-using System;
-using System.Collections.Specialized;
 using System.Collections.Generic;
-using System.Text;
+using MediaPortal.DeployTool.Sections;
 
 namespace MediaPortal.DeployTool
 {
@@ -53,9 +51,6 @@ namespace MediaPortal.DeployTool
     #region Singleton implementation
     static readonly DialogFlowHandler _instance = new DialogFlowHandler();
 
-    static DialogFlowHandler()
-    {
-    }
     DialogFlowHandler()
     {
       _dlgs = new List<DeployDialog>();
@@ -71,7 +66,7 @@ namespace MediaPortal.DeployTool
     #endregion
 
     #region Variables
-    private List<DeployDialog> _dlgs;
+    private readonly List<DeployDialog> _dlgs;
     private int _currentDlgIndex = -1;
     #endregion
 
@@ -109,46 +104,46 @@ namespace MediaPortal.DeployTool
         switch (dlgType)
         {
           case DialogType.Welcome:
-            dlg = (DeployDialog)new WelcomeDlg();
+            dlg = new WelcomeDlg();
             break;
           case DialogType.DownloadOnly:
-            dlg = (DeployDialog)new DownloadOnlyDlg();
+            dlg = new DownloadOnlyDlg();
             break;
           case DialogType.WatchTV:
-            dlg = (DeployDialog)new WatchTVDlg();
+            dlg = new WatchTVDlg();
             break;
           case DialogType.WatchHDTv:
-            dlg = (DeployDialog)new WatchHDTvDlg();
+            dlg = new WatchHDTvDlg();
             break;
           case DialogType.TvEngineType:
-            dlg = (DeployDialog)new TvEngineTypeDlg();
+            dlg = new TvEngineTypeDlg();
             break;
           case DialogType.BASE_INSTALLATION_TYPE_WITHOUT_TVENGINE:
-            dlg = (DeployDialog)new BaseInstallationTypeWithoutTvEngineDlg();
+            dlg = new BaseInstallationTypeWithoutTvEngineDlg();
             break;
           case DialogType.BASE_INSTALLATION_TYPE:
-            dlg = (DeployDialog)new BaseInstallationTypeDlg();
+            dlg = new BaseInstallationTypeDlg();
             break;
           case DialogType.CUSTOM_INSTALLATION_TYPE:
-            dlg = (DeployDialog)new CustomInstallationTypeDlg();
+            dlg = new CustomInstallationTypeDlg();
             break;
           case DialogType.DBMSType:
-            dlg = (DeployDialog)new DBMSTypeDlg();
+            dlg = new DBMSTypeDlg();
             break;
           case DialogType.DBMSSettings:
-            dlg = (DeployDialog)new DBMSSettingsDlg();
+            dlg = new DBMSSettingsDlg();
             break;
           case DialogType.MPSettings:
-            dlg = (DeployDialog)new MPSettingsDlg();
+            dlg = new MPSettingsDlg();
             break;
           case DialogType.TvServerSettings:
-            dlg = (DeployDialog)new TvServerSettingsDlg();
+            dlg = new TvServerSettingsDlg();
             break;
           case DialogType.Installation:
-            dlg = (DeployDialog)new InstallDlg();
+            dlg = new InstallDlg();
             break;
           case DialogType.Finished:
-            dlg = (DeployDialog)new FinishedDlg();
+            dlg = new FinishedDlg();
             break;
         }
         if (dlg != null)

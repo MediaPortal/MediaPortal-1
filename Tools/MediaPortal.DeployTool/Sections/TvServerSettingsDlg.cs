@@ -24,18 +24,11 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
-using System.IO;
-using System.Collections.Specialized;
 
-namespace MediaPortal.DeployTool
+namespace MediaPortal.DeployTool.Sections
 {
-  public partial class TvServerSettingsDlg : DeployDialog, IDeployDialog
+  public partial class TvServerSettingsDlg : DeployDialog
   {
     public TvServerSettingsDlg()
     {

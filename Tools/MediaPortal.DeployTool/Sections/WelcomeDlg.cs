@@ -23,29 +23,22 @@
 
 #endregion
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
 using System.IO;
 using System.Windows.Forms;
 using System.Globalization;
 
-namespace MediaPortal.DeployTool
+namespace MediaPortal.DeployTool.Sections
 {
-  public partial class WelcomeDlg : DeployDialog, IDeployDialog
+  public partial class WelcomeDlg : DeployDialog
   {
     public WelcomeDlg()
     {
       InitializeComponent();
       type = DialogType.Welcome;
-      SimpleCultureInfo sci;
-      CultureInfo ci;
 
       //Default culture en-US is not in a resource file
-      ci = new CultureInfo("en-US");
-      sci = new SimpleCultureInfo("en-US", ci.NativeName);
+      CultureInfo ci = new CultureInfo("en-US");
+      SimpleCultureInfo sci = new SimpleCultureInfo("en-US", ci.NativeName);
       cbLanguage.Items.Add(sci);
       cbLanguage.SelectedItem = sci;
       //
@@ -54,7 +47,6 @@ namespace MediaPortal.DeployTool
       DirectoryInfo[] subDirs = dir.GetDirectories();
       foreach (DirectoryInfo d in subDirs)
       {
-        ci = null;
         try
         {
           ci = new CultureInfo(d.Name);
@@ -103,7 +95,7 @@ namespace MediaPortal.DeployTool
 
     private void cbLanguage_SelectedIndexChanged(object sender, EventArgs e)
     {
-      Localizer.Instance.SwitchCulture(GetLanguageId());
+      Localizer.SwitchCulture(GetLanguageId());
       if (ParentForm != null)
         ((IDeployDialog)ParentForm).UpdateUI();
       UpdateUI();

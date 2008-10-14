@@ -22,11 +22,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.IO;
@@ -39,7 +34,7 @@ namespace MediaPortal.DeployTool
 
     private void UpdateUI()
     {
-      this.Text = Utils.GetBestTranslation("ManualDownload_Title");
+      Text = Utils.GetBestTranslation("ManualDownload_Title");
       labelHeading.Text = Utils.GetBestTranslation("ManualDownload_labelHeading");
       linkURL.Text = labelTargetFile.Text = Utils.GetBestTranslation("ManualDownload_linkURL");
       linkDir.Text = Utils.GetBestTranslation("ManualDownload_linkDir");
@@ -58,7 +53,7 @@ namespace MediaPortal.DeployTool
       _url = url;
       labelTargetFile.Text = targetFile;
       labelTargetDir.Text = targetDir;
-      return base.ShowDialog();
+      return ShowDialog();
     }
 
     private void linkURL_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -73,15 +68,15 @@ namespace MediaPortal.DeployTool
 
     private void buttonContinue_Click(object sender, EventArgs e)
     {
-      if (!File.Exists(labelTargetDir.Text + "\\" + labelTargetFile.Text))
-        Utils.ErrorDlg(Utils.GetBestTranslation("ManualDownload_errFileNotFound"));
-      else
-        DialogResult = DialogResult.OK;
-    }
-
-      private void ManualDownload_Load(object sender, EventArgs e)
+      string target_dir = labelTargetDir.Text;
+      string target_file = labelTargetFile.Text;
+      if (!File.Exists(target_dir + "\\" + target_file))
       {
-
+        Dispose();
+        ManualDownloadFileMissing FileFind = new ManualDownloadFileMissing();
+        FileFind.ShowDialog(target_dir, target_file);
       }
+      DialogResult = DialogResult.OK;
+    }
   }
 }

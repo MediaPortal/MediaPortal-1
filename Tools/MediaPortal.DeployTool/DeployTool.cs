@@ -24,15 +24,8 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using System.IO;
-using Microsoft.Win32;
 using System.Diagnostics;
 
 namespace MediaPortal.DeployTool
@@ -45,7 +38,7 @@ namespace MediaPortal.DeployTool
     #region IDeployDialog interface
     public void UpdateUI()
     {
-      this.Text = Utils.GetBestTranslation("MainWindow_AppName");
+      Text = Utils.GetBestTranslation("MainWindow_AppName");
       //labelAppHeading.Text = Utils.GetBestTranslation("MainWindow_labelAppHeading");
       backButton.Text = Utils.GetBestTranslation("MainWindow_backButton");
       nextButton.Text = Utils.GetBestTranslation("MainWindow_nextButton");
@@ -88,7 +81,7 @@ namespace MediaPortal.DeployTool
 
       // Paint first screen
       InitializeComponent();
-      Localizer.Instance.SwitchCulture("en-US");
+      Localizer.SwitchCulture("en-US");
       UpdateUI();
 
       _currentDialog = DialogFlowHandler.Instance.GetDialogInstance(DialogType.Welcome);
@@ -133,7 +126,7 @@ namespace MediaPortal.DeployTool
       if (InstallationProperties.Instance["language"] != _currentCulture)
       {
         _currentCulture = InstallationProperties.Instance["language"];
-        Localizer.Instance.SwitchCulture(_currentCulture);
+        Localizer.SwitchCulture(_currentCulture);
         UpdateUI();
       }
       _currentDialog = _currentDialog.GetNextDialog();
@@ -148,10 +141,7 @@ namespace MediaPortal.DeployTool
       }
       if (InstallationProperties.Instance["Install_Dialog"] == "yes")
       {
-        if (InstallationProperties.Instance["InstallType"] == "download_only")
-          nextButton.Text = Utils.GetBestTranslation("Install_buttonDownload");
-        else
-          nextButton.Text = Utils.GetBestTranslation("Install_buttonInstall");
+        nextButton.Text = InstallationProperties.Instance["InstallType"] == "download_only" ? Utils.GetBestTranslation("Install_buttonDownload") : Utils.GetBestTranslation("Install_buttonInstall");
         InstallationProperties.Instance.Set("Install_Dialog", "no");
       }
     }
@@ -165,52 +155,20 @@ namespace MediaPortal.DeployTool
       nextButton.Text = Utils.GetBestTranslation("MainWindow_nextButton");
       SwitchDialog(_currentDialog);
     }
-    
-     private void exitButton_Click(object sender, System.EventArgs e)
+
+    private void pictureBox2_Click(object sender, EventArgs e)
     {
- 			string message = Utils.GetBestTranslation("Exit_Installation");
-		  string caption = "MediaPortal";
-			MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-			DialogResult result;
+      string message = Utils.GetBestTranslation("Exit_Installation");
+      const string caption = "MediaPortal";
+      const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 
-			result = MessageBox.Show(this, message, caption, buttons);
+      DialogResult result = MessageBox.Show(this, message, caption, buttons);
 
-            if (result == DialogResult.Yes)
-            {
-                Application.Exit();
-            }
+      if (result == DialogResult.Yes)
+      {
+        Application.Exit();
+      }
+
     }
-    
-
-      private void splitContainer2_Panel2_Paint(object sender, PaintEventArgs e)
-      {
-
-      }
-
-      private void pictureBox1_Click(object sender, EventArgs e)
-      {
-
-      }
-
-      private void splitContainer2_Panel1_Paint(object sender, PaintEventArgs e)
-      {
-
-      }
-
-      private void pictureBox2_Click(object sender, EventArgs e)
-      {
-          string message = Utils.GetBestTranslation("Exit_Installation");
-          string caption = "MediaPortal";
-          MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-          DialogResult result;
-
-          result = MessageBox.Show(this, message, caption, buttons);
-
-          if (result == DialogResult.Yes)
-          {
-              Application.Exit();
-          }
-
-      }
   }
 }

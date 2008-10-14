@@ -23,19 +23,11 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
-using System.Collections.Specialized;
-using System.IO;
 
-namespace MediaPortal.DeployTool
+namespace MediaPortal.DeployTool.Sections
 {
-  public partial class FinishedDlg : DeployDialog, IDeployDialog
+  public partial class FinishedDlg : DeployDialog
   {
     public FinishedDlg()
     {
@@ -78,7 +70,7 @@ namespace MediaPortal.DeployTool
     #endregion
 
     #region Hyperlink handler
-    private void OpenURL(string url)
+    private static void OpenURL(string url)
     {
       System.Diagnostics.Process.Start(url);
     }

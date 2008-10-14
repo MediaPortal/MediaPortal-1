@@ -359,7 +359,8 @@ The PC will then act as dedicated TV-Server and provide other PC's in your LAN w
     <value>Continue</value>
   </data>
   <data name="ManualDownload_errFileNotFound" xml:space="preserve">
-    <value>The requested file still does not exist</value>
+    <value>File {0} still does not exist. Please browse your disk
+(filename should be closed to the proposed one)</value>
   </data>
   <data name="ManualDownload_labelDesc" xml:space="preserve">
     <value>Hit "continue" when you finished downloading the requested file</value>
@@ -489,7 +490,7 @@ Continue at your own risk!</value>
   </data>
   <data name="DownloadSettings_failed" xml:space="preserve">
     <value>Download of settings file failed.
-Please review your Internet Explorer configuration.
+Please review your Internet Explorer configuration and try once again.
 Corrupted config file, if found, will now be deleted.</value>
   </data>
   <data name="MPSettings_checkBoxFirewall" xml:space="preserve">
@@ -508,5 +509,11 @@ Transfer this folder to your HTPC. Start installation by running "MediaPortal.De
   </data>
   <data name="Exit_Installation" xml:space="preserve">
     <value>Do you really want to abort the MediaPortal installation?</value>
+  </data>
+  <data name="ManualDownload_buttonBrowse" xml:space="preserve">
+    <value>Browse</value>
+  </data>
+  <data name="DownloadOnly_CurrentSettings" xml:space="preserve">
+    <value>Current download settings: lang={0}, arch={1}</value>
   </data>
 </root>

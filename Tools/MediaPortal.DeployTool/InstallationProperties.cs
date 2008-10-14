@@ -21,9 +21,6 @@
  */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Collections.Specialized;
 
 namespace MediaPortal.DeployTool
@@ -32,11 +29,8 @@ namespace MediaPortal.DeployTool
   {
     #region Singleton implementation
     static readonly InstallationProperties _instance = new InstallationProperties();
-    static InstallationProperties()
-    {
-    }
+
     InstallationProperties()
-      : base()
     {
 
     }

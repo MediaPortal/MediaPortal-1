@@ -24,18 +24,10 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
-using System.Windows.Forms;
-using System.Collections.Specialized;
-using System.Resources;
 
-namespace MediaPortal.DeployTool
+namespace MediaPortal.DeployTool.Sections
 {
-  public partial class TvEngineTypeDlg : DeployDialog, IDeployDialog
+  public partial class TvEngineTypeDlg : DeployDialog
   {
     bool tve3Checked;
     public TvEngineTypeDlg()
@@ -43,7 +35,7 @@ namespace MediaPortal.DeployTool
       InitializeComponent();
       type = DialogType.TvEngineType;
       labelSectionHeader.Text = "";
-      imgTVE3.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
+      imgTVE3.Image = Images.Choose_button_on;
       tve3Checked = true;
       UpdateUI();
     }
@@ -59,10 +51,12 @@ namespace MediaPortal.DeployTool
     public override DeployDialog GetNextDialog()
     {
       if (tve3Checked)
+      {
         return DialogFlowHandler.Instance.GetDialogInstance(DialogType.BASE_INSTALLATION_TYPE);
-      else
-        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.BASE_INSTALLATION_TYPE_WITHOUT_TVENGINE);
+      }
+      return DialogFlowHandler.Instance.GetDialogInstance(DialogType.BASE_INSTALLATION_TYPE_WITHOUT_TVENGINE);
     }
+
     public override bool SettingsValid()
     {
       return true;
@@ -72,15 +66,15 @@ namespace MediaPortal.DeployTool
 
     private void imgTVE2_Click(object sender, EventArgs e)
     {
-      imgTVE2.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
-      imgTVE3.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      imgTVE2.Image = Images.Choose_button_on;
+      imgTVE3.Image = Images.Choose_button_off;
       tve3Checked = false;
     }
 
     private void imgTVE3_Click(object sender, EventArgs e)
     {
-      imgTVE2.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      imgTVE3.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
+      imgTVE2.Image = Images.Choose_button_off;
+      imgTVE3.Image = Images.Choose_button_on;
       tve3Checked = true;
     }
   }

@@ -24,17 +24,11 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
-using System.Collections.Specialized;
 
-namespace MediaPortal.DeployTool
+namespace MediaPortal.DeployTool.Sections
 {
-  public partial class DBMSSettingsDlg : DeployDialog, IDeployDialog
+  public partial class DBMSSettingsDlg : DeployDialog
   {
     public DBMSSettingsDlg()
     {
@@ -59,10 +53,12 @@ namespace MediaPortal.DeployTool
     public override DeployDialog GetNextDialog()
     {
       if (InstallationProperties.Instance["InstallType"] == "singleseat")
+      {
         return DialogFlowHandler.Instance.GetDialogInstance(DialogType.MPSettings);
-      else
-        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.TvServerSettings);
+      }
+      return DialogFlowHandler.Instance.GetDialogInstance(DialogType.TvServerSettings);
     }
+
     public override bool SettingsValid()
     {
       if (!Utils.CheckTargetDir(textBoxDir.Text))

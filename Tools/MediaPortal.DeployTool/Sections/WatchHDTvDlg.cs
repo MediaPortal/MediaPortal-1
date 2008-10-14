@@ -24,18 +24,10 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
-using System.Windows.Forms;
-using System.Collections.Specialized;
-using System.Resources;
 
-namespace MediaPortal.DeployTool
+namespace MediaPortal.DeployTool.Sections
 {
-  public partial class WatchHDTvDlg : DeployDialog, IDeployDialog
+  public partial class WatchHDTvDlg : DeployDialog
   {
     bool rbYesChecked;
 
@@ -44,7 +36,7 @@ namespace MediaPortal.DeployTool
       InitializeComponent();
       type = DialogType.WatchHDTv;
       labelSectionHeader.Text = "";
-      imgYesHD.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
+      imgYesHD.Image = Images.Choose_button_on;
       rbYesChecked = true;
       UpdateUI();
     }
@@ -60,10 +52,12 @@ namespace MediaPortal.DeployTool
     public override DeployDialog GetNextDialog()
     {
       if (rbYesChecked)
+      {
         return DialogFlowHandler.Instance.GetDialogInstance(DialogType.BASE_INSTALLATION_TYPE);
-      else
-        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.TvEngineType);
+      }
+      return DialogFlowHandler.Instance.GetDialogInstance(DialogType.TvEngineType);
     }
+
     public override bool SettingsValid()
     {
       return true;
@@ -73,25 +67,25 @@ namespace MediaPortal.DeployTool
 
     private void imgYesHD_Click(object sender, EventArgs e)
     {
-      imgYesHD.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
-      imgNoHD.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      imgMaybeHD.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      imgYesHD.Image = Images.Choose_button_on;
+      imgNoHD.Image = Images.Choose_button_off;
+      imgMaybeHD.Image = Images.Choose_button_off;
       rbYesChecked = true;
     }
 
     private void imgNoHD_Click(object sender, EventArgs e)
     {
-      imgYesHD.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      imgNoHD.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
-      imgMaybeHD.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      imgYesHD.Image = Images.Choose_button_off;
+      imgNoHD.Image = Images.Choose_button_on;
+      imgMaybeHD.Image = Images.Choose_button_off;
       rbYesChecked = false;
     }
 
     private void imgMaybeHD_Click(object sender, EventArgs e)
     {
-      imgYesHD.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      imgNoHD.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      imgMaybeHD.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
+      imgYesHD.Image = Images.Choose_button_off;
+      imgNoHD.Image = Images.Choose_button_off;
+      imgMaybeHD.Image = Images.Choose_button_on;
       rbYesChecked = false;
     }
   }

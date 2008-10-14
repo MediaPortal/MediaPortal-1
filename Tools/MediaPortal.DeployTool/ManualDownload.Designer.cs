@@ -37,6 +37,7 @@ namespace MediaPortal.DeployTool
       this.linkDir = new System.Windows.Forms.LinkLabel();
       this.labelDesc = new System.Windows.Forms.Label();
       this.buttonContinue = new System.Windows.Forms.Button();
+      this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
       this.SuspendLayout();
       // 
       // labelHeading
@@ -112,14 +113,16 @@ namespace MediaPortal.DeployTool
       // labelDesc
       // 
       this.labelDesc.AutoSize = true;
+      this.labelDesc.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.labelDesc.Location = new System.Drawing.Point(13, 131);
       this.labelDesc.Name = "labelDesc";
-      this.labelDesc.Size = new System.Drawing.Size(312, 13);
+      this.labelDesc.Size = new System.Drawing.Size(374, 13);
       this.labelDesc.TabIndex = 7;
       this.labelDesc.Text = "Hit \"continue\", when you finished downloading the requested file";
       // 
       // buttonContinue
       // 
+      this.buttonContinue.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.buttonContinue.Location = new System.Drawing.Point(227, 162);
       this.buttonContinue.Name = "buttonContinue";
       this.buttonContinue.Size = new System.Drawing.Size(102, 23);
@@ -146,7 +149,6 @@ namespace MediaPortal.DeployTool
       this.Name = "ManualDownload";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
       this.Text = "Manual download";
-      this.Load += new System.EventHandler(this.ManualDownload_Load);
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -163,5 +165,6 @@ namespace MediaPortal.DeployTool
     private System.Windows.Forms.LinkLabel linkDir;
     private System.Windows.Forms.Label labelDesc;
     private System.Windows.Forms.Button buttonContinue;
+    private System.Windows.Forms.OpenFileDialog openFileDialog;
   }
 }

@@ -199,6 +199,9 @@ Il PC si comporterà quindi come un TV-Server dedicato e fornirà la TV ad altri
   <data name="DBMSType_rbMySQL" xml:space="preserve">
     <value>MySQL 5</value>
   </data>
+  <data name="DownloadOnly_CurrentSettings" xml:space="preserve">
+    <value>Configurazione dello scarico: lingua={0}, arch={1}</value>
+  </data>
   <data name="DownloadOnly_labelSectionHeader" xml:space="preserve">
     <value>E' richiesta una connessione internet per l'installazione.
 
@@ -215,8 +218,11 @@ poi eseguire l'installazione sucessivamente ?
   </data>
   <data name="DownloadSettings_failed" xml:space="preserve">
     <value>Download del file di configurazione fallito.
-Controllare la configurazione di Internet Explorer.
+Controllare la configurazione di Internet Explorer e riprovare.
 Se esiste un file corrotto, verrà cancellato ora.</value>
+  </data>
+  <data name="Exit_Installation" xml:space="preserve">
+    <value>Abbandonare l'installazione di MediaPortal ?</value>
   </data>
   <data name="Finished_labelEbay" xml:space="preserve">
     <value>MediaPortal è GRATUITO - se l'avete comprato su eBay siete stati ingannati!</value>
@@ -380,11 +386,15 @@ Se esiste un file corrotto, verrà cancellato ora.</value>
   <data name="MainWindow_nextButton" xml:space="preserve">
     <value>Avanti</value>
   </data>
+  <data name="ManualDownload_buttonBrowse" xml:space="preserve">
+    <value>Cerca</value>
+  </data>
   <data name="ManualDownload_buttonContinue" xml:space="preserve">
     <value>Continua</value>
   </data>
   <data name="ManualDownload_errFileNotFound" xml:space="preserve">
-    <value>Il file richiesto non esiste ancora</value>
+    <value>Il file {0} non esiste. Cercarlo sul disco fisso
+(il nome file deve essere simile a quello proposto)</value>
   </data>
   <data name="ManualDownload_labelDesc" xml:space="preserve">
     <value>Premere "continua" quando è finito il download del file richiesto</value>

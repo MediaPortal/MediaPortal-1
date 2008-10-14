@@ -92,7 +92,6 @@ namespace MediaPortal.DeployTool
         this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
         this.pictureBox1.TabIndex = 3;
         this.pictureBox1.TabStop = false;
-        this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
         // 
         // splitContainer2
         // 
@@ -108,7 +107,6 @@ namespace MediaPortal.DeployTool
         // 
         this.splitContainer2.Panel1.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_middle_empty;
         this.splitContainer2.Panel1.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        this.splitContainer2.Panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.splitContainer2_Panel1_Paint);
         // 
         // splitContainer2.Panel2
         // 
@@ -117,7 +115,6 @@ namespace MediaPortal.DeployTool
         this.splitContainer2.Panel2.Controls.Add(this.nextButton);
         this.splitContainer2.Panel2.Controls.Add(this.backButton);
         this.splitContainer2.Panel2.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        this.splitContainer2.Panel2.Paint += new System.Windows.Forms.PaintEventHandler(this.splitContainer2_Panel2_Paint);
         this.splitContainer2.Size = new System.Drawing.Size(666, 293);
         this.splitContainer2.SplitterDistance = 250;
         this.splitContainer2.SplitterWidth = 1;

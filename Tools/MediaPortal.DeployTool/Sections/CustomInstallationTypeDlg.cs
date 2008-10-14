@@ -24,24 +24,17 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
-using System.Windows.Forms;
-using System.Collections.Specialized;
 
-namespace MediaPortal.DeployTool
+namespace MediaPortal.DeployTool.Sections
 {
-  public partial class CustomInstallationTypeDlg : DeployDialog, IDeployDialog
+  public partial class CustomInstallationTypeDlg : DeployDialog
   {
     int installType;
     public CustomInstallationTypeDlg()
     {
       InitializeComponent();
       type = DialogType.CUSTOM_INSTALLATION_TYPE;
-      imgSingle.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
+      imgSingle.Image = Images.Choose_button_on;
       installType = 1;
       UpdateUI();
     }
@@ -97,25 +90,25 @@ namespace MediaPortal.DeployTool
 
     private void imgSingle_Click(object sender, EventArgs e)
     {
-      imgSingle.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
-      imgMaster.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      imgClient.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      imgSingle.Image = Images.Choose_button_on;
+      imgMaster.Image = Images.Choose_button_off;
+      imgClient.Image = Images.Choose_button_off;
       installType = 1;
     }
 
     private void imgMaster_Click(object sender, EventArgs e)
     {
-      imgSingle.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      imgMaster.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
-      imgClient.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      imgSingle.Image = Images.Choose_button_off;
+      imgMaster.Image = Images.Choose_button_on;
+      imgClient.Image = Images.Choose_button_off;
       installType = 2;
     }
 
     private void imgClient_Click(object sender, EventArgs e)
     {
-      imgSingle.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      imgMaster.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      imgClient.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
+      imgSingle.Image = Images.Choose_button_off;
+      imgMaster.Image = Images.Choose_button_off;
+      imgClient.Image = Images.Choose_button_on;
       installType = 3;
     }
   }

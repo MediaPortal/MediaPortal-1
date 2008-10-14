@@ -24,18 +24,10 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
-using System.Windows.Forms;
-using System.Collections.Specialized;
-using System.Resources;
 
-namespace MediaPortal.DeployTool
+namespace MediaPortal.DeployTool.Sections
 {
-  public partial class DownloadOnlyDlg : DeployDialog, IDeployDialog
+  public partial class DownloadOnlyDlg : DeployDialog
   {
     bool rbDownloadOnlyChecked;
 
@@ -44,7 +36,7 @@ namespace MediaPortal.DeployTool
       InitializeComponent();
       type = DialogType.DownloadOnly;
       labelSectionHeader.Text = "";
-      imgInstallNow.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
+      imgInstallNow.Image = Images.Choose_button_on;
       rbDownloadOnlyChecked = false;
       UpdateUI();
     }
@@ -55,6 +47,9 @@ namespace MediaPortal.DeployTool
       labelSectionHeader.Text = Utils.GetBestTranslation("DownloadOnly_labelSectionHeader");
       rbDownloadOnly.Text = Utils.GetBestTranslation("DownloadOnly_no");
       rbInstallNow.Text = Utils.GetBestTranslation("DownloadOnly_yes");
+      string arch = Utils.Check64bit() ? "64bit" : "32bit";
+      string lang = System.Threading.Thread.CurrentThread.CurrentUICulture.Name;
+      labelDownloadSettings.Text = String.Format(Utils.GetBestTranslation("DownloadOnly_CurrentSettings"), lang, arch);
     }
     public override DeployDialog GetNextDialog()
     {
@@ -63,11 +58,9 @@ namespace MediaPortal.DeployTool
         InstallationProperties.Instance.Set("InstallType", "download_only");
         return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Installation);
       }
-      else
-      {
-        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.WatchTV);
-      }
+      return DialogFlowHandler.Instance.GetDialogInstance(DialogType.WatchTV);
     }
+
     public override bool SettingsValid()
     {
       return true;
@@ -77,23 +70,17 @@ namespace MediaPortal.DeployTool
 
     private void imgInstallNow_Click(object sender, EventArgs e)
     {
-      imgInstallNow.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
-      imgDownloadOnly.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      imgInstallNow.Image = Images.Choose_button_on;
+      imgDownloadOnly.Image = Images.Choose_button_off;
       rbDownloadOnlyChecked = false;
     }
 
     private void imgDownloadOnly_Click(object sender, EventArgs e)
     {
-      imgInstallNow.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      imgDownloadOnly.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
+      imgInstallNow.Image = Images.Choose_button_off;
+      imgDownloadOnly.Image = Images.Choose_button_on;
       rbDownloadOnlyChecked = true;
     }
-
-      private void labelSectionHeader_Click(object sender, EventArgs e)
-      {
-
-      }
-
 
   }
 }

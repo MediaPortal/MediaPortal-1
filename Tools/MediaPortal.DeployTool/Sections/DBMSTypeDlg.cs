@@ -1,22 +1,15 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
-using System.Windows.Forms;
-using System.Collections.Specialized;
 
-namespace MediaPortal.DeployTool
+namespace MediaPortal.DeployTool.Sections
 {
-  public partial class DBMSTypeDlg : DeployDialog, IDeployDialog
+  public partial class DBMSTypeDlg : DeployDialog
   {
     int dbmsType;
     public DBMSTypeDlg()
     {
       InitializeComponent();
       type = DialogType.DBMSType;
-      imgMS.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
+      imgMS.Image = Images.Choose_button_on;
       dbmsType = 1;
       UpdateUI();
     }
@@ -34,13 +27,14 @@ namespace MediaPortal.DeployTool
       if (dbmsType == 3)
       {
         if (InstallationProperties.Instance["InstallType"] == "singleseat")
+        {
           return DialogFlowHandler.Instance.GetDialogInstance(DialogType.MPSettings);
-        else
-          return DialogFlowHandler.Instance.GetDialogInstance(DialogType.TvServerSettings);
+        }
+        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.TvServerSettings);
       }
-      else
-        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.DBMSSettings);
+      return DialogFlowHandler.Instance.GetDialogInstance(DialogType.DBMSSettings);
     }
+
     public override bool SettingsValid()
     {
       return true;
@@ -64,25 +58,25 @@ namespace MediaPortal.DeployTool
 
     private void imgMS_Click(object sender, EventArgs e)
     {
-      imgMS.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
-      imgMySQL.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      imgExists.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      imgMS.Image = Images.Choose_button_on;
+      imgMySQL.Image = Images.Choose_button_off;
+      imgExists.Image = Images.Choose_button_off;
       dbmsType = 1;
     }
 
     private void imgMySQL_Click(object sender, EventArgs e)
     {
-      imgMS.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      imgMySQL.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
-      imgExists.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      imgMS.Image = Images.Choose_button_off;
+      imgMySQL.Image = Images.Choose_button_on;
+      imgExists.Image = Images.Choose_button_off;
       dbmsType = 2;
     }
 
     private void imgExists_Click(object sender, EventArgs e)
     {
-      imgMS.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      imgMySQL.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      imgExists.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
+      imgMS.Image = Images.Choose_button_off;
+      imgMySQL.Image = Images.Choose_button_off;
+      imgExists.Image = Images.Choose_button_on;
       dbmsType = 3;
     }
   }

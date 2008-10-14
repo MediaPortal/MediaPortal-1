@@ -22,8 +22,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using System.Resources;
@@ -53,9 +51,6 @@ namespace MediaPortal.DeployTool
   {
     #region Singleton implementation
     static readonly Localizer _instance = new Localizer();
-    static Localizer()
-    {
-    }
 
     Localizer()
     {
@@ -72,7 +67,7 @@ namespace MediaPortal.DeployTool
     #endregion
 
     #region Variables
-    private ResourceManager _rscMan;
+    private readonly ResourceManager _rscMan;
     #endregion
 
     public string GetString(string id)
@@ -85,7 +80,7 @@ namespace MediaPortal.DeployTool
       return _rscMan.GetString(id, new CultureInfo("en-US"));
     }
 
-    public void SwitchCulture(string cultureId)
+    public static void SwitchCulture(string cultureId)
     {
       System.Threading.Thread.CurrentThread.CurrentUICulture = new CultureInfo(cultureId);
     }
@@ -98,10 +93,7 @@ namespace MediaPortal.DeployTool
     public static void ErrorDlg(string msg)
     {
       MessageBox.Show(msg, "MediaPortal Deploy Tool -- Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-    }
-    public static void InfoDlg(string msg)
-    {
-      MessageBox.Show(msg, "MediaPortal Deploy Tool -- Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+      Environment.Exit(-1);
     }
     #endregion
 
@@ -110,12 +102,12 @@ namespace MediaPortal.DeployTool
       XmlDocument doc = new XmlDocument();
       HTTPDownload dlg = new HTTPDownload();
       string XmlFile = Application.StartupPath + "\\ApplicationLocations.xml";
-      string XmlUrl = "http://install.team-mediaportal.com/DeployTool/ApplicationLocations.xml";
+      const string XmlUrl = "http://install.team-mediaportal.com/DeployTool/ApplicationLocations.xml";
 
       //HTTP update of the xml file with the application download URLs
       if (!File.Exists(XmlFile))
       {
-        DialogResult result = dlg.ShowDialog(XmlUrl, XmlFile, GetUserAgentOsString());
+        dlg.ShowDialog(XmlUrl, XmlFile, GetUserAgentOsString());
       }
       try
       {
@@ -125,8 +117,7 @@ namespace MediaPortal.DeployTool
       }
       catch
       {
-        // TODO: MessageBox.Show(Utils.GetBestTranslation("DownloadSettings_failed"), XmlUrl, MessageBoxButtons.OK, MessageBoxIcon.Stop);
-        MessageBox.Show("Download of settings file failed.\nPlease review your InternetExplorer configuration.\nCorrupted config file, if found, will now be deleted.", XmlUrl, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+        MessageBox.Show(GetBestTranslation("DownloadSettings_failed"), XmlUrl, MessageBoxButtons.OK, MessageBoxIcon.Stop);
         File.Delete(XmlFile);
         Environment.Exit(-2);
       }
@@ -137,15 +128,15 @@ namespace MediaPortal.DeployTool
     {
       DialogResult result;
 
-      if (Utils.GetDownloadString(prg, "TYPE") == "Manual")
+      if (GetDownloadString(prg, "TYPE") == "Manual")
       {
         ManualDownload dlg = new ManualDownload();
-        result = dlg.ShowDialog(Utils.GetDownloadString(prg, "URL"), Path.GetFileName(FileName), Application.StartupPath + "\\deploy");
+        result = dlg.ShowDialog(GetDownloadString(prg, "URL"), Path.GetFileName(FileName), Application.StartupPath + "\\deploy");
       }
       else
       {
         HTTPDownload dlg = new HTTPDownload();
-        result = dlg.ShowDialog(Utils.GetDownloadString(prg, "URL"), FileName, GetUserAgentOsString());
+        result = dlg.ShowDialog(GetDownloadString(prg, "URL"), FileName, GetUserAgentOsString());
       }
       return result;
     }
@@ -160,9 +151,10 @@ namespace MediaPortal.DeployTool
         if (File.Exists(FileName))
         {
           if (FileInfo.Length > 10000)
+          {
             break;
-          else
-            result = DownloadFile(FileName, prg);
+          }
+          result = DownloadFile(FileName, prg);
         }
         else
           result = DownloadFile(FileName, prg);
@@ -173,28 +165,27 @@ namespace MediaPortal.DeployTool
 
     public static string LocalizeDownloadFile(string filename, string downloadtype, string prg)
     {
-      string LangCode = System.Globalization.CultureInfo.CurrentCulture.ThreeLetterWindowsLanguageName;
-      string LangCodeExt = System.Globalization.CultureInfo.CurrentCulture.Name;
+      string LangCode = CultureInfo.CurrentCulture.ThreeLetterWindowsLanguageName;
+      string LangCodeExt = CultureInfo.CurrentCulture.Name;
       string NewFileName = filename;
 
-      if (LangCode != "ENU")
+      // SQL2005 native language download
+      if ((prg == "MSSQLExpress" + InstallationProperties.Instance["Sql2005Download"]) && downloadtype != "Manual" && LangCode != "ENU")
       {
-        // SQL2005 native language download
-        if ((prg == "MSSQLExpress" + InstallationProperties.Instance["Sql2005Download"]) && downloadtype != "Manual")
+        NewFileName = filename.Split('.')[0] + "_" + LangCode + ".exe";
+      }
+
+      // WMP11 native language download
+      if (prg == "WindowsMediaPlayer")
+      {
+        if (Check64bit())
         {
-          NewFileName = filename.Split('.')[0] + "_" + LangCode + ".exe";
+          NewFileName = filename.Replace("x86", "x64").Split('.')[0] + "-ENU.exe";
         }
-        // WMP11 native language download
-        if (prg == "WindowsMediaPlayer")
+        else
         {
-          if (Utils.Check64bit())
-          {
-            NewFileName = filename.Replace("x86", "x64").Split('.')[0] + "-ENU.exe";
-          }
-          else
-          {
-            NewFileName = filename.Split('.')[0] + "-" + LangCodeExt + ".exe";
-          }
+          string suffix = LangCode == "ENU" ? LangCode : LangCodeExt;
+          NewFileName = filename.Split('.')[0] + "-" + suffix + ".exe";
         }
       }
       return NewFileName;
@@ -206,22 +197,15 @@ namespace MediaPortal.DeployTool
         return false;
       if (Directory.Exists(dir))
         return true;
-      DirectoryInfo info = null;
       try
       {
-        info = Directory.CreateDirectory(dir);
+        Directory.CreateDirectory(dir);
       }
       catch
       {
         return false;
       }
-      if (info == null)
-        return false;
-      else
-      {
-        Directory.Delete(dir);
-        return true;
-      }
+      return true;
     }
 
     private static string GetUserAgentOsString()
@@ -232,39 +216,43 @@ namespace MediaPortal.DeployTool
 
     public static void UninstallNSIS(string RegistryFullPathName)
     {
-      Process setup;
       string FileName = Path.GetFileName(RegistryFullPathName);
       string Directory = Path.GetDirectoryName(RegistryFullPathName);
       string TempFullPathName = Environment.GetEnvironmentVariable("TEMP") + "\\" + FileName;
       File.Copy(RegistryFullPathName, TempFullPathName);
-      setup = Process.Start(TempFullPathName, " /S _?=" + Directory);
-      setup.WaitForExit();
+      Process setup = Process.Start(TempFullPathName, " /S _?=" + Directory);
+      if (setup != null)
+      {
+        setup.WaitForExit();
+      }
       File.Delete(TempFullPathName);
     }
 
     public static void UninstallMSI(string clsid)
     {
       Process setup = Process.Start("msiexec.exe", "/x " + clsid + " /qn");
-      setup.WaitForExit();
+      if (setup != null)
+      {
+        setup.WaitForExit();
+      }
       CheckUninstallString(clsid, true);
     }
 
     public static string CheckUninstallString(string clsid, bool delete)
     {
-      string strUninstall;
       string keyPath = "SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + clsid;
       RegistryKey key = Registry.LocalMachine.OpenSubKey(keyPath);
       if (key != null)
       {
-        strUninstall = key.GetValue("UninstallString").ToString();
+        string strUninstall = key.GetValue("UninstallString").ToString();
         if (File.Exists(strUninstall))
         {
           key.Close();
           return strUninstall;
         }
-        else
+        if (delete)
         {
-          if (delete) key.DeleteSubKeyTree(keyPath);
+          key.DeleteSubKeyTree(keyPath);
         }
         key.Close();
       }
@@ -276,16 +264,15 @@ namespace MediaPortal.DeployTool
       aCurrentVersion = new Version(0, 0, 0, 0);
       try
       {
-        System.Version desiredVersion = new System.Version(aMinimumVersion);
+        Version desiredVersion = new Version(aMinimumVersion);
         FileVersionInfo fileVersion = FileVersionInfo.GetVersionInfo(aFilePath);
         if (!string.IsNullOrEmpty(fileVersion.ProductVersion))
         {
           // Replace "," with "." because of versioning localization issues
-          aCurrentVersion = new System.Version(fileVersion.ProductVersion.Replace(',', '.'));
+          aCurrentVersion = new Version(fileVersion.ProductVersion.Replace(',', '.'));
           return aCurrentVersion >= desiredVersion;
         }
-        else
-          return false;
+        return false;
       }
       catch (Exception)
       {
@@ -309,7 +296,7 @@ namespace MediaPortal.DeployTool
       // Disable OS if < XP
       if (ver < 51)
       {
-        MessageBox.Show(Utils.GetBestTranslation("OS_Support"), MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
+        MessageBox.Show(GetBestTranslation("OS_Support"), MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
         Application.Exit();
       }
       switch (ver)
@@ -317,7 +304,7 @@ namespace MediaPortal.DeployTool
         case 51:
           if (os.OSServicePackMajor < 2)
           {
-            MessageBox.Show(Utils.GetBestTranslation("OS_Support"), MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(GetBestTranslation("OS_Support"), MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
             Application.Exit();
           }
           break;
@@ -325,23 +312,23 @@ namespace MediaPortal.DeployTool
           if (os.OSProductType == OsDetection.OSProductType.Workstation)
           {
             MsgOsVersion = MsgOsVersion + " [64bit]";
-            MessageBox.Show(Utils.GetBestTranslation("OS_Support"), MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(GetBestTranslation("OS_Support"), MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
             Application.Exit();
           }
-          res = MessageBox.Show(Utils.GetBestTranslation("OS_Warning"), MsgOsVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+          res = MessageBox.Show(GetBestTranslation("OS_Warning"), MsgOsVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
           if (res == DialogResult.Cancel) Application.Exit();
           break;
         case 60:
           if (os.OSProductType != OsDetection.OSProductType.Workstation || os.OSServicePackMajor < 1)
           {
-            res = MessageBox.Show(Utils.GetBestTranslation("OS_Warning"), MsgOsVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+            res = MessageBox.Show(GetBestTranslation("OS_Warning"), MsgOsVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
             if (res == DialogResult.Cancel) Application.Exit();
           }
           break;
       }
       if (os.OSServicePackBuild != 0)
       {
-        res = MessageBox.Show(Utils.GetBestTranslation("OS_Beta"), MsgOsVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+        res = MessageBox.Show(GetBestTranslation("OS_Beta"), MsgOsVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
         if (res == DialogResult.Cancel) Application.Exit();
       }
     }
@@ -365,12 +352,10 @@ namespace MediaPortal.DeployTool
       bool isWow64;
       bool success = IsWow64Process(handle, out isWow64);
       if (!success)
+      {
         throw new System.ComponentModel.Win32Exception();
-      else
-        if (isWow64)
-          return true;
-        else
-          return false;
+      }
+      return isWow64;
     }
     #endregion
 
@@ -386,10 +371,13 @@ namespace MediaPortal.DeployTool
         }
         FileInfo file = new FileInfo(Application.ExecutablePath);
         DirectoryInfo dir = file.Directory;
-        if ((dir.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+        if (dir != null)
         {
-          MessageBox.Show("Need write access to startup directory.", Application.StartupPath, MessageBoxButtons.OK, MessageBoxIcon.Stop);
-          return false;
+          if ((dir.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+          {
+            MessageBox.Show("Need write access to startup directory.", Application.StartupPath, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+            return false;
+          }
         }
         return true;
       }
@@ -407,10 +395,7 @@ namespace MediaPortal.DeployTool
       {
         return _translation;
       }
-      else
-      {
-        return Localizer.Instance.GetDefaultString(ID);
-      }
+      return Localizer.Instance.GetDefaultString(ID);
     }
 
     public static string GetPackageVersion()

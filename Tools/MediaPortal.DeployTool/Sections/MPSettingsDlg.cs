@@ -24,18 +24,11 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
-using System.Collections.Specialized;
-using System.IO;
 
-namespace MediaPortal.DeployTool
+namespace MediaPortal.DeployTool.Sections
 {
-  public partial class MPSettingsDlg : DeployDialog, IDeployDialog
+  public partial class MPSettingsDlg : DeployDialog
   {
     public MPSettingsDlg()
     {
@@ -57,10 +50,12 @@ namespace MediaPortal.DeployTool
     {
       if (InstallationProperties.Instance["InstallType"] == "client" ||
           InstallationProperties.Instance["InstallType"] == "mp_only")
+      {
         return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Installation);
-      else
-        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.TvServerSettings);
+      }
+      return DialogFlowHandler.Instance.GetDialogInstance(DialogType.TvServerSettings);
     }
+
     public override bool SettingsValid()
     {
       if (!Utils.CheckTargetDir(textBoxDir.Text))
@@ -94,9 +89,9 @@ namespace MediaPortal.DeployTool
       }
     }
 
-      private void MPSettingsDlg_Load(object sender, EventArgs e)
-      {
+    private void MPSettingsDlg_Load(object sender, EventArgs e)
+    {
 
-      }
+    }
   }
 }

@@ -24,18 +24,10 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
-using System.Windows.Forms;
-using System.Collections.Specialized;
-using System.Resources;
 
-namespace MediaPortal.DeployTool
+namespace MediaPortal.DeployTool.Sections
 {
-  public partial class BaseInstallationTypeWithoutTvEngineDlg : DeployDialog, IDeployDialog
+  public partial class BaseInstallationTypeWithoutTvEngineDlg : DeployDialog
   {
     bool rbOneClickChecked;
 
@@ -44,7 +36,7 @@ namespace MediaPortal.DeployTool
       InitializeComponent();
       type = DialogType.BASE_INSTALLATION_TYPE_WITHOUT_TVENGINE;
       labelSectionHeader.Text = "";
-      imgOneClick.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
+      imgOneClick.Image = Images.Choose_button_on;
       rbOneClickChecked = true;
       UpdateUI();
     }
@@ -66,8 +58,7 @@ namespace MediaPortal.DeployTool
       {
         return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Installation);
       }
-      else
-        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.MPSettings);
+      return DialogFlowHandler.Instance.GetDialogInstance(DialogType.MPSettings);
     }
     public override bool SettingsValid()
     {
@@ -78,8 +69,8 @@ namespace MediaPortal.DeployTool
 
     private void imgOneClick_Click(object sender, EventArgs e)
     {
-      imgOneClick.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
-      imgAdvanced.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      imgOneClick.Image = Images.Choose_button_on;
+      imgAdvanced.Image = Images.Choose_button_off;
       rbOneClickChecked = true;
     }
 
@@ -90,8 +81,8 @@ namespace MediaPortal.DeployTool
 
     private void imgAdvanced_Click(object sender, EventArgs e)
     {
-      imgOneClick.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      imgAdvanced.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
+      imgOneClick.Image = Images.Choose_button_off;
+      imgAdvanced.Image = Images.Choose_button_on;
       rbOneClickChecked = false;
     }
     private void rbAdvanced_Click(object sender, EventArgs e)

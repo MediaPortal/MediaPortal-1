@@ -1,4 +1,4 @@
-namespace MediaPortal.DeployTool
+namespace MediaPortal.DeployTool.Sections
 {
   partial class MPSettingsDlg
   {
@@ -55,7 +55,7 @@ namespace MediaPortal.DeployTool
       // textBoxDir
       // 
       this.textBoxDir.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+                                                                     | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxDir.Location = new System.Drawing.Point(10, 66);
       this.textBoxDir.Name = "textBoxDir";
       this.textBoxDir.Size = new System.Drawing.Size(486, 21);

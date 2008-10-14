@@ -22,11 +22,7 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using System.Net;
 using System.IO;
@@ -35,16 +31,8 @@ namespace MediaPortal.DeployTool
 {
   public partial class HTTPDownload : Form
   {
-    private WebClient client = null;
+    private WebClient client;
     private string _target;
-
-    private void UpdateUI()
-    {
-      this.Text = Utils.GetBestTranslation("HTTPDownload_Title");
-      labelSourceURL.Text = Utils.GetBestTranslation("HTTPDownload_labelSourceURL");
-      labelTargetFile.Text = Utils.GetBestTranslation("HTTPDownload_labelTargetFile");
-      buttonCancel.Text = Utils.GetBestTranslation("HTTPDownload_buttonCancel");
-    }
 
     public HTTPDownload()
     {
@@ -55,7 +43,7 @@ namespace MediaPortal.DeployTool
     {
       _target = targetFile;
       DownloadFile(url, targetFile, userAgentOs);
-      return base.ShowDialog();
+      return ShowDialog();
     }
 
     private void DownloadFile(string url, string targetFile, string userAgentOs)
@@ -73,14 +61,14 @@ namespace MediaPortal.DeployTool
       }
       else
       {
-        MessageBox.Show("Proxy is " + proxyUri.ToString(), url, MessageBoxButtons.OK,MessageBoxIcon.Warning);
+        MessageBox.Show("Proxy is " + proxyUri, url, MessageBoxButtons.OK,MessageBoxIcon.Warning);
       }
 #endif
 
       client.Proxy.Credentials = CredentialCache.DefaultCredentials;
       client.Headers.Add("user-agent", @"Mozilla/4.0 (compatible; MSIE 7.0;" + userAgentOs);
-      client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(client_DownloadProgressChanged);
-      client.DownloadFileCompleted += new AsyncCompletedEventHandler(client_DownloadFileCompleted);
+      client.DownloadProgressChanged += client_DownloadProgressChanged;
+      client.DownloadFileCompleted += client_DownloadFileCompleted;
       try
       {
         client.DownloadFileAsync(new Uri(url), targetFile);
@@ -92,7 +80,8 @@ namespace MediaPortal.DeployTool
         {
           File.Delete(targetFile);
         }
-        catch (Exception) { }
+        catch
+        { }
         DialogResult = DialogResult.Cancel;
       }
     }
@@ -115,7 +104,8 @@ namespace MediaPortal.DeployTool
       {
         File.Delete(_target);
       }
-      catch (Exception) { }
+      catch
+      { }
       DialogResult = DialogResult.Cancel;
     }
 

@@ -24,19 +24,11 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
-using System.Collections.Specialized;
-using System.IO;
-using Microsoft.Win32;
 
-namespace MediaPortal.DeployTool
+namespace MediaPortal.DeployTool.Sections
 {
-  public partial class InstallDlg : DeployDialog, IDeployDialog
+  public partial class InstallDlg : DeployDialog
   {
     public InstallDlg()
     {
@@ -52,10 +44,7 @@ namespace MediaPortal.DeployTool
       // This change the description of "Next" button to "Install" or "Download"
       InstallationProperties.Instance.Set("Install_Dialog", "yes");
 
-      if (InstallationProperties.Instance["InstallType"] == "download_only")
-        labelHeading.Text = Utils.GetBestTranslation("Install_labelHeadingDownload");
-      else
-        labelHeading.Text = Utils.GetBestTranslation("Install_labelHeadingInstall");
+      labelHeading.Text = InstallationProperties.Instance["InstallType"] == "download_only" ? Utils.GetBestTranslation("Install_labelHeadingDownload") : Utils.GetBestTranslation("Install_labelHeadingInstall");
 
       listView.Columns[0].Text = Utils.GetBestTranslation("Install_colApplication");
       listView.Columns[1].Text = Utils.GetBestTranslation("Install_colState");
@@ -64,11 +53,10 @@ namespace MediaPortal.DeployTool
     }
     public override DeployDialog GetNextDialog()
     {
-      int action;
       foreach (ListViewItem item in listView.Items)
       {
         IInstallationPackage package = (IInstallationPackage)item.Tag;
-        action = PerformPackageAction(package, item);
+        int action = PerformPackageAction(package, item);
         if (action == 2)
         {
           break;
@@ -207,7 +195,7 @@ namespace MediaPortal.DeployTool
 
       }
       if ((InstallationProperties.Instance["ConfigureMediaPortalFirewall"] == "1" ||
-          InstallationProperties.Instance["ConfigureTVServerFirewall"] == "1") && InstallationProperties.Instance["InstallType"] != "download_only")
+           InstallationProperties.Instance["ConfigureTVServerFirewall"] == "1") && InstallationProperties.Instance["InstallType"] != "download_only")
         AddPackageToListView(new WindowsFirewallChecker());
       listView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
     }
