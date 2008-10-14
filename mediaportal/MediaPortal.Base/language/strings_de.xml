@@ -970,8 +970,9 @@
     <String id="1512">Vorherigen Kanal zeigen?</String>
     <String id="1513">TV wurde für eine geplante Aufnahme gestoppt</String>
     <String id="1514">TV wurde von einem Administrator gestoppt</String>
-    <String id="1515">TV wurde vom TV-Server gestoppt</String>
+    <String id="1515">TV wurde vom TV-Service gestoppt</String>
     <String id="1516">TV wurde aus unbekannten Gründen gestoppt</String>
+    <String id="1517">TV wurde von anderem Benutzer gestoppt</String>
     <String id="1950" prefix="Mein ">Status</String>
     <String id="1951">Festplatte</String>
     <String id="1952">Lüfter</String>
@@ -1654,6 +1655,7 @@
     <String id="100762" prefix="Mein ">Radio-Programm</String>
     <String id="100770" prefix="Mein ">Datei-Manager</String>
     <String id="101000">Tastatur</String>
+    <String id="101002">Bildschirm-Tastatur</String>
     <String id="102000">Auswahldialog</String>
     <String id="102001" prefix="Meine ">Musik/Info</String>
     <String id="102002">Dialog Ok</String>
@@ -1743,10 +1745,12 @@
     <String id="200051">Videodatei ist ungültig</String>
     <String id="200052">Laufende Aufnahmen</String>
     <String id="200053">Keine laufenden Aufnahmen</String>
-	<String id="200059">Audio Dual Mono Mode</String>
+    <String id="200054">Die Aufnahme konnte nicht gelöscht werden</String>
+    <String id="200055">Die TV-Wiedergabe wird ggf. unterbrochen</String>
+	<String id="200059">Dual Mono Ton</String>
 	<String id="200060">Stereo</String>
-	<String id="200061">Linker Kanal auf beide</String>
-	<String id="200062">Rechter Kanal auf beide</String>
+	<String id="200061">Den linken Kanal verwenden</String>
+	<String id="200062">Den rechten Kanal verwenden</String>
 	<String id="200063">Beide Kanäle mischen</String>
   </Section>
 </Language>
