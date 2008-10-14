@@ -280,7 +280,8 @@ namespace MediaPortal.DeployTool
         FileVersionInfo fileVersion = FileVersionInfo.GetVersionInfo(aFilePath);
         if (!string.IsNullOrEmpty(fileVersion.ProductVersion))
         {
-          aCurrentVersion = new System.Version(fileVersion.ProductVersion);
+          // Replace "," with "." because of versioning localization issues
+          aCurrentVersion = new System.Version(fileVersion.ProductVersion.Replace(',', '.'));
           return aCurrentVersion >= desiredVersion;
         }
         else

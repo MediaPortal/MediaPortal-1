@@ -117,7 +117,8 @@ namespace MediaPortal.Util
           try
           {
             // The ProductVersion might contain an irregular Format
-            aCurrentVersion = new System.Version(fileVersion.ProductVersion);
+            // Replace "," with "." because of versioning localization issues
+            aCurrentVersion = new System.Version(fileVersion.ProductVersion.Replace(',', '.'));
             return true;
           }
           catch (Exception) { }
@@ -128,7 +129,8 @@ namespace MediaPortal.Util
           try
           {
             // FileVersions sometimes contain alphanumeric chars
-            aCurrentVersion = new System.Version(fileVersion.FileVersion);
+            // Replace "," with "." because of versioning localization issues
+            aCurrentVersion = new System.Version(fileVersion.FileVersion.Replace(',', '.'));
             return true;
           }
           catch (Exception) { }
@@ -157,7 +159,8 @@ namespace MediaPortal.Util
         FileVersionInfo fileVersion = FileVersionInfo.GetVersionInfo(aFilePath);
         if (!string.IsNullOrEmpty(fileVersion.ProductVersion))
         {
-          aCurrentVersion = new System.Version(fileVersion.ProductVersion);
+          // Replace "," with "." because of versioning localization issues
+          aCurrentVersion = new System.Version(fileVersion.ProductVersion.Replace(',', '.'));
           return aCurrentVersion >= desiredVersion;
         }
         else
