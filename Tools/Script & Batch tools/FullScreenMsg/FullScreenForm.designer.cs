@@ -83,7 +83,8 @@
       this.ShowInTaskbar = false;
       this.Text = "FullScreenForm";
       this.TopMost = true;
-      this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+      this.Load += new System.EventHandler(this.frmFullScreen_Load);
+      this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmFullScreen_FormClosing);
       ((System.ComponentModel.ISupportInitialize)(this.pbBackground)).EndInit();
       this.ResumeLayout(false);
 

@@ -160,6 +160,8 @@ namespace FullscreenMsg
       ReadSplashScreenXML();
       if (pbBackground.Image == null) ReadReferenceXML();
 
+      TryToFindMPScreenSelectorSettings();
+
       return pbBackground.Image != null;
     }
 
@@ -309,6 +311,54 @@ namespace FullscreenMsg
       catch
       { }
       return MpSkinPath;
+    }
+
+    private void frmFullScreen_Load(object sender, EventArgs e)
+    {
+      Cursor.Hide();
+
+      this.Location = new Point(0, 0);
+      this.Size = new Size(Screen.FromHandle(this.Handle).Bounds.Width + 1, Screen.FromHandle(this.Handle).Bounds.Height + 1);
+    }
+
+    private void frmFullScreen_FormClosing(object sender, FormClosingEventArgs e)
+    {
+      Cursor.Show();
+    }
+
+    private void TryToFindMPScreenSelectorSettings()
+    {
+      string mpConfigPath = GetMpConfigPath();
+
+      if (System.IO.File.Exists(mpConfigPath + "\\mediaportal.xml"))
+      {
+        XmlDocument doc = new XmlDocument();
+        doc.Load(mpConfigPath + "\\mediaportal.xml");
+
+        XmlNodeList SectionList = doc.DocumentElement.SelectNodes("/profile/section[@name='screenselector']");
+        if (SectionList.Count > 0)
+        {
+          if (SectionList[0].SelectSingleNode("entry[@name='usescreenselector'][text()]").InnerText == "yes")
+          {
+            int ScreenNumber = Convert.ToInt16(SectionList[0].SelectSingleNode("entry[@name='screennumber'][text()]").InnerText); // read the screen number
+            ScreenNumber++; // increase the number by 1 to respect the DisplayDevice naming convention
+
+            foreach (Screen tmpscreen in Screen.AllScreens)
+            {
+              if (tmpscreen.DeviceName.Contains("DISPLAY" + ScreenNumber)) // if the selected Display is found
+              {
+                this.Location = new Point(tmpscreen.Bounds.X, tmpscreen.Bounds.Y); // set the form position into this screen
+                this.Size = new Size(tmpscreen.Bounds.Width + 1, tmpscreen.Bounds.Height + 1);
+              }
+            }
+          }
+          else
+          {
+            this.Location = new Point(0, 0);
+            this.Size = new Size(Screen.FromHandle(this.Handle).Bounds.Width + 1, Screen.FromHandle(this.Handle).Bounds.Height + 1);
+          }
+        }
+      }
     }
   }
 }
