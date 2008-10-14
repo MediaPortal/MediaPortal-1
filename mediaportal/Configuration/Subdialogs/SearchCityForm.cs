@@ -782,52 +782,69 @@ namespace MediaPortal.Configuration
       catch (Exception) { }
     }
 
+    private void SetPreviewImage(string aFilename, PictureBox aPreviewArea)
+    {
+      if (File.Exists(aFilename))
+      {
+        try
+        {
+          FileInfo fi = new FileInfo(aFilename);
+          if (fi.Length > 0)
+          {
+            // No using since we need the image's lifetime
+            Bitmap preview = new Bitmap(aFilename);
+            aPreviewArea.Image = preview;
+          }
+          else
+            MessageBox.Show(this, string.Format("Your link is not working!"), "Invalid location", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+        catch (Exception ex)
+        {
+          MessageBox.Show(this, string.Format("No usable image detected! \n{0}", ex.Message), "Invalid data", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+      }
+    }
+
     private void btnPreviewSat_Click(object sender, EventArgs e)
     {
       string tempFile = PathUtility.GetSecureTempFileName();
       Util.Utils.DownLoadImage(textBoxSatURL.Text, tempFile);
-      if (File.Exists(tempFile))
-        pictureBoxPreviewSat.Image = new Bitmap(tempFile);
+      SetPreviewImage(tempFile, pictureBoxPreviewSat);
     }
 
     private void btnPreviewTemp_Click(object sender, EventArgs e)
     {
       string tempFile = PathUtility.GetSecureTempFileName();
       Util.Utils.DownLoadImage(textBoxTempURL.Text, tempFile);
-      if (File.Exists(tempFile))
-        pictureBoxPreviewTemp.Image = new Bitmap(tempFile);
+      SetPreviewImage(tempFile, pictureBoxPreviewTemp);
     }
 
     private void btnPreviewUV_Click(object sender, EventArgs e)
     {
       string tempFile = PathUtility.GetSecureTempFileName();
       Util.Utils.DownLoadImage(textBoxUVURL.Text, tempFile);
-      if (File.Exists(tempFile))
-        pictureBoxPreviewUV.Image = new Bitmap(tempFile);
+      SetPreviewImage(tempFile, pictureBoxPreviewUV);
     }
 
     private void btnPreviewWinds_Click(object sender, EventArgs e)
     {
       string tempFile = PathUtility.GetSecureTempFileName();
       Util.Utils.DownLoadImage(textBoxWindURL.Text, tempFile);
-      if (File.Exists(tempFile))
-        pictureBoxPreviewWinds.Image = new Bitmap(tempFile);
+      SetPreviewImage(tempFile, pictureBoxPreviewWinds);
     }
 
     private void btnPreviewHumidity_Click(object sender, EventArgs e)
     {
       string tempFile = PathUtility.GetSecureTempFileName();
       Util.Utils.DownLoadImage(textBoxHumURL.Text, tempFile);
-      if (File.Exists(tempFile))
-        pictureBoxPreviewHumidity.Image = new Bitmap(tempFile);
+      SetPreviewImage(tempFile, pictureBoxPreviewHumidity);
     }
 
     private void btnPreviewPrecip_Click(object sender, EventArgs e)
     {
       string tempFile = PathUtility.GetSecureTempFileName();
       Util.Utils.DownLoadImage(textBoxPrecURL.Text, tempFile);
-      if (File.Exists(tempFile))
-        pictureBoxPreviewPrecip.Image = new Bitmap(tempFile);
+      SetPreviewImage(tempFile, pictureBoxPreviewPrecip);
     }
 
   }
