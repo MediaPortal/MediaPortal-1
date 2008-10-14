@@ -365,10 +365,7 @@ namespace MediaPortal.GUI.Library
                 g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
                 g.TextRenderingHint = TextRenderingHint.AntiAlias;
                 g.TextContrast = 0;
-
-                // /!\ TODO @Tourettes: add your GetCachedSystemFont method
-                //g.DrawString(draw.text, GetCachedSystemFont(fontSize), Brushes.White, new Point((int)0, (int)0), StringFormat.GenericTypographic);
-                g.DrawString(draw.text, new System.Drawing.Font("Arial", fontSize), Brushes.White, new Point((int)0, (int)0), StringFormat.GenericTypographic);
+                g.DrawString(draw.text, CachedSystemFont(fontSize), Brushes.White, new Point((int)0, (int)0), StringFormat.GenericTypographic);
 
                 bitmap.Save(imageStream, ImageFormat.Bmp);
 
