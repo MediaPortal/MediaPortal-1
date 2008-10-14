@@ -413,13 +413,6 @@ namespace MediaPortal.GUI.Library
         size.Width = (int)textwidth;
         size.Height = (int)textheight;
 
-        //Bitmap bmp = new Bitmap(size.Width, size.Height, PixelFormat.Format32bppArgb);
-        //Graphics g1 = Graphics.FromImage(bmp);
-
-        //g1.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-        //g1.TextRenderingHint = TextRenderingHint.AntiAlias;
-        //g1.TextContrast = 0;
-
         FontTexture newTexture;
         newTexture.text = draw.text;
         newTexture.texture = texture;
