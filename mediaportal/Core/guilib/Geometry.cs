@@ -218,7 +218,7 @@ namespace MediaPortal.GUI.Library
                       if (fNewHeight > ScreenHeight)
                       {
                         fNewHeight = ScreenHeight;
-                        fNewWidth = fNewHeight * fOutputFrameRatio;
+                        fNewWidth = fNewHeight * fCroppedOutputFrameRatio;
                       }
 
                       // this shouldnt happen, but just make sure that everything still fits onscreen
