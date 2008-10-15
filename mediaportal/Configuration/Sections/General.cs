@@ -190,7 +190,7 @@ namespace MediaPortal.Configuration.Sections
 
       try
       {
-        if (settingsCheckedListBox.GetItemChecked(5)) // autostart on boot
+        if (settingsCheckedListBox.GetItemChecked(6)) // autostart on boot
         {
           string fileName = Config.GetFile(Config.Dir.Base, "MediaPortal.exe");
           using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true))
@@ -201,13 +201,13 @@ namespace MediaPortal.Configuration.Sections
             subkey.DeleteValue("MediaPortal", false);
 
         Int32 iValue = 1;
-        if (settingsCheckedListBox.GetItemChecked(12)) // disable ballon tips
+        if (settingsCheckedListBox.GetItemChecked(13)) // disable ballon tips
           iValue = 0;
 
         using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer", true))
           subkey.SetValue("EnableBalloonTips", iValue);
 
-        if (settingsCheckedListBox.GetItemChecked(3)) // always on top
+        if (settingsCheckedListBox.GetItemChecked(4)) // always on top
           using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true))
             subkey.SetValue("ForegroundLockTimeout", 0);
 
