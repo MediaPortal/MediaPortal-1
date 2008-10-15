@@ -132,6 +132,7 @@ namespace FullscreenMsg
             FullScreenForm.lblMainLable.Text = "";
             FullScreenForm.lblMainLable.Parent = FullScreenForm.pbBackground;
             FullScreenForm.MainFormObj = this;
+            FullScreenForm.Show();
 
             Cursor.Position = new System.Drawing.Point(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
 
@@ -150,7 +151,6 @@ namespace FullscreenMsg
               FullScreenForm.pbBackground.Image = new Bitmap(tmpArgs.Values[tmpArgs.FindArgPos("BgImage")]);
               if (!FullScreenForm.Visible || FullScreenForm.Opacity==0)
               {
-                FullScreenForm.Show();
                 FullScreenForm.Update();
                 FullScreenForm.Opacity = 100;
                 this.Visible = false;
@@ -160,7 +160,6 @@ namespace FullscreenMsg
             {
               if (FullScreenForm.RetrieveSplashBackground())
               {
-                FullScreenForm.Show();
                 FullScreenForm.Update();
                 FullScreenForm.Opacity = 100;
                 this.Visible = false;
