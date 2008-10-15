@@ -184,6 +184,7 @@ namespace TvPlugin
         _byIndex = xmlreader.GetValueAsBool("mytv", "byindex", true);
         _showChannelNumber = xmlreader.GetValueAsBool("mytv", "showchannelnumber", false);
         _channelNumberMaxLength = xmlreader.GetValueAsInt("mytv", "channelnumbermaxlength", 3);
+        _timePerBlock = xmlreader.GetValueAsInt("tvguide", "timeperblock", 30);
       }
     }
 
@@ -194,6 +195,7 @@ namespace TvPlugin
         xmlwriter.SetValue("tvguide", "channel", _currentChannel);
         xmlwriter.SetValue("tvguide", "ypos", _cursorX.ToString());
         xmlwriter.SetValue("tvguide", "yoffset", _channelOffset.ToString());
+        xmlwriter.SetValue("tvguide", "timeperblock", _timePerBlock);
       }
     }
     #endregion
@@ -1870,7 +1872,6 @@ namespace TvPlugin
       }
       return iProgramCount;
     }
-
 
     void OnDown(bool updateScreen)
     {
