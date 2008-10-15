@@ -179,13 +179,15 @@ namespace TvService
       foreach (VirtualCard vCard in vCards)
       {
         int schedId = vCard.RecordingScheduleId;
-
-        Schedule sc = Schedule.Retrieve(schedId);
-        if (sc == null)
+        if (schedId > 0)
         {
-          //seems like the schedule has disappeared  stop the recording also.
-          Log.Debug("Orphaned Recording found {0} - removing", schedId);
-          StopRecordingSchedule(schedId);
+          Schedule sc = Schedule.Retrieve(schedId);
+          if (sc == null)
+          {
+            //seems like the schedule has disappeared  stop the recording also.
+            Log.Debug("Orphaned Recording found {0} - removing", schedId);
+            StopRecordingSchedule(schedId);
+          }
         }
       }
     }

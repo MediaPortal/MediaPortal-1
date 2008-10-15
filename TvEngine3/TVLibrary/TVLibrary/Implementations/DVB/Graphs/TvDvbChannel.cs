@@ -260,8 +260,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public override void OnGraphStart()
     {
-      Log.Log.WriteFile("subch:{0} OnGraphStart", _subChannelId);
-      if (!_graphRunning) return;
+      Log.Log.WriteFile("subch:{0} OnGraphStart", _subChannelId);      
           
       DateTime dtNow;
       if (_graphBuilder != null)
@@ -273,7 +272,7 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.WriteFile("subch:{0} RunGraph: already running", _subChannelId);
           WaitForPMT();
           return;
-        }
+        }        
       }      
       
       if (_teletextDecoder != null)
@@ -292,7 +291,20 @@ namespace TvLibrary.Implementations.DVB
     public override void OnGraphStarted()
     {
       Log.Log.WriteFile("subch:{0} OnGraphStarted", _subChannelId);
-      if (_graphRunning) return;
+
+      if (_graphBuilder != null)
+      {
+        FilterState state;
+        (_graphBuilder as IMediaControl).GetState(10, out state);
+        if (state == FilterState.Stopped)
+        {
+          return;
+        }
+      }
+      else
+      {
+        return;
+      }
           
       WaitForPMT();
 
