@@ -400,7 +400,7 @@ namespace MediaPortal.DeployTool
 
     public static string GetPackageVersion()
     {
-      return "1.0 RC3";
+      return "1.0 Final";
     }
 
   }
