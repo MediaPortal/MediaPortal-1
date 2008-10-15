@@ -504,4 +504,10 @@ Overfør denne folderen til din HTPC. Start installasjonen ved å kjøre "MediaP
   <data name="Exit_Installation" xml:space="preserve">
     <value>Vil du virkelig avslutte installasjonen av MediaPortal?</value>
   </data>
+  <data name="ManualDownload_buttonBrowse" xml:space="preserve">
+    <value>Finn</value>
+  </data>
+  <data name="DownloadOnly_CurrentSettings" xml:space="preserve">
+    <value>Gjeldende instillinger for nedlasting: lang={0}, arch={1}</value>
+  </data>
 </root>
