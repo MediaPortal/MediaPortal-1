@@ -165,8 +165,8 @@ namespace MediaPortal.DeployTool
 
     public static string LocalizeDownloadFile(string filename, string downloadtype, string prg)
     {
-      string LangCode = CultureInfo.CurrentCulture.ThreeLetterWindowsLanguageName;
-      string LangCodeExt = CultureInfo.CurrentCulture.Name;
+      string LangCode = CultureInfo.InstalledUICulture.ThreeLetterWindowsLanguageName;
+      string LangCodeExt = CultureInfo.InstalledUICulture.Name;
       string NewFileName = filename;
 
       // SQL2005 native language download

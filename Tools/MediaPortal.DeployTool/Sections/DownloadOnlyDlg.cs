@@ -24,6 +24,7 @@
 #endregion
 
 using System;
+using System.Globalization;
 
 namespace MediaPortal.DeployTool.Sections
 {
@@ -48,7 +49,7 @@ namespace MediaPortal.DeployTool.Sections
       rbDownloadOnly.Text = Utils.GetBestTranslation("DownloadOnly_no");
       rbInstallNow.Text = Utils.GetBestTranslation("DownloadOnly_yes");
       string arch = Utils.Check64bit() ? "64bit" : "32bit";
-      string lang = System.Threading.Thread.CurrentThread.CurrentUICulture.Name;
+      string lang = CultureInfo.InstalledUICulture.Name;
       labelDownloadSettings.Text = String.Format(Utils.GetBestTranslation("DownloadOnly_CurrentSettings"), lang, arch);
     }
     public override DeployDialog GetNextDialog()
