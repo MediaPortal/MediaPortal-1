@@ -77,6 +77,8 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
 	m_lastVideoPTS.IsValid=false;
 	ResetMpeg2VideoInfo();
 	m_mpegParserTriggerFormatChange=false;
+	m_DisableDiscontinuitiesFiltering = false ;
+
 }
 
 CDeMultiplexer::~CDeMultiplexer()
@@ -781,35 +783,52 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket)
 
 	// dynmic pins are currently disabled 
 	#ifdef USE_DYNAMIC_PINS
-	int lastVidResX=m_mpeg2VideoInfo.hdr.rcSource.right;
-	int lastVidResY=m_mpeg2VideoInfo.hdr.rcSource.bottom;
-	m_mpegPesParser.OnTsPacket(tsPacket,header,m_mpeg2VideoInfo);
-	int streamType=m_mpeg2VideoInfo.hdr.dwReserved1;
-	m_mpeg2VideoInfo.hdr.dwReserved1=0;
-	if (lastVidResX!=m_mpeg2VideoInfo.hdr.rcSource.right || lastVidResY!=m_mpeg2VideoInfo.hdr.rcSource.bottom)
+	if (header.Pid==m_pids.VideoPid)
 	{
-		LogDebug("DeMultiplexer: video format changed: res=%dx%d aspectRatio=%d:%d bitrate=%d isInterlaced=%d",m_mpeg2VideoInfo.hdr.rcSource.right,m_mpeg2VideoInfo.hdr.rcSource.bottom,m_mpeg2VideoInfo.hdr.dwPictAspectRatioX,m_mpeg2VideoInfo.hdr.dwPictAspectRatioY,m_mpeg2VideoInfo.hdr.dwBitRate,(m_mpeg2VideoInfo.hdr.dwInterlaceFlags & AMINTERLACE_IsInterlaced==AMINTERLACE_IsInterlaced));
-		if (m_mpegParserTriggerFormatChange)
+		int lastVidResX=m_mpeg2VideoInfo.hdr.rcSource.right;
+		int lastVidResY=m_mpeg2VideoInfo.hdr.rcSource.bottom;
+		m_mpegPesParser.OnTsPacket(tsPacket,header,m_mpeg2VideoInfo,m_pids.videoServiceType);
+		int streamType=m_mpeg2VideoInfo.hdr.dwReserved1;
+		m_mpeg2VideoInfo.hdr.dwReserved1=0;
+		if (lastVidResX!=m_mpeg2VideoInfo.hdr.rcSource.right || lastVidResY!=m_mpeg2VideoInfo.hdr.rcSource.bottom)
 		{
-			LogDebug("DeMultiplexer: OnMediaFormatChange triggered by mpeg2Parser");
-			m_filter.OnMediaTypeChanged(3);
-			m_mpegParserTriggerFormatChange=false;
+			LogDebug("DeMultiplexer: %x video format changed: res=%dx%d aspectRatio=%d:%d bitrate=%d isInterlaced=%d",header.Pid,m_mpeg2VideoInfo.hdr.rcSource.right,m_mpeg2VideoInfo.hdr.rcSource.bottom,m_mpeg2VideoInfo.hdr.dwPictAspectRatioX,m_mpeg2VideoInfo.hdr.dwPictAspectRatioY,m_mpeg2VideoInfo.hdr.dwBitRate,(m_mpeg2VideoInfo.hdr.dwInterlaceFlags & AMINTERLACE_IsInterlaced==AMINTERLACE_IsInterlaced));
+
+//				{					// Dump of Ts packet that cause the format change.
+//				int i= 0 ;
+//				while(i<188)
+//				{
+//					LogDebug(" %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x ",
+//						tsPacket[0+i], tsPacket[1+i], tsPacket[2+i], tsPacket[3+i], 
+//						tsPacket[4+i], tsPacket[5+i], tsPacket[6+i], tsPacket[7+i], 
+//						tsPacket[8+i], tsPacket[9+i], tsPacket[10+i], tsPacket[11+i], 
+//						tsPacket[12+i], tsPacket[13+i], tsPacket[14+i], tsPacket[15+i]) ;
+//				i+=16 ;
+//				}
+//				}
+
+			if (m_mpegParserTriggerFormatChange)
+			{
+				LogDebug("DeMultiplexer: OnMediaFormatChange triggered by mpeg2Parser");
+				m_filter.OnMediaTypeChanged(3);
+				m_mpegParserTriggerFormatChange=false;
+			}
+			LogDebug("DeMultiplexer: triggering OnVideoFormatChanged");
+			m_filter.OnVideoFormatChanged(streamType,m_mpeg2VideoInfo.hdr.rcSource.right,m_mpeg2VideoInfo.hdr.rcSource.bottom,m_mpeg2VideoInfo.hdr.dwPictAspectRatioX,m_mpeg2VideoInfo.hdr.dwPictAspectRatioY,m_mpeg2VideoInfo.hdr.dwBitRate,(m_mpeg2VideoInfo.hdr.dwInterlaceFlags & AMINTERLACE_IsInterlaced==AMINTERLACE_IsInterlaced));
 		}
-		LogDebug("DeMultiplexer: triggering OnVideoFormatChanged");
-		m_filter.OnVideoFormatChanged(streamType,m_mpeg2VideoInfo.hdr.rcSource.right,m_mpeg2VideoInfo.hdr.rcSource.bottom,m_mpeg2VideoInfo.hdr.dwPictAspectRatioX,m_mpeg2VideoInfo.hdr.dwPictAspectRatioY,m_mpeg2VideoInfo.hdr.dwBitRate,(m_mpeg2VideoInfo.hdr.dwInterlaceFlags & AMINTERLACE_IsInterlaced==AMINTERLACE_IsInterlaced));
-	}
-	else
-	{
-		if (m_mpegParserTriggerFormatChange)
-			m_receivedPackets++;
-		int packetsToFallBack=FALLBACK_PACKETS_SD;
-		if (m_pids.videoServiceType!=SERVICE_TYPE_VIDEO_MPEG2)
-			packetsToFallBack=FALLBACK_PACKETS_HD;
-		if (m_mpegParserTriggerFormatChange && m_receivedPackets>packetsToFallBack)
+		else
 		{
-			LogDebug("DeMultiplexer: Got %d packets after the channel change was detected without correct mpeg header parsing, so we trigger the format change now.");
-			m_filter.OnMediaTypeChanged(3);
-			m_mpegParserTriggerFormatChange=false;
+			if (m_mpegParserTriggerFormatChange)
+				m_receivedPackets++;
+			int packetsToFallBack=FALLBACK_PACKETS_SD;
+			if (m_pids.videoServiceType!=SERVICE_TYPE_VIDEO_MPEG2)
+				packetsToFallBack=FALLBACK_PACKETS_HD;
+			if (m_mpegParserTriggerFormatChange && m_receivedPackets>packetsToFallBack)
+			{
+				LogDebug("DeMultiplexer: Got %d packets after the channel change was detected without correct mpeg header parsing, so we trigger the format change now.",m_receivedPackets);
+				m_filter.OnMediaTypeChanged(3);
+				m_mpegParserTriggerFormatChange=false;
+			}
 		}
 	}
 	#endif
@@ -907,7 +926,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
 	if ((m_AudioPrevCC !=-1 ) && (m_AudioPrevCC != ((header.ContinuityCounter - 1) & 0x0F)))
 	{
 		LogDebug("Audio Continuity error... %x ( prev %x )", header.ContinuityCounter, m_AudioPrevCC) ;
-		m_AudioValidPES = false ;
+		m_AudioValidPES = m_DisableDiscontinuitiesFiltering ;
 	}
 	m_AudioPrevCC = header.ContinuityCounter ;
 	
@@ -1034,7 +1053,7 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
 	if ((m_VideoPrevCC !=-1 ) && (m_VideoPrevCC != ((header.ContinuityCounter - 1) & 0x0F)))
 	{
 		LogDebug("Video Continuity error... %x ( prev %x )", header.ContinuityCounter, m_VideoPrevCC) ;
-		m_VideoValidPES = false ;
+		m_VideoValidPES = m_DisableDiscontinuitiesFiltering ;
 	}
 	m_VideoPrevCC = header.ContinuityCounter ;
 

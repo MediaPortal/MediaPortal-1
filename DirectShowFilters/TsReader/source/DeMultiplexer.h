@@ -94,6 +94,9 @@ public:
   void SetTeletextServiceInfoCallback(int (CALLBACK *pTeletextServiceInfoCallback)(int, byte,byte,byte,byte));
 
   void CallTeletextEventCallback(int eventCode,unsigned long int eventValue);
+
+	bool m_DisableDiscontinuitiesFiltering ;
+
 private:
   struct stAudioStream
   {

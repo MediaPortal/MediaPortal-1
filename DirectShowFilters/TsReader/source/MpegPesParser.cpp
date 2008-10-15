@@ -326,29 +326,51 @@ bool CMpegPesParser::ParseH264Video(byte* tsPacket,int offset,MPEG2VIDEOINFO &mp
 	return true;
 }
 
-bool CMpegPesParser::ParseVideo(byte* tsPacket,int offset,MPEG2VIDEOINFO &mpeg2VideoInfo)
+bool CMpegPesParser::ParseVideo(byte* tsPacket,int offset,MPEG2VIDEOINFO &mpeg2VideoInfo, int videoServiceType)
 {
   //LogDebug("Found VIDEO offset=%d 0x%x%x%x%x",offset,tsPacket[offset],tsPacket[offset+1],tsPacket[offset+2],tsPacket[offset+3]);
   unsigned int marker = 0xffffffff;
-  for (; offset < 188; offset++)
-  {
-	marker=(unsigned int)marker<<8;
-	marker &= 0xffffff00;
-    marker += tsPacket[offset];
-	if ((marker==MPEG2_SEQ_CODE) && (offset <= 187))
-		return ParseMpeg2Video(tsPacket,offset+1,mpeg2VideoInfo);
-	if(((marker & 0xffffff9f) == H264_PREFIX) && (offset <= 187))
-	    return ParseH264Video(tsPacket,offset+1,mpeg2VideoInfo);
-  }
+	if (videoServiceType==SERVICE_TYPE_VIDEO_MPEG2)
+	{
+	  for (; offset < 170; offset++)
+		{
+		marker=(unsigned int)marker<<8;
+		marker &= 0xffffff00;
+		marker += tsPacket[offset];
+		if (marker == MPEG2_SEQ_CODE)
+			return ParseMpeg2Video(tsPacket,offset+1,mpeg2VideoInfo);
+		}
+	}
+	else
+	{
+	  for (; offset < 170; offset++)
+		{
+		marker=(unsigned int)marker<<8;
+		marker &= 0xffffff00;
+		marker += tsPacket[offset];
+		if ((marker == 0x00000001) && (((tsPacket[offset+1] & 0x9f)|0x0100) == H264_PREFIX))
+			return ParseH264Video(tsPacket,offset+2,mpeg2VideoInfo);
+		}
+	}
   return false;
 }
 
-bool CMpegPesParser::OnTsPacket(byte *tsPacket, CTsHeader header, MPEG2VIDEOINFO &mpeg2VideoInfo)
+bool CMpegPesParser::OnTsPacket(byte *tsPacket, CTsHeader header, MPEG2VIDEOINFO &mpeg2VideoInfo, int videoServiceType)
 {
 	int offset=header.PayLoadStart;
 	if (!header.HasPayload)
 		return false;
 	if (!header.PayloadUnitStart)
 		return false;
-	return ParseVideo(tsPacket,offset,mpeg2VideoInfo);
+
+	if (offset < 170)
+	{
+		if (tsPacket[offset+0]==0 && tsPacket[offset+1]==0 && tsPacket[offset+2]==1 && ((tsPacket[offset+6] & 0xC0) == 0x80))
+		{	// should find PES header and skip it.
+			offset += (9 + tsPacket[offset+8]) ;
+			if (offset < 180)
+				return ParseVideo(tsPacket,offset,mpeg2VideoInfo,videoServiceType);
+		}
+	}
+	return false ;
 }
