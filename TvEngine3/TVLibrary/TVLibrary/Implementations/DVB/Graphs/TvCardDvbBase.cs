@@ -69,7 +69,6 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// DVB Graph variables
     /// </summary>
-    protected IFilterGraph2 _graphBuilder = null;
     protected ICaptureGraphBuilder2 _capBuilder = null;
     protected DsROTEntry _rotEntry = null;
     protected IBaseFilter _filterNetworkProvider = null;
@@ -86,7 +85,6 @@ namespace TvLibrary.Implementations.DVB
     protected MDPlugs _mdplugs = null;
     protected List<IBDA_SignalStatistics> _tunerStatistics = new List<IBDA_SignalStatistics>();
     protected IBaseFilter _filterTsWriter;
-    protected bool _graphRunning = false;
     protected int _managedThreadId = -1;
     protected bool _isATSC = false;
     protected ITsEpgScanner _interfaceEpgGrabber;
@@ -295,8 +293,7 @@ namespace TvLibrary.Implementations.DVB
         throw new TvException("Unable to start graph");
       }
       //GetTunerSignalStatistics();
-      _epgGrabbing = false;
-      _graphRunning = true;
+      _epgGrabbing = false;      
       if (_mapSubChannels.ContainsKey(subChannel))
       {
         _mapSubChannels[subChannel].OnGraphStarted();
@@ -327,8 +324,7 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.Error("dvb:StopGraph returns:0x{0:X}", hr);
           throw new TvException("Unable to stop graph");
         }
-        _conditionalAccess.OnStopGraph();
-        _graphRunning = false;
+        _conditionalAccess.OnStopGraph();    
       }
       _graphState = GraphState.Created;
     }
@@ -1133,11 +1129,10 @@ namespace TvLibrary.Implementations.DVB
       }
 
       FreeAllSubChannels();
-      _graphRunning = false;
+      //_graphRunning = false;
       Log.Log.WriteFile("  stop");
       // Decompose the graph
-      hr = (_graphBuilder as IMediaControl).StopWhenReady();
-      //hr = (_graphBuilder as IMediaControl).Stop();
+      hr = (_graphBuilder as IMediaControl).StopWhenReady();      
 
       //In case MDPlugs exists then close and release them
       if (_mdplugs != null)
@@ -1267,7 +1262,7 @@ namespace TvLibrary.Implementations.DVB
       if (ts.TotalMilliseconds < 5000) return;
       try
       {
-        if (_graphRunning == false)
+        if (GraphRunning() == false)
         {
           _tunerLocked = false;
           _signalLevel = 0;

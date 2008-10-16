@@ -55,7 +55,7 @@ namespace TvLibrary.Implementations
 
     #region ctor
     public TvCardBase(DsDevice device)
-    {
+    {      
       _graphState = GraphState.Idle;
       _device = device;
       _tunerDevice = device;
@@ -79,6 +79,20 @@ namespace TvLibrary.Implementations
     }
 
     #endregion
+
+    protected bool GraphRunning()
+    {
+      bool graphRunning = false;
+
+      if (_graphBuilder != null)
+      {
+        FilterState state;
+        (_graphBuilder as IMediaControl).GetState(10, out state);
+        graphRunning = (state == FilterState.Running);
+      }
+      //Log.Log.WriteFile("subch:{0} GraphRunning: {1}", _subChannelId, graphRunning);
+      return graphRunning;
+    }
 
     #region variables
 
@@ -135,6 +149,9 @@ namespace TvLibrary.Implementations
     /// State of the graph
     /// </summary>
     protected GraphState _graphState = GraphState.Idle;
+
+    protected IFilterGraph2 _graphBuilder;
+
     /// <summary>
     /// Type of the cam
     /// </summary>

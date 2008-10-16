@@ -788,7 +788,7 @@ namespace TvLibrary.Implementations.DVB
     {
       TimeSpan ts = DateTime.Now - _lastSignalUpdate;
       if (ts.TotalMilliseconds < 5000) return;
-      if (_graphRunning == false)
+      if (GraphRunning() == false)
       {
         _tunerLocked = false;
         _signalLevel = 0;
@@ -928,8 +928,7 @@ namespace TvLibrary.Implementations.DVB
         }
       }
       Log.Log.WriteFile("ss2:Decompose");
-      int hr = 0;
-      _graphRunning = false;
+      int hr = 0;      
       // Decompose the graph
       //hr = (_graphBuilder as IMediaControl).StopWhenReady();
       hr = (_graphBuilder as IMediaControl).Stop();

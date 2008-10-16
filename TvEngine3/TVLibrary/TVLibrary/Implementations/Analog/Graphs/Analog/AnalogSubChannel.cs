@@ -126,8 +126,7 @@ namespace TvLibrary.Implementations.Analog
     /// </summary>
     public override void OnGraphStarted()
     {
-      Log.Log.WriteFile("analog subch:{0} OnGraphStarted", _subChannelId);
-      _graphRunning = true;
+      Log.Log.WriteFile("analog subch:{0} OnGraphStarted", _subChannelId);      
       _dateTimeShiftStarted = DateTime.MinValue;
     }
 

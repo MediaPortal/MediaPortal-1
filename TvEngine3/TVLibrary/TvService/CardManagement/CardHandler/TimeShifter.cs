@@ -279,10 +279,22 @@ namespace TvService
           context.GetUser(ref user);
           ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(user.SubChannel);
 
+          Log.Write("card: CAM enabled : {0}", _cardHandler.HasCA);
+
+          if (subchannel is TvDvbChannel)
+          {
+            if (!((TvDvbChannel)subchannel).PMTreceived)
+            {
+              Log.Info("start subch:{0} No PMT received. Timeshifting failed", subchannel.SubChannelId);
+              this.Stop(ref user);
+              _cardHandler.Users.RemoveUser(user);
+              return TvResult.UnableToStartGraph;
+            }
+          }
+
 					if (subchannel is BaseSubChannel)
-					{
-            ((BaseSubChannel)subchannel).AudioVideoEvent -= new BaseSubChannel.AudioVideoObserverEvent(this.AudioVideoEventHandler);
-            ((BaseSubChannel)subchannel).AudioVideoEvent += new BaseSubChannel.AudioVideoObserverEvent(this.AudioVideoEventHandler);
+					{                        
+            ((BaseSubChannel)subchannel).AudioVideoEvent += new BaseSubChannel.AudioVideoObserverEvent(this.AudioVideoEventHandler);            
 					}
 
           if (!_eventsReady)
@@ -290,27 +302,17 @@ namespace TvService
             _eventAudio = new ManualResetEvent(false);
             _eventVideo = new ManualResetEvent(false);
             _eventsReady = true;
-          }
+          }          
 
-          Log.Write("card: CAM enabled : {0}", _cardHandler.HasCA);
-
-          if (subchannel == null) return TvResult.UnknownChannel;          
-
+          if (subchannel == null) return TvResult.UnknownChannel;
+          bool isScrambled = false;
           if (subchannel.IsTimeShifting)
-          {
-            if (WaitForUnScrambledSignal(ref user) == false)
-            {
-              Log.Write("card: channel is scrambled");
-              this.Stop(ref user);
-              _cardHandler.Users.RemoveUser(user);              
-              return TvResult.ChannelIsScrambled;
-            }					
-
-						if (!WaitForTimeShiftFile(ref user, fileName + ".tsbuffer"))
+          {                        
+            if (!WaitForTimeShiftFile(ref user, out isScrambled))
 						{
               this.Stop(ref user);
-							_cardHandler.Users.RemoveUser(user);							
-							if (_cardHandler.IsScrambled(ref user))
+							_cardHandler.Users.RemoveUser(user);
+              if (isScrambled)
 							{								
 								return TvResult.ChannelIsScrambled;
 							}							
@@ -339,20 +341,12 @@ namespace TvService
             return TvResult.UnableToStartGraph;
           }
 					fileName += ".tsbuffer";
-          
-          if (WaitForUnScrambledSignal(ref user) == false)
-          {
-            Log.Write("card: channel is scrambled");
-            this.Stop(ref user);
-            _cardHandler.Users.RemoveUser(user);
-            return TvResult.ChannelIsScrambled;
-          }					
-          
-          if (!WaitForTimeShiftFile(ref user, fileName))
+          isScrambled = false;
+          if (!WaitForTimeShiftFile(ref user, out isScrambled))
           {
             this.Stop(ref user);
-						_cardHandler.Users.RemoveUser(user);						
-            if (_cardHandler.IsScrambled(ref user))
+						_cardHandler.Users.RemoveUser(user);
+            if (isScrambled)
             {              
               return TvResult.ChannelIsScrambled;
             }            
@@ -396,8 +390,8 @@ namespace TvService
 
         ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(user.SubChannel);
 				if (subchannel is BaseSubChannel)
-				{
-          ((BaseSubChannel)subchannel).AudioVideoEvent -= new BaseSubChannel.AudioVideoObserverEvent(this.AudioVideoEventHandler);
+				{          
+          ((BaseSubChannel)subchannel).AudioVideoEvent -= new BaseSubChannel.AudioVideoObserverEvent(this.AudioVideoEventHandler);          
 				}
         
         _eventVideo.Close();
@@ -556,8 +550,9 @@ namespace TvService
     /// <param name="cardId">The card id.</param>
     /// <param name="fileName">Name of the file.</param>
     /// <returns>true when timeshift files is at least of 300kb, else timeshift file is less then 300kb</returns>
-    public bool WaitForTimeShiftFile(ref User user, string fileName)
+    public bool WaitForTimeShiftFile(ref User user, out bool scrambled)
     {
+      scrambled = false;
       if (_cardHandler.DataBaseCard.Enabled == false) return false;
 			try
 			{
@@ -569,20 +564,19 @@ namespace TvService
 				Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
 				return false;
 			}
-      Log.Write("card: WaitForTimeShiftFile");
-      if (!WaitForUnScrambledSignal(ref user)) return false;
+
+      if (!WaitForUnScrambledSignal(ref user))
+      {
+        scrambled = true;
+        return false;
+      }
       int waitForEvent = _waitForTimeshifting * 1000; // in ms           
 
       DateTime timeStart = DateTime.Now;
 
       if (_cardHandler.Card.SubChannels.Length <= 0) return false;
       IChannel channel = _cardHandler.Card.SubChannels[0].CurrentChannel;
-      bool isRadio = channel.IsRadio;
-      ulong minTimeShiftFile = 100 * 1024;//500Kb
-      if (isRadio)
-      {
-        minTimeShiftFile = 100 * 1024;//100Kb
-      }
+      bool isRadio = channel.IsRadio;            
 
       if (isRadio)
       {
@@ -591,13 +585,21 @@ namespace TvService
         if (_eventAudio.WaitOne(waitForEvent, true))
         {
           // start of the video & audio is seen
-          Log.Write("card: WaitForTimeShiftFile - start of audio is seen");
+          TimeSpan ts = DateTime.Now - timeStart;
+          Log.Write("card: WaitForTimeShiftFile - audio is seen after {0} seconds", ts.TotalSeconds);
           _eventVideo.Reset();
           _eventAudio.Reset();
 
           // give some breathing room for TsReader
           Thread.Sleep(200);
           return true;
+        }
+        else
+        {
+          _eventVideo.Reset();
+          _eventAudio.Reset();
+          TimeSpan ts = DateTime.Now - timeStart;
+          Log.Write("card: WaitForTimeShiftFile - no audio was found after {0} seconds", ts.TotalSeconds);
         }
       }
       else
@@ -610,17 +612,30 @@ namespace TvService
           if (_eventVideo.WaitOne(waitForEvent, true))
           {
             // start of the video & audio is seen
-            Log.Write("card: WaitForTimeShiftFile - start of the video & audio is seen");
+            TimeSpan ts = DateTime.Now - timeStart;
+            Log.Write("card: WaitForTimeShiftFile - video & audio are seen after {0} seconds", ts.TotalSeconds);
             _eventVideo.Reset();
 
             // give some breathing room for TsReader
             Thread.Sleep(200);
             return true;
           }
+          else
+          {
+            _eventVideo.Reset();
+            _eventAudio.Reset();
+            TimeSpan ts = DateTime.Now - timeStart;
+            Log.Write("card: WaitForTimeShiftFile - video was found, but audio was not found after {0} seconds", ts.TotalSeconds);
+          }
         }
-      }
-
-      Log.Write("card: WaitForTimeShiftFile");      
+        else
+        {
+          _eventVideo.Reset();
+          _eventAudio.Reset();
+          TimeSpan ts = DateTime.Now - timeStart;
+          Log.Write("card: WaitForTimeShiftFile - no audio was found after {0} seconds", ts.TotalSeconds);
+        }
+      }      
       return false;
     }
   }

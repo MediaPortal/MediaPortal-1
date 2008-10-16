@@ -72,7 +72,7 @@ namespace TvLibrary.Implementations
     }
     #endregion
 
-    #region variables
+    #region variables    
     /// <summary>
     /// Indicates, if the channel has teletext
     /// </summary>
@@ -120,11 +120,7 @@ namespace TvLibrary.Implementations
     /// <summary>
     /// Current state of the graph
     /// </summary>
-    protected GraphState _graphState;
-    /// <summary>
-    /// Indicates, if the graph is running
-    /// </summary>
-    protected bool _graphRunning;
+    protected GraphState _graphState;    
     /// <summary>
     /// Scanning parameters
     /// </summary>
@@ -153,13 +149,13 @@ namespace TvLibrary.Implementations
     /// Initializes a new instance of the <see cref="BaseSubChannel"/> class.
     /// </summary>
     public BaseSubChannel()
-    {
+    {      
       _teletextDecoder = new DVBTeletext();
       _timeshiftFileName = String.Empty;
       _recordingFileName = String.Empty;
       _dateRecordingStarted = DateTime.MinValue;
       _dateTimeShiftStarted = DateTime.MinValue;
-      _graphRunning = false;
+      //_graphRunning = false;
       _graphState = GraphState.Created;
       _tsHelper = new TSHelperTools();
     }
@@ -558,8 +554,7 @@ namespace TvLibrary.Implementations
       {
         _teletextDecoder.ClearBuffer();
       }
-      _graphState = GraphState.Created;
-      _graphRunning = false;
+      _graphState = GraphState.Created;    
       OnDecompose();
     }
     #endregion

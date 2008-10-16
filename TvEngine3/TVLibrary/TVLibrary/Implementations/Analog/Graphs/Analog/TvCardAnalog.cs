@@ -89,8 +89,7 @@ namespace TvLibrary.Implementations.Analog
     private DsDevice _captureDevice;
     private DsDevice _videoEncoderDevice;
     private DsDevice _audioEncoderDevice;
-    private DsDevice _multiplexerDevice;
-    private IFilterGraph2 _graphBuilder = null;
+    private DsDevice _multiplexerDevice;    
     private DsROTEntry _rotEntry = null;
     private ICaptureGraphBuilder2 _capBuilder;
     private IBaseFilter _filterTvTuner = null;
