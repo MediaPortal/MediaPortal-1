@@ -516,7 +516,7 @@
                 {
                     Log.Info("LCDHypeWrapper.LCD_SetIOPropertys(Port={0},Exectime={1},ExectimeGfx={2},X={3},Y={4},gX={5},gY={6},LightOn={7},LightSliderValue={8},ContrastOn={9},ContrastSliderValue={10},Outports={11},UnderlineMode={12},UnderlineOutput={13})", new object[] { Port, DelayText, DelayGraphics, ColumnsText, RowsText, ColumnsGraphics, RowsGraphics, BacklightControl, BacklightLevel, ContrastControl, ContrastLevel, OutPortsMask, UnderLineMode, UnderlineOutput });
                 }
-                this.m_tDllReg.InvokeMember("LCD_SetIOPropertys", BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Static, null, null, new object[] { Port, DelayText, DelayGraphics, ColumnsText, RowsText, ColumnsGraphics, RowsGraphics, BacklightControl, BacklightLevel, ContrastControl, ContrastLevel, OutPortsMask, UnderLineMode, UnderlineOutput });
+                this.m_tDllReg.InvokeMember("LCD_SetIOPropertys", BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Static, null, null, new object[] { Port, DelayText, DelayGraphics, ColumnsText, RowsText, ColumnsGraphics, RowsGraphics, BacklightControl, BacklightLevel, ContrastControl, ContrastLevel, (int)OutPortsMask, UnderLineMode, UnderlineOutput });
             }
             catch
             {
@@ -900,6 +900,7 @@
             Log.Info("LCDHypeWrapper.Setup(): LCDHype driver supports contrast = {0}", new object[] { this.info.SupportContrastSlider });
             Log.Info("LCDHypeWrapper.Setup(): Contrast Setting: {0}", new object[] { this.LCD_CONFIG.ContrastLevel });
             this.LCD_SetIOPropertys(this.LCD_CONFIG.Port, this.LCD_CONFIG.DelayText, this.LCD_CONFIG.DelayGraphics, this.LCD_CONFIG.ColumnsText, this.LCD_CONFIG.RowsText, this.LCD_CONFIG.ColumnsGraphics, this.LCD_CONFIG.RowsGraphics, true, this.LCD_CONFIG.BacklightLevel, true, this.LCD_CONFIG.ContrastLevel, this.LCD_CONFIG.OutPortsMask, this.LCD_CONFIG.UnderLineMode, this.LCD_CONFIG.UnderlineOutput);
+
         }
 
         private void UpdateAdvancedSettings()
