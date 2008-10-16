@@ -1484,7 +1484,9 @@ namespace MediaPortal.Player
           if (crossFadeSeconds > 0)
             crossFadeSeconds = crossFadeSeconds / 1000f;
 
-          if (oldStreamDuration - (oldStreamElapsedSeconds + crossFadeSeconds) > -1)
+          // Don't fade out on Last.Fm Radio, even if cross fading is enabled
+          if ((oldStreamDuration - (oldStreamElapsedSeconds + crossFadeSeconds) > -1) 
+               && !_isLastFMRadio)
           {
             FadeOutStop(oldStream);
           }
@@ -1533,6 +1535,7 @@ namespace MediaPortal.Player
           // create the stream
           _isCDDAFile = false;
           _isRadio = false;
+          _isLastFMRadio = false;
           if (MediaPortal.Util.Utils.IsCDDA(filePath))
           {
             _isCDDAFile = true;
@@ -1560,7 +1563,7 @@ namespace MediaPortal.Player
               _bufferOffset = Bass.BASS_ChannelSeconds2Bytes(stream, (float)(_BufferingMS / 1000));
             }
             else
-              stream = Bass.BASS_StreamCreateURL(filePath, 0, streamFlags , null, 0);
+              stream = Bass.BASS_StreamCreateURL(filePath, 0, streamFlags, null, 0);
 
             if (stream != 0)
             {
@@ -1805,7 +1808,11 @@ namespace MediaPortal.Player
         return null;
 
       List<int> syncHandles = new List<int>();
-      syncHandles.Add(RegisterPlaybackFadeOutEvent(stream, streamIndex, _CrossFadeIntervalMS));
+
+      // Don't register the fade out event for last.fm radio, as it causes problems
+      if (!_isLastFMRadio)
+        syncHandles.Add(RegisterPlaybackFadeOutEvent(stream, streamIndex, _CrossFadeIntervalMS));
+
       syncHandles.Add(RegisterPlaybackEndEvent(stream, streamIndex));
       syncHandles.Add(RegisterStreamFreedEvent(stream));
 
@@ -2757,7 +2764,7 @@ namespace MediaPortal.Player
         _sourceRectangle = _videoRectangle;
       }
 
-      if (!GUIWindowManager.IsRouted) 
+      if (!GUIWindowManager.IsRouted)
         VizWindow.Visible = _State == PlayState.Playing;
     }
 
