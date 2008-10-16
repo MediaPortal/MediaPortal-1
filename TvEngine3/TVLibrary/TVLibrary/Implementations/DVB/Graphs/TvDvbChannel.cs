@@ -91,8 +91,6 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public TvDvbChannel()
     {
-      _eventPMT = new ManualResetEvent(false);      
-
       _graphState = GraphState.Created;      
 
       _pmtTimer.Enabled = false;
@@ -125,7 +123,6 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="tsWriter">The ts writer filter.</param>
     public TvDvbChannel(IFilterGraph2 graphBuilder, ref ConditionalAccess ca, ref MDPlugs mdplugs, IBaseFilter tif, IBaseFilter tsWriter, int subChannelId, IChannel channel)
     {
-      _eventPMT = new ManualResetEvent(false);
       _graphState = GraphState.Created;
       _graphBuilder = graphBuilder;
       _conditionalAccess = ca;
@@ -218,13 +215,14 @@ namespace TvLibrary.Implementations.DVB
       DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
       if (channel != null)
       {
-        _newCA = true;  
+        _newCA = true;
+        _eventPMT = new ManualResetEvent(false);
         if (SetupPmtGrabber(channel.PmtPid, channel.ServiceId))
         {
           _pmtTimer.Enabled = true;   
           DateTime dtNow = DateTime.Now;
           int timeoutPMT = _parameters.TimeOutPMT * 1000;
-          Log.Log.Debug("WaitForPMT: Waiting for PMT.");                      
+          Log.Log.Debug("WaitForPMT: Waiting for PMT.");          
           if (_eventPMT.WaitOne(timeoutPMT, true))
           {
             TimeSpan ts = DateTime.Now - dtNow;
@@ -238,13 +236,12 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.Debug("WaitForPMT: Timed out waiting for PMT after {0} seconds. Increase the PMT timeout value?", ts.TotalSeconds);
             foundPMT = false;
             _newPMT = false;
-          }
-          _eventPMT.Reset();
-          
+          }                    
           _pmtTimer.Enabled = false;          
           _newCA = false;  
         }
       }
+      _eventPMT.Close();
       return foundPMT;  
     }
 
@@ -270,7 +267,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public override void OnGraphStart()
     {
-      Log.Log.WriteFile("subch:{0} OnGraphStart", _subChannelId);
+      Log.Log.WriteFile("subch:{0} OnGraphStart", _subChannelId);      
 
       if (GraphRunning())
       {
@@ -348,8 +345,7 @@ namespace TvLibrary.Implementations.DVB
     public override void OnGraphStopped()
     {
       Log.Log.WriteFile("subch:{0} OnGraphStopped", _subChannelId);
-      _graphState = GraphState.Created;
-
+      _graphState = GraphState.Created;      
     }
 
     #endregion
@@ -1082,12 +1078,22 @@ namespace TvLibrary.Implementations.DVB
             if (_filterTIF != null)
               _filterTIF.Stop();
           }
-        } else
+        } 
+        else
         {
           _newPMT = true;
         }
-        _eventPMT.Set();
-      } catch (Exception ex)
+
+        DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
+        if (channel != null)
+        {
+          if (!(_pmtVersion < 0 && channel.PmtPid > 0))
+          {
+            _eventPMT.Set();
+          }
+        }
+      } 
+      catch (Exception ex)
       {
         Log.Log.Write(ex);
       }
