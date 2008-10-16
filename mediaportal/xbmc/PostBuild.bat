@@ -53,7 +53,7 @@ xcopy /y %1\ProcessPlugins\MusicShareWatcher\MusicShareWatcherHelper\bin\%2\Musi
 xcopy /y %1\ProcessPlugins\MusicShareWatcher\MusicShareWatcher\bin\%2\MusicShareWatcher.exe .
 
 REM CybrDisplayPlugin
-xcopy /y %1\CybrDisplayPlugin\bin\%2\CybrDisplayPlugin.* plugins\process\
+xcopy /y %1\CybrDisplayPlugin\bin\%2\CybrDisplayPlugin.* plugins\Windows\
 
 REM RemotePlugins
 xcopy /y %1\RemotePlugins\bin\%2\RemotePlugins.* .

@@ -694,7 +694,6 @@
             this.mpDisableGUISetup.Text = "Disable GUI Setup";
             this.mpDisableGUISetup.UseVisualStyleBackColor = true;
             this.btnCancel.Anchor = AnchorStyles.Right | AnchorStyles.Left | AnchorStyles.Bottom;
-            this.btnCancel.DialogResult = DialogResult.Cancel;
             this.btnCancel.Location = new Point(0x129, 0x1a9);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new Size(0x4e, 0x17);

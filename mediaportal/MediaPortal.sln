@@ -49,12 +49,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PostSetup", "PostSetup\Post
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaPortal.Configuration", "Configuration\MediaPortal.Configuration.csproj", "{68168FAA-A363-4F64-981C-32629A537900}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F2B349EB-67F5-48E3-9BE2-EC5BA8F010C7} = {F2B349EB-67F5-48E3-9BE2-EC5BA8F010C7}
+	EndProjectSection
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
-	ProjectSection(ProjectDependencies) = postProject
-		{F2B349EB-67F5-48E3-9BE2-EC5BA8F010C7} = {F2B349EB-67F5-48E3-9BE2-EC5BA8F010C7}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TVCapture", "TVCapture\TVCapture.csproj", "{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}"
@@ -64,11 +64,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TVCapture", "TVCapture\TVCa
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaPortal", "xbmc\MediaPortal.csproj", "{CBDFAA0E-01F5-4331-AB55-18A4A037B5AE}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
+		{11ADEC11-8343-40AD-8AE1-F5AF63F3D7DE} = {11ADEC11-8343-40AD-8AE1-F5AF63F3D7DE}
+		{8635D515-A5D4-4FB7-BD30-71770651E18B} = {8635D515-A5D4-4FB7-BD30-71770651E18B}
 		{396C5208-5D46-4A11-92C1-FD0F2F42D7DD} = {396C5208-5D46-4A11-92C1-FD0F2F42D7DD}
 		{F2B349EB-67F5-48E3-9BE2-EC5BA8F010C7} = {F2B349EB-67F5-48E3-9BE2-EC5BA8F010C7}
 		{67D44FEB-AC41-4B93-AC1D-876318CDD16B} = {67D44FEB-AC41-4B93-AC1D-876318CDD16B}
@@ -87,7 +85,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaPortal", "xbmc\MediaPo
 		{596BDC58-35E0-488F-BED2-FC7A133BC047} = {596BDC58-35E0-488F-BED2-FC7A133BC047}
 		{3333B71D-6304-452C-BEA5-D037E7B3AA6B} = {3333B71D-6304-452C-BEA5-D037E7B3AA6B}
 		{BD4A3413-C9F9-4299-BB52-ED45027EE7CC} = {BD4A3413-C9F9-4299-BB52-ED45027EE7CC}
-		{11ADEC11-8343-40AD-8AE1-F5AF63F3D7DE} = {11ADEC11-8343-40AD-8AE1-F5AF63F3D7DE}
+	EndProjectSection
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dialogs", "Dialogs\Dialogs.csproj", "{396C5208-5D46-4A11-92C1-FD0F2F42D7DD}"
@@ -211,16 +212,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WatchDog", "WatchDog\WatchD
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CybrDisplayPlugin", "CybrDisplayPlugin\CybrDisplayPlugin.csproj", "{8635D515-A5D4-4FB7-BD30-71770651E18B}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
-		{CBDFAA0E-01F5-4331-AB55-18A4A037B5AE} = {CBDFAA0E-01F5-4331-AB55-18A4A037B5AE}
 		{02FFFC1F-2555-4B99-8B01-3432D0673855} = {02FFFC1F-2555-4B99-8B01-3432D0673855}
 		{0A234721-1F13-4DF8-9B1E-64D9E3111203} = {0A234721-1F13-4DF8-9B1E-64D9E3111203}
 		{6DA0E4DF-6230-4642-98B5-E690BB6942BB} = {6DA0E4DF-6230-4642-98B5-E690BB6942BB}
 		{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C} = {B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}
+	EndProjectSection
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
 Global
