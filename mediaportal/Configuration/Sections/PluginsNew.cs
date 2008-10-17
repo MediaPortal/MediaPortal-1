@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
@@ -116,7 +117,7 @@ namespace MediaPortal.Configuration.Sections
         //
         // Populate our list
         //
-        
+
         LoadSettings();
         PopulateListView();
         LoadListFiles();
@@ -229,22 +230,23 @@ namespace MediaPortal.Configuration.Sections
           try
           {
             Type[] exportedTypes = pluginAssembly.GetExportedTypes();
+            List<object> NonSetupWindows = new List<object>();
 
             foreach (Type type in exportedTypes)
             {
+              bool isPlugin = (type.GetInterface("MediaPortal.GUI.Library.ISetupForm") != null);
+              bool isGuiWindow = ((type.IsClass) && (type.IsSubclassOf(typeof(GUIWindow))));
+
               // an abstract class cannot be instanciated
               if (type.IsAbstract)
               {
                 continue;
               }
-              //
+
               // Try to locate the interface we're interested in
-              //
-              if (type.GetInterface("MediaPortal.GUI.Library.ISetupForm") != null)
+              if (isPlugin || isGuiWindow)
               {
-                //
                 // Create instance of the current type
-                //
                 object pluginObject;
                 try
                 {
@@ -253,93 +255,87 @@ namespace MediaPortal.Configuration.Sections
                 catch (TargetInvocationException)
                 {
                   MessageBox.Show(
-                    string.Format(
-                      "An error occured while loading the plugin {0}.\n\nIt's incompatible with the current MediaPortal version and won't be loaded.",
-                      type.FullName), "Plugin Manager", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                  Log.Info(
-                    "Plugin Manager: Plugin {0} is incompatible with the current MediaPortal version! (File: {1})",
-                    type.FullName, pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1));
+                    string.Format("An error occured while loading the plugin {0}.\n\nIt's incompatible with the current MediaPortal version and won't be loaded.",
+                                   type.FullName
+                                  ), "Plugin Manager", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                  Log.Warn("Plugin Manager: Plugin {0} is incompatible with the current MediaPortal version! (File: {1})",
+                            type.FullName, pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1));
                   continue;
                 }
-                ISetupForm pluginForm = pluginObject as ISetupForm;
-                IExternalPlayer extPlayer = pluginObject as IExternalPlayer;
-                IShowPlugin showPlugin = pluginObject as IShowPlugin;
 
-                if (pluginForm != null)
+                if (isPlugin)
                 {
-                  ItemTag tag = new ItemTag();
-                  tag.SetupForm = pluginForm;
-                  tag.DllName = pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1);
-                  tag.WindowId = pluginForm.GetWindowId();
-                  if (extPlayer != null)
-                  {
-                    tag.IsExternalPlayer = true;
-                  }
-                  else
-                  {
-                    tag.IsProcess = true;
-                  }
-                  if (showPlugin != null)
-                  {
-                    tag.ShowDefaultHome = showPlugin.ShowDefaultHome();
-                  }
+                  ISetupForm pluginForm = pluginObject as ISetupForm;
+                  IExternalPlayer extPlayer = pluginObject as IExternalPlayer;
+                  IShowPlugin showPlugin = pluginObject as IShowPlugin;
 
-                  LoadPluginImages(type, tag);
-                  loadedPlugins.Add(tag);
+                  if (pluginForm != null)
+                  {
+                    ItemTag tag = new ItemTag();
+                    tag.SetupForm = pluginForm;
+                    tag.DllName = pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1);
+                    tag.WindowId = pluginForm.GetWindowId();
+
+                    if (isGuiWindow)
+                    {
+                      GUIWindow win = (GUIWindow)pluginObject;
+                      if (tag.WindowId == win.GetID)
+                      {
+                        tag.Type = win.GetType().ToString();
+                        tag.IsProcess = false;
+                        tag.IsWindow = true;
+                      }
+                    }
+                    else
+                      if (extPlayer != null)
+                      {
+                        tag.IsExternalPlayer = true;
+                      }
+                      else
+                      {
+                        tag.IsProcess = true;
+                      }
+
+                    if (showPlugin != null)
+                    {
+                      tag.ShowDefaultHome = showPlugin.ShowDefaultHome();
+                    }
+
+                    LoadPluginImages(type, tag);
+                    loadedPlugins.Add(tag);
+                  }
                 }
+                else
+                {
+                  NonSetupWindows.Add(pluginObject);
+                }
+
               }
             }
-            foreach (Type t in exportedTypes)
+            // Filter plugins from e.g. dialogs or other windows.
+            foreach (GUIWindow win in NonSetupWindows)
             {
-              if ((t.IsClass) && (t.IsSubclassOf(typeof(GUIWindow))))
+              foreach (ItemTag tag in loadedPlugins)
               {
-                object newObj;
-
-                // an abstract class cannot be instanciated
-                if (t.IsAbstract)
+                if (tag.WindowId == win.GetID)
                 {
-                  continue;
-                }
-                try
-                {
-                  newObj = Activator.CreateInstance(t);
-                }
-                catch (TargetInvocationException)
-                {
-                  MessageBox.Show(
-                    string.Format(
-                      "An error occured while loading the plugin {0}.\n\nIt's incompatible with the current MediaPortal version and won't be loaded.",
-                      t.FullName), "Plugin Manager", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                  Log.Warn("PluginManager: {0} is incompatible with the current MediaPortal version! (File: {1})",
-                           t.FullName, pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1));
-                  continue;
-                }
-                GUIWindow win = (GUIWindow)newObj;
-
-                foreach (ItemTag tag in loadedPlugins)
-                {
-                  if (tag.WindowId == win.GetID)
-                  {
-                    tag.Type = win.GetType().ToString();
-                    tag.IsProcess = false;
-                    tag.IsWindow = true;
-                    break;
-                  }
+                  tag.Type = win.GetType().ToString();
+                  tag.IsProcess = false;
+                  tag.IsWindow = true;
+                  break;
                 }
               }
             }
+
           }
           catch (Exception ex)
           {
             MessageBox.Show(
-              string.Format(
-                "An error occured while loading the plugin file {0}.\n\nIt's broken or incompatible with the current MediaPortal version and won't be loaded.",
-                pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1)), "Plugin Manager", MessageBoxButtons.OK,
-              MessageBoxIcon.Error);
-            Log.Warn(
-              "PluginManager: Plugin file {0} is broken or incompatible with the current MediaPortal version and won't be loaded!",
-              pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1));
-            Log.Info("PluginManager: Exception: {0}", ex);
+              string.Format("An error occured while loading the plugin file {0}.\n\nIt's broken or incompatible with the current MediaPortal version and won't be loaded.",
+                             pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1)), "Plugin Manager", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            Log.Warn("PluginManager: Plugin file {0} is broken or incompatible with the current MediaPortal version and won't be loaded!",
+                      pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1));
+            Log.Error("PluginManager: Exception: {0}", ex);
           }
         }
       }
@@ -431,7 +427,7 @@ namespace MediaPortal.Configuration.Sections
                 itemTag.IsPlugins = xmlreader.GetValueAsBool("myplugins", itemTag.SetupForm.PluginName(), isPlugins);
               }
             }
-          }          
+          }
         }
       }
     }
