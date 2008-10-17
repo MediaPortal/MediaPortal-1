@@ -239,8 +239,7 @@ namespace TvService
       {
         _eventVideo.Set();
       }
-		}
-
+		}    
 
     /// <summary>
     /// Start timeshifting.
@@ -294,7 +293,7 @@ namespace TvService
 
 					if (subchannel is BaseSubChannel)
 					{                        
-            ((BaseSubChannel)subchannel).AudioVideoEvent += new BaseSubChannel.AudioVideoObserverEvent(this.AudioVideoEventHandler);            
+            ((BaseSubChannel)subchannel).AudioVideoEvent += new BaseSubChannel.AudioVideoObserverEvent(this.AudioVideoEventHandler);
 					}
 
           if (!_eventsReady)
@@ -391,7 +390,7 @@ namespace TvService
         ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(user.SubChannel);
 				if (subchannel is BaseSubChannel)
 				{          
-          ((BaseSubChannel)subchannel).AudioVideoEvent -= new BaseSubChannel.AudioVideoObserverEvent(this.AudioVideoEventHandler);          
+          ((BaseSubChannel)subchannel).AudioVideoEvent -= new BaseSubChannel.AudioVideoObserverEvent(this.AudioVideoEventHandler);
 				}
         
         _eventVideo.Close();
@@ -495,54 +494,7 @@ namespace TvService
         Log.Write(ex);
         return TvResult.UnknownError;
       }
-    }
-
-    /// <summary>
-    /// Waits for un scrambled signal.
-    /// </summary>
-    /// <param name="cardId">The card id.</param>
-    /// <returns>true if channel is unscrambled else false</returns>
-    public bool WaitForUnScrambledSignal(ref User user)
-    {
-      if (_cardHandler.DataBaseCard.Enabled == false) return false;
-			try
-			{
-				RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-				if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return false;
-			}
-			catch (Exception)
-			{
-				Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
-				return false;
-			}
-      Log.Write("card: WaitForUnScrambledSignal");
-      DateTime timeStart = DateTime.Now;
-      while (true)
-      {
-        if (_cardHandler.IsScrambled(ref user))
-        {
-          if (!_cardHandler.HasCA)
-          {
-            Log.Write("card:   return scrambled, since card has no CAM.");
-            return false;
-          }
-
-          Log.Write("card:   scrambled, sleep 100");
-          System.Threading.Thread.Sleep(100);
-          TimeSpan timeOut = DateTime.Now - timeStart;
-          if (timeOut.TotalMilliseconds >= (_waitForUnscrambled * 1000))
-          {
-            Log.Write("card:   return scrambled");
-            return false;
-          }
-        }
-        else
-        {
-          Log.Write("card:   return not scrambled");
-          return true;
-        }
-      }
-    }
+    }    
 
     /// <summary>
     /// Waits for time shift file to be at leat 300kb.
@@ -565,11 +517,27 @@ namespace TvService
 				return false;
 			}
 
+      // no need to wait for unscrambled signal, since the wait audio video pids are internally raised in tswriter when the packets are unscrambled.
+      // instead we should query tswriter in the event that no audio/video events was received, wether or not the current state of the stream is scrambled or not.
+      /*
       if (!WaitForUnScrambledSignal(ref user))
       {
         scrambled = true;
         return false;
       }
+      */
+
+      //lets check if stream is initially scrambled, if it is and the card has no CA, then we are unable to decrypt stream.
+      if (_cardHandler.IsScrambled(ref user))
+      {
+        if (!_cardHandler.HasCA)
+        {
+          Log.Write("card: WaitForTimeShiftFile - return scrambled, since card has no CAM.");
+          scrambled = true;
+          return false;
+        }
+      }
+
       int waitForEvent = _waitForTimeshifting * 1000; // in ms           
 
       DateTime timeStart = DateTime.Now;
@@ -600,6 +568,11 @@ namespace TvService
           _eventAudio.Reset();
           TimeSpan ts = DateTime.Now - timeStart;
           Log.Write("card: WaitForTimeShiftFile - no audio was found after {0} seconds", ts.TotalSeconds);
+          if (_cardHandler.IsScrambled(ref user))
+          {            
+            Log.Write("card: WaitForTimeShiftFile - audio stream is scrambled");
+            scrambled = true;            
+          }
         }
       }
       else
@@ -613,7 +586,7 @@ namespace TvService
           {
             // start of the video & audio is seen
             TimeSpan ts = DateTime.Now - timeStart;
-            Log.Write("card: WaitForTimeShiftFile - video & audio are seen after {0} seconds", ts.TotalSeconds);
+            Log.Write("card: WaitForTimeShiftFile - video and audio are seen after {0} seconds", ts.TotalSeconds);
             _eventVideo.Reset();
 
             // give some breathing room for TsReader
@@ -626,6 +599,11 @@ namespace TvService
             _eventAudio.Reset();
             TimeSpan ts = DateTime.Now - timeStart;
             Log.Write("card: WaitForTimeShiftFile - video was found, but audio was not found after {0} seconds", ts.TotalSeconds);
+            if (_cardHandler.IsScrambled(ref user))
+            {
+              Log.Write("card: WaitForTimeShiftFile - audio stream is scrambled");
+              scrambled = true;
+            }
           }
         }
         else
@@ -634,6 +612,11 @@ namespace TvService
           _eventAudio.Reset();
           TimeSpan ts = DateTime.Now - timeStart;
           Log.Write("card: WaitForTimeShiftFile - no audio was found after {0} seconds", ts.TotalSeconds);
+          if (_cardHandler.IsScrambled(ref user))
+          {
+            Log.Write("card: WaitForTimeShiftFile - audio and video stream is scrambled");
+            scrambled = true;
+          }
         }
       }      
       return false;

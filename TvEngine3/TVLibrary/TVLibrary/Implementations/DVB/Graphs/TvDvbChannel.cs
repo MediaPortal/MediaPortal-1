@@ -792,14 +792,20 @@ namespace TvLibrary.Implementations.DVB
       DVBBaseChannel dvbChannel = _currentChannel as DVBBaseChannel;
       if (dvbChannel == null) return;
 
+      try
+      {
+        _tsFilterInterface.TimeShiftPause(_subChannelIndex, 1);
+        _tsFilterInterface.TimeShiftSetPmtPid(_subChannelIndex, dvbChannel.PmtPid, dvbChannel.ServiceId, _pmtData, _pmtLength);
 
-      _tsFilterInterface.TimeShiftPause(_subChannelIndex, 1);
-      _tsFilterInterface.TimeShiftSetPmtPid(_subChannelIndex, dvbChannel.PmtPid, dvbChannel.ServiceId, _pmtData, _pmtLength);
+        //_linkageScannerEnabled = (layer.GetSetting("linkageScannerEnabled", "no").Value == "yes");
 
-      //_linkageScannerEnabled = (layer.GetSetting("linkageScannerEnabled", "no").Value == "yes");
-
-      _tsFilterInterface.TimeShiftPause(_subChannelIndex, 0);
-      _dateTimeShiftStarted = DateTime.Now;
+        _tsFilterInterface.TimeShiftPause(_subChannelIndex, 0);
+        _dateTimeShiftStarted = DateTime.Now;
+      }
+      catch (Exception e)
+      {
+        Log.Log.Error("could not set TimeShiftSetPmtPid {0}", e.Message);
+      }
     }
 
     /// <summary>
@@ -1050,7 +1056,7 @@ namespace TvLibrary.Implementations.DVB
     }
 
     #endregion
-
+   
     #region IPMTCallback Members
     /// <summary>
     /// Called when tswriter.ax has received a new pmt
