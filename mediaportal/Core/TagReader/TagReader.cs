@@ -125,26 +125,22 @@ namespace MediaPortal.TagReader
           TagLib.Id3v2.Tag id32_tag = tag.GetTag(TagLib.TagTypes.Id3v2) as TagLib.Id3v2.Tag;
           if (id32_tag != null)
           {
-            TagLib.Id3v2.PopularimeterFrame popm;
-            foreach (TagLib.Id3v2.Frame frame in id32_tag)
+            foreach (TagLib.Id3v2.PopularimeterFrame popm in id32_tag.GetFrames<TagLib.Id3v2.PopularimeterFrame>())
             {
-              popm = frame as TagLib.Id3v2.PopularimeterFrame;
-              if (popm != null)
-              {
-                int rating = popm.Rating;
-                int i = 0;
-                if (rating > 205)
-                  i = 5;
-                else if (rating > 154)
-                  i = 4;
-                else if (rating > 104)
-                  i = 3;
-                else if (rating > 53)
-                  i = 2;
-                else if (rating > 0)
-                  i = 1;
-                musictag.Rating = i;
-              }
+              int rating = popm.Rating;
+              int i = 0;
+              if (rating > 205)
+                i = 5;
+              else if (rating > 154)
+                i = 4;
+              else if (rating > 104)
+                i = 3;
+              else if (rating > 53)
+                i = 2;
+              else if (rating > 0)
+                i = 1;
+              musictag.Rating = i;
+              break;  // we only take the first popm frame
             }
           }
         }
