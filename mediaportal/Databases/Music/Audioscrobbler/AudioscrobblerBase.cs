@@ -687,6 +687,19 @@ namespace MediaPortal.Music.Database
         {
           request.CookieContainer = _cookies;
           //request.UserAgent = "Last.fm Client 1.3.1.1 (Windows)";
+
+          try
+          {
+            // Use the current user in case an NTLM Proxy or similar is used.
+            request.Proxy = WebProxy.GetDefaultProxy();
+            request.Proxy.Credentials = CredentialCache.DefaultCredentials;
+          }
+          catch (Exception) { }
+
+          //request.Timeout = 20000;
+          request.Pipelined = false;
+
+          request.UserAgent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)";
         }
       }
       catch (Exception e)

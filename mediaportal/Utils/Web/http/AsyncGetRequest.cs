@@ -77,6 +77,14 @@ namespace MediaPortal.Utils.Web
         try
         {
           request = (HttpWebRequest)WebRequest.Create(targetURL);
+          try
+          {
+            // Use the current user in case an NTLM Proxy or similar is used.
+            request.Proxy = WebProxy.GetDefaultProxy();
+            request.Proxy.Credentials = CredentialCache.DefaultCredentials;
+          }
+          catch (Exception) { }
+
           //request.Timeout = 20000;
           request.Pipelined = false;
 
@@ -110,7 +118,7 @@ namespace MediaPortal.Utils.Web
 
           reader = new StreamReader(response.GetResponseStream());
           responseCode = response.StatusCode;
-          
+
           //request = null;
         }
         catch (Exception ex2)
@@ -118,7 +126,7 @@ namespace MediaPortal.Utils.Web
           if (workerError != null)
             workerError(targetURL, ex2);
           return;
-        }        
+        }
 
         List<String> responseStrings = new List<string>();
         String tmp = string.Empty;

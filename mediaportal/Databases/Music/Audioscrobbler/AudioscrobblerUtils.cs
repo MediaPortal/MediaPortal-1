@@ -38,6 +38,7 @@ using MediaPortal.Services;
 using MediaPortal.Threading;
 using MediaPortal.GUI.Library;
 using MediaPortal.Configuration;
+using System.Runtime.CompilerServices;
 
 #endregion
 
@@ -861,7 +862,7 @@ namespace MediaPortal.Music.Database
           bool foundDoubleEntry = false;
           string tmpArtist = string.Empty;
 
-          for (int s = 0 ; s < unfilteredList_.Count ; s++)
+          for (int s = 0; s < unfilteredList_.Count; s++)
           {
             tmpArtist = unfilteredList_[s].Artist.ToLowerInvariant();
             // only accept other artists than the current playing but include current "tag" since some people tag just using the artist's name..
@@ -887,7 +888,7 @@ namespace MediaPortal.Music.Database
                     if (onlyUniqueArtists)
                     {
                       // check and prevent entries from the same artist
-                      for (int j = 0 ; j < tmpSongs.Count ; j++)
+                      for (int j = 0; j < tmpSongs.Count; j++)
                       {
                         if (tmpSong.Artist == tmpSongs[j].Artist)
                         {
@@ -926,7 +927,7 @@ namespace MediaPortal.Music.Database
                     {
                       foundDoubleEntry = false;
                       // check and prevent double entries 
-                      for (int j = 0 ; j < tmpSongs.Count ; j++)
+                      for (int j = 0; j < tmpSongs.Count; j++)
                       {
                         if (dbArtists[0].Artist == (tmpSongs[j].Artist))
                         {
@@ -962,7 +963,7 @@ namespace MediaPortal.Music.Database
                     {
                       foundDoubleEntry = false;
                       // check and prevent double entries 
-                      for (int j = 0 ; j < tmpSongs.Count ; j++)
+                      for (int j = 0; j < tmpSongs.Count; j++)
                       {
                         if (dbAlbums[0].Album == (tmpSongs[j].Album))
                         {
@@ -1079,7 +1080,7 @@ namespace MediaPortal.Music.Database
           List<Song> filteredSongs = new List<Song>(albumTracks.Count);
           filteredSongs = FilterNonLocalTracks(albumTracks, false);
 
-          for (int i = 0 ; i < albumTracks.Count ; i++)
+          for (int i = 0; i < albumTracks.Count; i++)
           {
             albumTracks[i].URL = string.Empty;
 
@@ -1143,7 +1144,7 @@ namespace MediaPortal.Music.Database
 
         if (randomPosition < tagTracks.Count - 1)
         {
-          for (int x = 0 ; x < _limitRandomListCount ; x++)
+          for (int x = 0; x < _limitRandomListCount; x++)
           {
             tmpGenre = tagTracks[randomPosition].Genre.ToLowerInvariant();
             // filter unwanted tags
@@ -1155,7 +1156,7 @@ namespace MediaPortal.Music.Database
               // if random picking doesn't lead to a result quit the randomness and pick the best
               if (x > tagTracks.Count * 3)
               {
-                for (int t = 0 ; t < tagTracks.Count ; t++)
+                for (int t = 0; t < tagTracks.Count; t++)
                 {
                   tmpGenre = tagTracks[t].Genre.ToLowerInvariant();
                   if (!_unwantedTags.Contains(tmpGenre.ToLowerInvariant()))
@@ -1312,7 +1313,7 @@ namespace MediaPortal.Music.Database
             else
               randomPosition = rand.Next(0, minRandValue);
             // loop current list to find out if randomPos was already inserted
-            for (int j = 0 ; j < randomTaggedArtists.Count ; j++)
+            for (int j = 0; j < randomTaggedArtists.Count; j++)
             {
               if (randomTaggedArtists.Contains(taggedArtists[randomPosition]))
               {
@@ -1377,7 +1378,7 @@ namespace MediaPortal.Music.Database
             else
               randomPosition = rand.Next(0, minRandValue);
             // loop current list to find out if randomPos was already inserted
-            for (int j = 0 ; j < randomSimilarArtists.Count ; j++)
+            for (int j = 0; j < randomSimilarArtists.Count; j++)
             {
               if (randomSimilarArtists.Contains(similarArtists[randomPosition]))
               {
@@ -1475,11 +1476,7 @@ namespace MediaPortal.Music.Database
           // Here we get the image from the web and save it to disk
           try
           {
-            string tmpFile = PathUtility.GetSecureTempFileName();
-            WebClient client = new WebClient();
-            //client.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
-            //client.Headers.Add("user-agent", @"Mozilla/5.0 (X11; U; Linux i686; de-DE; rv:1.8.1) Gecko/20060601 Firefox/2.0 (Ubuntu-edgy)");
-            client.DownloadFile(imageUrl, tmpFile);
+            string tmpFile = DownloadTempFile(imageUrl);
 
             //temp file downloaded - check if needed
             if (File.Exists(fullLargePath))
@@ -1531,6 +1528,28 @@ namespace MediaPortal.Music.Database
       return success;
     }
 
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    private static string DownloadTempFile(string imageUrl)
+    {
+      string tmpFile = PathUtility.GetSecureTempFileName();
+      try
+      {        
+        using (WebClient client = new WebClient())
+        {
+          // Use the current user in case an NTLM Proxy or similar is used.
+          client.Proxy = WebProxy.GetDefaultProxy();
+          client.Proxy.Credentials = CredentialCache.DefaultCredentials;
+          //client.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
+          //client.Headers.Add("user-agent", @"Mozilla/5.0 (X11; U; Linux i686; de-DE; rv:1.8.1) Gecko/20060601 Firefox/2.0 (Ubuntu-edgy)");
+          client.DownloadFile(imageUrl, tmpFile);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("AudioscrobblerUtils: Exception while downloading {0} - {1}", imageUrl, ex.Message);
+      }
+      return tmpFile;
+    }
 
     private List<Song> fetchRandomTracks(offlineMode randomMode_)
     {
@@ -1551,7 +1570,7 @@ namespace MediaPortal.Music.Database
         randomSong = lookupSong.Clone();
 
         bool found = false;
-        for (int i = 0 ; i < randomSongList.Count ; i++)
+        for (int i = 0; i < randomSongList.Count; i++)
           if (randomSongList[i].Artist == randomSong.Artist)
           {
             found = true;
@@ -1631,7 +1650,7 @@ namespace MediaPortal.Music.Database
               randomPosition = rand.Next(0, minRandValue);
 
             // loop current list to find out if randomPos was already inserted
-            for (int j = 0 ; j < myRandomNeighbours.Count ; j++)
+            for (int j = 0; j < myRandomNeighbours.Count; j++)
             {
               if (myRandomNeighbours.Contains(myNeighbours[randomPosition]))
               {
@@ -1648,7 +1667,7 @@ namespace MediaPortal.Music.Database
           }
           // now _limitRandomListCount random neighbours are added
           // get artists for these neighbours  
-          for (int n = 0 ; n < myRandomNeighbours.Count ; n++)
+          for (int n = 0; n < myRandomNeighbours.Count; n++)
           {
             myNeighboorsArtists = getAudioScrobblerFeed(_currentNeighbourMode, myRandomNeighbours[n].Artist);
 
@@ -1678,7 +1697,7 @@ namespace MediaPortal.Music.Database
                 else
                   randomPosition = rand.Next(0, minRandAValue);
 
-                for (int j = 0 ; j < myRandomNeighboorsArtists.Count ; j++)
+                for (int j = 0; j < myRandomNeighboorsArtists.Count; j++)
                 {
                   if (myRandomNeighboorsArtists.Contains(myNeighboorsArtists[randomPosition]))
                   {
@@ -1701,7 +1720,7 @@ namespace MediaPortal.Music.Database
         else
         // limit not reached - return all neighbours random artists          
         {
-          for (int i = 0 ; i < myNeighbours.Count ; i++)
+          for (int i = 0; i < myNeighbours.Count; i++)
           {
             // sort by match needed
             myNeighboorsArtists = getAudioScrobblerFeed(_currentNeighbourMode, myNeighbours[i].Artist);
@@ -1732,7 +1751,7 @@ namespace MediaPortal.Music.Database
                 else
                   randomPosition = rand.Next(0, minRandAValue);
 
-                for (int j = 0 ; j < myNeighboorsArtists.Count ; j++)
+                for (int j = 0; j < myNeighboorsArtists.Count; j++)
                 {
                   if (myRandomNeighboorsArtists.Contains(myNeighboorsArtists[randomPosition]))
                   {
@@ -1757,7 +1776,7 @@ namespace MediaPortal.Music.Database
       else
       {
         if (myNeighbours.Count > 4)
-          for (int i = 0 ; i < 4 ; i++)
+          for (int i = 0; i < 4; i++)
             myNeighboorsArtists.AddRange(getAudioScrobblerFeed(_currentNeighbourMode, myNeighbours[i].Artist));
         return myNeighboorsArtists;
       }
@@ -1772,7 +1791,7 @@ namespace MediaPortal.Music.Database
       {
         XmlDocument doc = new XmlDocument();
 
-        doc.Load(@"http://ws.audioscrobbler.com/1.0/album/" + artist_ + "/" + album_ + "/info.xml");
+        doc.Load(DownloadTempFile(@"http://ws.audioscrobbler.com/1.0/album/" + artist_ + "/" + album_ + "/info.xml"));
 
         XmlNodeList nodes = doc.SelectNodes(@"//album");
         string tmpCover = string.Empty;
@@ -1861,7 +1880,7 @@ namespace MediaPortal.Music.Database
       {
         XmlDocument doc = new XmlDocument();
 
-        doc.Load(@"http://ws.audioscrobbler.com/1.0/artist/" + artist_ + "/topalbums.xml");
+        doc.Load(DownloadTempFile(@"http://ws.audioscrobbler.com/1.0/artist/" + artist_ + "/topalbums.xml"));
 
         XmlNodeList nodes = doc.SelectNodes(@"//topalbums/album");
 
@@ -1905,7 +1924,7 @@ namespace MediaPortal.Music.Database
       {
         XmlDocument doc = new XmlDocument();
 
-        doc.Load(@"http://ws.audioscrobbler.com/1.0/artist/" + artist_ + "/" + "similar.xml");
+        doc.Load(DownloadTempFile(@"http://ws.audioscrobbler.com/1.0/artist/" + artist_ + "/" + "similar.xml"));
         XmlNodeList nodes = doc.SelectNodes(@"//similarartists");
 
         if (!string.IsNullOrEmpty(nodes[0].Attributes["artist"].Value))
@@ -1929,7 +1948,7 @@ namespace MediaPortal.Music.Database
       {
         XmlDocument doc = new XmlDocument();
 
-        doc.Load(@"http://ws.audioscrobbler.com/1.0/artist/" + artist_ + "/" + "similar.xml");
+        doc.Load(DownloadTempFile(@"http://ws.audioscrobbler.com/1.0/artist/" + artist_ + "/" + "similar.xml"));
         XmlNodeList nodes = doc.SelectNodes(@"//similarartists/artist");
 
         foreach (XmlNode node in nodes)
@@ -1975,16 +1994,16 @@ namespace MediaPortal.Music.Database
         switch (searchType_)
         {
           case lastFMFeed.topartisttags:
-            doc.Load(@"http://ws.audioscrobbler.com/1.0/artist/" + artist_ + "/toptags.xml");
+            doc.Load(DownloadTempFile(@"http://ws.audioscrobbler.com/1.0/artist/" + artist_ + "/toptags.xml"));
             nodes = doc.SelectNodes(@"//toptags/tag");
             break;
           case lastFMFeed.toptracktags:
-            doc.Load(@"http://ws.audioscrobbler.com/1.0/track/" + artist_ + "/" + track_ + "/toptags.xml");
+            doc.Load(DownloadTempFile(@"http://ws.audioscrobbler.com/1.0/track/" + artist_ + "/" + track_ + "/toptags.xml"));
             nodes = doc.SelectNodes(@"//toptags/tag");
             break;
 
           default:
-            doc.Load(@"http://ws.audioscrobbler.com/1.0/artist/" + artist_ + "/toptags.xml");
+            doc.Load(DownloadTempFile(@"http://ws.audioscrobbler.com/1.0/artist/" + artist_ + "/toptags.xml"));
             nodes = doc.SelectNodes(@"//toptags/tag");
             break;
         }
@@ -2027,19 +2046,19 @@ namespace MediaPortal.Music.Database
         switch (searchType_)
         {
           case lastFMFeed.taggedartists:
-            doc.Load(@"http://ws.audioscrobbler.com/1.0/tag/" + taggedWith_ + "/topartists.xml");
+            doc.Load(DownloadTempFile(@"http://ws.audioscrobbler.com/1.0/tag/" + taggedWith_ + "/topartists.xml"));
             nodes = doc.SelectNodes(@"//tag/artist");
             break;
           case lastFMFeed.taggedalbums:
-            doc.Load(@"http://ws.audioscrobbler.com/1.0/tag/" + taggedWith_ + "/topalbums.xml");
+            doc.Load(DownloadTempFile(@"http://ws.audioscrobbler.com/1.0/tag/" + taggedWith_ + "/topalbums.xml"));
             nodes = doc.SelectNodes(@"//tag/album");
             break;
           case lastFMFeed.taggedtracks:
-            doc.Load(@"http://ws.audioscrobbler.com/1.0/tag/" + taggedWith_ + "/toptracks.xml");
+            doc.Load(DownloadTempFile(@"http://ws.audioscrobbler.com/1.0/tag/" + taggedWith_ + "/toptracks.xml"));
             nodes = doc.SelectNodes(@"//tag/track");
             break;
           default:
-            doc.Load(@"http://ws.audioscrobbler.com/1.0/tag/" + taggedWith_ + "/topartists.xml");
+            doc.Load(DownloadTempFile(@"http://ws.audioscrobbler.com/1.0/tag/" + taggedWith_ + "/topartists.xml"));
             nodes = doc.SelectNodes(@"//tag/artist");
             break;
         }
@@ -2097,7 +2116,7 @@ namespace MediaPortal.Music.Database
       {
         XmlDocument doc = new XmlDocument();
 
-        doc.Load(xmlFileInput);
+        doc.Load(DownloadTempFile(xmlFileInput));
         XmlNodeList nodes = doc.SelectNodes(queryNodePath);
 
         foreach (XmlNode node in nodes)
@@ -2250,7 +2269,7 @@ namespace MediaPortal.Music.Database
         string tempFile = PathUtility.GetSecureTempFileName();
         XmlDocument doc = new XmlDocument();
 
-        doc.Load(aLocation);
+        doc.Load(DownloadTempFile(aLocation));
         doc.Save(tempFile);
 
         using (XmlReader reader = XmlReader.Create(tempFile))
@@ -2331,7 +2350,7 @@ namespace MediaPortal.Music.Database
       {
         XmlDocument doc = new XmlDocument();
 
-        doc.Load(aLocation);
+        doc.Load(DownloadTempFile(aLocation));
 
         XmlNodeList nodes = doc.SelectNodes(@"//playlist/trackList/track");
 

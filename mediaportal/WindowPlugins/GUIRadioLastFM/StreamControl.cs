@@ -90,7 +90,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     #endregion
 
     #region Variables
-    private PlayListPlayer PlaylistPlayer = null;    
+    private PlayListPlayer PlaylistPlayer = null;
 
     /// <summary>
     /// The "filename" used by the player to access the stream
@@ -145,7 +145,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     {
       AudioscrobblerBase.RadioHandshakeSuccess += new AudioscrobblerBase.RadioHandshakeCompleted(OnRadioLoginSuccess);
       AudioscrobblerBase.RadioHandshakeError += new AudioscrobblerBase.RadioHandshakeFailed(OnRadioLoginFailed);
-      
+
       PlaylistPlayer = PlayListPlayer.SingletonPlayer;
     }
 
@@ -186,7 +186,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     private void LoadSettings()
     {
       CurrentSongTag = new MusicTag();
-      
+
       httpcommand = new AsyncGetRequest();
       httpcommand.workerFinished += new AsyncGetRequest.AsyncGetRequestCompleted(OnParseAsyncResponse);
       httpcommand.workerError += new AsyncGetRequest.AsyncGetRequestError(OnAsyncRequestError);
@@ -219,7 +219,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         RadioSettingsSuccess();
       }
       else
-        RadioSettingsError();      
+        RadioSettingsError();
     }
 
     private void OnRadioLoginFailed()
@@ -324,7 +324,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     public int DiscoveryEnabledInt
     {
-      get 
+      get
       {
         return _discoveryMode ? 1 : 0;
       }
@@ -347,15 +347,15 @@ namespace MediaPortal.GUI.RADIOLASTFM
     }
 
     #endregion
-    
+
     #region Control functions
     public bool PlayStream()
     {
       GUIWaitCursor.Show();
 
-      if (g_Player.Playing)      
+      if (g_Player.Playing)
         g_Player.Stop();
-      
+
       _currentState = StreamPlaybackState.starting;
       // often the buffer is too slow for the playback to start
       for (int i = 0; i < 3; i++)
@@ -366,7 +366,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
           _currentState = StreamPlaybackState.streaming;
           ToggleRecordToProfile(AudioscrobblerBase.SubmitRadioSongs);
           ToggleDiscoveryMode(_discoveryMode);
-          
+
           return true;
         }
       }
@@ -400,7 +400,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       _currentState = StreamPlaybackState.streaming;
       ToggleRecordToProfile(false);
       ToggleDiscoveryMode(_discoveryMode);
-      
+
       return true;
     }
 
@@ -474,7 +474,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         Log.Info("StreamControl: Currently not streaming - ignoring command");
     }
     #endregion
-    
+
     #region Tuning functions
     public bool TuneIntoPersonalRadio(string username_)
     {
@@ -595,7 +595,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     public bool TuneIntoWebPlaylist(string username_)
     {
       string TuneUser = AudioscrobblerBase.getValidURLLastFMString(username_);
-                                    //ext.last.fm/
+      //ext.last.fm/
       if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/adjust.php?session=" + _currentSession + @"&url=lastfm://user/" + TuneUser + "/playlist"))
       {
         _currentTuneType = StreamType.Playlist;
@@ -607,21 +607,28 @@ namespace MediaPortal.GUI.RADIOLASTFM
         return false;
     }
     #endregion
-    
+
     #region Network related
     private bool SendCommandRequest(string url_)
     {
-      // Enforce a minimum wait time between connects.
-      DateTime nextconnect = _lastConnectAttempt.Add(_minConnectWaitTime);
-      if (DateTime.Now < nextconnect)
+      try
       {
-        TimeSpan waittime = nextconnect - DateTime.Now;
-        Log.Debug("StreamControl: Avoiding too fast connects for {0} - sleeping until {1}", url_, nextconnect.ToString());
-        Thread.Sleep(waittime);
+        // Enforce a minimum wait time between connects.
+        DateTime nextconnect = _lastConnectAttempt.Add(_minConnectWaitTime);
+        if (DateTime.Now < nextconnect)
+        {
+          TimeSpan waittime = nextconnect - DateTime.Now;
+          Log.Debug("StreamControl: Avoiding too fast connects for {0} - sleeping until {1}", url_, nextconnect.ToString());
+          Thread.Sleep(waittime);
+        }
       }
+      // While debugging you might get a waittime which is no longer a valid integer.
+      catch (Exception) { }
+
       _lastConnectAttempt = DateTime.Now;
 
       httpcommand.SendAsyncGetRequest(url_);
+
       return true;
     }
 
@@ -647,11 +654,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
           {
             List<string> responseStrings = new List<string>(responseList);
 
-            //foreach (String responsestr in responseList)
-            //{
-            //  responseStrings.Add(responsestr);
-            //}
-
             if (responseCode == HttpStatusCode.OK)
             {
               responseMessage = responseStrings[0];
@@ -665,7 +667,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
                 if (responseMessage.StartsWith("price="))
                 {
                   ParseNowPlaying(responseStrings);
-                  //return true;
                   return;
                 }
               }
@@ -675,14 +676,13 @@ namespace MediaPortal.GUI.RADIOLASTFM
               string logmessage = "StreamControl: ***** Unknown response! - " + responseMessage;
               foreach (String unkStr in responseStrings)
               {
-                logmessage += "\n" + unkStr; 
+                logmessage += "\n" + unkStr;
               }
 
               if (logmessage.Contains("Not enough content"))
               {
                 _currentState = StreamPlaybackState.nocontent;
                 Log.Warn("StreamControl: Not enough content left to play this station");
-                //return false;
                 return;
               }
               else
@@ -696,11 +696,9 @@ namespace MediaPortal.GUI.RADIOLASTFM
       catch (Exception e)
       {
         Log.Error("StreamControl: SendCommandRequest: Parsing response failed {0}", e.Message);
-        //return false;
         return;
       }
 
-      //return false;
       return;
     }
     # endregion
@@ -735,8 +733,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
       try
       {
-        foreach (String respStr in responseList_)        
-          NowPlayingInfo.Add(respStr);                
+        foreach (String respStr in responseList_)
+          NowPlayingInfo.Add(respStr);
 
         foreach (String token in NowPlayingInfo)
         {
@@ -807,7 +805,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
           Log.Info("StreamControl: Current track: {0} [{1}] - {2} ({3})", CurrentSongTag.Artist, CurrentSongTag.Album, CurrentSongTag.Title, Util.Utils.SecondsToHMSString(CurrentSongTag.Duration));
         }
- 
+
       }
       catch (Exception ex)
       {
