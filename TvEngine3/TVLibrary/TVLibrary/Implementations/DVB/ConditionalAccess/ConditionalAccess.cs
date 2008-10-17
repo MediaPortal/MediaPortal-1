@@ -459,6 +459,38 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
+    /// Patches the PMT to force standard AC3 header.
+    /// </summary>
+    /// <param name="PMT">byte array containing the PMT</param>
+    /// <param name="pmtLength">length of the pmt array</param>
+    /// <returns></returns>
+    private byte[] PatchPMT(byte[] PMT, int pmtLength, out int newPmtLength)
+    {
+      byte[] newPMT = new byte[1024] ;  // create a new array.
+
+      int ps = 0;
+      int pd = 0;
+
+      for (int i = 0; i < 12; ++i) newPMT[pd++] = PMT[ps++];
+      for (int i = 0; i < PMT[11]; ++i) newPMT[pd++] = PMT[ps++];
+      
+      // Need to patch audio AC3 channels 0x06, , , , ,0x6A in real AC3 descriptor 0x81, .... for ( at least !) ASTONCRYPT CAM module
+      while ((ps + 5 < pmtLength) && (pd < 1024))
+      {
+          int len = PMT[ps + 4] + 5;
+          for (int i = 0; i < len; ++i)
+          {
+            if (pd >= 1024) break;
+            if ((i == 0) && (PMT[ps] == 0x06) && (PMT[ps + 5] == 0x6A)) { newPMT[pd++] = 0x81; ps++; }
+            else newPMT[pd++] = PMT[ps++];
+          }
+      }
+
+      newPmtLength = pd;
+      return newPMT;
+    }
+
+    /// <summary>
     /// Sends the PMT to the CI module
     /// </summary>
     /// <param name="subChannel">The sub channel.</param>
@@ -472,6 +504,7 @@ namespace TvLibrary.Implementations.DVB
     {
       try
       {
+        int newLength;
         if (!_useCam) return true;
         if (channel.FreeToAir) return true;//no need to descramble this one...
 
@@ -479,8 +512,8 @@ namespace TvLibrary.Implementations.DVB
         ConditionalAccessContext context = _mapSubChannels[subChannel];
         context.CamType = camType;
         context.Channel = channel;
-        context.PMT = PMT;
-        context.PMTLength = pmtLength;
+        context.PMT = PatchPMT(PMT, pmtLength, out newLength);
+        context.PMTLength = newLength;
         context.AudioPid = audioPid;
         context.ServiceId = channel.ServiceId;
 
