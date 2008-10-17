@@ -46,7 +46,7 @@ namespace MediaPortal.DeployTool.Sections
     {
       labelHeading.Text = Utils.GetBestTranslation("DBMSSettings_labelHeading");
       labelInstDir.Text = Utils.GetBestTranslation("DBMSSettings_labelInstDir");
-      buttonBrowse.Text = Utils.GetBestTranslation("DBMSSettings_buttonBrowse");
+      buttonBrowse.Text = Utils.GetBestTranslation("MainWindow_browseButton");
       checkBoxFirewall.Text = Utils.GetBestTranslation("DBMSSettings_checkBoxFirewall");
       labelPassword.Text = Utils.GetBestTranslation("DBMSSettings_labelPassword");
     }

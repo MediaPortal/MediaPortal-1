@@ -44,7 +44,7 @@ namespace MediaPortal.DeployTool.Sections
     {
       labelHeading.Text = Utils.GetBestTranslation("MPSettings_labelHeading");
       labelInstDir.Text = Utils.GetBestTranslation("MPSettings_labelInstDir");
-      buttonBrowse.Text = Utils.GetBestTranslation("MPSettings_buttonBrowse");
+      buttonBrowse.Text = Utils.GetBestTranslation("MainWindow_browseButton");
     }
     public override DeployDialog GetNextDialog()
     {

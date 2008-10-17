@@ -24,15 +24,12 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.Win32;
 using System.IO;
 using System.Diagnostics;
 using System.Windows.Forms;
 
 
-namespace MediaPortal.DeployTool
+namespace MediaPortal.DeployTool.InstallationChecks
 {
   class WindowsMediaPlayerChecker : IInstallationPackage
   {
@@ -43,9 +40,8 @@ namespace MediaPortal.DeployTool
 
     public bool Download()
     {
-      string prg = "WindowsMediaPlayer";
-      DialogResult result;
-      result = Utils.RetryDownloadFile(InstallationProperties.Instance["Wmp11FileName"], prg);
+      const string prg = "WindowsMediaPlayer";
+      DialogResult result = Utils.RetryDownloadFile(InstallationProperties.Instance["Wmp11FileName"], prg);
       return (result == DialogResult.OK);
     }
     public bool Install()
@@ -53,13 +49,17 @@ namespace MediaPortal.DeployTool
       Process setup = Process.Start(InstallationProperties.Instance["Wmp11FileName"], "/q");
       try
       {
-        setup.WaitForExit();
+        if (setup != null)
+        {
+          setup.WaitForExit();
+        }
         return true;
       }
       catch
       {
         return false;
       }
+      return false;
     }
     public bool UnInstall()
     {
@@ -69,29 +69,18 @@ namespace MediaPortal.DeployTool
     public CheckResult CheckStatus()
     {
       CheckResult result;
-      string prg = "WindowsMediaPlayer";
+      const string prg = "WindowsMediaPlayer";
       string FileName = Application.StartupPath + "\\deploy\\" + Utils.LocalizeDownloadFile(Utils.GetDownloadString(prg, "FILE"), Utils.GetDownloadString(prg, "TYPE"), prg);
       InstallationProperties.Instance.Set("Wmp11FileName", FileName);
       result.needsDownload = !File.Exists(FileName);
       if (InstallationProperties.Instance["InstallType"] == "download_only")
       {
-        if (result.needsDownload == false)
-          result.state = CheckState.DOWNLOADED;
-        else
-          result.state = CheckState.NOT_DOWNLOADED;
+        result.state = result.needsDownload == false ? CheckState.DOWNLOADED : CheckState.NOT_DOWNLOADED;
         return result;
       }
       Version aParamVersion;
-      if (Utils.CheckFileVersion(Environment.SystemDirectory + "\\wmp.dll", "11.0.0000.0000", out aParamVersion))
-      {
-        result.state = CheckState.INSTALLED;
-      }
-      else
-      {
-        result.state = CheckState.NOT_INSTALLED;
-      }
+      result.state = Utils.CheckFileVersion(Environment.SystemDirectory + "\\wmp.dll", "11.0.0000.0000", out aParamVersion) ? CheckState.INSTALLED : CheckState.NOT_INSTALLED;
       return result;
     }
   }
 }
-

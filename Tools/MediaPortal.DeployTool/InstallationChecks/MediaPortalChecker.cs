@@ -23,15 +23,12 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Win32;
 using System.IO;
 using System.Diagnostics;
 using System.Windows.Forms;
 
-namespace MediaPortal.DeployTool
+namespace MediaPortal.DeployTool.InstallationChecks
 {
   class MediaPortalChecker : IInstallationPackage
   {
@@ -42,10 +39,9 @@ namespace MediaPortal.DeployTool
 
     public bool Download()
     {
-      string prg = "MediaPortal";
+      const string prg = "MediaPortal";
       string FileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
-      DialogResult result;
-      result = Utils.RetryDownloadFile(FileName, prg);
+      DialogResult result = Utils.RetryDownloadFile(FileName, prg);
       return (result == DialogResult.OK);
     }
 
@@ -57,8 +53,11 @@ namespace MediaPortal.DeployTool
       //NSIS installed doesn't want " in parameters (chefkoch)
       //Rember that /D must be the last one         (chefkoch)
       Process setup = Process.Start(nsis, "/S /DeployMode /D=" + targetDir);
-      setup.WaitForExit();
-      if (setup.ExitCode == 0) return true;
+      if (setup != null)
+      {
+        setup.WaitForExit();
+        if (setup.ExitCode == 0) return true;
+      }
       return false;
     }
 
@@ -84,10 +83,7 @@ namespace MediaPortal.DeployTool
       result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString("MediaPortal", "FILE"));
       if (InstallationProperties.Instance["InstallType"] == "download_only")
       {
-        if (result.needsDownload == false)
-          result.state = CheckState.DOWNLOADED;
-        else
-          result.state = CheckState.NOT_DOWNLOADED;
+        result.state = result.needsDownload == false ? CheckState.DOWNLOADED : CheckState.NOT_DOWNLOADED;
         return result;
       }
 
@@ -112,10 +108,7 @@ namespace MediaPortal.DeployTool
 
           if (MpPath != null && File.Exists(MpPath))
           {
-            if (MpVer == Utils.GetPackageVersion())
-              result.state = CheckState.INSTALLED;
-            else
-              result.state = CheckState.VERSION_MISMATCH;
+            result.state = MpVer == Utils.GetPackageVersion() ? CheckState.INSTALLED : CheckState.VERSION_MISMATCH;
           }
         }
       }

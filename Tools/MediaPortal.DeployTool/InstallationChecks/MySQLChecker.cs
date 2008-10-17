@@ -24,8 +24,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Win32;
 using System.IO;
 using System.Diagnostics;
@@ -33,7 +31,7 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.ServiceProcess;
 
-namespace MediaPortal.DeployTool
+namespace MediaPortal.DeployTool.InstallationChecks
 {
   class MySQLChecker : IInstallationPackage
   {
@@ -78,10 +76,9 @@ namespace MediaPortal.DeployTool
 
     public bool Download()
     {
-      string prg = "MySQL";
+      const string prg = "MySQL";
       string FileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
-      DialogResult result;
-      result = Utils.RetryDownloadFile(FileName, prg);
+      DialogResult result = Utils.RetryDownloadFile(FileName, prg);
       return (result == DialogResult.OK);
     }
 
@@ -95,7 +92,10 @@ namespace MediaPortal.DeployTool
       Process setup = Process.Start("msiexec.exe", cmdLine);
       try
       {
-        setup.WaitForExit();
+        if (setup != null)
+        {
+          setup.WaitForExit();
+        }
       }
       catch
       {
@@ -119,7 +119,7 @@ namespace MediaPortal.DeployTool
       }
       string inifile = InstallationProperties.Instance["DBMSDir"] + "\\my.ini";
       PrepareMyIni(inifile);
-      string ServiceName = "MySQL";
+      const string ServiceName = "MySQL";
       string cmdExe = Environment.SystemDirectory + "\\sc.exe";
       string cmdParam = "create " + ServiceName + " start= auto DisplayName= " + ServiceName + " binPath= \"" + InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysqld-nt.exe --defaults-file=\\\"" + inifile + "\\\" " + ServiceName + "\"";
 #if DEBUG
@@ -132,7 +132,10 @@ namespace MediaPortal.DeployTool
 #else
       Process svcInstaller = Process.Start(cmdExe, cmdParam);
 #endif
-      svcInstaller.WaitForExit();
+      if (svcInstaller != null)
+      {
+        svcInstaller.WaitForExit();
+      }
       ServiceController ctrl = new ServiceController(ServiceName);
       try
       {
@@ -154,11 +157,14 @@ namespace MediaPortal.DeployTool
       Process mysqladmin = Process.Start(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysqladmin.exe", cmdLine);
       try
       {
-        mysqladmin.WaitForExit();
-        if (mysqladmin.ExitCode != 0)
+        if (mysqladmin != null)
         {
-          MessageBox.Show("MySQL - set password error: " + mysqladmin.ExitCode);
-          return false;
+          mysqladmin.WaitForExit();
+          if (mysqladmin.ExitCode != 0)
+          {
+            MessageBox.Show("MySQL - set password error: " + mysqladmin.ExitCode);
+            return false;
+          }
         }
       }
       catch (Exception)
@@ -174,11 +180,14 @@ namespace MediaPortal.DeployTool
       Process mysql = Process.Start(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysql.exe", cmdLine);
       try
       {
-        mysql.WaitForExit();
-        if (mysql.ExitCode != 0)
+        if (mysql != null)
         {
-          MessageBox.Show("MySQL - set privileges error: " + mysql.ExitCode);
-          return false;
+          mysql.WaitForExit();
+          if (mysql.ExitCode != 0)
+          {
+            MessageBox.Show("MySQL - set privileges error: " + mysql.ExitCode);
+            return false;
+          }
         }
       }
       catch (Exception)
@@ -201,10 +210,7 @@ namespace MediaPortal.DeployTool
       result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString("MySQL", "FILE"));
       if (InstallationProperties.Instance["InstallType"] == "download_only")
       {
-        if (result.needsDownload == false)
-          result.state = CheckState.DOWNLOADED;
-        else
-          result.state = CheckState.NOT_DOWNLOADED;
+        result.state = result.needsDownload == false ? CheckState.DOWNLOADED : CheckState.NOT_DOWNLOADED;
         return result;
       }
       RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "MySQL AB\\MySQL Server 5.0");

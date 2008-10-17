@@ -44,7 +44,7 @@ namespace MediaPortal.DeployTool.Sections
       labelHeading.Text = Utils.GetBestTranslation("TvServerSettings_labelHeading");
       labelInstDir.Text = Utils.GetBestTranslation("TvServerSettings_labelInstDir");
       checkBoxFirewall.Text = Utils.GetBestTranslation("TvServerSettings_checkBoxFirewall");
-      buttonBrowse.Text = Utils.GetBestTranslation("TvServerSettings_buttonBrowse");
+      buttonBrowse.Text = Utils.GetBestTranslation("MainWindow_browseButton");
     }
     public override DeployDialog GetNextDialog()
     {

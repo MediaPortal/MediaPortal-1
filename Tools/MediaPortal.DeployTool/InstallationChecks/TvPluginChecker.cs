@@ -23,15 +23,12 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Win32;
 using System.IO;
 using System.Diagnostics;
 using System.Windows.Forms;
 
-namespace MediaPortal.DeployTool
+namespace MediaPortal.DeployTool.InstallationChecks
 {
   class TvPluginChecker : IInstallationPackage
   {
@@ -42,10 +39,9 @@ namespace MediaPortal.DeployTool
 
     public bool Download()
     {
-      string prg = "TvServer";
+      const string prg = "TvServer";
       string FileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
-      DialogResult result;
-      result = Utils.RetryDownloadFile(FileName, prg);
+      DialogResult result = Utils.RetryDownloadFile(FileName, prg);
       return (result == DialogResult.OK);
     }
 
@@ -55,10 +51,13 @@ namespace MediaPortal.DeployTool
       if (!File.Exists(nsis)) return false;
       //NSIS installed doesn't want " in parameters (chefkoch)
       //Rember that /D must be the last one         (chefkoch)
-      string parameters = "/S /noServer /DeployMode";
+      const string parameters = "/S /noServer /DeployMode";
       Process setup = Process.Start(nsis, parameters);
-      setup.WaitForExit();
-      if (setup.ExitCode == 0) return true;
+      if (setup != null)
+      {
+        setup.WaitForExit();
+        if (setup.ExitCode == 0) return true;
+      }
       return false;
     }
 
@@ -84,10 +83,7 @@ namespace MediaPortal.DeployTool
 #if DEBUG
         MessageBox.Show("TvPlugin - CheckStatus: " + "download_only");
 #endif
-        if (result.needsDownload == false)
-          result.state = CheckState.DOWNLOADED;
-        else
-          result.state = CheckState.NOT_DOWNLOADED;
+        result.state = result.needsDownload == false ? CheckState.DOWNLOADED : CheckState.NOT_DOWNLOADED;
         return result;
       }
       RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal TV Server");
@@ -125,10 +121,7 @@ namespace MediaPortal.DeployTool
 #endif
           if (clientInstalled == 1)
           {
-            if (version == Utils.GetPackageVersion())
-              result.state = CheckState.INSTALLED;
-            else
-              result.state = CheckState.VERSION_MISMATCH;
+            result.state = version == Utils.GetPackageVersion() ? CheckState.INSTALLED : CheckState.VERSION_MISMATCH;
           }
           else
             result.state = CheckState.NOT_INSTALLED;

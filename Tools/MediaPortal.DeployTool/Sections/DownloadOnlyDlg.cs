@@ -24,7 +24,6 @@
 #endregion
 
 using System;
-using System.Globalization;
 
 namespace MediaPortal.DeployTool.Sections
 {
@@ -48,16 +47,12 @@ namespace MediaPortal.DeployTool.Sections
       labelSectionHeader.Text = Utils.GetBestTranslation("DownloadOnly_labelSectionHeader");
       rbDownloadOnly.Text = Utils.GetBestTranslation("DownloadOnly_no");
       rbInstallNow.Text = Utils.GetBestTranslation("DownloadOnly_yes");
-      string arch = Utils.Check64bit() ? "64bit" : "32bit";
-      string lang = CultureInfo.InstalledUICulture.Name;
-      labelDownloadSettings.Text = String.Format(Utils.GetBestTranslation("DownloadOnly_CurrentSettings"), lang, arch);
     }
     public override DeployDialog GetNextDialog()
     {
       if (rbDownloadOnlyChecked)
       {
-        InstallationProperties.Instance.Set("InstallType", "download_only");
-        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Installation);
+        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.DownloadSettings);
       }
       return DialogFlowHandler.Instance.GetDialogInstance(DialogType.WatchTV);
     }

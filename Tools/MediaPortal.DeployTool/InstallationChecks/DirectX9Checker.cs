@@ -23,15 +23,12 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Win32;
 using System.IO;
 using System.Windows.Forms;
 using System.Diagnostics;
 
-namespace MediaPortal.DeployTool
+namespace MediaPortal.DeployTool.InstallationChecks
 {
   class DirectX9Checker : IInstallationPackage
   {
@@ -42,7 +39,7 @@ namespace MediaPortal.DeployTool
 
     public bool Download()
     {
-      string prg = "DirectX9c";
+      const string prg = "DirectX9c";
       string FileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
       DialogResult result;
       result = Utils.RetryDownloadFile(FileName, prg);
@@ -54,7 +51,10 @@ namespace MediaPortal.DeployTool
       Process setup = Process.Start(exe, "/q /t:\"" + Path.GetTempPath() + "\\directx9c\"");
       try
       {
-        setup.WaitForExit();
+        if (setup != null)
+        {
+          setup.WaitForExit();
+        }
         return true;
       }
       catch
@@ -73,10 +73,7 @@ namespace MediaPortal.DeployTool
       result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString("DirectX9c", "FILE"));
       if (InstallationProperties.Instance["InstallType"] == "download_only")
       {
-        if (result.needsDownload == false)
-          result.state = CheckState.DOWNLOADED;
-        else
-          result.state = CheckState.NOT_DOWNLOADED;
+        result.state = result.needsDownload == false ? CheckState.DOWNLOADED : CheckState.NOT_DOWNLOADED;
         return result;
       }
       RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\DirectX");

@@ -23,15 +23,9 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.Win32;
 using System.IO;
-using System.Windows.Forms;
-using System.Diagnostics;
 
-namespace MediaPortal.DeployTool
+namespace MediaPortal.DeployTool.InstallationChecks
 {
   class OldPackageChecker : IInstallationPackage
   {

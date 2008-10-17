@@ -24,14 +24,11 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.Win32;
 using System.IO;
 using System.Diagnostics;
 using System.Windows.Forms;
 
-namespace MediaPortal.DeployTool
+namespace MediaPortal.DeployTool.InstallationChecks
 {
   class VCRedistChecker : IInstallationPackage
   {
@@ -42,10 +39,9 @@ namespace MediaPortal.DeployTool
 
     public bool Download()
     {
-      string prg = "VCRedist";
+      const string prg = "VCRedist";
       string FileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
-      DialogResult result;
-      result = Utils.RetryDownloadFile(FileName, prg);
+      DialogResult result = Utils.RetryDownloadFile(FileName, prg);
       return (result == DialogResult.OK);
     }
     public bool Install()
@@ -53,7 +49,10 @@ namespace MediaPortal.DeployTool
       Process setup = Process.Start(Application.StartupPath + "\\Deploy\\" + Utils.GetDownloadString("VCRedist", "FILE"), "/Q");
       try
       {
-        setup.WaitForExit();
+        if (setup != null)
+        {
+          setup.WaitForExit();
+        }
         return true;
       }
       catch
@@ -72,21 +71,18 @@ namespace MediaPortal.DeployTool
       result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString("VCRedist", "FILE"));
       if (InstallationProperties.Instance["InstallType"] == "download_only")
       {
-        if (result.needsDownload == false)
-          result.state = CheckState.DOWNLOADED;
-        else
-          result.state = CheckState.NOT_DOWNLOADED;
+        result.state = result.needsDownload == false ? CheckState.DOWNLOADED : CheckState.NOT_DOWNLOADED;
         return result;
       }
       string ManifestDir = Environment.GetEnvironmentVariable("SystemRoot") + "\\winsxs\\Manifests\\";
       //Manifests for Vista
-      string ManifestCRT_Vista = "x86_microsoft.vc80.crt_1fc8b3b9a1e18e3b_8.0.50727.762_none_10b2f55f9bffb8f8.manifest";
-      string ManifestMFC_Vista = "x86_microsoft.vc80.mfc_1fc8b3b9a1e18e3b_8.0.50727.762_none_0c178a139ee2a7ed.manifest";
-      string ManifestATL_Vista = "x86_microsoft.vc80.atl_1fc8b3b9a1e18e3b_8.0.50727.762_none_11ecb0ab9b2caf3c.manifest";
+      const string ManifestCRT_Vista = "x86_microsoft.vc80.crt_1fc8b3b9a1e18e3b_8.0.50727.762_none_10b2f55f9bffb8f8.manifest";
+      const string ManifestMFC_Vista = "x86_microsoft.vc80.mfc_1fc8b3b9a1e18e3b_8.0.50727.762_none_0c178a139ee2a7ed.manifest";
+      const string ManifestATL_Vista = "x86_microsoft.vc80.atl_1fc8b3b9a1e18e3b_8.0.50727.762_none_11ecb0ab9b2caf3c.manifest";
       //Manifests for XP
-      string ManifestCRT_XP = "x86_Microsoft.VC80.CRT_1fc8b3b9a1e18e3b_8.0.50727.762_x-ww_6b128700.manifest";
-      string ManifestMFC_XP = "x86_Microsoft.VC80.MFC_1fc8b3b9a1e18e3b_8.0.50727.762_x-ww_3bf8fa05.manifest";
-      string ManifestATL_XP = "x86_Microsoft.VC80.ATL_1fc8b3b9a1e18e3b_8.0.50727.762_x-ww_cbb27474.manifest";
+      const string ManifestCRT_XP = "x86_Microsoft.VC80.CRT_1fc8b3b9a1e18e3b_8.0.50727.762_x-ww_6b128700.manifest";
+      const string ManifestMFC_XP = "x86_Microsoft.VC80.MFC_1fc8b3b9a1e18e3b_8.0.50727.762_x-ww_3bf8fa05.manifest";
+      const string ManifestATL_XP = "x86_Microsoft.VC80.ATL_1fc8b3b9a1e18e3b_8.0.50727.762_x-ww_cbb27474.manifest";
 
       if (File.Exists(ManifestDir + ManifestCRT_Vista) && File.Exists(ManifestDir + ManifestMFC_Vista) && File.Exists(ManifestDir + ManifestATL_Vista))
         result.state = CheckState.INSTALLED;

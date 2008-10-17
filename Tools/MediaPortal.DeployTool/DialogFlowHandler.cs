@@ -32,6 +32,7 @@ namespace MediaPortal.DeployTool
   {
     Welcome,
     DownloadOnly,
+    DownloadSettings,
     WatchTV,
     WatchHDTv,
     TvEngineType,
@@ -86,7 +87,7 @@ namespace MediaPortal.DeployTool
     #endregion
 
     #region Public members
-    
+
     public DeployDialog GetPreviousDlg(ref bool isFirstDlg)
     {
       if (_currentDlgIndex == 0)
@@ -95,7 +96,7 @@ namespace MediaPortal.DeployTool
       isFirstDlg = (_currentDlgIndex == 0);
       return _dlgs[_currentDlgIndex];
     }
-    
+
     public DeployDialog GetDialogInstance(DialogType dlgType)
     {
       DeployDialog dlg = FindDialog(dlgType);
@@ -108,6 +109,9 @@ namespace MediaPortal.DeployTool
             break;
           case DialogType.DownloadOnly:
             dlg = new DownloadOnlyDlg();
+            break;
+          case DialogType.DownloadSettings:
+            dlg = new DownloadSettingsDlg();
             break;
           case DialogType.WatchTV:
             dlg = new WatchTVDlg();

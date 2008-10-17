@@ -165,12 +165,22 @@ namespace MediaPortal.DeployTool
 
     public static string LocalizeDownloadFile(string filename, string downloadtype, string prg)
     {
-      string LangCode = CultureInfo.InstalledUICulture.ThreeLetterWindowsLanguageName;
-      string LangCodeExt = CultureInfo.InstalledUICulture.Name;
+      // LangCode = "ITA"
+      string LangCode = InstallationProperties.Instance["DownloadThreeLetterWindowsLanguageName"];
+      if (String.IsNullOrEmpty(LangCode))
+      {
+        LangCode = CultureInfo.InstalledUICulture.ThreeLetterWindowsLanguageName;
+      }
+      // LangCodeExt = "it-IT"
+      string LangCodeExt = InstallationProperties.Instance["DownloadLanguageName"];
+      if (String.IsNullOrEmpty(LangCodeExt))
+      {
+        LangCodeExt = CultureInfo.InstalledUICulture.Name;
+      }
       string NewFileName = filename;
 
       // SQL2005 native language download
-      if ((prg == "MSSQLExpress" + InstallationProperties.Instance["Sql2005Download"]) && downloadtype != "Manual" && LangCode != "ENU")
+      if (prg.Contains("MSSQLExpress") && downloadtype != "Manual" && LangCode != "ENU")
       {
         NewFileName = filename.Split('.')[0] + "_" + LangCode + ".exe";
       }
@@ -178,7 +188,8 @@ namespace MediaPortal.DeployTool
       // WMP11 native language download
       if (prg == "WindowsMediaPlayer")
       {
-        if (Check64bit())
+        string arch = InstallationProperties.Instance["DownloadArch"];
+        if (arch == "64")
         {
           NewFileName = filename.Replace("x86", "x64").Split('.')[0] + "-ENU.exe";
         }

@@ -63,12 +63,12 @@ namespace MediaPortal.DeployTool
       if (Utils.Check64bit())
       {
         InstallationProperties.Instance.Set("RegistryKeyAdd", "Wow6432Node\\");
-        InstallationProperties.Instance.Set("Sql2005Download", "64");
+        InstallationProperties.Instance.Set("CurrentArch", "64");
       }
       else
       {
         InstallationProperties.Instance.Set("RegistryKeyAdd", "");
-        InstallationProperties.Instance.Set("Sql2005Download", "32");
+        InstallationProperties.Instance.Set("CurrentArch", "32");
       }
 
       //Create necessary directory tree
@@ -89,12 +89,15 @@ namespace MediaPortal.DeployTool
       InstallationProperties.Instance.Add("InstallTypeHeader", "Choose installation type");
       backButton.Visible = false;
       UpdateUI();
+      nextButton.Focus();
     }
 
     private void SwitchDialog(DeployDialog dlg)
     {
       splitContainer2.Panel1.Controls.Clear();
       splitContainer2.Panel1.Controls.Add(dlg);
+      dlg.Focus();
+      nextButton.Focus();
     }
 
     private void nextButton_Click(object sender, EventArgs e)

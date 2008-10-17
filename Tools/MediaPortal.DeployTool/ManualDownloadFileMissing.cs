@@ -12,7 +12,7 @@ namespace MediaPortal.DeployTool
     private void UpdateUI()
     {
       Text = Utils.GetBestTranslation("ManualDownload_Title");
-      buttonBrowse.Text = Utils.GetBestTranslation("ManualDownload_buttonBrowse");
+      buttonBrowse.Text = Utils.GetBestTranslation("MainWindow_browseButton");
     }
 
     public ManualDownloadFileMissing()

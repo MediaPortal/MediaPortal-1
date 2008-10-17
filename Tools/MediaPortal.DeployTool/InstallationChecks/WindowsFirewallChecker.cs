@@ -25,11 +25,9 @@
 
 using System;
 using System.IO;
-using System.Windows.Forms;
-
 using NetFwTypeLib;
 
-namespace MediaPortal.DeployTool
+namespace MediaPortal.DeployTool.InstallationChecks
 {
   class WindowsFirewallChecker : IInstallationPackage
   {
@@ -43,24 +41,30 @@ namespace MediaPortal.DeployTool
       try
       {
         Type objectType = Type.GetTypeFromProgID(PROGID_FIREWALL_MANAGER);
-        return Activator.CreateInstance(objectType) as NetFwTypeLib.INetFwMgr;
+        return Activator.CreateInstance(objectType) as INetFwMgr;
       }
       catch (Exception)
       {
         return null;
       }
     }
-    private bool AuthorizeApplication(string title, string applicationPath, NET_FW_SCOPE_ scope, NET_FW_IP_VERSION_ ipVersion)
+    private static void AuthorizeApplication(string title, string applicationPath, NET_FW_SCOPE_ scope, NET_FW_IP_VERSION_ ipVersion)
     {
       Type type = Type.GetTypeFromProgID(PROGID_AUTHORIZED_APPLICATION);
       INetFwAuthorizedApplication auth = Activator.CreateInstance(type) as INetFwAuthorizedApplication;
-      auth.Name = title;
+      if (auth != null)
+      {
+        auth.Name = title;
+      }
       if (!File.Exists(applicationPath))
-        return false;
-      auth.ProcessImageFileName = applicationPath;
-      auth.Scope = scope;
-      auth.IpVersion = ipVersion;
-      auth.Enabled = true;
+        return;
+      if (auth != null)
+      {
+        auth.ProcessImageFileName = applicationPath;
+        auth.Scope = scope;
+        auth.IpVersion = ipVersion;
+        auth.Enabled = true;
+      }
       INetFwMgr manager = GetFirewallManager();
       try
       {
@@ -68,19 +72,21 @@ namespace MediaPortal.DeployTool
       }
       catch
       {
-        return false;
+        return;
       }
-      return true;
     }
-    private bool GloballyOpenPort(string title, int portNo, NET_FW_SCOPE_ scope, NET_FW_IP_PROTOCOL_ protocol, NET_FW_IP_VERSION_ ipVersion)
+    private static void GloballyOpenPort(string title, int portNo, NET_FW_SCOPE_ scope, NET_FW_IP_PROTOCOL_ protocol, NET_FW_IP_VERSION_ ipVersion)
     {
       Type type = Type.GetTypeFromProgID(PROGID_OPEN_PORT);
       INetFwOpenPort port = Activator.CreateInstance(type) as INetFwOpenPort;
-      port.Name = title;
-      port.Port = portNo;
-      port.Scope = scope;
-      port.Protocol = protocol;
-      port.IpVersion = ipVersion;
+      if (port != null)
+      {
+        port.Name = title;
+        port.Port = portNo;
+        port.Scope = scope;
+        port.Protocol = protocol;
+        port.IpVersion = ipVersion;
+      }
       INetFwMgr manager = GetFirewallManager();
       try
       {
@@ -88,17 +94,15 @@ namespace MediaPortal.DeployTool
       }
       catch
       {
-        return false;
+        return;
       }
-      return true;
     }
 
     #endregion
     #region Helper functions
-    private void ConfigureFirewallProfile()
+    private static void ConfigureFirewallProfile()
     {
-      int port = 0;
-      string app = "";
+      string app;
 
       if (InstallationProperties.Instance["ConfigureTVServerFirewall"] == "1")
       {
@@ -114,6 +118,7 @@ namespace MediaPortal.DeployTool
       }
       if (InstallationProperties.Instance["ConfigureDBMSFirewall"] == "1")
       {
+        int port;
         if (InstallationProperties.Instance["DBMSType"] == "mssql2005")
         {
           //SQL2005 TCP Port
@@ -222,10 +227,13 @@ namespace MediaPortal.DeployTool
       while (e1.MoveNext())
       {
         INetFwAuthorizedApplication app = e1.Current as INetFwAuthorizedApplication;
-        if (app.ProcessImageFileName.ToLower() == apptv.ToLower())
-          chktv = true;
-        if (app.ProcessImageFileName.ToLower() == appmp.ToLower())
-          chkmp = true;
+        if (app != null)
+        {
+          if (app.ProcessImageFileName.ToLower() == apptv.ToLower())
+            chktv = true;
+          if (app.ProcessImageFileName.ToLower() == appmp.ToLower())
+            chkmp = true;
+        }
       }
 
       if (chktv && chkmp)
@@ -244,15 +252,18 @@ namespace MediaPortal.DeployTool
           while (e2.MoveNext())
           {
             INetFwOpenPort app = e2.Current as INetFwOpenPort;
-            if (InstallationProperties.Instance["DBMSType"] == "mssql2005")
+            if (app != null)
             {
-              if (app.Port == 1433)
-                result.state = CheckState.CONFIGURED;
-            }
-            else
-            {
-              if (app.Port == 3306)
-                result.state = CheckState.CONFIGURED;
+              if (InstallationProperties.Instance["DBMSType"] == "mssql2005")
+              {
+                if (app.Port == 1433)
+                  result.state = CheckState.CONFIGURED;
+              }
+              else
+              {
+                if (app.Port == 3306)
+                  result.state = CheckState.CONFIGURED;
+              }
             }
           }
         }

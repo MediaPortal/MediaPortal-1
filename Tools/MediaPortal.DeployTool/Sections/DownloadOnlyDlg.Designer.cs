@@ -33,7 +33,6 @@ namespace MediaPortal.DeployTool.Sections
       this.imgDownloadOnly = new System.Windows.Forms.PictureBox();
       this.rbInstallNow = new System.Windows.Forms.Label();
       this.rbDownloadOnly = new System.Windows.Forms.Label();
-      this.labelDownloadSettings = new System.Windows.Forms.Label();
       ((System.ComponentModel.ISupportInitialize)(this.imgInstallNow)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.imgDownloadOnly)).BeginInit();
       this.SuspendLayout();
@@ -50,7 +49,7 @@ namespace MediaPortal.DeployTool.Sections
       // 
       this.imgInstallNow.Cursor = System.Windows.Forms.Cursors.Hand;
       this.imgInstallNow.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      this.imgInstallNow.Location = new System.Drawing.Point(200, 174);
+      this.imgInstallNow.Location = new System.Drawing.Point(200, 154);
       this.imgInstallNow.Name = "imgInstallNow";
       this.imgInstallNow.Size = new System.Drawing.Size(21, 21);
       this.imgInstallNow.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -62,7 +61,7 @@ namespace MediaPortal.DeployTool.Sections
       // 
       this.imgDownloadOnly.Cursor = System.Windows.Forms.Cursors.Hand;
       this.imgDownloadOnly.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      this.imgDownloadOnly.Location = new System.Drawing.Point(200, 209);
+      this.imgDownloadOnly.Location = new System.Drawing.Point(200, 189);
       this.imgDownloadOnly.Name = "imgDownloadOnly";
       this.imgDownloadOnly.Size = new System.Drawing.Size(21, 21);
       this.imgDownloadOnly.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -76,7 +75,7 @@ namespace MediaPortal.DeployTool.Sections
       this.rbInstallNow.Cursor = System.Windows.Forms.Cursors.Hand;
       this.rbInstallNow.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.rbInstallNow.ForeColor = System.Drawing.Color.White;
-      this.rbInstallNow.Location = new System.Drawing.Point(230, 178);
+      this.rbInstallNow.Location = new System.Drawing.Point(230, 158);
       this.rbInstallNow.Name = "rbInstallNow";
       this.rbInstallNow.Size = new System.Drawing.Size(176, 13);
       this.rbInstallNow.TabIndex = 13;
@@ -89,30 +88,18 @@ namespace MediaPortal.DeployTool.Sections
       this.rbDownloadOnly.Cursor = System.Windows.Forms.Cursors.Hand;
       this.rbDownloadOnly.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.rbDownloadOnly.ForeColor = System.Drawing.Color.White;
-      this.rbDownloadOnly.Location = new System.Drawing.Point(230, 213);
+      this.rbDownloadOnly.Location = new System.Drawing.Point(230, 193);
       this.rbDownloadOnly.Name = "rbDownloadOnly";
       this.rbDownloadOnly.Size = new System.Drawing.Size(216, 13);
       this.rbDownloadOnly.TabIndex = 14;
       this.rbDownloadOnly.Text = "Only download required components";
       this.rbDownloadOnly.Click += new System.EventHandler(this.imgDownloadOnly_Click);
       // 
-      // labelDownloadSettings
-      // 
-      this.labelDownloadSettings.AutoSize = true;
-      this.labelDownloadSettings.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.labelDownloadSettings.ForeColor = System.Drawing.Color.White;
-      this.labelDownloadSettings.Location = new System.Drawing.Point(200, 141);
-      this.labelDownloadSettings.Name = "labelDownloadSettings";
-      this.labelDownloadSettings.Size = new System.Drawing.Size(304, 13);
-      this.labelDownloadSettings.TabIndex = 15;
-      this.labelDownloadSettings.Text = "Current download settings: lang=EN-EN, arch=32bit";
-      // 
       // DownloadOnlyDlg
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_middle_internet_connection;
-      this.Controls.Add(this.labelDownloadSettings);
       this.Controls.Add(this.rbDownloadOnly);
       this.Controls.Add(this.rbInstallNow);
       this.Controls.Add(this.imgDownloadOnly);
@@ -124,7 +111,6 @@ namespace MediaPortal.DeployTool.Sections
       this.Controls.SetChildIndex(this.imgDownloadOnly, 0);
       this.Controls.SetChildIndex(this.rbInstallNow, 0);
       this.Controls.SetChildIndex(this.rbDownloadOnly, 0);
-      this.Controls.SetChildIndex(this.labelDownloadSettings, 0);
       ((System.ComponentModel.ISupportInitialize)(this.imgInstallNow)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.imgDownloadOnly)).EndInit();
       this.ResumeLayout(false);
@@ -138,7 +124,6 @@ namespace MediaPortal.DeployTool.Sections
     private System.Windows.Forms.PictureBox imgDownloadOnly;
     private System.Windows.Forms.Label rbInstallNow;
     private System.Windows.Forms.Label rbDownloadOnly;
-    private System.Windows.Forms.Label labelDownloadSettings;
 
   }
 }

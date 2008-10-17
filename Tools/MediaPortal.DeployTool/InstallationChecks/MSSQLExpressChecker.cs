@@ -23,23 +23,22 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Win32;
 using System.IO;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 
-namespace MediaPortal.DeployTool
+namespace MediaPortal.DeployTool.InstallationChecks
 {
   class MSSQLExpressChecker : IInstallationPackage
   {
     [DllImport("kernel32")]
     private static extern long WritePrivateProfileString(string section, string key, string val, string filePath);
 
-    private void PrepareTemplateINI(string iniFile)
+    private readonly string arch = Utils.Check64bit() ? "64" : "32";
+
+    private static void PrepareTemplateINI(string iniFile)
     {
       WritePrivateProfileString("Options", "USERNAME", "MediaPortal", iniFile);
       WritePrivateProfileString("Options", "COMPANYNAME", "\"Team MediaPortal\"", iniFile);
@@ -61,20 +60,22 @@ namespace MediaPortal.DeployTool
 
     public bool Download()
     {
-      string prg = "MSSQLExpress" + InstallationProperties.Instance["Sql2005Download"];
+      string prg = "MSSQLExpress" + arch;
       string FileName = InstallationProperties.Instance["Sql2005FileName"];
       DialogResult result = Utils.RetryDownloadFile(FileName, prg);
       return (result == DialogResult.OK);
     }
     public bool Install()
     {
-
       string tmpPath = Path.GetTempPath() + "\\SQLEXPRESS";
       //Extract all files
       Process extract = Process.Start(InstallationProperties.Instance["Sql2005FileName"], "/X:\"" + tmpPath + "\" /Q");
       try
       {
-        extract.WaitForExit();
+        if (extract != null)
+        {
+          extract.WaitForExit();
+        }
       }
       catch
       {
@@ -86,19 +87,22 @@ namespace MediaPortal.DeployTool
       Process setup = Process.Start(tmpPath + "\\setup.exe", "/wait /settings \"" + tmpPath + "\\template.ini\" /qn");
       try
       {
-        setup.WaitForExit();
-        if (setup.ExitCode == 0)
+        if (setup != null)
         {
-          Directory.Delete(tmpPath, true);
-          return true;
-        }
-        else
+          setup.WaitForExit();
+          if (setup.ExitCode == 0)
+          {
+            Directory.Delete(tmpPath, true);
+            return true;
+          }
           return false;
+        }
       }
       catch
       {
         return false;
       }
+      return false;
     }
     public bool UnInstall()
     {
@@ -108,17 +112,14 @@ namespace MediaPortal.DeployTool
     public CheckResult CheckStatus()
     {
       CheckResult result;
-      string prg = "MSSQLExpress" + InstallationProperties.Instance["Sql2005Download"];
+      string prg = "MSSQLExpress" + arch;
       string FileName = Application.StartupPath + "\\deploy\\" + Utils.LocalizeDownloadFile(Utils.GetDownloadString(prg, "FILE"), Utils.GetDownloadString(prg, "TYPE"), prg);
       InstallationProperties.Instance.Set("Sql2005FileName", FileName);
 
       result.needsDownload = !File.Exists(FileName);
       if (InstallationProperties.Instance["InstallType"] == "download_only")
       {
-        if (result.needsDownload == false)
-          result.state = CheckState.DOWNLOADED;
-        else
-          result.state = CheckState.NOT_DOWNLOADED;
+        result.state = result.needsDownload == false ? CheckState.DOWNLOADED : CheckState.NOT_DOWNLOADED;
         return result;
       }
       RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Microsoft SQL Server\\SQLEXPRESS\\MSSQLServer\\CurrentVersion");
@@ -128,10 +129,7 @@ namespace MediaPortal.DeployTool
       {
         string version = (string)key.GetValue("CurrentVersion");
         key.Close();
-        if (version.StartsWith("9.0"))
-          result.state = CheckState.INSTALLED;
-        else
-          result.state = CheckState.VERSION_MISMATCH;
+        result.state = version.StartsWith("9.0") ? CheckState.INSTALLED : CheckState.VERSION_MISMATCH;
       }
       return result;
     }

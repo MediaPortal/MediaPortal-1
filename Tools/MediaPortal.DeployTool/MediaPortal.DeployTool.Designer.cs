@@ -198,15 +198,6 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Browse.
-        /// </summary>
-        internal static string DBMSSettings_buttonBrowse {
-            get {
-                return ResourceManager.GetString("DBMSSettings_buttonBrowse", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Configure Windows Firewall to allow external access to database server.
         /// </summary>
         internal static string DBMSSettings_checkBoxFirewall {
@@ -354,6 +345,15 @@ namespace MediaPortal.DeployTool {
         internal static string DownloadSettings_failed {
             get {
                 return ResourceManager.GetString("DownloadSettings_failed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please select settings for downloads:.
+        /// </summary>
+        internal static string DownloadSettings_labelSectionHeader {
+            get {
+                return ResourceManager.GetString("DownloadSettings_labelSectionHeader", resourceCulture);
             }
         }
         
@@ -827,6 +827,15 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Browse.
+        /// </summary>
+        internal static string MainWindow_browseButton {
+            get {
+                return ResourceManager.GetString("MainWindow_browseButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Exit.
         /// </summary>
         internal static string MainWindow_buttonClose {
@@ -850,15 +859,6 @@ namespace MediaPortal.DeployTool {
         internal static string MainWindow_nextButton {
             get {
                 return ResourceManager.GetString("MainWindow_nextButton", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Browse.
-        /// </summary>
-        internal static string ManualDownload_buttonBrowse {
-            get {
-                return ResourceManager.GetString("ManualDownload_buttonBrowse", resourceCulture);
             }
         }
         
@@ -923,15 +923,6 @@ namespace MediaPortal.DeployTool {
         internal static string ManualDownload_Title {
             get {
                 return ResourceManager.GetString("ManualDownload_Title", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Browse.
-        /// </summary>
-        internal static string MPSettings_buttonBrowse {
-            get {
-                return ResourceManager.GetString("MPSettings_buttonBrowse", resourceCulture);
             }
         }
         
@@ -1050,15 +1041,6 @@ namespace MediaPortal.DeployTool {
         internal static string TvEngineType_rbTvEngine {
             get {
                 return ResourceManager.GetString("TvEngineType_rbTvEngine", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Browse.
-        /// </summary>
-        internal static string TvServerSettings_buttonBrowse {
-            get {
-                return ResourceManager.GetString("TvServerSettings_buttonBrowse", resourceCulture);
             }
         }
         
