@@ -42,6 +42,7 @@ namespace MediaPortal.Configuration.Sections
     private ArrayList loadedPlugins = new ArrayList();
     private ArrayList availablePlugins = new ArrayList();
     private bool isLoaded = false;
+    private bool wasLastLoadAdvanced = false;
 
     public MPInstallHelper lst = new MPInstallHelper();
     public MPInstallHelper lst_online = new MPInstallHelper();
@@ -97,8 +98,9 @@ namespace MediaPortal.Configuration.Sections
 
     private void LoadAll()
     {
-      if (!isLoaded)
+      if (!isLoaded || (wasLastLoadAdvanced != SettingsForm.AdvancedMode))
       {
+        ClearLoadedPlugins();
         isLoaded = true;
         //
         // Enumerate available plugins
@@ -108,22 +110,26 @@ namespace MediaPortal.Configuration.Sections
         //
         // Load plugins
         //
-        loadPlugins();
+        LoadPlugins();
 
         CheckPowerScheduler();
         //
         // Populate our list
         //
-        populateListView();
+        
         LoadSettings();
+        PopulateListView();
         LoadListFiles();
         LoadToListview("All");
-        
+
       }
     }
 
     private void EnumeratePlugins()
     {
+      // Save to determine whether the mode has changed
+      wasLastLoadAdvanced = SettingsForm.AdvancedMode;
+
       EnumeratePluginDirectory(Config.GetSubFolder(Config.Dir.Plugins, "windows"));
       EnumeratePluginDirectory(Config.GetSubFolder(Config.Dir.Plugins, "subtitle"));
       EnumeratePluginDirectory(Config.GetSubFolder(Config.Dir.Plugins, "tagreaders"));
@@ -150,10 +156,28 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void populateListView()
+    private void PopulateListView()
     {
       foreach (ItemTag tag in loadedPlugins)
       {
+        // Show only common, stable plugins
+        if (!SettingsForm.AdvancedMode)
+        {
+          if (tag.IsExternalPlayer)
+            continue;
+          if (tag.IsProcess && !tag.IsEnabled)
+            continue;
+
+          if (tag.WindowId == 760) // GUIBurner
+            continue;
+          if (tag.WindowId == 2700) // GUIRSSFeed
+            continue;
+          if (tag.WindowId == 5000) // GUIAlarm
+            continue;
+          if (tag.WindowId == 3005) // GUITopbar
+            continue;
+        }
+
         ListViewItem item;
         if (tag.IsProcess)
         {
@@ -178,7 +202,14 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void loadPlugins()
+    private void ClearLoadedPlugins()
+    {
+      listViewPlugins.Items.Clear();
+      availablePlugins.Clear();
+      loadedPlugins.Clear();
+    }
+
+    private void LoadPlugins()
     {
       foreach (string pluginFile in availablePlugins)
       {
@@ -252,6 +283,7 @@ namespace MediaPortal.Configuration.Sections
                   {
                     tag.ShowDefaultHome = showPlugin.ShowDefaultHome();
                   }
+
                   LoadPluginImages(type, tag);
                   loadedPlugins.Add(tag);
                 }
@@ -262,7 +294,7 @@ namespace MediaPortal.Configuration.Sections
               if ((t.IsClass) && (t.IsSubclassOf(typeof(GUIWindow))))
               {
                 object newObj;
-                
+
                 // an abstract class cannot be instanciated
                 if (t.IsAbstract)
                 {
@@ -282,7 +314,7 @@ namespace MediaPortal.Configuration.Sections
                            t.FullName, pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1));
                   continue;
                 }
-                GUIWindow win = (GUIWindow) newObj;
+                GUIWindow win = (GUIWindow)newObj;
 
                 foreach (ItemTag tag in loadedPlugins)
                 {
@@ -347,7 +379,7 @@ namespace MediaPortal.Configuration.Sections
       {
         return Image.FromStream(type.Assembly.GetManifestResourceStream(resourceName));
       }
-      catch(ArgumentException aex)
+      catch (ArgumentException aex)
       {
         Log.Error("PluginsNew: Argument Exception loading the image - {0}, {1}", resourceName, aex.Message);
         //Thrown when the stream does not seem to contain a valid image
@@ -369,10 +401,8 @@ namespace MediaPortal.Configuration.Sections
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        foreach (ListViewItem item in listViewPlugins.Items)
+        foreach (ItemTag itemTag in loadedPlugins)
         {
-          ItemTag itemTag = (ItemTag) item.Tag;
-
           if (itemTag.SetupForm != null)
           {
             if (itemTag.SetupForm.CanEnable() || itemTag.SetupForm.DefaultEnabled())
@@ -401,8 +431,7 @@ namespace MediaPortal.Configuration.Sections
                 itemTag.IsPlugins = xmlreader.GetValueAsBool("myplugins", itemTag.SetupForm.PluginName(), isPlugins);
               }
             }
-          }
-          updateListViewItem(item);
+          }          
         }
       }
     }
@@ -416,7 +445,7 @@ namespace MediaPortal.Configuration.Sections
       {
         foreach (ListViewItem item in listViewPlugins.Items)
         {
-          ItemTag itemTag = (ItemTag) item.Tag;
+          ItemTag itemTag = (ItemTag)item.Tag;
 
           bool isEnabled = itemTag.IsEnabled;
           bool isHome = itemTag.IsHome;
@@ -449,8 +478,8 @@ namespace MediaPortal.Configuration.Sections
         foreach (string dll in dLoad)
         {
           if (dll == "") continue;
-          if (dllsToSkip.IndexOf(dll+";")!=-1)
-            dllsToSkip=dllsToSkip.Remove(dllsToSkip.IndexOf(dll+";"),dll.Length+1);
+          if (dllsToSkip.IndexOf(dll + ";") != -1)
+            dllsToSkip = dllsToSkip.Remove(dllsToSkip.IndexOf(dll + ";"), dll.Length + 1);
         }
         foreach (string dll in dLoad)
         {
@@ -468,7 +497,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void listViewPlugins_DoubleClick(object sender, EventArgs e)
     {
-      ItemTag itemTag = (ItemTag) listViewPlugins.FocusedItem.Tag;
+      ItemTag itemTag = (ItemTag)listViewPlugins.FocusedItem.Tag;
       itemTag.IsEnabled = !itemTag.IsEnabled;
       if (!itemTag.SetupForm.CanEnable())
       {
@@ -481,18 +510,18 @@ namespace MediaPortal.Configuration.Sections
 
     private void updateListViewItem(ListViewItem item)
     {
-      ItemTag tag = (ItemTag) item.Tag;
+      ItemTag tag = (ItemTag)item.Tag;
       if (tag.IsEnabled && tag.ActiveImage != null)
       {
-        string enabledKey = item.Text+"_enabled";
+        string enabledKey = item.Text + "_enabled";
         if (!item.ImageList.Images.ContainsKey(enabledKey))
         {
-          item.ImageList.Images.Add(enabledKey,tag.ActiveImage);
+          item.ImageList.Images.Add(enabledKey, tag.ActiveImage);
         }
         item.ImageKey = enabledKey;
         return;
       }
-      if (!tag.IsEnabled && tag.InactiveImage !=null)
+      if (!tag.IsEnabled && tag.InactiveImage != null)
       {
         string disabledKey = item.Text + "_disabled";
         if (!item.ImageList.Images.ContainsKey(disabledKey))
@@ -558,7 +587,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void itemMyPlugins_Click(object sender, EventArgs e)
     {
-      ItemTag itemTag = (ItemTag) listViewPlugins.FocusedItem.Tag;
+      ItemTag itemTag = (ItemTag)listViewPlugins.FocusedItem.Tag;
       itemTag.IsPlugins = !itemTag.IsPlugins;
       if (itemTag.IsPlugins)
       {
@@ -574,7 +603,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void itemMyHome_Click(object sender, EventArgs e)
     {
-      ItemTag itemTag = (ItemTag) listViewPlugins.FocusedItem.Tag;
+      ItemTag itemTag = (ItemTag)listViewPlugins.FocusedItem.Tag;
       itemTag.IsHome = !itemTag.IsHome;
       if (itemTag.IsHome)
       {
@@ -591,7 +620,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void itemEnabled_Click(object sender, EventArgs e)
     {
-      ItemTag itemTag = (ItemTag) listViewPlugins.FocusedItem.Tag;
+      ItemTag itemTag = (ItemTag)listViewPlugins.FocusedItem.Tag;
       itemTag.IsEnabled = !itemTag.IsEnabled;
       if (!itemTag.SetupForm.CanEnable())
       {
@@ -603,7 +632,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void itemConfigure_Click(object sender, EventArgs e)
     {
-      ItemTag itemTag = (ItemTag) listViewPlugins.FocusedItem.Tag;
+      ItemTag itemTag = (ItemTag)listViewPlugins.FocusedItem.Tag;
       if ((itemTag.SetupForm != null) &&
           (itemTag.SetupForm.HasSetup()))
       {
@@ -675,7 +704,7 @@ namespace MediaPortal.Configuration.Sections
 
       if (listViewPlugins.FocusedItem != null)
       {
-        ItemTag itemTag = (ItemTag) listViewPlugins.FocusedItem.Tag;
+        ItemTag itemTag = (ItemTag)listViewPlugins.FocusedItem.Tag;
 
         addContextMenuItem("Name", itemTag.SetupForm.PluginName(), null, false);
         addContextMenuItem("Author", string.Format("Author: {0}", itemTag.SetupForm.Author()), null, false);
@@ -725,7 +754,7 @@ namespace MediaPortal.Configuration.Sections
         }
       }
     }
- #region MPInstaller stuff
+    #region MPInstaller stuff
     private void mpButtonInstall_Click(object sender, EventArgs e)
     {
       if (openFileDialog1.ShowDialog(this) == DialogResult.OK)
@@ -736,7 +765,7 @@ namespace MediaPortal.Configuration.Sections
         LoadListFiles();
         LoadToListview("All");
       }
-      
+
     }
 
     private void install_Package(string fil)
@@ -767,7 +796,7 @@ namespace MediaPortal.Configuration.Sections
       //  lst.AddRange(lst_online);
       //}
     }
-    
+
     public void LoadToListview(string strgroup)
     {
       LoadToListview(lst, mpListView1, strgroup);
@@ -810,7 +839,7 @@ namespace MediaPortal.Configuration.Sections
         MPpackageStruct pk = (MPpackageStruct)mpih.lst[i];
         if ((pk._intalerStruct.Group == strgroup || strgroup == "All") /*&& TestView(pk, comboBox3.SelectedIndex)*/)
         {
-          ListViewItem item1 = new ListViewItem(pk._intalerStruct.Name, mpListView1.Groups["listViewGroup"+pk._intalerStruct.Group]);//listViewGroup listViewPlugins.Groups["listViewGroupProcess"]
+          ListViewItem item1 = new ListViewItem(pk._intalerStruct.Name, mpListView1.Groups["listViewGroup" + pk._intalerStruct.Group]);//listViewGroup listViewPlugins.Groups["listViewGroupProcess"]
           item1.ImageIndex = 0;
           if (pk._intalerStruct.Logo != null)
           {
@@ -831,7 +860,7 @@ namespace MediaPortal.Configuration.Sections
         //        SetButtonState();
       }
     }
-    
+
     private void mpListView1_SelectedIndexChanged(object sender, EventArgs e)
     {
       SetButtonState();
@@ -899,7 +928,7 @@ namespace MediaPortal.Configuration.Sections
         MessageBox.Show("Invalid package !");
     }
 
- #endregion
+    #endregion
 
     private void CheckPowerScheduler()
     {

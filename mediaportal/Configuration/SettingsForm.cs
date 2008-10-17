@@ -125,6 +125,7 @@ namespace MediaPortal.Configuration
     private const int SW_SHOW = 5;
     private const int SW_RESTORE = 9;
     private string _windowName = "MediaPortal - Setup";
+    private int hintShowCount = 0;
     private LinkLabel linkLabel1;
     private ToolStrip toolStrip1;
     private ToolStripSplitButton helpToolStripSplitButton;
@@ -164,7 +165,7 @@ namespace MediaPortal.Configuration
       get { return advancedMode; }
       set
       {
-        advancedMode = value;        
+        advancedMode = value;
         // Save the last state
         using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
@@ -196,7 +197,7 @@ namespace MediaPortal.Configuration
       Log.Info("SettingsForm constructor");
       // Required for Windows Form Designer support
       InitializeComponent();
-      this.linkLabel1.Links.Add(0, linkLabel1.Text.Length, "http://www.team-mediaportal.com/donate.html");      
+      this.linkLabel1.Links.Add(0, linkLabel1.Text.Length, "http://www.team-mediaportal.com/donate.html");
       // Stop MCE services
       if (splashScreen != null)
         splashScreen.SetInformation("Stopping MCE services...");
@@ -207,9 +208,16 @@ namespace MediaPortal.Configuration
       string strLanguage;
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        strLanguage = xmlreader.GetValueAsString("skin", "language", "English");
+        strLanguage = xmlreader.GetValueAsString("skin", "language", "English");        
+        hintShowCount = xmlreader.GetValueAsInt("general", "ConfigModeHintCount", 0);
+
+        if (splashScreen != null)
+          splashScreen.SetInformation("Loading config options...");
+        CheckModeHintDisplay(hintShowCount);
+        // The initial hint allows to choose a mode so we need to ask before loading that setting
         advancedMode = xmlreader.GetValueAsBool("general", "AdvancedConfigMode", false);
       }
+      
       toolStripButtonSwitchAdvanced.Text = AdvancedMode ? "Switch to standard mode" : "Switch to expert mode";
       GUILocalizeStrings.Load(strLanguage);
       // Register Bass.Net
@@ -374,7 +382,7 @@ namespace MediaPortal.Configuration
       string[] audioEncoders = new string[] { "InterVideo Audio Encoder" };
       FilterCollection legacyFilters = Filters.LegacyFilters;
       foreach (Filter audioCodec in legacyFilters)
-        for (int i = 0 ; i < audioEncoders.Length ; ++i)
+        for (int i = 0; i < audioEncoders.Length; ++i)
         {
           if (String.Compare(audioCodec.Name, audioEncoders[i], true) == 0)
           {
@@ -568,7 +576,7 @@ namespace MediaPortal.Configuration
       GeneralSkin skinConfig = new GeneralSkin();
       AddSection(new ConfigPage(general, skinConfig, false));
 
-      AddSection(new ConfigPage(general, new GeneralThumbs(), false));      
+      AddSection(new ConfigPage(general, new GeneralThumbs(), false));
       AddSection(new ConfigPage(general, new GeneralVolume(), false));
 
       AddSection(new ConfigPage(general, new GeneralKeyboardControl(), true));
@@ -611,7 +619,7 @@ namespace MediaPortal.Configuration
             // Find parent section (IndexOfKey is buggy)
             int parentPos = -1;
             // This limits usage to one level only - loop subitems if you want to build a tree
-            for (int i = 0 ; i < sectionTree.Nodes.Count ; i++)
+            for (int i = 0; i < sectionTree.Nodes.Count; i++)
               if (sectionTree.Nodes[i].Text.CompareTo(currentSection.Parentsection.Text) == 0)
               {
                 parentPos = i;
@@ -1085,6 +1093,30 @@ namespace MediaPortal.Configuration
       Log.Info("SaveSectionSettings done()");
     }
 
+    private void CheckModeHintDisplay(int aHintShowCount)
+    {
+      switch (aHintShowCount)
+      {
+        case 0:
+          aHintShowCount = ShowConfigModeHint() ? 1 : 0;
+          break;
+        default:
+          aHintShowCount++;
+          break;
+      }
+
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        xmlwriter.SetValue("general", "ConfigModeHintCount", aHintShowCount);
+      }
+    }
+
+    private bool ShowConfigModeHint()
+    {
+      DlgConfigModeHint hintForm = new DlgConfigModeHint();
+      return (hintForm.ShowDialog(this) == DialogResult.OK);
+    }
+
     private void cancelButton_Click(object sender, EventArgs e)
     {
       Close();
@@ -1121,7 +1153,7 @@ namespace MediaPortal.Configuration
           return false;
         }
         bool added = false;
-        for (int index = 0 ; index < MaximumShares ; index++)
+        for (int index = 0; index < MaximumShares; index++)
         {
           string sharePath = String.Format("sharepath{0}", index);
           string sharePathData = xmlreader.GetValueAsString("music", sharePath, "");
@@ -1138,7 +1170,7 @@ namespace MediaPortal.Configuration
           return false;
         }
         added = false;
-        for (int index = 0 ; index < MaximumShares ; index++)
+        for (int index = 0; index < MaximumShares; index++)
         {
           string sharePath = String.Format("sharepath{0}", index);
           string shareNameData = xmlreader.GetValueAsString("movies", sharePath, "");
@@ -1155,7 +1187,7 @@ namespace MediaPortal.Configuration
           return false;
         }
         added = false;
-        for (int index = 0 ; index < MaximumShares ; index++)
+        for (int index = 0; index < MaximumShares; index++)
         {
           string sharePath = String.Format("sharepath{0}", index);
           string shareNameData = xmlreader.GetValueAsString("pictures", sharePath, "");
