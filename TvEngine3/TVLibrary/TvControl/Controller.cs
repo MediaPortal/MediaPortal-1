@@ -75,6 +75,10 @@ namespace TvControl
     /// </summary>
     NoVideoAudioDetected,
     /// <summary>
+    /// Operation failed since no signal was detected
+    /// </summary>
+    NoSignalDetected,
+    /// <summary>
     /// Operation failed due to an unknown error
     /// </summary>
     UnknownError,

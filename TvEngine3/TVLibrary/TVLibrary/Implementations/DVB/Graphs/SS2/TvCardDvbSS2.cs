@@ -607,6 +607,35 @@ namespace TvLibrary.Implementations.DVB
     }
 
     #region SS2 specific
+
+    public override bool LockedInOnSignal()
+    {      
+      bool isLocked = false;
+      DateTime timeStart = DateTime.Now;
+      TimeSpan ts = timeStart - timeStart;
+      while (!isLocked && ts.TotalSeconds < 2)
+      {
+        int hr = _interfaceB2C2TunerCtrl.SetTunerStatus();
+        _interfaceB2C2TunerCtrl.CheckLock();
+        if (((uint)hr) == (uint)0x90010115)
+        {         
+          ts = DateTime.Now - timeStart;
+          Log.Log.WriteFile("dvb-s ss2:  LockedInOnSignal waiting 20ms");
+          System.Threading.Thread.Sleep(20);
+        }
+        else
+        {
+          isLocked = true;
+        }                        
+      }
+
+      if (!isLocked)
+      {
+        Log.Log.WriteFile("dvb-s ss2:  LockedInOnSignal could not lock onto channel - no signal or bad signal");
+      }
+      return isLocked;
+    }
+
     /// <summary>
     /// Builds the graph.
     /// </summary>

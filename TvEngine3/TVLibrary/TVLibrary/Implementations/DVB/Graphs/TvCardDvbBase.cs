@@ -191,7 +191,8 @@ namespace TvLibrary.Implementations.DVB
           _mapSubChannels.Remove(subChannelId);
         }
         throw new TvException("Unable to tune to channel");
-      }
+      }      
+
       _lastSignalUpdate = DateTime.MinValue;
       _mapSubChannels[subChannelId].OnAfterTune();
       return _mapSubChannels[subChannelId];
@@ -273,18 +274,71 @@ namespace TvLibrary.Implementations.DVB
       return;
     }
 
+    public virtual bool LockedInOnSignal()
+    {
+      //UpdateSignalQuality(true);
+      bool isLocked = false;
+      DateTime timeStart = DateTime.Now;
+      TimeSpan ts = timeStart - timeStart;
+      while (!isLocked && ts.TotalSeconds < 2)
+      {
+        for (int i = 0; i < _tunerStatistics.Count; i++)
+        {
+          IBDA_SignalStatistics stat = (IBDA_SignalStatistics)_tunerStatistics[i];
+
+          try
+          {
+            stat.get_SignalLocked(out isLocked);
+            if (isLocked)
+            {
+              break;
+            }
+          }
+          catch (COMException)
+          {
+            //            Log.Log.WriteFile("get_SignalLocked() locked :{0}", ex);
+          }
+        }
+        if (!isLocked)
+        {
+          ts = DateTime.Now-timeStart;
+          Log.Log.WriteFile("dvb:  LockedInOnSignal waiting 20ms");
+          System.Threading.Thread.Sleep(20);
+        }
+      }
+
+      if (!isLocked)
+      {
+        Log.Log.WriteFile("dvb:  LockedInOnSignal could not lock onto channel - no signal or bad signal");        
+      }
+      return isLocked;     
+    }
+
+
     /// <summary>
     /// Methods which starts the graph
     /// </summary>
     protected void RunGraph(int subChannel)
-    {
+    {      
+      bool graphRunning = GraphRunning();
+
       if (_mapSubChannels.ContainsKey(subChannel))
       {
+        if (graphRunning)
+        {
+          if (!LockedInOnSignal())
+          {
+            throw new TvExceptionNoSignal("Unable to tune to channel - no signal");
+          }
+        }
         _mapSubChannels[subChannel].OnGraphStart();
       }
-      FilterState state;
-      (_graphBuilder as IMediaControl).GetState(10, out state);
-      if (state == FilterState.Running) return;
+
+      if (graphRunning)
+      {        
+        return;
+      }
+
       Log.Log.Info("dvb:  RunGraph");
       int hr = (_graphBuilder as IMediaControl).Run();
       if (hr < 0 || hr > 1)
@@ -292,10 +346,15 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.WriteFile("dvb:  RunGraph returns: 0x{0:X}", hr);
         throw new TvException("Unable to start graph");
       }
+      
       //GetTunerSignalStatistics();
       _epgGrabbing = false;      
       if (_mapSubChannels.ContainsKey(subChannel))
       {
+        if (!LockedInOnSignal())
+        {
+          throw new TvExceptionNoSignal("Unable to tune to channel - no signal");
+        }        
         _mapSubChannels[subChannel].OnGraphStarted();
       }
     }
@@ -1253,13 +1312,14 @@ namespace TvLibrary.Implementations.DVB
 
     #region signal quality, level etc
 
-    /// <summary>
-    /// updates the signal quality/level and tuner locked statusses
-    /// </summary>
-    protected override void UpdateSignalQuality()
+
+    public void UpdateSignalQuality(bool force)
     {
-      TimeSpan ts = DateTime.Now - _lastSignalUpdate;
-      if (ts.TotalMilliseconds < 5000) return;
+      if (!force)
+      {
+        TimeSpan ts = DateTime.Now - _lastSignalUpdate;
+        if (ts.TotalMilliseconds < 5000) return;
+      }
       try
       {
         if (GraphRunning() == false)
@@ -1412,11 +1472,21 @@ namespace TvLibrary.Implementations.DVB
         {
           _signalPresent = false;
         }
+        
       }
       finally
       {
         _lastSignalUpdate = DateTime.Now;
       }
+    }
+
+    /// <summary>
+    /// updates the signal quality/level and tuner locked statusses
+    /// </summary>    
+    /// 
+    protected override void UpdateSignalQuality()
+    {
+      UpdateSignalQuality(false);      
     }//public bool SignalPresent()
     #endregion
 

@@ -29,6 +29,41 @@ namespace TvLibrary
   /// Exception class for the tv library
   /// </summary>
   [Serializable]
+  public class TvExceptionNoSignal : Exception
+  {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="T:TvException"/> class.
+    /// </summary>
+    public TvExceptionNoSignal()
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="T:TvException"/> class.
+    /// </summary>
+    /// <param name="message">The message.</param>
+    public TvExceptionNoSignal(string message)
+      : base(message)
+    {
+    }
+
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="T:TvException"/> class.
+    /// </summary>
+    /// <param name="message">The message.</param>
+    /// <param name="innerException">The inner exception.</param>
+    public TvExceptionNoSignal(string message, Exception innerException)
+      : base(message, innerException)
+    {
+    }
+
+  }  
+
+  /// <summary>
+  /// Exception class for the tv library
+  /// </summary>
+  [Serializable]
   public class TvException : Exception
   {
     /// <summary>
