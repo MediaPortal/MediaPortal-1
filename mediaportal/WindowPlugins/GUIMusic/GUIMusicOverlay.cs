@@ -274,7 +274,9 @@ namespace MediaPortal.GUI.Music
         // this is called serveral times per second!
         if (_videoWindow != null)
         {          
-          SetVideoWindow(new Rectangle(_videoWindow.XPosition, _videoWindow.YPosition, _videoWindow.Width, _videoWindow.Height));
+          // Old code for overlay support? Commented out to fix Mantis:
+          // 0001682: Music visualization it's off position when using UI Calibration
+          //SetVideoWindow(new Rectangle(_videoWindow.XPosition, _videoWindow.YPosition, _videoWindow.Width, _videoWindow.Height));
         }
         // still needed?
         else
