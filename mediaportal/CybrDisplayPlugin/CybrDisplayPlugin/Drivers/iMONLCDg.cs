@@ -59,6 +59,7 @@
     private string _ForceDisplay;
     private bool _ForceKeyBoardMode;
     private bool _ForceManagerRestart;
+    private bool _ForceManagerReload;
     private int _gcols = 0x60;
     private int _grows = 0x10;
     private Thread _iconThread;
@@ -380,19 +381,29 @@
         num = (int)key.GetValue("MouseMode", -1);
         if ((str.Equals("iMON PAD") & (num != 0)) & this._ForceKeyBoardMode)
         {
+          MediaPortal.GUI.Library.Log.Info("iMONLCDgCheck_iMON_Manager_Status(): \"iMON PAD\" configuration error.", new object[0]);
+          MediaPortal.GUI.Library.Log.Info("iMONLCDg.Check_iMON_Manager_Status(): The Antec VFD Manager is not set correctly. The configuration has been corrected.", new object[0]);
           flag2 = false;
         }
         if (((int)key.GetValue("RCPlugin", -1)) != 1)
         {
+          MediaPortal.GUI.Library.Log.Info("iMONLCDgCheck_iMON_Manager_Status(): \"RCPlugin\" configuration error.", new object[0]);
+          MediaPortal.GUI.Library.Log.Info("iMONLCDg.Check_iMON_Manager_Status(): The Antec VFD Manager is not set correctly. The configuration has been corrected.", new object[0]);
           flag2 = false;
         }
         if (((int)key.GetValue("RunFront", -1)) != 0)
         {
+          MediaPortal.GUI.Library.Log.Info("iMONLCDgCheck_iMON_Manager_Status(): \"RunFront\" configuration error.", new object[0]);
+          MediaPortal.GUI.Library.Log.Info("iMONLCDg.Check_iMON_Manager_Status(): The Antec VFD Manager is not set correctly. The configuration has been corrected.", new object[0]);
+          flag2 = false;
+        }
+        if (_ForceManagerReload)
+        {
+          MediaPortal.GUI.Library.Log.Info("iMONLCDgCheck_iMON_Manager_Status(): Forcing Antec/iMON Manager reload...", new object[0]);
           flag2 = false;
         }
         if (!flag2)
         {
-          MediaPortal.GUI.Library.Log.Info("iMONLCDg.Check_iMON_Manager_Status(): The Antec VFD Manager is not set correctly. The configuration has been corrected.", new object[0]);
           key.SetValue("RCPlugin", 1, RegistryValueKind.DWord);
           key.SetValue("RunFront", 0, RegistryValueKind.DWord);
           if (str.Equals("iMON PAD") & (num != 0))
@@ -437,7 +448,7 @@
           processesByName = Process.GetProcessesByName("VFD");
           MediaPortal.GUI.Library.Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): Found {0} instances of Antec VFD Manager", new object[] { processesByName.Length });
         }
-        Registry.CurrentUser.Close();
+        key.Close();
       }
       else
       {
@@ -475,19 +486,30 @@
         num = (int)key.GetValue("MouseMode", -1);
         if ((str.Equals("iMON PAD") & (num != 0)) & this._ForceKeyBoardMode)
         {
+          MediaPortal.GUI.Library.Log.Info("iMONLCDgCheck_iMON_Manager_Status(): \"iMON PAD\" configuration error.", new object[0]);
+          MediaPortal.GUI.Library.Log.Info("iMONLCDgCheck_iMON_Manager_Status(): The Soundgraph iMON Manager is not set correctly. The configuration has been corrected.", new object[0]);
           flag2 = false;
         }
         if (((int)key.GetValue("RCPlugin", -1)) != 1)
         {
+          MediaPortal.GUI.Library.Log.Info("iMONLCDgCheck_iMON_Manager_Status(): \"RCPlugin\" configuration error.", new object[0]);
+          MediaPortal.GUI.Library.Log.Info("iMONLCDgCheck_iMON_Manager_Status(): The Soundgraph iMON Manager is not set correctly. The configuration has been corrected.", new object[0]);
           flag2 = false;
         }
+
         if (((int)key.GetValue("RunFront", -1)) != 0)
         {
+          MediaPortal.GUI.Library.Log.Info("iMONLCDgCheck_iMON_Manager_Status(): \"RunFront\" configuration error.", new object[0]);
+          MediaPortal.GUI.Library.Log.Info("iMONLCDgCheck_iMON_Manager_Status(): The Soundgraph iMON Manager is not set correctly. The configuration has been corrected.", new object[0]);
+          flag2 = false;
+        }
+        if (_ForceManagerReload)
+        {
+          MediaPortal.GUI.Library.Log.Info("iMONLCDgCheck_iMON_Manager_Status(): Forcing Antec/iMON Manager reload...", new object[0]);
           flag2 = false;
         }
         if (!flag2)
         {
-          MediaPortal.GUI.Library.Log.Info("iMONLCDgCheck_iMON_Manager_Status(): The Soundgraph iMON Manager is not set correctly. The configuration has been corrected.", new object[0]);
           key.SetValue("RCPlugin", 1, RegistryValueKind.DWord);
           key.SetValue("RunFront", 0, RegistryValueKind.DWord);
           if (str.Equals("iMON PAD") & (num != 0))
@@ -532,7 +554,7 @@
           processesByName = Process.GetProcessesByName("iMON");
           MediaPortal.GUI.Library.Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): Found {0} instances of SoundGraph iMON Manager", new object[] { processesByName.Length });
         }
-        Registry.CurrentUser.Close();
+        key.Close();
       }
       else
       {
@@ -1981,6 +2003,7 @@
       MediaPortal.GUI.Library.Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Delay driver startup: {0}", new object[] { this._DelayStartup.ToString() });
       MediaPortal.GUI.Library.Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Ensure Antec/iMON Manager is running before driver startup: {0}", new object[] { this._EnsureManagerStartup.ToString() });
       MediaPortal.GUI.Library.Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Force Antec/iMON Manager Restart after driver startup: {0}", new object[] { this._ForceManagerRestart.ToString() });
+      MediaPortal.GUI.Library.Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Force Antec/iMON Manager Reload during driver startup: {0}", new object[] { this._ForceManagerReload.ToString() });
       MediaPortal.GUI.Library.Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Restart Antec/iMON Manager FrontView on exit: {0}", new object[] { this._RestartFrontviewOnExit.ToString() });
       MediaPortal.GUI.Library.Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Force Manager to use KeyBoard mode for iMON PAD: {0}", new object[] { this._ForceKeyBoardMode.ToString() });
       MediaPortal.GUI.Library.Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Force Display Type: {0}", new object[] { this._ForceDisplay });
@@ -2181,6 +2204,7 @@
       this._DelayStartup = this.AdvSettings.DelayStartup;
       this._EnsureManagerStartup = this.AdvSettings.EnsureManagerStartup;
       this._ForceManagerRestart = this.AdvSettings.ForceManagerRestart;
+      this._ForceManagerReload = this.AdvSettings.ForceManagerReload;
       this._RestartFrontviewOnExit = this.AdvSettings.RestartFrontviewOnExit;
       this._ForceKeyBoardMode = this.AdvSettings.ForceKeyBoardMode;
       this.RemoteSettings.EnableRemote = false;
@@ -4342,6 +4366,7 @@
       private int m_EQTitleShowTime = 2;
       private bool m_ForceKeyBoardMode;
       private bool m_ForceManagerRestart;
+      private bool m_ForceManagerReload;
       private static iMONLCDg.AdvancedSettings m_Instance;
       private bool m_MonitorPowerState;
       private bool m_NormalEQ = true;
@@ -6630,6 +6655,7 @@
         _settings.UseInvertedIcons = false;
         _settings.EnsureManagerStartup = false;
         _settings.ForceManagerRestart = false;
+        _settings.ForceManagerReload = false;
         _settings.RestartFrontviewOnExit = false;
         _settings.ForceKeyBoardMode = false;
         _settings.EqDisplay = false;
@@ -7002,6 +7028,19 @@
         set
         {
           this.m_ForceManagerRestart = value;
+        }
+      }
+
+      [XmlAttribute]
+      public bool ForceManagerReload
+      {
+        get
+        {
+          return this.m_ForceManagerReload;
+        }
+        set
+        {
+          this.m_ForceManagerReload = value;
         }
       }
 
@@ -7465,9 +7504,9 @@
         }
         XmlSerializer serializer = new XmlSerializer(typeof(DataTable));
         TextWriter textWriter = new StreamWriter(Config.GetFile(Config.Dir.Config, "CybrDisplay_imonlcdg_font.xml"));
-        MediaPortal.GUI.Library.Log.Debug("SaveFontData(): Serializing data", new object[0]);
-        serializer.Serialize(textWriter, this.FontData);
-        MediaPortal.GUI.Library.Log.Debug("SaveFontData(): Writing data to file", new object[0]);
+        MediaPortal.GUI.Library.Log.Debug( "SaveFontData(): Serializing data", new object [0 ]) ;
+        serializer .Serialize(textWriter, this.FontData);
+        MediaPortal.GUI.Library.Log.Debug ("SaveFontData(): Writing data to file" , new object[ 0] );
         textWriter.Close();
         MediaPortal.GUI.Library.Log.Debug("SaveFontData(): completed", new object[0]);
       }
@@ -7477,8 +7516,8 @@
     {
       private bool _diskFlash;
       private bool _diskInverted;
-      private readonly ulong[] _DiskMask = new ulong [] { 0x80fe0000000000L , 0x80fd0000000000L , 0x80fb0000000000L , 0x80f70000000000L, 0x80ef0000000000L, 0x80df0000000000L, 0x80bf0000000000L, 0x807f0000000000L };
-      private readonly ulong[] _DiskMaskInv = new ulong [] { 0x80010000000000L , 0x80020000000000L , 0x80040000000000L , 0x80080000000000L, 0x80100000000000L, 0x80200000000000L, 0x80400000000000L, 0x80800000000000L };
+      private readonly ulong[] _DiskMask = new ulong[] { 0x80fe0000000000L, 0x80fd0000000000L, 0x80fb0000000000L , 0x80f70000000000L, 0x80ef0000000000L, 0x80df0000000000L, 0x80bf0000000000L, 0x807f0000000000L };
+      private readonly ulong[] _DiskMaskInv = new ulong[] { 0x80010000000000L, 0x80020000000000L, 0x80040000000000L , 0x80080000000000L, 0x80100000000000L, 0x80200000000000L, 0x80400000000000L, 0x80800000000000L };
       private bool _diskOn;
       private bool _diskRotate;
       private bool _diskRotateClockwise = true;
