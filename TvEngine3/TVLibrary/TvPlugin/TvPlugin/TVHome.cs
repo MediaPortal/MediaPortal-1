@@ -2408,6 +2408,9 @@ namespace TvPlugin
       string errorMessage = GUILocalizeStrings.Get(1500);
       switch (succeeded)
       {
+        case TvResult.NoSignalDetected:
+          errorMessage += "\r" + GUILocalizeStrings.Get(1499) + "\r";
+          break;
         case TvResult.CardIsDisabled:
           errorMessage += "\r" + GUILocalizeStrings.Get(1501) + "\r";
           break;
