@@ -954,6 +954,7 @@
     <String id="1448">Select None</String>
     <String id="1449">Stop recording</String>
     <String id="1450">Are you sure you want to stop recording?</String>
+    <String id="1499">No signal</String>
     <String id="1500">Unable to start timeshifting</String>
     <String id="1501">Card is disabled</String>
     <String id="1502">No free card available</String>
