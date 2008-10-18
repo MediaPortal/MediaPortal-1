@@ -1,0 +1,216 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" standalone="yes"-->
+<window>
+  <id>35</id>
+  <defaultcontrol>6</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <disabletopbar>no</disabletopbar>
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>Background.png</texture>
+      <width>1280</width>
+      <height>720</height>
+    </control>
+    <control>
+      <description>Big text</description>
+      <type>label</type>
+      <id>200</id>
+      <posX>631</posX>
+      <posY>250</posY>
+      <label>#highlightedbutton</label>
+      <align>center</align>
+      <font>dingbats</font>
+      <textcolor>40ffffff</textcolor>
+      <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="500">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="20,20" center="384,288" time="500">WindowClose</animation>
+    </control>
+    <control>
+      <description>home BM Video</description>
+      <type>button</type>
+      <id>3</id>
+      <posX>88</posX>
+      <posY>250</posY>
+      <width>243</width>
+      <height>277</height>
+      <textureFocus>Basic_video_focus.png</textureFocus>
+      <textureNoFocus>Basic_video_nofocus.png</textureNoFocus>
+      <hyperlink>6</hyperlink>
+      <hover>hover_my videos.png</hover>
+      <hoverX>435</hoverX>
+      <hoverY>350</hoverY>
+      <hoverWidth>483</hoverWidth>
+      <hoverHeight>382</hoverHeight>
+      <label>3</label>
+      <textcolor>00ffffff</textcolor>
+      <textcolorNoFocus>00ffffff</textcolorNoFocus>
+      <onleft>7</onleft>
+      <onright>4</onright>
+      <onup>21</onup>
+      <ondown>44</ondown>
+      <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="500">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="20,20" center="384,288" time="500">WindowClose</animation>
+    </control>
+    <control>
+      <description>home BM Pictures</description>
+      <type>button</type>
+      <id>4</id>
+      <posX>337</posX>
+      <posY>262</posY>
+      <width>195</width>
+      <height>290</height>
+      <textureFocus>Basic_pictures_focus.png</textureFocus>
+      <textureNoFocus>Basic_pictures_nofocus.png</textureNoFocus>
+      <hyperlink>2</hyperlink>
+      <hover>hover_my pictures.png</hover>
+      <hoverX>435</hoverX>
+      <hoverY>350</hoverY>
+      <hoverWidth>483</hoverWidth>
+      <hoverHeight>382</hoverHeight>
+      <label>1</label>
+      <textcolor>00ffffff</textcolor>
+      <textcolorNoFocus>00ffffff</textcolorNoFocus>
+      <onleft>3</onleft>
+      <onright>5</onright>
+      <onup>21</onup>
+      <ondown>4</ondown>
+      <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="500">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="20,20" center="384,288" time="500">WindowClose</animation>
+    </control>
+    <control>
+      <description>home BM Weather</description>
+      <type>button</type>
+      <id>5</id>
+      <posX>533</posX>
+      <posY>283</posY>
+      <width>206</width>
+      <height>235</height>
+      <textureFocus>Basic_weather_focus.png</textureFocus>
+      <textureNoFocus>Basic_weather_nofocus.png</textureNoFocus>
+      <hyperlink>2600</hyperlink>
+      <hover>hover_my weather.png</hover>
+      <hoverX>435</hoverX>
+      <hoverY>350</hoverY>
+      <hoverWidth>483</hoverWidth>
+      <hoverHeight>382</hoverHeight>
+      <label>8</label>
+      <textcolor>00ffffff</textcolor>
+      <textcolorNoFocus>00ffffff</textcolorNoFocus>
+      <onleft>4</onleft>
+      <onright>6</onright>
+      <onup>21</onup>
+      <ondown>5</ondown>
+      <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="500">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="20,20" center="384,288" time="500">WindowClose</animation>
+    </control>
+    <control>
+      <description>home BM Music</description>
+      <type>button</type>
+      <id>6</id>
+      <posX>736</posX>
+      <posY>262</posY>
+      <width>193</width>
+      <height>290</height>
+      <textureFocus>Basic_music_focus.png</textureFocus>
+      <textureNoFocus>Basic_music_nofocus.png</textureNoFocus>
+      <hyperlink>501</hyperlink>
+      <hover>hover_my music.png</hover>
+      <hoverX>435</hoverX>
+      <hoverY>350</hoverY>
+      <hoverWidth>483</hoverWidth>
+      <hoverHeight>382</hoverHeight>
+      <label>2</label>
+      <textcolor>00ffffff</textcolor>
+      <textcolorNoFocus>00ffffff</textcolorNoFocus>
+      <keepaspectratio>yes</keepaspectratio>
+      <onleft>5</onleft>
+      <onright>7</onright>
+      <onup>21</onup>
+      <ondown>6</ondown>
+      <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="500">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="20,20" center="384,288" time="500">WindowClose</animation>
+    </control>
+    <control>
+      <description>home BM TV</description>
+      <type>button</type>
+      <id>7</id>
+      <posX>942</posX>
+      <posY>250</posY>
+      <width>236</width>
+      <height>368</height>
+      <textureFocus>Basic_tv_focus.png</textureFocus>
+      <textureNoFocus>Basic_tv_nofocus.png</textureNoFocus>
+      <hyperlink>1</hyperlink>
+      <hover>hover_my tv.png</hover>
+      <hoverX>435</hoverX>
+      <hoverY>350</hoverY>
+      <hoverWidth>483</hoverWidth>
+      <hoverHeight>382</hoverHeight>
+      <label>605</label>
+      <textcolor>00ffffff</textcolor>
+      <textcolorNoFocus>00ffffff</textcolorNoFocus>
+      <onleft>6</onleft>
+      <onright>3</onright>
+      <onup>21</onup>
+      <ondown>7</ondown>
+      <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="500">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="20,20" center="384,288" time="500">WindowClose</animation>
+    </control>
+    <control>
+      <description>Date</description>
+      <type>label</type>
+      <id>200</id>
+      <posX>1054</posX>
+      <posY>87</posY>
+      <label>#date</label>
+      <align>right</align>
+      <font>font13</font>
+      <textcolor>ffa9d0f7</textcolor>
+      <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="500">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="20,20" center="384,288" time="500">WindowClose</animation>
+    </control>
+    <control>
+      <description>Time</description>
+      <type>label</type>
+      <id>201</id>
+      <posX>1075</posX>
+      <posY>87</posY>
+      <label>#time</label>
+      <align>left</align>
+      <font>font13</font>
+      <textcolor>ffffffff</textcolor>
+      <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="500">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="20,20" center="384,288" time="500">WindowClose</animation>
+    </control>
+    <control>
+      <type>image</type>
+      <id>1</id>
+      <posX>35</posX>
+      <posY>30</posY>
+      <texture>mediaportaltext.png</texture>
+      <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="500">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="20,20" center="384,288" time="500">WindowClose</animation>
+    </control>
+    <control>
+      <description>Mediaportaltext</description>
+      <type>button</type>
+      <id>44</id>
+      <posX>147</posX>
+      <posY>56</posY>
+      <width>62</width>
+      <height>26</height>
+      <textureFocus>Animations\Buttf.png</textureFocus>
+      <textureNoFocus>Animations\Buttnf.png</textureNoFocus>
+      <hyperlink>8888</hyperlink>
+      <onleft>7</onleft>
+      <onright>7</onright>
+      <onup>21</onup>
+      <ondown>7</ondown>
+      <visible>player.hasaudio</visible>
+      <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="500">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="20,20" center="384,288" time="500">WindowClose</animation>
+    </control>
+  </controls>
+</window>

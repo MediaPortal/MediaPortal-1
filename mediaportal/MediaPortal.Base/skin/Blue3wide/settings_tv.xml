@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>700</id>
+  <defaultcontrol>24</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:6014</define>
+  <define>#header.image:settings_logo.png</define>
+  <define>#header.hover:hover_my tv.png</define>
+  <controls>
+    <import>common.settings.xml</import>
+    <control>
+      <description>buttons</description>
+      <type>group</type>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="slide" time="150" start="800,0">WindowOpen</animation>
+      <animation effect="slide" time="250" end="800,0">WindowClose</animation>
+      <posX>99</posX>
+      <posY>188</posY>
+      <layout>GridLayout(2, 6, 52, 8, 1)</layout>
+      <control>
+        <description>MPEG-2 Video Codecs</description>
+        <type>button</type>
+        <id>24</id>
+        <label>6000</label>
+        <onup>17</onup>
+      </control>
+      <control>
+        <description>H.264 Video Codecs</description>
+        <type>button</type>
+        <id>35</id>
+        <label>6036</label>
+      </control>
+      <control>
+        <description>Audio Codecs</description>
+        <type>button</type>
+        <id>25</id>
+        <label>6001</label>
+      </control>
+      <control>
+        <description>LATM AAC Audio Codecs</description>
+        <type>button</type>
+        <id>36</id>
+        <label>6039</label>
+      </control>
+      <control>
+        <description>Audio Renderer</description>
+        <type>button</type>
+        <id>33</id>
+        <label>6002</label>
+      </control>
+      <control>
+        <description>De-interlacing</description>
+        <type>button</type>
+        <id>27</id>
+        <label>6003</label>
+      </control>
+      <control>
+        <description>Apect Ratio</description>
+        <type>button</type>
+        <id>28</id>
+        <label>6004</label>
+        <ondown>31</ondown>
+      </control>
+      <control>
+        <description>Recording options</description>
+        <type>button</type>
+        <id>31</id>
+        <label>6007</label>
+        <hyperlink>701</hyperlink>
+        <onup>28</onup>
+      </control>
+      <control>
+        <description>Automatically turn TV on</description>
+        <type>button</type>
+        <id>30</id>
+        <label>6006</label>
+      </control>
+      <control>
+        <description>Timeshift usage mode</description>
+        <type>button</type>
+        <id>26</id>
+        <label>777</label>
+      </control>
+      <control>
+        <description>Timeshift Buffer</description>
+        <type>button</type>
+        <id>29</id>
+        <label>6005</label>
+      </control>
+      <control>
+        <description>Channelsorting</description>
+        <type>button</type>
+        <id>32</id>
+        <label>6008</label>
+        <hyperlink>702</hyperlink>
+      </control>
+      <control>
+        <description>DVB Guide</description>
+        <type>button</type>
+        <id>34</id>
+        <label>6009</label>
+        <ondown>36</ondown>
+        <hyperlink>706</hyperlink>
+      </control>
+      <!-- last control needs ondown to itself, else it jumps to last button in first column -->
+      <control>
+        <description>XMLTV EPG Grabber</description>
+        <type>button</type>
+        <id>37</id>
+        <label>6010</label>
+        <hyperlink>707</hyperlink>
+        <ondown>24</ondown>
+      </control>
+    </control>
+  </controls>
+</window>

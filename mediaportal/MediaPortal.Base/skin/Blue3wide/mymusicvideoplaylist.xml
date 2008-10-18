@@ -1,0 +1,166 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>500</id>
+  <defaultcontrol>39</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:136</define>
+  <define>#header.image:logo_music videos.png</define>
+  <define>#header.hover:hover_musicvideo.png</define>
+  <controls>
+    <import>common.window.xml</import>
+    <control>
+      <description>group element</description>
+      <type>group</type>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="slide" time="150" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="250" end="0,-300">WindowClose</animation>
+      <posX>71</posX>
+      <posY>121</posY>
+      <layout>StackLayout</layout>
+      <control>
+        <description>my playlist button</description>
+        <type>button</type>
+        <id>39</id>
+        <label>983</label>
+        <onright>50</onright>
+      </control>
+      <control>
+        <description>Shuffle button</description>
+        <type>button</type>
+        <id>20</id>
+        <label>191</label>
+        <onright>50</onright>
+      </control>
+      <control>
+        <description>Save button</description>
+        <type>button</type>
+        <id>21</id>
+        <label>190</label>
+        <onright>50</onright>
+      </control>
+      <control>
+        <description>Clear button</description>
+        <type>button</type>
+        <id>22</id>
+        <label>192</label>
+        <onright>50</onright>
+      </control>
+      <control>
+        <description>Play button</description>
+        <type>button</type>
+        <id>23</id>
+        <label>208</label>
+        <onright>50</onright>
+      </control>
+      <control>
+        <description>Next button</description>
+        <type>button</type>
+        <id>24</id>
+        <label>209</label>
+        <onright>50</onright>
+      </control>
+      <control>
+        <description>Previous button</description>
+        <type>button</type>
+        <id>25</id>
+        <label>210</label>
+        <onright>50</onright>
+        <ondown>99</ondown>
+      </control>
+    </control>
+    <control>
+      <description>group element</description>
+      <type>group</type>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="slide" time="150" start="0,-300">WindowOpen</animation>
+      <animation effect="slide" time="250" end="800,0">WindowClose</animation>
+      <control>
+        <description>composite control consisting of a list control and a thumbnail panel</description>
+        <type>facadeview</type>
+        <id>50</id>
+        <control>
+          <description>Thumbnail Panel</description>
+          <type>thumbnailpanel</type>
+          <id>50</id>
+          <onleft>20</onleft>
+          <onright>50</onright>
+          <onup>20</onup>
+          <ondown>20</ondown>
+        </control>
+        <control>
+          <description>album view listcontrol</description>
+          <type>listcontrol</type>
+          <subtype>album</subtype>
+          <id>50</id>
+          <font>font13</font>
+          <font2>font13</font2>
+          <selectedColor>FFFF6600</selectedColor>
+          <textcolor>FFB2D4F5</textcolor>
+          <selectedColor2>FFFF6600</selectedColor2>
+          <textcolor2>FFB2D4F5</textcolor2>
+          <textXOff2>746</textXOff2>
+          <textYOff2>75</textYOff2>
+          <itemWidth>144</itemWidth>
+          <itemHeight>101</itemHeight>
+          <spaceBetweenItems>24</spaceBetweenItems>
+          <textureHeight>112</textureHeight>
+          <onleft>20</onleft>
+          <onright>50</onright>
+          <onup>20</onup>
+          <ondown>20</ondown>
+        </control>
+        <control>
+          <description>playlist control</description>
+          <type>playlistcontrol</type>
+          <id>50</id>
+          <!--
+          <onleft>52</onleft>
+          <onright>53</onright>
+          <onup>52</onup>
+          <ondown>52</ondown> -->
+          <textcolor>FFFFFFFF</textcolor>
+        </control>
+      </control>
+    </control>
+    <!-- not sure whether this is still needed
+    <control>
+      <type>image</type>
+      <id>1</id>
+      <posX>60</posX>
+      <posY>20</posY>
+      <texture>-</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Number of Files Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>260</posX>
+      <posY>530</posY>
+      <label>#itemcount</label>
+      <align>left</align>
+      <textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Selected item Label</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>660</posX>
+      <posY>70</posY>
+      <width>400</width>
+      <label>#selecteditem</label>
+      <font>font13</font>
+      <align>right</align>
+      <textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    -->
+  </controls>
+</window>

@@ -1,0 +1,302 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>708</id>
+  <defaultcontrol>19</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:6025</define>
+  <define>#header.image:settings_logo.png</define>
+  <define>#header.hover:hover_settings.png</define>
+  <controls>
+    <import>common.settings.xml</import>
+    <control>
+      <description>buttons</description>
+      <type>group</type>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="slide" time="150" start="800,0">WindowOpen</animation>
+      <animation effect="slide" time="250" end="800,0">WindowClose</animation>
+      <posX>99</posX>
+      <posY>188</posY>
+      <layout>StackLayout</layout>
+      <control>
+        <description>add button</description>
+        <type>button</type>
+        <id>19</id>
+        <label>200039</label>
+        <onup>99</onup>
+        <onright>2</onright>
+      </control>
+      <control>
+        <description>remove button</description>
+        <type>button</type>
+        <id>20</id>
+        <label>200040</label>
+        <onright>3</onright>
+      </control>
+      <control>
+        <description>reset button</description>
+        <type>button</type>
+        <id>18</id>
+        <label>886</label>
+        <ondown>99</ondown>
+        <onright>5</onright>
+      </control>
+    </control>
+    <control>
+      <description>skip steps seconds</description>
+      <type>group</type>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="slide" time="150" start="800,0">WindowOpen</animation>
+      <animation effect="slide" time="250" end="800,0">WindowClose</animation>
+      <posX>512</posX>
+      <posY>187</posY>
+      <layout>StackLayout(25)</layout>
+      <control>
+        <type>label</type>
+        <description>skip steps seconds</description>
+        <id>1</id>
+        <label>9997</label>
+        <font>font13</font>
+      </control>
+      <control>
+        <description>Step 1</description>
+        <type>checkmark</type>
+        <id>2</id>
+        <label>5</label>
+        <align>right</align>
+        <onleft>19</onleft>
+        <onright>6</onright>
+        <onup>5</onup>
+        <ondown>3</ondown>
+      </control>
+      <control>
+        <description>Step 2</description>
+        <type>checkmark</type>
+        <id>3</id>
+        <label>15</label>
+        <align>right</align>
+        <onleft>20</onleft>
+        <onright>7</onright>
+        <onup>2</onup>
+        <ondown>4</ondown>
+      </control>
+      <control>
+        <description>Step 3</description>
+        <type>checkmark</type>
+        <id>4</id>
+        <label>30</label>
+        <align>right</align>
+        <onleft>20</onleft>
+        <onright>8</onright>
+        <onup>3</onup>
+        <ondown>5</ondown>
+      </control>
+      <control>
+        <description>Step 4</description>
+        <type>checkmark</type>
+        <id>5</id>
+        <label>45</label>
+        <align>right</align>
+        <onleft>18</onleft>
+        <onright>9</onright>
+        <onup>4</onup>
+        <ondown>2</ondown>
+      </control>
+    </control>
+    <control>
+      <description>skip steps minutes</description>
+      <type>group</type>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="slide" time="150" start="800,0">WindowOpen</animation>
+      <animation effect="slide" time="250" end="800,0">WindowClose</animation>
+      <posX>768</posX>
+      <posY>187</posY>
+      <layout>StackLayout(25)</layout>
+      <control>
+        <description>skip steps minutes</description>
+        <type>label</type>
+        <id>1</id>
+        <label>9998</label>
+      </control>
+      <control>
+        <description>Step 5</description>
+        <type>checkmark</type>
+        <id>6</id>
+        <label>1</label>
+        <align>right</align>
+        <onleft>2</onleft>
+        <onright>14</onright>
+        <onup>13</onup>
+        <ondown>7</ondown>
+      </control>
+      <control>
+        <description>Step 6</description>
+        <type>checkmark</type>
+        <id>7</id>
+        <label>3</label>
+        <align>right</align>
+        <onleft>3</onleft>
+        <onright>15</onright>
+        <onup>6</onup>
+        <ondown>8</ondown>
+      </control>
+      <control>
+        <description>Step 7</description>
+        <type>checkmark</type>
+        <id>8</id>
+        <label>5</label>
+        <align>right</align>
+        <onleft>4</onleft>
+        <onright>16</onright>
+        <onup>7</onup>
+        <ondown>9</ondown>
+      </control>
+      <control>
+        <description>Step 8</description>
+        <type>checkmark</type>
+        <id>9</id>
+        <label>7</label>
+        <align>right</align>
+        <onleft>5</onleft>
+        <onright>17</onright>
+        <onup>8</onup>
+        <ondown>10</ondown>
+      </control>
+      <control>
+        <description>Step 9</description>
+        <type>checkmark</type>
+        <id>10</id>
+        <label>10</label>
+        <align>right</align>
+        <onleft>5</onleft>
+        <onright>17</onright>
+        <onup>9</onup>
+        <ondown>11</ondown>
+      </control>
+      <control>
+        <description>Step 10</description>
+        <type>checkmark</type>
+        <id>11</id>
+        <label>15</label>
+        <align>right</align>
+        <onleft>5</onleft>
+        <onright>17</onright>
+        <onup>10</onup>
+        <ondown>12</ondown>
+      </control>
+      <control>
+        <description>Step 11</description>
+        <type>checkmark</type>
+        <id>12</id>
+        <label>30</label>
+        <align>right</align>
+        <onleft>5</onleft>
+        <onright>17</onright>
+        <onup>11</onup>
+        <ondown>13</ondown>
+      </control>
+      <control>
+        <description>Step 12</description>
+        <type>checkmark</type>
+        <id>13</id>
+        <label>45</label>
+        <align>right</align>
+        <onleft>5</onleft>
+        <onright>17</onright>
+        <onup>12</onup>
+        <ondown>6</ondown>
+      </control>
+    </control>
+    <control>
+      <description>skip steps hours</description>
+      <type>group</type>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="slide" time="150" start="800,0">WindowOpen</animation>
+      <animation effect="slide" time="250" end="800,0">WindowClose</animation>
+      <posX>1024</posX>
+      <posY>187</posY>
+      <layout>StackLayout(25)</layout>
+      <control>
+        <description>skip steps hours</description>
+        <type>label</type>
+        <id>1</id>
+        <label>9999</label>
+      </control>
+      <control>
+        <description>Step 13</description>
+        <type>checkmark</type>
+        <id>14</id>
+        <label>1</label>
+        <align>right</align>
+        <onleft>6</onleft>
+        <onright>14</onright>
+        <onup>17</onup>
+        <ondown>15</ondown>
+      </control>
+      <control>
+        <description>Step 14</description>
+        <type>checkmark</type>
+        <id>15</id>
+        <label> 1.5</label>
+        <align>right</align>
+        <onleft>7</onleft>
+        <onright>15</onright>
+        <onup>14</onup>
+        <ondown>16</ondown>
+      </control>
+      <control>
+        <description>Step 15</description>
+        <type>checkmark</type>
+        <id>16</id>
+        <label>2</label>
+        <align>right</align>
+        <onleft>8</onleft>
+        <onright>16</onright>
+        <onup>15</onup>
+        <ondown>17</ondown>
+      </control>
+      <control>
+        <description>Step 16</description>
+        <type>checkmark</type>
+        <id>17</id>
+        <label>3</label>
+        <align>right</align>
+        <onleft>9</onleft>
+        <onright>17</onright>
+        <onup>16</onup>
+        <ondown>14</ondown>
+      </control>
+    </control>
+    <control>
+      <description>skip steps labels</description>
+      <type>group</type>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="slide" time="150" start="800,0">WindowOpen</animation>
+      <animation effect="slide" time="250" end="800,0">WindowClose</animation>
+      <dimColor>0xFFFFFFFF</dimColor>
+      <control>
+        <description>Current config static</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>512</posX>
+        <posY>537</posY>
+        <label>143</label>
+        <font>font18</font>
+      </control>
+      <control>
+        <description>Current config dynamic</description>
+        <type>label</type>
+        <id>21</id>
+        <posX>512</posX>
+        <posY>587</posY>
+        <label>15,30,60,300</label>
+        <font>font12</font>
+      </control>
+    </control>
+  </controls>
+</window>

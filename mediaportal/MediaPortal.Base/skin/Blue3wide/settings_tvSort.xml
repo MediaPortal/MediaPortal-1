@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>702</id>
+  <defaultcontrol>24</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <controls>
+    <control>
+      <type>image</type>
+      <description>BG</description>
+      <id>1</id>
+    </control>
+    <control>
+      <type>image</type>
+      <id>1</id>
+      <posX>85</posX>
+      <posY>487</posY>
+      <texture>hover_my tv.png</texture>
+    </control>
+    <control>
+      <type>image</type>
+      <description>MP Logo</description>
+      <id>1</id>
+      <posX>56</posX>
+      <posY>30</posY>
+      <texture>mplogo.png</texture>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Setup TV</description>
+      <id>1</id>
+      <posX>56</posX>
+      <posY>120</posY>
+      <label>6008</label>
+      <font>font18</font>
+    </control>
+    <control>
+      <type>button</type>
+      <id>24</id>
+      <posX>99</posX>
+      <posY>188</posY>
+      <label>971</label>
+      <ondown>25</ondown>
+      <onup>24</onup>
+      <onleft>10</onleft>
+      <onright>10</onright>
+    </control>
+    <control>
+      <description>tvchannels listcontrol</description>
+      <!--type>updownlistcontrol</type-->
+      <type>playlistcontrol</type>
+      <id>10</id>
+      <width>718</width>
+      <height>587</height>
+      <textXOff>17</textXOff>
+      <textYOff>2</textYOff>
+      <textXOff2>746</textXOff2>
+      <textYOff2>36</textYOff2>
+      <textXOff3>177</textXOff3>
+      <textYOff3>36</textYOff3>
+      <IconXOff>21</IconXOff>
+      <PinIconXOff>45</PinIconXOff>
+      <PinIconYOff>19</PinIconYOff>
+      <spinPosX>1077</spinPosX>
+      <spinPosY>647</spinPosY>
+      <itemWidth>62</itemWidth>
+      <itemHeight>43</itemHeight>
+      <upBtnWidth>62</upBtnWidth>
+      <downBtnWidth>62</downBtnWidth>
+      <deleteBtnWidth>88</deleteBtnWidth>
+      <upBtnHeight>62</upBtnHeight>
+      <downBtnHeight>62</downBtnHeight>
+      <deleteBtnHeight>62</deleteBtnHeight>
+      <upBtnXOffset>581</upBtnXOffset>
+      <downBtnXOffset>643</downBtnXOffset>
+      <textureFocus>recording_background_focus.png</textureFocus>
+      <textureNoFocus>recording_background_nofocus.png</textureNoFocus>
+      <spaceBetweenItems>8</spaceBetweenItems>
+      <textureHeight>62</textureHeight>
+      <keepaspectratio>no</keepaspectratio>
+      <font2>font10</font2>
+      <font3>font10</font3>
+      <onleft>24</onleft>
+      <onright>24</onright>
+      <onup>2</onup>
+      <ondown>2</ondown>
+    </control>
+  </controls>
+</window>

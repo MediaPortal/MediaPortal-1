@@ -1,0 +1,194 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>5900</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:5900</define>
+  <define>#header.image:trailers_logo.png</define>
+  <define>#header.hover:hover_my trailers.png</define>
+  <controls>
+    <import>common.window.xml</import>
+    <control>
+      <type>togglebutton</type>
+      <description>Plot</description>
+      <id>5</id>
+      <posX>106</posX>
+      <posY>165</posY>
+      <onleft>4</onleft>
+      <onright>4</onright>
+      <onup>3</onup>
+      <ondown>6</ondown>
+      <label>207</label>
+    </control>
+    <control>
+      <type>togglebutton</type>
+      <description>Cast</description>
+      <id>6</id>
+      <posX>106</posX>
+      <posY>208</posY>
+      <onleft>4</onleft>
+      <onright>4</onright>
+      <onup>5</onup>
+      <ondown>2</ondown>
+      <label>206</label>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <description>genre value</description>
+      <id>51</id>
+      <posX>560</posX>
+      <posY>350</posY>
+      <label>#genre</label>
+      <disabledcolor>ff808080</disabledcolor>
+    </control>
+    <control>
+      <type>textboxscrollup</type>
+      <description>Cast value</description>
+      <id>57</id>
+      <posX>444</posX>
+      <posY>412</posY>
+      <width>782</width>
+      <height>240</height>
+      <colordiffuse>ffffffff</colordiffuse>
+      <font>font13</font>
+      <label>#cast</label>
+      <textcolor>FFFFFFFF</textcolor>
+    </control>
+    <control>
+      <type>label</type>
+      <description>cast txt</description>
+      <id>56</id>
+      <posX>444</posX>
+      <posY>381</posY>
+      <label>Cast:</label>
+      <textcolor>ffb2d4f5</textcolor>
+    </control>
+    <control>
+      <type>label</type>
+      <description>year value</description>
+      <id>55</id>
+      <posX>675</posX>
+      <posY>318</posY>
+      <label>#year</label>
+      <textcolor>ffffffff</textcolor>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Runtime txt</description>
+      <id>54</id>
+      <posX>444</posX>
+      <posY>318</posY>
+      <label>172</label>
+      <textcolor>ffb2d4f5</textcolor>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Runtime value</description>
+      <id>53</id>
+      <posX>577</posX>
+      <posY>287</posY>
+      <label>#runtime</label>
+      <textcolor>ffffffff</textcolor>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Runtime txt</description>
+      <id>52</id>
+      <posX>444</posX>
+      <posY>287</posY>
+      <label>299</label>
+      <textcolor>ffb2d4f5</textcolor>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Genre txt</description>
+      <id>50</id>
+      <posX>444</posX>
+      <posY>350</posY>
+      <label>174</label>
+      <textcolor>ffb2d4f5</textcolor>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Plot txt</description>
+      <id>58</id>
+      <posX>444</posX>
+      <posY>381</posY>
+      <visible>no</visible>
+      <label>Plot:</label>
+      <textcolor>ffb2d4f5</textcolor>
+    </control>
+    <control>
+      <type>selectbutton</type>
+      <description>Letter button</description>
+      <id>3</id>
+      <posX>71</posX>
+      <posY>121</posY>
+      <onleft>4</onleft>
+      <onright>4</onright>
+      <onup>17</onup>
+      <ondown>4</ondown>
+      <subitems>-</subitems>
+      <label>872</label>
+      <textureFocus>menu_list_nofocus.png</textureFocus>
+    </control>
+    <control>
+      <type>textboxscrollup</type>
+      <description>Plot value</description>
+      <id>59</id>
+      <posX>444</posX>
+      <posY>410</posY>
+      <width>782</width>
+      <height>250</height>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>no</visible>
+      <font>font13</font>
+      <label>#plot</label>
+      <textcolor>FFFFFFFF</textcolor>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <description>Movie Title value</description>
+      <id>1</id>
+      <posX>455</posX>
+      <posY>55</posY>
+      <label>#title</label>
+      <width>711</width>
+      <font>font18</font>
+      <disabledcolor>ff808080</disabledcolor>
+    </control>
+    <control>
+      <type>listcontrol</type>
+      <description>listview</description>
+      <id>4</id>
+      <posX>444</posX>
+      <width>782</width>
+      <height>540</height>
+      <onleft>3</onleft>
+      <onright>3</onright>
+      <onup>3</onup>
+      <ondown>3</ondown>
+      <font>font13</font>
+    </control>
+    <control>
+      <type>image</type>
+      <description>movie border</description>
+      <id>0</id>
+      <posX>170</posX>
+      <posY>260</posY>
+      <width>213</width>
+      <height>230</height>
+      <texture>playback_background.png</texture>
+    </control>
+    <control>
+      <type>image</type>
+      <description>movie poster</description>
+      <id>24</id>
+      <posX>184</posX>
+      <posY>277</posY>
+      <width>179</width>
+      <height>187</height>
+    </control>
+  </controls>
+</window>

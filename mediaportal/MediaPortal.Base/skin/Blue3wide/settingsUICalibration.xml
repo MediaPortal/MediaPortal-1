@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>10</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <define>#header.label:213</define>
+  <define>#header.image:settings_logo.png</define>
+  <define>#header.hover:hover_settings.png</define>
+  <controls>
+    <import>common.settings.xml</import>
+    <control>
+      <description>calibration image</description>
+      <type>image</type>
+      <id>1</id>
+      <width>1280</width>
+      <height>720</height>
+      <texture>settingsUICalibration.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>rectangle image</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>32</posX>
+      <posY>337</posY>
+      <texture>calibration_bar.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>coordinates label</description>
+      <type>label</type>
+      <id>2</id>
+      <posX>640</posX>
+      <posY>368</posY>
+      <label>5</label>
+      <font>font13</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+  </controls>
+</window>

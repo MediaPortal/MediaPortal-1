@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>629</id>
+  <defaultcontrol>24</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <controls>
+    <control>
+      <type>image</type>
+      <description>BG</description>
+      <id>1</id>
+    </control>
+    <control>
+      <type>button</type>
+      <description>Back</description>
+      <id>25</id>
+      <posX>995</posX>
+      <posY>630</posY>
+      <onleft>23</onleft>
+      <onright>25</onright>
+      <onup>24</onup>
+      <ondown>25</ondown>
+      <hyperlink>616</hyperlink>
+      <label>&lt;Back</label>
+      <width>170</width>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Welcome to MediaPortal. </description>
+      <id>1</id>
+      <posX>56</posX>
+      <posY>190</posY>
+      <label>Please select your country or region. </label>
+      <font>font12</font>
+    </control>
+    <control>
+      <type>image</type>
+      <id>1</id>
+      <posX>85</posX>
+      <posY>487</posY>
+      <width>286</width>
+      <height>197</height>
+      <texture>hover_my tv.png</texture>
+    </control>
+    <control>
+      <type>image</type>
+      <description>MP Logo</description>
+      <id>1</id>
+      <posX>56</posX>
+      <posY>30</posY>
+      <texture>mplogo.png</texture>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Setup Analog</description>
+      <id>1</id>
+      <posX>56</posX>
+      <posY>150</posY>
+      <label>TV Setup - Analog TV</label>
+      <font>font18</font>
+    </control>
+    <control>
+      <type>listcontrol</type>
+      <description>countryList</description>
+      <id>24</id>
+      <posX>56</posX>
+      <posY>290</posY>
+      <width>1052</width>
+      <height>275</height>
+      <onleft>23</onleft>
+      <onright>23</onright>
+      <onup>23</onup>
+      <ondown>23</ondown>
+      <font>font13</font>
+      <spinPosX>977</spinPosX>
+      <spinPosY>500</spinPosY>
+    </control>
+  </controls>
+</window>

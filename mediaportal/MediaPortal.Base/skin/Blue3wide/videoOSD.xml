@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>2901</id>
+  <defaultcontrol>213</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <define>#play.progressbar.percentage:#percentage</define>
+  <define>#play.progressbar.currentplaytime:#currentplaytime</define>
+  <define>#play.progressbar.currentremaining:#currentremaining</define>
+  <define>#play.osd.background:osd_bg_video.png</define>
+  <controls>
+    <import>common.play.osd.xml</import>
+    <control>
+      <description>TV Logo</description>
+      <type>image</type>
+      <id>102</id>
+      <posX>71</posX>
+      <posY>437</posY>
+      <width>88</width>
+      <height>85</height>
+      <texture>#Play.Current.Thumb</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>Movie Name</description>
+      <id>36</id>
+      <type>fadelabel</type>
+      <width>515</width>
+      <height>37</height>
+      <posX>195</posX>
+      <posY>437</posY>
+      <font>font13</font>
+      <label>#Play.Current.Title</label>
+      <textcolor>FFB2D4F5</textcolor>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>Plot</description>
+      <type>textboxscrollup</type>
+      <posX>195</posX>
+      <posY>468</posY>
+      <width>515</width>
+      <height>212</height>
+      <label>#Play.Current.Plot</label>
+      <font>font13</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+  </controls>
+</window>
