@@ -75,6 +75,10 @@ namespace MediaPortal
 
     #endregion
 
+    protected bool _resizeOngoing = false; // this is true only when user is resizing the form
+    protected bool _ignoreNextResizeEvent = false; // True if next event should be ignored (min/max happened)
+    protected FormWindowState _windowState = FormWindowState.Normal;
+    protected Size _clientSize = new Size(0,0); 
     protected bool _minimizeOnStartup = false;  // Minimize to tray on startup and on gui exit
     protected bool _minimizeOnGuiExit = false;
     protected bool _shuttingDown = false;
@@ -2239,10 +2243,52 @@ namespace MediaPortal
     }
 
     /// <summary>
-    /// Handle resize events
+    /// Handle OnResizeEnd
+    /// </summary>
+    protected override void OnResizeEnd(EventArgs e)
+    {
+      if (GUIGraphicsContext.IsDirectX9ExUsed())
+      {
+        _resizeOngoing = false;
+        if (_clientSize != ClientSize)
+        {
+          SwitchFullScreenOrWindowed(false);
+          OnDeviceReset(null, null);
+        }
+      }
+      base.OnResizeEnd(e);
+    }
+
+    /// <summary>
+    /// Handle OnResizeBegin
+    /// </summary>
+    protected override void OnResizeBegin(EventArgs e)
+    {
+      if (GUIGraphicsContext.IsDirectX9ExUsed())
+      {
+        _resizeOngoing = true;
+        _clientSize = ClientSize;
+      }
+      base.OnResizeBegin(e);
+    }
+
+    /// <summary>
+    /// Handle OnResize
     /// </summary>
     protected override void OnResize(EventArgs e)
     {
+      if (GUIGraphicsContext.IsDirectX9ExUsed())
+      {
+        if (_ignoreNextResizeEvent)
+        {
+          _ignoreNextResizeEvent = false;
+          return;
+        }
+        if (_resizeOngoing)
+        {
+          return;
+        }
+      }
       try
       {
         if (_fromTray)
@@ -2306,6 +2352,16 @@ namespace MediaPortal
       if (isHandlingSizeChanges)
       {
         //storedLocation = this.Location;
+      }
+      if (GUIGraphicsContext.IsDirectX9ExUsed())
+      {
+        if (WindowState != _windowState)
+        {
+          _windowState = WindowState;
+          _ignoreNextResizeEvent = true;
+          SwitchFullScreenOrWindowed(false);
+          OnDeviceReset(null, null);
+        }
       }
       base.OnMove(e);
     }
