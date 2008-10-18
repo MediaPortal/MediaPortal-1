@@ -970,9 +970,9 @@
     <String id="1512">Vorherigen Kanal zeigen?</String>
     <String id="1513">TV wurde für eine geplante Aufnahme gestoppt</String>
     <String id="1514">TV wurde von einem Administrator gestoppt</String>
-    <String id="1515">TV wurde vom TV-Service gestoppt</String>
+    <String id="1515">TV wurde vom TV-Server gestoppt</String>
     <String id="1516">TV wurde aus unbekannten Gründen gestoppt</String>
-    <String id="1517">TV wurde von anderem Benutzer gestoppt</String>
+    <String id="1517">TV wurde von einem anderen User gestoppt</String>
     <String id="1950" prefix="Mein ">Status</String>
     <String id="1951">Festplatte</String>
     <String id="1952">Lüfter</String>
@@ -1170,6 +1170,7 @@
     <String id="2223">Papierkorb</String>
     <String id="2224">Verzeichnis existiert bereits!</String>
     <String id="2225">Verzeichnis angelegt!</String>
+    <String id="2345" prefix="Mein ">Shoutcast</String>
     <String id="2500">Kein Suchbegriff eingegeben!</String>
     <String id="2501">Bitte einen Suchbegriff eingeben!</String>
     <String id="2502">Lokalisierte Wikipedia wählen:</String>
@@ -1655,8 +1656,8 @@
     <String id="100762" prefix="Mein ">Radio-Programm</String>
     <String id="100770" prefix="Mein ">Datei-Manager</String>
     <String id="101000">Tastatur</String>
-    <String id="101002">Bildschirm-Tastatur</String>
     <String id="102000">Auswahldialog</String>
+    <String id="101002">Bildschirmtastatur</String>
     <String id="102001" prefix="Meine ">Musik/Info</String>
     <String id="102002">Dialog Ok</String>
     <String id="102003" prefix="Meine ">Filme/Info</String>
@@ -1673,6 +1674,7 @@
     <String id="102014">Bildinformationen</String>
     <String id="102015">Mini Menü</String>
     <String id="102016">Benachrichtigung</String>
+    <String id="102345" prefix="Mein ">Shoutcast</String>
     <String id="102600" prefix="Mein ">Wetter</String>
     <String id="102700" prefix="Meine ">Nachrichten</String>
     <String id="102900">Bildschirm-Schoner</String>
@@ -1692,6 +1694,38 @@
     <String id="107777" prefix="Mein ">Su-ji wa doku</String>
     <String id="107890" prefix="Mein ">Last.fm Radio</String>
     <String id="108888">Musik-Menü</String>
+    <String id="127050">Yahoo Music Videos</String>
+    <String id="127051">Ansicht</String>
+    <String id="127052">Category : Genre</String>
+    <String id="127053">Category : Ära</String>
+    <String id="127054">Category : Thema</String>
+    <String id="127055">Beliebteste Videos</String>
+    <String id="127056">zuletzt hinzugefügte Videos</String>
+    <String id="127057">Favoriten</String>
+    <String id="127058">Video Kanäle</String>
+    <String id="127070">Video suchen</String>
+    <String id="127071">Wiedergabe deaktiviert</String>
+    <String id="127072">Alle abspielen</String>
+    <String id="127073">Optionen</String>
+    <String id="127074">Anbieter festlegen</String>
+    <String id="127075">Info</String>
+    <String id="127076">Ähnliche Videos</String>
+    <String id="127077">Kategorie</String>
+    <String id="127078">Abspielen</String>
+    <String id="127079">Künstler suchen</String>
+    <String id="127080">suche alle Videos von diesem Künstler</String>
+    <String id="127081">Playlist</String>
+    <String id="127082">Zur Playlist hinzufügen</String>
+    <String id="127083">Aktuell spielt</String>
+    <String id="127084">Ähnliche Künstler</String>
+    <String id="127085">Ähnliche Videos</String>
+    <String id="127086">Es wurde nichts gefunden !</String>
+    <String id="127087">Meinten sie</String>
+    <String id="127089">Zu Favoriten hinzufügen</String>
+    <String id="127090">Land</String>
+    <String id="127091">Alle anzeigen</String>
+    <String id="127092">Nur abspielbare Videos anzeigen</String>
+    <String id="127093">Von Favoriten löschen</String>
     <String id="200000">Bitte einen EPG-Grabber auswählen. Hinweis: Ist ihr Land nicht aufgeführt,</String>
     <String id="200001">dann müssen sie den Programmführer manuell einrichten!</String>
     <String id="200002">Sie können jetzt EPG-Kanäle ihren TV-Kanälen zuordnen</String>
@@ -1745,12 +1779,19 @@
     <String id="200051">Videodatei ist ungültig</String>
     <String id="200052">Laufende Aufnahmen</String>
     <String id="200053">Keine laufenden Aufnahmen</String>
-    <String id="200054">Die Aufnahme konnte nicht gelöscht werden</String>
-    <String id="200055">Die TV-Wiedergabe wird ggf. unterbrochen</String>
-	<String id="200059">Dual Mono Ton</String>
+    <String id="200054">Aufnahme konnte nicht gelöscht werden.</String>
+    <String id="200055">Live TV ist vermutlich gestört.</String>
+	<String id="200059">Audio Dual Mono Mode</String>
 	<String id="200060">Stereo</String>
-	<String id="200061">Den linken Kanal verwenden</String>
-	<String id="200062">Den rechten Kanal verwenden</String>
+	<String id="200061">Linker Kanal auf beide</String>
+	<String id="200062">Rechter Kanal auf beide</String>
 	<String id="200063">Beide Kanäle mischen</String>
+    <String id="107986">My Filme</String>
+    <String id="107987">Filme</String>
+    <String id="1079871">Update</String>
+    <String id="1079872">Erstes</String>
+    <String id="1079873">Letzes</String>
+    <String id="1079874">Aktuelles Bild als Fanart verwenden</String>
+    <String id="1079875">Aktuelles Bild als Standart verwenden</String>
   </Section>
 </Language>

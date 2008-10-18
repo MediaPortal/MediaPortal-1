@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Language name="English" characters="255">
   <Section name="unmapped">
     <String id="0" prefix="My ">Programs</String>
@@ -892,6 +892,7 @@
     <String id="1056">(unavailable)</String>
     <String id="1061">Removable</String>
     <String id="1062">Object</String>
+    <String id="1063">Titel</String>
     <String id="1064">Bookmarks</String>
     <String id="1065">Jump to</String>
     <String id="1066">MP4</String>
@@ -967,7 +968,7 @@
     <String id="1509">No tuning details for the channel</String>
     <String id="1510">Connection to TV service lost</String>
     <String id="1511">No active streams</String>
-    <String id="1512">Tune previous ch.?</String>        
+    <String id="1512">Tune previous ch.?</String>
     <String id="1513">Timeshifting stopped due to a scheduled\rrecording</String>
     <String id="1514">Timeshifting stopped by an\radministrator</String>
     <String id="1515">Timeshifting stopped by the\rTV-server</String>
@@ -1170,6 +1171,7 @@
     <String id="2223">Rubbish Bin</String>
     <String id="2224">Folder exists!</String>
     <String id="2225">Folder created</String>
+    <String id="2345" prefix="My ">Shoutcast</String>
     <String id="2500">No search term entered!</String>
     <String id="2501">Please enter a valid search term!</String>
     <String id="2502">Select your local Wikipedia:</String>
@@ -1673,6 +1675,7 @@
     <String id="102014">Picture info.</String>
     <String id="102015">Mini menu</String>
     <String id="102016">Notification</String>
+    <String id="102345" prefix="My ">Shoutcast</String>
     <String id="102600" prefix="My ">Weather</String>
     <String id="102700" prefix="My ">News</String>
     <String id="102900">Screensaver</String>
@@ -1692,6 +1695,38 @@
     <String id="107777" prefix="My ">Sudoku</String>
     <String id="107890" prefix="My ">Last.fm radio</String>
     <String id="108888">Music menu</String>
+    <String id="127050">Yahoo Music Videos</String>
+    <String id="127051">Views</String>
+    <String id="127052">Category : Genre</String>
+    <String id="127053">Category : Era</String>
+    <String id="127054">Category : Theme</String>
+    <String id="127055">Most Popular Videos</String>
+    <String id="127056">Recently Added Videos</String>
+    <String id="127057">Favorite Videos</String>
+    <String id="127058">Video Stations</String>
+    <String id="127070">Search video</String>
+    <String id="127071">Playback disabled for this item</String>
+    <String id="127072">Play all</String>
+    <String id="127073">Options</String>
+    <String id="127074">Provider localization</String>
+    <String id="127075">Info</String>
+    <String id="127076">Similar videos</String>
+    <String id="127077">Category</String>
+    <String id="127078">Play</String>
+    <String id="127079">Search artist</String>
+    <String id="127080">All videos from this artist</String>
+    <String id="127081">Playlist</String>
+    <String id="127082">Add to playlist</String>
+    <String id="127083">Now playing</String>
+    <String id="127084">Similar artists</String>
+    <String id="127085">Similar videos</String>
+    <String id="127086">No item was found !</String>
+    <String id="127087">Did you mean</String>
+    <String id="127089">Add to favorites</String>
+    <String id="127090">Contry</String>
+    <String id="127091">Show all items</String>
+    <String id="127092">Show playeble items only</String>
+    <String id="127093">Remove from favorites</String>
     <String id="200000">Please select your EPG grabber. Note if your country is</String>
     <String id="200001">not listed then you will need to supply the EPG manually</String>
     <String id="200002">You can now map the EPG channels to your TV channels</String>
@@ -1741,16 +1776,23 @@
     <String id="200047">Create thumbnails (incl. subfolders)</String>
     <String id="200048">Re-create all thumbnails</String>
     <String id="200049">Only watched recording for this show</String>
-    <String id="200050">This will delete your recordings from harddisc</String>		        
+    <String id="200050">This will delete your recordings from harddisc</String>
     <String id="200051">Delete this episode?</String>
     <String id="200052">Active recordings</String>
-    <String id="200053">No active recordings</String>    
+    <String id="200053">No active recordings</String>
     <String id="200054">Could not delete TV recording.</String>
     <String id="200055">Live TV viewing might be disrupted.</String>
-	<String id="200059">Audio Dual Mono Mode</String>
-	<String id="200060">Stereo</String>
-	<String id="200061">Left channel to the left and right speakers</String>
-	<String id="200062">Right channel to the left and right speakers</String>
-	<String id="200063">Mix both</String>	
+    <String id="200059">Audio Dual Mono Mode</String>
+    <String id="200060">Stereo</String>
+    <String id="200061">Left channel to the left and right speakers</String>
+    <String id="200062">Right channel to the left and right speakers</String>
+    <String id="200063">Mix both</String>
+    <String id="107986">My Films</String>
+    <String id="107987">Films</String>
+    <String id="1079871">Update</String>
+    <String id="1079872">First</String>
+    <String id="1079873">Last</String>
+    <String id="1079874">Activate current picture as Fanart</String>
+    <String id="1079875">Activate current Picture as default</String>
   </Section>
 </Language>
