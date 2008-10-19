@@ -118,6 +118,9 @@ namespace SetupTv.Sections
         {
           switch (result)
           {
+            case TvResult.NoSignalDetected:
+              MessageBox.Show(this, "No signal");
+              break;
             case TvResult.CardIsDisabled:
               MessageBox.Show(this, "Card is not enabled");
               break;
