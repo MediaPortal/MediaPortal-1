@@ -133,7 +133,7 @@
     <value>Oui - Je vais utiliser MediaPortal pour regarder de la TV HD</value>
   </data>
   <data name="WatchHDTv_no" xml:space="preserve">
-    <value>Non - Je vais utiliser MediaPortal pour regarder de la TV HD</value>
+    <value>Non - Je ne vais pas utiliser MediaPortal pour regarder de la TV HD</value>
   </data>
   <data name="WatchHDTv_maybe" xml:space="preserve">
     <value>Je ne sais pas ce qu'est la TV HD</value>
