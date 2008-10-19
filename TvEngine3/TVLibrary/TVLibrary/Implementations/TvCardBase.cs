@@ -408,7 +408,7 @@ namespace TvLibrary.Implementations
     {
       get
       {
-        UpdateSignalQuality();
+        UpdateSignalQuality(true);
         return _tunerLocked;
       }
     }
@@ -555,6 +555,11 @@ namespace TvLibrary.Implementations
     {
     }
 
+    public virtual bool LockedInOnSignal()
+    {
+      return false;
+    }
+
     #endregion
 
     #region abstract methods
@@ -563,6 +568,12 @@ namespace TvLibrary.Implementations
     /// A derrived class should update the signal informations of the tv cards
     /// </summary>
     protected abstract void UpdateSignalQuality();
+
+    /// <summary>
+    /// A derrived class should update the signal informations of the tv cards
+    /// </summary>
+    protected abstract void UpdateSignalQuality(bool force);
+
     /// <summary>
     /// Stops the current graph
     /// </summary>

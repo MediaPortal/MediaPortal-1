@@ -146,6 +146,14 @@ namespace TvService
           }
 
           ITvSubChannel result = _cardHandler.Card.Tune(user.SubChannel, channel);
+
+          bool isLocked = _cardHandler.Card.IsTunerLocked;
+          Log.Debug("card: Tuner locked: {0}", isLocked);
+
+          Log.Info("**************************************************");
+          Log.Info("***** SIGNAL LEVEL: {0}, SIGNAL QUALITY: {1} *****", _cardHandler.Card.SignalLevel, _cardHandler.Card.SignalQuality);
+          Log.Info("**************************************************");
+
           if (result != null)
           {
             Log.Debug("card: tuned user: {0} subchannel: {1}", user.Name, result.SubChannelId);
@@ -153,21 +161,20 @@ namespace TvService
             user.IdChannel = idChannel;
             context.Add(user);
           }
-
-          Log.Debug("card: Tuner locked: {0}", _cardHandler.Card.IsTunerLocked);
-
-          Log.Info("**************************************************");
-          Log.Info("***** SIGNAL LEVEL: {0}, SIGNAL QUALITY: {1} *****", _cardHandler.Card.SignalLevel, _cardHandler.Card.SignalQuality);
-          Log.Info("**************************************************");
-
-          if (result == null)
+          else if (result == null)
           {
+            _cardHandler.Card.FreeSubChannel(result.SubChannelId);
             return TvResult.AllCardsBusy;
           }
-          if (!_cardHandler.Card.IsTunerLocked)
+          
+          //no need to recheck if signal is ok, this is done sooner now.
+          if (!isLocked)
           {
-            return TvResult.NoVideoAudioDetected;
-          }
+            _cardHandler.Card.FreeSubChannel(result.SubChannelId);
+            return TvResult.NoSignalDetected;
+          } 
+                   
+
           if (result.IsTimeShifting || result.IsRecording)
           {
             context.OnZap(user);

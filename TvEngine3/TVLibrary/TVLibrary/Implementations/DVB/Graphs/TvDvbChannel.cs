@@ -211,15 +211,15 @@ namespace TvLibrary.Implementations.DVB
       bool foundPMT = false;
       _pmtPid = -1;
       _pmtVersion = -1;
-      _newPMT = false;      
+      _newPMT = false;
+      _newCA = false;
 
       DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
       if (channel != null)
-      {
-        _newCA = true;
+      {        
         _eventPMT = new ManualResetEvent(false);
         if (SetupPmtGrabber(channel.PmtPid, channel.ServiceId))
-        {
+        {          
           _pmtTimer.Enabled = true;   
           DateTime dtNow = DateTime.Now;
           int timeoutPMT = _parameters.TimeOutPMT * 1000;
@@ -238,8 +238,7 @@ namespace TvLibrary.Implementations.DVB
             foundPMT = false;
             _newPMT = false;
           }                    
-          _pmtTimer.Enabled = false;          
-          _newCA = false;  
+          _pmtTimer.Enabled = false;                    
         }
       }
       _eventPMT.Close();
@@ -296,6 +295,8 @@ namespace TvLibrary.Implementations.DVB
 
         _pmtPid = -1;
         _pmtVersion = -1;
+        _newPMT = false;
+        _newCA = false;
       }    
     }
 
@@ -310,6 +311,11 @@ namespace TvLibrary.Implementations.DVB
 
       if (!GraphRunning())
       {
+        _pmtPid = -1;
+        _pmtVersion = -1;
+        _newPMT = false;
+        _newCA = false;
+
         Log.Log.WriteFile("subch:{0} Graph not started - skip WaitForPMT", _subChannelId);
         return;
       }      
@@ -859,14 +865,14 @@ namespace TvLibrary.Implementations.DVB
     {
       lock (this)
       {
+        DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
         updatePids = false;
         if (_mdplugs != null)
         {
-          DVBBaseChannel chan = _currentChannel as DVBBaseChannel;
-          if (chan != null)
+          if (channel != null)
           {
             //HACK: Currently Premiere Direkt Feeds (nid=133) have the free_ca flag in SDT set to true (means not scrambled), so we have to override this
-            if ((!chan.FreeToAir) || (chan.NetworkId == 133 && !chan.Provider.Equals("BetaDigital")))
+            if ((!channel.FreeToAir) || (channel.NetworkId == 133 && !channel.Provider.Equals("BetaDigital")))
             {
               if (_newCA == false)
               {
@@ -876,10 +882,11 @@ namespace TvLibrary.Implementations.DVB
             }
           }
         }
-        DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
+        
         if (channel == null)
         {
           Log.Log.Info("subch:{0} SendPmt:no channel set", _subChannelId);
+          _pmtTimer.Enabled = false;
           return true;
         }
         IntPtr pmtMem = Marshal.AllocCoTaskMem(4096);// max. size for pmt
@@ -944,8 +951,10 @@ namespace TvLibrary.Implementations.DVB
                     _pmtVersion = version;
                     Log.Log.WriteFile("subch:{0} cam flags:{1}", _subChannelId, _conditionalAccess.IsCamReady());
                     _pmtTimer.Interval = 100;
+                    _pmtTimer.Enabled = false;
                     return true;
-                  } else
+                  } 
+                  else
                   {
                     //cam is not ready yet
                     Log.Log.WriteFile("subch:{0} SendPmt failed cam flags:{1}", _subChannelId, _conditionalAccess.IsCamReady());
@@ -959,11 +968,12 @@ namespace TvLibrary.Implementations.DVB
                 }
                 _pmtTimer.Interval = 100;
                 _pmtVersion = version;
-
+                _pmtTimer.Enabled = false;
                 return true;
               } else
               {
                 //already received this pmt
+                _pmtTimer.Enabled = false;
                 return true;
               }
             }

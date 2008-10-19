@@ -380,24 +380,59 @@ namespace TvLibrary.Implementations.Analog
     #endregion
 
     #region properties
-    /// <summary>
-    /// When the tuner is locked onto a signal this property will return true
-    /// otherwise false
-    /// </summary>
-    protected override void UpdateSignalQuality()
+
+    public override bool LockedInOnSignal()
     {
-      TimeSpan ts = DateTime.Now - _lastSignalUpdate;
-      if (ts.TotalMilliseconds < 5000 || _graphState == GraphState.Idle)
-      {
-        _tunerLocked = false;
-      }
-      else
+      bool isLocked = false;
+      DateTime timeStart = DateTime.Now;
+      TimeSpan ts = timeStart - timeStart;
+      while (!isLocked && ts.TotalSeconds < 2)
       {
         IAMTVTuner tvTuner = _filterTvTuner as IAMTVTuner;
         AMTunerSignalStrength signalStrength;
         tvTuner.SignalPresent(out signalStrength);
-        _tunerLocked = (signalStrength == AMTunerSignalStrength.SignalPresent || signalStrength == AMTunerSignalStrength.HasNoSignalStrength);
+        isLocked = (signalStrength == AMTunerSignalStrength.SignalPresent || signalStrength == AMTunerSignalStrength.HasNoSignalStrength);
+
+        if (!isLocked)
+        {
+          ts = DateTime.Now - timeStart;
+          Log.Log.WriteFile("analog:  LockedInOnSignal waiting 20ms");
+          System.Threading.Thread.Sleep(20);
+        }
       }
+
+      if (!isLocked)
+      {
+        Log.Log.WriteFile("analog:  LockedInOnSignal could not lock onto channel - no signal or bad signal");
+      }
+      else
+      {
+        Log.Log.WriteFile("analog:  LockedInOnSignal ok");
+      }
+      return isLocked;           
+    }
+
+    /// <summary>
+    /// When the tuner is locked onto a signal this property will return true
+    /// otherwise false
+    /// </summary>
+    protected override void UpdateSignalQuality(bool force)
+    {
+      if (!force)
+      {
+        TimeSpan ts = DateTime.Now - _lastSignalUpdate;
+        if (ts.TotalMilliseconds < 5000 || _graphState == GraphState.Idle)
+        {
+          _tunerLocked = false;
+          return;
+        }
+      }
+      
+      IAMTVTuner tvTuner = _filterTvTuner as IAMTVTuner;
+      AMTunerSignalStrength signalStrength;
+      tvTuner.SignalPresent(out signalStrength);
+      _tunerLocked = (signalStrength == AMTunerSignalStrength.SignalPresent || signalStrength == AMTunerSignalStrength.HasNoSignalStrength);
+      
       if (_tunerLocked)
       {
         _signalLevel = 100;
@@ -408,6 +443,15 @@ namespace TvLibrary.Implementations.Analog
         _signalLevel = 0;
         _signalQuality = 0;
       }
+    }
+
+    /// <summary>
+    /// When the tuner is locked onto a signal this property will return true
+    /// otherwise false
+    /// </summary>
+    protected override void UpdateSignalQuality()
+    {
+      UpdateSignalQuality(false);
     }
 
     /// <summary>

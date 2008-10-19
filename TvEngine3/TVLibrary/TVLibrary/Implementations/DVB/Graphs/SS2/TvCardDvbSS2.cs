@@ -633,6 +633,10 @@ namespace TvLibrary.Implementations.DVB
       {
         Log.Log.WriteFile("dvb-s ss2:  LockedInOnSignal could not lock onto channel - no signal or bad signal");
       }
+      else
+      {
+        Log.Log.WriteFile("dvb-s ss2:  LockedInOnSignal ok");
+      }
       return isLocked;
     }
 
@@ -810,10 +814,11 @@ namespace TvLibrary.Implementations.DVB
       }
       */ 
     }
+
     /// <summary>
     /// updates the signal quality/level and tuner locked statusses
     /// </summary>
-    protected override void UpdateSignalQuality()
+    protected override void UpdateSignalQuality(bool force)
     {
       TimeSpan ts = DateTime.Now - _lastSignalUpdate;
       if (ts.TotalMilliseconds < 5000) return;
@@ -850,6 +855,14 @@ namespace TvLibrary.Implementations.DVB
       _signalQuality = quality;
       _signalLevel = level;
       _lastSignalUpdate = DateTime.Now;
+    }
+
+    /// <summary>
+    /// updates the signal quality/level and tuner locked statusses
+    /// </summary>
+    protected override void UpdateSignalQuality()
+    {
+      UpdateSignalQuality(false);
     }
 
     private void GetTunerCapabilities()

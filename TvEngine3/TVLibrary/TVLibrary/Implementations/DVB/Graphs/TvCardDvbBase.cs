@@ -301,15 +301,19 @@ namespace TvLibrary.Implementations.DVB
         }
         if (!isLocked)
         {
-          ts = DateTime.Now-timeStart;
+          ts = DateTime.Now - timeStart;
           Log.Log.WriteFile("dvb:  LockedInOnSignal waiting 20ms");
           System.Threading.Thread.Sleep(20);
-        }
+        }                        
       }
 
       if (!isLocked)
       {
-        Log.Log.WriteFile("dvb:  LockedInOnSignal could not lock onto channel - no signal or bad signal");        
+        Log.Log.WriteFile("dvb:  LockedInOnSignal could not lock onto channel - no signal or bad signal");
+      }
+      else
+      {
+        Log.Log.WriteFile("dvb:  LockedInOnSignal ok");
       }
       return isLocked;     
     }
@@ -1313,7 +1317,7 @@ namespace TvLibrary.Implementations.DVB
     #region signal quality, level etc
 
 
-    public void UpdateSignalQuality(bool force)
+    protected override void UpdateSignalQuality(bool force)
     {
       if (!force)
       {
@@ -1324,6 +1328,7 @@ namespace TvLibrary.Implementations.DVB
       {
         if (GraphRunning() == false)
         {
+          //System.Diagnostics.Debugger.Launch();
           _tunerLocked = false;
           _signalLevel = 0;
           _signalPresent = false;
@@ -1332,6 +1337,7 @@ namespace TvLibrary.Implementations.DVB
         }
         if (CurrentChannel == null)
         {
+          //System.Diagnostics.Debugger.Launch();
           _tunerLocked = false;
           _signalLevel = 0;
           _signalPresent = false;
@@ -1340,6 +1346,7 @@ namespace TvLibrary.Implementations.DVB
         }
         if (_filterNetworkProvider == null)
         {
+          //System.Diagnostics.Debugger.Launch();
           _tunerLocked = false;
           _signalLevel = 0;
           _signalPresent = false;
@@ -1348,6 +1355,7 @@ namespace TvLibrary.Implementations.DVB
         }
         if (!CheckThreadId())
         {
+          //System.Diagnostics.Debugger.Launch();
           _tunerLocked = false;
           _signalLevel = 0;
           _signalPresent = false;
@@ -1358,6 +1366,7 @@ namespace TvLibrary.Implementations.DVB
         //if we dont have an IBDA_SignalStatistics interface then return
         if (_tunerStatistics == null)
         {
+          //System.Diagnostics.Debugger.Launch();
           _tunerLocked = false;
           _signalLevel = 0;
           _signalPresent = false;
@@ -1367,6 +1376,7 @@ namespace TvLibrary.Implementations.DVB
         }
         if (_tunerStatistics.Count == 0)
         {
+          //System.Diagnostics.Debugger.Launch();
           _tunerLocked = false;
           _signalLevel = 0;
           _signalPresent = false;
@@ -1452,7 +1462,8 @@ namespace TvLibrary.Implementations.DVB
           {
             //            Log.Log.WriteFile("get_SignalQuality() locked :{0}", ex);
           }
-          //Log.Log.WriteFile("  dvb:#{0}  locked:{1} present:{2} quality:{3} strength:{4}", i, isLocked, isPresent, quality, strength);
+          //Log.Log.WriteFile("  dvb:#{0}  locked:{1} present:{2} quality:{3} strength:{4}", i, isLocked, isPresent, quality, strength);          
+
         }
         if (_tunerStatistics.Count > 0)
         {
@@ -1460,9 +1471,14 @@ namespace TvLibrary.Implementations.DVB
           _signalLevel = (int)signalStrength / _tunerStatistics.Count;
         }
         if (isTunerLocked)
+        {
           _tunerLocked = true;
+        }
         else
+        {
+          //System.Diagnostics.Debugger.Launch();
           _tunerLocked = false;
+        }
 
         if (isTunerLocked)
         {
