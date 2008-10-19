@@ -171,11 +171,19 @@ namespace MediaPortal
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        if (xmlreader.GetValueAsBool("screenselector", "usescreenselector", false)) // lets see if the screen selector is enabled
+        if ((D3DApp._screenNumberOverride != -1) || xmlreader.GetValueAsBool("screenselector", "usescreenselector", false)) // lets see if the command line option "/screen=" was set or the screen selector is enabled in the config
         {
-          int ScreenNumber = xmlreader.GetValueAsInt("screenselector", "screennumber", 0); // read the screen number
-          ScreenNumber++; // increase the number by 1 to respect the DisplayDevice naming convention
+          int ScreenNumber = 0;
+          if (D3DApp._screenNumberOverride != -1)
+          {
+            ScreenNumber = D3DApp._screenNumberOverride;
+          }
+          else
+          {
+            ScreenNumber = xmlreader.GetValueAsInt("screenselector", "screennumber", 0); // read the screen number
+          }
 
+          ScreenNumber++; // increase the number by 1 to respect the DisplayDevice naming convention
           foreach (Screen tmpscreen in Screen.AllScreens)
           {
             if (tmpscreen.DeviceName.Contains("DISPLAY" + ScreenNumber)) // if the selected Display is found
