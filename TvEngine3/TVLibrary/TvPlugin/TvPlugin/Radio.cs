@@ -969,6 +969,16 @@ namespace TvPlugin
         TVHome.ViewChannelAndCheck(channel);
     }
 
+    void SortChanged(object sender, SortEventArgs e)
+    {
+      sortAscending = e.Order != System.Windows.Forms.SortOrder.Descending;
+
+      OnSort();
+      UpdateButtonStates();
+
+      GUIControl.FocusControl(GetID, ((GUIControl)sender).GetID);
+    }
+
     #region ISetupForm Members
 
     public bool CanEnable()
@@ -983,8 +993,9 @@ namespace TvPlugin
 
     public bool HasSetup()
     {
-      return true;
+      return false;
     }
+
     public bool DefaultEnabled()
     {
       return true;
@@ -1006,12 +1017,12 @@ namespace TvPlugin
 
     public string Author()
     {
-      return "Frodo";
+      return "Frodo, gemx";
     }
 
     public string Description()
     {
-      return "Listen to analog, DVB and internet radio";
+      return "Connect to TV service to listen to analog, DVB and internet radio";
     }
 
     public void ShowPlugin()
@@ -1030,16 +1041,5 @@ namespace TvPlugin
     }
 
     #endregion
-
-    void SortChanged(object sender, SortEventArgs e)
-    {
-      sortAscending = e.Order != System.Windows.Forms.SortOrder.Descending;
-
-      OnSort();
-      UpdateButtonStates();
-
-      GUIControl.FocusControl(GetID, ((GUIControl)sender).GetID);
-    }
-
   }
 }

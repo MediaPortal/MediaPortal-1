@@ -23,7 +23,6 @@
 
 #endregion
 
-
 #region Usings
 
 using System;
@@ -60,16 +59,19 @@ using TvLibrary.Implementations.DVB;
 
 namespace TvPlugin
 {
-  /// <summary>v
-  /// Summary description for Class1.
+  /// <summary>
+  /// TV Home screen.
   /// </summary>
+  [PluginIcons("TvPlugin.TVPlugin.gif", "TvPlugin.TVPluginDisabled.gif")]
   public class TVHome : GUIWindow, ISetupForm, IShowPlugin, IPluginReceiver
   {
     #region constants
+
     private const int HEARTBEAT_INTERVAL = 5; //seconds
     private const int WM_POWERBROADCAST = 0x0218;
     private const int PBT_APMRESUMESUSPEND = 0x0007;
     private const int PBT_APMRESUMESTANDBY = 0x0008;
+
     #endregion
 
     #region variables
@@ -151,6 +153,72 @@ namespace TvPlugin
     #region Events
     #endregion
 
+    #region ISetupForm Members
+
+    public bool CanEnable()
+    {
+      return true;
+    }
+
+    public string PluginName()
+    {
+      return "My TV";
+    }
+
+    public bool DefaultEnabled()
+    {
+      return true;
+    }
+
+    public int GetWindowId()
+    {
+      return (int)GUIWindow.Window.WINDOW_TV;
+    }
+
+    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
+    {
+      // TODO:  Add TVHome.GetHome implementation
+      strButtonText = GUILocalizeStrings.Get(605);
+      strButtonImage = "";
+      strButtonImageFocus = "";
+      strPictureImage = "";
+      return true;
+    }
+
+    public string Author()
+    {
+      return "Frodo, gemx";
+    }
+
+    public string Description()
+    {
+      return "Connect to TV service to watch, record and timeshift analog and digital TV";
+    }
+
+    public bool HasSetup()
+    {
+      return false;
+    }
+
+    public void ShowPlugin()
+    {
+      /*
+      TvSetupForm setup = new TvSetupForm();
+      setup.ShowDialog();
+       */
+    }
+
+    #endregion
+
+    #region IShowPlugin Members
+
+    public bool ShowDefaultHome()
+    {
+      return true;
+    }
+
+    #endregion
+
     static TVHome()
     {
       try
@@ -207,14 +275,14 @@ namespace TvPlugin
 
             // when debugging we want to disable heartbeats
 #if !DEBUG
-          try
-          {
-            RemoteControl.Instance.HeartBeat(TVHome.Card.User);
-          }
-          catch (Exception e)
-          {
-            Log.Error("TVHome: failed sending HeartBeat signal to server. ({0})", e.Message);
-          }
+            try
+            {
+              RemoteControl.Instance.HeartBeat(TVHome.Card.User);
+            }
+            catch (Exception e)
+            {
+              Log.Error("TVHome: failed sending HeartBeat signal to server. ({0})", e.Message);
+            }
 #endif
           }
           else if (TVHome.Connected && !isTS && !_playbackStopped && _onPageLoadDone && (!g_Player.IsMusic && !g_Player.IsDVD && !g_Player.IsRadio && !g_Player.IsVideo))
@@ -541,8 +609,8 @@ namespace TvPlugin
             }
           }
           else if (s != null)
-          {                        
-            s.Delete();            
+          {
+            s.Delete();
           }
           server.OnNewSchedule();
         }
@@ -761,6 +829,7 @@ namespace TvPlugin
     #endregion
 
     #region Serialisation
+
     static void LoadSettings()
     {
       if (settingsLoaded) return;
@@ -822,6 +891,7 @@ namespace TvPlugin
         }
       }
     }
+
     #endregion
 
     #region Overrides
@@ -843,6 +913,7 @@ namespace TvPlugin
         return false;
       }
     }
+
     public override bool Init()
     {
       MediaPortal.GUI.Library.Log.Info("TVHome:Init");
@@ -1077,12 +1148,10 @@ namespace TvPlugin
       Log.Debug("TVHome.Stop()");
     }
 
-
     public bool WndProc(ref System.Windows.Forms.Message msg)
     {
       if (msg.Msg == WM_POWERBROADCAST)
       {
-
         switch (msg.WParam.ToInt32())
         {
           case PBT_APMRESUMESUSPEND:
@@ -1386,7 +1455,6 @@ namespace TvPlugin
         g_Player.ShowFullScreenWindow();
       }
     }
-
 
     protected override void OnPageDestroy(int newWindowId)
     {
@@ -2908,72 +2976,6 @@ namespace TvPlugin
     {
       get { return m_navigator; }
     }
-
-    #region ISetupForm Members
-
-    public bool CanEnable()
-    {
-      return true;
-    }
-
-    public string PluginName()
-    {
-      return "My TV";
-    }
-
-    public bool DefaultEnabled()
-    {
-      return true;
-    }
-
-    public int GetWindowId()
-    {
-      return (int)GUIWindow.Window.WINDOW_TV;
-    }
-
-    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
-    {
-      // TODO:  Add TVHome.GetHome implementation
-      strButtonText = GUILocalizeStrings.Get(605);
-      strButtonImage = "";
-      strButtonImageFocus = "";
-      strPictureImage = "";
-      return true;
-    }
-
-    public string Author()
-    {
-      return "Frodo";
-    }
-
-    public string Description()
-    {
-      return "Watch, record and timeshift analog and digital TV with MediaPortal. Tv Engine v3";
-    }
-
-    public bool HasSetup()
-    {
-      return false;
-    }
-
-    public void ShowPlugin()
-    {
-      /*
-      TvSetupForm setup = new TvSetupForm();
-      setup.ShowDialog();
-       */
-    }
-
-    #endregion
-
-    #region IShowPlugin Members
-
-    public bool ShowDefaultHome()
-    {
-      return true;
-    }
-
-    #endregion
 
     private static void StartPlay()
     {
