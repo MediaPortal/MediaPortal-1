@@ -107,20 +107,20 @@ namespace TvService
       {
         if (_cardHandler.DataBaseCard.Enabled == false) return new List<IChannel>().ToArray();
 
-				try
-				{
-					RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-					if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return new List<IChannel>().ToArray();
-					if (_cardHandler.IsLocal == false)
-					{
-						return RemoteControl.Instance.Scan(_cardHandler.DataBaseCard.IdCard, channel);
-					}
-				}
-				catch (Exception)
-				{
-					Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
-					return null;
-				}
+        try
+        {
+          RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
+          if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return new List<IChannel>().ToArray();
+          if (_cardHandler.IsLocal == false)
+          {
+            return RemoteControl.Instance.Scan(_cardHandler.DataBaseCard.IdCard, channel);
+          }
+        }
+        catch (Exception)
+        {
+          Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+          return null;
+        }
         ITVScanning scanner = _cardHandler.Card.ScanningInterface;
         if (scanner == null) return null;
         scanner.Reset();
@@ -128,6 +128,11 @@ namespace TvService
         if (channelsFound == null) return null;
         return channelsFound.ToArray();
 
+      }
+      catch (TvExceptionNoSignal)
+      {
+        //ignore
+        return null;
       }
       catch (Exception ex)
       {

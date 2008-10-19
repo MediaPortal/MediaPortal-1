@@ -26,6 +26,7 @@ using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+//using System.Runtime.CompilerServices;
 using System.Text;
 using Microsoft.Win32;
 using DirectShowLib;
@@ -245,15 +246,29 @@ namespace TvLibrary.Implementations.DVB
       return foundPMT;  
     }
 
+    //[MethodImpl(MethodImplOptions.Synchronized)]
     protected bool GraphRunning()
-    {
+    {      
       bool graphRunning = false;
 
       if (_graphBuilder != null)
       {
-        FilterState state;
-        (_graphBuilder as IMediaControl).GetState(10, out state);
-        graphRunning = (state == FilterState.Running);
+        try
+        {
+          FilterState state;
+          (_graphBuilder as IMediaControl).GetState(10, out state);
+          graphRunning = (state == FilterState.Running);
+        }
+        catch (InvalidComObjectException e)
+        {
+          // RCW error
+          // ignore this error as, the graphbuilder is being disposed of in another thread.         
+          return false;
+        }
+        catch (Exception e)
+        {          
+          Log.Log.Error("GraphRunning error : {0}", e.Message);
+        }
       }
       //Log.Log.WriteFile("subch:{0} GraphRunning: {1}", _subChannelId, graphRunning);
       return graphRunning;
@@ -987,9 +1002,9 @@ namespace TvLibrary.Implementations.DVB
     void _pmtTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
       try
-      {        
-        if (GraphRunning() == false) return;
+      {                
         if (_pmtTimerRentrant) return;
+        if (GraphRunning() == false) return;
         _pmtTimerRentrant = true;
 
         if (_newPMT)
