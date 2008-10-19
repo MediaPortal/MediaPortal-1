@@ -795,6 +795,30 @@
   <ItemGroup>
     <EmbeddedResource Include="GUIRSSFeed\rssicon_disabled.png" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUIMusic\Music.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUIMusic\MusicDisabled.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUIVideoFiles\Video.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUIVideoFiles\VideoDisabled.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUITetris\Tetris.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUITetris\TetrisDisabled.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUIWeather\Weather.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUIWeather\WeatherDisabled.gif" />
+  </ItemGroup>  
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

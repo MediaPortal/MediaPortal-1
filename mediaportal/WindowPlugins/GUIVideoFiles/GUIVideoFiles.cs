@@ -47,8 +47,8 @@ namespace MediaPortal.GUI.Video
 {
   /// <summary>
   /// MyVideo GUI class when not using DB driven views.
-  /// 
   /// </summary>
+  [PluginIcons("WindowPlugins.GUIVideoFiles.Video.gif", "WindowPlugins.GUIVideoFiles.VideoDisabled.gif")]
   public class GUIVideoFiles : GUIVideoBaseWindow, ISetupForm, IShowPlugin, IMDB.IProgress
   {
     #region map settings
@@ -1101,69 +1101,7 @@ namespace MediaPortal.GUI.Video
         strLine = keyboard.Text;
       }
     }
-
-    #region ISetupForm Members
-
-    public bool CanEnable()
-    {
-      return true;
-    }
-
-
-    public bool HasSetup()
-    {
-      return false;
-    }
-    public string PluginName()
-    {
-      return "My Videos";
-    }
-
-    public bool DefaultEnabled()
-    {
-      return true;
-    }
-
-    public int GetWindowId()
-    {
-      return GetID;
-    }
-
-    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
-    {
-      strButtonText = GUILocalizeStrings.Get(3);
-      strButtonImage = string.Empty;
-      strButtonImageFocus = string.Empty;
-      strPictureImage = string.Empty;
-      return true;
-    }
-
-    public string Author()
-    {
-      return "Frodo";
-    }
-
-    public string Description()
-    {
-      return "Watch and organize your video files";
-    }
-
-    public void ShowPlugin()
-    {
-      // TODO:  Add GUIVideoFiles.ShowPlugin implementation
-    }
-
-    #endregion
-
-    #region IShowPlugin Members
-
-    public bool ShowDefaultHome()
-    {
-      return true;
-    }
-
-    #endregion
-
+    
     private void FetchMatroskaInfo(string path, bool pathIsDirectory, ref IMDBMovie movie)
     {
       string xmlFile = string.Empty;
@@ -2529,5 +2467,67 @@ namespace MediaPortal.GUI.Video
 
     #endregion
 
+
+    #region ISetupForm Members
+
+    public bool CanEnable()
+    {
+      return true;
+    }
+
+    public bool HasSetup()
+    {
+      return false;
+    }
+
+    public string PluginName()
+    {
+      return "My Videos";
+    }
+
+    public bool DefaultEnabled()
+    {
+      return true;
+    }
+
+    public int GetWindowId()
+    {
+      return GetID;
+    }
+
+    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
+    {
+      strButtonText = GUILocalizeStrings.Get(3);
+      strButtonImage = string.Empty;
+      strButtonImageFocus = string.Empty;
+      strPictureImage = string.Empty;
+      return true;
+    }
+
+    public string Author()
+    {
+      return "Frodo";
+    }
+
+    public string Description()
+    {
+      return "Watch and organize your video files";
+    }
+
+    public void ShowPlugin()
+    {
+      // TODO:  Add GUIVideoFiles.ShowPlugin implementation
+    }
+
+    #endregion
+
+    #region IShowPlugin Members
+
+    public bool ShowDefaultHome()
+    {
+      return true;
+    }
+
+    #endregion
   }
 }

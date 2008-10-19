@@ -39,6 +39,7 @@ using System.Threading;
 
 namespace MediaPortal.GUI.Weather
 {
+  [PluginIcons("WindowPlugins.GUIWeather.Weather.gif", "WindowPlugins.GUIWeather.WeatherDisabled.gif")]
   public class GUIWindowWeather : GUIWindow, ISetupForm, IShowPlugin
   {
     #region structs
