@@ -274,7 +274,7 @@ namespace TvLibrary.Implementations.DVB
       return;
     }
 
-    public virtual bool LockedInOnSignal()
+    public override bool LockedInOnSignal()
     {
       //UpdateSignalQuality(true);
       bool isLocked = false;

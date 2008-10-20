@@ -168,12 +168,12 @@ namespace TvService
           }
           
           //no need to recheck if signal is ok, this is done sooner now.
-          if (!isLocked)
+          /*if (!isLocked)
           {
             _cardHandler.Card.FreeSubChannel(result.SubChannelId);
             return TvResult.NoSignalDetected;
           } 
-                   
+          */         
 
           if (result.IsTimeShifting || result.IsRecording)
           {

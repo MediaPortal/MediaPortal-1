@@ -49,9 +49,7 @@ namespace TvLibrary.Implementations.DVB
   public class TvDvbChannel : BaseSubChannel, ITeletextCallBack, IPMTCallback, ICACallback, ITvSubChannel, IVideoAudioObserver
   {
     #region variables
-    #region local variables
-    protected bool _newPMT = false;
-    protected bool _newCA = false;
+    #region local variables    
     protected int _pmtVersion;
     protected int _pmtPid = -1;
     protected ChannelInfo _channelInfo;
@@ -60,13 +58,6 @@ namespace TvLibrary.Implementations.DVB
     protected int _subChannelIndex = -1;
     protected DVBAudioStream _currentAudioStream;
     protected MDPlugs _mdplugs = null;
-#if FORM
-    protected System.Windows.Forms.Timer _pmtTimer = new System.Windows.Forms.Timer();
-#else
-    protected System.Timers.Timer _pmtTimer = new System.Timers.Timer();
-#endif
-    bool _pmtTimerRentrant = false;
-
 
     #region teletext
     private int _pmtLength;
@@ -76,6 +67,7 @@ namespace TvLibrary.Implementations.DVB
 
     #region events
     private ManualResetEvent _eventPMT; // gets signaled when PMT arrives
+    private ManualResetEvent _eventCA; // gets signaled when CA arrives
     #endregion
 
     #region graph variables
@@ -92,15 +84,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public TvDvbChannel()
     {
-      _graphState = GraphState.Created;      
-
-      _pmtTimer.Enabled = false;
-      _pmtTimer.Interval = 100;
-#if FORM
-      _pmtTimer.Tick += new EventHandler(_pmtTimer_ElapsedForm);
-#else
-      _pmtTimer.Elapsed += new System.Timers.ElapsedEventHandler(_pmtTimer_Elapsed);
-#endif
+      _graphState = GraphState.Created;            
       _teletextDecoder = new DVBTeletext();
       _packetHeader = new TSHelperTools.TSHeader();
       _tsHelper = new TSHelperTools();
@@ -129,14 +113,7 @@ namespace TvLibrary.Implementations.DVB
       _conditionalAccess = ca;
       _mdplugs = mdplugs;
       _filterTIF = tif;
-      _filterTsWriter = tsWriter;
-      _pmtTimer.Enabled = false;
-      _pmtTimer.Interval = 100;
-#if FORM
-      _pmtTimer.Tick += new EventHandler(_pmtTimer_ElapsedForm);
-#else
-      _pmtTimer.Elapsed += new System.Timers.ElapsedEventHandler(_pmtTimer_Elapsed);
-#endif
+      _filterTsWriter = tsWriter;      
       _teletextDecoder = new DVBTeletext();
       _packetHeader = new TSHelperTools.TSHeader();
       _tsHelper = new TSHelperTools();
@@ -172,8 +149,7 @@ namespace TvLibrary.Implementations.DVB
       }
       _startTimeShifting = false;
       _startRecording = false;
-      _channelInfo = new ChannelInfo();
-      _pmtTimer.Enabled = false;
+      _channelInfo = new ChannelInfo();      
       _hasTeletext = false;
       _currentAudioStream = null;
     }
@@ -185,7 +161,6 @@ namespace TvLibrary.Implementations.DVB
     public override void OnAfterTune()
     {
       Log.Log.WriteFile("subch:{0} OnAfterTune", _subChannelId);
-      _pmtTimer.Enabled = true;
       ArrayList pids = new ArrayList();
       pids.Add((ushort)0x0);//pat
       pids.Add((ushort)0x11);//sdt
@@ -202,43 +177,85 @@ namespace TvLibrary.Implementations.DVB
       _conditionalAccess.SendPids(_subChannelId,(DVBBaseChannel)_currentChannel,pids);
 
       _pmtPid = -1;
-      _pmtVersion = -1;
-      _newPMT = false;
-      _newCA = false;
+      _pmtVersion = -1;      
     }
     private bool WaitForPMT()
     {
       bool foundPMT = false;
       _pmtPid = -1;
-      _pmtVersion = -1;
-      _newPMT = false;
-      _newCA = false;
+      _pmtVersion = -1;      
 
       DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
       if (channel != null)
       {        
         _eventPMT = new ManualResetEvent(false);
+        _eventCA = new ManualResetEvent(false);
         if (SetupPmtGrabber(channel.PmtPid, channel.ServiceId))
-        {          
-          _pmtTimer.Enabled = true;   
+        {                    
           DateTime dtNow = DateTime.Now;
           int timeoutPMT = _parameters.TimeOutPMT * 1000;
           Log.Log.Debug("WaitForPMT: Waiting for PMT.");          
           if (_eventPMT.WaitOne(timeoutPMT, true))
           {
+            _eventPMT.Close();
             TimeSpan ts = DateTime.Now - dtNow;
             Log.Log.Debug("WaitForPMT: Found PMT after {0} seconds.", ts.TotalSeconds);
-            foundPMT = true;                        
-            _newPMT = true;
+            foundPMT = true;                                    
+            DateTime dtNowPMT2CAM = DateTime.Now;
+            bool sendPmtToCamDone = false;
+            try
+            {                          
+              bool updatePids;
+              int retries = 0;
+              int waitInterval = 100; //ms              
+
+              while (retries < 4 && !sendPmtToCamDone) //lets keep trying to send pmt2cam for max. 4 retries.
+              {
+                sendPmtToCamDone = SendPmtToCam(out updatePids, out waitInterval);
+                if (sendPmtToCamDone)
+                {
+                  if (updatePids)
+                  {
+                    if (_channelInfo != null)
+                    {
+                      SetMpegPidMapping(_channelInfo);
+                      if (_mdplugs != null)
+                        _mdplugs.SetChannel(_subChannelId, _currentChannel, _channelInfo);
+                    }
+                    Log.Log.Info("subch:{0} stop tif", _subChannelId);
+                    if (_filterTIF != null)
+                      _filterTIF.Stop();
+                  }
+                }
+              }
+              if (!sendPmtToCamDone)
+              {
+                retries++;
+                Thread.Sleep(waitInterval);
+              }
+            }
+            catch (Exception ex)
+            {
+              Log.Log.WriteFile("subch:{0}", ex.Message);
+              Log.Log.WriteFile("subch:{0}", ex.Source);
+              Log.Log.WriteFile("subch::{0}", ex.StackTrace);
+            }
+            TimeSpan tsPMT2CAM = DateTime.Now - dtNowPMT2CAM;
+            if (!sendPmtToCamDone)
+            {              
+              Log.Log.Debug("WaitForPMT: Timed out sending PMT to CAM {0} seconds.", tsPMT2CAM.TotalSeconds);
+            }
+            else
+            {
+              Log.Log.Debug("WaitForPMT: sending PMT to CAM took {0} seconds.", tsPMT2CAM.TotalSeconds);
+            }
           }
           else
           {
             TimeSpan ts = DateTime.Now - dtNow;            
             Log.Log.Debug("WaitForPMT: Timed out waiting for PMT after {0} seconds. Increase the PMT timeout value?", ts.TotalSeconds);
             foundPMT = false;
-            _newPMT = false;
-          }                    
-          _pmtTimer.Enabled = false;                    
+          }                              
         }
       }
       _eventPMT.Close();
@@ -294,9 +311,7 @@ namespace TvLibrary.Implementations.DVB
           _teletextDecoder.ClearBuffer();
 
         _pmtPid = -1;
-        _pmtVersion = -1;
-        _newPMT = false;
-        _newCA = false;
+        _pmtVersion = -1;        
       }    
     }
 
@@ -313,17 +328,12 @@ namespace TvLibrary.Implementations.DVB
       {
         _pmtPid = -1;
         _pmtVersion = -1;
-        _newPMT = false;
-        _newCA = false;
 
         Log.Log.WriteFile("subch:{0} Graph not started - skip WaitForPMT", _subChannelId);
         return;
       }      
           
-      WaitForPMT();
-
-      /*_newPMT = false;
-      _newCA = false; */
+      WaitForPMT();     
     }
 
     /// <summary>
@@ -335,13 +345,10 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.WriteFile("subch:{0} OnGraphStop", _subChannelId);
       _pmtPid = -1;
       _dateTimeShiftStarted = DateTime.MinValue;
-      _dateRecordingStarted = DateTime.MinValue;
-      _pmtTimer.Enabled = false;
+      _dateRecordingStarted = DateTime.MinValue;      
       _startTimeShifting = false;
       _startRecording = false;
-      _pmtVersion = -1;
-      _newPMT = false;
-      _newCA = false;
+      _pmtVersion = -1;      
       _recordingFileName = "";
       _channelInfo = new ChannelInfo();
       _currentChannel = null;
@@ -555,7 +562,8 @@ namespace TvLibrary.Implementations.DVB
         _currentAudioStream = audioStream;
         _pmtVersion = -1;
         bool updatePids;
-        SendPmtToCam(out updatePids);
+        int interval = 0;
+        SendPmtToCam(out updatePids, out interval);
       }
     }
     #endregion
@@ -861,12 +869,14 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Decodes the PMT and sends the PMT to cam.
     /// </summary>
-    protected bool SendPmtToCam(out bool updatePids)
+    protected bool SendPmtToCam(out bool updatePids, out int waitInterval)
     {
       lock (this)
       {
         DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
         updatePids = false;
+        waitInterval = 100;
+        bool foundCA = false;
         if (_mdplugs != null)
         {
           if (channel != null)
@@ -874,11 +884,22 @@ namespace TvLibrary.Implementations.DVB
             //HACK: Currently Premiere Direkt Feeds (nid=133) have the free_ca flag in SDT set to true (means not scrambled), so we have to override this
             if ((!channel.FreeToAir) || (channel.NetworkId == 133 && !channel.Provider.Equals("BetaDigital")))
             {
-              if (_newCA == false)
+              DateTime dtNow = DateTime.Now;
+              //_eventCA = new ManualResetEvent(false);
+              if (!_eventCA.WaitOne(10000, true)) //wait 10 sec for CA to arrive.
               {
-                Log.Log.Info("subch:{0} SendPmt:wait for ca", _subChannelId);
-                return false;//cat not received yet
+                _eventCA.Close();
+                TimeSpan ts = DateTime.Now - dtNow;
+                Log.Log.Info("subch:{0} SendPmt:no CA found after {1} seconds", _subChannelId, ts.TotalSeconds);
+                return false;
               }
+              else
+              {
+                TimeSpan ts = DateTime.Now - dtNow;
+                Log.Log.Info("subch:{0} SendPmt:CA found after {1}seconds", _subChannelId, ts.TotalSeconds);
+                foundCA = true;
+              }
+              _eventCA.Close();              
             }
           }
         }
@@ -886,7 +907,6 @@ namespace TvLibrary.Implementations.DVB
         if (channel == null)
         {
           Log.Log.Info("subch:{0} SendPmt:no channel set", _subChannelId);
-          _pmtTimer.Enabled = false;
           return true;
         }
         IntPtr pmtMem = Marshal.AllocCoTaskMem(4096);// max. size for pmt
@@ -919,7 +939,7 @@ namespace TvLibrary.Implementations.DVB
                 {
                   channel.FreeToAir = !_channelInfo.scrambled;
                 }
-                if ((_mdplugs != null) && (_newCA))
+                if ((_mdplugs != null) && (foundCA))
                 {
                   try
                   {
@@ -950,30 +970,26 @@ namespace TvLibrary.Implementations.DVB
                   {
                     _pmtVersion = version;
                     Log.Log.WriteFile("subch:{0} cam flags:{1}", _subChannelId, _conditionalAccess.IsCamReady());
-                    _pmtTimer.Interval = 100;
-                    _pmtTimer.Enabled = false;
                     return true;
                   } 
                   else
                   {
                     //cam is not ready yet
                     Log.Log.WriteFile("subch:{0} SendPmt failed cam flags:{1}", _subChannelId, _conditionalAccess.IsCamReady());
-                    _pmtVersion = -1;
-                    _pmtTimer.Interval = 3000;
+                    _pmtVersion = -1;                    
+                    waitInterval = 3000;
                     return false;
                   }
                 } else
                 {
                   Log.Log.Info("subch:{0} No cam in use", _subChannelId);
-                }
-                _pmtTimer.Interval = 100;
-                _pmtVersion = version;
-                _pmtTimer.Enabled = false;
+                }                
+                _pmtVersion = version;                
                 return true;
-              } else
+              } 
+              else
               {
-                //already received this pmt
-                _pmtTimer.Enabled = false;
+                //already received this pmt                
                 return true;
               }
             }
@@ -988,64 +1004,6 @@ namespace TvLibrary.Implementations.DVB
         }
       }
       return false;
-    }
-    #endregion
-
-    #region pmt timer callbacks
-    /// <summary>
-    /// timer callback. This method checks if a new PMT has been received
-    /// and ifso updates the various pid mappings and updates the CI interface
-    /// with the new PMT
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="args"></param>
-    void _pmtTimer_ElapsedForm(object sender, EventArgs args)
-    {
-      _pmtTimer_Elapsed(null, null);
-    }
-
-    /// <summary>
-    /// Handles the Elapsed event of the _pmtTimer control.
-    /// </summary>
-    /// <param name="sender">The source of the event.</param>
-    /// <param name="e">The <see cref="T:System.Timers.ElapsedEventArgs"/> instance containing the event data.</param>
-    void _pmtTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-    {
-      try
-      {                
-        if (_pmtTimerRentrant) return;
-        if (GraphRunning() == false) return;
-        _pmtTimerRentrant = true;
-
-        if (_newPMT)
-        {
-          bool updatePids;
-          if (SendPmtToCam(out updatePids))
-          {
-            _newPMT = false;
-            if (updatePids)
-            {
-              if (_channelInfo != null)
-              {
-                SetMpegPidMapping(_channelInfo);
-                if(_mdplugs != null)
-                  _mdplugs.SetChannel(_subChannelId, _currentChannel, _channelInfo);
-              }
-              Log.Log.Info("subch:{0} stop tif", _subChannelId);
-              if (_filterTIF != null)
-                _filterTIF.Stop();
-            }
-          }
-        }
-      } catch (Exception ex)
-      {
-        Log.Log.WriteFile("subch:{0}", ex.Message);
-        Log.Log.WriteFile("subch:{0}", ex.Source);
-        Log.Log.WriteFile("subch::{0}", ex.StackTrace);
-      } finally
-      {
-        _pmtTimerRentrant = false;
-      }
     }
     #endregion
 
@@ -1074,7 +1032,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public int OnCaReceived()
     {
-      _newCA = true;
+      _eventCA.Set();
       Log.Log.WriteFile("subch:OnCaReceived()");
 
       return 0;
@@ -1088,131 +1046,16 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <returns></returns>
     public int OnPMTReceived()
-    {
-      try
-      {
-        Log.Log.WriteFile("subch:{0} OnPMTReceived() {1}", _subChannelId, GraphRunning());
-        _newPMT = false;
-        if (GraphRunning() == false) return 0;
-        bool updatePids;
-        if (SendPmtToCam(out updatePids))
-        {
-          if (updatePids)
-          {
-            if (_channelInfo != null)
-            {
-              SetMpegPidMapping(_channelInfo);
-              if (_mdplugs != null)
-                _mdplugs.SetChannel(_subChannelId, _currentChannel, _channelInfo);
-            }
-            Log.Log.Info("subch:{0} stop tif", _subChannelId);
-            if (_filterTIF != null)
-              _filterTIF.Stop();
-          }
-        } 
-        else
-        {
-          _newPMT = true;
-        }
-
-        DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
-        if (channel != null)
-        {
-          if (!(_pmtVersion < 0 && channel.PmtPid > 0))
-          {
-            _eventPMT.Set();
-          }
-        }
-      } 
-      catch (Exception ex)
-      {
-        Log.Log.Write(ex);
-      }
+    {     
+      Log.Log.WriteFile("subch:{0} OnPMTReceived() {1}", _subChannelId, GraphRunning());     
+      _eventPMT.Set();
       return 0;
     }
 
 
-#if notused
-    /// <summary>
-    /// Sends the PMT to cam.
-    /// </summary>
-    protected bool SendPmtToCam(byte[] pmt, out bool updatePids)
-    {
-      lock (this)
-      {
-        updatePids = false;
-        if ((_currentChannel as ATSCChannel) != null) return true;
-        DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
-        if (channel == null) return true;
-        try
-        {
-          if (pmt.Length > 6)
-          {
-            int version = -1;
-            version = ((pmt[5] >> 1) & 0x1F);
-            int pmtProgramNumber = (pmt[3] << 8) + pmt[4];
-            if (pmtProgramNumber == channel.ServiceId)
-            {
-              if (_pmtVersion != version)
-              {
-                _channelInfo = new ChannelInfo();
-                _channelInfo.DecodePmt(pmt);
-                _channelInfo.network_pmt_PID = channel.PmtPid;
-                _channelInfo.pcr_pid = channel.PcrPid;
 
-                int pmtLength = pmt.Length;
-                updatePids = true;
-                Log.Log.WriteFile("dvb:SendPMT version:{0} len:{1} {2}", version, pmtLength, _channelInfo.caPMT.ProgramNumber);
-                if (_conditionalAccess != null)
-                {
-                  int audioPid = -1;
-                  if (_currentAudioStream != null)
-                  {
-                    audioPid = _currentAudioStream.Pid;
-                  }
-
-                  if (_conditionalAccess.SendPMT(CamType.Default, (DVBBaseChannel)Channel, pmt, pmtLength, audioPid))
-                  {
-                    _pmtVersion = version;
-                    Log.Log.WriteFile("dvb:cam flags:{0}", _conditionalAccess.IsCamReady());
-                    _pmtTimer.Interval = 100;
-                    return true;
-                  }
-                  else
-                  {
-                    //cam is not ready yet
-                    Log.Log.WriteFile("dvb:SendPmt failed cam flags:{0}", _conditionalAccess.IsCamReady());
-                    _pmtVersion = -1;
-                    _pmtTimer.Interval = 3000;
-                    return false;
-                  }
-                }
-                _pmtTimer.Interval = 100;
-                _pmtVersion = version;
-
-                return true;
-              }
-              else
-              {
-                //already received this pmt
-                return true;
-              }
-            }
-          }
-        }
-        catch (Exception ex)
-        {
-          Log.Log.Write(ex);
-        }
-        finally
-        {
-        }
-      }
-      return false;
-    }I mean.
-
-#endif
     #endregion
+
     #endregion
 
   }
