@@ -27,10 +27,10 @@
       <description>exit button</description>
       <type>button</type>
       <id>34</id>
-      <posX>1022</posX>
-      <posY>100</posY>
-      <width>88</width>
-      <height>62</height>
+      <posX>1046</posX>
+      <posY>97</posY>
+      <width>78</width>
+      <height>68</height>
       <textureFocus>dialogue_shutdown_focus.png</textureFocus>
       <textureNoFocus>dialogue_shutdown_nofocus.png</textureNoFocus>
       <animation effect="zoom" start="100,100" end="100,100" time="100">focus</animation>
@@ -67,8 +67,8 @@
       <itemWidth>62</itemWidth>
       <itemHeight>43</itemHeight>
       <spaceBetweenItems>5</spaceBetweenItems>
-      <textureHeight>55</textureHeight>
-      <keepaspectratio>no</keepaspectratio>
+      <textureHeight>60</textureHeight>
+      <keepaspectratio>yes</keepaspectratio>
       <font>font10</font>
       <font2>font10</font2>
       <font3>font12</font3>
@@ -107,7 +107,7 @@
       <itemHeight>43</itemHeight>
       <spaceBetweenItems>3</spaceBetweenItems>
       <textureHeight>55</textureHeight>
-      <keepaspectratio>no</keepaspectratio>
+      <keepaspectratio>yes</keepaspectratio>
       <font>font12</font>
       <font2>font12</font2>
       <font3>font14</font3>
