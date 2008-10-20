@@ -311,7 +311,7 @@ public class MediaPortalApp : D3DApp, IRender
         Application.DoEvents();
         if (_waitForTvServer)
         {
-          Log.Info("Main: Wait for TvServer requested. Checking if installed...");
+          Log.Debug("Main: Wait for TV service requested. Checking if installed...");
           ServiceController ctrl = null;
           try
           {
@@ -321,27 +321,27 @@ public class MediaPortalApp : D3DApp, IRender
           catch (Exception)
           {
             ctrl = null;
-            Log.Info("Main: TvServer not installed, so we can go on.");
+            Log.Debug("Main: TV service not installed - proceeding...");
           }
           if (ctrl != null)
           {
-            Log.Info("Main: TvServer found. Checking status...");
+            Log.Debug("Main: TV service found. Checking status...");
             if (ctrl.Status == ServiceControllerStatus.StartPending || ctrl.Status == ServiceControllerStatus.Stopped)
             {
-              Log.Info("Main: TvServer is start pending. Waiting until it starts up...");
+              Log.Info("Main: TV service start is pending. Waiting...");
               if (splashScreen != null)
-                splashScreen.SetInformation("Waiting for startup of TvServer...");
+                splashScreen.SetInformation("Waiting for startup of TV service...");
               try
               {
                 ctrl.WaitForStatus(ServiceControllerStatus.Running, new TimeSpan(0, 0, 45));
               }
               catch (Exception) { }
               if (ctrl.Status == ServiceControllerStatus.Running)
-                Log.Info("Main: Ok. TvServer is started.");
+                Log.Info("Main: The TV service has started successfully.");
               else
-                Log.Info("Main: Failed. TvServer is in status {0}", ctrl.Status.ToString());
+                Log.Info("Main: Startup of the TV service failed - current status: {0}", ctrl.Status.ToString());
             }
-            Log.Info("Main: TvServer is in status {0}. So we can go on.", ctrl.Status.ToString());
+            Log.Info("Main: TV service is in status {0} - proceeding...", ctrl.Status.ToString());
             ctrl.Close();
           }
         }
@@ -357,7 +357,7 @@ public class MediaPortalApp : D3DApp, IRender
             Thread.Sleep(1000);
           }
         }
-        Log.Info("Main: Verifying DirectX 9");
+        Log.Debug("Main: Verifying DirectX 9");
         try
         {
           // CHECK if DirectX 9.0c if installed
@@ -419,7 +419,7 @@ public class MediaPortalApp : D3DApp, IRender
 
           // CHECK if Windows MediaPlayer 11 is installed
           string WMP_Main_Ver = "11";
-          Log.Info("Main: Verifying Windows Media Player");
+          Log.Debug("Main: Verifying Windows Media Player");
 
           Version aParamVersion;
           if (FilterChecker.CheckFileVersion(Environment.SystemDirectory + "\\wmp.dll", WMP_Main_Ver + ".0.0000.0000", out aParamVersion))
@@ -458,7 +458,7 @@ public class MediaPortalApp : D3DApp, IRender
           splashScreen.SetInformation("Initializing DirectX...");
 
         MediaPortalApp app = new MediaPortalApp();
-        Log.Info("Main: Initializing DirectX");
+        Log.Debug("Main: Initializing DirectX");
         if (app.CreateGraphicsSample())
         {
           IMessageFilter filter = new ThreadMessageFilter(app);
@@ -480,7 +480,7 @@ public class MediaPortalApp : D3DApp, IRender
           catch (Exception ex)
           {
             Log.Error(ex);
-            Log.Error("MediaPortal stopped due 2 an exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+            Log.Error("MediaPortal stopped due to an exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
             _mpCrashed = true;
           }
           //#endif
@@ -495,7 +495,7 @@ public class MediaPortalApp : D3DApp, IRender
         catch (Exception ex)
         {
           Log.Error(ex);
-          Log.Error("MediaPortal stopped due 2 an exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+          Log.Error("MediaPortal stopped due to an exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
           _mpCrashed = true;
         }
 #endif
@@ -507,7 +507,7 @@ public class MediaPortalApp : D3DApp, IRender
         }
 #endif
         Settings.SaveCache();
-        Log.Info("Main: MediaPortal done");
+
         if (autoHideTaskbar)
         {
           // only re-show the startbar if MP is the one that has hidden it.
