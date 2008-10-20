@@ -77,14 +77,6 @@
         <description>TV On/Off button</description>
         <type>togglebutton</type>
         <id>8</id>
-        <width>337</width>
-        <height>40</height>
-        <textXOff>17</textXOff>
-        <textYOff>6</textYOff>
-        <font>font13</font>
-        <textcolor>White</textcolor>
-        <colordiffuse>White</colordiffuse>
-        <disabledcolor>#60ffffff</disabledcolor>
         <label>707</label>
         <AltTextureFocus>togglebutton-off-focus.png</AltTextureFocus>
         <AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
@@ -98,11 +90,6 @@
         <description>Active Streams</description>
         <type>button</type>
         <id>9</id>
-        <textXOff>17</textXOff>
-        <textYOff>6</textYOff>
-        <width>337</width>
-        <height>40</height>
-        <font>font13</font>
         <label>692</label>
         <onup>8</onup>
         <ondown>10</ondown>
@@ -234,9 +221,9 @@
       <description>progress bar</description>
       <type>progress</type>
       <id>20</id>
-      <posX>513</posX>
+      <posX>527</posX>
       <posY>472</posY>
-      <width>661</width>
+      <width>640</width>
       <height>31</height>
       <label>#TV.View.Percentage</label>
       <visible>yes</visible>
@@ -273,8 +260,8 @@
       <description>Playing Channel</description>
       <type>image</type>
       <id>1</id>
-      <posX>71</posX>
-      <posY>537</posY>
+      <posX>75</posX>
+      <posY>580</posY>
       <width>106</width>
       <height>75</height>
       <texture>#TV.View.thumb</texture>
@@ -287,8 +274,8 @@
       <id>1</id>
       <width>266</width>
       <height>37</height>
-      <posX>213</posX>
-      <posY>562</posY>
+      <posX>205</posX>
+      <posY>600</posY>
       <label>#TV.View.channel</label>
       <align>left</align>
       <font>font13</font>
@@ -302,8 +289,8 @@
       <id>1</id>
       <width>266</width>
       <height>37</height>
-      <posX>213</posX>
-      <posY>587</posY>
+      <posX>205</posX>
+      <posY>625</posY>
       <label>#TV.View.start - #TV.View.stop</label>
       <align>left</align>
       <font>font13</font>
@@ -315,8 +302,8 @@
       <description>Channel label</description>
       <type>label</type>
       <id>13</id>
-      <posX>213</posX>
-      <posY>537</posY>
+      <posX>205</posX>
+      <posY>575</posY>
       <label>602</label>
       <font>font13</font>
       <align>left</align>
