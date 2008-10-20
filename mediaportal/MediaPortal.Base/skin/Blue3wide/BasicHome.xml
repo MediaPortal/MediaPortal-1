@@ -24,60 +24,8 @@
       <align>center</align>
       <font>dingbats</font>
       <textcolor>40ffffff</textcolor>
-      <animation effect="zoom" start="20,20" end="100,100" center="640,360" time="500">WindowOpen</animation>
-      <animation effect="zoom" start="100,100" end="20,20" center="640,360" time="500">WindowClose</animation>
-    </control>
-    <control>
-      <description>home BM Video</description>
-      <type>button</type>
-      <id>3</id>
-      <posX>88</posX>
-      <posY>250</posY>
-      <width>243</width>
-      <height>277</height>
-      <textureFocus>Basic_video_focus.png</textureFocus>
-      <textureNoFocus>Basic_video_nofocus.png</textureNoFocus>
-      <hyperlink>6</hyperlink>
-      <hover>hover_my videos.png</hover>
-      <hoverX>435</hoverX>
-      <hoverY>350</hoverY>
-      <hoverWidth>483</hoverWidth>
-      <hoverHeight>382</hoverHeight>
-      <label>3</label>
-      <textcolor>00ffffff</textcolor>
-      <textcolorNoFocus>00ffffff</textcolorNoFocus>
-      <onleft>7</onleft>
-      <onright>4</onright>
-      <onup>21</onup>
-      <ondown>44</ondown>
-      <animation effect="zoom" start="20,20" end="100,100" center="640,360" time="500">WindowOpen</animation>
-      <animation effect="zoom" start="100,100" end="20,20" center="640,360" time="500">WindowClose</animation>
-    </control>
-    <control>
-      <description>home BM Pictures</description>
-      <type>button</type>
-      <id>4</id>
-      <posX>337</posX>
-      <posY>262</posY>
-      <width>195</width>
-      <height>290</height>
-      <textureFocus>Basic_pictures_focus.png</textureFocus>
-      <textureNoFocus>Basic_pictures_nofocus.png</textureNoFocus>
-      <hyperlink>2</hyperlink>
-      <hover>hover_my pictures.png</hover>
-      <hoverX>435</hoverX>
-      <hoverY>350</hoverY>
-      <hoverWidth>483</hoverWidth>
-      <hoverHeight>382</hoverHeight>
-      <label>1</label>
-      <textcolor>00ffffff</textcolor>
-      <textcolorNoFocus>00ffffff</textcolorNoFocus>
-      <onleft>3</onleft>
-      <onright>5</onright>
-      <onup>21</onup>
-      <ondown>4</ondown>
-      <animation effect="zoom" start="20,20" end="100,100" center="640,360" time="500">WindowOpen</animation>
-      <animation effect="zoom" start="100,100" end="20,20" center="640,360" time="500">WindowClose</animation>
+      <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="500">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="20,20" center="384,288" time="500">WindowClose</animation>
     </control>
     <control>
       <description>home BM Weather</description>
@@ -86,15 +34,15 @@
       <posX>533</posX>
       <posY>283</posY>
       <width>206</width>
-      <height>235</height>
+      <height>282</height>
       <textureFocus>Basic_weather_focus.png</textureFocus>
       <textureNoFocus>Basic_weather_nofocus.png</textureNoFocus>
       <hyperlink>2600</hyperlink>
       <hover>hover_my weather.png</hover>
-      <hoverX>435</hoverX>
-      <hoverY>350</hoverY>
-      <hoverWidth>483</hoverWidth>
-      <hoverHeight>382</hoverHeight>
+      <hoverX>445</hoverX>
+      <hoverY>360</hoverY>
+      <hoverWidth>413</hoverWidth>
+      <hoverHeight>342</hoverHeight>
       <label>8</label>
       <textcolor>00ffffff</textcolor>
       <textcolorNoFocus>00ffffff</textcolorNoFocus>
@@ -102,8 +50,8 @@
       <onright>6</onright>
       <onup>21</onup>
       <ondown>5</ondown>
-      <animation effect="zoom" start="20,20" end="100,100" center="640,360" time="500">WindowOpen</animation>
-      <animation effect="zoom" start="100,100" end="20,20" center="640,360" time="500">WindowClose</animation>
+      <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="500">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="20,20" center="384,288" time="500">WindowClose</animation>
     </control>
     <control>
       <description>home BM Music</description>
@@ -112,15 +60,15 @@
       <posX>736</posX>
       <posY>262</posY>
       <width>193</width>
-      <height>290</height>
+      <height>330</height>
       <textureFocus>Basic_music_focus.png</textureFocus>
       <textureNoFocus>Basic_music_nofocus.png</textureNoFocus>
       <hyperlink>501</hyperlink>
       <hover>hover_my music.png</hover>
-      <hoverX>435</hoverX>
-      <hoverY>350</hoverY>
-      <hoverWidth>483</hoverWidth>
-      <hoverHeight>382</hoverHeight>
+       <hoverX>445</hoverX>
+      <hoverY>360</hoverY>
+      <hoverWidth>413</hoverWidth>
+      <hoverHeight>342</hoverHeight>
       <label>2</label>
       <textcolor>00ffffff</textcolor>
       <textcolorNoFocus>00ffffff</textcolorNoFocus>
@@ -129,8 +77,60 @@
       <onright>7</onright>
       <onup>21</onup>
       <ondown>6</ondown>
-      <animation effect="zoom" start="20,20" end="100,100" center="640,360" time="500">WindowOpen</animation>
-      <animation effect="zoom" start="100,100" end="20,20" center="640,360" time="500">WindowClose</animation>
+      <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="500">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="20,20" center="384,288" time="500">WindowClose</animation>
+    </control>
+      <control>
+      <description>home BM Video</description>
+      <type>button</type>
+      <id>3</id>
+      <posX>88</posX>
+      <posY>250</posY>
+      <width>243</width>
+      <height>315</height>
+      <textureFocus>Basic_video_focus.png</textureFocus>
+      <textureNoFocus>Basic_video_nofocus.png</textureNoFocus>
+      <hyperlink>6</hyperlink>
+      <hover>hover_my videos.png</hover>
+      <hoverX>445</hoverX>
+      <hoverY>360</hoverY>
+      <hoverWidth>413</hoverWidth>
+      <hoverHeight>342</hoverHeight>
+      <label>3</label>
+      <textcolor>00ffffff</textcolor>
+      <textcolorNoFocus>00ffffff</textcolorNoFocus>
+      <onleft>7</onleft>
+      <onright>4</onright>
+      <onup>21</onup>
+      <ondown>44</ondown>
+      <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="500">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="20,20" center="384,288" time="500">WindowClose</animation>
+    </control>
+    <control>
+      <description>home BM Pictures</description>
+      <type>button</type>
+      <id>4</id>
+      <posX>337</posX>
+      <posY>262</posY>
+      <width>195</width>
+      <height>340</height>
+      <textureFocus>Basic_pictures_focus.png</textureFocus>
+      <textureNoFocus>Basic_pictures_nofocus.png</textureNoFocus>
+      <hyperlink>2</hyperlink>
+      <hover>hover_my pictures.png</hover>
+        <hoverX>445</hoverX>
+      <hoverY>360</hoverY>
+      <hoverWidth>413</hoverWidth>
+      <hoverHeight>342</hoverHeight>
+      <label>1</label>
+      <textcolor>00ffffff</textcolor>
+      <textcolorNoFocus>00ffffff</textcolorNoFocus>
+      <onleft>3</onleft>
+      <onright>5</onright>
+      <onup>21</onup>
+      <ondown>4</ondown>
+      <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="500">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="20,20" center="384,288" time="500">WindowClose</animation>
     </control>
     <control>
       <description>home BM TV</description>
@@ -139,15 +139,15 @@
       <posX>942</posX>
       <posY>250</posY>
       <width>236</width>
-      <height>368</height>
+      <height>408</height>
       <textureFocus>Basic_tv_focus.png</textureFocus>
       <textureNoFocus>Basic_tv_nofocus.png</textureNoFocus>
       <hyperlink>1</hyperlink>
       <hover>hover_my tv.png</hover>
-      <hoverX>435</hoverX>
-      <hoverY>350</hoverY>
-      <hoverWidth>483</hoverWidth>
-      <hoverHeight>382</hoverHeight>
+       <hoverX>445</hoverX>
+      <hoverY>360</hoverY>
+      <hoverWidth>413</hoverWidth>
+      <hoverHeight>342</hoverHeight>
       <label>605</label>
       <textcolor>00ffffff</textcolor>
       <textcolorNoFocus>00ffffff</textcolorNoFocus>
@@ -155,8 +155,8 @@
       <onright>3</onright>
       <onup>21</onup>
       <ondown>7</ondown>
-      <animation effect="zoom" start="20,20" end="100,100" center="640,360" time="500">WindowOpen</animation>
-      <animation effect="zoom" start="100,100" end="20,20" center="640,360" time="500">WindowClose</animation>
+      <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="500">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="20,20" center="384,288" time="500">WindowClose</animation>
     </control>
     <control>
       <description>Date</description>
@@ -168,8 +168,8 @@
       <align>right</align>
       <font>font13</font>
       <textcolor>ffa9d0f7</textcolor>
-      <animation effect="zoom" start="20,20" end="100,100" center="640,360" time="500">WindowOpen</animation>
-      <animation effect="zoom" start="100,100" end="20,20" center="640,360" time="500">WindowClose</animation>
+      <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="500">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="20,20" center="384,288" time="500">WindowClose</animation>
     </control>
     <control>
       <description>Time</description>
@@ -181,8 +181,8 @@
       <align>left</align>
       <font>font13</font>
       <textcolor>ffffffff</textcolor>
-      <animation effect="zoom" start="20,20" end="100,100" center="640,360" time="500">WindowOpen</animation>
-      <animation effect="zoom" start="100,100" end="20,20" center="640,360" time="500">WindowClose</animation>
+      <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="500">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="20,20" center="384,288" time="500">WindowClose</animation>
     </control>
     <control>
       <type>image</type>
@@ -190,15 +190,15 @@
       <posX>35</posX>
       <posY>30</posY>
       <texture>mediaportaltext.png</texture>
-      <animation effect="zoom" start="20,20" end="100,100" center="640,360" time="500">WindowOpen</animation>
-      <animation effect="zoom" start="100,100" end="20,20" center="640,360" time="500">WindowClose</animation>
+      <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="500">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="20,20" center="384,288" time="500">WindowClose</animation>
     </control>
     <control>
       <description>Mediaportaltext</description>
       <type>button</type>
       <id>44</id>
-      <posX>147</posX>
-      <posY>56</posY>
+      <posX>89</posX>
+      <posY>52</posY>
       <width>62</width>
       <height>26</height>
       <textureFocus>Animations\Buttf.png</textureFocus>
@@ -209,8 +209,8 @@
       <onup>21</onup>
       <ondown>7</ondown>
       <visible>player.hasaudio</visible>
-      <animation effect="zoom" start="20,20" end="100,100" center="640,360" time="500">WindowOpen</animation>
-      <animation effect="zoom" start="100,100" end="20,20" center="640,360" time="500">WindowClose</animation>
+      <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="500">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="20,20" center="384,288" time="500">WindowClose</animation>
     </control>
   </controls>
 </window>
