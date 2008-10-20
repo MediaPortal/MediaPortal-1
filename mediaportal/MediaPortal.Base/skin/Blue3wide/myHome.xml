@@ -19,8 +19,8 @@
       <posX>145</posX>
       <posY>30</posY>
       <texture>mediaportaltext.png</texture>
-      <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="500">WindowOpen</animation>
-      <animation effect="zoom" start="100,100" end="20,20" center="384,288" time="500">WindowClose</animation>
+      <animation effect="zoom" start="20,20" end="100,100" center="640,360" time="500">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="20,20" center="640,360" time="500">WindowClose</animation>
     </control>
     <control>
       <description>Logo</description>
@@ -31,16 +31,16 @@
       <width>176</width>
       <height>75</height>
       <texture flipY="true" diffuse="Thumb_Mask.png">-</texture>
-      <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="500">WindowOpen</animation>
-      <animation effect="zoom" start="100,100" end="20,20" center="384,288" time="500">WindowClose</animation>
+      <animation effect="zoom" start="20,20" end="100,100" center="640,360" time="500">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="20,20" center="640,360" time="500">WindowClose</animation>
     </control>
     <control>
       <description>Menu</description>
       <type>menu</type>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
-      <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="500">WindowOpen</animation>
-      <animation effect="zoom" start="100,100" end="20,20" center="384,288" time="500">WindowClose</animation>
+      <animation effect="zoom" start="20,20" end="100,100" center="640,360" time="500">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="20,20" center="640,360" time="500">WindowClose</animation>
       <id>50</id>
       <posX>672</posX>
       <posY>162</posY>
@@ -49,7 +49,7 @@
       <textColorNoFocus>ffa9d0f7</textColorNoFocus>
       <dimColor>80ffffff</dimColor>
       <buttonTextXOff>38</buttonTextXOff>
-      <buttonTextYOff>12</buttonTextYOff>
+      <buttonTextYOff>10</buttonTextYOff>
       <buttonOffset>31</buttonOffset>
       <buttonFont>font18</buttonFont>
       <buttonHeight>75</buttonHeight>
@@ -72,8 +72,8 @@
     <control>
       <description>Date</description>
       <type>label</type>
-      <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="500">WindowOpen</animation>
-      <animation effect="zoom" start="100,100" end="20,20" center="384,288" time="500">WindowClose</animation>
+      <animation effect="zoom" start="20,20" end="100,100" center="640,360" time="500">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="20,20" center="640,360" time="500">WindowClose</animation>
       <id>200</id>
       <posX>609</posX>
       <posY>187</posY>
@@ -85,8 +85,8 @@
     <control>
       <description>Time</description>
       <type>label</type>
-      <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="500">WindowOpen</animation>
-      <animation effect="zoom" start="100,100" end="20,20" center="384,288" time="500">WindowClose</animation>
+      <animation effect="zoom" start="20,20" end="100,100" center="640,360" time="500">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="20,20" center="640,360" time="500">WindowClose</animation>
       <id>201</id>
       <posX>609</posX>
       <posY>215</posY>

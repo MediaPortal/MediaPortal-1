@@ -24,8 +24,8 @@
       <align>center</align>
       <font>dingbats</font>
       <textcolor>40ffffff</textcolor>
-      <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="500">WindowOpen</animation>
-      <animation effect="zoom" start="100,100" end="20,20" center="384,288" time="500">WindowClose</animation>
+      <animation effect="zoom" start="20,20" end="100,100" center="640,360" time="500">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="20,20" center="640,360" time="500">WindowClose</animation>
     </control>
     <control>
       <description>home BM Video</description>
@@ -50,8 +50,8 @@
       <onright>4</onright>
       <onup>21</onup>
       <ondown>44</ondown>
-      <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="500">WindowOpen</animation>
-      <animation effect="zoom" start="100,100" end="20,20" center="384,288" time="500">WindowClose</animation>
+      <animation effect="zoom" start="20,20" end="100,100" center="640,360" time="500">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="20,20" center="640,360" time="500">WindowClose</animation>
     </control>
     <control>
       <description>home BM Pictures</description>
@@ -76,8 +76,8 @@
       <onright>5</onright>
       <onup>21</onup>
       <ondown>4</ondown>
-      <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="500">WindowOpen</animation>
-      <animation effect="zoom" start="100,100" end="20,20" center="384,288" time="500">WindowClose</animation>
+      <animation effect="zoom" start="20,20" end="100,100" center="640,360" time="500">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="20,20" center="640,360" time="500">WindowClose</animation>
     </control>
     <control>
       <description>home BM Weather</description>
@@ -102,8 +102,8 @@
       <onright>6</onright>
       <onup>21</onup>
       <ondown>5</ondown>
-      <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="500">WindowOpen</animation>
-      <animation effect="zoom" start="100,100" end="20,20" center="384,288" time="500">WindowClose</animation>
+      <animation effect="zoom" start="20,20" end="100,100" center="640,360" time="500">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="20,20" center="640,360" time="500">WindowClose</animation>
     </control>
     <control>
       <description>home BM Music</description>
@@ -129,8 +129,8 @@
       <onright>7</onright>
       <onup>21</onup>
       <ondown>6</ondown>
-      <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="500">WindowOpen</animation>
-      <animation effect="zoom" start="100,100" end="20,20" center="384,288" time="500">WindowClose</animation>
+      <animation effect="zoom" start="20,20" end="100,100" center="640,360" time="500">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="20,20" center="640,360" time="500">WindowClose</animation>
     </control>
     <control>
       <description>home BM TV</description>
@@ -155,8 +155,8 @@
       <onright>3</onright>
       <onup>21</onup>
       <ondown>7</ondown>
-      <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="500">WindowOpen</animation>
-      <animation effect="zoom" start="100,100" end="20,20" center="384,288" time="500">WindowClose</animation>
+      <animation effect="zoom" start="20,20" end="100,100" center="640,360" time="500">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="20,20" center="640,360" time="500">WindowClose</animation>
     </control>
     <control>
       <description>Date</description>
@@ -168,8 +168,8 @@
       <align>right</align>
       <font>font13</font>
       <textcolor>ffa9d0f7</textcolor>
-      <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="500">WindowOpen</animation>
-      <animation effect="zoom" start="100,100" end="20,20" center="384,288" time="500">WindowClose</animation>
+      <animation effect="zoom" start="20,20" end="100,100" center="640,360" time="500">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="20,20" center="640,360" time="500">WindowClose</animation>
     </control>
     <control>
       <description>Time</description>
@@ -181,8 +181,8 @@
       <align>left</align>
       <font>font13</font>
       <textcolor>ffffffff</textcolor>
-      <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="500">WindowOpen</animation>
-      <animation effect="zoom" start="100,100" end="20,20" center="384,288" time="500">WindowClose</animation>
+      <animation effect="zoom" start="20,20" end="100,100" center="640,360" time="500">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="20,20" center="640,360" time="500">WindowClose</animation>
     </control>
     <control>
       <type>image</type>
@@ -190,8 +190,8 @@
       <posX>35</posX>
       <posY>30</posY>
       <texture>mediaportaltext.png</texture>
-      <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="500">WindowOpen</animation>
-      <animation effect="zoom" start="100,100" end="20,20" center="384,288" time="500">WindowClose</animation>
+      <animation effect="zoom" start="20,20" end="100,100" center="640,360" time="500">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="20,20" center="640,360" time="500">WindowClose</animation>
     </control>
     <control>
       <description>Mediaportaltext</description>
@@ -209,8 +209,8 @@
       <onup>21</onup>
       <ondown>7</ondown>
       <visible>player.hasaudio</visible>
-      <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="500">WindowOpen</animation>
-      <animation effect="zoom" start="100,100" end="20,20" center="384,288" time="500">WindowClose</animation>
+      <animation effect="zoom" start="20,20" end="100,100" center="640,360" time="500">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="20,20" center="640,360" time="500">WindowClose</animation>
     </control>
   </controls>
 </window>
