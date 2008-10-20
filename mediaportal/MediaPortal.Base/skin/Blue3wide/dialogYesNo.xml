@@ -11,7 +11,7 @@
       <type>button</type>
       <id>10</id>
       <posX>675</posX>
-      <posY>395</posY>
+      <posY>415</posY>
       <textXOff>53</textXOff>
       <textYOff>8</textYOff>
       <width>186</width>
@@ -31,7 +31,7 @@
       <type>button</type>
       <id>11</id>
       <posX>408</posX>
-      <posY>395</posY>
+      <posY>415</posY>
       <textXOff>56</textXOff>
       <textYOff>8</textYOff>
       <width>186</width>

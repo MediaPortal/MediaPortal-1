@@ -20,8 +20,8 @@
       <description>Heading text label</description>
       <type>label</type>
       <id>4</id>
-      <posX>284</posX>
-      <posY>150</posY>
+      <posX>394</posX>
+      <posY>140</posY>
       <font>font16</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
@@ -65,7 +65,7 @@
       <id>11</id>
       <posX>302</posX>
       <posY>447</posY>
-      <width>657</width>
+      <width>557</width>
       <label>1110</label>
       <onup>3</onup>
       <ondown>12</ondown>
@@ -76,7 +76,7 @@
       <id>12</id>
       <posX>302</posX>
       <posY>497</posY>
-      <width>657</width>
+      <width>557</width>
       <label>1111</label>
       <onup>11</onup>
       <ondown>13</ondown>
@@ -87,7 +87,7 @@
       <id>13</id>
       <posX>302</posX>
       <posY>547</posY>
-      <width>657</width>
+      <width>557</width>
       <label>1112</label>
       <onup>12</onup>
       <ondown>14</ondown>
@@ -98,7 +98,7 @@
       <id>14</id>
       <posX>302</posX>
       <posY>597</posY>
-      <width>657</width>
+      <width>557</width>
       <label>1113</label>
       <onup>13</onup>
       <ondown>3</ondown>

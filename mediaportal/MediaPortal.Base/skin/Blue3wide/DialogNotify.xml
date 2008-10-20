@@ -41,10 +41,10 @@
         <description>OK button</description>
         <type>button</type>
         <id>4</id>
-        <posX>1086</posX>
-        <posY>525</posY>
-        <width>48</width>
-        <height>33</height>
+        <posX>1093</posX>
+        <posY>522</posY>
+        <width>50</width>
+        <height>40</height>
         <textureFocus>dialogue_ok_focus.png</textureFocus>
         <textureNoFocus>dialogue_ok_nofocus.png</textureNoFocus>
         <label>-</label>

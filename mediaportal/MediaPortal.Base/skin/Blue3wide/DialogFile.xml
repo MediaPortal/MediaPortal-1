@@ -44,6 +44,7 @@
       <posY>412</posY>
       <width>142</width>
       <height>37</height>
+	  <textYOff>2</textYOff>
       <textureFocus>small_button_focus.png</textureFocus>
       <textureNoFocus>small_button_nofocus.png</textureNoFocus>
       <label>107</label>
@@ -62,6 +63,7 @@
       <posY>412</posY>
       <width>142</width>
       <height>37</height>
+      <textYOff>2</textYOff>
       <textureFocus>small_button_focus.png</textureFocus>
       <textureNoFocus>small_button_nofocus.png</textureNoFocus>
       <label>106</label>
@@ -80,6 +82,7 @@
       <posY>456</posY>
       <width>142</width>
       <height>37</height>
+      <textYOff>2</textYOff>
       <textureFocus>small_button_focus.png</textureFocus>
       <textureNoFocus>small_button_nofocus.png</textureNoFocus>
       <label>511</label>
@@ -98,6 +101,7 @@
       <posY>456</posY>
       <width>142</width>
       <height>37</height>
+      <textYOff>2</textYOff>
       <textureFocus>small_button_focus.png</textureFocus>
       <textureNoFocus>small_button_nofocus.png</textureNoFocus>
       <label>512</label>
@@ -116,6 +120,7 @@
       <posY>412</posY>
       <width>142</width>
       <height>37</height>
+      <textYOff>2</textYOff>
       <textureFocus>small_button_focus.png</textureFocus>
       <textureNoFocus>small_button_nofocus.png</textureNoFocus>
       <label>510</label>

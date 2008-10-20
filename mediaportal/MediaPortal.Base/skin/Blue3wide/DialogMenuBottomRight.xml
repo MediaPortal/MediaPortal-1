@@ -61,10 +61,10 @@
         <description>Exit button</description>
         <type>button</type>
         <id>2</id>
-        <posX>1008</posX>
-        <posY>228</posY>
-        <width>76</width>
-        <height>53</height>
+        <posX>1020</posX>
+        <posY>230</posY>
+        <width>73</width>
+        <height>63</height>
         <textureFocus>dialogue_shutdown_focus.png</textureFocus>
         <textureNoFocus>dialogue_shutdown_nofocus.png</textureNoFocus>
         <label>-</label>

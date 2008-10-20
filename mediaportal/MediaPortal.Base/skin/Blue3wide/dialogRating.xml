@@ -86,11 +86,11 @@
       <description>OK button</description>
       <type>button</type>
       <id>12</id>
-      <posX>945</posX>
+      <posX>965</posX>
       <posY>277</posY>
       <textYOff>8</textYOff>
-      <width>78</width>
-      <height>55</height>
+      <width>68</width>
+      <height>58</height>
       <textureFocus>dialogue_ok_focus.png</textureFocus>
       <textureNoFocus>dialogue_ok_nofocus.png</textureNoFocus>
       <label>-</label>
@@ -106,7 +106,7 @@
       <type>button</type>
       <id>13</id>
       <posX>524</posX>
-      <posY>450</posY>
+      <posY>455</posY>
       <width>46</width>
       <height>33</height>
       <textureFocus>arrow_round_right_focus.png</textureFocus>
@@ -125,7 +125,7 @@
       <posX>471</posX>
       <posY>450</posY>
       <width>46</width>
-      <height>33</height>
+      <height>46</height>
       <textureFocus>osd_play_focus.png</textureFocus>
       <textureNoFocus>osd_play_nofocus.png</textureNoFocus>
       <label>-</label>
@@ -142,7 +142,7 @@
       <type>button</type>
       <id>15</id>
       <posX>417</posX>
-      <posY>450</posY>
+      <posY>455</posY>
       <width>46</width>
       <height>33</height>
       <textureFocus>arrow_round_left_focus.png</textureFocus>
