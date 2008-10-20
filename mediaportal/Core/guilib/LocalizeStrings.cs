@@ -85,7 +85,7 @@ namespace MediaPortal.GUI.Library
       if (language != null)
         cultureName = GetCultureName(language);
 
-      Log.Info("  Loading localised Strings - Path: {0} Culture: {1}  Language: {2} Prefix: {3}", directory, cultureName, language, isPrefixEnabled);
+      Log.Info("  Loading localized Strings - Path: {0} Culture: {1}  Language: {2} Prefix: {3}", directory, cultureName, language, isPrefixEnabled);
 
       _stringProvider = new LocalisationProvider(directory, cultureName, isPrefixEnabled);
 

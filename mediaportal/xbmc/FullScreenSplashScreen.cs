@@ -156,7 +156,7 @@ namespace MediaPortal
           if (System.IO.File.Exists(BackgroundImagePath))
           {
             pbBackground.Image = new Bitmap(BackgroundImagePath); // load the image as background
-            Log.Debug("FullScreenSplash: Background iamge value found: {0}", BackgroundImagePath);
+            Log.Debug("FullScreenSplash: Background image value found: {0}", BackgroundImagePath);
           }
         }
       }
