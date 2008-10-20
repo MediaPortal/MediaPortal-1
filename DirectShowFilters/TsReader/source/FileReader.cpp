@@ -87,7 +87,7 @@ HRESULT FileReader::SetFileName(LPCOLESTR pszFileName)
 HRESULT FileReader::OpenFile()
 {
 	WCHAR *pFileName = NULL;
-
+	int Tmo=5 ;
 	// Is the file already opened
 	if (m_hFile != INVALID_HANDLE_VALUE) 
   {
@@ -117,11 +117,10 @@ HRESULT FileReader::OpenFile()
 
 	pFileName = m_pFileName;
 //#endif
-
-	m_bReadOnly = FALSE;
-
-	// Try to open the file
-	m_hFile = ::CreateFileW(pFileName,      // The filename
+	do
+	{
+		// Try to open the file
+		m_hFile = ::CreateFileW(pFileName,      // The filename
 						 (DWORD) GENERIC_READ,        // File access
 						 (DWORD) FILE_SHARE_READ,     // Share access
 						 NULL,                        // Security
@@ -129,8 +128,9 @@ HRESULT FileReader::OpenFile()
 						 (DWORD) 0,                   // More flags
 						 NULL);                       // Template
 
-	if (m_hFile == INVALID_HANDLE_VALUE) 
-  {
+		m_bReadOnly = FALSE;
+		if (m_hFile != INVALID_HANDLE_VALUE) break ;
+
 		//Test incase file is being recorded to
 		m_hFile = ::CreateFileW(pFileName,		// The filename
 							(DWORD) GENERIC_READ,				// File access
@@ -145,15 +145,25 @@ HRESULT FileReader::OpenFile()
 //							FILE_FLAG_SEQUENTIAL_SCAN,	    // More flags
 							NULL);						                // Template
 
-		if (m_hFile == INVALID_HANDLE_VALUE)
-		{
-      LogDebug("FileReader::OpenFile() failed to open file");
-			DWORD dwErr = GetLastError();
-			return HRESULT_FROM_WIN32(dwErr);
-		}
-
 		m_bReadOnly = TRUE;
+		if (m_hFile != INVALID_HANDLE_VALUE) break ;
+
+		Sleep(20) ;
 	}
+	while(--Tmo) ;
+	if (Tmo)
+	{
+    if (Tmo<4) // 1 failed + 1 succeded is quasi-normal, more is a bit suspicious ( disk drive too slow or problem ? )
+  			LogDebug("FileReader::OpenFile(), %d tries to succeed opening %ws.", 6-Tmo, pFileName);
+	}
+	else
+	{
+		LogDebug("FileReader::OpenFile(), open file %ws failed.", pFileName);
+		DWORD dwErr = GetLastError();
+		return HRESULT_FROM_WIN32(dwErr);
+	}
+
+
 
   //LogDebug("FileReader::OpenFile() handle %i %ws", m_hFile, pFileName );
 

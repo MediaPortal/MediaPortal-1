@@ -356,19 +356,24 @@ HRESULT MultiFileWriter::ReuseTSFile()
   TCHAR sz[MAX_PATH];
   sprintf(sz, "%S", pFilename);
   // Can be locked temporarily to update duration or definitely (!) if timeshift is paused.
-	while(!DeleteFile(sz) && Tmo) { Sleep(50) ; Tmo-- ;}
+	do
+	{
+		DeleteFile(sz) ;	// Stupid function, return can be ok and file not deleted ( just tagged for deleting )!!!!
+		hr = m_pCurrentTSFile->OpenFile() ;
+		if (!FAILED(hr)) break ;
+		Sleep(20) ;
+	}
+	while (--Tmo) ;
+
   if (Tmo)
   {
-    if (Tmo!=5) 
-		LogDebug("MultiFileWriter: File : %ws has waited %d times for unlocking and deleting...", pFilename, 5-Tmo);
+    if (Tmo<4) // 1 failed + 1 succeded is quasi-normal, more is a bit suspicious ( disk drive too slow or problem ? )
+			LogDebug("MultiFileWriter: %d tries to succeed deleting and re-opening %ws.", 6-Tmo, pFilename);
   }
   else
-    LogDebug("MultiFileWriter: File : %ws locked.", pFilename);
-
-	if FAILED(hr = m_pCurrentTSFile->OpenFile())
 	{
-    LogDebug("MultiFileWriter: failed to create file");
-		return hr;
+    LogDebug("MultiFileWriter: failed to create file %ws",pFilename);
+		return hr ;
 	}
 
 	// if stuff worked then move the filename to the end of the files list

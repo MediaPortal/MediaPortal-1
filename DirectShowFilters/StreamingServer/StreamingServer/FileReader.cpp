@@ -73,6 +73,7 @@ int FileReader::SetFileName(char* pszFileName)
 //
 int FileReader::OpenFile()
 {
+	int Tmo=5 ;
 
     //printf("FileReader::OpenFile(%s)\n",m_fileName);
 	// Is the file already opened
@@ -82,12 +83,10 @@ int FileReader::OpenFile()
 		return NOERROR;
 	}
 
-
-
-	m_bReadOnly = FALSE;
-
-	// Try to open the file
-  m_hFile = CreateFileA((LPCSTR)m_fileName,   // The filename
+	do
+	{
+		// Try to open the file
+		m_hFile = CreateFileA((LPCSTR)m_fileName,   // The filename
 						 GENERIC_READ,          // File access
 						 FILE_SHARE_READ,       // Share access
 						 NULL,                  // Security
@@ -95,8 +94,8 @@ int FileReader::OpenFile()
 						 (DWORD) 0,             // More flags
 						 NULL);                 // Template
 
-	if (m_hFile == INVALID_HANDLE_VALUE) 
-  {
+		m_bReadOnly = FALSE;
+		if (m_hFile != INVALID_HANDLE_VALUE) break ;
 
 		//Test incase file is being recorded to
 		m_hFile = CreateFileA((LPCSTR)m_fileName,		// The filename
@@ -111,15 +110,22 @@ int FileReader::OpenFile()
 //							FILE_FLAG_SEQUENTIAL_SCAN,	// More flags
 							NULL);						// Template
 
-		if (m_hFile == INVALID_HANDLE_VALUE)
-		{
-			DWORD dwErr = GetLastError();
-      Log("FileReader::OpenFile(%s) failed:%d",(LPCSTR)m_fileName,dwErr);
-			return (int)dwErr;
-		}
-
 		m_bReadOnly = TRUE;
-    //printf("FileReader::OpenFile() succeeded\n");
+		if (m_hFile != INVALID_HANDLE_VALUE) break ;
+
+		Sleep(20) ;
+	}
+	while(--Tmo) ;
+	if (Tmo)
+	{
+    if (Tmo<4) // 1 failed + 1 succeded is quasi-normal, more is a bit suspicious ( disk drive too slow or problem ? )
+  			Log("FileReader::OpenFile(%s), %d tries to succeed opening %ws.",(LPCSTR)m_fileName, 6-Tmo);
+	}
+	else
+	{
+		DWORD dwErr = GetLastError();
+    Log("FileReader::OpenFile(%s) failed:%d",(LPCSTR)m_fileName,dwErr);
+		return (int)dwErr;
 	}
 /*
 	char infoName[512];
