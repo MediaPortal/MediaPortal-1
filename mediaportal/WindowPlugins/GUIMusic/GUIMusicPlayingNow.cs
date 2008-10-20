@@ -23,6 +23,8 @@
 
 #endregion
 
+#region usings
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -39,10 +41,19 @@ using MediaPortal.TagReader;
 using MediaPortal.Util;
 using MediaPortal.Configuration;
 
+#endregion
+
 namespace MediaPortal.GUI.Music
 {
+  /// <summary>
+  /// Displays more information about the current running track
+  /// Window added by Steve5 (why not using the MusicBaseWindow?)
+  /// Internet lookups added by rtv
+  /// </summary>
   public class GUIMusicPlayingNow : GUIWindow
   {
+    #region Enums
+
     private enum PopularityRating : int
     {
       unknown = 0,
@@ -97,6 +108,8 @@ namespace MediaPortal.GUI.Music
       CountDown
     }
 
+    #endregion
+
     #region Properties
 
     public GUIMusicBaseWindow MusicWindow
@@ -107,6 +120,7 @@ namespace MediaPortal.GUI.Music
     #endregion
 
     #region Skin controls
+
     [SkinControlAttribute((int)ControlIDs.LBL_CAPTION)]
     protected GUILabelControl LblCaption = null;
     [SkinControlAttribute((int)ControlIDs.IMG_COVERART)]
@@ -149,7 +163,10 @@ namespace MediaPortal.GUI.Music
     protected GUIImageList ImgListFamousTrack2 = null;
     [SkinControlAttribute((int)ControlIDs.IMGLIST_FAMOUS_TRACK3)]
     protected GUIImageList ImgListFamousTrack3 = null;
+
     #endregion
+
+    #region Variables
 
     private const int DISPLAY_LISTITEM_COUNT = 3;
 
@@ -181,6 +198,9 @@ namespace MediaPortal.GUI.Music
     private bool _preventMonitorPowerDown = false;
     private object _imageMutex = null;
 
+    #endregion
+
+    #region Constructor
 
     public GUIMusicPlayingNow()
     {
@@ -197,6 +217,10 @@ namespace MediaPortal.GUI.Music
 
       LoadSettings();
     }
+
+    #endregion
+
+    #region Serialisation
 
     void LoadSettings()
     {
@@ -227,18 +251,9 @@ namespace MediaPortal.GUI.Music
       _usingBassEngine = BassMusicPlayer.IsDefaultMusicPlayer;
     }
 
-    void OnThreadMessage(GUIMessage message)
-    {
-      //switch (message.Message)
-      //{
-      //  case GUIMessage.MessageType.GUI_MSG_PLAYING_10SEC:
-      //    if (PlaylistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC)
-      //    {      
-      //      OnSongInserted();
-      //    }
-      //    break;
-      //}
-    }
+    #endregion
+
+    #region Events
 
     void g_Player_PlayBackEnded(g_Player.MediaType type, string filename)
     {
@@ -333,6 +348,10 @@ namespace MediaPortal.GUI.Music
       }
     }
 
+    #endregion
+
+    #region Overrides
+
     public override bool Init()
     {
       return Load(GUIGraphicsContext.Skin + @"\MyMusicPlayingNow.xml");
@@ -403,6 +422,477 @@ namespace MediaPortal.GUI.Music
           break;
       }
     }
+
+
+    public override bool OnMessage(GUIMessage message)
+    {
+      switch (message.Message)
+      {
+        case GUIMessage.MessageType.GUI_MSG_CLICKED:
+          {
+            if (facadeAlbumInfo != null)
+            {
+              if (message.SenderControlId == (int)ControlIDs.LIST_ALBUM_INFO) // listbox
+              {
+                if ((int)Action.ActionType.ACTION_SELECT_ITEM == message.Param1)
+                {
+                  if (!facadeAlbumInfo.SelectedListItem.IsPlayed)
+                    AddInfoTrackToPlaylist(facadeAlbumInfo.SelectedListItem, true);
+                  else
+                  {
+                    Log.Info("GUIMusicPlayingNow: Could not add {0} from top album tracks because it was not found in your collection!");
+                    GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+                    if (dlg == null)
+                      break;
+                    //dlg. Reset();
+                    dlg.SetHeading(502);     // Unable to complete action
+                    dlg.SetLine(2, 33032);   // This album's top track could not
+                    dlg.SetLine(3, 33033);   // be found in your collection!
+
+                    dlg.DoModal(GetID);
+                  }
+                }
+              }
+            }
+            if (facadeTagInfo != null)
+            {
+              if (message.SenderControlId == (int)ControlIDs.LIST_TAG_INFO) // listbox
+              {
+                if ((int)Action.ActionType.ACTION_SELECT_ITEM == message.Param1)
+                {
+                  AddInfoTrackToPlaylist(facadeTagInfo.SelectedListItem, true);
+                }
+              }
+            }
+          }
+          break;
+
+      }
+      return base.OnMessage(message);
+    }
+
+    protected override void OnPageLoad()
+    {
+      base.OnPageLoad();
+
+      facadeAlbumInfo.Clear();
+      facadeTagInfo.Clear();
+      ImagePathContainer.Clear();
+
+      _trackChanged = true;
+
+      ToggleTopTrackRatings(false, PopularityRating.unknown);
+
+      GUIPropertyManager.SetProperty("#currentmodule", String.Format("{0}/{1}", GUILocalizeStrings.Get(100005), GUILocalizeStrings.Get(4540)));
+      LblUpNext.Label = GUILocalizeStrings.Get(4541);
+
+      if (LblUpNext.Label.Length == 0)
+        LblUpNext.Label = "Playing next";
+
+      if (GUIPropertyManager.GetProperty("#Play.Next.Title") == string.Empty)
+        LblUpNext.Visible = false;
+
+      if (LblBestAlbumTracks != null)
+        LblBestAlbumTracks.Visible = false;
+      if (LblBestTagTracks != null)
+        LblBestTagTracks.Visible = false;
+      ControlsInitialized = true;
+
+      InfoScrobbler = AudioscrobblerUtils.Instance;
+
+      if (ImageChangeTimer == null)
+      {
+        ImageChangeTimer = new System.Timers.Timer();
+        ImageChangeTimer.Interval = 3600 * 1000;
+        ImageChangeTimer.Elapsed += new ElapsedEventHandler(OnImageTimerTickEvent);
+        ImageChangeTimer.Start();
+      }
+
+      UpdateImagePathContainer();
+
+      if (g_Player.Playing)
+      {
+        g_Player_PlayBackStarted(g_Player.MediaType.Music, g_Player.CurrentFile);
+
+        SetVisualizationWindow();
+      }
+      else
+      {
+        CurrentTrackTag = null;
+        NextTrackTag = null;
+        UpdateTrackInfo();
+        ClearVisualizationImages();
+        // notify user what he's lost here?
+      }
+
+      // Prevent Monitor from being turned off, while in Now Playing
+      if (_preventMonitorPowerDown)
+        Util.Win32API.PreventMonitorPowerdown();
+    }
+
+    protected override void OnPageDestroy(int new_windowId)
+    {
+      // Reset the Monitor Power Down State
+      if (_preventMonitorPowerDown)
+        Util.Win32API.AllowMonitorPowerdown();
+
+      // Remove pending requests from the request queue
+      InfoScrobbler.RemoveRequest(_lastAlbumRequest);
+      InfoScrobbler.RemoveRequest(_lastArtistRequest);
+      InfoScrobbler.RemoveRequest(_lastTagRequest);
+
+      ImageChangeTimer.Stop();
+
+      if (ImgCoverArt != null)
+        ImgCoverArt.FreeResources();
+
+      GC.Collect();
+      ControlsInitialized = false;
+
+      // Make sure we clear any images we added so we revert back the coverart image
+      ClearVisualizationImages();
+
+      base.OnPageDestroy(new_windowId);
+    }
+
+    public override void Render(float timePassed)
+    {
+      base.Render(timePassed);
+
+      if (!g_Player.Playing || !g_Player.IsMusic)
+        return;
+
+      TimeSpan ts = DateTime.Now - LastUpdateTime;
+
+      if (ts >= UpdateInterval)
+      {
+        LastUpdateTime = DateTime.Now;
+        UpdateTrackInfo();
+      }
+    }
+
+    protected override void OnShowContextMenu()
+    {
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      MusicDatabase dbs;
+
+      if (dlg == null)
+        return;
+
+      dlg.Reset();
+      dlg.SetHeading(498);                // Menu
+
+      dlg.AddLocalizedString(930);        //Add to favorites
+
+      if (CurrentTrackTag.Album != null)
+        dlg.AddLocalizedString(33041);
+
+      //dlg.AddLocalizedString(928);        // Find Coverart
+      // dlg.AddLocalizedString(4521);       // Show Album Info
+
+      if (IsCdTrack(CurrentTrackFileName))
+        dlg.AddLocalizedString(4554);   // Lookup CD info
+
+      if (CurrentTrackTag != null)
+        dlg.AddLocalizedString(33040);  // copy IRC spam
+
+      dlg.DoModal(GetID);
+
+      // The ImgCoverArt visibility gets restored when a context menu is popped up.
+      // So we need to reset the visualization window visibility is restored after
+      // the context menu is dismissed
+      SetVisualizationWindow();
+
+      if (dlg.SelectedId == -1)
+        return;
+
+      switch (dlg.SelectedId)
+      {
+        case 928:       // Find Coverart
+          if (_MusicWindow != null)
+          {
+            string albumFolderPath = System.IO.Path.GetDirectoryName(CurrentTrackFileName);
+
+            _MusicWindow.FindCoverArt(false, CurrentTrackTag.Artist, CurrentTrackTag.Album, albumFolderPath, CurrentTrackTag, -1);
+            CurrentThumbFileName = GUIMusicFiles.GetCoverArt(false, CurrentTrackFileName, CurrentTrackTag);
+
+            if (CurrentThumbFileName.Length > 0)
+            {
+              // let us test if there is a larger cover art image
+              string strLarge = MediaPortal.Util.Utils.ConvertToLargeCoverArt(CurrentThumbFileName);
+              if (System.IO.File.Exists(strLarge))
+                CurrentThumbFileName = strLarge;
+              AddImageToImagePathContainer(CurrentThumbFileName);
+
+              if (_usingBassEngine)
+                BassMusicPlayer.Player.VisualizationWindow.CoverArtImagePath = CurrentThumbFileName;
+
+              UpdateImagePathContainer();
+            }
+          }
+          break;
+
+        case 4521:      // Show Album Info
+          if (_MusicWindow != null)
+          {
+            string albumFolderPath = System.IO.Path.GetDirectoryName(CurrentTrackFileName);
+            if (_MusicWindow != null)
+              _MusicWindow.ShowAlbumInfo(GetID, false, CurrentTrackTag.Artist, CurrentTrackTag.Album, albumFolderPath, CurrentTrackTag);
+          }
+          break;
+
+        case 4554:      // Lookup CD info
+          MusicTag tag = new MusicTag();
+          GetCDInfoFromFreeDB(CurrentTrackFileName, tag);
+          GetTrackTags();
+          break;
+
+        case 33040:    // IRC spam
+          try
+          {
+            if (CurrentTrackTag != null)
+            {
+              string tmpTrack = CurrentTrackTag.Track > 0 ? (Convert.ToString(CurrentTrackTag.Track) + ". ") : string.Empty;
+              Clipboard.SetDataObject(@"/me is listening to " + CurrentTrackTag.Artist + " [" + CurrentTrackTag.Album + "] - " + tmpTrack + CurrentTrackTag.Title, true);
+            }
+          }
+          catch (Exception ex)
+          {
+            Log.Error("GUIMusicPlayingNow: could not copy song spam to clipboard - {0}", ex.Message);
+          }
+          break;
+
+        case 930: // add to favorites
+          dbs = MusicDatabase.Instance;
+          Song currentSong = new Song();
+          string strFile = g_Player.Player.CurrentFile;
+
+          bool songFound = dbs.GetSongByFileName(strFile, ref currentSong);
+          if (songFound)
+          {
+            if (currentSong == null)
+              return;
+            if (currentSong.Id < 0)
+              return;
+            currentSong.Favorite = true;
+            dbs.SetFavorite(currentSong);
+          }
+          break;
+
+        case 33041: //Play this album
+          try
+          {
+            if (CurrentTrackTag != null)
+            {
+              dbs = MusicDatabase.Instance;
+              ArrayList albumSongs = new ArrayList();
+              String strAlbum = CurrentTrackTag.Album;
+
+              bool albumSongsFound = dbs.GetSongsByAlbum(strAlbum, ref albumSongs);
+
+              if (albumSongsFound)
+              {
+                for (int i = albumSongs.Count - 1; i >= 0; i--)
+                {
+                  Song song = (Song)albumSongs[i];
+                  if (song.Title != CurrentTrackTag.Title && song.Artist == CurrentTrackTag.Artist)
+                  {
+                    AddSongToPlaylist(ref song, _enqueueDefault);
+                  }
+                }
+                OnSongInserted();
+              }
+            }
+          }
+          catch (Exception ex)
+          {
+            Log.Error("GUIMusicPlayingNow: error while adding album tracks for {0} - {1}", CurrentTrackTag.Album, ex.Message);
+          }
+          break;
+      }
+    }
+
+    #endregion
+
+    #region Public methods
+
+    public void OnUpdateAlbumInfoCompleted(AlbumInfoRequest request, List<Song> AlbumTracks)
+    {
+      if (request.Equals(_lastAlbumRequest))
+      {
+        GUIListItem item = null;
+        facadeAlbumInfo.Clear();
+        ToggleTopTrackRatings(false, PopularityRating.unknown);
+
+        if (AlbumTracks.Count > 0)
+        {
+          // get total ratings
+          float AlbumSongRating = 0;
+          float ratingBase = 0;
+
+          foreach (Song Song in AlbumTracks)
+          {
+            AlbumSongRating += Convert.ToSingle(Song.TimesPlayed);
+          }
+          // set % rating
+          if (AlbumTracks[0].TimesPlayed > 0)
+            ratingBase = AlbumSongRating / Convert.ToSingle(AlbumTracks[0].TimesPlayed);
+          //else
+          //  ratingBase = 0.01f;
+
+          // avoid division by zero
+          AlbumSongRating = AlbumSongRating > 0 ? AlbumSongRating : 1;
+
+          for (int i = 0; i < AlbumTracks.Count; i++)
+          {
+            float rating = 0;
+
+            if (i == 0)
+              AlbumTracks[i].Rating = 11;
+            else
+            {
+              rating = (int)(ratingBase * Convert.ToSingle(AlbumTracks[i].TimesPlayed));
+              AlbumTracks[i].Rating = (int)(rating * 10 / AlbumSongRating);
+            }
+
+            item = new GUIListItem(AlbumTracks[i].ToShortString());
+            item.Label = AlbumTracks[i].Title;
+            //item.Label2 = " (" + GUILocalizeStrings.Get(931) + ": " + Convert.ToString(AlbumTracks[i].TimesPlayed) + ")";
+            //item.Label2 = " (" + GUILocalizeStrings.Get(931) + ": " + Convert.ToString(AlbumTracks[i].Rating) + ")";
+
+            item.MusicTag = AlbumTracks[i].ToMusicTag();
+            item.IsPlayed = AlbumTracks[i].URL == "local" ? false : true;
+
+            facadeAlbumInfo.Add(item);
+
+            string currentTrackRatingProperty = "#Lastfm.Rating.AlbumTrack" + Convert.ToString(i + 1);
+            try
+            {
+              GUIPropertyManager.SetProperty(currentTrackRatingProperty, Convert.ToString(AlbumTracks[i].Rating));
+            }
+            catch (Exception ex)
+            {
+              Log.Warn("GUIMusicPlayingNow: Could not set last.fm rating - {0}", ex.Message);
+              break;
+            }
+
+            // display 3 items only
+            if (facadeAlbumInfo.Count == DISPLAY_LISTITEM_COUNT)
+              break;
+          }
+        }
+        if (facadeAlbumInfo.Count > 0)
+        {
+          int popularity = AlbumTracks[0].TimesPlayed;
+
+          // only display stars if list is filled
+          if (facadeAlbumInfo.Count == DISPLAY_LISTITEM_COUNT)
+          {
+            if (popularity > 40000)
+              ToggleTopTrackRatings(true, PopularityRating.famous);
+            else
+              if (popularity > 10000)
+                ToggleTopTrackRatings(true, PopularityRating.known);
+              else
+                if (popularity > 2500)
+                  ToggleTopTrackRatings(true, PopularityRating.existent);
+                else
+                  ToggleTopTrackRatings(true, PopularityRating.unknown);
+          }
+
+          CurrentThumbFileName = GUIMusicFiles.GetCoverArt(false, CurrentTrackFileName, CurrentTrackTag);
+          if (CurrentThumbFileName.Length > 0)
+          {
+            // let us test if there is a larger cover art image
+            string strLarge = MediaPortal.Util.Utils.ConvertToLargeCoverArt(CurrentThumbFileName);
+            if (System.IO.File.Exists(strLarge))
+              CurrentThumbFileName = strLarge;
+
+            AddImageToImagePathContainer(CurrentThumbFileName);
+          }
+          if (LblBestAlbumTracks != null)
+            LblBestAlbumTracks.Visible = true;
+
+          UpdateImagePathContainer();
+
+          GUIControl.FocusControl(GetID, ((int)ControlIDs.LIST_ALBUM_INFO));
+        }
+      }
+      else
+      {
+        Log.Warn("GUIMusicPlayingNow: OnUpdateAlbumInfoCompleted: unexpected responsetype for request: {0}", request.Type);
+      }
+    }
+
+    public void OnUpdateArtistInfoCompleted(ArtistInfoRequest request, Song song)
+    {
+      if (request.Equals(_lastArtistRequest))
+      {
+        CurrentThumbFileName = Util.Utils.GetCoverArtName(Thumbs.MusicArtists, Util.Utils.MakeFileName(CurrentTrackTag.Artist));
+        if (CurrentThumbFileName.Length > 0)
+        {
+          // let us test if there is a larger cover art image
+          string strLarge = MediaPortal.Util.Utils.ConvertToLargeCoverArt(CurrentThumbFileName);
+          if (System.IO.File.Exists(strLarge))
+            CurrentThumbFileName = strLarge;
+
+          AddImageToImagePathContainer(CurrentThumbFileName);
+          UpdateImagePathContainer();
+        }
+      }
+      else
+      {
+        Log.Warn("NowPlaying.OnUpdateArtistInfoCompleted: unexpected response for request: {0}", request.Type);
+      }
+    }
+
+    public void OnUpdateTagInfoCompleted(TagInfoRequest request, List<Song> TagTracks)
+    {
+      if (request.Equals(_lastTagRequest))
+      {
+        GUIListItem item = null;
+        // lock (_infoUpdateMutex)
+        {
+          facadeTagInfo.Clear();
+
+          for (int i = 0; i < TagTracks.Count; i++)
+          {
+            item = new GUIListItem(TagTracks[i].ToShortString());
+            item.Label = TagTracks[i].Artist + " - " + TagTracks[i].Title;
+            //item.Label2 = " (" + GUILocalizeStrings.Get(931) + ": " + Convert.ToString(TagTracks[i].TimesPlayed) + ")";
+            //item.Label = TagTracks[i].Artist;
+            //item.Label2 = TagTracks[i].Title;
+
+            item.MusicTag = TagTracks[i].ToMusicTag();
+
+            facadeTagInfo.Add(item);
+
+            // display 3 items only
+            if (facadeTagInfo.Count == DISPLAY_LISTITEM_COUNT)
+              break;
+          }
+
+          if (facadeTagInfo.Count > 0)
+          {
+            if (LblBestTagTracks != null)
+            {
+              LblBestTagTracks.Label = GUILocalizeStrings.Get(33031) + TagTracks[0].Genre;
+              LblBestTagTracks.Visible = true;
+            }
+            if (facadeAlbumInfo == null || facadeAlbumInfo.Count == 0)
+              GUIControl.FocusControl(GetID, ((int)ControlIDs.LIST_TAG_INFO));
+          }
+        }
+      }
+      else
+      {
+        Log.Warn("NowPlaying.OnUpdateTagInfoCompleted: unexpected response for request: {0}", request.Type);
+      }
+    }
+
+    #endregion
+
+    #region Private methods
 
     private void UpdateImagePathContainer()
     {
@@ -551,25 +1041,6 @@ namespace MediaPortal.GUI.Music
           {
             if (AddSongToPlaylist(ref addSong, _enqueueDefault))
               Log.Info("GUIMusicPlayingNow: Song inserted: {0} - {1}", addSong.Artist, addSong.Title);
-            //if (mdb.GetSongs(1, listTag.Title, ref guiListItemList))
-            //{
-            //  MusicTag tempTag = new MusicTag();
-
-            //  foreach (GUIListItem alternativeSong in guiListItemList)
-            //  {
-            //    tempTag = GetTrackTag(mdb, alternativeSong.Path, false);
-            //    if (tempTag != null && tempTag.Artist != string.Empty)
-            //    {
-            //      if (tempTag.Artist.ToUpperInvariant() == listTag.Artist.ToUpperInvariant())
-            //      {
-            //        queueItem = alternativeSong;
-            //        queueItem.MusicTag = tempTag;
-            //      }
-            //    }
-            //  }
-            //  if (queueItem != null && queueItem.MusicTag != null)
-            //    if (AddSongToPlaylist(ref queueItem, _enqueueDefault))
-            //      Log.Info("GUIMusicPlayingNow: Song inserted: {0} - {1}", listTag.Artist, listTag.Title);
           }
           else
             Log.Info("GUIMusicPlayingNow: DB lookup for Artist: {0} Title: {1} unsuccessful", tempTag.Artist, tempTag.Title);
@@ -595,311 +1066,6 @@ namespace MediaPortal.GUI.Music
       }
     }
 
-    public override bool OnMessage(GUIMessage message)
-    {
-      switch (message.Message)
-      {
-        case GUIMessage.MessageType.GUI_MSG_CLICKED:
-          {
-            if (facadeAlbumInfo != null)
-            {
-              if (message.SenderControlId == (int)ControlIDs.LIST_ALBUM_INFO) // listbox
-              {
-                if ((int)Action.ActionType.ACTION_SELECT_ITEM == message.Param1)
-                {
-                  if (!facadeAlbumInfo.SelectedListItem.IsPlayed)
-                    AddInfoTrackToPlaylist(facadeAlbumInfo.SelectedListItem, true);
-                  else
-                  {
-                    Log.Info("GUIMusicPlayingNow: Could not add {0} from top album tracks because it was not found in your collection!");
-                    GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-                    if (dlg == null)
-                      break;
-                    //dlg. Reset();
-                    dlg.SetHeading(502);     // Unable to complete action
-                    dlg.SetLine(2, 33032);   // This album's top track could not
-                    dlg.SetLine(3, 33033);   // be found in your collection!
-
-                    dlg.DoModal(GetID);
-                  }
-                }
-              }
-            }
-            if (facadeTagInfo != null)
-            {
-              if (message.SenderControlId == (int)ControlIDs.LIST_TAG_INFO) // listbox
-              {
-                if ((int)Action.ActionType.ACTION_SELECT_ITEM == message.Param1)
-                {
-                  AddInfoTrackToPlaylist(facadeTagInfo.SelectedListItem, true);
-                }
-              }
-            }
-          }
-          break;
-
-        //case GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS:
-        //  {
-        //    //_currentPlaying = message.Label;
-        //    if (GUIWindowManager.ActiveWindow == GetID)
-        //    {
-        //      //facadeAlbumInfo.OnMessage(message); // really needed?
-        //      //facadeTagInfo.OnMessage(message);
-        //    }
-        //  }
-        //  break;
-      }
-      return base.OnMessage(message);
-    }
-
-    protected override void OnPageLoad()
-    {
-      base.OnPageLoad();
-
-      facadeAlbumInfo.Clear();
-      facadeTagInfo.Clear();
-      ImagePathContainer.Clear();
-
-      _trackChanged = true;
-
-      ToggleTopTrackRatings(false, PopularityRating.unknown);
-
-      GUIPropertyManager.SetProperty("#currentmodule", String.Format("{0}/{1}", GUILocalizeStrings.Get(100005), GUILocalizeStrings.Get(4540)));
-      LblUpNext.Label = GUILocalizeStrings.Get(4541);
-
-      if (LblUpNext.Label.Length == 0)
-        LblUpNext.Label = "Playing next";
-
-      if (GUIPropertyManager.GetProperty("#Play.Next.Title") == string.Empty)
-        LblUpNext.Visible = false;
-
-      if (LblBestAlbumTracks != null)
-        LblBestAlbumTracks.Visible = false;
-      if (LblBestTagTracks != null)
-        LblBestTagTracks.Visible = false;
-      ControlsInitialized = true;
-
-      InfoScrobbler = AudioscrobblerUtils.Instance;
-
-      if (ImageChangeTimer == null)
-      {
-        ImageChangeTimer = new System.Timers.Timer();
-        ImageChangeTimer.Interval = 3600 * 1000;
-        ImageChangeTimer.Elapsed += new ElapsedEventHandler(OnImageTimerTickEvent);
-        ImageChangeTimer.Start();
-      }
-
-      UpdateImagePathContainer();
-
-      if (g_Player.Playing)
-      {
-        g_Player_PlayBackStarted(g_Player.MediaType.Music, g_Player.CurrentFile);
-
-        SetVisualizationWindow();
-      }
-      else
-      {
-        CurrentTrackTag = null;
-        NextTrackTag = null;
-        UpdateTrackInfo();
-        ClearVisualizationImages();
-        // notify user what he's lost here?
-      }
-
-      // Prevent Monitor from being turned off, while in Now Playing
-      if (_preventMonitorPowerDown)
-        Util.Win32API.PreventMonitorPowerdown();
-    }
-
-    protected override void OnPageDestroy(int new_windowId)
-    {
-      // Reset the Monitor Power Down State
-      if (_preventMonitorPowerDown)
-        Util.Win32API.AllowMonitorPowerdown();
-
-      // Remove pending requests from the request queue
-      InfoScrobbler.RemoveRequest(_lastAlbumRequest);
-      InfoScrobbler.RemoveRequest(_lastArtistRequest);
-      InfoScrobbler.RemoveRequest(_lastTagRequest);
-
-      ImageChangeTimer.Stop();
-
-      if (ImgCoverArt != null)
-        ImgCoverArt.FreeResources();
-
-      GC.Collect();
-      ControlsInitialized = false;
-
-      // Make sure we clear any images we added so we revert back the coverart image
-      ClearVisualizationImages();
-
-      base.OnPageDestroy(new_windowId);
-    }
-
-    public override void Render(float timePassed)
-    {
-      base.Render(timePassed);
-
-      if (!g_Player.Playing || !g_Player.IsMusic)
-        return;
-
-      TimeSpan ts = DateTime.Now - LastUpdateTime;
-
-      if (ts >= UpdateInterval)
-      {
-        LastUpdateTime = DateTime.Now;
-        UpdateTrackInfo();
-      }
-    }
-
-    protected override void OnShowContextMenu()
-    {
-      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-
-      if (dlg == null)
-        return;
-
-      dlg.Reset();
-      dlg.SetHeading(498);                // Menu
-
-      dlg.AddLocalizedString(930);        //Add to favorites
-
-      if (CurrentTrackTag.Album != null)
-        dlg.AddLocalizedString(33041);
-
-      //dlg.AddLocalizedString(928);        // Find Coverart
-      // dlg.AddLocalizedString(4521);       // Show Album Info
-
-      if (IsCdTrack(CurrentTrackFileName))
-        dlg.AddLocalizedString(4554);   // Lookup CD info
-
-      if (CurrentTrackTag != null)
-        dlg.AddLocalizedString(33040);  // copy IRC spam
-
-      dlg.DoModal(GetID);
-
-      // The ImgCoverArt visibility gets restored when a context menu is popped up.
-      // So we need to reset the visualization window visibility is restored after
-      // the context menu is dismissed
-      SetVisualizationWindow();
-
-      if (dlg.SelectedId == -1)
-        return;
-
-      switch (dlg.SelectedId)
-      {
-        case 928:       // Find Coverart
-          if (_MusicWindow != null)
-          {
-            string albumFolderPath = System.IO.Path.GetDirectoryName(CurrentTrackFileName);
-
-            _MusicWindow.FindCoverArt(false, CurrentTrackTag.Artist, CurrentTrackTag.Album, albumFolderPath, CurrentTrackTag, -1);
-            CurrentThumbFileName = GUIMusicFiles.GetCoverArt(false, CurrentTrackFileName, CurrentTrackTag);
-
-            if (CurrentThumbFileName.Length > 0)
-            {
-              // let us test if there is a larger cover art image
-              string strLarge = MediaPortal.Util.Utils.ConvertToLargeCoverArt(CurrentThumbFileName);
-              if (System.IO.File.Exists(strLarge))
-                CurrentThumbFileName = strLarge;
-              AddImageToImagePathContainer(CurrentThumbFileName);
-
-              if (_usingBassEngine)
-                BassMusicPlayer.Player.VisualizationWindow.CoverArtImagePath = CurrentThumbFileName;
-
-              UpdateImagePathContainer();
-            }
-          }
-          break;
-
-
-        case 4521:      // Show Album Info
-          if (_MusicWindow != null)
-          {
-            string albumFolderPath = System.IO.Path.GetDirectoryName(CurrentTrackFileName);
-            if (_MusicWindow != null)
-              _MusicWindow.ShowAlbumInfo(GetID, false, CurrentTrackTag.Artist, CurrentTrackTag.Album, albumFolderPath, CurrentTrackTag);
-          }
-          break;
-
-
-        case 4554:      // Lookup CD info
-          {
-            MusicTag tag = new MusicTag();
-            GetCDInfoFromFreeDB(CurrentTrackFileName, tag);
-            GetTrackTags();
-            break;
-          }
-        case 33040:    // IRC spam
-          {
-            try
-            {
-              if (CurrentTrackTag != null)
-              {
-                string tmpTrack = CurrentTrackTag.Track > 0 ? (Convert.ToString(CurrentTrackTag.Track) + ". ") : string.Empty;
-                Clipboard.SetDataObject(@"/me is listening to " + CurrentTrackTag.Artist + " [" + CurrentTrackTag.Album + "] - " + tmpTrack + CurrentTrackTag.Title, true);
-              }
-              break;
-            }
-            catch (Exception ex)
-            {
-              Log.Error("GUIMusicPlayingNow: could not copy song spam to clipboard - {0}", ex.Message);
-              break;
-            }
-          }
-        case 930: // add to favorites
-          {
-            MusicDatabase dbs = MusicDatabase.Instance;
-            Song currentSong = new Song();
-            string strFile = g_Player.Player.CurrentFile;
-
-            bool songFound = dbs.GetSongByFileName(strFile, ref currentSong);
-            if (songFound)
-            {
-              if (currentSong == null)
-                return;
-              if (currentSong.Id < 0)
-                return;
-              currentSong.Favorite = true;
-              dbs.SetFavorite(currentSong);
-            }
-            break;
-          }
-        case 33041: //Play this album
-          {
-            try
-            {
-              if (CurrentTrackTag != null)
-              {
-                MusicDatabase dbs = MusicDatabase.Instance;
-                ArrayList albumSongs = new ArrayList();
-                String strAlbum = CurrentTrackTag.Album;
-
-                bool albumSongsFound = dbs.GetSongsByAlbum(strAlbum, ref albumSongs);
-
-                if (albumSongsFound)
-                {
-                  for (int i = albumSongs.Count - 1; i >= 0; i--)
-                  {
-                    Song song = (Song)albumSongs[i];
-                    if (song.Title != CurrentTrackTag.Title && song.Artist == CurrentTrackTag.Artist)
-                    {
-                      AddSongToPlaylist(ref song, _enqueueDefault);
-                    }
-                  }
-                  OnSongInserted();
-                }
-              }
-            }
-            catch (Exception ex)
-            {
-              Log.Error("GUIMusicPlayingNow: error while adding album tracks for {0} - {1}", CurrentTrackTag.Album, ex.Message);
-            }
-            break;
-          }
-      }
-    }
-
     private void UpdateCurrentTrackRating(int RatingValue)
     {
       if (RatingValue < 0 || RatingValue > 5)
@@ -914,22 +1080,6 @@ namespace MediaPortal.GUI.Music
       dbs.SetRating(strFile, RatingValue);
       Log.Info("GUIMusicPlayingNow: Set rating for song {0} to {1}", System.IO.Path.GetFileName(g_Player.CurrentFile), Convert.ToString(RatingValue));
     }
-
-    //private MusicTag BuildMusicTagFromSong(Song Song_)
-    //{
-    //  MusicTag tmpTag = new MusicTag();
-
-    //  tmpTag.Title = Song_.Title;
-    //  tmpTag.Album = Song_.Album;
-    //  tmpTag.Artist = Song_.Artist;
-    //  tmpTag.Duration = Song_.Duration;
-    //  tmpTag.Genre = Song_.Genre;
-    //  tmpTag.Track = Song_.Track;
-    //  tmpTag.Year = Song_.Year;
-    //  tmpTag.Rating = Song_.Rating;
-
-    //  return tmpTag;
-    //}
 
     private string CleanTagString(string tagField)
     {
@@ -1020,6 +1170,10 @@ namespace MediaPortal.GUI.Music
           Log.Warn("GUIMusicPlayingNow: current tag invalid for tag info lookup. File: {0}", g_Player.CurrentFile);
           return;
         }
+
+        if (LblBestTagTracks != null)
+          LblBestTagTracks.Visible = false;
+
         TagInfoRequest request = new TagInfoRequest(
                                         CurrentArtist,
                                         CurrentTrack,
@@ -1505,7 +1659,7 @@ namespace MediaPortal.GUI.Music
       return true;
     }
 
-    int GetCDATrackNumber(string strFile)
+    private int GetCDATrackNumber(string strFile)
     {
       string strTrack = string.Empty;
       int pos = strFile.IndexOf(".cda");
@@ -1658,179 +1812,6 @@ namespace MediaPortal.GUI.Music
       }
     }
 
-    public void OnUpdateAlbumInfoCompleted(AlbumInfoRequest request, List<Song> AlbumTracks)
-    {
-      if (request.Equals(_lastAlbumRequest))
-      {
-        GUIListItem item = null;
-        facadeAlbumInfo.Clear();
-        ToggleTopTrackRatings(false, PopularityRating.unknown);
-
-        if (AlbumTracks.Count > 0)
-        {
-          // get total ratings
-          float AlbumSongRating = 0;
-          float ratingBase = 0;
-
-          foreach (Song Song in AlbumTracks)
-          {
-            AlbumSongRating += Convert.ToSingle(Song.TimesPlayed);
-          }
-          // set % rating
-          if (AlbumTracks[0].TimesPlayed > 0)
-            ratingBase = AlbumSongRating / Convert.ToSingle(AlbumTracks[0].TimesPlayed);
-          //else
-          //  ratingBase = 0.01f;
-
-          // avoid division by zero
-          AlbumSongRating = AlbumSongRating > 0 ? AlbumSongRating : 1;
-
-          for (int i = 0; i < AlbumTracks.Count; i++)
-          {
-            float rating = 0;
-
-            if (i == 0)
-              AlbumTracks[i].Rating = 11;
-            else
-            {
-              rating = (int)(ratingBase * Convert.ToSingle(AlbumTracks[i].TimesPlayed));
-              AlbumTracks[i].Rating = (int)(rating * 10 / AlbumSongRating);
-            }
-
-            item = new GUIListItem(AlbumTracks[i].ToShortString());
-            item.Label = AlbumTracks[i].Title;
-            //item.Label2 = " (" + GUILocalizeStrings.Get(931) + ": " + Convert.ToString(AlbumTracks[i].TimesPlayed) + ")";
-            //item.Label2 = " (" + GUILocalizeStrings.Get(931) + ": " + Convert.ToString(AlbumTracks[i].Rating) + ")";
-
-            item.MusicTag = AlbumTracks[i].ToMusicTag();
-            item.IsPlayed = AlbumTracks[i].URL == "local" ? false : true;
-
-            facadeAlbumInfo.Add(item);
-
-            string currentTrackRatingProperty = "#Lastfm.Rating.AlbumTrack" + Convert.ToString(i + 1);
-            try
-            {
-              GUIPropertyManager.SetProperty(currentTrackRatingProperty, Convert.ToString(AlbumTracks[i].Rating));
-            }
-            catch (Exception ex)
-            {
-              Log.Warn("GUIMusicPlayingNow: Could not set last.fm rating - {0}", ex.Message);
-              break;
-            }
-
-            // display 3 items only
-            if (facadeAlbumInfo.Count == DISPLAY_LISTITEM_COUNT)
-              break;
-          }
-        }
-        if (facadeAlbumInfo.Count > 0)
-        {
-          int popularity = AlbumTracks[0].TimesPlayed;
-
-          // only display stars if list is filled
-          if (facadeAlbumInfo.Count == DISPLAY_LISTITEM_COUNT)
-          {
-            if (popularity > 40000)
-              ToggleTopTrackRatings(true, PopularityRating.famous);
-            else
-              if (popularity > 10000)
-                ToggleTopTrackRatings(true, PopularityRating.known);
-              else
-                if (popularity > 2500)
-                  ToggleTopTrackRatings(true, PopularityRating.existent);
-                else
-                  ToggleTopTrackRatings(true, PopularityRating.unknown);
-          }
-
-          CurrentThumbFileName = GUIMusicFiles.GetCoverArt(false, CurrentTrackFileName, CurrentTrackTag);
-          if (CurrentThumbFileName.Length > 0)
-          {
-            // let us test if there is a larger cover art image
-            string strLarge = MediaPortal.Util.Utils.ConvertToLargeCoverArt(CurrentThumbFileName);
-            if (System.IO.File.Exists(strLarge))
-              CurrentThumbFileName = strLarge;
-
-            AddImageToImagePathContainer(CurrentThumbFileName);
-          }
-          if (LblBestAlbumTracks != null)
-            LblBestAlbumTracks.Visible = true;
-
-          UpdateImagePathContainer();
-
-          GUIControl.FocusControl(GetID, ((int)ControlIDs.LIST_ALBUM_INFO));
-        }
-      }
-      else
-      {
-        Log.Warn("GUIMusicPlayingNow: OnUpdateAlbumInfoCompleted: unexpected responsetype for request: {0}", request.Type);
-      }
-    }
-
-    public void OnUpdateArtistInfoCompleted(ArtistInfoRequest request, Song song)
-    {
-      if (request.Equals(_lastArtistRequest))
-      {
-        CurrentThumbFileName = Util.Utils.GetCoverArtName(Thumbs.MusicArtists, Util.Utils.MakeFileName(CurrentTrackTag.Artist));
-        if (CurrentThumbFileName.Length > 0)
-        {
-          // let us test if there is a larger cover art image
-          string strLarge = MediaPortal.Util.Utils.ConvertToLargeCoverArt(CurrentThumbFileName);
-          if (System.IO.File.Exists(strLarge))
-            CurrentThumbFileName = strLarge;
-
-          AddImageToImagePathContainer(CurrentThumbFileName);
-          UpdateImagePathContainer();
-        }
-      }
-      else
-      {
-        Log.Warn("NowPlaying.OnUpdateArtistInfoCompleted: unexpected response for request: {0}", request.Type);
-      }
-    }
-
-    public void OnUpdateTagInfoCompleted(TagInfoRequest request, List<Song> TagTracks)
-    {
-      if (request.Equals(_lastTagRequest))
-      {
-        GUIListItem item = null;
-        // lock (_infoUpdateMutex)
-        {
-          facadeTagInfo.Clear();
-
-          for (int i = 0; i < TagTracks.Count; i++)
-          {
-            item = new GUIListItem(TagTracks[i].ToShortString());
-            item.Label = TagTracks[i].Artist + " - " + TagTracks[i].Title;
-            //item.Label2 = " (" + GUILocalizeStrings.Get(931) + ": " + Convert.ToString(TagTracks[i].TimesPlayed) + ")";
-            //item.Label = TagTracks[i].Artist;
-            //item.Label2 = TagTracks[i].Title;
-
-            item.MusicTag = TagTracks[i].ToMusicTag();
-
-            facadeTagInfo.Add(item);
-
-            // display 3 items only
-            if (facadeTagInfo.Count == DISPLAY_LISTITEM_COUNT)
-              break;
-          }
-
-          if (facadeTagInfo.Count > 0)
-          {
-            if (LblBestTagTracks != null)
-            {
-              LblBestTagTracks.Label = GUILocalizeStrings.Get(33031) + TagTracks[0].Genre;
-              LblBestTagTracks.Visible = true;
-            }
-            if (facadeAlbumInfo == null || facadeAlbumInfo.Count == 0)
-              GUIControl.FocusControl(GetID, ((int)ControlIDs.LIST_TAG_INFO));
-          }
-        }
-      }
-      else
-      {
-        Log.Warn("NowPlaying.OnUpdateTagInfoCompleted: unexpected response for request: {0}", request.Type);
-      }
-    }
-
+    #endregion
   }
 }
