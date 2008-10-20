@@ -3418,16 +3418,27 @@ namespace TvLibrary.Implementations.Analog
     /// </summary>
     private void RunGraph(int subChannel)
     {
+      bool graphRunning = GraphRunning();
+
       if (!CheckThreadId())
         return;
       if (_mapSubChannels.ContainsKey(subChannel))
       {
+        if (graphRunning)
+        {
+          if (!LockedInOnSignal())
+          {
+            throw new TvExceptionNoSignal("Unable to tune to channel - no signal");
+          }
+        }
         _mapSubChannels[subChannel].OnGraphStart();
-      }
-      FilterState state;
-      (_graphBuilder as IMediaControl).GetState(10, out state);
-      if (state == FilterState.Running)
+      }      
+
+      if (graphRunning)
+      {
         return;
+      }
+
       Log.Log.WriteFile("analog: RunGraph");
       int hr = 0;
       hr = (_graphBuilder as IMediaControl).Run();
@@ -3438,6 +3449,10 @@ namespace TvLibrary.Implementations.Analog
       }
       if (_mapSubChannels.ContainsKey(subChannel))
       {
+        if (!LockedInOnSignal())
+        {
+          throw new TvExceptionNoSignal("Unable to tune to channel - no signal");
+        } 
         _mapSubChannels[subChannel].OnGraphStarted();
       }
     }
