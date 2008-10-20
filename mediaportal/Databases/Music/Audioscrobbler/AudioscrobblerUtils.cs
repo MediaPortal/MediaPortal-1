@@ -1533,7 +1533,7 @@ namespace MediaPortal.Music.Database
     {
       string tmpFile = PathUtility.GetSecureTempFileName();
       try
-      {        
+      {
         using (WebClient client = new WebClient())
         {
           // Use the current user in case an NTLM Proxy or similar is used.

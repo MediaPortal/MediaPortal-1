@@ -23,6 +23,8 @@
 
 #endregion
 
+#region usings
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -30,6 +32,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Security.Cryptography;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Timers;
 using System.Text;
@@ -38,6 +41,8 @@ using MediaPortal.Configuration;
 using MediaPortal.Util;
 using MediaPortal.Music.Database;
 using MediaPortal.GUI.Library;
+
+#endregion
 
 namespace MediaPortal.Music.Database
 {
@@ -79,7 +84,7 @@ namespace MediaPortal.Music.Database
     const string RADIO_SCROBBLER_URL = "http://ws.audioscrobbler.com/radio/";
     const string PROTOCOL_VERSION = "1.2";
     #endregion
-    
+
     #region Variables
     // Client-specific config variables.
     private static string username;
@@ -96,7 +101,6 @@ namespace MediaPortal.Music.Database
     static AudioscrobblerQueue queue;
     private static Object queueLock;
     private static Object submitLock;
-    private static Object ParseLock;
     private static DateTime lastHandshake;        //< last successful attempt.
     private static DateTime lastRadioHandshake;
     private static TimeSpan handshakeInterval;
@@ -156,7 +160,6 @@ namespace MediaPortal.Music.Database
         _artistsStripped = xmlreader.GetValueAsBool("musicfiles", "stripartistprefixes", false);
 
         string tmpPass;
-        ParseLock = new object();        
 
         tmpPass = MusicDatabase.Instance.AddScrobbleUserPassword(Convert.ToString(MusicDatabase.Instance.AddScrobbleUser(username)), "");
         _useDebugLog = (MusicDatabase.Instance.AddScrobbleUserSettings(Convert.ToString(MusicDatabase.Instance.AddScrobbleUser(username)), "iDebugLog", -1) == 1) ? true : false;
@@ -351,7 +354,7 @@ namespace MediaPortal.Music.Database
       if (username != scrobbleUser_)
       {
         queue.Save();
-        queue = null;        
+        queue = null;
         MD5Response = "";
         string tmpPass = "";
         try
@@ -423,7 +426,7 @@ namespace MediaPortal.Music.Database
 
       Log.Warn("AudioscrobblerBase: falling back to safe mode");
     }
-    
+
 
     #endregion
 
@@ -445,7 +448,7 @@ namespace MediaPortal.Music.Database
         return;
       }
 
-      if (!forceNow_ ||ReasonForHandshake != HandshakeType.Recover)
+      if (!forceNow_ || ReasonForHandshake != HandshakeType.Recover)
       {
         // Check whether we had a *successful* handshake recently.
         if (DateTime.Now < lastHandshake.Add(handshakeInterval))
@@ -461,23 +464,23 @@ namespace MediaPortal.Music.Database
 
       if (ReasonForHandshake != HandshakeType.Init && !_signedIn)
       {
-         if (ReasonForHandshake == HandshakeType.PreRadio)
-         {
-           Log.Warn("AudioscrobblerBase: Disconnected - nevertheless trying radio handshake to listen without submits");
-           AttemptRadioHandshake();
-           return;
-         }
-         else
-         {
-           Log.Warn("AudioscrobblerBase: Disconnected - not attempting {0} handshake", ReasonForHandshake.ToString());
-           workerFailed(ReasonForHandshake, DateTime.MinValue, new Exception("Disconnected!"));
-           return;
-         }
+        if (ReasonForHandshake == HandshakeType.PreRadio)
+        {
+          Log.Warn("AudioscrobblerBase: Disconnected - nevertheless trying radio handshake to listen without submits");
+          AttemptRadioHandshake();
+          return;
+        }
+        else
+        {
+          Log.Warn("AudioscrobblerBase: Disconnected - not attempting {0} handshake", ReasonForHandshake.ToString());
+          workerFailed(ReasonForHandshake, DateTime.MinValue, new Exception("Disconnected!"));
+          return;
+        }
       }
 
       BackgroundWorker worker = new BackgroundWorker();
       worker.DoWork += new DoWorkEventHandler(Worker_TryHandshake);
-      worker.RunWorkerAsync(ReasonForHandshake);      
+      worker.RunWorkerAsync(ReasonForHandshake);
     }
 
     private static void Worker_TryHandshake(object sender, DoWorkEventArgs e)
@@ -497,7 +500,7 @@ namespace MediaPortal.Music.Database
                  + "&v=" + CLIENT_VERSION
                  + "&u=" + System.Web.HttpUtility.UrlEncode(username)
                  + "&t=" + authTime
-                 + "&a=" + tmpAuth;  
+                 + "&a=" + tmpAuth;
 
       try
       {
@@ -559,7 +562,7 @@ namespace MediaPortal.Music.Database
         case HandshakeType.ChangeUser:
           Log.Warn("AudioscrobblerBase: {0}", "ChangeUser failed - using previous account");
           username = olduser;
-          password = oldpass;         
+          password = oldpass;
           break;
         case HandshakeType.PreRadio:
           Log.Warn("AudioscrobblerBase: {0}", "Handshake failed - not attempting radio login");
@@ -612,7 +615,7 @@ namespace MediaPortal.Music.Database
     private static bool AttemptRadioHandshake()
     {
       // http://ws.audioscrobbler.com/radio/handshake.php?version=1.3.1.1&platform=win32&username=f1n4rf1n&passwordmd5=3847af7ab43a1c31503e8bef7736c41f&language=de&player=wmplayer HTTP/1.1
-      
+
       string tmpUser = System.Web.HttpUtility.UrlEncode(username).ToLower();
       string tmpPass = HashSingleString(password);
       string url = RADIO_SCROBBLER_URL
@@ -634,7 +637,7 @@ namespace MediaPortal.Music.Database
         return false;
       }
 
-      lastRadioHandshake = DateTime.Now;      
+      lastRadioHandshake = DateTime.Now;
 
       if (_useDebugLog)
         Log.Debug("AudioscrobblerBase: {0}", "Radio handshake successful");
@@ -653,7 +656,7 @@ namespace MediaPortal.Music.Database
       RadioHandshakeSuccess();
       return true;
     }
-    
+
 
     /// <summary>
     /// Executes the given HTTP request and parses the response of the server.
@@ -717,7 +720,7 @@ namespace MediaPortal.Music.Database
           Log.Info("AudioscrobblerBase: Announcing current track: {0}", postdata_);
         else
           Log.Info("AudioscrobblerBase: Submitting data: {0}", postdata_);
-        
+
         try
         {
           byte[] postHeaderBytes = Encoding.UTF8.GetBytes(postdata_);
@@ -738,7 +741,7 @@ namespace MediaPortal.Music.Database
           requestStream.Close();
         }
         catch (Exception e)
-        {          
+        {
           Log.Warn("AudioscrobblerBase.GetResponse: {0}", e.Message);
           return false;
         }
@@ -901,7 +904,7 @@ namespace MediaPortal.Music.Database
     }
 
     private static void AttemptSubmitNow()
-    {      
+    {
       // If the queue is empty, nothing else to do today.
       if (queue.Count <= 0)
       {
@@ -1142,6 +1145,7 @@ namespace MediaPortal.Music.Database
     #endregion
 
     #region Utilities
+
     private static string HashSubmitToken()
     {
       return HashMD5LoginStrings(false, password);
@@ -1192,7 +1196,7 @@ namespace MediaPortal.Music.Database
         md5response += barr[i].ToString("x2");
       }
 
-      return md5response;   
+      return md5response;
     }
 
     private static string removeInvalidChars(string inputString_)
@@ -1220,11 +1224,11 @@ namespace MediaPortal.Music.Database
       if (cleanString.Contains("|"))
         cleanString = cleanString.Remove(cleanString.IndexOf("|"));
       // substitute "&" with "and" <-- as long as needed
-      cleanString = cleanString.Replace("&", " and ");
+      //      cleanString = cleanString.Replace("&", " and ");
       // make sure there's only one space
-      cleanString = cleanString.Replace("  ", " ");
+      //      cleanString = cleanString.Replace("  ", " ");
       // substitute "/" with "+"
-      cleanString = cleanString.Replace(@"/", "+");
+      //      cleanString = cleanString.Replace(@"/", "+");
       // clean soundtracks
       cleanString = cleanString.Replace("OST ", " ");
       cleanString = cleanString.Replace("Soundtrack - ", " ");
@@ -1256,58 +1260,56 @@ namespace MediaPortal.Music.Database
       return inputString_;
     }
 
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public static string getValidURLLastFMString(string lastFMString)
     {
-      lock (ParseLock)
+      string outString = string.Empty;
+      string urlString = System.Web.HttpUtility.UrlEncode(lastFMString);
+
+      try
       {
-        string outString = string.Empty;
-        string urlString = System.Web.HttpUtility.UrlEncode(lastFMString);
+        outString = removeInvalidChars(lastFMString);
 
-        try
+        if (!string.IsNullOrEmpty(outString))
+          urlString = System.Web.HttpUtility.UrlEncode(removeEndingChars(outString));
+
+        outString = urlString;
+
+        // add chars here which need to be followed by "+" to be recognized correctly by last.fm
+        // consider some special cases like R.E.M. / D.D.E. / P.O.D etc
+        List<Char> invalidSingleChars = new List<Char>();
+        // invalidSingleChars.Add('.');
+        // invalidSingleChars.Add(',');
+
+        foreach (Char singleChar in invalidSingleChars)
         {
-          outString = removeInvalidChars(lastFMString);
-
-          if (!string.IsNullOrEmpty(outString))
-            urlString = System.Web.HttpUtility.UrlEncode(removeEndingChars(outString));
-
-          outString = urlString;
-
-          // add chars here which need to be followed by "+" to be recognized correctly by last.fm
-          // consider some special cases like R.E.M. / D.D.E. / P.O.D etc
-          List<Char> invalidSingleChars = new List<Char>();
-          //invalidSingleChars.Add('.');
-          invalidSingleChars.Add(',');
-
-          foreach (Char singleChar in invalidSingleChars)
+          // do not loop unless needed
+          if (urlString.IndexOf(singleChar) > 0)
           {
-            // do not loop unless needed
-            if (urlString.IndexOf(singleChar) > 0)
+            // check each letter of the string
+            for (int s = 0; s < urlString.Length; s++)
             {
-              // check each letter of the string
-              for (int s = 0; s < urlString.Length; s++)
+              // the evil char has been detected
+              if (urlString[s] == singleChar)
               {
-                // the evil char has been detected
-                if (urlString[s] == singleChar)
-                {
-                  outString = urlString.Insert(s + 1, "+");
-                  urlString = outString;
-                  // skip checking the just inserted position
-                  s++;
-                }
+                outString = urlString.Insert(s + 1, "+");
+                urlString = outString;
+                // skip checking the just inserted position
+                s++;
               }
             }
           }
-          outString = outString.Replace("++", "+");
-          // build a clean end
-          outString = removeEndingChars(outString);
         }
-        catch (Exception ex)
-        {
-          Log.Error("AudioscrobblerBase: Error while building valid url string - {0}", ex.Message);
-          return urlString;
-        }
-        return outString;
+        outString = outString.Replace("++", "+");
+        // build a clean end
+        outString = removeEndingChars(outString);
       }
+      catch (Exception ex)
+      {
+        Log.Error("AudioscrobblerBase: Error while building valid url string - {0}", ex.Message);
+        return urlString;
+      }
+      return outString;
     }
 
     public static string UndoArtistPrefix(string aStrippedArtist)
@@ -1353,8 +1355,8 @@ namespace MediaPortal.Music.Database
     {
       //"The, Les, Die"
       if (_artistsStripped)
-        Util.Utils.StripArtistNamePrefix(ref aArtistToStrip, true);        
-      
+        Util.Utils.StripArtistNamePrefix(ref aArtistToStrip, true);
+
       return aArtistToStrip;
     }
     #endregion
