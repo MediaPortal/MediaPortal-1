@@ -86,19 +86,19 @@
       <id>37</id>
       <posX>145</posX>
       <posY>175</posY>
-      <width>860</width>
+      <width>900</width>
       <height>450</height>
       <textYOff>25</textYOff>
-      <textXOff2>853</textXOff2>
+      <textXOff2>890</textXOff2>
       <textYOff2>25</textYOff2>
       <textXOff3>88</textXOff3>
-      <textYOff3>6</textYOff3>
-      <IconXOff>21</IconXOff>
+      <textYOff3>1</textYOff3>
+      <IconXOff>10</IconXOff>
       <IconYOff>5</IconYOff>
-      <PinIconXOff>500</PinIconXOff>
-      <PinIconYOff>1</PinIconYOff>
-      <PinIconWidth>47</PinIconWidth>
-      <PinIconHeight>42</PinIconHeight>
+      <PinIconXOff>915</PinIconXOff>
+      <PinIconYOff>3</PinIconYOff>
+      <PinIconWidth>50</PinIconWidth>
+      <PinIconHeight>50</PinIconHeight>
       <spinPosX>1034</spinPosX>
       <spinPosY>581</spinPosY>
       <spinWidth>39</spinWidth>
