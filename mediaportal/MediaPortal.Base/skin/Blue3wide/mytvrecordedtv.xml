@@ -9,6 +9,8 @@
     <control>
       <type>image</type>
       <description>BG</description>
+       <width>1280</width>
+      <height>720</height>
       <id>1</id>
     </control>
     <control>

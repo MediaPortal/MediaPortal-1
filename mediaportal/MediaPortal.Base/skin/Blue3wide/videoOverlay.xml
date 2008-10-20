@@ -8,8 +8,8 @@
       <description>play time label</description>
       <type>label</type>
       <id>2</id>
-      <posX>391</posX>
-      <posY>612</posY>
+     <posX>391</posX>
+      <posY>602</posY>
       <label>#currentplaytime</label>
       <align>left</align>
       <font>font60</font>
@@ -21,9 +21,9 @@
       <description>play logo</description>
       <type>image</type>
       <id>3</id>
-      <posX>376</posX>
+      <posX>326</posX>
       <posY>575</posY>
-      <width>64</width>
+      <width>52</width>
       <height>52</height>
       <texture>logo_play.png</texture>
       <visible>player.playing</visible>
@@ -34,9 +34,9 @@
       <description>Pause logo</description>
       <type>image</type>
       <id>4</id>
-      <posX>376</posX>
+      <posX>326</posX>
       <posY>575</posY>
-      <width>64</width>
+      <width>52</width>
       <height>52</height>
       <texture>logo_pause.png</texture>
       <visible>player.paused</visible>
@@ -47,9 +47,9 @@
       <description>FF logo</description>
       <type>image</type>
       <id>7</id>
-      <posX>376</posX>
+      <posX>326</posX>
       <posY>575</posY>
-      <width>64</width>
+      <width>52</width>
       <height>52</height>
       <texture>logo_fastforward.png</texture>
       <visible>player.forwarding</visible>
@@ -60,9 +60,9 @@
       <description>RW logo</description>
       <type>image</type>
       <id>8</id>
-      <posX>376</posX>
+      <posX>326</posX>
       <posY>575</posY>
-      <width>64</width>
+      <width>52</width>
       <height>52</height>
       <texture>logo_rewind.png</texture>
       <visible>player.rewinding</visible>
@@ -74,7 +74,7 @@
       <type>fadelabel</type>
       <width>248</width>
       <height>37</height>
-      <posX>97</posX>
+      <posX>78</posX>
       <posY>683</posY>
       <font>font12</font>
       <label>#Play.Current.Title\r#Play.Current.Genre\r#Play.Current.Year\r#Play.Current.Director</label>
@@ -87,9 +87,9 @@
       <description>video rectangle</description>
       <type>image</type>
       <id>0</id>
-      <posX>87</posX>
+      <posX>78</posX>
       <posY>523</posY>
-      <width>286</width>
+      <width>240</width>
       <height>155</height>
       <texture>Picture_cover.png</texture>
       <animation effect="fade" time="250">WindowClose</animation>
@@ -99,9 +99,9 @@
       <description>video preview window</description>
       <type>videowindow</type>
       <id>1</id>
-      <posX>99</posX>
+      <posX>89</posX>
       <posY>531</posY>
-      <width>257</width>
+      <width>217</width>
       <height>138</height>
       <action>18</action>
       <textureFocus>tv_green_border.png</textureFocus>
