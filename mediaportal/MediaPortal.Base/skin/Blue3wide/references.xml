@@ -189,8 +189,10 @@
     <textYOff>5</textYOff>
     <textXOff2>0</textXOff2>
     <textYOff2>5</textYOff2>
-    <IconXOff>14</IconXOff>
-    <IconYOff>10</IconYOff>
+     <itemWidth>32</itemWidth>
+     <itemHeight>32</itemHeight>
+    <IconXOff>12</IconXOff>
+    <IconYOff>4</IconYOff>
     <suffix>|</suffix>
   </control>
   <control>
