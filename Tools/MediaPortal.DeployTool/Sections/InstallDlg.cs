@@ -24,6 +24,7 @@
 #endregion
 
 using System;
+using System.Drawing;
 using System.Windows.Forms;
 using MediaPortal.DeployTool.InstallationChecks;
 
@@ -58,6 +59,9 @@ namespace MediaPortal.DeployTool.Sections
       {
         IInstallationPackage package = (IInstallationPackage)item.Tag;
         int action = PerformPackageAction(package, item);
+        item.UseItemStyleForSubItems = false;
+        item.SubItems[1].Font = new Font(item.SubItems[1].Font, FontStyle.Regular);
+        listView.Update();
         if (action == 2)
         {
           break;
@@ -215,11 +219,13 @@ namespace MediaPortal.DeployTool.Sections
       //        2: install error
       //
       CheckResult result = package.CheckStatus();
-      if (result.state != CheckState.INSTALLED && 
-          result.state != CheckState.REMOVED && 
+      if (result.state != CheckState.INSTALLED &&
+          result.state != CheckState.REMOVED &&
           result.state != CheckState.DOWNLOADED &&
           result.state != CheckState.SKIPPED)
       {
+        item.UseItemStyleForSubItems = false;
+        item.SubItems[1].Font = new Font(item.SubItems[1].Font, FontStyle.Bold);
         switch (result.state)
         {
           case CheckState.NOT_INSTALLED:
@@ -227,7 +233,7 @@ namespace MediaPortal.DeployTool.Sections
             {
               item.SubItems[1].Text = Utils.GetBestTranslation("Install_msgDownloading");
               listView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
-              Update();
+              listView.Update();
               if (!package.Download())
               {
                 Utils.ErrorDlg(string.Format(Utils.GetBestTranslation("Install_errInstallFailed"), package.GetDisplayName()));
@@ -236,7 +242,7 @@ namespace MediaPortal.DeployTool.Sections
             }
             item.SubItems[1].Text = Utils.GetBestTranslation("Install_msgInstalling");
             listView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
-            Update();
+            listView.Update();
             if (!package.Install())
             {
               Utils.ErrorDlg(string.Format(Utils.GetBestTranslation("Install_errInstallFailed"), package.GetDisplayName()));
@@ -247,7 +253,7 @@ namespace MediaPortal.DeployTool.Sections
           case CheckState.NOT_CONFIGURED:
             item.SubItems[1].Text = Utils.GetBestTranslation("Install_msgConfiguring");
             listView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
-            Update();
+            listView.Update();
             if (!package.Install())
             {
               Utils.ErrorDlg(string.Format(Utils.GetBestTranslation("Install_errConfigureFailed"), package.GetDisplayName()));
@@ -258,7 +264,7 @@ namespace MediaPortal.DeployTool.Sections
           case CheckState.NOT_REMOVED:
             item.SubItems[1].Text = Utils.GetBestTranslation("Install_msgUninstalling");
             listView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
-            Update();
+            listView.Update();
             if (!package.Install())
             {
               Utils.ErrorDlg(string.Format(Utils.GetBestTranslation("Install_errRemoveFailed"), package.GetDisplayName()));
@@ -269,7 +275,7 @@ namespace MediaPortal.DeployTool.Sections
           case CheckState.VERSION_MISMATCH:
             item.SubItems[1].Text = Utils.GetBestTranslation("Install_msgUninstalling");
             listView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
-            Update();
+            listView.Update();
             if (!package.UnInstall())
             {
               Utils.ErrorDlg(string.Format(Utils.GetBestTranslation("Install_errUinstallFailed"), package.GetDisplayName()));
@@ -279,7 +285,7 @@ namespace MediaPortal.DeployTool.Sections
             {
               item.SubItems[1].Text = Utils.GetBestTranslation("Install_msgDownloading");
               listView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
-              Update();
+              listView.Update();
               if (!package.Download())
               {
                 Utils.ErrorDlg(string.Format(Utils.GetBestTranslation("Install_errDownloadFailed"), package.GetDisplayName()));
@@ -288,7 +294,7 @@ namespace MediaPortal.DeployTool.Sections
             }
             item.SubItems[1].Text = Utils.GetBestTranslation("Install_msgInstalling");
             listView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
-            Update();
+            listView.Update();
             if (!package.Install())
             {
               Utils.ErrorDlg(string.Format(Utils.GetBestTranslation("Install_errInstallFailed"), package.GetDisplayName()));
@@ -299,7 +305,7 @@ namespace MediaPortal.DeployTool.Sections
           case CheckState.NOT_DOWNLOADED:
             item.SubItems[1].Text = Utils.GetBestTranslation("Install_msgDownloading");
             listView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
-            Update();
+            listView.Update();
             if (!package.Download())
             {
               Utils.ErrorDlg(string.Format(Utils.GetBestTranslation("Install_errDownloadFailed"), package.GetDisplayName()));
