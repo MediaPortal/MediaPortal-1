@@ -62,15 +62,12 @@ namespace MediaPortal.AudioScrobbler
       this.toolTipRandomness = new System.Windows.Forms.ToolTip(this.components);
       this.tabControlSettings = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPageLastFMSettings = new System.Windows.Forms.TabPage();
-      this.labelNewUserHint = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.groupBoxProfile = new System.Windows.Forms.GroupBox();
+      this.pictureBoxAvatar = new System.Windows.Forms.PictureBox();
       this.labelNoUser = new MediaPortal.UserInterface.Controls.MPLabel();
       this.labelPluginBannerHint = new MediaPortal.UserInterface.Controls.MPLabel();
       this.linkLabel1 = new System.Windows.Forms.LinkLabel();
       this.linkLabel2 = new System.Windows.Forms.LinkLabel();
-      this.groupBoxOptions = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.checkBoxEnableNowPlaying = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.checkBoxEnableSubmits = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.checkBoxLogVerbose = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBoxAccount = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.buttonDelUser = new MediaPortal.UserInterface.Controls.MPButton();
       this.buttonAddUser = new MediaPortal.UserInterface.Controls.MPButton();
@@ -78,7 +75,12 @@ namespace MediaPortal.AudioScrobbler
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.maskedTextBoxASPassword = new System.Windows.Forms.MaskedTextBox();
+      this.labelNewUserHint = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tabPageMusicSettings = new System.Windows.Forms.TabPage();
+      this.groupBoxOptions = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.checkBoxEnableNowPlaying = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxEnableSubmits = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxLogVerbose = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBoxSimilarMode = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.checkBoxReAddArtist = new System.Windows.Forms.CheckBox();
       this.groupBoxNeighbourFriend = new MediaPortal.UserInterface.Controls.MPGroupBox();
@@ -157,13 +159,21 @@ namespace MediaPortal.AudioScrobbler
       this.buttonOk = new MediaPortal.UserInterface.Controls.MPButton();
       this.labelPassword = new MediaPortal.UserInterface.Controls.MPLabel();
       this.labelUser = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.lblProfRealnameDesc = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.lblProfRealname = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.lblProfPlaycount = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.lblProfPlaycountDesc = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.lblProfRegistered = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.lblProfRegisteredDesc = new MediaPortal.UserInterface.Controls.MPLabel();
       this.panelPicBox.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxASLogo)).BeginInit();
       this.tabControlSettings.SuspendLayout();
       this.tabPageLastFMSettings.SuspendLayout();
-      this.groupBoxOptions.SuspendLayout();
+      this.groupBoxProfile.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxAvatar)).BeginInit();
       this.groupBoxAccount.SuspendLayout();
       this.tabPageMusicSettings.SuspendLayout();
+      this.groupBoxOptions.SuspendLayout();
       this.groupBoxSimilarMode.SuspendLayout();
       this.groupBoxNeighbourFriend.SuspendLayout();
       this.groupBoxOfflineMode.SuspendLayout();
@@ -255,13 +265,13 @@ namespace MediaPortal.AudioScrobbler
       // 
       // tabPageLastFMSettings
       // 
-      this.tabPageLastFMSettings.Controls.Add(this.labelNewUserHint);
+      this.tabPageLastFMSettings.Controls.Add(this.groupBoxProfile);
       this.tabPageLastFMSettings.Controls.Add(this.labelNoUser);
       this.tabPageLastFMSettings.Controls.Add(this.labelPluginBannerHint);
       this.tabPageLastFMSettings.Controls.Add(this.linkLabel1);
       this.tabPageLastFMSettings.Controls.Add(this.linkLabel2);
-      this.tabPageLastFMSettings.Controls.Add(this.groupBoxOptions);
       this.tabPageLastFMSettings.Controls.Add(this.groupBoxAccount);
+      this.tabPageLastFMSettings.Controls.Add(this.labelNewUserHint);
       this.tabPageLastFMSettings.Location = new System.Drawing.Point(4, 22);
       this.tabPageLastFMSettings.Name = "tabPageLastFMSettings";
       this.tabPageLastFMSettings.Padding = new System.Windows.Forms.Padding(3);
@@ -270,24 +280,37 @@ namespace MediaPortal.AudioScrobbler
       this.tabPageLastFMSettings.Text = "Plugin settings";
       this.tabPageLastFMSettings.UseVisualStyleBackColor = true;
       // 
-      // labelNewUserHint
+      // groupBoxProfile
       // 
-      this.labelNewUserHint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.labelNewUserHint.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.labelNewUserHint.ForeColor = System.Drawing.SystemColors.ControlText;
-      this.labelNewUserHint.Location = new System.Drawing.Point(23, 256);
-      this.labelNewUserHint.Name = "labelNewUserHint";
-      this.labelNewUserHint.Size = new System.Drawing.Size(262, 36);
-      this.labelNewUserHint.TabIndex = 9;
-      this.labelNewUserHint.Text = "Please enter your last.fm user and password\r\nThen click \"OK\" and re-enter the con" +
-          "fig";
-      this.labelNewUserHint.Visible = false;
+      this.groupBoxProfile.Controls.Add(this.lblProfRegistered);
+      this.groupBoxProfile.Controls.Add(this.lblProfRegisteredDesc);
+      this.groupBoxProfile.Controls.Add(this.lblProfPlaycount);
+      this.groupBoxProfile.Controls.Add(this.lblProfPlaycountDesc);
+      this.groupBoxProfile.Controls.Add(this.lblProfRealname);
+      this.groupBoxProfile.Controls.Add(this.lblProfRealnameDesc);
+      this.groupBoxProfile.Controls.Add(this.pictureBoxAvatar);
+      this.groupBoxProfile.Location = new System.Drawing.Point(10, 136);
+      this.groupBoxProfile.Name = "groupBoxProfile";
+      this.groupBoxProfile.Size = new System.Drawing.Size(275, 145);
+      this.groupBoxProfile.TabIndex = 10;
+      this.groupBoxProfile.TabStop = false;
+      this.groupBoxProfile.Text = "Profile details";
+      this.groupBoxProfile.Visible = false;
+      // 
+      // pictureBoxAvatar
+      // 
+      this.pictureBoxAvatar.Location = new System.Drawing.Point(16, 19);
+      this.pictureBoxAvatar.Name = "pictureBoxAvatar";
+      this.pictureBoxAvatar.Size = new System.Drawing.Size(110, 110);
+      this.pictureBoxAvatar.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+      this.pictureBoxAvatar.TabIndex = 11;
+      this.pictureBoxAvatar.TabStop = false;
       // 
       // labelNoUser
       // 
       this.labelNoUser.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.labelNoUser.ForeColor = System.Drawing.SystemColors.ControlText;
-      this.labelNoUser.Location = new System.Drawing.Point(23, 256);
+      this.labelNoUser.Location = new System.Drawing.Point(26, 245);
       this.labelNoUser.Name = "labelNoUser";
       this.labelNoUser.Size = new System.Drawing.Size(262, 36);
       this.labelNoUser.TabIndex = 8;
@@ -321,67 +344,14 @@ namespace MediaPortal.AudioScrobbler
       // 
       this.linkLabel2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.linkLabel2.AutoSize = true;
-      this.linkLabel2.LinkArea = new System.Windows.Forms.LinkArea(0, 29);
+      this.linkLabel2.LinkArea = new System.Windows.Forms.LinkArea(0, 31);
       this.linkLabel2.Location = new System.Drawing.Point(305, 240);
       this.linkLabel2.Name = "linkLabel2";
-      this.linkLabel2.Size = new System.Drawing.Size(159, 17);
+      this.linkLabel2.Size = new System.Drawing.Size(152, 13);
       this.linkLabel2.TabIndex = 5;
       this.linkLabel2.TabStop = true;
       this.linkLabel2.Text = "Sign up a new user on last.fm..";
-      this.linkLabel2.UseCompatibleTextRendering = true;
       this.linkLabel2.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelNewUser_LinkClicked);
-      // 
-      // groupBoxOptions
-      // 
-      this.groupBoxOptions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBoxOptions.Controls.Add(this.checkBoxEnableNowPlaying);
-      this.groupBoxOptions.Controls.Add(this.checkBoxEnableSubmits);
-      this.groupBoxOptions.Controls.Add(this.checkBoxLogVerbose);
-      this.groupBoxOptions.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxOptions.Location = new System.Drawing.Point(10, 136);
-      this.groupBoxOptions.Name = "groupBoxOptions";
-      this.groupBoxOptions.Size = new System.Drawing.Size(275, 92);
-      this.groupBoxOptions.TabIndex = 4;
-      this.groupBoxOptions.TabStop = false;
-      this.groupBoxOptions.Text = "Scrobbler options";
-      // 
-      // checkBoxEnableNowPlaying
-      // 
-      this.checkBoxEnableNowPlaying.AutoSize = true;
-      this.checkBoxEnableNowPlaying.Checked = true;
-      this.checkBoxEnableNowPlaying.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.checkBoxEnableNowPlaying.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxEnableNowPlaying.Location = new System.Drawing.Point(16, 45);
-      this.checkBoxEnableNowPlaying.Name = "checkBoxEnableNowPlaying";
-      this.checkBoxEnableNowPlaying.Size = new System.Drawing.Size(184, 17);
-      this.checkBoxEnableNowPlaying.TabIndex = 5;
-      this.checkBoxEnableNowPlaying.Text = "Announce current track on last.fm";
-      this.checkBoxEnableNowPlaying.UseVisualStyleBackColor = true;
-      // 
-      // checkBoxEnableSubmits
-      // 
-      this.checkBoxEnableSubmits.AutoSize = true;
-      this.checkBoxEnableSubmits.Checked = true;
-      this.checkBoxEnableSubmits.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.checkBoxEnableSubmits.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxEnableSubmits.Location = new System.Drawing.Point(16, 22);
-      this.checkBoxEnableSubmits.Name = "checkBoxEnableSubmits";
-      this.checkBoxEnableSubmits.Size = new System.Drawing.Size(239, 17);
-      this.checkBoxEnableSubmits.TabIndex = 4;
-      this.checkBoxEnableSubmits.Text = "Improve my profile at last.fm - submits enabled";
-      this.checkBoxEnableSubmits.UseVisualStyleBackColor = true;
-      // 
-      // checkBoxLogVerbose
-      // 
-      this.checkBoxLogVerbose.AutoSize = true;
-      this.checkBoxLogVerbose.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxLogVerbose.Location = new System.Drawing.Point(16, 68);
-      this.checkBoxLogVerbose.Name = "checkBoxLogVerbose";
-      this.checkBoxLogVerbose.Size = new System.Drawing.Size(135, 17);
-      this.checkBoxLogVerbose.TabIndex = 2;
-      this.checkBoxLogVerbose.Text = "Show debug log entries";
-      this.checkBoxLogVerbose.UseVisualStyleBackColor = true;
       // 
       // groupBoxAccount
       // 
@@ -469,8 +439,22 @@ namespace MediaPortal.AudioScrobbler
       this.maskedTextBoxASPassword.TabIndex = 2;
       this.maskedTextBoxASPassword.KeyUp += new System.Windows.Forms.KeyEventHandler(this.maskedTextBoxASPassword_KeyUp);
       // 
+      // labelNewUserHint
+      // 
+      this.labelNewUserHint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.labelNewUserHint.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.labelNewUserHint.ForeColor = System.Drawing.SystemColors.ControlText;
+      this.labelNewUserHint.Location = new System.Drawing.Point(23, 245);
+      this.labelNewUserHint.Name = "labelNewUserHint";
+      this.labelNewUserHint.Size = new System.Drawing.Size(262, 36);
+      this.labelNewUserHint.TabIndex = 9;
+      this.labelNewUserHint.Text = "Please enter your last.fm user and password\r\nThen click \"OK\" and re-enter the con" +
+          "fig";
+      this.labelNewUserHint.Visible = false;
+      // 
       // tabPageMusicSettings
       // 
+      this.tabPageMusicSettings.Controls.Add(this.groupBoxOptions);
       this.tabPageMusicSettings.Controls.Add(this.groupBoxSimilarMode);
       this.tabPageMusicSettings.Controls.Add(this.groupBoxNeighbourFriend);
       this.tabPageMusicSettings.Controls.Add(this.groupBoxOfflineMode);
@@ -482,6 +466,59 @@ namespace MediaPortal.AudioScrobbler
       this.tabPageMusicSettings.TabIndex = 2;
       this.tabPageMusicSettings.Text = "MyMusic settings";
       this.tabPageMusicSettings.UseVisualStyleBackColor = true;
+      // 
+      // groupBoxOptions
+      // 
+      this.groupBoxOptions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxOptions.Controls.Add(this.checkBoxEnableNowPlaying);
+      this.groupBoxOptions.Controls.Add(this.checkBoxEnableSubmits);
+      this.groupBoxOptions.Controls.Add(this.checkBoxLogVerbose);
+      this.groupBoxOptions.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxOptions.Location = new System.Drawing.Point(10, 224);
+      this.groupBoxOptions.Name = "groupBoxOptions";
+      this.groupBoxOptions.Size = new System.Drawing.Size(260, 67);
+      this.groupBoxOptions.TabIndex = 14;
+      this.groupBoxOptions.TabStop = false;
+      this.groupBoxOptions.Text = "Scrobbler options";
+      // 
+      // checkBoxEnableNowPlaying
+      // 
+      this.checkBoxEnableNowPlaying.AutoSize = true;
+      this.checkBoxEnableNowPlaying.Checked = true;
+      this.checkBoxEnableNowPlaying.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxEnableNowPlaying.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxEnableNowPlaying.Location = new System.Drawing.Point(16, 45);
+      this.checkBoxEnableNowPlaying.Name = "checkBoxEnableNowPlaying";
+      this.checkBoxEnableNowPlaying.Size = new System.Drawing.Size(184, 17);
+      this.checkBoxEnableNowPlaying.TabIndex = 5;
+      this.checkBoxEnableNowPlaying.Text = "Announce current track on last.fm";
+      this.checkBoxEnableNowPlaying.UseVisualStyleBackColor = true;
+      // 
+      // checkBoxEnableSubmits
+      // 
+      this.checkBoxEnableSubmits.AutoSize = true;
+      this.checkBoxEnableSubmits.Checked = true;
+      this.checkBoxEnableSubmits.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxEnableSubmits.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxEnableSubmits.Location = new System.Drawing.Point(16, 22);
+      this.checkBoxEnableSubmits.Name = "checkBoxEnableSubmits";
+      this.checkBoxEnableSubmits.Size = new System.Drawing.Size(185, 17);
+      this.checkBoxEnableSubmits.TabIndex = 4;
+      this.checkBoxEnableSubmits.Text = "Improve my profile (submits tracks)";
+      this.checkBoxEnableSubmits.UseVisualStyleBackColor = true;
+      // 
+      // checkBoxLogVerbose
+      // 
+      this.checkBoxLogVerbose.AutoSize = true;
+      this.checkBoxLogVerbose.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxLogVerbose.Location = new System.Drawing.Point(120, 45);
+      this.checkBoxLogVerbose.Name = "checkBoxLogVerbose";
+      this.checkBoxLogVerbose.Size = new System.Drawing.Size(135, 17);
+      this.checkBoxLogVerbose.TabIndex = 2;
+      this.checkBoxLogVerbose.Text = "Show debug log entries";
+      this.checkBoxLogVerbose.UseVisualStyleBackColor = true;
+      this.checkBoxLogVerbose.Visible = false;
       // 
       // groupBoxSimilarMode
       // 
@@ -580,7 +617,7 @@ namespace MediaPortal.AudioScrobbler
       this.groupBoxMusicSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxMusicSettings.Location = new System.Drawing.Point(10, 6);
       this.groupBoxMusicSettings.Name = "groupBoxMusicSettings";
-      this.groupBoxMusicSettings.Size = new System.Drawing.Size(260, 238);
+      this.groupBoxMusicSettings.Size = new System.Drawing.Size(260, 212);
       this.groupBoxMusicSettings.TabIndex = 6;
       this.groupBoxMusicSettings.TabStop = false;
       this.groupBoxMusicSettings.Text = "My Music global settings";
@@ -588,7 +625,7 @@ namespace MediaPortal.AudioScrobbler
       // labelPlaycountHint
       // 
       this.labelPlaycountHint.AutoSize = true;
-      this.labelPlaycountHint.Location = new System.Drawing.Point(14, 216);
+      this.labelPlaycountHint.Location = new System.Drawing.Point(14, 191);
       this.labelPlaycountHint.Name = "labelPlaycountHint";
       this.labelPlaycountHint.Size = new System.Drawing.Size(165, 13);
       this.labelPlaycountHint.TabIndex = 21;
@@ -597,7 +634,7 @@ namespace MediaPortal.AudioScrobbler
       // labelTrackBarPlayCount
       // 
       this.labelTrackBarPlayCount.AutoSize = true;
-      this.labelTrackBarPlayCount.Location = new System.Drawing.Point(14, 154);
+      this.labelTrackBarPlayCount.Location = new System.Drawing.Point(14, 142);
       this.labelTrackBarPlayCount.Name = "labelTrackBarPlayCount";
       this.labelTrackBarPlayCount.Size = new System.Drawing.Size(134, 13);
       this.labelTrackBarPlayCount.TabIndex = 20;
@@ -605,12 +642,13 @@ namespace MediaPortal.AudioScrobbler
       // 
       // trackBarConsiderCount
       // 
+      this.trackBarConsiderCount.AutoSize = false;
       this.trackBarConsiderCount.BackColor = System.Drawing.SystemColors.Window;
       this.trackBarConsiderCount.LargeChange = 1;
-      this.trackBarConsiderCount.Location = new System.Drawing.Point(17, 170);
+      this.trackBarConsiderCount.Location = new System.Drawing.Point(17, 158);
       this.trackBarConsiderCount.Maximum = 3;
       this.trackBarConsiderCount.Name = "trackBarConsiderCount";
-      this.trackBarConsiderCount.Size = new System.Drawing.Size(226, 45);
+      this.trackBarConsiderCount.Size = new System.Drawing.Size(226, 30);
       this.trackBarConsiderCount.TabIndex = 19;
       this.trackBarConsiderCount.Value = 2;
       this.trackBarConsiderCount.ValueChanged += new System.EventHandler(this.trackBarConsiderCount_ValueChanged);
@@ -664,7 +702,7 @@ namespace MediaPortal.AudioScrobbler
       this.labelPercRand.Name = "labelPercRand";
       this.labelPercRand.Size = new System.Drawing.Size(56, 13);
       this.labelPercRand.TabIndex = 2;
-      this.labelPercRand.Text = "77";
+      this.labelPercRand.Text = "75";
       this.labelPercRand.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
       // 
       // labelRandomness
@@ -678,17 +716,16 @@ namespace MediaPortal.AudioScrobbler
       // 
       // trackBarRandomness
       // 
+      this.trackBarRandomness.AutoSize = false;
       this.trackBarRandomness.BackColor = System.Drawing.SystemColors.Window;
-      this.trackBarRandomness.LargeChange = 25;
       this.trackBarRandomness.Location = new System.Drawing.Point(17, 98);
       this.trackBarRandomness.Maximum = 100;
       this.trackBarRandomness.Minimum = 25;
       this.trackBarRandomness.Name = "trackBarRandomness";
-      this.trackBarRandomness.Size = new System.Drawing.Size(226, 45);
-      this.trackBarRandomness.SmallChange = 5;
+      this.trackBarRandomness.Size = new System.Drawing.Size(226, 30);
       this.trackBarRandomness.TabIndex = 0;
       this.trackBarRandomness.TickFrequency = 15;
-      this.trackBarRandomness.Value = 77;
+      this.trackBarRandomness.Value = 75;
       this.trackBarRandomness.MouseLeave += new System.EventHandler(this.trackBarRandomness_MouseLeave);
       this.trackBarRandomness.ValueChanged += new System.EventHandler(this.trackBarRandomness_ValueChanged);
       this.trackBarRandomness.MouseHover += new System.EventHandler(this.trackBarRandomness_MouseHover);
@@ -1476,6 +1513,63 @@ namespace MediaPortal.AudioScrobbler
       this.labelUser.TabIndex = 2;
       this.labelUser.Text = "Username";
       // 
+      // lblProfRealnameDesc
+      // 
+      this.lblProfRealnameDesc.AutoSize = true;
+      this.lblProfRealnameDesc.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.lblProfRealnameDesc.Location = new System.Drawing.Point(132, 19);
+      this.lblProfRealnameDesc.Name = "lblProfRealnameDesc";
+      this.lblProfRealnameDesc.Size = new System.Drawing.Size(58, 13);
+      this.lblProfRealnameDesc.TabIndex = 12;
+      this.lblProfRealnameDesc.Text = "Realname:";
+      // 
+      // lblProfRealname
+      // 
+      this.lblProfRealname.AutoSize = true;
+      this.lblProfRealname.Location = new System.Drawing.Point(132, 35);
+      this.lblProfRealname.Name = "lblProfRealname";
+      this.lblProfRealname.Size = new System.Drawing.Size(68, 13);
+      this.lblProfRealname.TabIndex = 13;
+      this.lblProfRealname.Text = "myRealname";
+      // 
+      // lblProfPlaycount
+      // 
+      this.lblProfPlaycount.AutoSize = true;
+      this.lblProfPlaycount.Location = new System.Drawing.Point(132, 76);
+      this.lblProfPlaycount.Name = "lblProfPlaycount";
+      this.lblProfPlaycount.Size = new System.Drawing.Size(13, 13);
+      this.lblProfPlaycount.TabIndex = 15;
+      this.lblProfPlaycount.Text = "0";
+      // 
+      // lblProfPlaycountDesc
+      // 
+      this.lblProfPlaycountDesc.AutoSize = true;
+      this.lblProfPlaycountDesc.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.lblProfPlaycountDesc.Location = new System.Drawing.Point(132, 60);
+      this.lblProfPlaycountDesc.Name = "lblProfPlaycountDesc";
+      this.lblProfPlaycountDesc.Size = new System.Drawing.Size(74, 13);
+      this.lblProfPlaycountDesc.TabIndex = 14;
+      this.lblProfPlaycountDesc.Text = "Played tracks:";
+      // 
+      // lblProfRegistered
+      // 
+      this.lblProfRegistered.AutoSize = true;
+      this.lblProfRegistered.Location = new System.Drawing.Point(132, 116);
+      this.lblProfRegistered.Name = "lblProfRegistered";
+      this.lblProfRegistered.Size = new System.Drawing.Size(55, 13);
+      this.lblProfRegistered.TabIndex = 17;
+      this.lblProfRegistered.Text = "22.2.2002";
+      // 
+      // lblProfRegisteredDesc
+      // 
+      this.lblProfRegisteredDesc.AutoSize = true;
+      this.lblProfRegisteredDesc.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.lblProfRegisteredDesc.Location = new System.Drawing.Point(132, 99);
+      this.lblProfRegisteredDesc.Name = "lblProfRegisteredDesc";
+      this.lblProfRegisteredDesc.Size = new System.Drawing.Size(61, 13);
+      this.lblProfRegisteredDesc.TabIndex = 16;
+      this.lblProfRegisteredDesc.Text = "Registered:";
+      // 
       // AudioscrobblerSettings
       // 
       this.AcceptButton = this.buttonOk;
@@ -1496,11 +1590,14 @@ namespace MediaPortal.AudioScrobbler
       this.tabControlSettings.ResumeLayout(false);
       this.tabPageLastFMSettings.ResumeLayout(false);
       this.tabPageLastFMSettings.PerformLayout();
-      this.groupBoxOptions.ResumeLayout(false);
-      this.groupBoxOptions.PerformLayout();
+      this.groupBoxProfile.ResumeLayout(false);
+      this.groupBoxProfile.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxAvatar)).EndInit();
       this.groupBoxAccount.ResumeLayout(false);
       this.groupBoxAccount.PerformLayout();
       this.tabPageMusicSettings.ResumeLayout(false);
+      this.groupBoxOptions.ResumeLayout(false);
+      this.groupBoxOptions.PerformLayout();
       this.groupBoxSimilarMode.ResumeLayout(false);
       this.groupBoxSimilarMode.PerformLayout();
       this.groupBoxNeighbourFriend.ResumeLayout(false);
@@ -1575,8 +1672,6 @@ namespace MediaPortal.AudioScrobbler
     private System.Windows.Forms.TabPage tabPageWeeklyTracks;
     private MediaPortal.UserInterface.Controls.MPButton buttonRefreshWeeklyTracks;
     private MediaPortal.UserInterface.Controls.MPListView listViewWeeklyTracks;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxOptions;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxLogVerbose;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxAccount;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
@@ -1584,7 +1679,6 @@ namespace MediaPortal.AudioScrobbler
     private System.Windows.Forms.TabPage tabPageTags;
     private MediaPortal.UserInterface.Controls.MPButton buttonTagsRefresh;
     private MediaPortal.UserInterface.Controls.MPListView listViewTags;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxEnableSubmits;
     private MediaPortal.UserInterface.Controls.MPComboBox comboBoxNeighbourMode;
     private System.Windows.Forms.TabPage tabPageMusicSettings;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxOfflineMode;
@@ -1622,8 +1716,7 @@ namespace MediaPortal.AudioScrobbler
     private System.Windows.Forms.CheckBox checkBoxReAddArtist;
     private System.Windows.Forms.TabPage tabPageSystemRecs;
       private MediaPortal.UserInterface.Controls.MPButton buttonRefreshSysRecs;
-      private MediaPortal.UserInterface.Controls.MPListView listViewSysRecs;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxEnableNowPlaying;
+    private MediaPortal.UserInterface.Controls.MPListView listViewSysRecs;
     private System.Windows.Forms.TabPage tabPageCoverArt;
     private MediaPortal.UserInterface.Controls.MPTabControl tabControlCoverArt;
     private System.Windows.Forms.TabPage tabPageArtistArt;
@@ -1638,5 +1731,17 @@ namespace MediaPortal.AudioScrobbler
     private MediaPortal.UserInterface.Controls.MPButton buttonCoverAlbumsLookup;
     private MediaPortal.UserInterface.Controls.MPButton buttonCoverAlbumsRefresh;
     private MediaPortal.UserInterface.Controls.MPListView listViewCoverAlbums;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxOptions;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxEnableNowPlaying;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxEnableSubmits;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxLogVerbose;
+    private System.Windows.Forms.GroupBox groupBoxProfile;
+    private System.Windows.Forms.PictureBox pictureBoxAvatar;
+    private MediaPortal.UserInterface.Controls.MPLabel lblProfRealname;
+    private MediaPortal.UserInterface.Controls.MPLabel lblProfRealnameDesc;
+    private MediaPortal.UserInterface.Controls.MPLabel lblProfRegistered;
+    private MediaPortal.UserInterface.Controls.MPLabel lblProfRegisteredDesc;
+    private MediaPortal.UserInterface.Controls.MPLabel lblProfPlaycount;
+    private MediaPortal.UserInterface.Controls.MPLabel lblProfPlaycountDesc;
   }
 }
