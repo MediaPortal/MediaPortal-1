@@ -41,7 +41,8 @@ namespace Wikipedia
   /// <summary>
   /// Windowplugin to search in Wikipedia and display articles using the MP Wikipedia Classes.
   /// </summary>
-  public class GUIWikipedia : GUIWindow, ISetupForm
+  [PluginIcons("WindowPlugins.GUIWikipedia.Wikipedia.gif", "WindowPlugins.GUIWikipedia.WikipediaDisabled.gif")]
+  public class GUIWikipedia : GUIWindow, ISetupForm, IShowPlugin
   {
     #region SkinControls
     [SkinControlAttribute(10)]
@@ -77,6 +78,7 @@ namespace Wikipedia
     {
       GetID = (int)GUIWindow.Window.WINDOW_WIKIPEDIA;
     }
+
     #region ISetupForm Members
 
     // Returns the name of the plugin which is shown in the plugin menu
@@ -146,6 +148,15 @@ namespace Wikipedia
       strPictureImage = "";
       return true;
     }
+    #endregion
+
+    #region IShowPlugin Member
+
+    public bool ShowDefaultHome()
+    {
+      return false;
+    }
+
     #endregion
 
     public override bool Init()
@@ -404,5 +415,6 @@ namespace Wikipedia
     }
 
     volatile bool _workerCompleted = true;
+
   }
 }

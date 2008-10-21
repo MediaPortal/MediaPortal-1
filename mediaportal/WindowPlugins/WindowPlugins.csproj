@@ -818,6 +818,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="GUIWeather\WeatherDisabled.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUIWikipedia\Wikipedia.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUIWikipedia\WikipediaDisabled.gif" />
   </ItemGroup>  
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
