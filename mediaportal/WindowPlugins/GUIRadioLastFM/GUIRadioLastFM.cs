@@ -41,7 +41,7 @@ using MediaPortal.Playlists;
 
 namespace MediaPortal.GUI.RADIOLASTFM
 {
-  [PluginIcons("WindowPlugins.GUIRadioLastFM.BallonRadio.gif", "WindowPlugins.GUIRadioLastFM.BallonRadioDisabled.gif")]  
+  [PluginIcons("WindowPlugins.GUIRadioLastFM.BallonRadio.gif", "WindowPlugins.GUIRadioLastFM.BallonRadioDisabled.gif")]
   public class GUIRadioLastFM : GUIWindow, ISetupForm, IShowPlugin
   {
     private enum SkinControlIDs

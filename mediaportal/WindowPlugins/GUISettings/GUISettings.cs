@@ -26,18 +26,18 @@
 using System;
 
 using MediaPortal.GUI.Library;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.GUI.Settings
 {
   /// <summary>
-  /// Summary description for Class1.
+  /// Change and tweak settings like Video codecs, skins, etc from inside MP
   /// </summary>
+  [PluginIcons("WindowPlugins.GUISettings.Settings.gif", "WindowPlugins.GUISettings.SettingsDisabled.gif")]
   public class GUISettings : GUIWindow, ISetupForm, IShowPlugin
   {
-
     public GUISettings()
     {
-
       GetID = (int)GUIWindow.Window.WINDOW_SETTINGS;
     }
 
@@ -45,6 +45,7 @@ namespace MediaPortal.GUI.Settings
     {
       return Load(GUIGraphicsContext.Skin + @"\settings.xml");
     }
+
     public override void OnAction(Action action)
     {
       switch (action.wID)
@@ -57,7 +58,6 @@ namespace MediaPortal.GUI.Settings
       }
       base.OnAction(action);
     }
-
 
     public override bool OnMessage(GUIMessage message)
     {

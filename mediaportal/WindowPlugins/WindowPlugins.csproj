@@ -824,7 +824,25 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="GUIWikipedia\WikipediaDisabled.gif" />
-  </ItemGroup>  
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUIPictures\Pictures.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUIPictures\PicturesDisabled.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUISettings\Settings.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUISettings\SettingsDisabled.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUITV\Television.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUITV\TelevisionDisabled.gif" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

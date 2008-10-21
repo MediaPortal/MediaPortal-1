@@ -42,13 +42,14 @@ using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
 using MediaPortal.Configuration;
 using System.Threading;
-using Config=MediaPortal.Configuration.Config;
+using Config = MediaPortal.Configuration.Config;
 
 namespace MediaPortal.GUI.TV
 {
-  /// <summary>v
-  /// Summary description for Class1.
+  /// <summary>
+  /// Use locally installed TV cards to watch and record TV
   /// </summary>
+  [PluginIcons("WindowPlugins.GUITV.Television.gif", "WindowPlugins.GUITV.TelevisionDisabled.gif")]
   public class GUITVHome : GUIWindow, ISetupForm, IShowPlugin, IPluginReceiver
   {
 
@@ -72,7 +73,7 @@ namespace MediaPortal.GUI.TV
     static bool _autoFullScreenOnly = false;
     static bool _resumed = false;
     static bool _showlastactivemodule = false;
-    static bool _showlastactivemoduleFullscreen = false;    
+    static bool _showlastactivemoduleFullscreen = false;
 
     static ChannelNavigator m_navigator = new ChannelNavigator();
     static GUITVCropManager _cropManager = new GUITVCropManager();
@@ -332,7 +333,7 @@ namespace MediaPortal.GUI.TV
       //set video window position
       if (videoWindow != null)
       {
-          GUIGraphicsContext.VideoWindow = new Rectangle(videoWindow.XPosition, videoWindow.YPosition, videoWindow.Width, videoWindow.Height);
+        GUIGraphicsContext.VideoWindow = new Rectangle(videoWindow.XPosition, videoWindow.YPosition, videoWindow.Width, videoWindow.Height);
       }
 
       // start viewing tv... 
@@ -626,7 +627,7 @@ namespace MediaPortal.GUI.TV
       // Don't update if recorder is stopped!
       if (Recorder.Running == false)
         return;
-      if (Recorder.CommandProcessor==null)
+      if (Recorder.CommandProcessor == null)
         return;
       // Don't update while busy - Will make it look bad!
       if (Recorder.CommandProcessor.IsBusy)
@@ -1090,7 +1091,7 @@ namespace MediaPortal.GUI.TV
       {
         hideAllChannelsGroup = xmlreader.GetValueAsBool("mytv", "hideAllChannelsGroup", false);
       }
-      
+
       TVDatabase.GetChannels(ref channels); // Load all channels
       if (!hideAllChannelsGroup || (m_groups.Count == 0))
       {

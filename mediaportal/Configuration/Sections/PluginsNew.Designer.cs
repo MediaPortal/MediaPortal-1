@@ -234,6 +234,7 @@ namespace MediaPortal.Configuration.Sections
       this.listViewPlugins.UseCompatibleStateImageBehavior = false;
       this.listViewPlugins.MouseClick += new System.Windows.Forms.MouseEventHandler(this.listViewPlugins_MouseClick);
       this.listViewPlugins.DoubleClick += new System.EventHandler(this.listViewPlugins_DoubleClick);
+      this.listViewPlugins.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.listViewPlugins_ItemSelectionChanged);
       this.listViewPlugins.Click += new System.EventHandler(this.listViewPlugins_Click);
       // 
       // columnHeaderName

@@ -176,8 +176,9 @@ namespace MediaPortal.GUI.Pictures
   #endregion
 
   /// <summary>
-  /// Summary description for Class1.
+  /// Displays pictures and offers methods for exif and rotation
   /// </summary>
+  [PluginIcons("WindowPlugins.GUIPictures.Pictures.gif", "WindowPlugins.GUIPictures.PicturesDisabled.gif")]
   public class GUIPictures : GUIWindow, IComparer<GUIListItem>, ISetupForm, IShowPlugin
   {
     #region MapSettings class

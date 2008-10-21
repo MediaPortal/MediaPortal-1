@@ -103,26 +103,16 @@ namespace MediaPortal.Configuration.Sections
       {
         ClearLoadedPlugins();
         isLoaded = true;
-        //
-        // Enumerate available plugins
-        //
-        EnumeratePlugins();
 
-        //
-        // Load plugins
-        //
+        EnumeratePlugins();
         LoadPlugins();
 
         CheckPowerScheduler();
-        //
-        // Populate our list
-        //
 
         LoadSettings();
         PopulateListView();
         LoadListFiles();
         LoadToListview("All");
-
       }
     }
 
@@ -703,6 +693,17 @@ namespace MediaPortal.Configuration.Sections
 
     private void listViewPlugins_Click(object sender, EventArgs e)
     {
+      OnItemSelected();
+    }
+
+    private void listViewPlugins_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+    {
+      if (e.Item != null)
+        OnItemSelected();
+    }
+
+    private void OnItemSelected()
+    {
       contextMenuStrip.Items.Clear();
 
       mpButtonHome.Enabled = false;
@@ -762,6 +763,7 @@ namespace MediaPortal.Configuration.Sections
         }
       }
     }
+
     #region MPInstaller stuff
     private void mpButtonInstall_Click(object sender, EventArgs e)
     {
