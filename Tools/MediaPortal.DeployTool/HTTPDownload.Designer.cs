@@ -84,6 +84,7 @@ namespace MediaPortal.DeployTool
         // 
         // buttonCancel
         // 
+        this.buttonCancel.Cursor = System.Windows.Forms.Cursors.Hand;
         this.buttonCancel.Location = new System.Drawing.Point(238, 146);
         this.buttonCancel.Name = "buttonCancel";
         this.buttonCancel.Size = new System.Drawing.Size(114, 23);
