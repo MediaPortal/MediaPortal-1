@@ -56,6 +56,7 @@ namespace MediaPortal.DeployTool.Sections
         listViewLang.Items.Add(item);
       }
       listViewLang.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+      listViewLang.Columns[2].Width = 0;
       listViewLang.Select();
       listViewLang.Items[0].Selected = true;
       listViewLang.Items[0].Focused = true;
