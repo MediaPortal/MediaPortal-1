@@ -1105,13 +1105,14 @@ namespace MediaPortal.GUI.Radio
 
     public string PluginName()
     {
-      return "My Radio";
+      return "Radio";
     }
 
     public bool HasSetup()
     {
       return false;
     }
+
     public bool DefaultEnabled()
     {
       return true;
@@ -1127,7 +1128,7 @@ namespace MediaPortal.GUI.Radio
       strButtonText = GUILocalizeStrings.Get(665);
       strButtonImage = string.Empty;
       strButtonImageFocus = string.Empty;
-      strPictureImage = string.Empty;
+      strPictureImage = @"hover_my radio.png";
       return true;
     }
 
@@ -1156,8 +1157,5 @@ namespace MediaPortal.GUI.Radio
     }
 
     #endregion
-
-
-
   }
 }

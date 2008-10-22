@@ -33,13 +33,13 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.GUI.Home
 {
-  public partial class GUIHomeSetupForm : MediaPortal.UserInterface.Controls.MPConfigForm , ISetupForm, IComparer
+  public partial class GUIHomeSetupForm : MediaPortal.UserInterface.Controls.MPConfigForm, ISetupForm, IComparer
   {
     public GUIHomeSetupForm()
     {
       InitializeComponent();
       LoadSettings();
-			UpdateTestBox();
+      UpdateTestBox();
     }
 
     private void LoadSettings()
@@ -63,7 +63,7 @@ namespace MediaPortal.GUI.Home
     {
       using (Profile.Settings xmlWriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        xmlWriter.SetValueAsBool("home", "scrollfixed",  chkboxFixScrollbar.Checked);
+        xmlWriter.SetValueAsBool("home", "scrollfixed", chkboxFixScrollbar.Checked);
         xmlWriter.SetValueAsBool("home", "usemyplugins", chkBoxUseMyPlugins.Checked);
         xmlWriter.SetValueAsBool("home", "enableanimation", chkBoxAnimation.Checked);
         xmlWriter.SetValue("home", "dateformat", cboxFormat.Text);
@@ -177,7 +177,7 @@ namespace MediaPortal.GUI.Home
         case 11: month = "November"; break;
         default: month = "December"; break;
       }
-      
+
       dateString = MediaPortal.Util.Utils.ReplaceTag(dateString, "<Day>", day, "unknown");
       dateString = MediaPortal.Util.Utils.ReplaceTag(dateString, "<DD>", cur.Day.ToString(), "unknown");
 
@@ -201,10 +201,7 @@ namespace MediaPortal.GUI.Home
     }
     #endregion
 
-
     #region Tab: Menu SetUp
-
-
 
     private void LoadPlugins()
     {
@@ -353,9 +350,9 @@ namespace MediaPortal.GUI.Home
 
       tvMenu.BeginUpdate();
       TreeNodeCollection nodeColl = tvMenu.Nodes;
-      if (tnSelected.Parent != null) nodeColl = tnSelected.Parent.Nodes;  
-      
-      if (((PluginInfo)tnSelected.Tag).Index+1 < nodeColl.Count)
+      if (tnSelected.Parent != null) nodeColl = tnSelected.Parent.Nodes;
+
+      if (((PluginInfo)tnSelected.Tag).Index + 1 < nodeColl.Count)
       {
         ((PluginInfo)tnSelected.Tag).Index++;
         ((PluginInfo)tnSelected.NextNode.Tag).Index--;
@@ -368,8 +365,8 @@ namespace MediaPortal.GUI.Home
 
     #endregion
 
-
     #region ISetupForm members
+
     public string PluginName()
     {
       return "Home";
@@ -384,11 +381,13 @@ namespace MediaPortal.GUI.Home
     {
       return "Bavarian";
     }
+
     public void ShowPlugin()
     {
       Form setup = new GUIHomeSetupForm();
       setup.ShowDialog();
     }
+
     //System.Reflection.TargetInvocationException
     public bool HasSetup()
     {
@@ -426,7 +425,7 @@ namespace MediaPortal.GUI.Home
     {
       TreeNode tx = x as TreeNode;
       TreeNode ty = y as TreeNode;
-      return ((PluginInfo)tx.Tag).Index - ((PluginInfo)ty.Tag).Index;    
+      return ((PluginInfo)tx.Tag).Index - ((PluginInfo)ty.Tag).Index;
     }
     #endregion
 
@@ -474,7 +473,6 @@ namespace MediaPortal.GUI.Home
       get { return _text; }
     }
 
-
     private void LoadData()
     {
       if (_setup != null)
@@ -493,8 +491,5 @@ namespace MediaPortal.GUI.Home
     }
 
   }
-
-
-
 
 }

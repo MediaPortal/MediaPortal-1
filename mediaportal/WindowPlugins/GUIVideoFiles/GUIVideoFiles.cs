@@ -2467,7 +2467,6 @@ namespace MediaPortal.GUI.Video
 
     #endregion
 
-
     #region ISetupForm Members
 
     public bool CanEnable()
@@ -2482,7 +2481,7 @@ namespace MediaPortal.GUI.Video
 
     public string PluginName()
     {
-      return "My Videos";
+      return "Videos";
     }
 
     public bool DefaultEnabled()
@@ -2500,7 +2499,7 @@ namespace MediaPortal.GUI.Video
       strButtonText = GUILocalizeStrings.Get(3);
       strButtonImage = string.Empty;
       strButtonImageFocus = string.Empty;
-      strPictureImage = string.Empty;
+      strPictureImage = @"hover_my videos.png";
       return true;
     }
 

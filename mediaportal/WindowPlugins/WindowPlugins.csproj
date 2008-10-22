@@ -308,6 +308,7 @@
     </Compile>
     <Compile Include="GUIDVD\GUIDVDFullscreen.cs" />
     <Compile Include="GUIMusic\GUIMusicMenu.cs" />
+    <Compile Include="GUITetris\MyTetrisControl.cs" />
     <Compile Include="GUITV\GUITVTeletextBase.cs" />
     <Compile Include="GUIVideoFiles\MatroskaTagLib.cs" />
     <Compile Include="GUIVideoFiles\SelectDVDHandler.cs" />
@@ -843,6 +844,24 @@
   <ItemGroup>
     <EmbeddedResource Include="GUITV\TelevisionDisabled.gif" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUIBurner\Burner.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUIBurner\BurnerDisabled.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUIDVD\DVD.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUIDVD\DVDDisabled.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUINumberPlace\NumberPlace.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUINumberPlace\NumberPlaceDisabled.gif" />
+  </ItemGroup>  
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

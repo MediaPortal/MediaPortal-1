@@ -1030,6 +1030,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     #endregion
 
     #region ISetupForm Members
+
     public int GetWindowId()
     {
       return GetID;
@@ -1037,7 +1038,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     public string PluginName()
     {
-      return "My Last.fm Radio";
+      return "Last.fm Radio";
     }
 
     public string Description()
@@ -1076,7 +1077,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       strButtonText = GUILocalizeStrings.Get(34000);
       strButtonImage = string.Empty;
       strButtonImageFocus = string.Empty;
-      strPictureImage = "hover_my radio.png";
+      strPictureImage = "hover_my radio.png"; //hover_LastFmRadio.png
       return true;
     }
 
@@ -1086,13 +1087,16 @@ namespace MediaPortal.GUI.RADIOLASTFM
       PluginSetupForm lastfmsetup = new PluginSetupForm();
       lastfmsetup.ShowDialog();
     }
+
     #endregion    
 
     #region IShowPlugin Members
+
     public bool ShowDefaultHome()
     {
       return false;
     }
+
     #endregion
   }
 }

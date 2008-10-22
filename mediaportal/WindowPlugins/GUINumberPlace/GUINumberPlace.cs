@@ -37,6 +37,7 @@ using MediaPortal.Dialogs;
 
 namespace MediaPortal.GUI.NumberPlace
 {
+  [PluginIcons("WindowPlugins.GUINumberPlace.NumberPlace.gif", "WindowPlugins.GUINumberPlace.NumberPlaceDisabled.gif")]
   public class GUINumberPlace : GUIWindow, ISetupForm, IShowPlugin
   {
     private enum SkinControlIDs
@@ -1123,14 +1124,20 @@ namespace MediaPortal.GUI.NumberPlace
     }
 
     #region ISetupForm Members
+
     public int GetWindowId()
     {
       return GetID;
     }
 
+    public void ShowPlugin()
+    {
+      MessageBox.Show("Nothing to setup.");
+    }
+
     public string PluginName()
     {
-      return "My Sudoku";
+      return "Sudoku";
     }
 
     public string Description()
@@ -1140,7 +1147,7 @@ namespace MediaPortal.GUI.NumberPlace
 
     public string Author()
     {
-      return "Cosmo/IMOON/rtv/mPod";
+      return "Cosmo, IMOON, rtv, mPod";
     }
 
     public bool CanEnable()
@@ -1157,10 +1164,7 @@ namespace MediaPortal.GUI.NumberPlace
     {
       return false;
     }
-    #endregion
 
-
-    #region IShowPlugin Members
     public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
     {
       strButtonText = GUILocalizeStrings.Get(19101);  // Sudoku
@@ -1170,15 +1174,15 @@ namespace MediaPortal.GUI.NumberPlace
       return true;
     }
 
-    public void ShowPlugin()
-    {
-      MessageBox.Show("Nothing to setup.");
-    }
+    #endregion
+
+    #region IShowPlugin Members
 
     public bool ShowDefaultHome()
     {
       return false;
     }
+
     #endregion
 
   }

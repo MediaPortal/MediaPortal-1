@@ -231,6 +231,7 @@ namespace GUIRSSFeed
     {
       return true;
     }
+
     /// <summary>
     /// See ISetupForm interface
     /// </summary>
@@ -255,7 +256,7 @@ namespace GUIRSSFeed
       strButtonText = GUILocalizeStrings.Get(9); // My News
       strButtonImage = "";
       strButtonImageFocus = "";
-      strPictureImage = "";			//the big image seen when hovering over My Radio
+      strPictureImage = @"hover_my news.png";			//the big image seen when hovering over My Radio
       return true;
     }
 
@@ -264,7 +265,7 @@ namespace GUIRSSFeed
     /// </summary>
     public string PluginName()
     {
-      return "My News";
+      return "RSS news";
     }
 
     /// <summary>

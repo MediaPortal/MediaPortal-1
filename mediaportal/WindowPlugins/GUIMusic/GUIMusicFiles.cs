@@ -2091,6 +2091,7 @@ namespace MediaPortal.GUI.Music
     }
 
     #region ISetupForm Members
+
     public bool DefaultEnabled()
     {
       return true;
@@ -2107,7 +2108,7 @@ namespace MediaPortal.GUI.Music
 
     public string PluginName()
     {
-      return "My Music";
+      return "Music";
     }
 
     public int GetWindowId()
@@ -2120,7 +2121,7 @@ namespace MediaPortal.GUI.Music
       strButtonText = GUILocalizeStrings.Get(2);
       strButtonImage = string.Empty;
       strButtonImageFocus = string.Empty;
-      strPictureImage = string.Empty;
+      strPictureImage = @"hover_my music.png";
       return true;
     }
 
@@ -2137,13 +2138,16 @@ namespace MediaPortal.GUI.Music
     public void ShowPlugin()
     {
     }
+
     #endregion
 
     #region IShowPlugin Members
+
     public bool ShowDefaultHome()
     {
       return true;
     }
+
     #endregion
 
   }

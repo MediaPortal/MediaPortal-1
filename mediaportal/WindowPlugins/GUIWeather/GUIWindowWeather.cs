@@ -1470,7 +1470,7 @@ namespace MediaPortal.GUI.Weather
 
     public string PluginName()
     {
-      return "My Weather";
+      return "Weather";
     }
 
     public bool DefaultEnabled()
@@ -1493,7 +1493,7 @@ namespace MediaPortal.GUI.Weather
       strButtonText = GUILocalizeStrings.Get(8);
       strButtonImage = string.Empty;
       strButtonImageFocus = string.Empty;
-      strPictureImage = string.Empty;
+      strPictureImage = @"hover_my weather.png";
       return true;
     }
 

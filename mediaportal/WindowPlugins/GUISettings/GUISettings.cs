@@ -90,6 +90,7 @@ namespace MediaPortal.GUI.Settings
     {
       return false;
     }
+
     public string PluginName()
     {
       return "Settings";

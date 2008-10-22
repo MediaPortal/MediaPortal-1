@@ -269,6 +269,7 @@ namespace MediaPortal.AudioScrobbler
     #endregion
 
     #region Control events
+
     // Implements the manual sorting of items by columns.
     class ListViewItemComparer : IComparer
     {
@@ -429,6 +430,7 @@ namespace MediaPortal.AudioScrobbler
     #endregion
 
     #region Internal formatting
+
     private ListViewItem BuildListViewItemSingleTag(Song song_)
     {
       ListViewItem listItem = new ListViewItem(song_.Artist);
@@ -481,6 +483,7 @@ namespace MediaPortal.AudioScrobbler
     #endregion
 
     #region Button events
+
     private void buttonCancel_Click(object sender, EventArgs e)
     {
       this.Close();
@@ -567,6 +570,36 @@ namespace MediaPortal.AudioScrobbler
       for (int i = 0; i < songList.Count; i++)
         listViewRecentTracks.Items.Add(BuildListViewTrackArtist(songList[i], false, true));
       buttonRefreshRecent.Enabled = true;
+    }
+
+    private void buttonRefreshRecentLoved_Click(object sender, EventArgs e)
+    {
+      buttonRefreshRecentLoved.Enabled = false;
+      listViewRecentTracks.Clear();
+      songList = new List<Song>(); ;
+      songList = lastFmLookup.getAudioScrobblerFeed(lastFMFeed.recentlovedtracks, _currentUser);
+      listViewRecentTracks.Columns.Add("Track", 155);
+      listViewRecentTracks.Columns.Add("Artist", 155);
+      listViewRecentTracks.Columns.Add("Date", 115);
+
+      for (int i = 0; i < songList.Count; i++)
+        listViewRecentTracks.Items.Add(BuildListViewTrackArtist(songList[i], false, true));
+      buttonRefreshRecentLoved.Enabled = true;
+    }
+
+    private void buttonRefreshRecentBanned_Click(object sender, EventArgs e)
+    {
+      buttonRefreshRecentBanned.Enabled = false;
+      listViewRecentTracks.Clear();
+      songList = new List<Song>(); ;
+      songList = lastFmLookup.getAudioScrobblerFeed(lastFMFeed.recentbannedtracks, _currentUser);
+      listViewRecentTracks.Columns.Add("Track", 155);
+      listViewRecentTracks.Columns.Add("Artist", 155);
+      listViewRecentTracks.Columns.Add("Date", 115);
+
+      for (int i = 0; i < songList.Count; i++)
+        listViewRecentTracks.Items.Add(BuildListViewTrackArtist(songList[i], false, true));
+      buttonRefreshRecentBanned.Enabled = true;
     }
 
     private void buttonArtistsRefresh_Click(object sender, EventArgs e)
@@ -1072,6 +1105,8 @@ namespace MediaPortal.AudioScrobbler
       comboBoxUserName.Items.Clear();
       LoadSettings();
     }
+
     #endregion
+
   }
 }

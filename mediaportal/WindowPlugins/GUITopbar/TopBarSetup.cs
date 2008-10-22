@@ -29,14 +29,16 @@ using MediaPortal.GUI.Library;
 namespace MediaPortal.Topbar
 {
   /// <summary>
-  /// 
+  /// Displays a bar which holds basic playback control elements
   /// </summary>
   public class TopBarSetup : ISetupForm, IShowPlugin
   {
     public TopBarSetup()
     {
     }
+
     #region ISetupForm Members
+
     public bool HasSetup()
     {
       return true;
@@ -51,6 +53,7 @@ namespace MediaPortal.Topbar
     {
       return true;
     }
+
     public string Description()
     {
       return "Navigation bar for music, video, etc. for all MediaPortal screens";
@@ -87,7 +90,6 @@ namespace MediaPortal.Topbar
     }
 
     #endregion
-
 
     #region IShowPlugin Members
 

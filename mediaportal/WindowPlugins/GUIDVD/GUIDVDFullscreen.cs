@@ -26,6 +26,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Collections;
 using System.Windows.Forms;
+using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Dialogs;
 using MediaPortal.Player;
@@ -39,11 +40,13 @@ using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
 
+
 namespace MediaPortal.GUI.Video
 {
   /// <summary>
   /// Adds "Play DVD" button to homescreen
   /// </summary>
+  [PluginIcons("WindowPlugins.GUIDVD.DVD.gif", "WindowPlugins.GUIDVD.DVDDisabled.gif")]
   public class GUIDVDFullscreen : GUIWindow, ISetupForm, IShowPlugin
   {
     private bool bINIT_from_MyVideosFullScreen = false;
@@ -113,6 +116,7 @@ namespace MediaPortal.GUI.Video
     }
 
     #region ISetupForm Members
+
     public bool CanEnable()
     {
       return true;
@@ -125,7 +129,7 @@ namespace MediaPortal.GUI.Video
 
     public string PluginName()
     {
-      return "Play DVD";
+      return "DVD Shortcut";
     }
 
     public bool DefaultEnabled()
@@ -143,7 +147,7 @@ namespace MediaPortal.GUI.Video
       strButtonText = GUILocalizeStrings.Get(341);
       strButtonImage = string.Empty;
       strButtonImageFocus = string.Empty;
-      strPictureImage = "";
+      strPictureImage = @"hover_play dvd.png";
       return true;
     }
 
@@ -161,13 +165,16 @@ namespace MediaPortal.GUI.Video
     {
       // TODO:  Add GUIVideoFiles.ShowPlugin implementation
     }
+
     #endregion
 
     #region IShowPlugin Members
+
     public bool ShowDefaultHome()
     {
       return true;
     }
+
     #endregion
   }
 }

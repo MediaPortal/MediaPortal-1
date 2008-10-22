@@ -45,6 +45,7 @@ namespace MediaPortal.GUI.GUIBurner
   /// <summary>
   /// Summary description for GUIBurner.
   /// </summary>
+  [PluginIcons("WindowPlugins.GUIBurner.Burner.gif", "WindowPlugins.GUIBurner.BurnerDisabled.gif")]
   public class GUIBurner : GUIWindow, ISetupForm, IShowPlugin
   {
     #region Private Enumerations
@@ -1537,17 +1538,17 @@ namespace MediaPortal.GUI.GUIBurner
 
     public string PluginName()
     {
-      return "My Burner";
+      return "Burner";
     }
 
     public string Description()
     {
-      return @"Burn CDs and DVDs in MediaPortal";
+      return @"Burn CD and DVD with MediaPortal";
     }
 
     public string Author()
     {
-      return "Gucky62/EgonSpenglerUk";
+      return "Gucky62, EgonSpenglerUk";
     }
 
     public void ShowPlugin()
@@ -1570,8 +1571,6 @@ namespace MediaPortal.GUI.GUIBurner
     {
       return true;
     }
-
-
 
     public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
     {

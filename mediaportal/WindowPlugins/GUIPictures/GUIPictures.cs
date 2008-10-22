@@ -1712,9 +1712,10 @@ namespace MediaPortal.GUI.Pictures
     {
       return false;
     }
+
     public string PluginName()
     {
-      return "My Pictures";
+      return "Pictures";
     }
 
     public bool DefaultEnabled()
@@ -1733,7 +1734,7 @@ namespace MediaPortal.GUI.Pictures
       strButtonText = GUILocalizeStrings.Get(1);
       strButtonImage = string.Empty;
       strButtonImageFocus = string.Empty;
-      strPictureImage = string.Empty;
+      strPictureImage = @"hover_my pictures.png";
       return true;
     }
 

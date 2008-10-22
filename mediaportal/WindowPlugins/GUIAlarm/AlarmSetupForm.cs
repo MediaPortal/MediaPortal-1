@@ -495,7 +495,7 @@ namespace MediaPortal.GUI.Alarm
 
     public string PluginName()
     {
-      return "My Alarm";
+      return "Alarm";
     }
 
     public void ShowPlugin()

@@ -52,7 +52,6 @@ namespace MediaPortal.GUI.TV
   [PluginIcons("WindowPlugins.GUITV.Television.gif", "WindowPlugins.GUITV.TelevisionDisabled.gif")]
   public class GUITVHome : GUIWindow, ISetupForm, IShowPlugin, IPluginReceiver
   {
-
     #region constants
     private const int WM_POWERBROADCAST = 0x0218;
     private const int PBT_APMRESUMESUSPEND = 0x0007;
@@ -991,7 +990,7 @@ namespace MediaPortal.GUI.TV
 
     public string PluginName()
     {
-      return "My TV";
+      return "TV";
     }
 
     public bool DefaultEnabled()
@@ -1010,7 +1009,7 @@ namespace MediaPortal.GUI.TV
       strButtonText = GUILocalizeStrings.Get(605);
       strButtonImage = string.Empty;
       strButtonImageFocus = string.Empty;
-      strPictureImage = string.Empty;
+      strPictureImage = @"hover_my tv.png";
       return true;
     }
 

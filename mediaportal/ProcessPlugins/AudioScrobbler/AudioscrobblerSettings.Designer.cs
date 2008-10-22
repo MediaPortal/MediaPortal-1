@@ -63,6 +63,12 @@ namespace MediaPortal.AudioScrobbler
       this.tabControlSettings = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPageLastFMSettings = new System.Windows.Forms.TabPage();
       this.groupBoxProfile = new System.Windows.Forms.GroupBox();
+      this.lblProfRegistered = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.lblProfRegisteredDesc = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.lblProfPlaycount = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.lblProfPlaycountDesc = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.lblProfRealname = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.lblProfRealnameDesc = new MediaPortal.UserInterface.Controls.MPLabel();
       this.pictureBoxAvatar = new System.Windows.Forms.PictureBox();
       this.labelNoUser = new MediaPortal.UserInterface.Controls.MPLabel();
       this.labelPluginBannerHint = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -159,12 +165,8 @@ namespace MediaPortal.AudioScrobbler
       this.buttonOk = new MediaPortal.UserInterface.Controls.MPButton();
       this.labelPassword = new MediaPortal.UserInterface.Controls.MPLabel();
       this.labelUser = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.lblProfRealnameDesc = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.lblProfRealname = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.lblProfPlaycount = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.lblProfPlaycountDesc = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.lblProfRegistered = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.lblProfRegisteredDesc = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.buttonRefreshRecentLoved = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonRefreshRecentBanned = new MediaPortal.UserInterface.Controls.MPButton();
       this.panelPicBox.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxASLogo)).BeginInit();
       this.tabControlSettings.SuspendLayout();
@@ -296,6 +298,63 @@ namespace MediaPortal.AudioScrobbler
       this.groupBoxProfile.TabStop = false;
       this.groupBoxProfile.Text = "Profile details";
       this.groupBoxProfile.Visible = false;
+      // 
+      // lblProfRegistered
+      // 
+      this.lblProfRegistered.AutoSize = true;
+      this.lblProfRegistered.Location = new System.Drawing.Point(132, 116);
+      this.lblProfRegistered.Name = "lblProfRegistered";
+      this.lblProfRegistered.Size = new System.Drawing.Size(55, 13);
+      this.lblProfRegistered.TabIndex = 17;
+      this.lblProfRegistered.Text = "22.2.2002";
+      // 
+      // lblProfRegisteredDesc
+      // 
+      this.lblProfRegisteredDesc.AutoSize = true;
+      this.lblProfRegisteredDesc.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.lblProfRegisteredDesc.Location = new System.Drawing.Point(132, 99);
+      this.lblProfRegisteredDesc.Name = "lblProfRegisteredDesc";
+      this.lblProfRegisteredDesc.Size = new System.Drawing.Size(61, 13);
+      this.lblProfRegisteredDesc.TabIndex = 16;
+      this.lblProfRegisteredDesc.Text = "Registered:";
+      // 
+      // lblProfPlaycount
+      // 
+      this.lblProfPlaycount.AutoSize = true;
+      this.lblProfPlaycount.Location = new System.Drawing.Point(132, 76);
+      this.lblProfPlaycount.Name = "lblProfPlaycount";
+      this.lblProfPlaycount.Size = new System.Drawing.Size(13, 13);
+      this.lblProfPlaycount.TabIndex = 15;
+      this.lblProfPlaycount.Text = "0";
+      // 
+      // lblProfPlaycountDesc
+      // 
+      this.lblProfPlaycountDesc.AutoSize = true;
+      this.lblProfPlaycountDesc.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.lblProfPlaycountDesc.Location = new System.Drawing.Point(132, 60);
+      this.lblProfPlaycountDesc.Name = "lblProfPlaycountDesc";
+      this.lblProfPlaycountDesc.Size = new System.Drawing.Size(74, 13);
+      this.lblProfPlaycountDesc.TabIndex = 14;
+      this.lblProfPlaycountDesc.Text = "Played tracks:";
+      // 
+      // lblProfRealname
+      // 
+      this.lblProfRealname.AutoSize = true;
+      this.lblProfRealname.Location = new System.Drawing.Point(132, 35);
+      this.lblProfRealname.Name = "lblProfRealname";
+      this.lblProfRealname.Size = new System.Drawing.Size(68, 13);
+      this.lblProfRealname.TabIndex = 13;
+      this.lblProfRealname.Text = "myRealname";
+      // 
+      // lblProfRealnameDesc
+      // 
+      this.lblProfRealnameDesc.AutoSize = true;
+      this.lblProfRealnameDesc.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.lblProfRealnameDesc.Location = new System.Drawing.Point(132, 19);
+      this.lblProfRealnameDesc.Name = "lblProfRealnameDesc";
+      this.lblProfRealnameDesc.Size = new System.Drawing.Size(58, 13);
+      this.lblProfRealnameDesc.TabIndex = 12;
+      this.lblProfRealnameDesc.Text = "Realname:";
       // 
       // pictureBoxAvatar
       // 
@@ -931,8 +990,8 @@ namespace MediaPortal.AudioScrobbler
       this.tabControlLiveFeeds.Controls.Add(this.tabPageSuggestions);
       this.tabControlLiveFeeds.Controls.Add(this.tabPageSystemRecs);
       this.tabControlLiveFeeds.Controls.Add(this.tabPageTopArtists);
-      this.tabControlLiveFeeds.Controls.Add(this.tabPageWeeklyArtists);
       this.tabControlLiveFeeds.Controls.Add(this.tabPageTopTracks);
+      this.tabControlLiveFeeds.Controls.Add(this.tabPageWeeklyArtists);
       this.tabControlLiveFeeds.Controls.Add(this.tabPageWeeklyTracks);
       this.tabControlLiveFeeds.Controls.Add(this.tabPageTags);
       this.tabControlLiveFeeds.HotTrack = true;
@@ -944,6 +1003,8 @@ namespace MediaPortal.AudioScrobbler
       // 
       // tabPageRecent
       // 
+      this.tabPageRecent.Controls.Add(this.buttonRefreshRecentBanned);
+      this.tabPageRecent.Controls.Add(this.buttonRefreshRecentLoved);
       this.tabPageRecent.Controls.Add(this.buttonRefreshRecent);
       this.tabPageRecent.Controls.Add(this.listViewRecentTracks);
       this.tabPageRecent.Location = new System.Drawing.Point(4, 22);
@@ -1513,62 +1574,27 @@ namespace MediaPortal.AudioScrobbler
       this.labelUser.TabIndex = 2;
       this.labelUser.Text = "Username";
       // 
-      // lblProfRealnameDesc
+      // buttonRefreshRecentLoved
       // 
-      this.lblProfRealnameDesc.AutoSize = true;
-      this.lblProfRealnameDesc.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.lblProfRealnameDesc.Location = new System.Drawing.Point(132, 19);
-      this.lblProfRealnameDesc.Name = "lblProfRealnameDesc";
-      this.lblProfRealnameDesc.Size = new System.Drawing.Size(58, 13);
-      this.lblProfRealnameDesc.TabIndex = 12;
-      this.lblProfRealnameDesc.Text = "Realname:";
+      this.buttonRefreshRecentLoved.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonRefreshRecentLoved.Location = new System.Drawing.Point(452, 210);
+      this.buttonRefreshRecentLoved.Name = "buttonRefreshRecentLoved";
+      this.buttonRefreshRecentLoved.Size = new System.Drawing.Size(83, 23);
+      this.buttonRefreshRecentLoved.TabIndex = 2;
+      this.buttonRefreshRecentLoved.Text = "Loved";
+      this.buttonRefreshRecentLoved.UseVisualStyleBackColor = true;
+      this.buttonRefreshRecentLoved.Click += new System.EventHandler(this.buttonRefreshRecentLoved_Click);
       // 
-      // lblProfRealname
+      // buttonRefreshRecentBanned
       // 
-      this.lblProfRealname.AutoSize = true;
-      this.lblProfRealname.Location = new System.Drawing.Point(132, 35);
-      this.lblProfRealname.Name = "lblProfRealname";
-      this.lblProfRealname.Size = new System.Drawing.Size(68, 13);
-      this.lblProfRealname.TabIndex = 13;
-      this.lblProfRealname.Text = "myRealname";
-      // 
-      // lblProfPlaycount
-      // 
-      this.lblProfPlaycount.AutoSize = true;
-      this.lblProfPlaycount.Location = new System.Drawing.Point(132, 76);
-      this.lblProfPlaycount.Name = "lblProfPlaycount";
-      this.lblProfPlaycount.Size = new System.Drawing.Size(13, 13);
-      this.lblProfPlaycount.TabIndex = 15;
-      this.lblProfPlaycount.Text = "0";
-      // 
-      // lblProfPlaycountDesc
-      // 
-      this.lblProfPlaycountDesc.AutoSize = true;
-      this.lblProfPlaycountDesc.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.lblProfPlaycountDesc.Location = new System.Drawing.Point(132, 60);
-      this.lblProfPlaycountDesc.Name = "lblProfPlaycountDesc";
-      this.lblProfPlaycountDesc.Size = new System.Drawing.Size(74, 13);
-      this.lblProfPlaycountDesc.TabIndex = 14;
-      this.lblProfPlaycountDesc.Text = "Played tracks:";
-      // 
-      // lblProfRegistered
-      // 
-      this.lblProfRegistered.AutoSize = true;
-      this.lblProfRegistered.Location = new System.Drawing.Point(132, 116);
-      this.lblProfRegistered.Name = "lblProfRegistered";
-      this.lblProfRegistered.Size = new System.Drawing.Size(55, 13);
-      this.lblProfRegistered.TabIndex = 17;
-      this.lblProfRegistered.Text = "22.2.2002";
-      // 
-      // lblProfRegisteredDesc
-      // 
-      this.lblProfRegisteredDesc.AutoSize = true;
-      this.lblProfRegisteredDesc.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.lblProfRegisteredDesc.Location = new System.Drawing.Point(132, 99);
-      this.lblProfRegisteredDesc.Name = "lblProfRegisteredDesc";
-      this.lblProfRegisteredDesc.Size = new System.Drawing.Size(61, 13);
-      this.lblProfRegisteredDesc.TabIndex = 16;
-      this.lblProfRegisteredDesc.Text = "Registered:";
+      this.buttonRefreshRecentBanned.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonRefreshRecentBanned.Location = new System.Drawing.Point(452, 239);
+      this.buttonRefreshRecentBanned.Name = "buttonRefreshRecentBanned";
+      this.buttonRefreshRecentBanned.Size = new System.Drawing.Size(83, 23);
+      this.buttonRefreshRecentBanned.TabIndex = 3;
+      this.buttonRefreshRecentBanned.Text = "Banned";
+      this.buttonRefreshRecentBanned.UseVisualStyleBackColor = true;
+      this.buttonRefreshRecentBanned.Click += new System.EventHandler(this.buttonRefreshRecentBanned_Click);
       // 
       // AudioscrobblerSettings
       // 
@@ -1743,5 +1769,7 @@ namespace MediaPortal.AudioScrobbler
     private MediaPortal.UserInterface.Controls.MPLabel lblProfRegisteredDesc;
     private MediaPortal.UserInterface.Controls.MPLabel lblProfPlaycount;
     private MediaPortal.UserInterface.Controls.MPLabel lblProfPlaycountDesc;
+    private MediaPortal.UserInterface.Controls.MPButton buttonRefreshRecentBanned;
+    private MediaPortal.UserInterface.Controls.MPButton buttonRefreshRecentLoved;
   }
 }

@@ -835,6 +835,10 @@ namespace MediaPortal.Music.Database
           return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "systemrecs.xml", @"//recommendations/artist", feed_);
         case lastFMFeed.profile:
           return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "profile.xml", @"//profile", feed_);
+        case lastFMFeed.recentbannedtracks:
+          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "recentbannedtracks.xml", @"//recentbannedtracks/track", feed_);
+        case lastFMFeed.recentlovedtracks:
+          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "recentlovedtracks.xml", @"//recentlovedtracks/track", feed_);
         default:
           return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "recenttracks.xml", @"//recenttracks/track", feed_);
       }
@@ -2133,7 +2137,6 @@ namespace MediaPortal.Music.Database
             switch (xmlfeed)
             {
               case (lastFMFeed.recenttracks):
-
                 if (child.Name == "artist" && child.ChildNodes.Count != 0)
                   nodeSong.Artist = DecodeUtf8String(child.ChildNodes[0].Value);
                 else if (child.Name == "name" && child.ChildNodes.Count != 0)
@@ -2145,6 +2148,10 @@ namespace MediaPortal.Music.Database
                 else if (child.Name == "date" && child.ChildNodes.Count != 0)
                   nodeSong.DateTimePlayed = Convert.ToDateTime(child.ChildNodes[0].Value);
                 break;
+              case (lastFMFeed.recentbannedtracks):
+                goto case lastFMFeed.recenttracks;
+              case (lastFMFeed.recentlovedtracks):
+                goto case lastFMFeed.recenttracks;
               case (lastFMFeed.topartists):
                 if (child.Name == "name" && child.ChildNodes.Count != 0)
                   nodeSong.Artist = DecodeUtf8String(child.ChildNodes[0].Value);

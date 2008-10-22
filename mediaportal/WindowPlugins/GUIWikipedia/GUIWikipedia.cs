@@ -145,7 +145,7 @@ namespace Wikipedia
       strButtonText = GUILocalizeStrings.Get(2516);
       strButtonImage = "";
       strButtonImageFocus = "";
-      strPictureImage = "";
+      strPictureImage = @"hover_my weather.png";
       return true;
     }
     #endregion

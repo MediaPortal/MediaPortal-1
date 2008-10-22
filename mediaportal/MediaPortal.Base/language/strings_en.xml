@@ -662,7 +662,7 @@
     <String id="772">Do you want to try again?</String>
     <String id="773">START</String>
     <String id="774">END</String>
-    <String id="775">Start TV in MyTV sections automatically</String>
+    <String id="775">Start TV automatically (e.g. watching EPG)?</String>
     <String id="776">Do not start / switch to TV automatically</String>
     <String id="777">Timeshift usage mode</String>
     <String id="778">Start with timeshift automatically enabled</String>

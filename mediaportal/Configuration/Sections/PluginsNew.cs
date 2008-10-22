@@ -509,6 +509,58 @@ namespace MediaPortal.Configuration.Sections
     private void updateListViewItem(ListViewItem item)
     {
       ItemTag tag = (ItemTag)item.Tag;
+
+      if (tag.IsWindow)
+      {
+        if (tag.IsEnabled)
+        {
+          item.Font = new Font(item.Font.FontFamily, 8.5f);
+          if (tag.IsHome)
+          {
+            item.ImageIndex = 8;
+            item.ForeColor = Color.Green;
+          }
+          else if (tag.IsPlugins)
+          {
+            item.ImageIndex = 9;
+            item.ForeColor = Color.RoyalBlue;
+          }
+          else
+          {
+            item.ImageIndex = 2;
+            item.ForeColor = Color.DarkSlateGray;
+          }
+        }
+        else
+        {
+          item.Font = new Font(item.Font.FontFamily, 8.5f);
+          item.ImageIndex = 3;
+          item.ForeColor = Color.DimGray;
+        }
+      }
+      else
+      {
+        if (tag.IsEnabled)
+        {
+          item.Font = new Font(item.Font.FontFamily, 8.5f);
+          item.ForeColor = Color.DarkSlateGray;
+        }
+        else
+        {
+          item.Font = new Font(item.Font.FontFamily, 8.0f);
+          item.ForeColor = Color.DimGray;
+        }        
+
+        if (tag.IsProcess)
+          item.ImageIndex = tag.IsEnabled ? 4 : 5;
+        else if (tag.IsExternalPlayer)
+          item.ImageIndex = tag.IsEnabled ? 6 : 7;
+        else
+          item.ImageIndex = tag.IsEnabled ? 0 : 1;
+      }
+
+      // If the plugin has its own icon we will be using this one.
+      // Check the imagelist for enabled / disabled variants.
       if (tag.IsEnabled && tag.ActiveImage != null)
       {
         string enabledKey = item.Text + "_enabled";
@@ -517,7 +569,6 @@ namespace MediaPortal.Configuration.Sections
           item.ImageList.Images.Add(enabledKey, tag.ActiveImage);
         }
         item.ImageKey = enabledKey;
-        return;
       }
       if (!tag.IsEnabled && tag.InactiveImage != null)
       {
@@ -527,60 +578,10 @@ namespace MediaPortal.Configuration.Sections
           item.ImageList.Images.Add(disabledKey, tag.InactiveImage);
         }
         item.ImageKey = disabledKey;
-        return;
       }
-      if (tag.IsWindow)
-      {
-        if (tag.IsEnabled)
-        {
-          if (tag.IsHome)
-          {
-            item.ImageIndex = 8;
-          }
-          else if (tag.IsPlugins)
-          {
-            item.ImageIndex = 9;
-          }
-          else
-          {
-            item.ImageIndex = 2;
-          }
-        }
-        else
-        {
-          item.ImageIndex = 3;
-        }
-      }
-      else if (tag.IsProcess)
-      {
-        if (tag.IsEnabled)
-        {
-          item.ImageIndex = 4;
-        }
-        else
-        {
-          item.ImageIndex = 5;
-        }
-      }
-      else if (tag.IsExternalPlayer)
-      {
-        if (tag.IsEnabled)
-        {
-          item.ImageIndex = 6;
-        }
-        else
-        {
-          item.ImageIndex = 7;
-        }
-      }
-      else if (tag.IsEnabled)
-      {
-        item.ImageIndex = 0;
-      }
-      else
-      {
-        item.ImageIndex = 1;
-      }
+
+      listViewPlugins.Refresh();
+      //this.Refresh();
     }
 
     private void itemMyPlugins_Click(object sender, EventArgs e)
