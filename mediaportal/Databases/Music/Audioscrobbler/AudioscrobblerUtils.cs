@@ -2380,6 +2380,8 @@ namespace MediaPortal.Music.Database
               nodeSong.Artist = DecodeUtf8String(mainchild.ChildNodes[0].Value);
             else if (mainchild.Name == "title" && mainchild.ChildNodes.Count != 0)
               nodeSong.Title = DecodeUtf8String(mainchild.ChildNodes[0].Value);
+            else if (mainchild.Name == "id" && mainchild.ChildNodes.Count != 0)
+              nodeSong.Id = Convert.ToInt32(mainchild.ChildNodes[0].Value);
             else if (mainchild.Name == "album" && mainchild.ChildNodes.Count != 0)
               nodeSong.Album = DecodeUtf8String(mainchild.ChildNodes[0].Value);
             else if (mainchild.Name == "location" && mainchild.ChildNodes.Count != 0)
@@ -2388,8 +2390,11 @@ namespace MediaPortal.Music.Database
               nodeSong.WebImage = mainchild.ChildNodes[0].Value;
             else if (mainchild.Name == "duration" && mainchild.ChildNodes.Count != 0)
               nodeSong.Duration = Convert.ToInt32(Convert.ToInt32(mainchild.ChildNodes[0].Value) / 1000);
+            else if (mainchild.Name == "lastfm:trackauth" && mainchild.ChildNodes.Count != 0)
+              nodeSong.LastFMMatch = mainchild.ChildNodes[0].Value;
           }
           XSPFPlaylist.Add(nodeSong);
+          Log.Debug("AudioscrobblerUtils: added XSPF track [{0}] - {1}", nodeSong.Id, nodeSong.ToLastFMMatchString(true));
         }
       }
       catch (Exception ex)

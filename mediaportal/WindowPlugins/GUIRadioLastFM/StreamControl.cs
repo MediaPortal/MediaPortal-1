@@ -394,11 +394,12 @@ namespace MediaPortal.GUI.RADIOLASTFM
       if (Playlist == null)
         return false;
 
+      // I found out, you have to send "Cookie: Session=[sessionID]" in the header of the request of the MP3 file. 
       PlaylistPlayer.Play(aStreamURL);
 
       GUIWaitCursor.Hide();
       _currentState = StreamPlaybackState.streaming;
-      ToggleRecordToProfile(false);
+      //ToggleRecordToProfile(false);
       ToggleDiscoveryMode(_discoveryMode);
 
       return true;
