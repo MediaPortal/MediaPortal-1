@@ -44,6 +44,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
   [PluginIcons("WindowPlugins.GUIRadioLastFM.BallonRadio.gif", "WindowPlugins.GUIRadioLastFM.BallonRadioDisabled.gif")]
   public class GUIRadioLastFM : GUIWindow, ISetupForm, IShowPlugin
   {
+    #region Variables
+
     private enum SkinControlIDs
     {
       BTN_START_STREAM = 10,
@@ -68,7 +70,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     private StreamControl LastFMStation = null;
     private NotifyIcon _trayBallonSongChange = null;
     private bool _configShowTrayIcon = true;
-    private bool _configShowBallonTips = true;    
+    private bool _configShowBallonTips = true;
     private bool _configDirectSkip = false;
     private int _configListEntryCount = 12;
     private List<string> _usersOwnTags = null;
@@ -80,12 +82,17 @@ namespace MediaPortal.GUI.RADIOLASTFM
     private ScrobblerUtilsRequest _lastUsersTagsRequest;
     private ScrobblerUtilsRequest _lastUsersFriendsRequest;
 
-    // constructor
+
+    #endregion
+
+    #region Constructor
+
     public GUIRadioLastFM()
     {
       GetID = (int)GUIWindow.Window.WINDOW_RADIO_LASTFM;
     }
 
+    #endregion
 
     public override bool Init()
     {
@@ -94,7 +101,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _configShowTrayIcon = xmlreader.GetValueAsBool("audioscrobbler", "showtrayicon", true);
-        _configShowBallonTips = xmlreader.GetValueAsBool("audioscrobbler", "showballontips", true);        
+        _configShowBallonTips = xmlreader.GetValueAsBool("audioscrobbler", "showballontips", true);
         _configDirectSkip = xmlreader.GetValueAsBool("audioscrobbler", "directskip", false);
         _configListEntryCount = xmlreader.GetValueAsInt("audioscrobbler", "listentrycount", 12);
       }
@@ -113,13 +120,13 @@ namespace MediaPortal.GUI.RADIOLASTFM
       g_Player.PlayBackStopped += new g_Player.StoppedHandler(PlayBackStoppedHandler);
       g_Player.PlayBackEnded += new g_Player.EndedHandler(PlayBackEndedHandler);
 
-      LastFMStation.RadioSettingsSuccess += new StreamControl.RadioSettingsLoaded(OnRadioSettingsSuccess);      
+      LastFMStation.RadioSettingsSuccess += new StreamControl.RadioSettingsLoaded(OnRadioSettingsSuccess);
       LastFMStation.RadioSettingsError += new StreamControl.RadioSettingsFailed(OnRadioSettingsError);
 
       BassMusicPlayer.Player.LastFMSync += new BassAudioEngine.LastFMSyncReceived(OnLastFMSyncReceived);
 
       LastFMStation.StreamSongChanged += new StreamControl.SongChangedHandler(OnLastFMStation_StreamSongChanged);
-      
+
       return bResult;
     }
 
@@ -129,7 +136,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       GUIWaitCursor.Show();
       BackgroundWorker worker = new BackgroundWorker();
       worker.DoWork += new DoWorkEventHandler(Worker_LoadSettings);
-      worker.RunWorkerAsync(); 
+      worker.RunWorkerAsync();
     }
 
     private void Worker_LoadSettings(object sender, DoWorkEventArgs e)
@@ -138,8 +145,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
       if (!LastFMStation.IsInit)
       {
         LastFMStation.LoadConfig();
-        btnSubmitProfile.Selected = AudioscrobblerBase.SubmitRadioSongs;       
-      }   
+        btnSubmitProfile.Selected = AudioscrobblerBase.SubmitRadioSongs;
+      }
       else
         GUIWaitCursor.Hide();
     }
@@ -166,7 +173,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
-      
+
       if (_trayBallonSongChange != null)
         _trayBallonSongChange.Visible = true;
 
@@ -180,7 +187,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       {
         btnChooseFriend.Disabled = true;
         btnChooseFriend.Label = GUILocalizeStrings.Get(34031);
-      }     
+      }
 
       GUIPropertyManager.SetProperty("#trackduration", " ");
 
@@ -189,7 +196,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       if (LastFMStation.CurrentTrackTag != null && LastFMStation.CurrentTrackTag.Artist != string.Empty)
         ThumbFileName = Util.Utils.GetCoverArtName(Thumbs.MusicArtists, LastFMStation.CurrentTrackTag.Artist);
 
-      SetArtistThumb(ThumbFileName);      
+      SetArtistThumb(ThumbFileName);
 
       LoadSettings();
     }
@@ -376,25 +383,23 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
         if (LastFMStation.CurrentStreamState == StreamPlaybackState.initialized)
         {
-          if (LastFMStation.PlayStream())
+          //if (LastFMStation.PlayStream())
+          //{
+          //  LastFMStation.CurrentPlaybackType = PlaybackType.Continuously;
+          //}
+          //else
+          //{
+
+          if (RebuildStreamList())
           {
-            LastFMStation.CurrentPlaybackType = PlaybackType.Continuously;            
-          }
-          else
-          {
-            RebuildStreamList();
-            if (_radioTrackList.Count > 0)
+            if (PlayPlayListStreams(_radioTrackList[0]))
             {
-              if (LastFMStation.PlayPlayListStreams(_radioTrackList[0].URL))
-              {
-                LastFMStation.CurrentPlaybackType = PlaybackType.PlaylistPlayer;
-                Log.Warn("GUIRadio: Fallback to playlist mode was needed to start the stream.");
-                return;
-              }
+              LastFMStation.CurrentPlaybackType = PlaybackType.PlaylistPlayer;
+              Log.Warn("GUIRadio: Fallback to playlist mode was needed to start the stream.");
+              return;
             }
-            
-            PlayBackFailedHandler();
           }
+          PlayBackFailedHandler();
         }
         else
           Log.Info("GUIRadio: Didn't start LastFM radio because stream state is {0}", LastFMStation.CurrentStreamState.ToString());
@@ -413,7 +418,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         dlg.DoModal(GetID);
         if (dlg.SelectedId == -1)
           return;
-        btnChooseTag.Label = _usersOwnTags[dlg.SelectedId -1];
+        btnChooseTag.Label = _usersOwnTags[dlg.SelectedId - 1];
         GUIPropertyManager.SetProperty("#selecteditem", btnChooseTag.Label);
       }
 
@@ -434,8 +439,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
         GUIPropertyManager.SetProperty("#selecteditem", btnChooseFriend.Label);
       }
 
-      if (control == btnDiscoveryMode)      
-        LastFMStation.DiscoveryMode = btnDiscoveryMode.Selected;      
+      if (control == btnDiscoveryMode)
+        LastFMStation.DiscoveryMode = btnDiscoveryMode.Selected;
 
       if (control == btnSubmitProfile)
         AudioscrobblerBase.SubmitRadioSongs = btnSubmitProfile.Selected;
@@ -513,35 +518,25 @@ namespace MediaPortal.GUI.RADIOLASTFM
           break;
       }
     }
+
     #endregion
 
     #region Playlist functions
+
     private bool RebuildStreamList()
     {
-      bool success = false;
-      PlayList playlist = PlaylistPlayer.GetPlaylist(PlayListType.PLAYLIST_RADIO_STREAMS);
-      if (playlist == null)
-        return success;
-
-      if (GetXSPFPlaylist())
-      {        
-        playlist.Clear();
-
-        foreach (Song tmpsong in _radioTrackList)
-        {
-          Song addSong = tmpsong.Clone();
-          AddStreamSongToPlaylist(ref addSong);
-        }
-        success = true;
-      }
-      return success;
-    }    
+      return GetXSPFPlaylist();
+    }
 
     private bool AddStreamSongToPlaylist(ref Song song)
     {
       PlayList playlist = PlaylistPlayer.GetPlaylist(PlayListType.PLAYLIST_RADIO_STREAMS);
       if (playlist == null)
         return false;
+
+      // We only want one item at each time since the links invalidate and therefore 
+      // automatic advancement of playlist items does not make any sense.
+      playlist.Clear();
 
       //add to playlist
       PlayListItem playlistItem = new PlayListItem();
@@ -558,13 +553,44 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
       playlistItem.MusicTag = song.ToMusicTag();
 
-      //if (enqueueNext_)
-      //  PlaylistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Insert(playlistItem, PlaylistPlayer.CurrentSong);
-      //else
-        PlaylistPlayer.GetPlaylist(PlayListType.PLAYLIST_RADIO_STREAMS).Add(playlistItem);
+      playlist.Add(playlistItem);
 
       return true;
     }
+
+    public bool PlayPlayListStreams(Song aStreamSong)
+    {
+      GUIWaitCursor.Show();
+      if (g_Player.Playing)
+      {
+        g_Player.Stop();
+      }
+      LastFMStation.CurrentStreamState = StreamPlaybackState.starting;
+
+      Song addSong = aStreamSong.Clone();
+      AddStreamSongToPlaylist(ref addSong);
+
+      PlaylistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_RADIO_STREAMS;
+      PlayList Playlist = PlaylistPlayer.GetPlaylist(PlaylistPlayer.CurrentPlaylistType);
+
+      if (Playlist == null)
+        return false;
+
+      // Avoid an endless loop when a song cannot be played.
+      PlaylistPlayer.RepeatPlaylist = false;
+
+      // I found out, you have to send "Cookie: Session=[sessionID]" in the header of the request of the MP3 file. 
+      PlaylistPlayer.Play(0);
+
+      LastFMStation.CurrentStreamState = StreamPlaybackState.streaming;
+      //LastFMStation.ToggleRecordToProfile(false);    
+
+      LastFMStation.ToggleDiscoveryMode(LastFMStation.DiscoveryMode);
+
+      GUIWaitCursor.Hide();
+      return true;
+    }
+
     #endregion
 
     #region Internet Lookups
@@ -573,17 +599,17 @@ namespace MediaPortal.GUI.RADIOLASTFM
       _radioTrackList.Clear();
       _radioTrackList = InfoScrobbler.getRadioPlaylist(@"http://ws.audioscrobbler.com/radio/xspf.php?sk=" + AudioscrobblerBase.RadioSession + "&discovery=" + Convert.ToString(LastFMStation.DiscoveryEnabledInt) + "&desktop=1.3.1.1");
 
-     Log.Debug("GUIRadioLastFM: Parsed XSPF Playlist for current radio stream");
+      Log.Debug("GUIRadioLastFM: Parsed XSPF Playlist for current radio stream");
 
-     for (int i = 0 ; i < _radioTrackList.Count ; i++)
-     {
-       Log.Debug("GUIRadioLastFM: Track {0} : {1}", Convert.ToString(i + 1), _radioTrackList[i].ToLastFMString());
-     }
+      for (int i = 0; i < _radioTrackList.Count; i++)
+      {
+        Log.Debug("GUIRadioLastFM: Track {0} : {1}", Convert.ToString(i + 1), _radioTrackList[i].ToLastFMString());
+      }
 
-     if (_radioTrackList.Count > 0)
-       return true;
-     else
-       return false;
+      if (_radioTrackList.Count > 0)
+        return true;
+      else
+        return false;
     }
 
     private void UpdateUsersFriends(string _serviceUser)
@@ -712,7 +738,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         for (int i = 0; i < FeedItems.Count; i++)
         {
           _usersOwnTags.Add(FeedItems[i].Artist);
-          if (i == _configListEntryCount -1)
+          if (i == _configListEntryCount - 1)
             break;
         }
         if (_usersOwnTags.Count > 0)
@@ -734,7 +760,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         for (int i = 0; i < FeedItems.Count; i++)
         {
           _usersFriends.Add(FeedItems[i].Artist);
-          if (i == _configListEntryCount -1)
+          if (i == _configListEntryCount - 1)
             break;
         }
         if (_usersFriends.Count > 0)
@@ -803,10 +829,13 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     void OnSkipHandler(bool directSkip)
     {
+      if (_radioTrackList.Count < 1)
+        RebuildStreamList();
+
       if (_radioTrackList.Count > 0)
       {
         if (_configDirectSkip || directSkip)
-          LastFMStation.PlayPlayListStreams(_radioTrackList[0].URL);
+          PlayPlayListStreams(_radioTrackList[0]);
         else
         {
           GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
@@ -821,10 +850,12 @@ namespace MediaPortal.GUI.RADIOLASTFM
           if (dlg.SelectedId == -1)
             return;
 
-          LastFMStation.PlayPlayListStreams(_radioTrackList[dlg.SelectedId - 1].URL);
+          PlayPlayListStreams(_radioTrackList[dlg.SelectedId - 1]);
         }
         LastFMStation.CurrentPlaybackType = PlaybackType.PlaylistPlayer;
       }
+      else
+        Log.Warn("GUIRadioLastFM: OnSkipHandler - No tracks to choose from!");
     }
 
     void OnLastFMStation_StreamSongChanged(MusicTag newCurrentSong, DateTime startTime)
@@ -870,18 +901,10 @@ namespace MediaPortal.GUI.RADIOLASTFM
       if (!Util.Utils.IsLastFMStream(filename) || LastFMStation.CurrentStreamState != StreamPlaybackState.streaming)
         return;
 
-      if (RebuildStreamList())
+      if (PlayPlayListStreams(_radioTrackList[0]))
       {
-        if (_radioTrackList.Count > 0)
-        {
-          if (LastFMStation.PlayPlayListStreams(_radioTrackList[0].URL))
-          {
-            LastFMStation.CurrentPlaybackType = PlaybackType.PlaylistPlayer;
-            return;
-          }
-        }
-        else
-          Log.Debug("GUIRadioLastFM: PlayBackEndedHandler - no more items found!");
+        LastFMStation.CurrentPlaybackType = PlaybackType.PlaylistPlayer;
+        return;
       }
 
       OnPlaybackStopped();
@@ -1021,7 +1044,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       GUIPropertyManager.SetProperty("#Play.Current.ArtistThumb", thumb);
 
       if (imgArtistArt != null)
-      {        
+      {
         imgArtistArt.SetFileName(thumb);
         imgArtistArt.FreeResources();
         imgArtistArt.AllocResources();
@@ -1088,7 +1111,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       lastfmsetup.ShowDialog();
     }
 
-    #endregion    
+    #endregion
 
     #region IShowPlugin Members
 

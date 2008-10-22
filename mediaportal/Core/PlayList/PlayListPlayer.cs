@@ -413,7 +413,12 @@ namespace MediaPortal.Playlists
           if (skipmissing)
             return false;
           else
-            iSong = playlist.Count - 1;
+          {
+            if (_entriesNotFound < playlist.Count)
+              iSong = playlist.Count - 1;
+            else
+              return false;
+          }
         }
 
         //int previousItem = _currentItem;

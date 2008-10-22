@@ -31,6 +31,7 @@ using System.Security.Cryptography;
 using System.Collections;
 using System.Web;
 using System.Xml;
+using System.Runtime.CompilerServices;
 
 namespace MediaPortal.Music.Database
 {
@@ -109,6 +110,7 @@ namespace MediaPortal.Music.Database
       LoadQueue();
     }
 
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Save()
     {
       if (!dirty)

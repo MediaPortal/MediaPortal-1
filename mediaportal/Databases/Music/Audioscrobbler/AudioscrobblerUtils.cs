@@ -1551,7 +1551,21 @@ namespace MediaPortal.Music.Database
           client.Proxy.Credentials = CredentialCache.DefaultCredentials;
           //client.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
           //client.Headers.Add("user-agent", @"Mozilla/5.0 (X11; U; Linux i686; de-DE; rv:1.8.1) Gecko/20060601 Firefox/2.0 (Ubuntu-edgy)");
-          client.DownloadFile(imageUrl, tmpFile);
+
+          try
+          {
+            client.DownloadFile(imageUrl, tmpFile);
+          }
+          catch (WebException wex)
+          {
+            // If error e.g. 503, server busy, etc wait and try again.
+            if (wex.Status == WebExceptionStatus.ConnectFailure)
+            {
+              Thread.Sleep(1000);
+              client.DownloadFile(imageUrl, tmpFile);
+            }
+          }
+          
         }
       }
       catch (Exception ex)
@@ -2367,7 +2381,14 @@ namespace MediaPortal.Music.Database
       {
         XmlDocument doc = new XmlDocument();
 
-        doc.Load(DownloadTempFile(aLocation));
+        try
+        {
+          doc.Load(DownloadTempFile(aLocation));
+        }
+        catch (Exception exd)
+        {
+          Log.Error("AudioscrobblerUtils: Couldn't fetch XSFP Radio tracklist - {0}", exd.Message);
+        }        
 
         XmlNodeList nodes = doc.SelectNodes(@"//playlist/trackList/track");
 
@@ -2394,12 +2415,11 @@ namespace MediaPortal.Music.Database
               nodeSong.LastFMMatch = mainchild.ChildNodes[0].Value;
           }
           XSPFPlaylist.Add(nodeSong);
-          Log.Debug("AudioscrobblerUtils: added XSPF track [{0}] - {1}", nodeSong.Id, nodeSong.ToLastFMMatchString(true));
         }
       }
       catch (Exception ex)
       {
-        Log.Error("AudioscrobblerUtils: Couldn't fetch XSFP Radio tracklist - {0},{1}", ex.Message, ex.StackTrace);
+        Log.Error("AudioscrobblerUtils: Error fetching XSFP Radio tracklist - {0},{1}", ex.Message, ex.StackTrace);
       }
 
       return XSPFPlaylist;
