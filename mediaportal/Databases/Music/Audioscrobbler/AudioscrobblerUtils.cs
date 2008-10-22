@@ -1547,7 +1547,7 @@ namespace MediaPortal.Music.Database
         using (WebClient client = new WebClient())
         {
           // Use the current user in case an NTLM Proxy or similar is used.
-          client.Proxy = WebProxy.GetDefaultProxy();
+          // client.Proxy = WebProxy.GetDefaultProxy();
           client.Proxy.Credentials = CredentialCache.DefaultCredentials;
           //client.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
           //client.Headers.Add("user-agent", @"Mozilla/5.0 (X11; U; Linux i686; de-DE; rv:1.8.1) Gecko/20060601 Firefox/2.0 (Ubuntu-edgy)");

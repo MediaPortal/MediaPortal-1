@@ -694,7 +694,7 @@ namespace MediaPortal.Music.Database
           try
           {
             // Use the current user in case an NTLM Proxy or similar is used.
-            request.Proxy = WebProxy.GetDefaultProxy();
+            // request.Proxy = WebProxy.GetDefaultProxy();
             request.Proxy.Credentials = CredentialCache.DefaultCredentials;
           }
           catch (Exception) { }

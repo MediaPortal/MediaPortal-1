@@ -105,37 +105,37 @@ namespace MediaPortal.GUI.Library
       GlobalServiceProvider.Get<ILog>().SetLogLevel(logLevel);
     }
 
-    [Obsolete("This method will disappear because the thread information is always logged now.", false)]
+    [Obsolete("This method will disappear because the thread information is always logged now.", true)]
     public static void WriteFileThreadId(LogType type, bool isError, string format, params object[] arg)
     {
       GlobalServiceProvider.Get<ILog>().WriteFile(type, isError, format, arg);
     }
 
-    [Obsolete("This method will disappear because the thread information is always logged now.", false)]
+    [Obsolete("This method will disappear because the thread information is always logged now.", true)]
     public static void InfoThread(string format, params object[] arg)
     {
       GlobalServiceProvider.Get<ILog>().Info(format, arg);
     }
 
-    [Obsolete("This method will disappear because the thread information is always logged now.", false)]
+    [Obsolete("This method will disappear because the thread information is always logged now.", true)]
     public static void WarnThread(string format, params object[] arg)
     {
       GlobalServiceProvider.Get<ILog>().Warn(format, arg);
     }
 
-    [Obsolete("This method will disappear because the thread information is always logged now.", false)]
+    [Obsolete("This method will disappear because the thread information is always logged now.", true)]
     public static void ErrorThread(string format, params object[] arg)
     {
       GlobalServiceProvider.Get<ILog>().Error(format, arg);
     }
 
-    [Obsolete("This method will disappear.  Use one of the Info, Warn, Debug or Error variants instead.", false)]
+    [Obsolete("This method will disappear.  Use one of the Info, Warn, Debug or Error variants instead.", true)]
     public static void Write(string format, params object[] arg)
     {
       GlobalServiceProvider.Get<ILog>().Write(format, arg);
     }
 
-    [Obsolete("This method will disappear.  Use one of the Info, Warn, Debug or Error variants instead.", false)]
+    [Obsolete("This method will disappear.  Use one of the Info, Warn, Debug or Error variants instead.", true)]
     public static void Write(Exception ex)
     {
       GlobalServiceProvider.Get<ILog>().Write(ex);

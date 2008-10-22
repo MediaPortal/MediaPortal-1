@@ -31,7 +31,7 @@ namespace MediaPortal.Services
   {
     void BackupLogFiles();
     void BackupLogFile(LogType logType);
-    [Obsolete("This method will disappear.  Use one of the Info, Warn, Debug or Error variants instead.", false)]
+    [Obsolete("This method will disappear.  Use one of the Info, Warn, Debug or Error variants instead.", true)]
     void Write(Exception ex);
 
     /// <summary>
@@ -39,7 +39,7 @@ namespace MediaPortal.Services
     /// </summary>
     /// <param name="format">The format of the string.</param>
     /// <param name="arg">An array containing the actual data of the string.</param>
-    [Obsolete("This method will disappear.  Use one of the Info, Warn, Debug or Error variants instead.", false)]
+    [Obsolete("This method will disappear.  Use one of the Info, Warn, Debug or Error variants instead.", true)]
     void Write(string format, params object[] arg);
 
     void Info(string format, params object[] arg);

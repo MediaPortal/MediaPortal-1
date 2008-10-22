@@ -525,7 +525,6 @@ namespace MediaPortal.Video.Database
     {
       try
       {
-        string strURL;
         // getting searchstring
         string strSearch = HttpUtility.UrlEncode(GetSearchString(strMovie));
 

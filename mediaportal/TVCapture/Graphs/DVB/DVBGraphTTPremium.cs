@@ -1120,7 +1120,7 @@ namespace MediaPortal.TV.Recording
         }
         catch (Exception ex)
         {
-            Log.Write(ex);
+            Log.Error(ex);
         }
     }
 }

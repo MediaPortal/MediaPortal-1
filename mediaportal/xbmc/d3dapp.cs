@@ -915,7 +915,7 @@ namespace MediaPortal
 
       try
       {
-        Log.Info("d3dapp: Graphic adapter '{0}' is using driver version '{1}' - WHQL = {2}", adapterInfo.AdapterDetails.Description, adapterInfo.AdapterDetails.DriverVersion.ToString(), adapterInfo.AdapterDetails.WhqlLevel);
+        Log.Info("d3dapp: Graphic adapter '{0}' is using driver version '{1}'", adapterInfo.AdapterDetails.Description.Trim(), adapterInfo.AdapterDetails.DriverVersion.ToString());
         Log.Info("d3dapp: Pixel shaders supported: {0} (Version: {1}), Vertex shaders supported: {2} (Version: {3})", deviceInfo.Caps.PixelShaderCaps.NumberInstructionSlots, deviceInfo.Caps.PixelShaderVersion.ToString(), deviceInfo.Caps.VertexShaderCaps.NumberTemps, deviceInfo.Caps.VertexShaderVersion.ToString());
       }
       catch (Exception lex)
