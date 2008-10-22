@@ -120,12 +120,7 @@
   <metadata name="VMR9Tips.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <data name="labelEVRHint.Text" xml:space="preserve">
-    <value>WARNING: This feature is still experimental. If you 
-experience crashes, freezing pictures or any other 
-abnormal behaviour, please try reverting to VMR9, 
-and make a bug report.
-
- Note: You need .NET3 Framework or Vista to use this!</value>
-  </data>
+  <metadata name="VMR9Tips.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
 </root>

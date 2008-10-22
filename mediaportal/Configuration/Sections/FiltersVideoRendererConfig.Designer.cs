@@ -28,7 +28,6 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FiltersVideoRenderer));
       this.checkboxMpNonsquare = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.radioButtonEVR = new System.Windows.Forms.RadioButton();
@@ -108,9 +107,11 @@ namespace MediaPortal.Configuration.Sections
       this.labelEVRHint.AutoSize = true;
       this.labelEVRHint.Location = new System.Drawing.Point(61, 240);
       this.labelEVRHint.Name = "labelEVRHint";
-      this.labelEVRHint.Size = new System.Drawing.Size(266, 78);
+      this.labelEVRHint.Size = new System.Drawing.Size(283, 52);
       this.labelEVRHint.TabIndex = 9;
-      this.labelEVRHint.Text = resources.GetString("labelEVRHint.Text");
+      this.labelEVRHint.Text = "WARNING: Under XP this renderer is only software based.\r\nIf you experience any is" +
+          "sue please switch back to VMR9.\r\n\r\nNOTE: You need .NET 3.0 Framework or Vista to" +
+          " use this!\r\n";
       // 
       // checkBoxDecimateMask
       // 
@@ -186,12 +187,12 @@ namespace MediaPortal.Configuration.Sections
       this.label1.Size = new System.Drawing.Size(0, 13);
       this.label1.TabIndex = 1;
       // 
-      // VideoRendererConfig
+      // FiltersVideoRenderer
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.mpGroupBox1);
-      this.Name = "VideoRendererConfig";
+      this.Name = "FiltersVideoRenderer";
       this.Size = new System.Drawing.Size(459, 384);
       this.mpGroupBox1.ResumeLayout(false);
       this.mpGroupBox1.PerformLayout();

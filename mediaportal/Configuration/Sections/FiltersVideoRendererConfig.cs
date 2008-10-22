@@ -18,7 +18,8 @@ namespace MediaPortal.Configuration.Sections
       this("Video Renderer Settings")
     {
     }
-    public FiltersVideoRenderer(string name):
+    public FiltersVideoRenderer(string name)
+      :
       base(name)
     {
       InitializeComponent();
@@ -38,11 +39,27 @@ namespace MediaPortal.Configuration.Sections
           checkBoxVMRWebStreams.Checked = xmlreader.GetValueAsBool("general", "usevrm9forwebstreams", true);
           checkBoxDecimateMask.Checked = xmlreader.GetValueAsBool("general", "dx9decimatemask", false); // http://msdn2.microsoft.com/en-us/library/ms787452(VS.85).aspx
           //EVR - VMR9 selection
-          if (xmlreader.GetValueAsBool("general", "useevr", false) == true)
+          OsDetection.OSVersionInfo os = new OsDetection.OperatingSystemVersion();
+          int ver = (os.OSMajorVersion * 10) + os.OSMinorVersion;
+          bool UseEVR;
+          string ValueEVR = xmlreader.GetValueAsString("general", "useevr", "---");
+          switch (ValueEVR)
+          {
+            case "---":
+              UseEVR = ver >= 60 ? true : false;
+              break;
+            default:
+              UseEVR = Convert.ToBoolean(ValueEVR);
+              break;
+          }
+          if (UseEVR)
+          {
             radioButtonEVR.Checked = true;
+          }
           else
+          {
             radioButtonVMR9.Checked = true;
-          
+          }
         }
         _init = true;
       }
@@ -54,7 +71,7 @@ namespace MediaPortal.Configuration.Sections
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValueAsBool("general", "nonsquare", checkboxMpNonsquare.Checked);
-        xmlwriter.SetValueAsBool("general", "exclusivemode",checkboxDXEclusive.Checked);
+        xmlwriter.SetValueAsBool("general", "exclusivemode", checkboxDXEclusive.Checked);
         xmlwriter.SetValue("general", "dx9filteringmode", mpVMR9FilterMethod.Text);
         xmlwriter.SetValueAsBool("general", "usevrm9forwebstreams", checkBoxVMRWebStreams.Checked);
         xmlwriter.SetValueAsBool("general", "dx9decimatemask", checkBoxDecimateMask.Checked);
@@ -62,31 +79,31 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-      private void radioButtonEVR_CheckedChanged(object sender, EventArgs e)
+    private void radioButtonEVR_CheckedChanged(object sender, EventArgs e)
+    {
+      if (radioButtonEVR.Checked == true)
       {
-          if (radioButtonEVR.Checked == true)
-          {
-              checkBoxVMRWebStreams.Enabled = false;
-              checkboxDXEclusive.Enabled = false;
-              checkboxMpNonsquare.Enabled = false;
-              checkBoxDecimateMask.Enabled = false;             
-              mpVMR9FilterMethod.Enabled = false;
-              labelFilteringHint.Enabled = false;
-          }
+        checkBoxVMRWebStreams.Enabled = false;
+        checkboxDXEclusive.Enabled = false;
+        checkboxMpNonsquare.Enabled = false;
+        checkBoxDecimateMask.Enabled = false;
+        mpVMR9FilterMethod.Enabled = false;
+        labelFilteringHint.Enabled = false;
       }
+    }
 
-      private void radioButtonVMR9_CheckedChanged(object sender, EventArgs e)
+    private void radioButtonVMR9_CheckedChanged(object sender, EventArgs e)
+    {
+      if (radioButtonVMR9.Checked == true)
       {
-          if (radioButtonVMR9.Checked == true)
-          {
-              checkBoxVMRWebStreams.Enabled = true;
-              checkboxDXEclusive.Enabled = true;
-              checkboxMpNonsquare.Enabled = true;
-              checkBoxDecimateMask.Enabled = true;
-              mpVMR9FilterMethod.Enabled = true;
-              labelFilteringHint.Enabled = true;
-          }
+        checkBoxVMRWebStreams.Enabled = true;
+        checkboxDXEclusive.Enabled = true;
+        checkboxMpNonsquare.Enabled = true;
+        checkBoxDecimateMask.Enabled = true;
+        mpVMR9FilterMethod.Enabled = true;
+        labelFilteringHint.Enabled = true;
       }
+    }
 
   }
 }
