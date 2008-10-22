@@ -151,7 +151,7 @@
           <type>group</type>
           <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
           <animation effect="slide" time="450" end="-300,0" reversible="false">hidden</animation>
-          <posX>71</posX>
+          <posX>40</posX>
           <posY>121</posY>
           <layout>StackLayout</layout>
           <visible>!Control.HasFocus(50)</visible>
@@ -305,7 +305,7 @@
       <id>0</id>
       <posX>78</posX>
       <posY>523</posY>
-      <width>155</width>
+      <width>255</width>
       <height>155</height>
       <texture>Picture_cover.png</texture>
       <animation effect="fade" time="250">visiblechange</animation>
@@ -316,9 +316,9 @@
       <type>videowindow</type>
       <id>0</id>
       <posX>86</posX>
-      <posY>528</posY>
-      <width>140</width>
-      <height>138</height>
+      <posY>530</posY>
+      <width>235</width>
+      <height>140</height>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
       <action>18</action>
@@ -330,7 +330,7 @@
       <description>play logo</description>
       <type>image</type>
       <id>0</id>
-      <posX>251</posX>
+      <posX>345</posX>
       <posY>575</posY>
       <width>52</width>
       <height>52</height>
@@ -342,7 +342,7 @@
       <description>Pause logo</description>
       <type>image</type>
       <id>0</id>
-      <posX>251</posX>
+      <posX>345</posX>
       <posY>575</posY>
       <width>52</width>
       <height>52</height>
