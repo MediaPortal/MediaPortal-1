@@ -31,26 +31,26 @@
           <dimColor>90ffffff</dimColor>
           <id>50</id>
           <posX>88</posX>
-          <posY>131</posY>
+          <posY>140</posY>
           <width>1173</width>
           <height>588</height>
           <scrollOffset>1</scrollOffset>
           <onleft>2</onleft>
           <onright>2</onright>
-          <itemWidth>187</itemWidth>
-          <itemHeight>175</itemHeight>
-          <textureWidth>157</textureWidth>
-          <textureHeight>120</textureHeight>
-          <thumbWidth>145</thumbWidth>
-          <thumbHeight>107</thumbHeight>
+          <itemWidth>157</itemWidth>
+          <itemHeight>174</itemHeight>
+          <textureWidth>107</textureWidth>
+          <textureHeight>145</textureHeight>
+          <thumbWidth>96</thumbWidth>
+          <thumbHeight>134</thumbHeight>
           <thumbPosX>5</thumbPosX>
           <thumbPosY>5</thumbPosY>
-          <itemWidthBig>224</itemWidthBig>
-          <itemHeightBig>227</itemHeightBig>
-          <thumbWidthBig>207</thumbWidthBig>
-          <thumbHeightBig>157</thumbHeightBig>
-          <textureWidthBig>219</textureWidthBig>
-          <textureHeightBig>167</textureHeightBig>
+          <itemWidthBig>195</itemWidthBig>
+          <itemHeightBig>250</itemHeightBig>
+          <thumbWidthBig>140</thumbWidthBig>
+          <thumbHeightBig>194</thumbHeightBig>
+          <textureWidthBig>150</textureWidthBig>
+          <textureHeightBig>205</textureHeightBig>
           <thumbPosXBig>5</thumbPosXBig>
           <thumbPosYBig>5</thumbPosYBig>
           <zoomXPixels>30</zoomXPixels>
