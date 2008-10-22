@@ -162,7 +162,7 @@ namespace TvPlugin
 
     public string PluginName()
     {
-      return "My TV";
+      return "TV";
     }
 
     public bool DefaultEnabled()
@@ -181,7 +181,7 @@ namespace TvPlugin
       strButtonText = GUILocalizeStrings.Get(605);
       strButtonImage = "";
       strButtonImageFocus = "";
-      strPictureImage = "";
+      strPictureImage = @"hover_my tv.png";
       return true;
     }
 

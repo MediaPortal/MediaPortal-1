@@ -988,12 +988,12 @@ namespace TvPlugin
 
     public string PluginName()
     {
-      return "My Radio";
+      return "Radio";
     }
 
     public bool HasSetup()
     {
-      return false;
+      return true;
     }
 
     public bool DefaultEnabled()
@@ -1011,7 +1011,7 @@ namespace TvPlugin
       strButtonText = GUILocalizeStrings.Get(665);
       strButtonImage = String.Empty;
       strButtonImageFocus = String.Empty;
-      strPictureImage = String.Empty;
+      strPictureImage = @"hover_my radio.png";
       return true;
     }
 
