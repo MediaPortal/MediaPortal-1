@@ -49,7 +49,7 @@ namespace MediaPortal.GUI.Home
         chkboxFixScrollbar.Checked = xmlreader.GetValueAsBool("home", "scrollfixed", false);
         chkBoxUseMyPlugins.Checked = xmlreader.GetValueAsBool("home", "usemyplugins", true);
         chkBoxAnimation.Checked = xmlreader.GetValueAsBool("home", "enableanimation", true);
-        string text = xmlreader.GetValueAsString("home", "dateformat", "<Day> <Month> <DD>");
+        string text = xmlreader.GetValueAsString("home", "dateformat", "<Day> <DD>.<Month>");
         cboxFormat.Items.Add(text);
         if (!text.Equals("<Day> <DD>.<Month>")) cboxFormat.Items.Add("<Day> <DD>.<Month>");
         if (!text.Equals("<Day> <DD> <Month>")) cboxFormat.Items.Add("<Day> <DD> <Month>");
