@@ -383,6 +383,9 @@ namespace TvLibrary.Implementations.Analog
 
     public override bool LockedInOnSignal()
     {
+      //problems with analogue cards.
+      return true;
+      /*
       bool isLocked = false;
       DateTime timeStart = DateTime.Now;
       TimeSpan ts = timeStart - timeStart;
@@ -409,7 +412,8 @@ namespace TvLibrary.Implementations.Analog
       {
         Log.Log.WriteFile("analog:  LockedInOnSignal ok");
       }
-      return isLocked;           
+      return isLocked;      
+      */
     }
 
     /// <summary>
