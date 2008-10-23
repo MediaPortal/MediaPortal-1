@@ -1544,6 +1544,8 @@
     <String id="34053">Wiedergabe dieses Streams fehlgeschlagen</String>
     <String id="34054">Radiostart fehlgeschlagen!</String>
     <String id="34055">Wiedergabe temporär nicht möglich</String>
+    <String id="34060">Einen Tag eingeben...</String>
+    <String id="34061">Einen Namen eingeben...</String>
     <String id="40001">Standby in Kürze</String>
     <String id="40002">MediaPortal ist unbenutzt, aber noch beschäftigt.</String>
     <String id="40003">Wenn alle aktuellen Aufgaben erledigt wurden, geht MediaPortal in den Standby-Modus.</String>

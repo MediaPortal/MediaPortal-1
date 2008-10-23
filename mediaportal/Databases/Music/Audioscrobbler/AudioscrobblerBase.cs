@@ -1146,11 +1146,13 @@ namespace MediaPortal.Music.Database
 
     #region Utilities
 
+    [MethodImpl(MethodImplOptions.Synchronized)]
     private static string HashSubmitToken()
     {
       return HashMD5LoginStrings(false, password);
     }
 
+    [MethodImpl(MethodImplOptions.Synchronized)]
     private static string HashSingleString(string singleString)
     {
       return HashMD5LoginStrings(true, singleString);
@@ -1199,64 +1201,79 @@ namespace MediaPortal.Music.Database
       return md5response;
     }
 
+    [MethodImpl(MethodImplOptions.Synchronized)]
     private static string removeInvalidChars(string inputString_)
     {
       string cleanString = inputString_;
       int dotIndex = 0;
 
-      // remove CD1, CD2, CDn from Tracks
-      if (Util.Utils.ShouldStack(cleanString, cleanString))
-        Util.Utils.RemoveStackEndings(ref cleanString);
-      // remove [DJ Spacko MIX (2000)]
-      dotIndex = cleanString.IndexOf("[");
-      if (dotIndex > 0)
-        cleanString = cleanString.Remove(dotIndex);
-      dotIndex = cleanString.IndexOf("(");
-      if (dotIndex > 0)
-        cleanString = cleanString.Remove(dotIndex);
-      dotIndex = cleanString.IndexOf("feat.");
-      if (dotIndex > 0)
-        cleanString = cleanString.Remove(dotIndex);
+      try
+      {
+        // remove CD1, CD2, CDn from Tracks
+        if (Util.Utils.ShouldStack(cleanString, cleanString))
+          Util.Utils.RemoveStackEndings(ref cleanString);
+        // remove [DJ Spacko MIX (2000)]
+        dotIndex = cleanString.IndexOf("[");
+        if (dotIndex > 0)
+          cleanString = cleanString.Remove(dotIndex);
+        dotIndex = cleanString.IndexOf("(");
+        if (dotIndex > 0)
+          cleanString = cleanString.Remove(dotIndex);
+        dotIndex = cleanString.IndexOf("feat.");
+        if (dotIndex > 0)
+          cleanString = cleanString.Remove(dotIndex);
 
-      // TODO: build REGEX here
-      // replace our artist concatenation
-      // cleanString = cleanString.Replace("|", "&");
-      if (cleanString.Contains("|"))
-        cleanString = cleanString.Remove(cleanString.IndexOf("|"));
-      // substitute "&" with "and" <-- as long as needed
-      //      cleanString = cleanString.Replace("&", " and ");
-      // make sure there's only one space
-      //      cleanString = cleanString.Replace("  ", " ");
-      // substitute "/" with "+"
-      //      cleanString = cleanString.Replace(@"/", "+");
-      // clean soundtracks
-      cleanString = cleanString.Replace("OST ", " ");
-      cleanString = cleanString.Replace("Soundtrack - ", " ");
+        // TODO: build REGEX here
+        // replace our artist concatenation
+        // cleanString = cleanString.Replace("|", "&");
+        if (cleanString.Contains("|"))
+          cleanString = cleanString.Remove(cleanString.IndexOf("|"));
+        // substitute "&" with "and" <-- as long as needed
+        //      cleanString = cleanString.Replace("&", " and ");
+        // make sure there's only one space
+        //      cleanString = cleanString.Replace("  ", " ");
+        // substitute "/" with "+"
+        //      cleanString = cleanString.Replace(@"/", "+");
+        // clean soundtracks
+        cleanString = cleanString.Replace("OST ", " ");
+        cleanString = cleanString.Replace("Soundtrack - ", " ");
 
-      if (cleanString.EndsWith("Soundtrack"))
-        cleanString = cleanString.Remove(cleanString.IndexOf("Soundtrack"));
-      if (cleanString.EndsWith("OST"))
-        cleanString = cleanString.Remove(cleanString.IndexOf("OST"));
-      if (cleanString.EndsWith(" EP"))
-        cleanString = cleanString.Remove(cleanString.IndexOf(" EP"));
-      if (cleanString.EndsWith(" (EP)"))
-        cleanString = cleanString.Remove(cleanString.IndexOf(" (EP)"));
+        if (cleanString.EndsWith("Soundtrack"))
+          cleanString = cleanString.Remove(cleanString.IndexOf("Soundtrack"));
+        if (cleanString.EndsWith("OST"))
+          cleanString = cleanString.Remove(cleanString.IndexOf("OST"));
+        if (cleanString.EndsWith(" EP"))
+          cleanString = cleanString.Remove(cleanString.IndexOf(" EP"));
+        if (cleanString.EndsWith(" (EP)"))
+          cleanString = cleanString.Remove(cleanString.IndexOf(" (EP)"));
+      }
+      catch (Exception ex)
+      {
+        Log.Warn("AudioscrobblerBase: Removal of invalid chars failed - {0}", ex.Message);
+      }
 
       return cleanString.Trim();
     }
 
+    [MethodImpl(MethodImplOptions.Synchronized)]
     private static string removeEndingChars(string inputString_)
     {
       int dotIndex = 0;
-      // build a clean end
-      inputString_ = inputString_.Trim();
-      dotIndex = inputString_.LastIndexOf('-');
-      if (dotIndex >= inputString_.Length - 2)
-        inputString_ = inputString_.Remove(dotIndex);
-      dotIndex = inputString_.LastIndexOf('+');
-      if (dotIndex >= inputString_.Length - 2)
-        inputString_ = inputString_.Remove(dotIndex);
-
+      try
+      {
+        // build a clean end
+        inputString_ = inputString_.Trim();
+        dotIndex = inputString_.LastIndexOf('-');
+        if (dotIndex >= inputString_.Length - 2)
+          inputString_ = inputString_.Remove(dotIndex);
+        dotIndex = inputString_.LastIndexOf('+');
+        if (dotIndex >= inputString_.Length - 2)
+          inputString_ = inputString_.Remove(dotIndex);
+      }
+      catch (Exception ex)
+      {
+        Log.Error("AudioscrobblerBase: Error removing ending chars - {0}", ex.Message);
+      }
       return inputString_;
     }
 
@@ -1312,6 +1329,7 @@ namespace MediaPortal.Music.Database
       return outString;
     }
 
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public static string UndoArtistPrefix(string aStrippedArtist)
     {
       //"The, Les, Die"
@@ -1351,6 +1369,7 @@ namespace MediaPortal.Music.Database
       return aStrippedArtist;
     }
 
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public static string StripArtistPrefix(string aArtistToStrip)
     {
       //"The, Les, Die"

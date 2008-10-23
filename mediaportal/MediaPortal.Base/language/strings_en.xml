@@ -1543,6 +1543,8 @@
     <String id="34053">Playback of selected stream failed</String>
     <String id="34054">Radio handshake failed!</String>
     <String id="34055">Streams might be temporarily unavailable</String>
+    <String id="34060">Enter a tag...</String>
+    <String id="34061">Enter a username...</String>
     <String id="40001">Waiting for Standby</String>
     <String id="40002">MediaPortal is unattended but still busy.</String>
     <String id="40003">When all current tasks are finished MediaPortal will go to standby mode.</String>

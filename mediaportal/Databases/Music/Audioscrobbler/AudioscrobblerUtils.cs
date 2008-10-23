@@ -1559,13 +1559,13 @@ namespace MediaPortal.Music.Database
           catch (WebException wex)
           {
             // If error e.g. 503, server busy, etc wait and try again.
-            if (wex.Status == WebExceptionStatus.ConnectFailure)
-            {
-              Thread.Sleep(1000);
-              client.DownloadFile(imageUrl, tmpFile);
-            }
+            //if (wex.Status == WebExceptionStatus.ConnectFailure)
+            //{
+            Log.Warn("AudioscrobblerUtils: Error while downloading on first try: {0} - {1}", imageUrl, wex.Message);
+            Thread.Sleep(1000);
+            client.DownloadFile(imageUrl, tmpFile);
+            //}
           }
-          
         }
       }
       catch (Exception ex)
@@ -1636,7 +1636,6 @@ namespace MediaPortal.Music.Database
 
       return randomSongList;
     }
-
 
     private List<Song> getOthersArtists(bool randomizeList_, lastFMFeed neighbourOrFriend_)
     {
@@ -1805,6 +1804,7 @@ namespace MediaPortal.Music.Database
         return myNeighboorsArtists;
       }
     }
+
     #endregion
 
     #region XML - Parsers
@@ -2374,6 +2374,7 @@ namespace MediaPortal.Music.Database
     #endregion
 
     #region XSPF - Parser
+
     private List<Song> ParseXSPFtrackList(string aLocation)
     {
       List<Song> XSPFPlaylist = new List<Song>(5);
@@ -2388,7 +2389,7 @@ namespace MediaPortal.Music.Database
         catch (Exception exd)
         {
           Log.Error("AudioscrobblerUtils: Couldn't fetch XSFP Radio tracklist - {0}", exd.Message);
-        }        
+        }
 
         XmlNodeList nodes = doc.SelectNodes(@"//playlist/trackList/track");
 
@@ -2424,6 +2425,7 @@ namespace MediaPortal.Music.Database
 
       return XSPFPlaylist;
     }
+
     #endregion
 
     #region Utils
