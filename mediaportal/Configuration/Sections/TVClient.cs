@@ -62,6 +62,13 @@ namespace MediaPortal.Configuration.Sections
     private ColumnHeader columnHeader5;
     private ColumnHeader columnHeader6;
     private ColumnHeader columnHeader8;
+    private TabPage tabPage1;
+    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox7;
+    private MediaPortal.UserInterface.Controls.MPCheckBox chkTVnotifications;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
+    private MediaPortal.UserInterface.Controls.MPTextBox txtNotifyBefore;
+    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox8;
+    private MediaPortal.UserInterface.Controls.MPCheckBox chkRecnotifications;
     private ColumnHeader columnHeader7;
 
     #endregion
@@ -98,6 +105,10 @@ namespace MediaPortal.Configuration.Sections
         enableAudioDualMonoModes.Checked = xmlreader.GetValueAsBool("tvservice", "audiodualmono", false);
         cbHideAllChannels.Checked = xmlreader.GetValueAsBool("mytv", "hideAllChannelsGroup", false);
         cbShowChannelStateIcons.Checked = xmlreader.GetValueAsBool("mytv", "showChannelStateIcons", true);
+
+        chkRecnotifications.Checked = xmlreader.GetValueAsBool("mytv", "enableRecNotifier", false);
+        chkTVnotifications.Checked = xmlreader.GetValueAsBool("mytv", "enableTvNotifier", false);
+        txtNotifyBefore.Text = xmlreader.GetValueAsString("mytv", "notifyTVBefore", "300");
       }
 
       if (System.IO.File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll"))
@@ -244,6 +255,10 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("mytv", "hideAllChannelsGroup", cbHideAllChannels.Checked);
         xmlwriter.SetValueAsBool("mytv", "showChannelStateIcons", cbShowChannelStateIcons.Checked);
 
+        xmlwriter.SetValueAsBool("mytv", "enableRecNotifier", chkRecnotifications.Checked);
+        xmlwriter.SetValueAsBool("mytv", "enableTvNotifier", chkTVnotifications.Checked);
+        xmlwriter.SetValue("mytv", "notifyTVBefore", txtNotifyBefore.Text);        
+
         foreach (ListViewItem item in mpListViewPreferredAudioLang.Items)
         {
           prefLangs += (string)item.Tag + ";";
@@ -306,6 +321,13 @@ namespace MediaPortal.Configuration.Sections
       this.mpListViewAvailSubLang = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader7 = new System.Windows.Forms.ColumnHeader();
+      this.tabPage1 = new System.Windows.Forms.TabPage();
+      this.mpGroupBox7 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.txtNotifyBefore = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.chkTVnotifications = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.mpGroupBox8 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.chkRecnotifications = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpGroupBox2.SuspendLayout();
       this.mpGroupBox1.SuspendLayout();
       this.tabControlTVGeneral.SuspendLayout();
@@ -317,6 +339,9 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageSubtitles.SuspendLayout();
       this.mpGroupBox4.SuspendLayout();
       this.mpGroupBox3.SuspendLayout();
+      this.tabPage1.SuspendLayout();
+      this.mpGroupBox7.SuspendLayout();
+      this.mpGroupBox8.SuspendLayout();
       this.SuspendLayout();
       // 
       // mpGroupBox2
@@ -405,6 +430,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabControlTVGeneral.Controls.Add(this.tabPageGeneralSettings);
       this.tabControlTVGeneral.Controls.Add(this.tabPageAudioLanguages);
       this.tabControlTVGeneral.Controls.Add(this.tabPageSubtitles);
+      this.tabControlTVGeneral.Controls.Add(this.tabPage1);
       this.tabControlTVGeneral.Location = new System.Drawing.Point(0, 2);
       this.tabControlTVGeneral.Name = "tabControlTVGeneral";
       this.tabControlTVGeneral.SelectedIndex = 0;
@@ -803,6 +829,82 @@ namespace MediaPortal.Configuration.Sections
       this.columnHeader7.Text = "ID";
       this.columnHeader7.Width = 35;
       // 
+      // tabPage1
+      // 
+      this.tabPage1.Controls.Add(this.mpGroupBox8);
+      this.tabPage1.Controls.Add(this.mpGroupBox7);
+      this.tabPage1.Location = new System.Drawing.Point(4, 22);
+      this.tabPage1.Name = "tabPage1";
+      this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPage1.Size = new System.Drawing.Size(464, 382);
+      this.tabPage1.TabIndex = 4;
+      this.tabPage1.Text = "Notifier";
+      this.tabPage1.UseVisualStyleBackColor = true;
+      // 
+      // mpGroupBox7
+      // 
+      this.mpGroupBox7.Controls.Add(this.mpLabel2);
+      this.mpGroupBox7.Controls.Add(this.txtNotifyBefore);
+      this.mpGroupBox7.Controls.Add(this.chkTVnotifications);
+      this.mpGroupBox7.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpGroupBox7.Location = new System.Drawing.Point(16, 16);
+      this.mpGroupBox7.Name = "mpGroupBox7";
+      this.mpGroupBox7.Size = new System.Drawing.Size(431, 82);
+      this.mpGroupBox7.TabIndex = 12;
+      this.mpGroupBox7.TabStop = false;
+      this.mpGroupBox7.Text = "TV notifications";
+      // 
+      // mpLabel2
+      // 
+      this.mpLabel2.AutoSize = true;
+      this.mpLabel2.Location = new System.Drawing.Point(19, 50);
+      this.mpLabel2.Name = "mpLabel2";
+      this.mpLabel2.Size = new System.Drawing.Size(96, 13);
+      this.mpLabel2.TabIndex = 8;
+      this.mpLabel2.Text = "Notify before (sec):";
+      // 
+      // txtNotifyBefore
+      // 
+      this.txtNotifyBefore.BorderColor = System.Drawing.Color.Empty;
+      this.txtNotifyBefore.Location = new System.Drawing.Point(157, 47);
+      this.txtNotifyBefore.Name = "txtNotifyBefore";
+      this.txtNotifyBefore.Size = new System.Drawing.Size(229, 20);
+      this.txtNotifyBefore.TabIndex = 7;
+      this.txtNotifyBefore.Text = "300";
+      // 
+      // chkTVnotifications
+      // 
+      this.chkTVnotifications.AutoSize = true;
+      this.chkTVnotifications.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.chkTVnotifications.Location = new System.Drawing.Point(22, 19);
+      this.chkTVnotifications.Name = "chkTVnotifications";
+      this.chkTVnotifications.Size = new System.Drawing.Size(336, 17);
+      this.chkTVnotifications.TabIndex = 0;
+      this.chkTVnotifications.Text = "Enabled (shows a notification when a TV program is about to start)";
+      this.chkTVnotifications.UseVisualStyleBackColor = true;
+      // 
+      // mpGroupBox8
+      // 
+      this.mpGroupBox8.Controls.Add(this.chkRecnotifications);
+      this.mpGroupBox8.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpGroupBox8.Location = new System.Drawing.Point(16, 118);
+      this.mpGroupBox8.Name = "mpGroupBox8";
+      this.mpGroupBox8.Size = new System.Drawing.Size(431, 82);
+      this.mpGroupBox8.TabIndex = 13;
+      this.mpGroupBox8.TabStop = false;
+      this.mpGroupBox8.Text = "Recording notifications";
+      // 
+      // chkRecnotifications
+      // 
+      this.chkRecnotifications.AutoSize = true;
+      this.chkRecnotifications.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.chkRecnotifications.Location = new System.Drawing.Point(22, 19);
+      this.chkRecnotifications.Name = "chkRecnotifications";
+      this.chkRecnotifications.Size = new System.Drawing.Size(327, 17);
+      this.chkRecnotifications.TabIndex = 0;
+      this.chkRecnotifications.Text = "Enabled (shows a notification when a recording starts and stops)";
+      this.chkRecnotifications.UseVisualStyleBackColor = true;
+      // 
       // TVClient
       // 
       this.Controls.Add(this.tabControlTVGeneral);
@@ -826,6 +928,11 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox4.PerformLayout();
       this.mpGroupBox3.ResumeLayout(false);
       this.mpGroupBox3.PerformLayout();
+      this.tabPage1.ResumeLayout(false);
+      this.mpGroupBox7.ResumeLayout(false);
+      this.mpGroupBox7.PerformLayout();
+      this.mpGroupBox8.ResumeLayout(false);
+      this.mpGroupBox8.PerformLayout();
       this.ResumeLayout(false);
 
     }
