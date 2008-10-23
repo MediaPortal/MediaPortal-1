@@ -27,29 +27,29 @@
         <control>
           <description>Thumbnail Panel</description>
           <type>thumbnailpanel</type>
-          <dimColor>90ffffff</dimColor>    
           <id>50</id>
           <posX>88</posX>
-          <posY>140</posY>
+          <posY>131</posY>
           <width>1173</width>
           <height>588</height>
           <scrollOffset>1</scrollOffset>
           <onleft>2</onleft>
           <onright>2</onright>
           <itemWidth>157</itemWidth>
-          <itemHeight>174</itemHeight>
-          <textureWidth>107</textureWidth>
-          <textureHeight>145</textureHeight>
-          <thumbWidth>96</thumbWidth>
-          <thumbHeight>134</thumbHeight>
+          <itemHeight>185</itemHeight>
+          <textureWidth>97</textureWidth>
+          <textureHeight>147</textureHeight>
+          <thumbWidth>87</thumbWidth>
+          <thumbHeight>137</thumbHeight>
           <thumbPosX>5</thumbPosX>
           <thumbPosY>5</thumbPosY>
-          <itemWidthBig>195</itemWidthBig>
-          <itemHeightBig>250</itemHeightBig>
-          <thumbWidthBig>140</thumbWidthBig>
-          <thumbHeightBig>194</thumbHeightBig>
-          <textureWidthBig>150</textureWidthBig>
-          <textureHeightBig>205</textureHeightBig>
+         
+          <itemWidthBig>224</itemWidthBig>
+          <itemHeightBig>247</itemHeightBig>
+          <thumbWidthBig>137</thumbWidthBig>
+          <thumbHeightBig>197</thumbHeightBig>
+          <textureWidthBig>149</textureWidthBig>
+          <textureHeightBig>209</textureHeightBig>
           <thumbPosXBig>5</thumbPosXBig>
           <thumbPosYBig>5</thumbPosYBig>
           <zoomXPixels>30</zoomXPixels>

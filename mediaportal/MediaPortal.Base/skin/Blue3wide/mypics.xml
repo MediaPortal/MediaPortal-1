@@ -151,7 +151,7 @@
           <type>group</type>
           <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
           <animation effect="slide" time="450" end="-300,0" reversible="false">hidden</animation>
-          <posX>40</posX>
+          <posX>71</posX>
           <posY>121</posY>
           <layout>StackLayout</layout>
           <visible>!Control.HasFocus(50)</visible>

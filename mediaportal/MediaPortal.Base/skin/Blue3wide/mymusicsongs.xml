@@ -151,14 +151,14 @@
           <type>group</type>
           <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
           <animation effect="slide" time="450" end="-300,0" reversible="false">hidden</animation>
-          <posX>40</posX>
+          <posX>71</posX>
           <posY>121</posY>
           <visible>!Control.HasFocus(50)</visible>
           <control>
             <description>View-As</description>
             <type>button</type>
             <id>2</id>
-            <posX>40</posX>
+            <posX>71</posX>
             <posY>121</posY>
             <label>100</label>
             <onright>50</onright>
@@ -169,7 +169,7 @@
             <description>Switch View</description>
             <type>button</type>
             <id>6</id>
-            <posX>40</posX>
+            <posX>71</posX>
             <posY>163</posY>
             <label>457</label>
             <onright>50</onright>
@@ -180,7 +180,7 @@
             <description>Sort</description>
             <type>sortbutton</type>
             <id>3</id>
-            <posX>40</posX>
+            <posX>71</posX>
             <posY>206</posY>
             <label>103</label>
             <onright>50</onright>
@@ -191,7 +191,7 @@
             <description>Play CD</description>
             <type>button</type>
             <id>12</id>
-            <posX>40</posX>
+            <posX>71</posX>
             <posY>248</posY>
             <label>890</label>
             <onright>50</onright>
@@ -210,7 +210,7 @@
             <description>Now playing</description>
             <type>button</type>
             <id>11</id>
-            <posX>40</posX>
+            <posX>71</posX>
             <posY>291</posY>
             <label>4540</label>
             <hyperlink>510</hyperlink>
@@ -222,7 +222,7 @@
             <description>Current Playlist</description>
             <type>button</type>
             <id>9</id>
-            <posX>40</posX>
+            <posX>71</posX>
             <posY>333</posY>
             <label>4555</label>
             <action>33</action>
@@ -234,7 +234,7 @@
             <description>My Playlists</description>
             <type>button</type>
             <id>10</id>
-            <posX>40</posX>
+            <posX>71</posX>
             <posY>376</posY>
             <label>983</label>
             <onright>50</onright>
@@ -245,7 +245,7 @@
             <description>Radiobutton</description>
             <type>button</type>
             <id>105</id>
-            <posX>244</posX>
+            <posX>214</posX>
             <posY>422</posY>
             <width>50</width>
             <height>45</height>
@@ -261,7 +261,7 @@
             <description>Lastfmbutton</description>
             <type>button</type>
             <id>106</id>
-            <posX>304</posX>
+            <posX>274</posX>
             <posY>422</posY>
             <width>50</width>
             <height>45</height>

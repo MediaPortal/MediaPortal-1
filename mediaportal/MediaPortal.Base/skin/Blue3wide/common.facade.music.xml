@@ -56,30 +56,24 @@
           <type>thumbnailpanel</type>
           <id>50</id>
           <posX>88</posX>
-          <posY>140</posY>
+          <posY>131</posY>
           <width>1173</width>
           <height>588</height>
-          <scrollOffset>1</scrollOffset>
+          <scrollOffset>0</scrollOffset>
           <onleft>2</onleft>
           <onright>2</onright>
-          <itemWidth>157</itemWidth>
-          <itemHeight>174</itemHeight>
-          <textureWidth>107</textureWidth>
-          <textureHeight>145</textureHeight>
-          <thumbWidth>96</thumbWidth>
-          <thumbHeight>134</thumbHeight>
-          <thumbPosX>5</thumbPosX>
-          <thumbPosY>5</thumbPosY>
-          <itemWidthBig>195</itemWidthBig>
-          <itemHeightBig>250</itemHeightBig>
-          <thumbWidthBig>140</thumbWidthBig>
-          <thumbHeightBig>194</thumbHeightBig>
-          <textureWidthBig>150</textureWidthBig>
-          <textureHeightBig>205</textureHeightBig>
+          <textureWidthBig>155</textureWidthBig>
+          <textureHeightBig>150</textureHeightBig>
+          <itemWidthBig>191</itemWidthBig>
+          <itemHeightBig>177</itemHeightBig>
+          <thumbWidthBig>144</thumbWidthBig>
+          <thumbHeightBig>144</thumbHeightBig>
           <thumbPosXBig>5</thumbPosXBig>
-          <thumbPosYBig>5</thumbPosYBig>
-          <zoomXPixels>30</zoomXPixels>
-          <zoomYPixels>30</zoomYPixels>
+          <thumbPosYBig>3</thumbPosYBig>
+          <thumbZoom>no</thumbZoom>
+          <enableFocusZoom>no</enableFocusZoom>
+          <zoomXPixels>50</zoomXPixels>
+          <zoomYPixels>50</zoomYPixels>
           <hideUnfocusTexture>no</hideUnfocusTexture>
           <renderFocusText>no</renderFocusText>
           <renderUnfocusText>yes</renderUnfocusText>

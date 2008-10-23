@@ -37,13 +37,13 @@
     <id>1</id>
     <posX>533</posX>
     <posY>250</posY>
-    <width>325</width>
+    <width>260</width>
     <height>45</height>
     <textXOff>17</textXOff>
     <textYOff>6</textYOff>
     <textureFocus>menu_list_focus.png</textureFocus>
     <textureNoFocus>menu_list_nofocus.png</textureNoFocus>
-    <font>font13</font>
+    <font>font12</font>
     <textcolor>white</textcolor>
     <colordiffuse>white</colordiffuse>
     <disabledcolor>60ffffff</disabledcolor>
@@ -113,7 +113,7 @@
     <id>4</id>
     <posX>533</posX>
     <posY>250</posY>
-    <width>325</width>
+    <width>260</width>
     <height>45</height>
     <textXOff>17</textXOff>
     <textYOff>6</textYOff>
@@ -122,7 +122,7 @@
     <AltTextureFocus>togglebutton-off-focus.png</AltTextureFocus>
     <AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
     <label>-</label>
-    <font>font13</font>
+    <font>font12</font>
     <textcolor>white</textcolor>
     <colordiffuse>white</colordiffuse>
     <disabledcolor>60ffffff</disabledcolor>
@@ -133,7 +133,7 @@
     <description>sort button</description>
     <type>sortbutton</type>
     <id>3</id>
-    <width>325</width>
+    <width>260</width>
     <height>45</height>
     <textXOff>17</textXOff>
     <textYOff>6</textYOff>
@@ -143,9 +143,9 @@
     <textureAscendingFocused>arrow_round_up_focus.png</textureAscendingFocused>
     <textureDescending>arrow_round_down_nofocus.png</textureDescending>
     <textureDescendingFocused>arrow_round_down_focus.png</textureDescendingFocused>
-    <offsetSortButtonX>278</offsetSortButtonX>
+    <offsetSortButtonX>228</offsetSortButtonX>
     <offsetSortButtonY>10</offsetSortButtonY>
-    <font>font13</font>
+    <font>font12</font>
     <textcolor>White</textcolor>
     <colordiffuse>White</colordiffuse>
     <disabledcolor>60ffffff</disabledcolor>
