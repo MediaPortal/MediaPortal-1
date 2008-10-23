@@ -68,7 +68,6 @@ namespace ProcessPlugins.TvMovie
       _isImporting = false;
     }
 
-
     private void StartImportThread(Object stateInfo)
     {
       if (!_isImporting)
@@ -79,7 +78,6 @@ namespace ProcessPlugins.TvMovie
         importThread.Start();
       }
     }
-
 
     #region ISetupForm Members
 

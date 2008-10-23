@@ -39,7 +39,6 @@ namespace ProcessPlugins.DiskSpace
 {
   public class EpisodeManagement : IPlugin, ISetupForm 
   {
-
     public EpisodeManagement()
     {
     }
@@ -73,6 +72,7 @@ namespace ProcessPlugins.DiskSpace
     }
 
     #region Episode disk management
+
     private void OnTvRecordingEnded(string recordingFilename, TVRecording recording, TVProgram program)
     {
       Log.Info("EpisodeManagement: recording {0} ended. type: {1} max episodes: {2}",
@@ -80,6 +80,7 @@ namespace ProcessPlugins.DiskSpace
 
       CheckEpsiodesForRecording(recording);
     }
+
     void CheckEpsiodesForRecording(TVRecording recording)
     {
       if (!recording.DoesUseEpisodeManagement) return;
@@ -104,6 +105,7 @@ namespace ProcessPlugins.DiskSpace
         Recorder.DeleteRecording(oldestEpisode);
       }
     }
+
     #endregion
 
     #region IPlugin Members

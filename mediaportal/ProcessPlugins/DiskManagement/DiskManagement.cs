@@ -46,7 +46,6 @@ namespace ProcessPlugins.DiskSpace
     System.Windows.Forms.Timer _timer;
     public DiskManagement()
     {
-
       _timer = new System.Windows.Forms.Timer();
       _timer.Interval = 15 * 60 * 1000;
       _timer.Enabled = false;
@@ -150,7 +149,6 @@ namespace ProcessPlugins.DiskSpace
       }
       return recordings;
     }
-
 
     void CheckDriveFreeDiskSpace(string drive)
     {

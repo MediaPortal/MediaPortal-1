@@ -23,6 +23,8 @@
 
 #endregion
 
+#region Usings
+
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -35,6 +37,7 @@ using MediaPortal.TagReader;
 using MediaPortal.Utils.Web;
 using MediaPortal.Playlists;
 
+#endregion
 
 namespace MediaPortal.GUI.RADIOLASTFM
 {
@@ -140,7 +143,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
     private AsyncGetRequest httpcommand = null;
     #endregion
 
-    // constructor
+    #region Constructor
+
     public StreamControl()
     {
       AudioscrobblerBase.RadioHandshakeSuccess += new AudioscrobblerBase.RadioHandshakeCompleted(OnRadioLoginSuccess);
@@ -148,6 +152,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
       PlaylistPlayer = PlayListPlayer.SingletonPlayer;
     }
+
+    #endregion
 
     #region Examples
     // 4. http.request.uri = Request URI: http://ws.audioscrobbler.com/ass/upgrade.php?platform=win&version=1.0.7&lang=en&user=f1n4rf1n
@@ -349,6 +355,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     #endregion
 
     #region Control functions
+
     public bool PlayStream()
     {
       GUIWaitCursor.Show();

@@ -25,12 +25,14 @@
 
 using System;
 using MediaPortal.GUI.Library;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.Topbar
 {
   /// <summary>
   /// Displays a bar which holds basic playback control elements
   /// </summary>
+  [PluginIcons("WindowPlugins.GUITopbar.Topbar.gif", "WindowPlugins.GUITopbar.Topbar_disabled.gif")]
   public class TopBarSetup : ISetupForm, IShowPlugin
   {
     public TopBarSetup()

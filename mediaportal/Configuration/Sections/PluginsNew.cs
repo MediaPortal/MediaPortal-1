@@ -178,6 +178,25 @@ namespace MediaPortal.Configuration.Sections
             if (tag.WindowId == (int)GUIWindow.Window.WINDOW_TV || tag.WindowId == (int)GUIWindow.Window.WINDOW_RADIO)
               continue;
           }
+          if (tag.IsProcess)
+          {
+            // Do not show plugins related to the old tv module
+            if (tag.SetupForm.PluginName() == "ComSkip Launcher")
+              continue;
+            if (tag.SetupForm.PluginName() == "DirecTV serial tuner")
+              continue;
+            if (tag.SetupForm.PluginName() == "TV Diskspace")
+              continue;
+            if (tag.SetupForm.PluginName() == "TV Episodes Cleanup")
+              continue;
+            if (tag.SetupForm.PluginName() == "TV Recordings Cleanup")
+              continue;
+            if (tag.SetupForm.PluginName() == "TV Movie Clickfinder")
+              continue;
+            // Unsure about this one - people might use it to get the xml file grabbed which _then_ is imported by some other app like tvserver
+            //if (tag.SetupForm.PluginName() == "WebEPG grabber")
+            //  continue;
+          }
         }
 
         ListViewItem item;

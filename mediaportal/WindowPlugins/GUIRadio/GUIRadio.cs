@@ -40,6 +40,7 @@ using MediaPortal.Playlists;
 
 namespace MediaPortal.GUI.Radio
 {
+  [PluginIcons("WindowPlugins.GUIRadio.Radio.gif", "WindowPlugins.GUIRadio.Radio_disabled.gif")]
   public class GUIRadio : GUIWindow, IComparer<GUIListItem>, ISetupForm, IShowPlugin
   {
     #region enums

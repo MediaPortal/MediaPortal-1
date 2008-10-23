@@ -38,6 +38,7 @@ using MediaPortal.Configuration;
 
 namespace MediaPortal.PowerScheduler
 {
+  [PluginIcons("ProcessPlugins.PowerScheduler.PowerScheduler.gif", "ProcessPlugins.PowerScheduler.PowerScheduler_disabled.gif")]
   public class PowerScheduler : IPluginReceiver, IWakeable, ISetupForm
   {
     #region Variables
@@ -485,6 +486,7 @@ namespace MediaPortal.PowerScheduler
     #region <Interface> Implementations
 
     #region IPluginReceiver Interface
+
     /// <summary>
     /// This method will be called by mediaportal to start your process plugin
     /// </summary>
@@ -555,9 +557,11 @@ namespace MediaPortal.PowerScheduler
       }
       return false; // false = all other processes will handle the msg
     }
+
     #endregion
 
     #region IWakeable Interface
+
     public DateTime GetNextEvent(DateTime earliestWakeuptime)
     {
       if (_wakeupInterval < 1)
@@ -588,9 +592,11 @@ namespace MediaPortal.PowerScheduler
       }
       return false;
     }
+
     #endregion
 
     #region ISetupForm Interface
+
     public bool CanEnable()
     {
       return true;

@@ -416,6 +416,12 @@
     <EmbeddedResource Include="TvNotifies\Notifybutton_disabled.gif" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="PowerScheduler\PowerScheduler.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="PowerScheduler\PowerScheduler_disabled.gif" />
+  </ItemGroup>
+  <ItemGroup>
     <EmbeddedResource Include="TvMovie\tvmovie.gif" />
   </ItemGroup>
   <ItemGroup>

@@ -37,11 +37,12 @@ namespace MediaPortal.GUI.Alarm
   /// <summary>
   /// Summary description for SetupForm.
   /// </summary>
+  [PluginIcons("WindowPlugins.GUIAlarm.Alarm.gif", "WindowPlugins.GUIAlarm.Alarm_disabled.gif")]
   public class AlarmSetupForm : MediaPortal.UserInterface.Controls.MPConfigForm, ISetupForm, IShowPlugin
   {
     private MediaPortal.UserInterface.Controls.MPButton btnCancel;
     private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
-      private MediaPortal.UserInterface.Controls.MPButton btnOk;
+    private MediaPortal.UserInterface.Controls.MPButton btnOk;
     private MediaPortal.UserInterface.Controls.MPGroupBox grpSounds;
     private MediaPortal.UserInterface.Controls.MPLabel label6;
     private System.Windows.Forms.NumericUpDown RepeatCount;
@@ -52,18 +53,18 @@ namespace MediaPortal.GUI.Alarm
     private MediaPortal.UserInterface.Controls.MPButton btnAlarmSoundsFolder;
     private MediaPortal.UserInterface.Controls.MPTextBox txtAlarmSoundsFolder;
     private MediaPortal.UserInterface.Controls.MPLabel label1;
-      private GroupBox grpAlarmTimeout;
-      private NumericUpDown NUDAlarmTimeout;
-      private Label lblAlarmTimeout;
-      private Label LblRadioOnlyMsg;
-      private GroupBox grpAlarmVol;
-      private NumericUpDown NUDAlarmVol;
-      private CheckBox chkEnableDefaultVol;
-      private Label lblAlarmVol2;
-      private Label lblAlarmVol1;
-      private Label lblAlarmVol3;
-      private Label lblAlarmVol4;
-      private Button cmdAlarmVolTest;
+    private GroupBox grpAlarmTimeout;
+    private NumericUpDown NUDAlarmTimeout;
+    private Label lblAlarmTimeout;
+    private Label LblRadioOnlyMsg;
+    private GroupBox grpAlarmVol;
+    private NumericUpDown NUDAlarmVol;
+    private CheckBox chkEnableDefaultVol;
+    private Label lblAlarmVol2;
+    private Label lblAlarmVol1;
+    private Label lblAlarmVol3;
+    private Label lblAlarmVol4;
+    private Button cmdAlarmVolTest;
     /// <summary>
     /// Required designer variable.
     /// </summary>
@@ -502,6 +503,7 @@ namespace MediaPortal.GUI.Alarm
     {
       ShowDialog();
     }
+
     public bool HasSetup()
     {
       return true;
@@ -561,59 +563,59 @@ namespace MediaPortal.GUI.Alarm
       this.Close();
     }
 
-      /// <summary>
-      /// Enables/disables the volume setting box
-      /// </summary>
-      /// <param name="sender"></param>
-      /// <param name="e"></param>
-      private void chkEnableDefaultVol_CheckedChanged(object sender, EventArgs e)
+    /// <summary>
+    /// Enables/disables the volume setting box
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void chkEnableDefaultVol_CheckedChanged(object sender, EventArgs e)
+    {
+      if (chkEnableDefaultVol.Checked == true)
       {
-          if (chkEnableDefaultVol.Checked == true)
-          {
-              NUDAlarmVol.Enabled = true;
-              cmdAlarmVolTest.Enabled = true;
-          }
-          else
-          {
-              NUDAlarmVol.Enabled = false;
-              cmdAlarmVolTest.Enabled = false;
-          }
+        NUDAlarmVol.Enabled = true;
+        cmdAlarmVolTest.Enabled = true;
+      }
+      else
+      {
+        NUDAlarmVol.Enabled = false;
+        cmdAlarmVolTest.Enabled = false;
+      }
+    }
+
+    /// <summary>
+    /// Plays a test sound to test out the set alarm volume setting
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void cmdAlarmVolTest_Click(object sender, EventArgs e)
+    {
+      MediaPortal.Player.VolumeHandler volumeHandler = new MediaPortal.Player.VolumeHandler();
+
+      //convert the volume percentage into real value
+      int realVolume;
+      realVolume = ConvertPercentageToRealVolume(NUDAlarmVol.Value);
+
+      //save the current volume setting
+      int existingVolume;
+      existingVolume = volumeHandler.Volume;
+
+      //set the test volume setting
+      volumeHandler.Volume = realVolume;
+
+      //play windows sound
+      const string testAudioFilePath = @"C:\windows\Media\chimes.wav";
+      if (System.IO.File.Exists(testAudioFilePath))
+      {
+        MediaPortal.Util.Utils.PlaySound(testAudioFilePath, true, true);
+      }
+      else
+      {
+        MessageBox.Show("Cannot find the file " + testAudioFilePath + "." + Environment.NewLine + Environment.NewLine + "Try using another program to play something now - the current volume setting is the alarm volume setting. Pressing OK now will revert the volume to the previous setting.");
       }
 
-      /// <summary>
-      /// Plays a test sound to test out the set alarm volume setting
-      /// </summary>
-      /// <param name="sender"></param>
-      /// <param name="e"></param>
-      private void cmdAlarmVolTest_Click(object sender, EventArgs e)
-      {
-          MediaPortal.Player.VolumeHandler volumeHandler = new MediaPortal.Player.VolumeHandler();
-          
-          //convert the volume percentage into real value
-          int realVolume;
-          realVolume = ConvertPercentageToRealVolume(NUDAlarmVol.Value);
-
-          //save the current volume setting
-          int existingVolume;
-          existingVolume = volumeHandler.Volume;
-
-          //set the test volume setting
-          volumeHandler.Volume = realVolume;
-
-          //play windows sound
-          const string testAudioFilePath = @"C:\windows\Media\chimes.wav";
-          if (System.IO.File.Exists(testAudioFilePath))
-          {
-              MediaPortal.Util.Utils.PlaySound(testAudioFilePath, true, true);
-          }
-          else
-          {
-              MessageBox.Show("Cannot find the file " + testAudioFilePath + "." + Environment.NewLine + Environment.NewLine + "Try using another program to play something now - the current volume setting is the alarm volume setting. Pressing OK now will revert the volume to the previous setting.");
-          }
-
-          //revert the volume setting to the previous one
-          volumeHandler.Volume = existingVolume;
-      }
+      //revert the volume setting to the previous one
+      volumeHandler.Volume = existingVolume;
+    }
     #endregion
 
     #region Private Methods
@@ -638,7 +640,7 @@ namespace MediaPortal.GUI.Alarm
         xmlwriter.SetValue("alarm", "alarmRepeatSeconds", RepeatSeconds.Value);
         xmlwriter.SetValue("alarm", "alarmRepeatCount", RepeatCount.Value);
         xmlwriter.SetValueAsBool("alarm", "alarmAlarmVolEnable", chkEnableDefaultVol.Checked);
-        
+
         //convert the volume percentage into real value first
         xmlwriter.SetValue("alarm", "alarmAlarmVol", ConvertPercentageToRealVolume(NUDAlarmVol.Value));
       }
@@ -664,38 +666,38 @@ namespace MediaPortal.GUI.Alarm
       }
     }
 
-      /// <summary>
-      /// Converts the real volume value into a volume percentage
-      /// </summary>
-      /// <param name="realVolume">real volume value</param>
-      /// <returns></returns>
-      private int ConvertRealVolumeToPercentage(decimal realVolume)
-      {
-          decimal tmpVolume;
-          MediaPortal.Player.VolumeHandler volumeHandler = new MediaPortal.Player.VolumeHandler();
-          tmpVolume = realVolume;
-          tmpVolume = tmpVolume / (volumeHandler.Maximum - volumeHandler.Minimum);
-          tmpVolume = tmpVolume * 100;
-          return (int)System.Math.Round(tmpVolume, 0);
-      }
+    /// <summary>
+    /// Converts the real volume value into a volume percentage
+    /// </summary>
+    /// <param name="realVolume">real volume value</param>
+    /// <returns></returns>
+    private int ConvertRealVolumeToPercentage(decimal realVolume)
+    {
+      decimal tmpVolume;
+      MediaPortal.Player.VolumeHandler volumeHandler = new MediaPortal.Player.VolumeHandler();
+      tmpVolume = realVolume;
+      tmpVolume = tmpVolume / (volumeHandler.Maximum - volumeHandler.Minimum);
+      tmpVolume = tmpVolume * 100;
+      return (int)System.Math.Round(tmpVolume, 0);
+    }
 
-      /// <summary>
-      /// Converts the volume percentage into a real volume value
-      /// </summary>
-      /// <param name="percentVolume">volume percentage value, e.g. 50</param>
-      /// <returns></returns>
-      private int ConvertPercentageToRealVolume(decimal percentVolume)
-      {
-          MediaPortal.Player.VolumeHandler volumeHandler = new MediaPortal.Player.VolumeHandler();
-          
-          decimal tmpVolume;
-          tmpVolume = percentVolume;
-          tmpVolume = tmpVolume / 100;
-          tmpVolume = tmpVolume * (volumeHandler.Maximum - volumeHandler.Minimum);
-          tmpVolume = tmpVolume + volumeHandler.Minimum;
+    /// <summary>
+    /// Converts the volume percentage into a real volume value
+    /// </summary>
+    /// <param name="percentVolume">volume percentage value, e.g. 50</param>
+    /// <returns></returns>
+    private int ConvertPercentageToRealVolume(decimal percentVolume)
+    {
+      MediaPortal.Player.VolumeHandler volumeHandler = new MediaPortal.Player.VolumeHandler();
 
-          return (int)System.Math.Round(tmpVolume, 0);
-      }
+      decimal tmpVolume;
+      tmpVolume = percentVolume;
+      tmpVolume = tmpVolume / 100;
+      tmpVolume = tmpVolume * (volumeHandler.Maximum - volumeHandler.Minimum);
+      tmpVolume = tmpVolume + volumeHandler.Minimum;
+
+      return (int)System.Math.Round(tmpVolume, 0);
+    }
 
     #endregion
   }

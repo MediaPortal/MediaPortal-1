@@ -29,17 +29,16 @@ namespace ProcessPlugins.DirectTVTunerPlugin
 {
   public class TunerPlugin : IPlugin, ISetupForm
   {
-
     private const int _windowID = 0;                // process plugin - doesn't need windowID
     private DirecTVSettings _settings;              // Serialized settings placeholder
     private SerialInterface _serialInterface;       // generic interface to DirecTV boxes
-    
-		public TunerPlugin()
-		{
+
+    public TunerPlugin()
+    {
     }
 
     public void Start()
-		{
+    {
       _settings = new DirecTVSettings();
       _settings.LoadSettings();
       _serialInterface = new SerialInterface(
@@ -101,64 +100,59 @@ namespace ProcessPlugins.DirectTVTunerPlugin
         }
       }
     }
-        
+
     #region ISetupForm Members
 
-		public bool CanEnable()
-		{
-			return true;
-		}
+    public bool CanEnable()
+    {
+      return true;
+    }
 
-		public string PluginName()
-		{
-			return "DirecTV serial tuner";
-		}
+    public string PluginName()
+    {
+      return "DirecTV serial tuner";
+    }
 
-		public bool HasSetup()
-		{
-			return true;
-		}
+    public bool HasSetup()
+    {
+      return true;
+    }
 
-		public bool DefaultEnabled()
-		{
-			return false;
-		}
+    public bool DefaultEnabled()
+    {
+      return false;
+    }
 
-		public int GetWindowId()
-		{
-			return _windowID;
-		}
+    public int GetWindowId()
+    {
+      return _windowID;
+    }
 
-		public bool GetHome(
-      out string strButtonText,
-      out string strButtonImage,
-      out string strButtonImageFocus,
-      out string strPictureImage
-      )
-		{
-			strButtonText = string.Empty;
-			strButtonImage = string.Empty;
-			strButtonImageFocus = string.Empty;
-			strPictureImage = string.Empty;
-			return false;
-		}
+    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
+    {
+      strButtonText = string.Empty;
+      strButtonImage = string.Empty;
+      strButtonImageFocus = string.Empty;
+      strPictureImage = string.Empty;
+      return false;
+    }
 
-		public string Author()
-		{
-			return "micheloe";
-		}
+    public string Author()
+    {
+      return "micheloe";
+    }
 
-		public string Description()
-		{
-			return "DirectTV Serial Tuner Plugin";
-		}
+    public string Description()
+    {
+      return "DirectTV Serial Tuner Plugin";
+    }
 
-		public void ShowPlugin()
-		{
+    public void ShowPlugin()
+    {
       System.Windows.Forms.Form f = new SetupForm();
       f.ShowDialog();
     }
 
-		#endregion
+    #endregion
   }
 }

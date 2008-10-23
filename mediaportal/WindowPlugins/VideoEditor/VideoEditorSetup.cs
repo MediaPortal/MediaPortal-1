@@ -27,15 +27,17 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using MediaPortal.GUI.Library;
+using MediaPortal.Configuration;
 
 namespace WindowPlugins.VideoEditor
 {
+  [PluginIcons("WindowPlugins.VideoEditor.VideoEditor.gif", "WindowPlugins.VideoEditor.VideoEditor_disabled.gif")]
   public class VideoEditorSetup : ISetupForm
   {
-//    int windowID = 170601;
+    //    int windowID = 170601;
 
     public VideoEditorSetup()
-    {      
+    {
     }
 
     #region ISetupForm Member
@@ -57,7 +59,7 @@ namespace WindowPlugins.VideoEditor
 
     public string Description()
     {
-      return "This plugin allows to cut .mpeg and .dvr-ms files";
+      return "This plugin is able to cut .mpg, .dvr-ms and .ts files";
     }
 
     public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
@@ -87,8 +89,8 @@ namespace WindowPlugins.VideoEditor
     public void ShowPlugin()
     {
       //System.Windows.Forms.MessageBox.Show("Nothing to configure - just enable and start MP ;)");
-			VideoEditorConfiguration config = new VideoEditorConfiguration();
-			config.Show();
+      VideoEditorConfiguration config = new VideoEditorConfiguration();
+      config.Show();
     }
 
     #endregion

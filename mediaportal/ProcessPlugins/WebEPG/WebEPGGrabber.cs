@@ -36,7 +36,6 @@ namespace MediaPortal.ProcessPlugins.WebEPG
 {
   public class WebEPGGrabber : IPlugin, IWakeable, ISetupForm
   {
-
     #region vars
 
     bool _grabberRunning;
@@ -344,6 +343,5 @@ namespace MediaPortal.ProcessPlugins.WebEPG
     }
 
     #endregion
-
   }
 }

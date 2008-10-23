@@ -40,6 +40,7 @@ namespace ProcessPlugins.DiskSpace
   public class RecordingManagement : IPlugin, ISetupForm 
   {
     System.Windows.Forms.Timer _timer;
+
     public RecordingManagement()
     {
       _timer = new System.Windows.Forms.Timer();
@@ -75,7 +76,6 @@ namespace ProcessPlugins.DiskSpace
         Recorder.DeleteRecording(rec);
       }
     }
-
 
     #region IPlugin Members
 

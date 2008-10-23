@@ -861,7 +861,37 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="GUINumberPlace\NumberPlaceDisabled.gif" />
-  </ItemGroup>  
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUIAlarm\Alarm.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUIAlarm\Alarm_disabled.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Home\Homemenu.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Home\Homemenu_disabled.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="VideoEditor\VideoEditor.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="VideoEditor\VideoEditor_disabled.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUITopbar\Topbar.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUITopbar\Topbar_disabled.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUIRadio\Radio.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUIRadio\Radio_disabled.gif" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>
