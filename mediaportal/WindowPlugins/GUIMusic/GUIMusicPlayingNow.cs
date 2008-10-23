@@ -195,7 +195,6 @@ namespace MediaPortal.GUI.Music
     private bool _usingBassEngine = false;
     private bool _showVisualization = false;
     private bool _enqueueDefault = true;
-    private bool _preventMonitorPowerDown = false;
     private object _imageMutex = null;
 
     #endregion
@@ -237,7 +236,6 @@ namespace MediaPortal.GUI.Music
         _doAlbumLookups = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmtopalbums", true);
         _doTrackTagLookups = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmtracktags", true);
         _enqueueDefault = xmlreader.GetValueAsBool("musicmisc", "enqueuenext", true);
-        _preventMonitorPowerDown = xmlreader.GetValueAsBool("musicmisc", "preventmonitorpowerdown", false);
 
         if (ShowViz && VizName != "None")
           _showVisualization = true;
@@ -260,10 +258,6 @@ namespace MediaPortal.GUI.Music
       if (!ControlsInitialized || type != g_Player.MediaType.Music)
         return;
 
-      // Allow Monitor to turn off again
-      if (_preventMonitorPowerDown)
-        Util.Win32API.AllowMonitorPowerdown();
-
       if (GUIWindowManager.ActiveWindow == GetID)
       {
         Log.Debug("GUIMusicPlayingNow: g_Player_PlayBackEnded for {0}", filename);
@@ -284,10 +278,6 @@ namespace MediaPortal.GUI.Music
     {
       if (!ControlsInitialized || type != g_Player.MediaType.Music)
         return;
-
-      // Allow Monitor to turn off again
-      if (_preventMonitorPowerDown)
-        Util.Win32API.AllowMonitorPowerdown();
 
       if (GUIWindowManager.ActiveWindow == GetID)
       {
@@ -524,18 +514,10 @@ namespace MediaPortal.GUI.Music
         ClearVisualizationImages();
         // notify user what he's lost here?
       }
-
-      // Prevent Monitor from being turned off, while in Now Playing
-      if (_preventMonitorPowerDown)
-        Util.Win32API.PreventMonitorPowerdown();
     }
 
     protected override void OnPageDestroy(int new_windowId)
     {
-      // Reset the Monitor Power Down State
-      if (_preventMonitorPowerDown)
-        Util.Win32API.AllowMonitorPowerdown();
-
       // Remove pending requests from the request queue
       InfoScrobbler.RemoveRequest(_lastAlbumRequest);
       InfoScrobbler.RemoveRequest(_lastArtistRequest);

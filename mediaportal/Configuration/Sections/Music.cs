@@ -181,8 +181,6 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
     private MediaPortal.UserInterface.Controls.MPComboBox soundDeviceComboBox;
     private CheckBox enableMixing;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxPowerSavings;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxPreventMonitorPowerDown;
     private MediaPortal.UserInterface.Controls.MPComboBox autoPlayComboBox;
 
     #endregion
@@ -416,7 +414,6 @@ namespace MediaPortal.Configuration.Sections
         checkBoxDisableCoverLookups.Checked = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmthumbs", true) ? true : false;
         checkBoxDisableAlbumLookups.Checked = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmtopalbums", true) ? true : false;
         checkBoxDisableTagLookups.Checked = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmtracktags", true) ? true : false;
-        checkBoxPreventMonitorPowerDown.Checked = xmlreader.GetValueAsBool("musicmisc", "preventmonitorpowerdown", false) ? true : false;
         radioButtonEnqueue.Checked = EnqueueNext = xmlreader.GetValueAsBool("musicmisc", "enqueuenext", true);
         radioButtonAddFile.Checked = !EnqueueNext;
       }
@@ -563,7 +560,6 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("musicmisc", "fetchlastfmtopalbums", !checkBoxDisableAlbumLookups.Checked);
         xmlwriter.SetValueAsBool("musicmisc", "fetchlastfmtracktags", !checkBoxDisableTagLookups.Checked);
         xmlwriter.SetValueAsBool("musicmisc", "enqueuenext", radioButtonEnqueue.Checked);
-        xmlwriter.SetValueAsBool("musicmisc", "preventmonitorpowerdown", checkBoxPreventMonitorPowerDown.Checked);
       }
 
       // Make sure we shut down the viz engine
@@ -682,8 +678,6 @@ namespace MediaPortal.Configuration.Sections
       this.labelAutoPlay = new MediaPortal.UserInterface.Controls.MPLabel();
       this.autoPlayComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.groupBoxPowerSavings = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.checkBoxPreventMonitorPowerDown = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.MusicSettingsTabCtl.SuspendLayout();
       this.PlayerTabPg.SuspendLayout();
       this.PlaybackSettingsGrpBox.SuspendLayout();
@@ -701,7 +695,6 @@ namespace MediaPortal.Configuration.Sections
       this.MiscTabPg.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.mpGroupBox2.SuspendLayout();
-      this.groupBoxPowerSavings.SuspendLayout();
       this.SuspendLayout();
       // 
       // MusicSettingsTabCtl
@@ -1214,7 +1207,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabPageNowPlaying
       // 
-      this.tabPageNowPlaying.Controls.Add(this.groupBoxPowerSavings);
       this.tabPageNowPlaying.Controls.Add(this.groupBoxDynamicContent);
       this.tabPageNowPlaying.Controls.Add(this.groupBoxVizOptions);
       this.tabPageNowPlaying.Location = new System.Drawing.Point(4, 22);
@@ -1434,28 +1426,6 @@ namespace MediaPortal.Configuration.Sections
       this.label4.Size = new System.Drawing.Size(100, 23);
       this.label4.TabIndex = 0;
       // 
-      // groupBoxPowerSavings
-      // 
-      this.groupBoxPowerSavings.Controls.Add(this.checkBoxPreventMonitorPowerDown);
-      this.groupBoxPowerSavings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxPowerSavings.Location = new System.Drawing.Point(16, 251);
-      this.groupBoxPowerSavings.Name = "groupBoxPowerSavings";
-      this.groupBoxPowerSavings.Size = new System.Drawing.Size(432, 58);
-      this.groupBoxPowerSavings.TabIndex = 5;
-      this.groupBoxPowerSavings.TabStop = false;
-      this.groupBoxPowerSavings.Text = "Power Saving Options";
-      // 
-      // checkBoxPreventMonitorPowerDown
-      // 
-      this.checkBoxPreventMonitorPowerDown.AutoSize = true;
-      this.checkBoxPreventMonitorPowerDown.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxPreventMonitorPowerDown.Location = new System.Drawing.Point(91, 26);
-      this.checkBoxPreventMonitorPowerDown.Name = "checkBoxPreventMonitorPowerDown";
-      this.checkBoxPreventMonitorPowerDown.Size = new System.Drawing.Size(275, 17);
-      this.checkBoxPreventMonitorPowerDown.TabIndex = 5;
-      this.checkBoxPreventMonitorPowerDown.Text = "Prevent Power Down of Monitor while in Now Playing";
-      this.checkBoxPreventMonitorPowerDown.UseVisualStyleBackColor = true;
-      // 
       // Music
       // 
       this.Controls.Add(this.MusicSettingsTabCtl);
@@ -1487,8 +1457,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.PerformLayout();
       this.mpGroupBox2.ResumeLayout(false);
       this.mpGroupBox2.PerformLayout();
-      this.groupBoxPowerSavings.ResumeLayout(false);
-      this.groupBoxPowerSavings.PerformLayout();
       this.ResumeLayout(false);
 
     }

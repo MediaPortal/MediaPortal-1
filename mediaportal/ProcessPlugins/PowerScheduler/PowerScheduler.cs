@@ -80,6 +80,8 @@ namespace MediaPortal.PowerScheduler
     protected bool _onResumeRunning = false;						// avoid multible OnResume calls
     // TV Guide Variables
     protected DateTime _nextRecordingTime = DateTime.MaxValue; // Date/Time when the next recording takes place
+    // Power Saving Options
+    protected bool _preventMonitorPowerOff = true;
     #endregion
     // Public Variables
     #endregion
@@ -146,6 +148,8 @@ namespace MediaPortal.PowerScheduler
         _wakeupInterval = xmlreader.GetValueAsInt("powerscheduler", "wakeupinterval", 1);
         _reinitRecorder = xmlreader.GetValueAsBool("powerscheduler", "reinitonresume", false);
 
+        _preventMonitorPowerOff = xmlreader.GetValueAsBool("powerscheduler", "preventmonitorpowerdow", false);
+
         if (_shutDownInterval < 1)
           ResetShutDown();   // be sure that we do no shutdown
 
@@ -178,6 +182,27 @@ namespace MediaPortal.PowerScheduler
     /// <param name="windowId">id of the window which is about to be activated</param
     private void OnActivateWindow(int windowId)
     {
+      if ((windowId == (int)GUIWindow.Window.WINDOW_HOME) ||
+                (windowId == (int)GUIWindow.Window.WINDOW_SECOND_HOME))
+      {
+        if (_shutDownInterval > 0)
+          SetShutDown();           // we are switching to home
+
+        if (_preventMonitorPowerOff)
+          Util.Win32API.AllowMonitorPowerdown();  // Turn on Energy Saving Options
+      }
+      else
+      {
+        if (_shutDownInterval > 0)
+          ResetShutDown();
+
+        Util.Win32API.PreventMonitorPowerdown(); // Turn off Energy Saving Options
+      }
+
+
+      /*
+       *  Hwahrmann: leave in, until the above changes are confirmed 
+       *
       if (_shutDownInterval > 0)
       {
         if ((windowId == (int)GUIWindow.Window.WINDOW_HOME) ||
@@ -191,6 +216,7 @@ namespace MediaPortal.PowerScheduler
           ResetShutDown();
         }
       }
+      */
     }
 
     /// <summary>
@@ -417,14 +443,14 @@ namespace MediaPortal.PowerScheduler
     void OnWakeupTimer()
     {
       LogExtensive("Wakeup timer expired");
-     /* undo because of OnWakeUpTimer calls when user is not in home for the recording
-      * if (_Timer.Enabled)  // did we shut down correctly?
-      {
-        Log.Info("PowerScheduler: did not shut down correctly -> resync");
-        OnSuspend();
-      }
+      /* undo because of OnWakeUpTimer calls when user is not in home for the recording
+       * if (_Timer.Enabled)  // did we shut down correctly?
+       {
+         Log.Info("PowerScheduler: did not shut down correctly -> resync");
+         OnSuspend();
+       }
        
-      */
+       */
     }
 
     void OnSuspend()

@@ -50,6 +50,8 @@ namespace MediaPortal.PowerScheduler
     private MediaPortal.UserInterface.Controls.MPNumericUpDown nud_wakeup;
     private MediaPortal.UserInterface.Controls.MPNumericUpDown nud_shutdown;
     private MediaPortal.UserInterface.Controls.MPButton btnCancel;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxPowerSavings;
+    private MediaPortal.UserInterface.Controls.MPCheckBox cbxPreventMonitorPowerDown;
     /// <summary>
     /// Required designer variable.
     /// </summary>
@@ -91,7 +93,7 @@ namespace MediaPortal.PowerScheduler
         cbxExtensive.Checked = xmlreader.GetValueAsBool("powerscheduler", "extensivelogging", false);
         cbxForced.Checked = xmlreader.GetValueAsBool("powerscheduler", "forcedshutdown", false);
         cbxReinit.Checked = xmlreader.GetValueAsBool("powerscheduler", "reinitonresume", false);
-
+        cbxPreventMonitorPowerDown.Checked = xmlreader.GetValueAsBool("powerscheduler", "preventmonitorpowerdown", false);
       }
     }
 
@@ -105,6 +107,7 @@ namespace MediaPortal.PowerScheduler
         xmlwriter.SetValueAsBool("powerscheduler", "extensivelogging", cbxExtensive.Checked);
         xmlwriter.SetValueAsBool("powerscheduler", "forcedshutdown", cbxForced.Checked);
         xmlwriter.SetValueAsBool("powerscheduler", "reinitonresume", cbxReinit.Checked);
+        xmlwriter.SetValueAsBool("powerscheduler", "preventmonitorpowerdow", cbxPreventMonitorPowerDown.Checked);
       }
       return true;
     }
@@ -130,16 +133,19 @@ namespace MediaPortal.PowerScheduler
       this.nud_wakeup = new MediaPortal.UserInterface.Controls.MPNumericUpDown();
       this.nud_shutdown = new MediaPortal.UserInterface.Controls.MPNumericUpDown();
       this.btnCancel = new MediaPortal.UserInterface.Controls.MPButton();
+      this.groupBoxPowerSavings = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.cbxPreventMonitorPowerDown = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.nud_wakeup)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.nud_shutdown)).BeginInit();
+      this.groupBoxPowerSavings.SuspendLayout();
       this.SuspendLayout();
       // 
       // cb_ok
       // 
       this.cb_ok.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.cb_ok.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.cb_ok.Location = new System.Drawing.Point(205, 260);
+      this.cb_ok.Location = new System.Drawing.Point(205, 339);
       this.cb_ok.Name = "cb_ok";
       this.cb_ok.Size = new System.Drawing.Size(75, 23);
       this.cb_ok.TabIndex = 0;
@@ -221,7 +227,7 @@ namespace MediaPortal.PowerScheduler
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox1.Location = new System.Drawing.Point(12, 148);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(349, 93);
+      this.groupBox1.Size = new System.Drawing.Size(349, 97);
       this.groupBox1.TabIndex = 18;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Advanced options";
@@ -255,7 +261,7 @@ namespace MediaPortal.PowerScheduler
       // 
       this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.btnCancel.Location = new System.Drawing.Point(286, 260);
+      this.btnCancel.Location = new System.Drawing.Point(286, 339);
       this.btnCancel.Name = "btnCancel";
       this.btnCancel.Size = new System.Drawing.Size(75, 23);
       this.btnCancel.TabIndex = 19;
@@ -263,12 +269,35 @@ namespace MediaPortal.PowerScheduler
       this.btnCancel.UseVisualStyleBackColor = true;
       this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
       // 
+      // groupBoxPowerSavings
+      // 
+      this.groupBoxPowerSavings.Controls.Add(this.cbxPreventMonitorPowerDown);
+      this.groupBoxPowerSavings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxPowerSavings.Location = new System.Drawing.Point(12, 264);
+      this.groupBoxPowerSavings.Name = "groupBoxPowerSavings";
+      this.groupBoxPowerSavings.Size = new System.Drawing.Size(349, 58);
+      this.groupBoxPowerSavings.TabIndex = 20;
+      this.groupBoxPowerSavings.TabStop = false;
+      this.groupBoxPowerSavings.Text = "Power Saving Options";
+      // 
+      // cbxPreventMonitorPowerDown
+      // 
+      this.cbxPreventMonitorPowerDown.AutoSize = true;
+      this.cbxPreventMonitorPowerDown.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbxPreventMonitorPowerDown.Location = new System.Drawing.Point(13, 26);
+      this.cbxPreventMonitorPowerDown.Name = "cbxPreventMonitorPowerDown";
+      this.cbxPreventMonitorPowerDown.Size = new System.Drawing.Size(244, 17);
+      this.cbxPreventMonitorPowerDown.TabIndex = 5;
+      this.cbxPreventMonitorPowerDown.Text = "Prevent Power Down of Monitor while in Home";
+      this.cbxPreventMonitorPowerDown.UseVisualStyleBackColor = true;
+      // 
       // PowerSchedulerSetupForm
       // 
       this.AcceptButton = this.cb_ok;
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.CancelButton = this.btnCancel;
-      this.ClientSize = new System.Drawing.Size(373, 295);
+      this.ClientSize = new System.Drawing.Size(373, 374);
+      this.Controls.Add(this.groupBoxPowerSavings);
       this.Controls.Add(this.btnCancel);
       this.Controls.Add(this.nud_shutdown);
       this.Controls.Add(this.nud_wakeup);
@@ -286,6 +315,8 @@ namespace MediaPortal.PowerScheduler
       this.groupBox1.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.nud_wakeup)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.nud_shutdown)).EndInit();
+      this.groupBoxPowerSavings.ResumeLayout(false);
+      this.groupBoxPowerSavings.PerformLayout();
       this.ResumeLayout(false);
 
     }
