@@ -30,7 +30,7 @@ using MediaPortal.TagReader;
 namespace MediaPortal.Music.Database
 {
   /// <summary>
-  /// 
+  /// The audioscrobbler submit queue status
   /// </summary>
   public enum SongStatus
   {
@@ -42,16 +42,66 @@ namespace MediaPortal.Music.Database
     Short
   }
 
+  /// <summary>
+  /// The source which "suggested" the track
+  /// </summary>
+  public enum SongSource
+  {
+    /// <summary>
+    /// Chosen by the user
+    /// </summary>
+    P,
+    /// <summary>
+    /// Non-personalised broadcast (e.g. Shoutcast, BBC Radio 1).
+    /// </summary>
+    R,
+    /// <summary>
+    /// Personalised recommendation except Last.fm (e.g. Pandora, Launchcast).
+    /// </summary>
+    E,
+    /// <summary>
+    /// Last.fm (any mode). prove validity of submission by sourceID (for example, "o[0]=L1b48a").
+    /// </summary>
+    L,
+    /// <summary>
+    /// Source unknown
+    /// </summary>
+    U,
+  }
+
+  /// <summary>
+  /// A single character denoting the rating of the track. Empty if not applicable
+  /// </summary>
+  public enum SongAction
+  {
+    /// <summary>
+    /// None
+    /// </summary>
+    N,
+    /// <summary>
+    /// Love (on any mode if the user has manually loved the track). This implies a listen.
+    /// </summary>
+    L,
+    /// <summary>
+    /// Ban (only if source=L). This implies a skip, and the client should skip to the next track when a ban happens.
+    /// </summary>
+    B,
+    /// <summary>
+    /// Skip (only if source=L)
+    /// </summary>
+    S,
+  }
+
   [Serializable()]
   public class Song
   {
     int _iTrackId = -1;
-    string _strFileName = "";
-    string _strTitle = "";
-    string _strArtist = "";
-    string _strAlbum = "";
-    string _strAlbumArtist = "";
-    string _strGenre = "";
+    string _strFileName = String.Empty;
+    string _strTitle = String.Empty;
+    string _strArtist = String.Empty;
+    string _strAlbum = String.Empty;
+    string _strAlbumArtist = String.Empty;
+    string _strGenre = String.Empty;
     int _iTrack = 0;
     int _iNumTracks = 0;
     int _iDuration = 0;
@@ -64,13 +114,15 @@ namespace MediaPortal.Music.Database
     DateTime _dateTimePlayed = DateTime.MinValue;
     SongStatus _audioScrobblerStatus;
     string _musicBrainzID;
-    string _strURL = "";
-    string _webImage = "";
-    string _lastFMMatch = "";
+    string _strURL = String.Empty;
+    string _webImage = String.Empty;
+    string _lastFMMatch = String.Empty;
     int _iDisc = 0;
     int _iNumDisc = 0;
-    string _strLyrics = "";
-    
+    string _strLyrics = String.Empty;
+    SongSource _songSource = SongSource.U;
+    string _authToken = String.Empty;
+    SongAction _songAction = SongAction.N;
 
     public Song()
     {
@@ -104,6 +156,9 @@ namespace MediaPortal.Music.Database
       newsong.DiscId = DiscId;
       newsong.DiscTotal = DiscTotal;
       newsong.Lyrics = Lyrics;
+      newsong.Source = Source;
+      newsong.AuthToken = AuthToken;
+      newsong.AudioscrobblerAction = AudioscrobblerAction;
 
       return newsong;
     }
@@ -112,12 +167,12 @@ namespace MediaPortal.Music.Database
     {
       _iTrackId = -1;
       _favorite = false;
-      _strFileName = "";
-      _strTitle = "";
-      _strArtist = "";
-      _strAlbum = "";
-      _strAlbumArtist = "";
-      _strGenre = "";
+      _strFileName = String.Empty;
+      _strTitle = String.Empty;
+      _strArtist = String.Empty;
+      _strAlbum = String.Empty;
+      _strAlbumArtist = String.Empty;
+      _strGenre = String.Empty;
       _iTrack = 0;
       _iNumTracks = 0;
       _iDuration = 0;
@@ -127,15 +182,20 @@ namespace MediaPortal.Music.Database
       _dateTimeModified = DateTime.MinValue;
       _dateTimePlayed = DateTime.MinValue;
       _audioScrobblerStatus = SongStatus.Init;
-      _musicBrainzID = "";
-      _strURL = "";
-      _webImage = "";
-      _lastFMMatch = "";
+      _musicBrainzID = String.Empty;
+      _strURL = String.Empty;
+      _webImage = String.Empty;
+      _lastFMMatch = String.Empty;
       _iResumeAt = 0;
       _iDisc = 0;
       _iNumDisc = 0;
-      _strLyrics = "";
+      _strLyrics = String.Empty;
+      _songSource = SongSource.U;
+      _authToken = String.Empty;
+      _songAction = SongAction.N;
     }
+
+    #region Getters & Setters
 
     public int Id
     {
@@ -354,6 +414,28 @@ namespace MediaPortal.Music.Database
       set { _strLyrics = value; }
     }
 
+    public SongSource Source
+    {
+      get { return _songSource; }
+      set { _songSource = value; }
+    }
+
+    public string AuthToken
+    {
+      get { return _authToken; }
+      set { _authToken = value; }
+    }
+
+    public SongAction AudioscrobblerAction
+    {
+      get { return _songAction; }
+      set { _songAction = value; }
+    }
+
+    #endregion
+
+    #region Methods
+
     public MusicTag ToMusicTag()
     {
       MusicTag tmpTag = new MusicTag();
@@ -377,13 +459,13 @@ namespace MediaPortal.Music.Database
     {
       StringBuilder s = new StringBuilder();
 
-      if (_strTitle != "")
+      if (_strTitle != String.Empty)
         s.Append(_strTitle);
       else
         s.Append("(Untitled)");
-      if (_strArtist != "")
+      if (_strArtist != String.Empty)
         s.Append(" - " + _strArtist);
-      if (_strAlbum != "")
+      if (_strAlbum != String.Empty)
         s.Append(" (" + _strAlbum + ")");
 
       return s.ToString();
@@ -393,12 +475,12 @@ namespace MediaPortal.Music.Database
     {
       StringBuilder s = new StringBuilder();
 
-      if (_strTitle != "")
+      if (_strTitle != String.Empty)
       {
         s.Append(_strTitle);
         s.Append(" - ");
       }
-      if (_strArtist != "")
+      if (_strArtist != String.Empty)
         s.Append(_strArtist);
       if (_iDuration > 0)
       {
@@ -415,29 +497,29 @@ namespace MediaPortal.Music.Database
     public string ToLastFMMatchString(bool showURL_)
     {
       StringBuilder s = new StringBuilder();
-      if (_strArtist != "")
+      if (_strArtist != String.Empty)
       {
         s.Append(_strArtist);
-        if (_strAlbum != "")
+        if (_strAlbum != String.Empty)
           s.Append(" - " + _strAlbum);
         else
         {
-          if (_strTitle != "")
+          if (_strTitle != String.Empty)
             s.Append(" - " + _strTitle);
-          if (_strGenre != "")
+          if (_strGenre != String.Empty)
             s.Append(" (tagged: " + _strGenre + ")");
         }
       }
       else
-        if (_strAlbum != "")
+        if (_strAlbum != String.Empty)
           s.Append(_strAlbum);
-      if (_lastFMMatch != "")
+      if (_lastFMMatch != String.Empty)
         if (_lastFMMatch.IndexOf(".") == -1)
           s.Append(" (match: " + _lastFMMatch + "%)");
         else
           s.Append(" (match: " + _lastFMMatch.Remove(_lastFMMatch.IndexOf(".") + 2) + "%)");
       if (showURL_)
-        if (_strURL != "")
+        if (_strURL != String.Empty)
           s.Append(" (link: " + _strURL + ")");
 
       return s.ToString();
@@ -476,9 +558,48 @@ namespace MediaPortal.Music.Database
       }
       return queueTime;
     }
+
+    public string getRateActionParam()
+    {
+      switch (_songAction)
+      {
+        case SongAction.N:
+          return String.Empty;
+        case SongAction.L:
+          return "L";
+        case SongAction.B:
+          return "B";
+        case SongAction.S:
+          return "S";
+        default:
+          return String.Empty;
+      }
+    }
+
+    public string getSourceParam()
+    {
+      switch (_songSource)
+      {
+        case SongSource.P:
+          return "P";
+        case SongSource.R:
+          return "R";
+        case SongSource.E:
+          return "E";
+        case SongSource.L:
+          return "L" + _authToken;
+        case SongSource.U:
+          return "U";
+        default:
+          return "P";
+          break;
+      }
+    }
+
+    #endregion
   }
 
-
+    
   public class SongMap
   {
     public string m_strPath;

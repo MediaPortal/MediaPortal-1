@@ -2441,7 +2441,7 @@ namespace MediaPortal.Music.Database
             else if (mainchild.Name == "duration" && mainchild.ChildNodes.Count != 0)
               nodeSong.Duration = Convert.ToInt32(Convert.ToInt32(mainchild.ChildNodes[0].Value) / 1000);
             else if (mainchild.Name == "lastfm:trackauth" && mainchild.ChildNodes.Count != 0)
-              nodeSong.LastFMMatch = mainchild.ChildNodes[0].Value;
+              nodeSong.AuthToken = mainchild.ChildNodes[0].Value;
           }
           XSPFPlaylist.Add(nodeSong);
         }

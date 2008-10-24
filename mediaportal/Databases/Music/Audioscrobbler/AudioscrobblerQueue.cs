@@ -40,60 +40,90 @@ namespace MediaPortal.Music.Database
     class QueuedTrack
     {
       #region public getters
+
       public QueuedTrack(Song track)
       {
         this.artist = track.Artist;
-        this.album = track.Album;
         this.title = track.Title;
-        this.tracknr = track.Track;
-        this.duration = (int)track.Duration;
         this.start_time = track.getQueueTime(true);
+        this.source = track.getSourceParam();
+        this.rating = track.getRateActionParam();
+        this.duration = (int)track.Duration;
+        this.album = track.Album;
+        this.tracknr = track.Track;
+        this.mbtrackid = track.MusicBrainzID;
+        this.auth = track.AuthToken;
       }
 
-      public QueuedTrack(string artist, string album, string title, int tracknr, int duration, string start_time)
+      public QueuedTrack(string artist, string title, string start_time, string source, string rateaction, int duration, string album, int tracknr, string mbtrackid, string auth)
       {
         this.artist = artist;
-        this.album = album;
         this.title = title;
-        this.tracknr = tracknr;
-        this.duration = duration;
         this.start_time = start_time;
+        this.source = source;
+        this.rating = rateaction;
+        this.duration = duration;
+        this.album = album;
+        this.tracknr = tracknr;
+        this.mbtrackid = mbtrackid;
+        this.auth = auth;
       }
 
-      public string StartTime
-      {
-        get { return start_time; }
-      }
       public string Artist
       {
         get { return artist; }
-      }
-      public string Album
-      {
-        get { return album; }
       }
       public string Title
       {
         get { return title; }
       }
-      public int TrackNr
+      public string StartTime
       {
-        get { return tracknr; }
+        get { return start_time; }
+      }
+      public string Source
+      {
+        get { return source; }
+      }
+      public string Rating
+      {
+        get { return rating; }
       }
       public int Duration
       {
         get { return duration; }
       }
+      public string Album
+      {
+        get { return album; }
+      }
+      public int TrackNr
+      {
+        get { return tracknr; }
+      }
+      public string MbTrackId
+      {
+        get { return mbtrackid; }
+      }
+      public string Auth
+      {
+        get { return auth; }
+      }
+
       #endregion
 
       string artist;
-      string album;
       string title;
-      int tracknr;
-      int duration;
       string start_time;
+      string source;
+      string rating;
+      int duration;
+      string album;
+      int tracknr;
+      string mbtrackid;
+      string auth;
     }
-    
+
     ArrayList queue;
     string xml_path;
     bool dirty;
@@ -128,18 +158,18 @@ namespace MediaPortal.Music.Database
         foreach (QueuedTrack track in queue)
         {
           writer.WriteStartElement("CachedSong");
+
           writer.WriteElementString("Artist", track.Artist);
-          writer.WriteElementString("Album", track.Album);
           writer.WriteElementString("Title", track.Title);
-          writer.WriteElementString("TrackNr", track.TrackNr.ToString());
-          writer.WriteElementString("Duration", track.Duration.ToString());
-          //DateTime startTime = DateTime.Now;
-          //string submitStartTime = string.Empty;
-          //if (DateTime.TryParse(track.StartTime, out startTime))
-          //  submitStartTime = Convert.ToString(Util.Utils.GetUnixTime(startTime.ToUniversalTime()));
-          //else
-          //  submitStartTime = Convert.ToString(Util.Utils.GetUnixTime(DateTime.UtcNow - new TimeSpan(0, 0, track.Duration)));
           writer.WriteElementString("Playtime", track.StartTime);
+          writer.WriteElementString("Source", track.Source);
+          writer.WriteElementString("RateAction", track.Rating);
+          writer.WriteElementString("Auth", track.Auth);
+          writer.WriteElementString("Duration", track.Duration.ToString());
+          writer.WriteElementString("Album", track.Album);
+          writer.WriteElementString("TrackNr", track.TrackNr.ToString());
+          writer.WriteElementString("MbTrackId", track.MbTrackId);
+
           writer.WriteEndElement(); // Track
         }
         writer.WriteEndElement(); // AudioscrobblerQueue
@@ -162,12 +192,16 @@ namespace MediaPortal.Music.Database
 
         foreach (XmlNode node in nodes)
         {
-          string artist = "";
-          string album = "";
-          string title = "";
-          int tracknr = 0;
-          int duration = 0;
+          string artist = String.Empty;
+          string title = String.Empty;
           string start_time = Convert.ToString(Util.Utils.GetUnixTime(DateTime.UtcNow));
+          string source = "U";
+          string rating = String.Empty;
+          string auth = String.Empty;
+          int duration = 0;
+          string album = String.Empty;
+          int tracknr = 0;
+          string mbtrackid = String.Empty;
 
           foreach (XmlNode child in node.ChildNodes)
           {
@@ -175,29 +209,45 @@ namespace MediaPortal.Music.Database
             {
               artist = child.ChildNodes[0].Value;
             }
-            else if (child.Name == "Album" && child.ChildNodes.Count != 0)
-            {
-              album = child.ChildNodes[0].Value;
-            }
             else if (child.Name == "Title" && child.ChildNodes.Count != 0)
             {
               title = child.ChildNodes[0].Value;
             }
-            else if (child.Name == "TrackNr" && child.ChildNodes.Count != 0)
+            else if (child.Name == "Playtime" && child.ChildNodes.Count != 0)
             {
-              tracknr = Convert.ToInt32(child.ChildNodes[0].Value);
+              start_time = (child.ChildNodes[0].Value);
+            }
+            else if (child.Name == "Source" && child.ChildNodes.Count != 0)
+            {
+              source = (child.ChildNodes[0].Value);
+            }
+            else if (child.Name == "RateAction" && child.ChildNodes.Count != 0)
+            {
+              rating = (child.ChildNodes[0].Value);
+            }
+            else if (child.Name == "Auth" && child.ChildNodes.Count != 0)
+            {
+              auth = (child.ChildNodes[0].Value);
             }
             else if (child.Name == "Duration" && child.ChildNodes.Count != 0)
             {
               duration = Convert.ToInt32(child.ChildNodes[0].Value);
             }
-            else if (child.Name == "Playtime" && child.ChildNodes.Count != 0)
+            else if (child.Name == "Album" && child.ChildNodes.Count != 0)
             {
-              start_time = (child.ChildNodes[0].Value);              
+              album = child.ChildNodes[0].Value;
+            }
+            else if (child.Name == "TrackNr" && child.ChildNodes.Count != 0)
+            {
+              tracknr = Convert.ToInt32(child.ChildNodes[0].Value);
+            }
+            else if (child.Name == "MbTrackId" && child.ChildNodes.Count != 0)
+            {
+              mbtrackid = child.ChildNodes[0].Value;
             }
           }
 
-          queue.Add(new QueuedTrack(artist, album, title, tracknr, duration, start_time));
+          queue.Add(new QueuedTrack(artist, title, start_time, source, rating, duration, album, tracknr, mbtrackid, auth));
         }
       }
       catch
@@ -217,7 +267,7 @@ namespace MediaPortal.Music.Database
           break;
 
         QueuedTrack track = (QueuedTrack)queue[i];
-        
+
         //s=<sessionID>
         //a[0]=<artist>
         //t[0]=<track>
@@ -229,26 +279,25 @@ namespace MediaPortal.Music.Database
         //n[0]=<tracknumber>
         //m[0]=<mb-trackid>
 
-        string trackNr = track.TrackNr > 0 ? Convert.ToString(track.TrackNr) : "";
+        string trackNr = track.TrackNr > 0 ? Convert.ToString(track.TrackNr) : String.Empty;
 
         sb.AppendFormat(
              "&a[{0}]={1}&t[{0}]={2}&i[{0}]={3}&o[{0}]={4}&r[{0}]={5}&l[{0}]={6}&b[{0}]={7}&n[{0}]={8}&m[{0}]={9}",
-             i,
-             AudioscrobblerBase.getValidURLLastFMString(AudioscrobblerBase.UndoArtistPrefix(track.Artist)),
-             System.Web.HttpUtility.UrlEncode(track.Title),
-             track.StartTime,
-             "P" /* chosen by user */ ,
-             "",
-             track.Duration.ToString(),
-             AudioscrobblerBase.getValidURLLastFMString(track.Album),
-             trackNr /* track.tracknr */,
-             "" /* musicbrainz id */
+             i, // number of queued items = 0
+             AudioscrobblerBase.getValidURLLastFMString(AudioscrobblerBase.UndoArtistPrefix(track.Artist)), // artist = 1
+             System.Web.HttpUtility.UrlEncode(track.Title), // track = 2
+             track.StartTime, // time = 3
+             track.Source, // source = 4
+             track.Rating, // rating = 5
+             track.Duration.ToString(), // secs = 6
+             AudioscrobblerBase.getValidURLLastFMString(track.Album), // album = 7
+             trackNr, // tracknumber = 8
+             track.MbTrackId // mb-trackid = 9
              );
       }
 
       num_tracks = i;
       return sb.ToString();
-
     }
 
     public void Add(Song track)

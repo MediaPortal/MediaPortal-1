@@ -563,9 +563,12 @@ namespace MediaPortal.GUI.RADIOLASTFM
       {
         case 34010:     // Love
           LastFMStation.SendControlCommand(StreamControls.lovetrack);
+          AudioscrobblerBase.CurrentSong.AudioscrobblerAction = SongAction.L;
           break;
         case 34011:     // Ban
           LastFMStation.SendControlCommand(StreamControls.bantrack);
+          AudioscrobblerBase.CurrentSong.AudioscrobblerAction = SongAction.B;
+          OnSkipHandler(false);
           break;
         case 34012:     // Skip
           OnSkipHandler(false);
@@ -659,11 +662,13 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
       LastFMStation.CurrentStreamState = StreamPlaybackState.streaming;
       //LastFMStation.ToggleRecordToProfile(false);    
-
       LastFMStation.ToggleDiscoveryMode(LastFMStation.DiscoveryMode);
 
+      AudioscrobblerBase.CurrentSong = aStreamSong;
+      AudioscrobblerBase.CurrentSong.Source = SongSource.L;
+
       GUIWaitCursor.Hide();
-      return true;
+      return g_Player.Playing;
     }
 
     #endregion

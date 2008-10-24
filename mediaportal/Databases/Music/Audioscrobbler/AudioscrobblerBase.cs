@@ -642,17 +642,6 @@ namespace MediaPortal.Music.Database
       if (_useDebugLog)
         Log.Debug("AudioscrobblerBase: {0}", "Radio handshake successful");
 
-      //url = "http://ws.audioscrobbler.com/ass/"
-      //     + "upgrade.php?"
-      //     + "platform=" + "win"
-      //     + "&version=" + "1.0.7"
-      //     + "&lang=" + "en"
-      //     + "&user=" + tmpUser;
-
-      //GetResponse(url, "", true);
-      //if (_useDebugLog)
-      //  Log.Debug("AudioscrobblerBase: {0}", "Upgrade request send");
-
       RadioHandshakeSuccess();
       return true;
     }
@@ -854,9 +843,9 @@ namespace MediaPortal.Music.Database
         return false;
       }
 
-      //Log.Info("AudioscrobblerBase.GetResponse: {0}", "End");
       return success;
     }
+
     #endregion
 
     /// <summary>
