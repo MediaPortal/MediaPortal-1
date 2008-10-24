@@ -42,6 +42,7 @@ using MediaPortal.Playlists;
 namespace MediaPortal.GUI.RADIOLASTFM
 {
   #region enums
+
   public enum PlaybackType
   {
     Unknown = 0,
@@ -77,11 +78,13 @@ namespace MediaPortal.GUI.RADIOLASTFM
     Neighbours = 6,
     Playlist = 7,
   }
+
   #endregion
 
   class StreamControl
   {
     #region Event delegates
+
     public delegate void SongChangedHandler(MusicTag newCurrentSong, DateTime startTime);
     public event SongChangedHandler StreamSongChanged;
 
@@ -90,9 +93,11 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     public delegate void RadioSettingsFailed();
     public event RadioSettingsFailed RadioSettingsError;
+
     #endregion
 
     #region Variables
+
     private PlayListPlayer PlaylistPlayer = null;
 
     /// <summary>
@@ -141,6 +146,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     private TimeSpan _minConnectWaitTime = new TimeSpan(0, 0, 1);
 
     private AsyncGetRequest httpcommand = null;
+
     #endregion
 
     #region Constructor
@@ -156,6 +162,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     #endregion
 
     #region Examples
+
     // 4. http.request.uri = Request URI: http://ws.audioscrobbler.com/ass/upgrade.php?platform=win&version=1.0.7&lang=en&user=f1n4rf1n
     // 5. http.request.uri = Request URI: http://ws.audioscrobbler.com/radio/np.php?session=e5b0c80f5b5d0937d407fb77a913cb6a
     // 6. http.request.uri = Request URI: http://ws.audioscrobbler.com/ass/artistmetadata.php?artist=Sportfreunde%20Stiller&lang=en
@@ -186,6 +193,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     //trackduration=222
     //radiomode=1
     //recordtoprofile=1
+
     #endregion
 
     #region Serialisation
@@ -238,6 +246,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     #endregion
 
     #region getters & setters
+
     public string AccountUser
     {
       get { return _currentUser; }
@@ -454,6 +463,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     #endregion
 
     #region Tuning functions
+
     public bool TuneIntoPersonalRadio(string username_)
     {
       string TuneUser = AudioscrobblerBase.getValidURLLastFMString(username_);
@@ -584,6 +594,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       else
         return false;
     }
+
     #endregion
 
     #region Network related
@@ -682,6 +693,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     # endregion
 
     #region Response parser
+
     private void ParseSuccessful(List<String> responseList_, String formerRequest_)
     {
       if (formerRequest_.Contains(@"&command=skip"))
@@ -790,6 +802,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         Log.Error("StreamControl: Error parsing now playing info: {0}", ex.Message);
       }
     }
+
     #endregion
   }
 }

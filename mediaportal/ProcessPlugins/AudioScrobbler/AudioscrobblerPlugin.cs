@@ -88,7 +88,7 @@ namespace MediaPortal.Audioscrobbler
 
     private void OnManualConnect(object sender, EventArgs args)
     {
-      if(!AudioscrobblerBase.Connected)
+      if (!AudioscrobblerBase.Connected)
         AudioscrobblerBase.Connect();
     }
 
@@ -240,7 +240,7 @@ namespace MediaPortal.Audioscrobbler
       else
         if (Util.Utils.IsLastFMStream(g_Player.Player.CurrentFile))
         {
-          for (int i = 0 ; i < 30 ; i++)
+          for (int i = 0; i < 30; i++)
           {
             _currentSong = AudioscrobblerBase.CurrentSong.Clone();
 
@@ -316,7 +316,7 @@ namespace MediaPortal.Audioscrobbler
     }
 
     public void OnLengthTickEvent(object trash_, ElapsedEventArgs args_)
-    {      
+    {
       if (_currentSong.AudioScrobblerStatus == SongStatus.Loaded)
       {
         _currentSong.AudioScrobblerStatus = SongStatus.Cached;
@@ -370,23 +370,10 @@ namespace MediaPortal.Audioscrobbler
       _currentSong.AudioScrobblerStatus = SongStatus.Queued;
       queued = true;
     }
+
     #endregion
 
     #region Utilities
-    //private void startStopSongCheckTimer(bool startNow)
-    //{
-    //  if (SongCheckTimer == null)
-    //    SongCheckTimer = new System.Timers.Timer();
-    //  if (startNow)
-    //  {
-    //    Log.Info("Audioscrobbler plugin: {0}", "starting check timer");
-    //    SongCheckTimer.Interval = _timerTickSecs * 1000;
-    //    SongCheckTimer.Elapsed += new ElapsedEventHandler(OnTickEvent);
-    //    SongCheckTimer.Start();
-    //  }
-    //  else
-    //    SongCheckTimer.Stop();
-    //}
 
     /// <summary>
     /// Starts and stops the timer to check how long a track has been played
@@ -395,24 +382,31 @@ namespace MediaPortal.Audioscrobbler
     /// <returns>Elapsed timer seconds</returns>
     private void startStopSongLengthTimer(bool startNow, int intervalLength)
     {
-      if (SongLengthTimer != null)
-        SongLengthTimer.Close();
-      else
+      try
       {
-        SongLengthTimer = new System.Timers.Timer();
-        SongLengthTimer.AutoReset = false;
-        SongLengthTimer.Interval = INFINITE_TIME;
-        SongLengthTimer.Elapsed += new ElapsedEventHandler(OnLengthTickEvent);
-      }
+        if (SongLengthTimer != null)
+          SongLengthTimer.Close();
+        else
+        {
+          SongLengthTimer = new System.Timers.Timer();
+          SongLengthTimer.AutoReset = false;
+          SongLengthTimer.Interval = INFINITE_TIME;
+          SongLengthTimer.Elapsed += new ElapsedEventHandler(OnLengthTickEvent);
+        }
 
-      if (startNow)
-      {
-        Log.Info("Audioscrobbler plugin: starting song length timer with an interval of {0} seconds", intervalLength.ToString());
-        SongLengthTimer.Interval = intervalLength * 1000;
-        SongLengthTimer.Start();
+        if (startNow)
+        {
+          Log.Info("Audioscrobbler plugin: starting song length timer with an interval of {0} seconds", intervalLength.ToString());
+          SongLengthTimer.Interval = intervalLength * 1000;
+          SongLengthTimer.Start();
+        }
+        else
+          SongLengthTimer.Stop();
       }
-      else
-        SongLengthTimer.Stop();
+      catch (Exception tex)
+      {
+        Log.Error("Audioscrobbler plugin: Issue with song length timer - start: {0} interval: {1} error: {2}", startNow.ToString(), intervalLength.ToString(), tex.Message);
+      }
     }
 
     private bool GetCurrentSong()
@@ -470,17 +464,18 @@ namespace MediaPortal.Audioscrobbler
     #endregion
 
     #region IPlugin Members
+
     public void Start()
     {
       string currentUser = "";
 
       _currentSong = null;
-      queued = false;      
+      queued = false;
       _alertTime = INFINITE_TIME;
 
       GUIWindowManager.OnNewAction += new OnActionHandler(OnNewAction);
       g_Player.PlayBackStarted += new g_Player.StartedHandler(OnPlayBackStarted);
-      g_Player.PlayBackEnded +=new g_Player.EndedHandler(OnPlayBackEnded);
+      g_Player.PlayBackEnded += new g_Player.EndedHandler(OnPlayBackEnded);
       g_Player.PlayBackStopped += new g_Player.StoppedHandler(OnPlayBackStopped);
 
       // startStopSongCheckTimer(true);
@@ -524,7 +519,7 @@ namespace MediaPortal.Audioscrobbler
     }
 
     public string Description()
-    {    
+    {
       return "The Audioscrobbler plugin populates your profile on http://www.last.fm \nand automatically fills your playlist with songs you'll like.";
     }
 

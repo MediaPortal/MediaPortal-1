@@ -356,14 +356,20 @@ namespace MediaPortal.Util
 
     public static bool IsLastFMStream(string aPath)
     {
-      if (aPath.StartsWith(@"http://"))
+      try
       {
-        if (aPath.IndexOf(@"/last.mp3?") > 0)
-          return true;
-        if (aPath.Contains(@"last.fm/"))
-          return true;
+        if (aPath.StartsWith(@"http://"))
+        {
+          if (aPath.IndexOf(@"/last.mp3?") > 0)
+            return true;
+          if (aPath.Contains(@"last.fm/"))
+            return true;
+        }
       }
-
+      catch (Exception ex)
+      {
+        Log.Warn("Util: Error in IsLastFMStream - {0}", ex.Message);
+      }
       return false;
     }
 
@@ -2095,12 +2101,12 @@ namespace MediaPortal.Util
       {
         try
         {
-          return File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll"); 
+          return File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll");
         }
         catch (Exception)
         {
           return false;
-        }        
+        }
       }
     }
 
@@ -2517,28 +2523,28 @@ namespace MediaPortal.Util
       switch (aspectRatioType)
       {
         case MediaPortal.GUI.Library.Geometry.Type.Stretch:
-            return GUILocalizeStrings.Get(942);
+          return GUILocalizeStrings.Get(942);
 
         case MediaPortal.GUI.Library.Geometry.Type.Normal:
-            return GUILocalizeStrings.Get(943);
+          return GUILocalizeStrings.Get(943);
 
         case MediaPortal.GUI.Library.Geometry.Type.Original:
-            return GUILocalizeStrings.Get(944);
+          return GUILocalizeStrings.Get(944);
 
         case MediaPortal.GUI.Library.Geometry.Type.LetterBox43:
-            return GUILocalizeStrings.Get(945);
+          return GUILocalizeStrings.Get(945);
 
         case MediaPortal.GUI.Library.Geometry.Type.PanScan43:
-            return GUILocalizeStrings.Get(946);
+          return GUILocalizeStrings.Get(946);
 
         case MediaPortal.GUI.Library.Geometry.Type.Zoom:
-            return GUILocalizeStrings.Get(947);
+          return GUILocalizeStrings.Get(947);
 
         case MediaPortal.GUI.Library.Geometry.Type.Zoom14to9:
-            return GUILocalizeStrings.Get(1190);
+          return GUILocalizeStrings.Get(1190);
 
         default:
-            return GUILocalizeStrings.Get(943);
+          return GUILocalizeStrings.Get(943);
       }
     }
 

@@ -406,7 +406,7 @@ namespace MediaPortal.Music.Database
           }
           catch (Exception ex)
           {
-            Log.Debug("AudioscrobblerBase: result of thread.Abort - {0}", ex.Message);
+            Log.Warn("AudioscrobblerBase: Result of pre-submit thread abort - {0}", ex.Message);
           }
         }
 
@@ -864,17 +864,31 @@ namespace MediaPortal.Music.Database
     /// </summary>
     private static void StartSubmitQueueThread()
     {
-      submitThread = new Thread(new ThreadStart(SubmitQueue));
-      submitThread.IsBackground = true;
-      submitThread.Name = "Scrobbler";
-      submitThread.Priority = ThreadPriority.BelowNormal;
-      submitThread.Start();
+      try
+      {
+        submitThread = new Thread(new ThreadStart(SubmitQueue));
+        submitThread.IsBackground = false; // do not abort the submit action when MediaPortal closes
+        submitThread.Name = "Scrobbler";
+        submitThread.Priority = ThreadPriority.BelowNormal;
+        submitThread.Start();
+      }
+      catch (Exception sex)
+      {
+        Log.Error("AudioscrobblerBase: Error starting submit thread - {0}", sex.Message);
+      }
     }
 
     private static void StopSubmitQueueThread()
     {
-      if (submitThread != null)
-        submitThread.Abort();
+      try
+      {
+        if (submitThread != null)
+          submitThread.Abort();
+      }
+      catch (Exception aex)
+      {
+        Log.Info("AudioscrobblerBase: Result stopping submit thread - {0}", aex.Message);
+      }
     }
 
     /// <summary>

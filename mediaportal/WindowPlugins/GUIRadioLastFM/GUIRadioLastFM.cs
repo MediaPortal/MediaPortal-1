@@ -308,7 +308,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
           btnChooseTag.Label = GUILocalizeStrings.Get(34030);
       }
       else
-        btnChooseTag.Label = _usersOwnTags[dlg.SelectedId - 1];
+        btnChooseTag.Label = _usersOwnTags[dlg.SelectedId - 2];
 
       GUIPropertyManager.SetProperty("#selecteditem", btnChooseTag.Label);
     }
@@ -340,7 +340,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
           btnChooseFriend.Label = GUILocalizeStrings.Get(34031);
       }
       else
-        btnChooseFriend.Label = _usersFriends[dlg.SelectedId - 1];
+        btnChooseFriend.Label = _usersFriends[dlg.SelectedId - 2];
 
       GUIPropertyManager.SetProperty("#selecteditem", btnChooseFriend.Label);
     }
@@ -611,7 +611,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     private bool AddStreamSongToPlaylist(ref Song song)
     {
       PlayList playlist = PlaylistPlayer.GetPlaylist(PlayListType.PLAYLIST_RADIO_STREAMS);
-      if (playlist == null)
+      if (playlist == null || song == null)
         return false;
 
       // We only want one item at each time since the links invalidate and therefore 
@@ -971,17 +971,23 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     private void PlayBackStoppedHandler(g_Player.MediaType type, int stoptime, string filename)
     {
-      if (!Util.Utils.IsLastFMStream(filename) || LastFMStation.CurrentStreamState != StreamPlaybackState.streaming)
-        return;
-
+      if (!String.IsNullOrEmpty(filename))
+      {
+        if (!Util.Utils.IsLastFMStream(filename) || LastFMStation.CurrentStreamState != StreamPlaybackState.streaming)
+          return;
+      }
       OnPlaybackStopped();
     }
 
     private void PlayBackEndedHandler(g_Player.MediaType type, string filename)
     {
-      if (!Util.Utils.IsLastFMStream(filename) || LastFMStation.CurrentStreamState != StreamPlaybackState.streaming)
-        return;
+      if (!String.IsNullOrEmpty(filename))
+      {
+        if (!Util.Utils.IsLastFMStream(filename) || LastFMStation.CurrentStreamState != StreamPlaybackState.streaming)
+          return;
+      }
 
+      Log.Debug("GUIRadioLastFM: PlayBackEnded for this selection - trying restart...");
       if (PlayPlayListStreams(_radioTrackList[0]))
       {
         LastFMStation.CurrentPlaybackType = PlaybackType.PlaylistPlayer;
