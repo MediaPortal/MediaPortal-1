@@ -36,18 +36,23 @@ namespace MediaPortal.Configuration.Sections
       // If TvService exist on local machine, then we are in singleseat
       //
       cbWaitForTvService.Checked = false;
-      foreach( ServiceController ctrl in ServiceController.GetServices())
+
+      if (Util.Utils.UsingTvServer)
       {
-        if (ctrl.DisplayName == "TVService")
+        foreach (ServiceController ctrl in ServiceController.GetServices())
         {
-          //
-          // On single seat WaitForTvService is forced enabled !
-          //
-          cbWaitForTvService.Checked = true;
-          break;
+          if (ctrl.DisplayName == "TVService")
+          {
+            //
+            // On single seat WaitForTvService is forced enabled !
+            //
+            cbWaitForTvService.Checked = true;
+            break;
+          }
         }
       }
     }
+
     public override void SaveSettings()
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
