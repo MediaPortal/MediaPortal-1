@@ -86,6 +86,7 @@ namespace MediaPortal.Music.Database
     #endregion
 
     #region Variables
+
     // Client-specific config variables.
     private static string username;
     private static string password;
@@ -110,7 +111,6 @@ namespace MediaPortal.Music.Database
     private static TimeSpan minConnectWaitTime;
 
     private static bool _useDebugLog;
-    private static bool _signedIn;
 
     // Data received by the Audioscrobbler service.
     private static string MD5Response;
@@ -129,12 +129,13 @@ namespace MediaPortal.Music.Database
     private static bool _recordToProfile = true;
 
     private static Song _currentSong;
+
     #endregion
 
     #region Constructor
 
     /// <summary>
-    /// ctor
+    /// This class handles the last.fm protocol implementations.
     /// </summary>
     static AudioscrobblerBase()
     {
@@ -183,7 +184,6 @@ namespace MediaPortal.Music.Database
       queueLock = new Object();
       submitLock = new Object();
 
-      _signedIn = false;
       lastHandshake = DateTime.MinValue;
       handshakeInterval = new TimeSpan(0, HANDSHAKE_INTERVAL, 0);
       handshakeRadioInterval = new TimeSpan(0, 5 * HANDSHAKE_INTERVAL, 0);  // Radio is session based - no need to re-handshake soon
@@ -199,6 +199,7 @@ namespace MediaPortal.Music.Database
     #endregion
 
     #region Public getters and setters
+
     /// <summary>
     /// The last.fm account name
     /// </summary>
@@ -302,39 +303,17 @@ namespace MediaPortal.Music.Database
       }
     }
 
-    /// <summary>
-    /// Check connected status - returns true if currently connected, false otherwise.
-    /// </summary>
-    public static bool Connected
-    {
-      get
-      {
-        return _signedIn;
-      }
-    }
-
-    /// <summary>
-    /// Returns the number of songs in the queue
-    /// </summary>
-    public static int QueueLength
-    {
-      get
-      {
-        return queue.Count;
-      }
-    }
-
     #endregion
 
     #region Public methods.
+
     /// <summary>
     /// Connect to the Audioscrobbler service. While connected any queued songs are submitted to Audioscrobbler.
     /// </summary>
     public static void Connect()
     {
       // start thread on start
-      if (!_signedIn)
-        DoHandshake(true, HandshakeType.Init);
+      DoHandshake(true, HandshakeType.Init);
     }
 
     /// <summary>
@@ -344,7 +323,6 @@ namespace MediaPortal.Music.Database
     {
       if (queue != null)
         queue.Save();
-      _signedIn = false;
     }
 
     public static void ChangeUser(string scrobbleUser_, string scrobblePassword_)
@@ -371,7 +349,6 @@ namespace MediaPortal.Music.Database
         using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           xmlwriter.SetValue("audioscrobbler", "user", username);
-          //xmlwriter.SetValue("audioscrobbler", "pass", password);
         }
 
         DoHandshake(true, HandshakeType.ChangeUser);
@@ -388,13 +365,11 @@ namespace MediaPortal.Music.Database
       if (_useDebugLog)
         Log.Debug("AudioscrobblerBase: {0}", logmessage);
 
-      // Enqueue the song.
-      //song_.AudioScrobblerStatus = SongStatus.Cached;
+      // Enqueue the song
       lock (queueLock)
       {
         queue.Add(song_);
       }
-
 
       if (submitThread != null)
         if (submitThread.IsAlive)
@@ -412,10 +387,6 @@ namespace MediaPortal.Music.Database
 
       // Try to submit immediately.
       StartSubmitQueueThread();
-
-      // Reset the submit timer.
-      // submitTimer.Close();
-      // InitSubmitTimer();
     }
 
     #region Public event triggers
@@ -431,6 +402,7 @@ namespace MediaPortal.Music.Database
     #endregion
 
     #region Networking related functions
+
     /// <summary>
     /// Handshake with the Audioscrobbler service
     /// </summary>
@@ -462,7 +434,7 @@ namespace MediaPortal.Music.Database
         }
       }
 
-      if (ReasonForHandshake != HandshakeType.Init && !_signedIn)
+      if (ReasonForHandshake != HandshakeType.Init)
       {
         if (ReasonForHandshake == HandshakeType.PreRadio)
         {
@@ -470,12 +442,12 @@ namespace MediaPortal.Music.Database
           AttemptRadioHandshake();
           return;
         }
-        else
-        {
-          Log.Warn("AudioscrobblerBase: Disconnected - not attempting {0} handshake", ReasonForHandshake.ToString());
-          workerFailed(ReasonForHandshake, DateTime.MinValue, new Exception("Disconnected!"));
-          return;
-        }
+        //else
+        //{
+        //  Log.Warn("AudioscrobblerBase: Disconnected - not attempting {0} handshake", ReasonForHandshake.ToString());
+        //  workerFailed(ReasonForHandshake, DateTime.MinValue, new Exception("Disconnected!"));
+        //  return;
+        //}
       }
 
       BackgroundWorker worker = new BackgroundWorker();
@@ -509,9 +481,6 @@ namespace MediaPortal.Music.Database
 
         if (success)
         {
-          if (!_signedIn)
-            _signedIn = true;
-
           lastHandshake = DateTime.Now;
 
           if (_useDebugLog)
@@ -521,7 +490,6 @@ namespace MediaPortal.Music.Database
         }
         else
         {
-          //Log.Warn("AudioscrobblerBase: {0}", "Handshake failed");
           workerFailed(ReasonForHandshake, lastHandshake, errorReason);
         }
       }
@@ -725,9 +693,11 @@ namespace MediaPortal.Music.Database
           request.ContentLength = postHeaderBytes.Length;
 
           // Create stream writer - this can also fail if we aren't connected
-          Stream requestStream = request.GetRequestStream();
-          requestStream.Write(postHeaderBytes, 0, postHeaderBytes.Length);
-          requestStream.Close();
+          using (Stream requestStream = request.GetRequestStream())
+          {
+            requestStream.Write(postHeaderBytes, 0, postHeaderBytes.Length);
+            requestStream.Close();
+          }
         }
         catch (Exception e)
         {
@@ -857,7 +827,7 @@ namespace MediaPortal.Music.Database
       {
         submitThread = new Thread(new ThreadStart(SubmitQueue));
         submitThread.IsBackground = false; // do not abort the submit action when MediaPortal closes
-        submitThread.Name = "Scrobbler";
+        submitThread.Name = "Scrobbler queue";
         submitThread.Priority = ThreadPriority.BelowNormal;
         submitThread.Start();
       }
@@ -916,9 +886,14 @@ namespace MediaPortal.Music.Database
         return;
       }
 
-      BackgroundWorker worker = new BackgroundWorker();
-      worker.DoWork += new DoWorkEventHandler(Worker_TrySubmitTracks);
-      worker.RunWorkerAsync();
+      Thread postThread = new Thread(new ThreadStart(Worker_TrySubmitTracks));
+      postThread.IsBackground = false;
+      postThread.Name = "Scrobbler submit";
+      postThread.Start();
+
+      //BackgroundWorker worker = new BackgroundWorker();
+      //worker.DoWork += new DoWorkEventHandler(Worker_TrySubmitTracks);
+      //worker.RunWorkerAsync();
     }
 
     private static void Worker_TryAnnounceTracks(object sender, DoWorkEventArgs e)
@@ -960,12 +935,12 @@ namespace MediaPortal.Music.Database
       }
     }
 
-    private static void Worker_TrySubmitTracks(object sender, DoWorkEventArgs e)
+    private static void Worker_TrySubmitTracks(/*object sender, DoWorkEventArgs e*/)
     {
       // Only one thread should attempt to run through the queue at a time.
       lock (submitLock)
       {
-        Thread.CurrentThread.Name = "Scrobbler submit";
+        // Thread.CurrentThread.Name = "Scrobbler submit";
         int _submittedSongs = 0;
 
         // Save the queue now since connecting to AS may time out, which

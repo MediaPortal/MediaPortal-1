@@ -422,7 +422,7 @@ namespace MediaPortal.Player
       }
       if (_player != null)
       {
-        Log.Info("g_Player.doStop() keepTimeShifting = {0} keepExclusiveModeOn = {1}", keepTimeShifting, keepExclusiveModeOn);
+        Log.Debug("g_Player.doStop() keepTimeShifting = {0} keepExclusiveModeOn = {1}", keepTimeShifting, keepExclusiveModeOn);
         OnStopped();
 
         //since plugins could stop playback, we need to make sure that _player is not null.
@@ -431,17 +431,17 @@ namespace MediaPortal.Player
         GUIGraphicsContext.ShowBackground = true;
         if (!keepTimeShifting && !keepExclusiveModeOn)
         {
-          Log.Info("g_Player.doStop() - stop");
+          Log.Debug("g_Player.doStop() - stop");
           _player.Stop();
         }
         else if (keepExclusiveModeOn)
         {
-          Log.Info("g_Player.doStop() - stop, keep exclusive mode on");
+          Log.Debug("g_Player.doStop() - stop, keep exclusive mode on");
           _player.Stop(true);
         }
         else
         {
-          Log.Info("g_Player.doStop() - StopAndKeepTimeShifting");
+          Log.Debug("g_Player.doStop() - StopAndKeepTimeShifting");
           _player.StopAndKeepTimeShifting();
         }
         if (GUIGraphicsContext.form != null)

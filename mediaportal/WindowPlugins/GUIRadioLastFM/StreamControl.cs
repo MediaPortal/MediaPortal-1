@@ -243,6 +243,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       _isInit = false; // need to check that..
       RadioSettingsError();
     }
+
     #endregion
 
     #region getters & setters

@@ -116,13 +116,12 @@ namespace MediaPortal.GUI.RADIOLASTFM
       // 
       this.checkBoxDirectSkip.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.checkBoxDirectSkip.AutoSize = true;
       this.checkBoxDirectSkip.Checked = true;
       this.checkBoxDirectSkip.CheckState = System.Windows.Forms.CheckState.Checked;
       this.checkBoxDirectSkip.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxDirectSkip.Location = new System.Drawing.Point(15, 50);
       this.checkBoxDirectSkip.Name = "checkBoxDirectSkip";
-      this.checkBoxDirectSkip.Size = new System.Drawing.Size(273, 17);
+      this.checkBoxDirectSkip.Size = new System.Drawing.Size(349, 17);
       this.checkBoxDirectSkip.TabIndex = 7;
       this.checkBoxDirectSkip.Text = "Skip directly to the next track (do not show selection)";
       this.checkBoxDirectSkip.UseVisualStyleBackColor = true;
@@ -157,10 +156,9 @@ namespace MediaPortal.GUI.RADIOLASTFM
       // 
       this.labelListEntries.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.labelListEntries.AutoSize = true;
       this.labelListEntries.Location = new System.Drawing.Point(79, 128);
       this.labelListEntries.Name = "labelListEntries";
-      this.labelListEntries.Size = new System.Drawing.Size(260, 13);
+      this.labelListEntries.Size = new System.Drawing.Size(285, 13);
       this.labelListEntries.TabIndex = 4;
       this.labelListEntries.Text = "Maximum number of menu entries (for tags, friends, ...)";
       // 
@@ -185,11 +183,10 @@ namespace MediaPortal.GUI.RADIOLASTFM
       // 
       this.checkBoxShowBallonTips.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.checkBoxShowBallonTips.AutoSize = true;
       this.checkBoxShowBallonTips.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxShowBallonTips.Location = new System.Drawing.Point(32, 93);
       this.checkBoxShowBallonTips.Name = "checkBoxShowBallonTips";
-      this.checkBoxShowBallonTips.Size = new System.Drawing.Size(188, 17);
+      this.checkBoxShowBallonTips.Size = new System.Drawing.Size(332, 17);
       this.checkBoxShowBallonTips.TabIndex = 2;
       this.checkBoxShowBallonTips.Text = "Display ballon tips on song change";
       this.checkBoxShowBallonTips.UseVisualStyleBackColor = true;
@@ -198,13 +195,12 @@ namespace MediaPortal.GUI.RADIOLASTFM
       // 
       this.checkBoxSubmitToProfile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.checkBoxSubmitToProfile.AutoSize = true;
       this.checkBoxSubmitToProfile.Checked = true;
       this.checkBoxSubmitToProfile.CheckState = System.Windows.Forms.CheckState.Checked;
       this.checkBoxSubmitToProfile.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxSubmitToProfile.Location = new System.Drawing.Point(15, 27);
       this.checkBoxSubmitToProfile.Name = "checkBoxSubmitToProfile";
-      this.checkBoxSubmitToProfile.Size = new System.Drawing.Size(215, 17);
+      this.checkBoxSubmitToProfile.Size = new System.Drawing.Size(349, 17);
       this.checkBoxSubmitToProfile.TabIndex = 1;
       this.checkBoxSubmitToProfile.Text = "Add radio tracks to your profile on last.fm";
       this.checkBoxSubmitToProfile.UseVisualStyleBackColor = true;
@@ -213,11 +209,10 @@ namespace MediaPortal.GUI.RADIOLASTFM
       // 
       this.checkBoxUseTrayIcon.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.checkBoxUseTrayIcon.AutoSize = true;
       this.checkBoxUseTrayIcon.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxUseTrayIcon.Location = new System.Drawing.Point(15, 73);
       this.checkBoxUseTrayIcon.Name = "checkBoxUseTrayIcon";
-      this.checkBoxUseTrayIcon.Size = new System.Drawing.Size(189, 17);
+      this.checkBoxUseTrayIcon.Size = new System.Drawing.Size(349, 17);
       this.checkBoxUseTrayIcon.TabIndex = 0;
       this.checkBoxUseTrayIcon.Text = "Show tray icon (with context menu)";
       this.checkBoxUseTrayIcon.UseVisualStyleBackColor = true;

@@ -55,7 +55,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       BTN_SUBMIT_PROFILE = 35,
       BTN_DISCOVERY_MODE = 40,
       LIST_TRACK_TAGS = 55,
-      IMG_ARTIST_ART = 112,      
+      IMG_ARTIST_ART = 112,
     }
 
     [SkinControlAttribute((int)SkinControlIDs.BTN_START_STREAM)]    protected GUIButtonControl btnStartStream = null;
@@ -264,15 +264,21 @@ namespace MediaPortal.GUI.RADIOLASTFM
     private string GetInputFromUser(string aDefaultText)
     {
       string searchterm = String.Empty; //aDefaultText;
-      VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
-      if (keyboard == null)
-        return searchterm;
-      
-      keyboard.Reset();
-      keyboard.Text = searchterm;
-      keyboard.DoModal(GetID); // show it...
-      searchterm = keyboard.Text;
+      try
+      {
+        VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
+        if (keyboard == null)
+          return searchterm;
 
+        keyboard.Reset();
+        keyboard.Text = searchterm;
+        keyboard.DoModal(GetID); // show it...
+        searchterm = keyboard.Text;
+      }
+      catch (Exception kex)
+      {
+        Log.Error("GUIRadioLastFM: VirtualKeyboard error - {0}", kex.Message);
+      }
       return searchterm;
     }
 
@@ -484,7 +490,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
           {
             Log.Warn("GUIRadioLastFM: Could not split given tags - {0}, {1}", btnChooseTag.Label, ex.Message);
             MyTags.Add(btnChooseTag.Label);
-          }          
+          }
           //MyTags.Add("melodic death metal");
           LastFMStation.TuneIntoTags(MyTags);
           break;
@@ -571,6 +577,9 @@ namespace MediaPortal.GUI.RADIOLASTFM
           OnSkipHandler(false);
           break;
         case 34012:     // Skip
+          // Only mark tracks as skipped if it has not been played long enough for a regular submit
+          if (AudioscrobblerBase.CurrentSong.AudioScrobblerStatus == SongStatus.Loaded)
+            AudioscrobblerBase.CurrentSong.AudioscrobblerAction = SongAction.S;
           OnSkipHandler(false);
           break;
         case 33040:    // IRC spam          
@@ -971,36 +980,41 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     private void PlayBackStoppedHandler(g_Player.MediaType type, int stoptime, string filename)
     {
-      if (!String.IsNullOrEmpty(filename))
-      {
-        if (!Util.Utils.IsLastFMStream(filename) || LastFMStation.CurrentStreamState != StreamPlaybackState.streaming)
-          return;
-      }
+      if (!Util.Utils.IsLastFMStream(filename) || LastFMStation.CurrentStreamState != StreamPlaybackState.streaming)
+        return;
       OnPlaybackStopped();
     }
 
     private void PlayBackEndedHandler(g_Player.MediaType type, string filename)
     {
-      if (!String.IsNullOrEmpty(filename))
-      {
-        if (!Util.Utils.IsLastFMStream(filename) || LastFMStation.CurrentStreamState != StreamPlaybackState.streaming)
-          return;
-      }
-
-      Log.Debug("GUIRadioLastFM: PlayBackEnded for this selection - trying restart...");
-      if (PlayPlayListStreams(_radioTrackList[0]))
-      {
-        LastFMStation.CurrentPlaybackType = PlaybackType.PlaylistPlayer;
+      if (!Util.Utils.IsLastFMStream(filename) || LastFMStation.CurrentStreamState != StreamPlaybackState.streaming)
         return;
+
+      try
+      {
+        g_Player.Stop();
+
+        Log.Debug("GUIRadioLastFM: PlayBackEnded for this selection - trying restart...");
+        if (RebuildStreamList())
+        {
+          if (PlayPlayListStreams(_radioTrackList[0]))
+          {
+            LastFMStation.CurrentPlaybackType = PlaybackType.PlaylistPlayer;
+            return;
+          }
+        }
+
+        OnPlaybackStopped();
+
+        ShowSongTrayBallon(GUILocalizeStrings.Get(34051), GUILocalizeStrings.Get(34052), 15, true); // Stream ended, No more content or bad connection
+
+        Log.Info("GUIRadioLastFM: No more content for this selection or interrupted stream..");
+        LastFMStation.CurrentStreamState = StreamPlaybackState.nocontent;
       }
-
-      OnPlaybackStopped();
-
-      ShowSongTrayBallon(GUILocalizeStrings.Get(34051), GUILocalizeStrings.Get(34052), 15, true); // Stream ended, No more content or bad connection
-
-      Log.Info("GUIRadioLastFM: No more content for this selection or interrupted stream..");
-      LastFMStation.CurrentStreamState = StreamPlaybackState.nocontent;
-      //dlg.AddLocalizedString(930);        //Add to favorites
+      catch (Exception ex)
+      {
+        Log.Warn("GUIRadioLastFM: Error in PlayBackEndedHandler - {0}", ex.Message);
+      }
     }
 
     private void PlayBackFailedHandler()

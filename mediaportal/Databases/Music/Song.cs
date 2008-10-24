@@ -27,6 +27,7 @@ using System;
 using System.Text;
 using MediaPortal.TagReader;
 
+
 namespace MediaPortal.Music.Database
 {
   /// <summary>
@@ -120,7 +121,7 @@ namespace MediaPortal.Music.Database
     int _iDisc = 0;
     int _iNumDisc = 0;
     string _strLyrics = String.Empty;
-    SongSource _songSource = SongSource.U;
+    SongSource _songSource = SongSource.P;
     string _authToken = String.Empty;
     SongAction _songAction = SongAction.N;
 
@@ -190,7 +191,7 @@ namespace MediaPortal.Music.Database
       _iDisc = 0;
       _iNumDisc = 0;
       _strLyrics = String.Empty;
-      _songSource = SongSource.U;
+      _songSource = SongSource.P;
       _authToken = String.Empty;
       _songAction = SongAction.N;
     }
@@ -260,6 +261,9 @@ namespace MediaPortal.Music.Database
       set { _strTitle = value; }
     }
 
+    /// <summary>
+    /// Track number
+    /// </summary>
     public int Track
     {
       get { return _iTrack; }
@@ -345,12 +349,18 @@ namespace MediaPortal.Music.Database
       set { _dateTimePlayed = value; }
     }
 
+    /// <summary>
+    /// Determines whether the song has been submitted, is waiting for submit, etc
+    /// </summary>
     public SongStatus AudioScrobblerStatus
     {
       get { return _audioScrobblerStatus; }
       set { _audioScrobblerStatus = value; }
     }
 
+    /// <summary>
+    /// A unique ID to indentify each track
+    /// </summary>
     public string MusicBrainzID
     {
       get { return _musicBrainzID; }
@@ -414,6 +424,9 @@ namespace MediaPortal.Music.Database
       set { _strLyrics = value; }
     }
 
+    /// <summary>
+    /// Indicates whether the track has been choosen by the user / a radio station / a suggestion method
+    /// </summary>
     public SongSource Source
     {
       get { return _songSource; }
@@ -426,6 +439,9 @@ namespace MediaPortal.Music.Database
       set { _authToken = value; }
     }
 
+    /// <summary>
+    /// A submit action like BAN / LOVE / SKIP
+    /// </summary>
     public SongAction AudioscrobblerAction
     {
       get { return _songAction; }
@@ -475,13 +491,13 @@ namespace MediaPortal.Music.Database
     {
       StringBuilder s = new StringBuilder();
 
-      if (_strTitle != String.Empty)
+      if (_strArtist != String.Empty)
       {
-        s.Append(_strTitle);
+        s.Append(_strArtist);
         s.Append(" - ");
       }
-      if (_strArtist != String.Empty)
-        s.Append(_strArtist);
+      if (_strTitle != String.Empty)
+        s.Append(_strTitle);
       if (_iDuration > 0)
       {
         s.Append(" [");
@@ -592,7 +608,6 @@ namespace MediaPortal.Music.Database
           return "U";
         default:
           return "P";
-          break;
       }
     }
 
