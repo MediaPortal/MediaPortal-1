@@ -220,7 +220,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
         _trayBallonSongChange.Visible = false;
         _trayBallonSongChange = null;
       }
-
       if (_lastTrackTagRequest != null)
         InfoScrobbler.RemoveRequest(_lastTrackTagRequest);
       if (_lastArtistCoverRequest != null)
@@ -241,20 +240,16 @@ namespace MediaPortal.GUI.RADIOLASTFM
       {
         SetupRadioStream();
       }
-
       if (control == btnChooseTag)
       {
         OnSelectTag();
       }
-
       if (control == btnChooseFriend)
       {
         OnSelectFriend();
       }
-
       if (control == btnDiscoveryMode)
         LastFMStation.DiscoveryMode = btnDiscoveryMode.Selected;
-
       if (control == btnSubmitProfile)
         AudioscrobblerBase.SubmitRadioSongs = btnSubmitProfile.Selected;
 

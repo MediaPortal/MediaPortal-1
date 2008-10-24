@@ -1559,12 +1559,40 @@ namespace MediaPortal.Music.Database
           catch (WebException wex)
           {
             // If error e.g. 503, server busy, etc wait and try again.
-            //if (wex.Status == WebExceptionStatus.ConnectFailure)
-            //{
-            Log.Warn("AudioscrobblerUtils: Error while downloading on first try: {0} - {1}", imageUrl, wex.Message);
-            Thread.Sleep(1000);
-            client.DownloadFile(imageUrl, tmpFile);
-            //}
+            if (wex.Status == WebExceptionStatus.ProtocolError)
+            {
+              HttpWebResponse httpResponse = (HttpWebResponse)wex.Response;
+              switch (httpResponse.StatusCode)
+              {
+                case HttpStatusCode.BadGateway:
+                  break;
+                case HttpStatusCode.BadRequest:
+                  break;
+                case HttpStatusCode.Forbidden:
+                  break;
+                case HttpStatusCode.Gone:
+                  break;
+                case HttpStatusCode.InternalServerError:
+                  break;
+                case HttpStatusCode.MethodNotAllowed:
+                  break;
+                case HttpStatusCode.NotFound:
+                  break;
+                case HttpStatusCode.PaymentRequired:
+                  break;
+                case HttpStatusCode.PreconditionFailed:
+                  break;
+                case HttpStatusCode.ProxyAuthenticationRequired:
+                  break;
+                case HttpStatusCode.Unauthorized:
+                  break;
+                default:
+                  Log.Warn("AudioscrobblerUtils: Error while downloading on first try: {0} - {1}", imageUrl, wex.Message);
+                  Thread.Sleep(1000);
+                  client.DownloadFile(imageUrl, tmpFile);
+                  break;
+              }
+            }
           }
         }
       }

@@ -1272,17 +1272,10 @@ namespace MediaPortal.Music.Database
     [MethodImpl(MethodImplOptions.Synchronized)]
     private static string removeEndingChars(string inputString_)
     {
-      int dotIndex = 0;
       try
       {
         // build a clean end
-        inputString_ = inputString_.Trim();
-        dotIndex = inputString_.LastIndexOf('-');
-        if (dotIndex >= inputString_.Length - 2)
-          inputString_ = inputString_.Remove(dotIndex);
-        dotIndex = inputString_.LastIndexOf('+');
-        if (dotIndex >= inputString_.Length - 2)
-          inputString_ = inputString_.Remove(dotIndex);
+        inputString_.TrimEnd(new char[] { '-', '+', ' ' });
       }
       catch (Exception ex)
       {
