@@ -95,7 +95,7 @@
     <control>
       <description>Gap / Normal Icon</description>
       <type>image</type>
-      <id>80</id>
+      <id>10</id>
       <posX>251</posX>
       <posY>638</posY>
       <width>53</width>
@@ -108,7 +108,7 @@
     <control>
       <description>Gapless Icon</description>
       <type>image</type>
-      <id>81</id>
+      <id>11</id>
       <posX>251</posX>
       <posY>638</posY>
       <width>53</width>
@@ -121,7 +121,7 @@
     <control>
       <description>Crossfade Icon</description>
       <type>image</type>
-      <id>82</id>
+      <id>12</id>
       <posX>251</posX>
       <posY>638</posY>
       <width>53</width>

@@ -8,7 +8,7 @@
       <posX>0</posX>
       <posY>0</posY>
       <width>1280</width>
-      <height>720</height>
+      <height>1020</height>
       <dimColor>50ffffff</dimColor>
       <texture>#selectedthumb</texture>
       <visible>facadeview.filmstrip</visible>
