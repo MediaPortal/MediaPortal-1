@@ -68,6 +68,7 @@ namespace TvService
     /// <returns></returns>
     public TvResult Tune(ref User user, IChannel channel, int idChannel)
     {
+      ITvSubChannel result = null;
       try
       {
         if (_cardHandler.DataBaseCard.Enabled == false) return TvResult.CardIsDisabled;
@@ -145,7 +146,7 @@ namespace TvService
             }
           }
 
-          ITvSubChannel result = _cardHandler.Card.Tune(user.SubChannel, channel);
+          result = _cardHandler.Card.Tune(user.SubChannel, channel);
 
           bool isLocked = _cardHandler.Card.IsTunerLocked;
           Log.Debug("card: Tuner locked: {0}", isLocked);
