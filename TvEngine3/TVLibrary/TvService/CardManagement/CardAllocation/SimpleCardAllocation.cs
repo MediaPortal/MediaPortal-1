@@ -355,6 +355,7 @@ namespace TvService
           } //foreach tuningdetail end      
         }
       }
+      Thread.CurrentThread.Abort();
     }
 
     #endregion
@@ -374,6 +375,7 @@ namespace TvService
       IList<User> allUsers = GetActiveUsers(cards);
       ThreadStart starter = delegate { DoSetChannelStates(cards, channels, checkTransponders, allUsers, tvController); };
       Thread setChannelStatesThread = new Thread(starter);
+      setChannelStatesThread.IsBackground = true;
       setChannelStatesThread.Priority = ThreadPriority.Lowest;
       setChannelStatesThread.Start();
     }
