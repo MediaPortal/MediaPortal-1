@@ -1573,6 +1573,10 @@ public class MediaPortalApp : D3DApp, IRender
       Log.Info("Main: Resetting DX9 device");
       GUIGraphicsContext.DX9Device.EvictManagedResources();
       GUIWaitCursor.Dispose();
+      if (!m_strSkin.Equals(GUIGraphicsContext.Skin))
+      {
+        m_strSkin = GUIGraphicsContext.Skin;
+      }
       GUIFontManager.LoadFonts(Config.GetFile(Config.Dir.Skin, m_strSkin, "fonts.xml"));
       GUIFontManager.InitializeDeviceObjects();
       if (GUIGraphicsContext.DX9Device != null)

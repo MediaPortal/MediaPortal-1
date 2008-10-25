@@ -848,6 +848,10 @@ namespace MediaPortal
         GUIGraphicsContext.DX9Device.Reset(presentParams);
         if (GUIGraphicsContext.IsDirectX9ExUsed() && !useEnhancedVideoRenderer)
         {
+          if (!m_strSkin.Equals(GUIGraphicsContext.Skin))
+          {
+            m_strSkin = GUIGraphicsContext.Skin;
+          }
           GUIFontManager.LoadFonts(Config.GetFile(Config.Dir.Skin, m_strSkin, "fonts.xml"));
           GUIFontManager.InitializeDeviceObjects();
         }
@@ -885,6 +889,10 @@ namespace MediaPortal
           GUIGraphicsContext.DX9Device.Reset(presentParams);
           if (GUIGraphicsContext.IsDirectX9ExUsed() && !useEnhancedVideoRenderer)
           {
+            if (!m_strSkin.Equals(GUIGraphicsContext.Skin))
+            {
+              m_strSkin = GUIGraphicsContext.Skin;
+            }
             GUIFontManager.LoadFonts(Config.GetFile(Config.Dir.Skin, m_strSkin, "fonts.xml"));
             GUIFontManager.InitializeDeviceObjects();
           }
@@ -2267,6 +2275,20 @@ namespace MediaPortal
         }
       }
       base.OnResizeEnd(e);
+    }
+    
+    /// <summary>
+    /// Handles the OnSizeChanged event, which isn't the same as the resize event.
+    /// </summary>
+    /// <param name="e">Event arguments</param>
+    protected override void OnSizeChanged(EventArgs e)
+    {
+      if (GUIGraphicsContext.IsDirectX9ExUsed() && this.Visible && !_resizeOngoing)
+      {
+        SwitchFullScreenOrWindowed(false);
+        OnDeviceReset(null, null);
+      }
+      base.OnSizeChanged(e);
     }
 
     /// <summary>

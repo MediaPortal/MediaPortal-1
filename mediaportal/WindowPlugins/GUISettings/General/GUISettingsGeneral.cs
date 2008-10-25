@@ -245,29 +245,28 @@ namespace WindowPlugins.GUISettings
       GUIFontManager.InitializeDeviceObjects();
       GUIControlFactory.ClearReferences();
       GUIControlFactory.LoadReferences(GUIGraphicsContext.Skin + @"\references.xml");
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-      {
-        xmlreader.SetValue("general", "skinobsoletecount", 0);
-        bool autosize = xmlreader.GetValueAsBool("general", "autosize", true);
-				if (autosize && !GUIGraphicsContext.Fullscreen)
-				{
-					try
-					{
-						Form.ActiveForm.Size = new System.Drawing.Size(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
-					}
-					catch(Exception ex)
-					{
-						Log.Error("OnSkinChanged exception:{0}", ex.ToString());
-						Log.Error(ex);
-					}
-				}
-      }
       GUIWindowManager.OnResize();
       GUIWindowManager.ActivateWindow(GetID);
       GUIControl.FocusControl(GetID, btnSkin.GetID);
 
       // Apply the selected buttons again, since they are cleared when we reload
       RestoreButtons();
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        xmlreader.SetValue("general", "skinobsoletecount", 0);
+        bool autosize = xmlreader.GetValueAsBool("general", "autosize", true);
+        if (autosize && !GUIGraphicsContext.Fullscreen)
+        {
+          try
+          {
+            Form.ActiveForm.ClientSize = new System.Drawing.Size(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
+          } catch (Exception ex)
+          {
+            Log.Error("OnSkinChanged exception:{0}", ex.ToString());
+            Log.Error(ex);
+          }
+        }
+      }
     }
 
     void OnLanguageChanged()
