@@ -128,12 +128,12 @@ namespace MediaPortal.Audioscrobbler
           int waitMs = 250;
 
           // Due to bad player design or crossfading OnPlayBackStarted might be earlier then OnPlayBackEnded
-          while (_currentSong.AudioScrobblerStatus == SongStatus.Cached && (lameLoopCounter * waitMs < BassMusicPlayer.Player.CrossFadeIntervalMS))
+          while (_currentSong.AudioScrobblerStatus == SongStatus.Cached && (lameLoopCounter * waitMs < 2 * BassMusicPlayer.Player.CrossFadeIntervalMS))
           {
             Thread.Sleep(waitMs);
             lameLoopCounter++;
             if (lameLoopCounter % 4 == 0)
-              Log.Warn("Audioscrobbler plugin: OnPlayBackStarted - waiting {0} s for OnPlayBackEnded to submit track.",(int) (lameLoopCounter * waitMs / 1000));
+              Log.Warn("Audioscrobbler plugin: OnPlayBackStarted - waiting {0} s for OnPlayBackEnded to submit track.", (int)(lameLoopCounter * waitMs / 1000));
           }
 
           QueueLastSong();
@@ -249,19 +249,12 @@ namespace MediaPortal.Audioscrobbler
       else
         if (Util.Utils.IsLastFMStream(g_Player.Player.CurrentFile))
         {
-          // Wait up to 15 seconds for the NowPlayingParser to get a response from last.fm
-          for (int i = 0; i < 30; i++)
-          {
-            _currentSong = AudioscrobblerBase.CurrentSong.Clone();
+          // Wait up to 5 seconds for the NowPlayingParser to get a response from last.fm
+          // This is usually not needed since the XSPF playlist contains all needed details
+          System.Threading.Thread.Sleep(5000);
+          _currentSong = AudioscrobblerBase.CurrentSong.Clone();
 
-            if (_currentSong.FileName == g_Player.Player.CurrentFile)
-            {
-              songFound = true;
-              Log.Info("Audioscrobbler plugin: detected new last.fm radio track as: {0} - {1} after {2} seconds", _currentSong.Artist, _currentSong.Title, Convert.ToString(i / 2));
-              break;
-            }
-            System.Threading.Thread.Sleep(500);
-          }
+          songFound = _currentSong.FileName == g_Player.Player.CurrentFile;
           if (songFound)
           {
             SetStartTime();
@@ -317,6 +310,7 @@ namespace MediaPortal.Audioscrobbler
         _currentSong.DateTimePlayed = DateTime.UtcNow;
         _lastPosition = 1;
       }
+      Log.Info("Audioscrobbler plugin: detected radio track as: {0} - {1} started at: {2}", _currentSong.Artist, _currentSong.Title, _currentSong.DateTimePlayed.ToLocalTime().ToLongTimeString());
     }
 
     /// <summary>

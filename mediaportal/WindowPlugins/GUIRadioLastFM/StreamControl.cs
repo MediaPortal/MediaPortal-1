@@ -197,6 +197,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     #endregion
 
     #region Serialisation
+
     private void LoadSettings()
     {
       CurrentSongTag = new MusicTag();
@@ -366,31 +367,31 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     #region Control functions
 
-    public bool PlayStream()
-    {
-      GUIWaitCursor.Show();
+    //public bool PlayStream()
+    //{
+    //  GUIWaitCursor.Show();
 
-      if (g_Player.Playing)
-        g_Player.Stop();
+    //  if (g_Player.Playing)
+    //    g_Player.Stop();
 
-      _currentState = StreamPlaybackState.starting;
-      // often the buffer is too slow for the playback to start
-      for (int i = 0; i < 3; i++)
-      {
-        if (g_Player.Play(_currentRadioURL))
-        {
-          GUIWaitCursor.Hide();
-          _currentState = StreamPlaybackState.streaming;
-          ToggleRecordToProfile(AudioscrobblerBase.SubmitRadioSongs);
-          ToggleDiscoveryMode(_discoveryMode);
+    //  _currentState = StreamPlaybackState.starting;
+    //  // often the buffer is too slow for the playback to start
+    //  for (int i = 0; i < 3; i++)
+    //  {
+    //    if (g_Player.Play(_currentRadioURL))
+    //    {
+    //      GUIWaitCursor.Hide();
+    //      _currentState = StreamPlaybackState.streaming;
+    //      ToggleRecordToProfile(AudioscrobblerBase.SubmitRadioSongs);
+    //      ToggleDiscoveryMode(_discoveryMode);
 
-          return true;
-        }
-      }
-      GUIWaitCursor.Hide();
-      _currentState = StreamPlaybackState.initialized;
-      return false;
-    }
+    //      return true;
+    //    }
+    //  }
+    //  GUIWaitCursor.Hide();
+    //  _currentState = StreamPlaybackState.initialized;
+    //  return false;
+    //}
 
     public void LoadConfig()
     {

@@ -195,7 +195,7 @@ namespace MediaPortal.Music.Database
           string artist = String.Empty;
           string title = String.Empty;
           string start_time = Convert.ToString(Util.Utils.GetUnixTime(DateTime.UtcNow));
-          string source = "U";
+          string source = "P";
           string rating = String.Empty;
           string auth = String.Empty;
           int duration = 0;

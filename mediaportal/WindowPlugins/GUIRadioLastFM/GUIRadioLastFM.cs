@@ -182,12 +182,12 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
       if (_usersOwnTags.Count < 1)
       {
-        btnChooseTag.Disabled = true;
+        // btnChooseTag.Disabled = true;
         btnChooseTag.Label = GUILocalizeStrings.Get(34030);
       }
       if (_usersFriends.Count < 1)
       {
-        btnChooseFriend.Disabled = true;
+        // btnChooseFriend.Disabled = true;
         btnChooseFriend.Label = GUILocalizeStrings.Get(34031);
       }
 
@@ -504,7 +504,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
           break;
       }
 
-      if (LastFMStation.CurrentStreamState == StreamPlaybackState.initialized)
+      if (LastFMStation.CurrentStreamState == StreamPlaybackState.initialized || LastFMStation.CurrentStreamState == StreamPlaybackState.nocontent)
       {
         //if (LastFMStation.PlayStream())
         //{
@@ -831,7 +831,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         }
         if (_usersOwnTags.Count > 0)
         {
-          btnChooseTag.Disabled = false;
+          // btnChooseTag.Disabled = false;
           btnChooseTag.Label = _usersOwnTags[0];
         }
       }
@@ -853,7 +853,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         }
         if (_usersFriends.Count > 0)
         {
-          btnChooseFriend.Disabled = false;
+          // btnChooseFriend.Disabled = false;
           btnChooseFriend.Label = _usersFriends[0];
         }
       }
@@ -1006,10 +1006,9 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
         OnPlaybackStopped();
 
-        ShowSongTrayBallon(GUILocalizeStrings.Get(34051), GUILocalizeStrings.Get(34052), 15, true); // Stream ended, No more content or bad connection
-
-        Log.Info("GUIRadioLastFM: No more content for this selection or interrupted stream..");
         LastFMStation.CurrentStreamState = StreamPlaybackState.nocontent;
+        ShowSongTrayBallon(GUILocalizeStrings.Get(34051), GUILocalizeStrings.Get(34052), 15, true); // Stream ended, No more content or bad connection
+        Log.Info("GUIRadioLastFM: No more content for this selection or interrupted stream..");
       }
       catch (Exception ex)
       {

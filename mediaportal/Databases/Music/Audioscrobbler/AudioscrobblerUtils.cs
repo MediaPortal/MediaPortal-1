@@ -2435,7 +2435,7 @@ namespace MediaPortal.Music.Database
             else if (mainchild.Name == "album" && mainchild.ChildNodes.Count != 0)
               nodeSong.Album = DecodeUtf8String(mainchild.ChildNodes[0].Value);
             else if (mainchild.Name == "location" && mainchild.ChildNodes.Count != 0)
-              nodeSong.URL = mainchild.ChildNodes[0].Value;
+              nodeSong.FileName = nodeSong.URL = mainchild.ChildNodes[0].Value;
             else if (mainchild.Name == "image" && mainchild.ChildNodes.Count != 0)
               nodeSong.WebImage = mainchild.ChildNodes[0].Value;
             else if (mainchild.Name == "duration" && mainchild.ChildNodes.Count != 0)
