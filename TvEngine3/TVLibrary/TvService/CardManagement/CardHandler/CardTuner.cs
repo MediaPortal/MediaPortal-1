@@ -185,13 +185,19 @@ namespace TvService
       }
       catch (TvExceptionNoSignal tvex)
       {
-        _cardHandler.Card.FreeSubChannel(result.SubChannelId);
+        if (result != null)
+        {
+          _cardHandler.Card.FreeSubChannel(result.SubChannelId);
+        }
         return TvResult.NoSignalDetected;
       }
       catch (Exception ex)
       {
         Log.Write(ex);
-        _cardHandler.Card.FreeSubChannel(result.SubChannelId);
+        if (result != null)
+        {
+          _cardHandler.Card.FreeSubChannel(result.SubChannelId);
+        }
         return TvResult.UnknownError;
       }
     }
