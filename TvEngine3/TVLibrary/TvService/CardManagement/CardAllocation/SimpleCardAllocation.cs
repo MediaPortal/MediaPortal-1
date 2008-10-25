@@ -28,6 +28,7 @@ using System.Xml;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.Runtime.CompilerServices;
 using DirectShowLib.SBE;
 using TvLibrary;
 using TvLibrary.Implementations;
@@ -123,6 +124,7 @@ namespace TvService
       return allUsers;
     }
 
+    [MethodImpl(MethodImplOptions.Synchronized)]
     private void DoSetChannelStates(Dictionary<int, ITvCardHandler> cards, List<Channel> channels, bool checkTransponders, IList<User> allUsers, TVController tvController)
     {
       //construct list of all cards we can use to tune to the new channel
