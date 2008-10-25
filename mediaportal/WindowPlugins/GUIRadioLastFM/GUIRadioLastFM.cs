@@ -28,7 +28,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 
 using MediaPortal.Configuration;
@@ -39,6 +41,7 @@ using MediaPortal.Player;
 using MediaPortal.TagReader;
 using MediaPortal.Util;
 using MediaPortal.Playlists;
+
 
 namespace MediaPortal.GUI.RADIOLASTFM
 {
@@ -77,6 +80,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     private List<string> _usersOwnTags = null;
     private List<string> _usersFriends = null;
     private List<Song> _radioTrackList = null;
+    private Song _streamSong = null;
     private ScrobblerUtilsRequest _lastTrackTagRequest;
     private ScrobblerUtilsRequest _lastArtistCoverRequest;
     private ScrobblerUtilsRequest _lastSimilarArtistRequest;
@@ -116,13 +120,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
         GUIWaitCursor.Hide();
     }
 
-    //private void SaveSettings()
-    //{
-    //  using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-    //  {
-    //  }
-    //}
-
     #endregion
 
     #region BaseWindow Members
@@ -145,6 +142,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       _usersOwnTags = new List<string>();
       _usersFriends = new List<string>();
       _radioTrackList = new List<Song>();
+      _streamSong = new Song();
 
       if (_configShowTrayIcon)
         InitTrayIcon();
@@ -155,10 +153,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
       LastFMStation.RadioSettingsSuccess += new StreamControl.RadioSettingsLoaded(OnRadioSettingsSuccess);
       LastFMStation.RadioSettingsError += new StreamControl.RadioSettingsFailed(OnRadioSettingsError);
-
-      BassMusicPlayer.Player.LastFMSync += new BassAudioEngine.LastFMSyncReceived(OnLastFMSyncReceived);
-
-      LastFMStation.StreamSongChanged += new StreamControl.SongChangedHandler(OnLastFMStation_StreamSongChanged);
 
       return bResult;
     }
@@ -192,9 +186,9 @@ namespace MediaPortal.GUI.RADIOLASTFM
       }
 
       GUIPropertyManager.SetProperty("#trackduration", " ");
-      string ThumbFileName = string.Empty;
+      string ThumbFileName = String.Empty;
 
-      if (LastFMStation.CurrentTrackTag != null && LastFMStation.CurrentTrackTag.Artist != string.Empty)
+      if (LastFMStation.CurrentTrackTag != null && LastFMStation.CurrentTrackTag.Artist != String.Empty)
       {
         // If we leave and reenter the plugin try to set the correct duration
         GUIPropertyManager.SetProperty("#trackduration", Util.Utils.SecondsToHMSString(LastFMStation.CurrentTrackTag.Duration));
@@ -263,7 +257,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     /// <returns>the text entered by the user</returns>
     private string GetInputFromUser(string aDefaultText)
     {
-      string searchterm = String.Empty; //aDefaultText;
+      string searchterm = aDefaultText;
       try
       {
         VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
@@ -291,8 +285,13 @@ namespace MediaPortal.GUI.RADIOLASTFM
       dlg.SetHeading(33013); // tracks suiting configured tag
 
       dlg.Add(GUILocalizeStrings.Get(34060)); // Enter tag...
-      foreach (string ownTag in _usersOwnTags)
-        dlg.Add(ownTag);
+      for (int i = 0; i < _usersOwnTags.Count; i++)
+      {
+        dlg.Add(_usersOwnTags[i]);
+        // position on the previous tag
+        if (_usersOwnTags[i] == btnChooseTag.Label)
+          dlg.SelectedLabel = i + 1; // that dialog starts with 1!? and we've added a manual item as well
+      }
 
       dlg.DoModal(GetID);
       if (dlg.SelectedId == -1)
@@ -323,8 +322,13 @@ namespace MediaPortal.GUI.RADIOLASTFM
       dlg.SetHeading(33016); // tracks your friends like
 
       dlg.Add(GUILocalizeStrings.Get(34061)); // Enter a username...
-      foreach (string Friend in _usersFriends)
-        dlg.Add(Friend);
+      for (int i = 0; i < _usersFriends.Count; i++)
+      {
+        dlg.Add(_usersFriends[i]);
+        // position on the previous tag
+        if (_usersFriends[i] == btnChooseFriend.Label)
+          dlg.SelectedLabel = i + 1; // that dialog starts with 1!? and we've added a manual item as well
+      }
 
       dlg.DoModal(GetID);
       if (dlg.SelectedId == -1)
@@ -333,7 +337,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       // Open keyboard to enter own friends
       if (dlg.SelectedId == 1)
       {
-        string SearchText = GetInputFromUser(btnChooseFriend.Label);
+        string SearchText = GetInputFromUser(String.Empty); // (btnChooseFriend.Label);
 
         if (!String.IsNullOrEmpty(SearchText))
           btnChooseFriend.Label = SearchText;
@@ -349,8 +353,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
     private void SetupRadioStream()
     {
       bool isSubscriber = LastFMStation.IsSubscriber;
-      string desiredTag = string.Empty;
-      string desiredFriend = string.Empty;
+      string desiredTag = String.Empty;
+      string desiredFriend = String.Empty;
       StreamType TuneIntoSelected = LastFMStation.CurrentTuneType;
 
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
@@ -364,21 +368,21 @@ namespace MediaPortal.GUI.RADIOLASTFM
       dlg.Add("MediaPortal User's group radio");
 
       // 3
-      if (btnChooseTag.Label != string.Empty)
+      if (btnChooseTag.Label != String.Empty)
         desiredTag = GUILocalizeStrings.Get(34041) + btnChooseTag.Label;  // Tune into chosen Tag: 
       else
         desiredTag = GUILocalizeStrings.Get(34042);                       // No tag has been chosen yet
       dlg.Add(desiredTag);
 
       // 4
-      if (btnChooseFriend.Label != string.Empty)
+      if (btnChooseFriend.Label != String.Empty)
         desiredFriend = GUILocalizeStrings.Get(34043) + btnChooseFriend.Label; // Personal radio of: 
       else
         desiredFriend = GUILocalizeStrings.Get(34045); // No Friend has been chosen yet
       dlg.Add(desiredFriend);
 
       // 5
-      if (btnChooseFriend.Label != string.Empty)
+      if (btnChooseFriend.Label != String.Empty)
         desiredFriend = GUILocalizeStrings.Get(34044) + btnChooseFriend.Label; // Loved tracks of: 
       else
         desiredFriend = GUILocalizeStrings.Get(34045); // No Friend has been chosen yet
@@ -506,19 +510,11 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
       if (LastFMStation.CurrentStreamState == StreamPlaybackState.initialized || LastFMStation.CurrentStreamState == StreamPlaybackState.nocontent)
       {
-        //if (LastFMStation.PlayStream())
-        //{
-        //  LastFMStation.CurrentPlaybackType = PlaybackType.Continuously;
-        //}
-        //else
-        //{
-
         if (RebuildStreamList())
         {
           if (PlayPlayListStreams(_radioTrackList[0]))
           {
             LastFMStation.CurrentPlaybackType = PlaybackType.PlaylistPlayer;
-            // Log.Warn("GUIRadio: Fallback to playlist mode was needed to start the stream.");
             return;
           }
         }
@@ -568,26 +564,20 @@ namespace MediaPortal.GUI.RADIOLASTFM
       switch (dlg.SelectedId)
       {
         case 34010:     // Love
-          LastFMStation.SendControlCommand(StreamControls.lovetrack);
-          AudioscrobblerBase.CurrentSong.AudioscrobblerAction = SongAction.L;
+          OnLoveClicked();
           break;
         case 34011:     // Ban
-          LastFMStation.SendControlCommand(StreamControls.bantrack);
-          AudioscrobblerBase.CurrentSong.AudioscrobblerAction = SongAction.B;
-          OnSkipHandler(false);
+          OnBanClicked();
           break;
         case 34012:     // Skip
-          // Only mark tracks as skipped if it has not been played long enough for a regular submit
-          if (AudioscrobblerBase.CurrentSong.AudioScrobblerStatus == SongStatus.Loaded)
-            AudioscrobblerBase.CurrentSong.AudioscrobblerAction = SongAction.S;
-          OnSkipHandler(false);
+          OnSkipClicked();
           break;
         case 33040:    // IRC spam          
           try
           {
             if (LastFMStation.CurrentTrackTag != null)
             {
-              string tmpTrack = LastFMStation.CurrentTrackTag.Track > 0 ? (Convert.ToString(LastFMStation.CurrentTrackTag.Track) + ". ") : string.Empty;
+              string tmpTrack = LastFMStation.CurrentTrackTag.Track > 0 ? (Convert.ToString(LastFMStation.CurrentTrackTag.Track) + ". ") : String.Empty;
               Clipboard.SetDataObject(@"/me is listening on last.fm: " + LastFMStation.CurrentTrackTag.Artist + " [" + LastFMStation.CurrentTrackTag.Album + "] - " + tmpTrack + LastFMStation.CurrentTrackTag.Title, true);
             }
           }
@@ -654,6 +644,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
       }
       LastFMStation.CurrentStreamState = StreamPlaybackState.starting;
 
+      _streamSong = aStreamSong;
+
       Song addSong = aStreamSong.Clone();
       AddStreamSongToPlaylist(ref addSong);
 
@@ -672,9 +664,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
       LastFMStation.CurrentStreamState = StreamPlaybackState.streaming;
       //LastFMStation.ToggleRecordToProfile(false);    
       LastFMStation.ToggleDiscoveryMode(LastFMStation.DiscoveryMode);
-
-      AudioscrobblerBase.CurrentSong = aStreamSong;
-      AudioscrobblerBase.CurrentSong.Source = SongSource.L;
 
       GUIWaitCursor.Hide();
       return g_Player.Playing;
@@ -721,7 +710,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     {
       if (_trackArtist == null)
         return;
-      if (_trackArtist != string.Empty)
+      if (_trackArtist != String.Empty)
       {
         ArtistInfoRequest request = new ArtistInfoRequest(
                       _trackArtist,
@@ -769,7 +758,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     {
       if (request2.Equals(_lastSimilarArtistRequest))
       {
-        string propertyTags = string.Empty;
+        string propertyTags = String.Empty;
 
         for (int i = 0; i < SimilarArtists.Count; i++)
         {
@@ -795,7 +784,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     {
       if (request.Equals(_lastTrackTagRequest))
       {
-        string propertyTags = string.Empty;
+        string propertyTags = String.Empty;
 
         for (int i = 0; i < TagTracks.Count; i++)
         {
@@ -866,12 +855,12 @@ namespace MediaPortal.GUI.RADIOLASTFM
       LastFMStation.CurrentTrackTag.Clear();
       LastFMStation.CurrentStreamState = StreamPlaybackState.initialized;
 
-      SetArtistThumb(string.Empty);
-      GUIPropertyManager.SetProperty("#Play.Current.Lastfm.TrackTags", string.Empty);
-      GUIPropertyManager.SetProperty("#Play.Current.Lastfm.SimilarArtists", string.Empty);
+      SetArtistThumb(String.Empty);
+      GUIPropertyManager.SetProperty("#Play.Current.Lastfm.TrackTags", String.Empty);
+      GUIPropertyManager.SetProperty("#Play.Current.Lastfm.SimilarArtists", String.Empty);
       GUIPropertyManager.SetProperty("#trackduration", " ");
-      GUIPropertyManager.SetProperty("#currentplaytime", string.Empty);
-      GUIPropertyManager.SetProperty("#Play.Current.Lastfm.CurrentStream", string.Empty);
+      GUIPropertyManager.SetProperty("#currentplaytime", String.Empty);
+      GUIPropertyManager.SetProperty("#Play.Current.Lastfm.CurrentStream", String.Empty);
 
       //reset the TrayIcon
       ShowSongTrayBallon(GUILocalizeStrings.Get(34050), " ", 1, false); // Stream stopped
@@ -907,14 +896,52 @@ namespace MediaPortal.GUI.RADIOLASTFM
       btnStartStream.Selected = false;
     }
 
-    private void OnLastFMSyncReceived(object trash, DateTime syncTime)
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    private void SetAudioScrobblerTrackThread(object aParam)
     {
-      SetArtistThumb(string.Empty);
-      GUITextureManager.CleanupThumbs();
-      GUIPropertyManager.SetProperty("#Play.Current.Lastfm.TrackTags", string.Empty);
-      GUIPropertyManager.SetProperty("#Play.Current.Lastfm.SimilarArtists", string.Empty);
+      string aStreamFile = aParam.ToString();
+      Log.Debug("GUIRadioLastFM: Set Audioscrobbler track for {0}", aStreamFile);
 
-      LastFMStation.UpdateNowPlaying(false);
+      AudioscrobblerBase.CurrentPlayingSong = _streamSong;
+      AudioscrobblerBase.CurrentPlayingSong.Source = SongSource.L;
+
+      RebuildStreamList();
+    }
+
+    private void OnPlaybackStarted()
+    {
+      SetArtistThumb(String.Empty);
+      GUITextureManager.CleanupThumbs();
+      GUIPropertyManager.SetProperty("#Play.Current.Lastfm.TrackTags", String.Empty);
+      GUIPropertyManager.SetProperty("#Play.Current.Lastfm.SimilarArtists", String.Empty);      
+
+      if (_lastTrackTagRequest != null)
+        InfoScrobbler.RemoveRequest(_lastTrackTagRequest);
+      if (_lastArtistCoverRequest != null)
+        InfoScrobbler.RemoveRequest(_lastArtistCoverRequest);
+
+      if (_streamSong != null)
+      {
+        if (_streamSong.Artist != String.Empty)
+        {
+          UpdateArtistInfo(_streamSong.Artist);
+          GUIPropertyManager.SetProperty("#Play.Current.Artist", _streamSong.Artist);
+
+          if (_streamSong.Title != String.Empty)
+          {
+            UpdateTrackTagsInfo(_streamSong.Artist, _streamSong.Title);
+
+            GUIPropertyManager.SetProperty("#Play.Current.Title", _streamSong.Title);
+            GUIPropertyManager.SetProperty("#Play.Current.Album", _streamSong.Album);
+            GUIPropertyManager.SetProperty("#Play.Current.Genre", _streamSong.Genre);
+            // GUIPropertyManager.SetProperty("#Play.Current.Thumb", _streamSong.Comment);
+            GUIPropertyManager.SetProperty("#trackduration", Util.Utils.SecondsToHMSString(_streamSong.Duration));
+
+            OnUpdateNotifyBallon();
+          }
+        }       
+
+      }
     }
 
     private void OnSkipHandler(bool directSkip)
@@ -948,34 +975,17 @@ namespace MediaPortal.GUI.RADIOLASTFM
         Log.Warn("GUIRadioLastFM: OnSkipHandler - No tracks to choose from!");
     }
 
-    private void OnLastFMStation_StreamSongChanged(MusicTag newCurrentSong, DateTime startTime)
-    {
-      if (_lastTrackTagRequest != null)
-        InfoScrobbler.RemoveRequest(_lastTrackTagRequest);
-      if (_lastArtistCoverRequest != null)
-        InfoScrobbler.RemoveRequest(_lastArtistCoverRequest);
-
-      if (LastFMStation.CurrentTrackTag != null)
-      {
-        if (LastFMStation.CurrentTrackTag.Artist != string.Empty)
-        {
-          UpdateArtistInfo(newCurrentSong.Artist);
-
-          if (LastFMStation.CurrentTrackTag.Title != string.Empty)
-            UpdateTrackTagsInfo(LastFMStation.CurrentTrackTag.Artist, LastFMStation.CurrentTrackTag.Title);
-        }
-
-        RebuildStreamList();
-      }
-    }
-
     private void PlayBackStartedHandler(g_Player.MediaType type, string filename)
     {
       if (!Util.Utils.IsLastFMStream(filename) || (LastFMStation.CurrentStreamState != StreamPlaybackState.streaming && LastFMStation.CurrentStreamState != StreamPlaybackState.starting))
         return;
 
-      Log.Debug("GUIRadioLastFM: PlayBackStartedHandler for {0} - sending sync", filename);
-      OnLastFMSyncReceived(null, DateTime.Now);
+      OnPlaybackStarted();
+
+      Thread stateThread = new Thread(new ParameterizedThreadStart(SetAudioScrobblerTrackThread));
+      stateThread.IsBackground = true;
+      stateThread.Name = "Last.FM event";
+      stateThread.Start((object)filename);
     }
 
     private void PlayBackStoppedHandler(g_Player.MediaType type, int stoptime, string filename)
@@ -1005,15 +1015,27 @@ namespace MediaPortal.GUI.RADIOLASTFM
         }
 
         OnPlaybackStopped();
-
-        LastFMStation.CurrentStreamState = StreamPlaybackState.nocontent;
-        ShowSongTrayBallon(GUILocalizeStrings.Get(34051), GUILocalizeStrings.Get(34052), 15, true); // Stream ended, No more content or bad connection
-        Log.Info("GUIRadioLastFM: No more content for this selection or interrupted stream..");
+        PlayBackNoMoreContentHandler();
       }
       catch (Exception ex)
       {
         Log.Warn("GUIRadioLastFM: Error in PlayBackEndedHandler - {0}", ex.Message);
       }
+    }
+
+    private void PlayBackNoMoreContentHandler()
+    {
+      LastFMStation.CurrentStreamState = StreamPlaybackState.nocontent;
+      ShowSongTrayBallon(GUILocalizeStrings.Get(34051), GUILocalizeStrings.Get(34052), 15, true); // Stream ended, No more content or bad connection
+
+      GUIDialogOK msgdlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+      if (msgdlg == null)
+        return;
+      msgdlg.SetHeading(34050); // No stream active
+      msgdlg.SetLine(1, GUILocalizeStrings.Get(34052)); // Playback of selected stream failed
+      msgdlg.DoModal(GetID);
+
+      Log.Info("GUIRadioLastFM: No more content for this selection or interrupted stream..");
     }
 
     private void PlayBackFailedHandler()
@@ -1024,6 +1046,27 @@ namespace MediaPortal.GUI.RADIOLASTFM
       msgdlg.SetHeading(34050); // No stream active
       msgdlg.SetLine(1, GUILocalizeStrings.Get(34053)); // Playback of selected stream failed
       msgdlg.DoModal(GetID);
+    }
+
+    private static void OnLoveClicked()
+    {
+      // LastFMStation.SendControlCommand(StreamControls.lovetrack);
+      AudioscrobblerBase.CurrentSubmitSong.AudioscrobblerAction = SongAction.L;
+    }
+
+    private void OnBanClicked()
+    {
+      // LastFMStation.SendControlCommand(StreamControls.bantrack);
+      AudioscrobblerBase.CurrentSubmitSong.AudioscrobblerAction = SongAction.B;
+      OnSkipHandler(false);
+    }
+
+    private void OnSkipClicked()
+    {
+      // Only mark tracks as skipped if it has not been played long enough for a regular submit
+      if (AudioscrobblerBase.CurrentSubmitSong.AudioScrobblerStatus == SongStatus.Loaded)
+        AudioscrobblerBase.CurrentSubmitSong.AudioscrobblerAction = SongAction.S;
+      OnSkipHandler(false);
     }
 
     #endregion
@@ -1047,10 +1090,10 @@ namespace MediaPortal.GUI.RADIOLASTFM
         _trayBallonSongChange.Text = IconText;
         _trayBallonSongChange.Visible = true;
 
-        if (notifyTitle == string.Empty)
+        if (notifyTitle == String.Empty)
           notifyTitle = "MediaPortal";
         _trayBallonSongChange.BalloonTipTitle = notifyTitle;
-        if (notifyMessage_ == string.Empty)
+        if (notifyMessage_ == String.Empty)
           notifyMessage_ = IconText;
         _trayBallonSongChange.BalloonTipText = notifyMessage_;
         if (popup_)
@@ -1097,13 +1140,26 @@ namespace MediaPortal.GUI.RADIOLASTFM
         _trayBallonSongChange.Visible = false;
       }
     }
+    
+    private void OnUpdateNotifyBallon()
+    {
+      // Send msg for Ballon Tip on song change
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SHOW_BALLONTIP_SONGCHANGE, 0, 0, 0, 0, 0, null);
+      msg.Label = _streamSong.Title;
+      msg.Label2 = _streamSong.Artist + " (" + _streamSong.Album + ")";
+      msg.Param1 = 5;
+      GUIGraphicsContext.SendMessage(msg);
+      msg = null;
 
-    // skip
+      Log.Info("GUIRadioLastFM: Current track: {0} [{1}] - {2} ({3})", _streamSong.Artist, _streamSong.Album, _streamSong.Title, Util.Utils.SecondsToHMSString(_streamSong.Duration));
+    }
+
+    // love
     private void Tray_menuItem1_Click(object Sender, EventArgs e)
     {
       if ((int)LastFMStation.CurrentStreamState > 2)
       {
-        LastFMStation.SendControlCommand(StreamControls.lovetrack);
+        OnLoveClicked();
       }
     }
 
@@ -1112,16 +1168,16 @@ namespace MediaPortal.GUI.RADIOLASTFM
     {
       if ((int)LastFMStation.CurrentStreamState > 2)
       {
-        LastFMStation.SendControlCommand(StreamControls.bantrack);
+        OnBanClicked();
       }
     }
 
-    // love
+    // skip
     private void Tray_menuItem3_Click(object Sender, EventArgs e)
     {
       if ((int)LastFMStation.CurrentStreamState > 2)
       {
-        OnSkipHandler(true);
+        OnSkipClicked();
       }
     }
 
@@ -1141,7 +1197,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         }
       }
 
-      //string refString = string.Empty;
+      //string refString = String.Empty;
       //Util.Utils.GetQualifiedFilename(thumb, ref refString);
       GUIPropertyManager.SetProperty("#Play.Current.ArtistThumb", thumb);
 
@@ -1179,12 +1235,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     public bool CanEnable()
     {
-      //bool AudioScrobblerOn = false;
-      //using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-      //{
-      //  AudioScrobblerOn = xmlreader.GetValueAsBool("plugins", "Audioscrobbler", false);
-      //}
-      //return AudioScrobblerOn;
       return true;
     }
 
@@ -1201,8 +1251,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
     public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
     {
       strButtonText = GUILocalizeStrings.Get(34000);
-      strButtonImage = string.Empty;
-      strButtonImageFocus = string.Empty;
+      strButtonImage = String.Empty;
+      strButtonImageFocus = String.Empty;
       strPictureImage = "hover_my radio.png"; //hover_LastFmRadio.png
       return true;
     }

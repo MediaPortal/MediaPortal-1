@@ -327,7 +327,7 @@ namespace MediaPortal
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         useExclusiveDirectXMode = xmlreader.GetValueAsBool("general", "exclusivemode", true);
-        useEnhancedVideoRenderer = xmlreader.GetValueAsBool("general", "useevr", false);
+        useEnhancedVideoRenderer = xmlreader.GetValueAsBool("general", "useEVRenderer", false);
         if (useEnhancedVideoRenderer)
           useExclusiveDirectXMode = false;
         autoHideTaskbar = xmlreader.GetValueAsBool("general", "hidetaskbar", true);

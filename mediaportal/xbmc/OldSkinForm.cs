@@ -159,7 +159,7 @@ namespace MediaPortal
 
 			string versionBlue3Skin="";
 			string versionSkin="";
-			string filename= Config.GetFile(Config.Dir.Skin, "Blue3\\references.xml");
+			string filename= Config.GetFile(Config.Dir.Skin, "Blue3", "references.xml");
 			if(File.Exists(filename))
 			{	
 				XmlDocument doc=new XmlDocument();

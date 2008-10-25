@@ -72,9 +72,11 @@ namespace MediaPortal.Music.Database
       Recover = 4,
       Announce = 5,
     }
+
     #endregion
 
     #region Constants
+
     const int MAX_QUEUE_SIZE = 50;
     const int HANDSHAKE_INTERVAL = 60;     //< In minutes.
     const int CONNECT_WAIT_TIME = 3;       //< Min secs between connects.
@@ -83,6 +85,7 @@ namespace MediaPortal.Music.Database
     const string SCROBBLER_URL = "http://post.audioscrobbler.com";
     const string RADIO_SCROBBLER_URL = "http://ws.audioscrobbler.com/radio/";
     const string PROTOCOL_VERSION = "1.2";
+
     #endregion
 
     #region Variables
@@ -129,6 +132,7 @@ namespace MediaPortal.Music.Database
     private static bool _recordToProfile = true;
 
     private static Song _currentSong;
+    private static Song _currentPostSong;
 
     #endregion
 
@@ -194,6 +198,7 @@ namespace MediaPortal.Music.Database
       _radioSession = string.Empty;
       _subscriber = false;
       _currentSong = new Song();
+      _currentPostSong = new Song();
     }
 
     #endregion
@@ -245,7 +250,7 @@ namespace MediaPortal.Music.Database
     /// <summary>
     /// Current Song set by Audioscrobbler plugin for Now Playing Announcement
     /// </summary>
-    public static Song CurrentSong
+    public static Song CurrentPlayingSong
     {
       get
       {
@@ -256,6 +261,24 @@ namespace MediaPortal.Music.Database
         if (value != _currentSong)
         {
           _currentSong = value;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Current track handled by audioscrobbler queue
+    /// </summary>
+    public static Song CurrentSubmitSong
+    {
+      get
+      {
+        return _currentPostSong;
+      }
+      set
+      {
+        if (value != _currentPostSong)
+        {
+          _currentPostSong = value;
         }
       }
     }
@@ -397,7 +420,6 @@ namespace MediaPortal.Music.Database
 
       Log.Warn("AudioscrobblerBase: falling back to safe mode");
     }
-
 
     #endregion
 
@@ -828,7 +850,7 @@ namespace MediaPortal.Music.Database
         submitThread = new Thread(new ThreadStart(SubmitQueue));
         submitThread.IsBackground = false; // do not abort the submit action when MediaPortal closes
         submitThread.Name = "Scrobbler queue";
-        submitThread.Priority = ThreadPriority.BelowNormal;
+        submitThread.Priority = ThreadPriority.Normal;
         submitThread.Start();
       }
       catch (Exception sex)
@@ -864,13 +886,23 @@ namespace MediaPortal.Music.Database
       DoHandshake(false, HandshakeType.Announce);
     }
 
+    [MethodImpl(MethodImplOptions.Synchronized)]
     private static void AttemptAnnounceNow()
     {
-      if (CurrentSong.Artist != string.Empty && CurrentSong.Title != string.Empty)
+      if (_currentSong.Artist != string.Empty && _currentSong.Title != string.Empty)
       {
-        BackgroundWorker worker = new BackgroundWorker();
-        worker.DoWork += new DoWorkEventHandler(Worker_TryAnnounceTracks);
-        worker.RunWorkerAsync();
+        try
+        {
+          Thread announceThread = new Thread(new ThreadStart(Worker_TryAnnounceTracks));
+          announceThread.IsBackground = false; // do not abort the announce action when MediaPortal closes
+          announceThread.Name = "Scrobbler nowplaying";
+          announceThread.Priority = ThreadPriority.BelowNormal;
+          announceThread.Start();
+        }
+        catch (Exception aex)
+        {
+          Log.Error("AudioscrobblerBase: Error starting announceThread thread - {0}", aex.Message);
+        }
       }
       else
         Log.Debug("AudioscrobblerBase: AttemptAnnounceNow aborted because of incomplete data");
@@ -896,9 +928,9 @@ namespace MediaPortal.Music.Database
       //worker.RunWorkerAsync();
     }
 
-    private static void Worker_TryAnnounceTracks(object sender, DoWorkEventArgs e)
+    private static void Worker_TryAnnounceTracks(/*object sender, DoWorkEventArgs e*/)
     {
-      Thread.CurrentThread.Name = "Scrobbler nowplaying";
+      // Thread.CurrentThread.Name = "Scrobbler nowplaying";
       // s=<sessionID>       The Session ID string as returned by the handshake. Required.
       // a=<artist>          The artist name. Required.
       // t=<track>           The track name. Required.
@@ -913,19 +945,22 @@ namespace MediaPortal.Music.Database
       sb.Append("s=");
       sb.Append(sessionID);
       sb.Append("&a=");
-      sb.Append(getValidURLLastFMString(UndoArtistPrefix(CurrentSong.Artist)));
+      sb.Append(getValidURLLastFMString(UndoArtistPrefix(_currentSong.Artist)));
       sb.Append("&t=");
-      sb.Append(System.Web.HttpUtility.UrlEncode(CurrentSong.Title));
+      sb.Append(System.Web.HttpUtility.UrlEncode(_currentSong.Title));
       sb.Append("&b=");
-      sb.Append(getValidURLLastFMString(CurrentSong.Album));
+      sb.Append(getValidURLLastFMString(_currentSong.Album));
       sb.Append("&l=");
-      sb.Append(CurrentSong.Duration);
+      sb.Append(_currentSong.Duration);
       sb.Append("&n=");
-      sb.Append(CurrentSong.Track > 0 ? Convert.ToString(CurrentSong.Track) : "");
+      sb.Append(_currentSong.Track > 0 ? Convert.ToString(_currentSong.Track) : "");
       sb.Append("&m=");
       sb.Append("");
 
       announceData = sb.ToString();
+
+      // Don't hammer last.fm with all web requests at once
+      Thread.Sleep(2000);
 
       // Submit or die.
       if (!GetResponse(nowPlayingUrl, announceData, false))
@@ -1018,6 +1053,7 @@ namespace MediaPortal.Music.Database
     #endregion
 
     #region Audioscrobbler response parsers.
+
     private static bool parseUpToDateMessage(string type_, StreamReader reader_)
     {
       if (_useDebugLog)
@@ -1067,14 +1103,12 @@ namespace MediaPortal.Music.Database
     private static bool parseBadUserMessage(string type_, StreamReader reader_)
     {
       Log.Warn("AudioscrobblerBase: {0}", "PLEASE CHECK YOUR ACCOUNT CONFIG! - re-trying handshake now");
-      //TriggerSafeModeEvent();
       return true;
     }
 
     private static bool parseBadTimeMessage(string type_, StreamReader reader_)
     {
       Log.Warn("AudioscrobblerBase: {0}", "BADTIME response received!");
-      //TriggerSafeModeEvent();
       return true;
     }
 
@@ -1091,7 +1125,6 @@ namespace MediaPortal.Music.Database
         Log.Warn(logmessage);
         return false;
       }
-
 
       if (type_.Length > 8)
       {

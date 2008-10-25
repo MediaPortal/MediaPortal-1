@@ -28,6 +28,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Threading;
 
 using MediaPortal.GUI.Library;
@@ -85,8 +86,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
   {
     #region Event delegates
 
-    public delegate void SongChangedHandler(MusicTag newCurrentSong, DateTime startTime);
-    public event SongChangedHandler StreamSongChanged;
+    //public delegate void SongChangedHandler(MusicTag newCurrentSong, DateTime startTime);
+    //public event SongChangedHandler StreamSongChanged;
 
     public delegate void RadioSettingsLoaded();
     public event RadioSettingsLoaded RadioSettingsSuccess;
@@ -367,45 +368,19 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     #region Control functions
 
-    //public bool PlayStream()
-    //{
-    //  GUIWaitCursor.Show();
-
-    //  if (g_Player.Playing)
-    //    g_Player.Stop();
-
-    //  _currentState = StreamPlaybackState.starting;
-    //  // often the buffer is too slow for the playback to start
-    //  for (int i = 0; i < 3; i++)
-    //  {
-    //    if (g_Player.Play(_currentRadioURL))
-    //    {
-    //      GUIWaitCursor.Hide();
-    //      _currentState = StreamPlaybackState.streaming;
-    //      ToggleRecordToProfile(AudioscrobblerBase.SubmitRadioSongs);
-    //      ToggleDiscoveryMode(_discoveryMode);
-
-    //      return true;
-    //    }
-    //  }
-    //  GUIWaitCursor.Hide();
-    //  _currentState = StreamPlaybackState.initialized;
-    //  return false;
-    //}
-
     public void LoadConfig()
     {
       LoadSettings();
     }
 
-    public void UpdateNowPlaying(bool delayed)
-    {
-      if (delayed)
-        // give the site some time to update and sync with the stream switch
-        SendDelayedCommandRequest(@"http://ws.audioscrobbler.com/radio/np.php?session=" + _currentSession, 4750);
-      else
-        SendCommandRequest(@"http://ws.audioscrobbler.com/radio/np.php?session=" + _currentSession);
-    }
+    //public void UpdateNowPlaying(bool delayed)
+    //{
+    //  if (delayed)
+    //    // give the site some time to update and sync with the stream switch
+    //    SendDelayedCommandRequest(@"http://ws.audioscrobbler.com/radio/np.php?session=" + _currentSession, 4750);
+    //  else
+    //    SendCommandRequest(@"http://ws.audioscrobbler.com/radio/np.php?session=" + _currentSession);
+    //}
 
     public void ToggleRecordToProfile(bool submitTracks_)
     {
@@ -440,28 +415,29 @@ namespace MediaPortal.GUI.RADIOLASTFM
       return success;
     }
 
-    public void SendControlCommand(StreamControls command_)
-    {
-      if (_currentState == StreamPlaybackState.streaming)
-      {
-        string baseUrl = @"http://ws.audioscrobbler.com/radio/control.php?session=" + _currentSession;
+    //public void SendControlCommand(StreamControls command_)
+    //{
+    //  if (_currentState == StreamPlaybackState.streaming)
+    //  {
+    //    string baseUrl = @"http://ws.audioscrobbler.com/radio/control.php?session=" + _currentSession;
 
-        switch (command_)
-        {
-          case StreamControls.skiptrack:
-            SendCommandRequest(baseUrl + @"&command=skip");
-            break;
-          case StreamControls.lovetrack:
-            SendCommandRequest(baseUrl + @"&command=love");
-            break;
-          case StreamControls.bantrack:
-            SendCommandRequest(baseUrl + @"&command=ban");
-            break;
-        }
-      }
-      else
-        Log.Info("StreamControl: Currently not streaming - ignoring command");
-    }
+    //    switch (command_)
+    //    {
+    //      case StreamControls.skiptrack:
+    //        SendCommandRequest(baseUrl + @"&command=skip");
+    //        break;
+    //      case StreamControls.lovetrack:
+    //        SendCommandRequest(baseUrl + @"&command=love");
+    //        break;
+    //      case StreamControls.bantrack:
+    //        SendCommandRequest(baseUrl + @"&command=ban");
+    //        break;
+    //    }
+    //  }
+    //  else
+    //    Log.Info("StreamControl: Currently not streaming - ignoring command");
+    //}
+
     #endregion
 
     #region Tuning functions
@@ -600,6 +576,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     #endregion
 
     #region Network related
+
     private bool SendCommandRequest(string url_)
     {
       try
@@ -609,7 +586,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         if (DateTime.Now < nextconnect)
         {
           TimeSpan waittime = nextconnect - DateTime.Now;
-          Log.Debug("StreamControl: Avoiding too fast connects for {0} - sleeping until {1}", url_, nextconnect.ToString());
+          //Log.Debug("StreamControl: Avoiding too fast connects for {0} - sleeping until {1}", url_, nextconnect.ToString());
           Thread.Sleep(waittime);
         }
       }
@@ -633,56 +610,55 @@ namespace MediaPortal.GUI.RADIOLASTFM
       Log.Warn("StreamControl: Async request for {0} unsuccessful: {1}", urlCommand, errorReason.Message);
     }
 
+    [MethodImpl(MethodImplOptions.Synchronized)]
     private void OnParseAsyncResponse(List<string> responseList, HttpStatusCode responseCode, String requestedURLCommand)
     {
       // parse the response
       try
       {
-        lock (this)
+        string responseMessage = string.Empty;
+        if (responseList.Count > 0)
         {
-          string responseMessage = string.Empty;
-          if (responseList.Count > 0)
+          List<string> responseStrings = new List<string>(responseList);
+
+          if (responseCode == HttpStatusCode.OK)
           {
-            List<string> responseStrings = new List<string>(responseList);
-
-            if (responseCode == HttpStatusCode.OK)
+            responseMessage = responseStrings[0];
             {
-              responseMessage = responseStrings[0];
+              if (responseMessage.StartsWith("response=OK"))
               {
-                if (responseMessage.StartsWith("response=OK"))
-                {
-                  ParseSuccessful(responseStrings, requestedURLCommand);
-                  return;
-                }
-
-                if (responseMessage.StartsWith("price="))
-                {
-                  ParseNowPlaying(responseStrings);
-                  return;
-                }
-              }
-            }
-            else
-            {
-              string logmessage = "StreamControl: ***** Unknown response! - " + responseMessage;
-              foreach (String unkStr in responseStrings)
-              {
-                logmessage += "\n" + unkStr;
-              }
-
-              if (logmessage.Contains("Not enough content"))
-              {
-                _currentState = StreamPlaybackState.nocontent;
-                Log.Warn("StreamControl: Not enough content left to play this station");
+                ParseSuccessful(responseStrings, requestedURLCommand);
                 return;
               }
-              else
-                Log.Warn(logmessage);
+
+              //if (responseMessage.StartsWith("price="))
+              //{
+              //  ParseNowPlaying(responseStrings);
+              //  return;
+              //}
             }
           }
           else
-            Log.Debug("StreamControl: SendCommandRequest: Reader object already destroyed");
+          {
+            string logmessage = "StreamControl: ***** Unknown response! - " + responseMessage;
+            foreach (String unkStr in responseStrings)
+            {
+              logmessage += "\n" + unkStr;
+            }
+
+            if (logmessage.Contains("Not enough content"))
+            {
+              _currentState = StreamPlaybackState.nocontent;
+              Log.Warn("StreamControl: Not enough content left to play this station");
+              return;
+            }
+            else
+              Log.Warn(logmessage);
+          }
         }
+        else
+          Log.Debug("StreamControl: SendCommandRequest: Reader object already destroyed");
+
       }
       catch (Exception e)
       {
@@ -692,6 +668,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
       return;
     }
+
     # endregion
 
     #region Response parser
@@ -717,93 +694,86 @@ namespace MediaPortal.GUI.RADIOLASTFM
       }
     }
 
-    private void ParseNowPlaying(List<String> responseList_)
-    {
-      List<String> NowPlayingInfo = new List<string>();
-      String prevTitle = CurrentSongTag.Title;
-      CurrentSongTag.Clear();
+    //private void ParseNowPlaying(List<String> responseList_)
+    //{
+    //  List<String> NowPlayingInfo = new List<string>();
+    //  String prevTitle = CurrentSongTag.Title;
+    //  CurrentSongTag.Clear();
 
-      try
-      {
-        foreach (String respStr in responseList_)
-          NowPlayingInfo.Add(respStr);
+    //  try
+    //  {
+    //    foreach (String respStr in responseList_)
+    //      NowPlayingInfo.Add(respStr);
 
-        foreach (String token in NowPlayingInfo)
-        {
-          if (token.StartsWith("artist="))
-          {
-            if (token.Length > 7)
-              CurrentSongTag.Artist = token.Substring(7);
-          }
-          else if (token.StartsWith("album="))
-          {
-            if (token.Length > 6)
-              CurrentSongTag.Album = token.Substring(6);
-          }
-          else if (token.StartsWith("track="))
-          {
-            if (token.Length > 6)
-              CurrentSongTag.Title = token.Substring(6);
-          }
-          else if (token.StartsWith("station="))
-          {
-            if (token.Length > 8)
-              CurrentSongTag.Genre = token.Substring(8);
-          }
-          else if (token.StartsWith("albumcover_large="))
-          {
-            if (token.Length > 17)
-              CurrentSongTag.Comment = token.Substring(17);
-          }
-          else if (token.StartsWith("trackduration="))
-          {
-            if (token.Length > 14)
-            {
-              int trackLength = Convert.ToInt32(token.Substring(14));
-              CurrentSongTag.Duration = trackLength;
-            }
-          }
-        }
+    //    foreach (String token in NowPlayingInfo)
+    //    {
+    //      if (token.StartsWith("artist="))
+    //      {
+    //        if (token.Length > 7)
+    //          CurrentSongTag.Artist = token.Substring(7);
+    //      }
+    //      else if (token.StartsWith("album="))
+    //      {
+    //        if (token.Length > 6)
+    //          CurrentSongTag.Album = token.Substring(6);
+    //      }
+    //      else if (token.StartsWith("track="))
+    //      {
+    //        if (token.Length > 6)
+    //          CurrentSongTag.Title = token.Substring(6);
+    //      }
+    //      else if (token.StartsWith("station="))
+    //      {
+    //        if (token.Length > 8)
+    //          CurrentSongTag.Genre = token.Substring(8);
+    //      }
+    //      else if (token.StartsWith("albumcover_large="))
+    //      {
+    //        if (token.Length > 17)
+    //          CurrentSongTag.Comment = token.Substring(17);
+    //      }
+    //      else if (token.StartsWith("trackduration="))
+    //      {
+    //        if (token.Length > 14)
+    //        {
+    //          int trackLength = Convert.ToInt32(token.Substring(14));
+    //          CurrentSongTag.Duration = trackLength;
+    //        }
+    //      }
+    //    }
 
-        if (CurrentSongTag.Title != prevTitle)
-        {
-          AudioscrobblerBase.CurrentSong.Clear();
-          AudioscrobblerBase.CurrentSong.Artist = CurrentSongTag.Artist;
-          AudioscrobblerBase.CurrentSong.Album = CurrentSongTag.Album;
-          AudioscrobblerBase.CurrentSong.Title = CurrentSongTag.Title;
-          AudioscrobblerBase.CurrentSong.Genre = CurrentSongTag.Genre;
-          AudioscrobblerBase.CurrentSong.Duration = CurrentSongTag.Duration;
-          AudioscrobblerBase.CurrentSong.WebImage = CurrentSongTag.Comment;
-          AudioscrobblerBase.CurrentSong.FileName = g_Player.Player.CurrentFile;
+    //    if (CurrentSongTag.Title != prevTitle)
+    //    {
+    //      //AudioscrobblerBase.CurrentSong.Clear();
+    //      //AudioscrobblerBase.CurrentSong.Artist = CurrentSongTag.Artist;
+    //      //AudioscrobblerBase.CurrentSong.Album = CurrentSongTag.Album;
+    //      //AudioscrobblerBase.CurrentSong.Title = CurrentSongTag.Title;
+    //      //AudioscrobblerBase.CurrentSong.Genre = CurrentSongTag.Genre;
+    //      //AudioscrobblerBase.CurrentSong.Duration = CurrentSongTag.Duration;
+    //      //AudioscrobblerBase.CurrentSong.WebImage = CurrentSongTag.Comment;
+    //      //AudioscrobblerBase.CurrentSong.FileName = g_Player.Player.CurrentFile;
 
-          // fire the event
-          if (StreamSongChanged != null)
-            StreamSongChanged(CurrentSongTag, DateTime.Now);
+    //      // fire the event
+    //      if (StreamSongChanged != null)
+    //        StreamSongChanged(CurrentSongTag, DateTime.Now);
 
-          GUIPropertyManager.SetProperty("#Play.Current.Artist", CurrentSongTag.Artist);
-          GUIPropertyManager.SetProperty("#Play.Current.Album", CurrentSongTag.Album);
-          GUIPropertyManager.SetProperty("#Play.Current.Title", CurrentSongTag.Title);
-          GUIPropertyManager.SetProperty("#Play.Current.Genre", CurrentSongTag.Genre);
-          GUIPropertyManager.SetProperty("#Play.Current.Thumb", CurrentSongTag.Comment);
-          GUIPropertyManager.SetProperty("#trackduration", Util.Utils.SecondsToHMSString(CurrentSongTag.Duration));
+    //      //GUIPropertyManager.SetProperty("#Play.Current.Artist", CurrentSongTag.Artist);
+    //      //GUIPropertyManager.SetProperty("#Play.Current.Album", CurrentSongTag.Album);
+    //      //GUIPropertyManager.SetProperty("#Play.Current.Title", CurrentSongTag.Title);
+    //      //GUIPropertyManager.SetProperty("#Play.Current.Genre", CurrentSongTag.Genre);
+    //      //GUIPropertyManager.SetProperty("#Play.Current.Thumb", CurrentSongTag.Comment);
+    //      //GUIPropertyManager.SetProperty("#trackduration", Util.Utils.SecondsToHMSString(CurrentSongTag.Duration));
 
-          // Send msg for Ballon Tip on song change
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SHOW_BALLONTIP_SONGCHANGE, 0, 0, 0, 0, 0, null);
-          msg.Label = CurrentSongTag.Title;
-          msg.Label2 = CurrentSongTag.Artist + " (" + CurrentSongTag.Album + ")";
-          msg.Param1 = 5;
-          GUIGraphicsContext.SendMessage(msg);
-          msg = null;
+    //      // UpdateNotifyBallon();
+    //    }
 
-          Log.Info("StreamControl: Current track: {0} [{1}] - {2} ({3})", CurrentSongTag.Artist, CurrentSongTag.Album, CurrentSongTag.Title, Util.Utils.SecondsToHMSString(CurrentSongTag.Duration));
-        }
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    Log.Error("StreamControl: Error parsing now playing info: {0}", ex.Message);
+    //  }
+    //}
 
-      }
-      catch (Exception ex)
-      {
-        Log.Error("StreamControl: Error parsing now playing info: {0}", ex.Message);
-      }
-    }
 
     #endregion
   }
