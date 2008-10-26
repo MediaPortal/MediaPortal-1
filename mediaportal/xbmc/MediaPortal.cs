@@ -111,6 +111,7 @@ public class MediaPortalApp : D3DApp, IRender
   private MouseEventArgs eLastMouseClickEvent = null;
   private Timer tMouseClickTimer = null;
   private bool bMouseClickFired = false;
+  private const int WM_NCACTIVATE = 0x0086;
   private const int WM_SYSCOMMAND = 0x0112;
   private const int WM_POWERBROADCAST = 0x0218;
   private const int WM_ENDSESSION = 0x0016;
@@ -865,6 +866,27 @@ public class MediaPortalApp : D3DApp, IRender
         tMouseClickTimer.Dispose();
         Application.ExitThread();
         Application.Exit();
+      }
+
+      if (_dontMinimizeOnLostFocus)
+      {
+        // piba,  Better dual screen support.
+        // prevent MediaPortal from minimizing
+        //
+        // this could happen with 2 monitors attached and MediaPortal running on secondary screen(TV)
+        // When popup window or virusscanner update pops up MediaPortal would minimize
+        // Reproduction was clicking on primary monitor while playing a HD movie on the TV (while playing a low res recording it didnt happen..)
+        //
+        if (msg.Msg == WM_NCACTIVATE && msg.WParam.ToInt32() == 0)
+        {
+          if (g_Player.Playing && (g_Player.IsTV || g_Player.IsVideo || g_Player.IsDVD))
+          {
+            Log.Debug("{0}  abortedMessage {1}", msg.ToString());
+            //Prevent minimizing MP when playing video and clicking on secondary screen.
+            msg.Result = new IntPtr(0);
+            return;
+          }
+        }
       }
 
       if (!PluginManager.WndProc(ref msg))
@@ -1679,7 +1701,7 @@ public class MediaPortalApp : D3DApp, IRender
   protected override void OnProcess()
   {
     // Set the date & time
-    if (DateTime.Now.Minute != m_updateTimer.Minute)
+    if (DateTime.Now.Second != m_updateTimer.Second)
     {
       m_updateTimer = DateTime.Now;
       GUIPropertyManager.SetProperty("#date", GetDate());
@@ -3231,7 +3253,7 @@ public class MediaPortalApp : D3DApp, IRender
   protected string GetTime()
   {
     DateTime cur = DateTime.Now;
-    string strTime = cur.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+    string strTime = cur.ToString(CultureInfo.CurrentCulture.DateTimeFormat.LongTimePattern);
     return strTime;
   }
 

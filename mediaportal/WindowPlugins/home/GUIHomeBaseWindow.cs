@@ -149,7 +149,7 @@ namespace MediaPortal.GUI.Home
     public override void Process()
     {
       // Set the date & time
-      if (DateTime.Now.Minute != _updateTimer.Minute)
+      if (DateTime.Now.Second != _updateTimer.Second)
       {
         _updateTimer = DateTime.Now;
         if (lblDate != null) lblDate.Label = GUIPropertyManager.GetProperty("#date");

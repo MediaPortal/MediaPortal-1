@@ -118,6 +118,7 @@ namespace MediaPortal
     internal static bool _fullscreenOverride = false;
     internal static bool _windowedOverride = false;
     internal static int _screenNumberOverride = -1;// 0 or higher means it is set
+    internal static bool _dontMinimizeOnLostFocus = false;// true will stop MediaPortal from minimizing when secondary screen is clicked or a popup window shows up (for example:messenger or virusscan update window) (by  piba)
 
     protected Caps Caps
     {
@@ -334,6 +335,7 @@ namespace MediaPortal
         alwaysOnTop = xmlreader.GetValueAsBool("general", "alwaysontop", false);
         debugChangeDeviceHack = xmlreader.GetValueAsBool("debug", "changedevicehack", false);
         _disableMouseEvents = xmlreader.GetValueAsBool("remote", "CentareaJoystickMap", false);
+        _dontMinimizeOnLostFocus = xmlreader.GetValueAsBool("general", "DontMinimizeOnLostFocus", false);
       }
 
       // When clipCursorWhenFullscreen is TRUE, the cursor is limited to
@@ -747,10 +749,6 @@ namespace MediaPortal
     {
       bool foundFullscreenMode = FindBestFullscreenMode(false, false);
       bool foundWindowedMode = FindBestWindowedMode(false, false);
-      /*if (/ *startFullscreen* /false && foundFullscreenMode)
-      { PIBA startFullscreen was not used and now when set to true would couse flickering visualizations whem playing music
-        graphicsSettings.IsWindowed = false;
-      }*/
 
       if (!foundFullscreenMode && !foundWindowedMode)
       {
@@ -790,7 +788,7 @@ namespace MediaPortal
       }
       else
       {                
-        graphicsSettings.DisplayMode = Manager.Adapters[GUIGraphicsContext.currentScreenNumber].CurrentDisplayMode;
+        graphicsSettings.DisplayMode = GUIGraphicsContext.currentFullscreenAdapterInfo.CurrentDisplayMode;
         
         presentParams.MultiSample = graphicsSettings.FullscreenMultisampleType;
         presentParams.MultiSampleQuality = graphicsSettings.FullscreenMultisampleQuality;
@@ -1996,8 +1994,12 @@ namespace MediaPortal
 
     private void D3DApp_MouseMove(object sender, MouseEventArgs e)
     {
-      if (ActiveForm != this)
-        return;
+      /*
+      PIBA, It should always respond to mouse events because: when using 2 screens
+      the fullscreenform can become unfocused and then the mouse sometimes isnt 
+      visible when moving it over MP without activating the form first. */
+      /*if (ActiveForm != this)
+        return;*/
 
       mousemove(e);
     }
