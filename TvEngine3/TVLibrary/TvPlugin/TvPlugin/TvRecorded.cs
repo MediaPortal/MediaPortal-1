@@ -733,7 +733,7 @@ namespace TvPlugin
       UpdateProperties();
     }
 
-    private static bool IsRecordingActual(Recording aRecording)
+    public static bool IsRecordingActual(Recording aRecording)
     {
 
       TimeSpan tsRecording = (aRecording.EndTime - aRecording.StartTime);
@@ -759,22 +759,29 @@ namespace TvPlugin
           if (prgList.Count > 0)
           {
 
-            Schedule sched = Schedule.Retrieve(card.RecordingScheduleId);
-
-            foreach (Program prg in prgList)
+            if (card.RecordingScheduleId > 0)
             {
-              if (sched.IsManual)
+              Schedule sched = Schedule.Retrieve(card.RecordingScheduleId);
+
+              foreach (Program prg in prgList)
               {
-                TimeSpan ts = now - aRecording.EndTime;
-                if (aRecording.StartTime <= prg.EndTime && ts.TotalHours < 24) // if endtime is over 24 hrs old, then we do not consider it as a currently rec. program
+                if (sched.IsManual)
+                {
+                  TimeSpan ts = now - aRecording.EndTime;
+                  if (aRecording.StartTime <= prg.EndTime && ts.TotalHours < 24) // if endtime is over 24 hrs old, then we do not consider it as a currently rec. program
+                  {
+                    return true;
+                  }
+                }
+                else if (sched.IsRecordingProgram(prg, false))
                 {
                   return true;
                 }
               }
-              else if (sched.IsRecordingProgram(prg, false))
-              {
-                return true;
-              }
+            }
+            else
+            {
+              return false;
             }
           }
         }

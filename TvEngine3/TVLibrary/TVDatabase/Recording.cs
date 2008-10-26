@@ -238,6 +238,21 @@ namespace TvDatabase
     }
 
     /// <summary>
+    /// Static method to retrieve all instances that are stored in the database in one call
+    /// </summary>
+    public static IList ListAllActive()
+    {      
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Recording));      
+      sb.AddConstraint("starttime=endtime");
+
+      SqlStatement stmt = sb.GetStatement(true);
+
+      // execute the statement/query and create a collection of User instances from the result set
+      IList getList = ObjectFactory.GetCollection(typeof(Recording), stmt.Execute());
+      return getList;
+    }
+
+    /// <summary>
     /// Retrieves an entity given it's id.
     /// </summary>
     public static Recording Retrieve(int id)
@@ -250,6 +265,7 @@ namespace TvDatabase
       Key key = new Key(typeof(Recording), true, "idRecording", id);
       return Broker.RetrieveInstance(typeof(Recording), key) as Recording;
     }
+    
 
     /// <summary>
     /// Retrieves an entity given it's filename.
