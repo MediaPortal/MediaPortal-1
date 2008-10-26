@@ -97,6 +97,8 @@ namespace MediaPortal.Dialogs
           if (m_pTexture != null) m_pTexture.Dispose();
           m_pTexture = null;
           base.OnMessage(message);
+          // Fix for Mantis issue: 0001709: Background not correct after viewing pictures properties twice
+          Restore();
           return true;
         }
       }
