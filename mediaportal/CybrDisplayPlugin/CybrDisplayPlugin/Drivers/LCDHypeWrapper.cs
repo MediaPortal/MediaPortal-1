@@ -227,7 +227,7 @@
 
         private void Display_Update()
         {
-            if (this.DisplaySettings.BlankDisplayWithVideo & this.DisplaySettings.EnableDisplayAction)
+            if (this.DisplaySettings.BlankDisplayWithVideo | this.DisplaySettings.EnableDisplayAction)
             {
                 GUIWindowManager.OnNewAction += new OnActionHandler(this.OnExternalAction);
             }
@@ -261,8 +261,15 @@
                     {
                         if (this.EQSettings.UseEqDisplay)
                         {
+                          if (!(this.EQSettings.RestrictEQ & ((DateTime.Now.Ticks - this.EQSettings._LastEQupdate.Ticks) < this.EQSettings._EqUpdateDelay)))
+                          {
                             this.GetEQ();
                             this.DisplayEQ();
+                          }
+                          else
+                          {
+                            Thread.Sleep(50);
+                          }
                         }
                         if (this.DisplaySettings.BlankDisplayWithVideo & (((this.MPStatus.Media_IsDVD || this.MPStatus.Media_IsVideo) || this.MPStatus.Media_IsTV) || this.MPStatus.Media_IsTVRecording))
                         {
@@ -292,7 +299,7 @@
 
         private void DisplayEQ()
         {
-            if ((this.EQSettings.UseEqDisplay & this.EQSettings._EqDataAvailable) && !(this.EQSettings.RestrictEQ & ((DateTime.Now.Ticks - this.EQSettings._LastEQupdate.Ticks) < this.EQSettings._EqUpdateDelay)))
+            if (this.EQSettings.UseEqDisplay & this.EQSettings._EqDataAvailable)
             {
                 if (this.DoDebug)
                 {
@@ -447,18 +454,27 @@
 
         private void GetEQ()
         {
-            lock (this.DWriteMutex)
+          lock (this.DWriteMutex)
+          {
+            long Now = DateTime.Now.Ticks;
+            if (this.DisplaySettings.EnableDisplayAction && ((Now - this.DisplaySettings._DisplayControlLastAction) <= (this.DisplaySettings.DisplayActionTime * 1000 * 1000 * 10)))
             {
-                this.EQSettings._EqDataAvailable = CybrDisplay.GetEQ(ref this.EQSettings);
-                if (this.EQSettings._EqDataAvailable)
-                {
-                    this._EqThread.Priority = ThreadPriority.AboveNormal;
-                }
-                else
-                {
-                    this._EqThread.Priority = ThreadPriority.BelowNormal;
-                }
+              this.EQSettings._EqDataAvailable = false;
             }
+            else
+            {
+              this.EQSettings._EqDataAvailable = CybrDisplay.GetEQ(ref this.EQSettings);
+            }
+
+            if (this.EQSettings._EqDataAvailable)
+            {
+              this._EqThread.Priority = ThreadPriority.AboveNormal;
+            }
+            else
+            {
+              this._EqThread.Priority = ThreadPriority.BelowNormal;
+            }
+          }
         }
 
         public void Initialize()
@@ -468,6 +484,7 @@
             this.LCD_SetIOPropertys(this.LCD_CONFIG.Port, this.LCD_CONFIG.DelayText, this.LCD_CONFIG.DelayGraphics, this.LCD_CONFIG.ColumnsText, this.LCD_CONFIG.RowsText, this.LCD_CONFIG.ColumnsGraphics, this.LCD_CONFIG.RowsGraphics, true, this.LCD_CONFIG.BacklightLevel, true, this.LCD_CONFIG.ContrastLevel, this.LCD_CONFIG.OutPortsMask, this.LCD_CONFIG.UnderLineMode, this.LCD_CONFIG.UnderlineOutput);
             this.lastBitmap = null;
             AdvancedSettings.OnSettingsChanged += new AdvancedSettings.OnSettingsChangedHandler(this.AdvancedSettings_OnSettingsChanged);
+            this.LoadAdvancedSettings();
             if (this.EQSettings.UseEqDisplay || this.DisplaySettings.BlankDisplayWithVideo)
             {
                 Log.Info("LCDHypeWrapper.Setup(): starting Display_Update() thread", new object[0]);
@@ -527,6 +544,7 @@
         {
             lock (this.DWriteMutex)
             {
+                System.Diagnostics.Debug.WriteLine(String.Format("{0}", _message));
                 this.SetPosition(0, _line);
                 this.SendText(_message);
             }
@@ -604,6 +622,7 @@
                 {
                     if ((wID != Action.ActionType.ACTION_SHOW_INFO) && (wID != Action.ActionType.ACTION_SHOW_OSD))
                     {
+                        this.DisplaySettings._DisplayControlLastAction = DateTime.Now.Ticks;
                         return;
                     }
                 }
@@ -694,62 +713,48 @@
                     {
                         Log.Info("LCDHypeWrapper.RenderEQ(): Drawing VU meter", new object[0]);
                     }
-                    string str = "";
-                    string str2 = "";
-                    int num5 = 0x10;
+                    string strLeft = "";
+                    string strRight = "";
+                    int segmentCount = 0x10;
                     if (this.EQSettings._useVUindicators)
                     {
-                        if (this.EQSettings.UseVUmeter)
+                        strLeft = "L";
+                        strRight = "R";
+                        segmentCount = 15;
+                    }
+                    for (int j = 0; j < segmentCount; j++)
+                    {
+                        if (EqDataArray[1] > j)
                         {
-                            str = "L";
-                            str2 = "R";
+                            strLeft = strLeft + '=';
                         }
                         else
                         {
-                            str = "L";
+                            strLeft = strLeft + ' ';
                         }
-                        num5 = 15;
-                    }
-                    for (int j = 0; j < num5; j++)
-                    {
-                        if (EqDataArray[1] == 0)
+                        if (EqDataArray[2] > j)
                         {
-                            str = str + ' ';
-                        }
-                        else if (((j + 1) * 5) < EqDataArray[1])
-                        {
-                            str = str + "*";
-                        }
-                        if (EqDataArray[2] == 0)
-                        {
-                            str2 = str2 + ' ';
-                        }
-                        else if (this.EQSettings.UseVUmeter)
-                        {
-                            if (((j + 1) * 5) < EqDataArray[2])
-                            {
-                                str2 = str2 + "*";
-                            }
-                        }
-                        else if (EqDataArray[2] > ((num5 - j) * 5))
-                        {
-                            str2 = str2 + "*";
+                            strRight = strRight + '=';
                         }
                         else
                         {
-                            str2 = str2 + ' ';
+                            strRight = strRight + ' ';
                         }
+
                     }
-                    if (this.EQSettings.UseVUmeter2 && this.EQSettings._useVUindicators)
+                    if (this.EQSettings.UseVUmeter2)
                     {
-                        str2 = str2 + "R";
+                        char [] strArray = strRight.ToCharArray();
+                        Array.Reverse( strArray );
+                        strRight = new string( strArray );
+                        //strRight = strRight.Replace(">", "<");
                     }
                     if (this.DoDebug)
                     {
-                        Log.Info("LCDHypeWrapper.RenderEQ(): Sending VU meter data to display: L = \"{0}\" - R = \"{1}\"", new object[] { str, str2 });
+                        Log.Info("LCDHypeWrapper.RenderEQ(): Sending VU meter data to display: L = \"{0}\" - R = \"{1}\"", new object[] { strLeft, strRight });
                     }
-                    this.LCDHypeWrapper_SetLine(0, str);
-                    this.LCDHypeWrapper_SetLine(1, str2);
+                    this.LCDHypeWrapper_SetLine(0, strLeft);
+                    this.LCDHypeWrapper_SetLine(1, strRight);
                 }
             }
         }
@@ -1023,13 +1028,13 @@
             {
                 Log.Info("LCDHypeWrapper.AdvancedSettings.Default(): called", new object[0]);
                 _settings.EqDisplay = false;
-                _settings.NormalEQ = true;
+                _settings.NormalEQ = false;
                 _settings.StereoEQ = false;
-                _settings.VUmeter = false;
+                _settings.VUmeter = true;
                 _settings.VUindicators = false;
                 _settings.RestrictEQ = false;
                 _settings.EqRate = 10;
-                _settings.DelayEQ = false;
+                _settings.DelayEQ = true;
                 _settings.DelayEqTime = 10;
                 _settings.SmoothEQ = false;
                 _settings.BlankDisplayWithVideo = false;

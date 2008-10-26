@@ -347,7 +347,6 @@
     <EmbeddedResource Include="CybrDisplayPlugin.Drivers.iMONLCDg_AdvancedSetupForm.resources" />
     <EmbeddedResource Include="CybrDisplayPlugin.Drivers.iMONLCDg_IconEdit.resources" />
     <EmbeddedResource Include="CybrDisplayPlugin.Drivers.IOWarrior_AdvancedSetupForm.resources" />
-    <EmbeddedResource Include="CybrDisplayPlugin.Drivers.LCDHypeWrapper_AdvancedSetupForm.resources" />
     <EmbeddedResource Include="CybrDisplayPlugin.Drivers.MatrixGX_AdvancedSetupForm.resources" />
     <EmbeddedResource Include="CybrDisplayPlugin.Drivers.MatrixMX_AdvancedSetupForm.resources" />
     <EmbeddedResource Include="CybrDisplayPlugin.Drivers.MD8800_AdvancedSetupForm.resources" />
@@ -359,6 +358,10 @@
     <EmbeddedResource Include="CybrDisplayPlugin.Properties.Resources.resources" />
     <EmbeddedResource Include="CybrDisplayPlugin.PropertyBrowser.resources" />
     <EmbeddedResource Include="CybrDisplayPlugin.SetupForm.resources" />
+    <EmbeddedResource Include="CybrDisplayPlugin\Drivers\LCDHypeWrapper_AdvancedSetupForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>LCDHypeWrapper_AdvancedSetupForm.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

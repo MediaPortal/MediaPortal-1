@@ -715,7 +715,7 @@
           if (EQSETTINGS.DelayEQ & (g_Player.CurrentPosition < EQSETTINGS._DelayEQTime))
           {
             EQSETTINGS._EQDisplayTitle = false;
-            EQSETTINGS._LastEQTitle = g_Player.CurrentPosition;
+            EQSETTINGS._LastEQTitle = (DateTime.Now.Ticks / 1000);
             return false;
           }
           if (EQSETTINGS.EQTitleDisplay)
@@ -724,12 +724,12 @@
             {
               EQSETTINGS._EQDisplayTitle = false;
             }
-            if ((g_Player.CurrentPosition - EQSETTINGS._LastEQTitle) > EQSETTINGS._EQTitleDisplayTime)
+            if (((DateTime.Now.Ticks / 1000) - EQSETTINGS._LastEQTitle) > (EQSETTINGS._EQTitleDisplayTime * 10000))
             {
-              EQSETTINGS._LastEQTitle = g_Player.CurrentPosition;
+              EQSETTINGS._LastEQTitle = (DateTime.Now.Ticks / 1000);
               EQSETTINGS._EQDisplayTitle = !EQSETTINGS._EQDisplayTitle;
             }
-            if (EQSETTINGS._EQDisplayTitle & ((g_Player.CurrentPosition - EQSETTINGS._LastEQTitle) < EQSETTINGS._EQTitleShowTime))
+            if (EQSETTINGS._EQDisplayTitle & (((DateTime.Now.Ticks / 1000) - EQSETTINGS._LastEQTitle) < (EQSETTINGS._EQTitleShowTime * 10000)))
             {
               return false;
             }
@@ -738,7 +738,7 @@
         catch
         {
           EQSETTINGS._EQDisplayTitle = false;
-          EQSETTINGS._LastEQTitle = g_Player.CurrentPosition;
+          EQSETTINGS._LastEQTitle = (DateTime.Now.Ticks / 1000);
           return false;
         }
         int handle = -1;
