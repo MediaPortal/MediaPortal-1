@@ -468,6 +468,11 @@ namespace MediaPortal.Visualization
     public VisualizationWindow(BassAudioEngine bass)
     {
       Bass = bass;
+      Init();
+    }
+
+    private void Init()
+    {
       InitializeComponent();
       CheckForIllegalCrossThreadCalls = false;
       PlaylistPlayer = PlayListPlayer.SingletonPlayer;
@@ -592,6 +597,15 @@ namespace MediaPortal.Visualization
     ~VisualizationWindow()
     {
       Dispose();
+    }
+
+    public void Reinit()
+    {
+      bool running = VisualizationRunning;
+      Run = false;
+      Dispose();
+      Init();
+      Run = running;
     }
 
     private void LoadSettings()

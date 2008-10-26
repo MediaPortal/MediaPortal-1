@@ -32,6 +32,7 @@ using MediaPortal.Util;
 using MediaPortal.GUI.Library;
 using MediaPortal.Dialogs;
 using MediaPortal.Configuration;
+using MediaPortal.Player;
 
 namespace WindowPlugins.GUISettings
 {
@@ -266,6 +267,10 @@ namespace WindowPlugins.GUISettings
             Log.Error(ex);
           }
         }
+      }
+      if (BassMusicPlayer.Player != null && BassMusicPlayer.Player.VisualizationWindow != null)
+      {
+        BassMusicPlayer.Player.VisualizationWindow.Reinit();
       }
     }
 
