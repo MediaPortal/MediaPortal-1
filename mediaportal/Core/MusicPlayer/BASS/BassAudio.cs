@@ -2739,16 +2739,16 @@ namespace MediaPortal.Player
       {
         Log.Debug("BASS: Fullscreen");
 
-        _VideoPositionX = GUIGraphicsContext.OverScanLeft;
-        _VideoPositionY = GUIGraphicsContext.OverScanTop;
+        _VideoPositionX = GUIGraphicsContext.OverScanLeft + GUIGraphicsContext.OffsetX;
+        _VideoPositionY = GUIGraphicsContext.OverScanTop + GUIGraphicsContext.OffsetY;
 
-        _VideoWidth = GUIGraphicsContext.OverScanWidth;
-        _VideoHeight = GUIGraphicsContext.OverScanHeight;
+        _VideoWidth = (int)Math.Round((float)GUIGraphicsContext.OverScanWidth * (float)GUIGraphicsContext.ZoomHorizontal);
+        _VideoHeight = (int)Math.Round((float)GUIGraphicsContext.OverScanHeight * (float)GUIGraphicsContext.ZoomVertical);
 
-        VizWindow.Location = new Point(0, 0);
+        VizWindow.Location = new Point(_VideoPositionX, _VideoPositionY);
         //VizWindow.Visible = false;
 
-        _videoRectangle = new Rectangle(0, 0, GUIGraphicsContext.Width, GUIGraphicsContext.Height);
+        _videoRectangle = new Rectangle(_VideoPositionX, _VideoPositionY, _VideoWidth, _VideoHeight);
         _sourceRectangle = _videoRectangle;
 
         VizWindow.Size = new System.Drawing.Size(_VideoWidth, _VideoHeight);
