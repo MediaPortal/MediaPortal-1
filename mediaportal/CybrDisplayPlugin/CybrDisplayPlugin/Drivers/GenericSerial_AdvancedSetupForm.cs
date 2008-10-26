@@ -21,7 +21,7 @@
         private CheckBox cbToggleDTR;
         private CheckBox cbToggleRTS;
         private MPComboBox cmbBlankIdleTime;
-        private readonly IContainer components;
+      private readonly IContainer components = null;
         private object ControlStateLock = new object();
         private MPGroupBox groupBoxConfiguration;
         private GroupBox groupBoxDisplayCommands;

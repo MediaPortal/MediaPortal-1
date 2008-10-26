@@ -12,7 +12,7 @@
         private MPButton btnOK;
         private MPButton btnReset;
         private MPComboBox cmbBlankIdleTime;
-        private readonly IContainer components;
+      private readonly IContainer components = null;
         private object ControlStateLock = new object();
         private MPGroupBox groupBox1;
         private GroupBox groupBox5;

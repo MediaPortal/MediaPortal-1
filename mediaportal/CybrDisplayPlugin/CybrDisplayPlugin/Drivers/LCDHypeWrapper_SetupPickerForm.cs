@@ -11,7 +11,7 @@
     {
         private MPButton btnCybrDisplay;
         private MPButton btnLCDHype;
-        private readonly IContainer components;
+      private readonly IContainer components = null;
         private object ControlStateLock = new object();
         private MPGroupBox groupBox1;
 

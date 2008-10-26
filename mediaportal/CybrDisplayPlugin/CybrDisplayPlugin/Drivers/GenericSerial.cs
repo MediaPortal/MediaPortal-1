@@ -19,11 +19,11 @@
 
     public class GenericSerial : BaseDisplay, IDisplay, IDisposable
     {
-        private bool _BackLightControl;
-        private int _BackLightLevel = 0x7f;
+        private bool _BackLightControl = false;
+        //private int _BackLightLevel = 0x7f;
         private bool _BlankDisplayOnExit;
-        private bool _ContrastControl;
-        private int _ContrastLevel = 0x7f;
+        //private bool _ContrastControl;
+        //private int _ContrastLevel = 0x7f;
         private Thread _DisplayThread;
         private readonly string _ErrorMessage = "";
         private bool _IsDisabled;

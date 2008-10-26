@@ -42,7 +42,7 @@
         private MPComboBox cmbEqRate;
         private MPComboBox cmbEQTitleDisplayTime;
         private MPComboBox cmbEQTitleShowTime;
-        private readonly IContainer components;
+      private readonly IContainer components = null;
         private object ControlStateLock = new object();
         private GroupBox Fan1Box;
         private GroupBox Fan2Box;

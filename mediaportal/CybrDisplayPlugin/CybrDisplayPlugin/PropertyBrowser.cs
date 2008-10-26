@@ -11,7 +11,7 @@
 
     public class PropertyBrowser : Form
     {
-        private IContainer components;
+        private IContainer components = null;
         private DataGrid dataGrid1;
         private bool DoDebug = Settings.Instance.ExtensiveLogging;
         private MPLabel label1;

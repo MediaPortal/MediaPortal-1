@@ -71,7 +71,7 @@
         private Button cmdSave;
         private Button cmdSaveEdit;
         private Button cmdSetAll;
-        private IContainer components;
+      private IContainer components = null;
         private int EditIndex = -1;
         private PictureBox Icon0;
         private PictureBox Icon1;

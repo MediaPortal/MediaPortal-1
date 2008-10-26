@@ -27,7 +27,7 @@
     private MPComboBox cmbEQTitleDisplayTime;
     private MPComboBox cmbEQTitleShowTime;
     private MPComboBox cmbType;
-    private readonly IContainer components;
+    private readonly IContainer components = null;
     private MPGroupBox groupBoxConfiguration;
     private GroupBox groupBoxDisplayControl;
     private GroupBox groupBoxDisplayOptions;

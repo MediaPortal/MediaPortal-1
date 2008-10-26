@@ -31,7 +31,7 @@
         private static bool _stopDisplayUpdateThread = false;
         private AdvancedSettings AdvSettings = AdvancedSettings.Load();
         private byte[] bitmapData;
-        private Container components;
+      private Container components = null;
         private CybrDisplay.DisplayControl DisplaySettings;
         private bool DoDebug;
         private bool DrawingText;

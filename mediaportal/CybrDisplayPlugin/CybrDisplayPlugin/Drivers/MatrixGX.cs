@@ -32,7 +32,7 @@
         private readonly string[] _Lines = new string[2];
         private static bool _useDiskIconForAllMedia;
         private static bool _useIcons;
-        private static bool _useInvertedDisplay;
+        //private static bool _useInvertedDisplay;
         private static bool _useProgressDisplay;
         private static bool _useVolumeDisplay;
         private AdvancedSettings AdvSettings;
@@ -1900,7 +1900,7 @@
                 private bool _diskRotate;
                 private bool _diskRotateClockwise = true;
                 private int _diskSegment;
-                private readonly uint _diskSolidOffMask;
+                private readonly uint _diskSolidOffMask = 0;
                 private readonly uint _diskSolidOnMask = 0xff;
                 private bool _diskSRWFlash = true;
                 private int _flashState = 1;

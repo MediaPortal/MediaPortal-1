@@ -30,7 +30,7 @@
         private MPComboBox cmbEqRate;
         private MPComboBox cmbEQTitleDisplayTime;
         private MPComboBox cmbEQTitleShowTime;
-        private readonly IContainer components;
+      private readonly IContainer components = null;
         private object ControlStateLock = new object();
         private MPGroupBox groupBox1;
         private GroupBox groupBox4;

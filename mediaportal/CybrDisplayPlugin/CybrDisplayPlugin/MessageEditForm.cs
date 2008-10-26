@@ -98,7 +98,7 @@
         private MPComboBox comboBoxProcessType;
         private MPComboBox ComboBoxStatusProperty;
         private MPComboBox comboBoxWindowProperty;
-        private Container components;
+      private Container components = null;
         private string[] ConditionList = new string[] { "And", "IsNull", "NotNull", "Or" };
         private GroupBox groupboxCharacterEdit;
         private MPGroupBox GroupBoxCondition;

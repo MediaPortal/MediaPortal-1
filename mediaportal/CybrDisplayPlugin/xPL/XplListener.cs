@@ -26,7 +26,7 @@
     private const int DEFAULT_HBEAT = 5;
     private const string DEFAULT_LISTENTOIP = "ANY";
     private bool disposing;
-    private bool DoDebug;
+    private bool DoDebug = false;
     private IPEndPoint epIncoming;
     private int HBeat_Count;
     public int InstanceNumber;

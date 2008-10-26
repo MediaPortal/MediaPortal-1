@@ -36,9 +36,9 @@
     private static SystemStatus MPStatus;
     public static object PropertyBrowserMutex = new object();
     private GUIWindow RemoteControlWindow = new GUI_SettingsRemote();
-    private bool ScreenSaverActive;
-    private bool ScreenSaverActiveAtStart;
-    private int ScreenSaverTimeOut;
+    private bool ScreenSaverActive = false;
+    //private bool ScreenSaverActiveAtStart;
+    //private int ScreenSaverTimeOut;
     private GUIWindow SetupWindow = new GUI_SettingsMain();
     private CybrDisplayPlugin.Status status;
     private static object StatusMutex = new object();

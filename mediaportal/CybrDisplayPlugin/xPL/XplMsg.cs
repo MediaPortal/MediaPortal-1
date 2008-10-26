@@ -11,7 +11,7 @@
     public class XplMsg
     {
         private bool bValid;
-        private bool DoDebug;
+        private bool DoDebug = false;
         private IPAddress pBroadcastAddress;
         private const int XPL_BASE_PORT = 0xf19;
         public List<structXplSection> XPL_Msg;

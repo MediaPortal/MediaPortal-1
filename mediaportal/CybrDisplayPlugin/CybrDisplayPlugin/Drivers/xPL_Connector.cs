@@ -24,7 +24,7 @@
         private bool _DisplayChanged;
         private readonly string _ErrorMessage = "";
         private bool _IsConnected;
-        private bool _IsDisabled;
+        private bool _IsDisabled = false;
         private readonly string[] _lines = new string[2];
         private bool _StatusChanged = true;
         private int _Tcols;

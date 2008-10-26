@@ -15,7 +15,7 @@
     {
         private readonly string[] _lines = new string[2];
         public const bool ExtensiveLogging = true;
-        private bool IDisplayToMCE;
+      private bool IDisplayToMCE = false;
         private Thread mainThread;
         private MCESession mediaSession = new HomeSession();
         private CybrDisplay.SystemStatus MPStatus = new CybrDisplay.SystemStatus();
