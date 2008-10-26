@@ -42,14 +42,13 @@
           <thumbWidth>87</thumbWidth>
           <thumbHeight>137</thumbHeight>
           <thumbPosX>5</thumbPosX>
-          <thumbPosY>5</thumbPosY>
-         
-          <itemWidthBig>224</itemWidthBig>
-          <itemHeightBig>247</itemHeightBig>
-          <thumbWidthBig>137</thumbWidthBig>
-          <thumbHeightBig>197</thumbHeightBig>
-          <textureWidthBig>149</textureWidthBig>
-          <textureHeightBig>209</textureHeightBig>
+          <thumbPosY>5</thumbPosY>  
+          <itemWidthBig>195</itemWidthBig>
+          <itemHeightBig>250</itemHeightBig>
+          <thumbWidthBig>140</thumbWidthBig>
+          <thumbHeightBig>194</thumbHeightBig>
+          <textureWidthBig>150</textureWidthBig>
+          <textureHeightBig>205</textureHeightBig>
           <thumbPosXBig>5</thumbPosXBig>
           <thumbPosYBig>5</thumbPosYBig>
           <zoomXPixels>30</zoomXPixels>
