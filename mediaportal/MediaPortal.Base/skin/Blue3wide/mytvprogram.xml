@@ -112,9 +112,9 @@
       <description>upcoming episodes listcontrol</description>
       <type>listcontrol</type>
       <id>10</id>
-      <posY>375</posY>
+      <posY>385</posY>
       <width>760</width>
-      <height>312</height>
+      <height>362</height>
       <textXOff>88</textXOff>
       <textYOff>2</textYOff>
       <textXOff2>743</textXOff2>
@@ -122,11 +122,11 @@
       <textXOff3>177</textXOff3>
       <textYOff3>36</textYOff3>
       <IconXOff>21</IconXOff>
-      <PinIconXOff>45</PinIconXOff>
+      <PinIconXOff>110</PinIconXOff>
       <PinIconYOff>15</PinIconYOff>
       <spinPosX>1031</spinPosX>
-      <itemWidth>62</itemWidth>
-      <itemHeight>43</itemHeight>
+      <itemWidth>74</itemWidth>
+      <itemHeight>52</itemHeight>
       <textureFocus>album_background_focus.png</textureFocus>
       <textureNoFocus>album_background_nofocus.png</textureNoFocus>
       <spaceBetweenItems>8</spaceBetweenItems>
