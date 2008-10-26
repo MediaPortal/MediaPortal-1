@@ -1051,6 +1051,8 @@ namespace MediaPortal.GUI.Pictures
       GUIDialogExif exifDialog = (GUIDialogExif)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_EXIF);
       exifDialog.FileName = item.Path;
       exifDialog.DoModal(GetID);
+      // Fix for Mantis issue: 0001709: Background not correct after viewing pictures properties twice
+      exifDialog.Restore();
     }
 
     void OnRotatePicture()
