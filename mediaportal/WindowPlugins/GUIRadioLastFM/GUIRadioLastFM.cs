@@ -102,16 +102,21 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     private void LoadSettings()
     {
-      GUIWaitCursor.Show();
-      BackgroundWorker worker = new BackgroundWorker();
-      worker.DoWork += new DoWorkEventHandler(Worker_LoadSettings);
-      worker.RunWorkerAsync();
+      Thread LoadThread = new Thread(new ThreadStart(Worker_LoadSettings));
+      LoadThread.IsBackground = true;
+      LoadThread.Priority = ThreadPriority.AboveNormal;
+      LoadThread.Name = "Last.fm init";
+      LoadThread.Start();
+      
+      //BackgroundWorker worker = new BackgroundWorker();
+      //worker.DoWork += new DoWorkEventHandler(Worker_LoadSettings);
+      //worker.RunWorkerAsync();
     }
 
-    private void Worker_LoadSettings(object sender, DoWorkEventArgs e)
+    private void Worker_LoadSettings(/*object sender, DoWorkEventArgs e*/)
     {
-      System.Threading.Thread.CurrentThread.Name = "LastFm";
-      if (!LastFMStation.IsInit)
+      GUIWaitCursor.Show();
+      if (!LastFMStation.IsInit || LastFMStation.AccountUser != AudioscrobblerBase.Username)
       {
         LastFMStation.LoadConfig();
         btnSubmitProfile.Selected = AudioscrobblerBase.SubmitRadioSongs;
@@ -188,11 +193,11 @@ namespace MediaPortal.GUI.RADIOLASTFM
       GUIPropertyManager.SetProperty("#trackduration", " ");
       string ThumbFileName = String.Empty;
 
-      if (LastFMStation.CurrentTrackTag != null && LastFMStation.CurrentTrackTag.Artist != String.Empty)
+      if (AudioscrobblerBase.CurrentPlayingSong != null && AudioscrobblerBase.CurrentPlayingSong.Artist != String.Empty)
       {
         // If we leave and reenter the plugin try to set the correct duration
-        GUIPropertyManager.SetProperty("#trackduration", Util.Utils.SecondsToHMSString(LastFMStation.CurrentTrackTag.Duration));
-        ThumbFileName = Util.Utils.GetCoverArtName(Thumbs.MusicArtists, LastFMStation.CurrentTrackTag.Artist);
+        GUIPropertyManager.SetProperty("#trackduration", Util.Utils.SecondsToHMSString(AudioscrobblerBase.CurrentPlayingSong.Duration));
+        ThumbFileName = Util.Utils.GetCoverArtName(Thumbs.MusicArtists, AudioscrobblerBase.CurrentPlayingSong.Artist);
       }
 
       SetArtistThumb(ThumbFileName);
@@ -551,7 +556,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       dlg.AddLocalizedString(34011);        // Ban
       dlg.AddLocalizedString(34012);        // Skip
 
-      if (LastFMStation.CurrentTrackTag != null)
+      if (AudioscrobblerBase.CurrentPlayingSong != null)
         dlg.AddLocalizedString(33040);  // copy IRC spam
 
       dlg.AddLocalizedString(34015);    // Reload tags/friends
@@ -575,10 +580,10 @@ namespace MediaPortal.GUI.RADIOLASTFM
         case 33040:    // IRC spam          
           try
           {
-            if (LastFMStation.CurrentTrackTag != null)
+            if (AudioscrobblerBase.CurrentPlayingSong != null)
             {
-              string tmpTrack = LastFMStation.CurrentTrackTag.Track > 0 ? (Convert.ToString(LastFMStation.CurrentTrackTag.Track) + ". ") : String.Empty;
-              Clipboard.SetDataObject(@"/me is listening on last.fm: " + LastFMStation.CurrentTrackTag.Artist + " [" + LastFMStation.CurrentTrackTag.Album + "] - " + tmpTrack + LastFMStation.CurrentTrackTag.Title, true);
+              string tmpTrack = AudioscrobblerBase.CurrentPlayingSong.Track > 0 ? (Convert.ToString(AudioscrobblerBase.CurrentPlayingSong.Track) + ". ") : String.Empty;
+              Clipboard.SetDataObject(@"/me is listening on last.fm: " + AudioscrobblerBase.CurrentPlayingSong.Artist + " [" + AudioscrobblerBase.CurrentPlayingSong.Album + "] - " + tmpTrack + AudioscrobblerBase.CurrentPlayingSong.Title, true);
             }
           }
           catch (Exception ex)
@@ -741,7 +746,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     {
       if (request.Equals(_lastArtistCoverRequest))
       {
-        string ThumbFileName = Util.Utils.GetCoverArtName(Thumbs.MusicArtists, LastFMStation.CurrentTrackTag.Artist);
+        string ThumbFileName = Util.Utils.GetCoverArtName(Thumbs.MusicArtists, AudioscrobblerBase.CurrentPlayingSong.Artist);
         // If the download was unsuccessful or disabled in config then do not remove a possibly present placeholder by specifing a not existing file
         if (File.Exists(ThumbFileName))
         {
@@ -852,7 +857,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     private void OnPlaybackStopped()
     {
-      LastFMStation.CurrentTrackTag.Clear();
       LastFMStation.CurrentStreamState = StreamPlaybackState.initialized;
 
       SetArtistThumb(String.Empty);

@@ -44,6 +44,9 @@ namespace MediaPortal.GUI.RADIOLASTFM
 {
   #region enums
 
+  /// <summary>
+  /// Obsolete - the "old" last.fm radio was using an uninteruptable stream, the XSPF playlist mode uses single mp3 files
+  /// </summary>
   public enum PlaybackType
   {
     Unknown = 0,
@@ -51,6 +54,9 @@ namespace MediaPortal.GUI.RADIOLASTFM
     PlaylistPlayer = 2,
   }
 
+  /// <summary>
+  /// Indicates the current playback status
+  /// </summary>
   public enum StreamPlaybackState : int
   {
     offline = 0,
@@ -61,6 +67,9 @@ namespace MediaPortal.GUI.RADIOLASTFM
     nocontent = 5,
   }
 
+  /// <summary>
+  /// Possible user interactions to manipulate the radio stream
+  /// </summary>
   public enum StreamControls : int
   {
     skiptrack = 0,
@@ -68,6 +77,9 @@ namespace MediaPortal.GUI.RADIOLASTFM
     bantrack = 2,
   }
 
+  /// <summary>
+  /// Do we want to listen to "artist" radio or maybe some specific "tag"
+  /// </summary>
   public enum StreamType : int
   {
     Artist = 0,
@@ -82,12 +94,12 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
   #endregion
 
+  /// <summary>
+  /// Handles last.fm radio protocol interaction
+  /// </summary>
   class StreamControl
   {
     #region Event delegates
-
-    //public delegate void SongChangedHandler(MusicTag newCurrentSong, DateTime startTime);
-    //public event SongChangedHandler StreamSongChanged;
 
     public delegate void RadioSettingsLoaded();
     public event RadioSettingsLoaded RadioSettingsSuccess;
@@ -201,8 +213,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     private void LoadSettings()
     {
-      CurrentSongTag = new MusicTag();
-
       httpcommand = new AsyncGetRequest();
       httpcommand.workerFinished += new AsyncGetRequest.AsyncGetRequestCompleted(OnParseAsyncResponse);
       httpcommand.workerError += new AsyncGetRequest.AsyncGetRequestError(OnAsyncRequestError);
@@ -250,11 +260,17 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     #region getters & setters
 
+    /// <summary>
+    /// The active last.fm user for the plugin
+    /// </summary>
     public string AccountUser
     {
       get { return _currentUser; }
     }
 
+    /// <summary>
+    /// The username which will be used for stream setups
+    /// </summary>
     public string StreamsUser
     {
       get { return _currentStreamsUser; }
@@ -289,13 +305,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
     public StreamType CurrentTuneType
     {
       get { return _currentTuneType; }
-
-      //set
-      //{
-      //  if (value != _currentTuneType)
-      //    _currentTuneType = value;
-      //  Log.Debug("StreamControl: Setting CurrentTuneType to {0}", _currentTuneType.ToString());
-      //}
     }
 
     public StreamPlaybackState CurrentStreamState
@@ -320,11 +329,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
           _currentPlaybackType = value;
         Log.Debug("StreamControl: Setting CurrentPlaybackType to {0}", _currentPlaybackType.ToString());
       }
-    }
-
-    public MusicTag CurrentTrackTag
-    {
-      get { return CurrentSongTag; }
     }
 
     public bool DiscoveryMode

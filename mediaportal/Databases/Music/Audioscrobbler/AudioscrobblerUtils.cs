@@ -640,9 +640,11 @@ namespace MediaPortal.Music.Database
         return 0;
       }
     }
+
     #endregion
 
     #region TagBlacklisting
+
     private List<String> buildTagBlacklist()
     {
       List<String> badTags = new List<string>();
@@ -668,9 +670,11 @@ namespace MediaPortal.Music.Database
 
       return badTags;
     }
+
     #endregion
 
     #region Serialization
+
     void LoadSettings()
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))

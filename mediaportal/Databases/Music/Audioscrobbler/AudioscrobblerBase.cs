@@ -49,6 +49,7 @@ namespace MediaPortal.Music.Database
   public static class AudioscrobblerBase
   {
     #region Events
+
     public delegate void HandshakeCompleted(HandshakeType ReasonForHandshake, DateTime lastSuccessfulHandshake);
     public static event HandshakeCompleted workerSuccess;
 
@@ -60,9 +61,11 @@ namespace MediaPortal.Music.Database
 
     public delegate void RadioHandshakeFailed();
     public static event RadioHandshakeFailed RadioHandshakeError;
+
     #endregion
 
     #region Enums
+
     public enum HandshakeType : int
     {
       Init = 0,
@@ -242,7 +245,6 @@ namespace MediaPortal.Music.Database
           password = value;
           // allow a new handshake to occur
           lastHandshake = DateTime.MinValue;
-          //          Log.Info("AudioscrobblerBase.Password", "Password changed");
         }
       }
     }
@@ -328,7 +330,7 @@ namespace MediaPortal.Music.Database
 
     #endregion
 
-    #region Public methods.
+    #region Public methods
 
     /// <summary>
     /// Connect to the Audioscrobbler service. While connected any queued songs are submitted to Audioscrobbler.
@@ -881,6 +883,9 @@ namespace MediaPortal.Music.Database
       DoHandshake(false, HandshakeType.Submit);
     }
 
+    /// <summary>
+    /// Post the just started song to last.fm so it appears as "currently listening" on their site
+    /// </summary>
     public static void AnnounceNowPlaying()
     {
       DoHandshake(false, HandshakeType.Announce);
@@ -1052,7 +1057,7 @@ namespace MediaPortal.Music.Database
     }
     #endregion
 
-    #region Audioscrobbler response parsers.
+    #region Audioscrobbler response parsers
 
     private static bool parseUpToDateMessage(string type_, StreamReader reader_)
     {

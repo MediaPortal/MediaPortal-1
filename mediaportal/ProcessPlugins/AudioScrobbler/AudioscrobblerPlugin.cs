@@ -24,15 +24,15 @@
 #endregion
 
 using System;
+using System.Runtime.CompilerServices;
 using System.Timers;
+using System.Threading;
 using System.Windows.Forms;
 
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Music.Database;
 using MediaPortal.Player;
-using System.Threading;
-using System.Runtime.CompilerServices;
 
 namespace MediaPortal.Audioscrobbler
 {
@@ -56,27 +56,10 @@ namespace MediaPortal.Audioscrobbler
 
     public bool _doSubmit = true;
     public bool _announceNowPlaying = true;
-    // private bool _queued = false;
 
     private System.Timers.Timer SongLengthTimer;
 
-    #region Properties
-
-    ///// <summary>
-    ///// Whether the current song has been added to the queue
-    ///// </summary>
-    //public bool Queued
-    //{
-    //  get { return _queued; }
-    //  set { _queued = value; }
-    //}
-
-    #endregion
-
     #region Events
-
-    //public delegate void TrackQueued();
-    //public event TrackQueued SubmitQueued;
 
     private void OnManualDisconnect(object sender, EventArgs args)
     {
@@ -104,11 +87,6 @@ namespace MediaPortal.Audioscrobbler
       }
     }
 
-    //private void AudioscrobblerPlugin_SubmitQueued()
-    //{
-    //  _queued = true;
-    //}
-
     private void OnSongLoadedThread()
     {
       for (int i = 0; i < 15; i++)
@@ -129,16 +107,6 @@ namespace MediaPortal.Audioscrobbler
         Thread.Sleep(1000);
       }
 
-      //while (AudioscrobblerBase.CurrentSubmitSong.AudioScrobblerStatus != SongStatus.Init)
-      //{
-      //  Thread.Sleep(1000);
-      //  Log.Debug("Audioscrobbler plugin: waiting for submit == init; CurrentSubmitSong - {0}", AudioscrobblerBase.CurrentSubmitSong.ToLastFMMatchString(true));
-      //}
-      //while (AudioscrobblerBase.CurrentPlayingSong.AudioScrobblerStatus != SongStatus.Loaded)
-      //{
-      //  Thread.Sleep(1000);
-      //  Log.Debug("Audioscrobbler plugin: waiting for current == loaded; CurrentPlayingSong - {0}", AudioscrobblerBase.CurrentPlayingSong.ToLastFMMatchString(true));
-      //}
       if (AudioscrobblerBase.CurrentPlayingSong.Artist != String.Empty)
       {
         // Don't hand over the reference        
@@ -255,9 +223,8 @@ namespace MediaPortal.Audioscrobbler
     }
 
     /// <summary>
-    /// Gets called everytime the playback status of MyMusic changes.
+    /// Gets called everytime when a new song needs to be detected
     /// </summary>
-    /// <param name="playing">on true it does a Song lookup for new Tracks if necessary</param>
     [MethodImpl(MethodImplOptions.Synchronized)]
     private void OnStateChangedEvent()
     {
@@ -497,9 +464,6 @@ namespace MediaPortal.Audioscrobbler
       g_Player.PlayBackStarted += new g_Player.StartedHandler(OnPlayBackStarted);
       g_Player.PlayBackEnded += new g_Player.EndedHandler(OnPlayBackEnded);
       g_Player.PlayBackStopped += new g_Player.StoppedHandler(OnPlayBackStopped);
-      //this.SubmitQueued += new TrackQueued(AudioscrobblerPlugin_SubmitQueued);
-
-      // startStopSongCheckTimer(true);
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
@@ -526,7 +490,6 @@ namespace MediaPortal.Audioscrobbler
       SongStoppedHandler();
 
       OnManualDisconnect(null, null);
-      //this.SubmitQueued -= new TrackQueued(AudioscrobblerPlugin_SubmitQueued);
       g_Player.PlayBackStarted -= new g_Player.StartedHandler(OnPlayBackStarted);
       g_Player.PlayBackEnded -= new g_Player.EndedHandler(OnPlayBackEnded);
       g_Player.PlayBackStopped -= new g_Player.StoppedHandler(OnPlayBackStopped);
