@@ -385,7 +385,7 @@ namespace MediaPortal.GUI.Music
           _currentScrobbleUser = dlg.SelectedLabelText;
           btnScrobbleUser.Label = GUILocalizeStrings.Get(33005) + _currentScrobbleUser;
 
-          AudioscrobblerBase.ChangeUser(_currentScrobbleUser, mdb.AddScrobbleUserPassword(Convert.ToString(mdb.AddScrobbleUser(_currentScrobbleUser)), ""));
+          AudioscrobblerBase.DoChangeUser(_currentScrobbleUser, mdb.AddScrobbleUserPassword(Convert.ToString(mdb.AddScrobbleUser(_currentScrobbleUser)), ""));
           LoadScrobbleUserSettings();
           UpdateButtonStates();
         }

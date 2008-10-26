@@ -46,6 +46,38 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Music.Database
 {
+  #region XmlRpcParams class
+
+  public class XmlRpcParams
+  {
+    /// <summary>
+    /// Empty constructor
+    /// </summary>
+    XmlRpcParams()
+    {
+    }
+    /// <summary>
+    /// Default constructor
+    /// </summary>
+    /// <param name="aMethodType"></param>
+    /// <param name="aArtist"></param>
+    /// <param name="aTitle"></param>
+    /// <param name="aFriendsUserName"></param>
+    public XmlRpcParams(XmlRpcType aMethodType, string aArtist, string aTitle, string aFriendsUserName)
+    {
+      MethodType = aMethodType;
+      Artist = aArtist;
+      Title = aTitle;
+      FriendsUserName = aFriendsUserName;
+    }
+    public XmlRpcType MethodType;
+    public string Artist;
+    public string Title;
+    public string FriendsUserName;
+  }
+
+  #endregion
+
   public static class AudioscrobblerBase
   {
     #region Events
@@ -85,8 +117,10 @@ namespace MediaPortal.Music.Database
     const int CONNECT_WAIT_TIME = 3;       //< Min secs between connects.
     const string CLIENT_NAME = "mpm";      //assigned by Russ Garrett from Last.fm Ltd.
     const string CLIENT_VERSION = "0.1";
+    const string CLIENT_FAKE_VERSION = "1.5.1.30182";
+    const string CLIENT_LANGUAGE = "de";
     const string SCROBBLER_URL = "http://post.audioscrobbler.com";
-    const string RADIO_SCROBBLER_URL = "http://ws.audioscrobbler.com/radio/";
+    const string RADIO_SCROBBLER_URL = "http://ws.audioscrobbler.com/";
     const string PROTOCOL_VERSION = "1.2";
 
     #endregion
@@ -105,7 +139,7 @@ namespace MediaPortal.Music.Database
 
     // Other internal properties.    
     private static Thread submitThread;
-    static AudioscrobblerQueue queue;
+    private static AudioscrobblerQueue queue;
     private static Object queueLock;
     private static Object submitLock;
     private static DateTime lastHandshake;        //< last successful attempt.
@@ -162,14 +196,14 @@ namespace MediaPortal.Music.Database
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        username = xmlreader.GetValueAsString("audioscrobbler", "user", "");
+        username = xmlreader.GetValueAsString("audioscrobbler", "user", String.Empty);
         _recordToProfile = xmlreader.GetValueAsBool("audioscrobbler", "submitradiotracks", true);
         _artistPrefixes = xmlreader.GetValueAsString("musicfiles", "artistprefixes", "The, Les, Die");
         _artistsStripped = xmlreader.GetValueAsBool("musicfiles", "stripartistprefixes", false);
 
         string tmpPass;
 
-        tmpPass = MusicDatabase.Instance.AddScrobbleUserPassword(Convert.ToString(MusicDatabase.Instance.AddScrobbleUser(username)), "");
+        tmpPass = MusicDatabase.Instance.AddScrobbleUserPassword(Convert.ToString(MusicDatabase.Instance.AddScrobbleUser(username)), String.Empty);
         _useDebugLog = (MusicDatabase.Instance.AddScrobbleUserSettings(Convert.ToString(MusicDatabase.Instance.AddScrobbleUser(username)), "iDebugLog", -1) == 1) ? true : false;
 
         if (tmpPass != string.Empty)
@@ -304,7 +338,7 @@ namespace MediaPortal.Music.Database
     /// <summary>
     /// Get/Set if you like your radio songs to appear in your last.fm profile
     /// </summary>
-    public static bool SubmitRadioSongs
+    public static bool IsSubmittingRadioSongs
     {
       get { return _recordToProfile; }
 
@@ -320,13 +354,19 @@ namespace MediaPortal.Music.Database
     /// <summary>
     /// Get the subscription status. Must be preceded by "RadioSession" before.
     /// </summary>
-    public static bool Subscriber
+    public static bool IsSubscriber
     {
       get
       {
         return _subscriber;
       }
     }
+
+    public static string ClientFakeVersion
+    {
+      get { return CLIENT_FAKE_VERSION; }
+    }
+
 
     #endregion
 
@@ -350,7 +390,7 @@ namespace MediaPortal.Music.Database
         queue.Save();
     }
 
-    public static void ChangeUser(string scrobbleUser_, string scrobblePassword_)
+    public static void DoChangeUser(string scrobbleUser_, string scrobblePassword_)
     {
       olduser = username;
       oldpass = password;
@@ -358,8 +398,8 @@ namespace MediaPortal.Music.Database
       {
         queue.Save();
         queue = null;
-        MD5Response = "";
-        string tmpPass = "";
+        MD5Response = String.Empty;
+        string tmpPass = String.Empty;
         try
         {
           EncryptDecrypt Crypter = new EncryptDecrypt();
@@ -414,16 +454,12 @@ namespace MediaPortal.Music.Database
       StartSubmitQueueThread();
     }
 
-    #region Public event triggers
-
-    public static void TriggerSafeModeEvent()
+    private static void TriggerSafeModeEvent()
     {
       DoHandshake(true, HandshakeType.Recover);
 
       Log.Warn("AudioscrobblerBase: falling back to safe mode");
     }
-
-    #endregion
 
     #region Networking related functions
 
@@ -501,7 +537,7 @@ namespace MediaPortal.Music.Database
       try
       {
         // Parse handshake response
-        success = GetResponse(url, "", false);
+        success = GetResponse(url, String.Empty, false);
 
         if (success)
         {
@@ -536,7 +572,7 @@ namespace MediaPortal.Music.Database
           AttemptRadioHandshake();
           break;
         case HandshakeType.Init:
-          AttemptSubmitNow();
+          AttemptSubmitNow();          
           break;
         case HandshakeType.Submit:
           AttemptSubmitNow();
@@ -606,13 +642,11 @@ namespace MediaPortal.Music.Database
 
     private static bool AttemptRadioHandshake()
     {
-      // http://ws.audioscrobbler.com/radio/handshake.php?version=1.3.1.1&platform=win32&username=f1n4rf1n&passwordmd5=3847af7ab43a1c31503e8bef7736c41f&language=de&player=wmplayer HTTP/1.1
-      // http://ws.audioscrobbler.com/radio/handshake.php?version=1.4.1.57486&platform=win32&platformversion=Windows%20XP&username=f1n4rf1n&passwordmd5=3847af7ab43a1c31503e8bef7736c41f&language=de&player=wmplayer
       string tmpUser = System.Web.HttpUtility.UrlEncode(username).ToLower();
       string tmpPass = HashSingleString(password);
       string url = RADIO_SCROBBLER_URL
-                 + "handshake.php?"
-                 + "version=" + "1.4.1.57486"
+                 + "radio/handshake.php?"
+                 + "version=" + CLIENT_FAKE_VERSION
                  + "&platform=" + "win32"
                  + "&platformversion=" + "Windows%20XP"
                  + "&username=" + tmpUser
@@ -621,7 +655,7 @@ namespace MediaPortal.Music.Database
                  + "&player=unknown";
 
       // Parse handshake response
-      bool success = GetResponse(url, "", true);
+      bool success = GetResponse(url, String.Empty, true);
 
       if (!success)
       {
@@ -639,7 +673,6 @@ namespace MediaPortal.Music.Database
       return true;
     }
 
-
     /// <summary>
     /// Executes the given HTTP request and parses the response of the server.
     /// </summary>
@@ -648,6 +681,8 @@ namespace MediaPortal.Music.Database
     /// <returns>True if the request was successfully completed, false otherwise</returns>
     private static bool GetResponse(string url_, string postdata_, bool useGet_)
     {
+      bool IsRpcRequest = url_.Contains("xmlrpc");
+
       // Enforce a minimum wait time between connects.
       DateTime nextconnect = lastConnectAttempt.Add(minConnectWaitTime);
       if (DateTime.Now < nextconnect)
@@ -666,26 +701,18 @@ namespace MediaPortal.Music.Database
       try
       {
         request = (HttpWebRequest)WebRequest.Create(url_);
-        if (request == null)
-          throw (new Exception());
-        else
-        {
+        if (IsRpcRequest)
           request.CookieContainer = _cookies;
-          //request.UserAgent = "Last.fm Client 1.3.1.1 (Windows)";
-
-          try
-          {
-            // Use the current user in case an NTLM Proxy or similar is used.
-            // request.Proxy = WebProxy.GetDefaultProxy();
-            request.Proxy.Credentials = CredentialCache.DefaultCredentials;
-          }
-          catch (Exception) { }
-
-          //request.Timeout = 20000;
-          request.Pipelined = false;
-
-          request.UserAgent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)";
+        request.UserAgent = "Last.fm Client " + CLIENT_FAKE_VERSION + " (Windows)";
+        //request.Timeout = 20000;
+        request.Pipelined = false;
+        try
+        {
+          // Use the current user in case an NTLM Proxy or similar is used.
+          // request.Proxy = WebProxy.GetDefaultProxy();
+          request.Proxy.Credentials = CredentialCache.DefaultCredentials;
         }
+        catch (Exception) { }
       }
       catch (Exception e)
       {
@@ -695,13 +722,21 @@ namespace MediaPortal.Music.Database
       }
 
       // Attach POST data to the request, if any.
-      if (postdata_ != "")
+      if (postdata_ != String.Empty)
       {
-        //Log.Info("AudioscrobblerBase.GetResponse: POST to {0}", url_);
-        if (url_.Contains(nowPlayingUrl))
-          Log.Info("AudioscrobblerBase: Announcing current track: {0}", postdata_);
+        if (IsRpcRequest)
+        {
+          if (_useDebugLog)
+            Log.Info("AudioscrobblerBase: Sending XMLRPC call: {0}", postdata_);
+          else
+            Log.Info("AudioscrobblerBase: Sending XMLRPC call...");
+          IsRpcRequest = true;
+        }
         else
-          Log.Info("AudioscrobblerBase: Submitting data: {0}", postdata_);
+          if (url_.Contains(nowPlayingUrl))
+            Log.Info("AudioscrobblerBase: Announcing current track: {0}", postdata_);
+          else
+            Log.Info("AudioscrobblerBase: Submitting data: {0}", postdata_);
 
         try
         {
@@ -713,7 +748,15 @@ namespace MediaPortal.Music.Database
           else
           {
             request.Method = "POST";
-            request.ContentType = "application/x-www-form-urlencoded";
+            if (IsRpcRequest)
+            {
+              request.ContentType = "text/xml";
+              request.KeepAlive = false;
+              request.ServicePoint.Expect100Continue = false;
+              request.Headers.Add("Accept-Language", "de, en");
+            }
+            else
+              request.ContentType = "application/x-www-form-urlencoded";
           }
           request.ContentLength = postHeaderBytes.Length;
 
@@ -740,44 +783,37 @@ namespace MediaPortal.Music.Database
       try
       {
         HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-        if (response == null)
-          throw (new Exception());
-        else
+        // Print the properties of each cookie.
+        int i = 0;
+        foreach (Cookie cook in response.Cookies)
         {
-          // Print the properties of each cookie.
-          int i = 0;
-          foreach (Cookie cook in response.Cookies)
+          _cookies.Add(cook);
+          i++;
+          if (_useDebugLog)
           {
-            _cookies.Add(cook);
-            i++;
-            if (_useDebugLog)
-            {
-              Log.Debug("AudioscrobblerBase: Cookie: {0}", Convert.ToString(i));
-              Log.Debug("AudioscrobblerBase: {0} = {1}", cook.Name, cook.Value);
-              Log.Debug("AudioscrobblerBase: Domain: {0}", cook.Domain);
-              Log.Debug("AudioscrobblerBase: Path: {0}", cook.Path);
-              Log.Debug("AudioscrobblerBase: Port: {0}", cook.Port);
-              Log.Debug("AudioscrobblerBase: Secure: {0}", cook.Secure);
-              Log.Debug("AudioscrobblerBase: When issued: {0}", cook.TimeStamp);
-              Log.Debug("AudioscrobblerBase: Expires: {0} (expired? {1})", cook.Expires, cook.Expired);
-              Log.Debug("AudioscrobblerBase: Don't save: {0}", cook.Discard);
-              Log.Debug("AudioscrobblerBase: Comment: {0}", cook.Comment);
-              Log.Debug("AudioscrobblerBase: Uri for comments: {0}", cook.CommentUri);
-              Log.Debug("AudioscrobblerBase: Version: RFC {0}", cook.Version == 1 ? "2109" : "2965");
-
-              // Show the string representation of the cookie.
-              Log.Debug("AudioscrobblerBase: String: {0}", cook.ToString());
-            }
+            Log.Debug("AudioscrobblerBase: Cookie: {0}", Convert.ToString(i));
+            Log.Debug("AudioscrobblerBase: {0} = {1}", cook.Name, cook.Value);
+            Log.Debug("AudioscrobblerBase: Domain: {0}", cook.Domain);
+            Log.Debug("AudioscrobblerBase: Path: {0}", cook.Path);
+            Log.Debug("AudioscrobblerBase: Port: {0}", cook.Port);
+            Log.Debug("AudioscrobblerBase: Secure: {0}", cook.Secure);
+            Log.Debug("AudioscrobblerBase: When issued: {0}", cook.TimeStamp);
+            Log.Debug("AudioscrobblerBase: Expires: {0} (expired? {1})", cook.Expires, cook.Expired);
+            Log.Debug("AudioscrobblerBase: Don't save: {0}", cook.Discard);
+            Log.Debug("AudioscrobblerBase: Comment: {0}", cook.Comment);
+            Log.Debug("AudioscrobblerBase: Uri for comments: {0}", cook.CommentUri);
+            Log.Debug("AudioscrobblerBase: Version: RFC {0}", cook.Version == 1 ? "2109" : "2965");
+            // Show the string representation of the cookie.
+            Log.Debug("AudioscrobblerBase: String: {0}", cook.ToString());
           }
         }
         reader = new StreamReader(response.GetResponseStream());
         statusCode = response.StatusDescription;
       }
-
       catch (Exception e)
       {
-        string logmessage = "HttpWebRequest.GetResponse: " + e.Message;
-        Log.Error("AudioscrobblerBase.GetResponse: {0}", logmessage);
+        Log.Error("AudioscrobblerBase.GetResponse: Exception  - {0}", e.Message);
+        Log.Error("AudioscrobblerBase.GetResponse: StatusCode - {0}", statusCode);
         return false;
       }
 
@@ -813,7 +849,8 @@ namespace MediaPortal.Music.Database
           success = parse_success = parseRadioStreamMessage(respType, reader);
         else if (respType.StartsWith(@"[App]")) // upgrade message
           success = parse_success = true;
-
+        else if (respType.StartsWith(@"<?xml version=")) // XMLRPC call
+          success = parse_success = parseXmlRpcMessage(respType, reader);
         else
         {
           string logmessage = "** CRITICAL ** Unknown response";
@@ -821,12 +858,10 @@ namespace MediaPortal.Music.Database
             logmessage += "\n " + respType;
           Log.Error("AudioscrobblerBase: {0}", logmessage);
         }
-
         // read next line to look for an interval
         //while ((respType = reader.ReadLine()) != null)
         //  if (respType.StartsWith("INTERVAL"))
         //    parse_success = parseIntervalMessage(respType, reader);
-
       }
       catch (Exception ex)
       {
@@ -834,9 +869,7 @@ namespace MediaPortal.Music.Database
       }
 
       if (!parse_success)
-      {
         return false;
-      }
 
       return success;
     }
@@ -887,10 +920,92 @@ namespace MediaPortal.Music.Database
     /// <summary>
     /// Post the just started song to last.fm so it appears as "currently listening" on their site
     /// </summary>
-    public static void AnnounceNowPlaying()
+    public static void DoAnnounceNowPlaying()
     {
       DoHandshake(false, HandshakeType.Announce);
     }
+
+    #region XMLRPC methods
+
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    public static void DoLoveTrackNow()
+    {
+      if (_currentSong.Artist != string.Empty && _currentSong.Title != string.Empty)
+      {
+        try
+        {
+          Thread xmlrpcThread = new Thread(new ParameterizedThreadStart(Worker_TryXmlRpcRequest));
+          xmlrpcThread.IsBackground = false; // do not abort the announce action when MediaPortal closes
+          xmlrpcThread.Name = "Scrobbler love";
+          xmlrpcThread.Priority = ThreadPriority.BelowNormal;
+          xmlrpcThread.Start((object)new XmlRpcParams(
+                                              XmlRpcType.loveTrack,
+                                              CurrentSubmitSong.Artist,
+                                              CurrentSubmitSong.Title,
+                                              String.Empty));
+        }
+        catch (Exception aex)
+        {
+          Log.Error("AudioscrobblerBase: Error starting XMLRPC love thread - {0}", aex.Message);
+        }
+      }
+      else
+        Log.Debug("AudioscrobblerBase: DoLoveTrackNow aborted because of incomplete data");
+    }
+
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    public static void DoUnLoveTrackNow()
+    {
+      if (_currentSong.Artist != string.Empty && _currentSong.Title != string.Empty)
+      {
+        try
+        {
+          Thread xmlrpcThread = new Thread(new ParameterizedThreadStart(Worker_TryXmlRpcRequest));
+          xmlrpcThread.IsBackground = false; // do not abort the announce action when MediaPortal closes
+          xmlrpcThread.Name = "Scrobbler unlove";
+          xmlrpcThread.Priority = ThreadPriority.BelowNormal;
+          xmlrpcThread.Start((object)new XmlRpcParams(
+                                              XmlRpcType.unLoveTrack,
+                                              CurrentSubmitSong.Artist,
+                                              CurrentSubmitSong.Title,
+                                              String.Empty));
+        }
+        catch (Exception aex)
+        {
+          Log.Error("AudioscrobblerBase: Error starting XMLRPC unlove thread - {0}", aex.Message);
+        }
+      }
+      else
+        Log.Debug("AudioscrobblerBase: DoUnLoveTrackNow aborted because of incomplete data");
+    }
+
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    public static void DoBanTrackNow()
+    {
+      if (_currentSong.Artist != string.Empty && _currentSong.Title != string.Empty)
+      {
+        try
+        {
+          Thread xmlrpcThread = new Thread(new ParameterizedThreadStart(Worker_TryXmlRpcRequest));
+          xmlrpcThread.IsBackground = false; // do not abort the announce action when MediaPortal closes
+          xmlrpcThread.Name = "Scrobbler ban";
+          xmlrpcThread.Priority = ThreadPriority.BelowNormal;
+          xmlrpcThread.Start((object)new XmlRpcParams(
+                                              XmlRpcType.banTrack,
+                                              CurrentSubmitSong.Artist,
+                                              CurrentSubmitSong.Title,
+                                              String.Empty));
+        }
+        catch (Exception aex)
+        {
+          Log.Error("AudioscrobblerBase: Error starting XMLRPC ban thread - {0}", aex.Message);
+        }
+      }
+      else
+        Log.Debug("AudioscrobblerBase: DoBanTrackNow aborted because of incomplete data");
+    }
+
+    #endregion
 
     [MethodImpl(MethodImplOptions.Synchronized)]
     private static void AttemptAnnounceNow()
@@ -907,7 +1022,7 @@ namespace MediaPortal.Music.Database
         }
         catch (Exception aex)
         {
-          Log.Error("AudioscrobblerBase: Error starting announceThread thread - {0}", aex.Message);
+          Log.Error("AudioscrobblerBase: Error starting announce thread - {0}", aex.Message);
         }
       }
       else
@@ -928,13 +1043,9 @@ namespace MediaPortal.Music.Database
       postThread.IsBackground = false;
       postThread.Name = "Scrobbler submit";
       postThread.Start();
-
-      //BackgroundWorker worker = new BackgroundWorker();
-      //worker.DoWork += new DoWorkEventHandler(Worker_TrySubmitTracks);
-      //worker.RunWorkerAsync();
     }
 
-    private static void Worker_TryAnnounceTracks(/*object sender, DoWorkEventArgs e*/)
+    private static void Worker_TryAnnounceTracks()
     {
       // Thread.CurrentThread.Name = "Scrobbler nowplaying";
       // s=<sessionID>       The Session ID string as returned by the handshake. Required.
@@ -959,9 +1070,9 @@ namespace MediaPortal.Music.Database
       sb.Append("&l=");
       sb.Append(_currentSong.Duration);
       sb.Append("&n=");
-      sb.Append(_currentSong.Track > 0 ? Convert.ToString(_currentSong.Track) : "");
+      sb.Append(_currentSong.Track > 0 ? Convert.ToString(_currentSong.Track) : String.Empty);
       sb.Append("&m=");
-      sb.Append("");
+      sb.Append(String.Empty);
 
       announceData = sb.ToString();
 
@@ -976,7 +1087,7 @@ namespace MediaPortal.Music.Database
       }
     }
 
-    private static void Worker_TrySubmitTracks(/*object sender, DoWorkEventArgs e*/)
+    private static void Worker_TrySubmitTracks()
     {
       // Only one thread should attempt to run through the queue at a time.
       lock (submitLock)
@@ -1056,6 +1167,50 @@ namespace MediaPortal.Music.Database
         Log.Debug("AudioscrobblerBase: submitted songs successfully removed from queue. Idle...");
       }
     }
+
+    private static void Worker_TryXmlRpcRequest(object aXmlRpcParams)
+    {
+      XmlRpcParams Params = aXmlRpcParams as XmlRpcParams;
+      if (Params == null)
+        return;
+      XmlRpcType aMethodType = Params.MethodType;
+      string aArtist = Params.Artist;
+      string aTitle = Params.Title;
+      string aFriendsUserName = Params.FriendsUserName;
+
+      string Challenge = Convert.ToString(Util.Utils.GetUnixTime(DateTime.UtcNow));
+      string AuthToken = HashSingleString(HashSingleString(password) + Challenge);
+
+      string url = RADIO_SCROBBLER_URL + "1.0/rw/xmlrpc.php";
+      string xml = String.Empty;
+
+      switch (aMethodType)
+      {
+        case XmlRpcType.loveTrack:
+          xml = AudioscrobblerUtils.Instance.GetRadioLoveRequest(Username, Challenge, AuthToken, aArtist, aTitle);
+          break;
+        case XmlRpcType.unLoveTrack:
+          xml = AudioscrobblerUtils.Instance.GetRadioUnLoveRequest(Username, Challenge, AuthToken, aArtist, aTitle);
+          break;
+        case XmlRpcType.banTrack:
+          xml = AudioscrobblerUtils.Instance.GetRadioBanRequest(Username, Challenge, AuthToken, aArtist, aTitle);
+          break;
+        case XmlRpcType.unBanTrack:
+          xml = AudioscrobblerUtils.Instance.GetRadioUnBanRequest(Username, Challenge, AuthToken, aArtist, aTitle);
+          break;
+        case XmlRpcType.addTrackToUserPlaylist:
+          xml = AudioscrobblerUtils.Instance.GetRadioAddTrackToPlaylistRequest(Username, Challenge, AuthToken, aArtist, aTitle);
+          break;
+        //case XmlRpcType.removeRecentlyListenedTrack:
+        //  break;
+        //case XmlRpcType.removeFriend:
+        //  break;
+      }
+
+      // Parse handshake response
+      bool success = GetResponse(url, xml, false);
+    }
+
     #endregion
 
     #region Audioscrobbler response parsers
@@ -1086,7 +1241,7 @@ namespace MediaPortal.Music.Database
     {
       try
       {
-        string logmessage = "";
+        string logmessage = String.Empty;
         if (type_.Length > 7)
           logmessage = "FAILED: " + type_.Substring(7);
         else
@@ -1159,6 +1314,50 @@ namespace MediaPortal.Music.Database
 
       return false;
     }
+
+    private static bool parseXmlRpcMessage(string type_, StreamReader reader_)
+    {
+      string logmessage = type_;
+      try
+      {
+        // Get the xml document
+        while ((type_ = reader_.ReadLine()) != null)
+        {
+          logmessage += type_;
+        }
+
+        XmlDocument doc = new XmlDocument();
+        doc.LoadXml(logmessage);
+        XmlNodeList nodes = doc.SelectNodes(@"//methodResponse/params");
+
+        foreach (XmlNode node in nodes)
+        {
+          foreach (XmlNode singleParamChild in node.ChildNodes)
+          {
+            if (singleParamChild.Name == "param" && singleParamChild.ChildNodes.Count != 0)
+            {
+              foreach (XmlNode singleValueChild in singleParamChild.ChildNodes)
+              {
+                if (singleValueChild.Name == "value" && singleValueChild.ChildNodes.Count != 0)
+                  foreach (XmlNode singleString in singleValueChild.ChildNodes)
+                  {
+                    if (singleString.Name == "string" && singleString.ChildNodes.Count != 0)
+                      Log.Debug("AudioscrobblerBase: XMLRPC value string - {0}", singleString.ChildNodes[0].Value);
+                  }
+              }
+            }
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("AudioscrobblerBase: Error parsing XML RPC response - {0}", ex.Message);
+        return false;
+      }
+
+      return true;
+    }
+
     #endregion
 
     #region Utilities

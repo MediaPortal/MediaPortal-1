@@ -113,19 +113,15 @@ namespace MediaPortal.GUI.RADIOLASTFM
       LoadThread.Priority = ThreadPriority.AboveNormal;
       LoadThread.Name = "Last.fm init";
       LoadThread.Start();
-      
-      //BackgroundWorker worker = new BackgroundWorker();
-      //worker.DoWork += new DoWorkEventHandler(Worker_LoadSettings);
-      //worker.RunWorkerAsync();
     }
 
-    private void Worker_LoadSettings(/*object sender, DoWorkEventArgs e*/)
+    private void Worker_LoadSettings()
     {
       GUIWaitCursor.Show();
       if (!LastFMStation.IsInit || LastFMStation.AccountUser != AudioscrobblerBase.Username)
       {
         LastFMStation.LoadConfig();
-        btnSubmitProfile.Selected = AudioscrobblerBase.SubmitRadioSongs;
+        btnSubmitProfile.Selected = AudioscrobblerBase.IsSubmittingRadioSongs;
       }
       else
         GUIWaitCursor.Hide();
@@ -268,7 +264,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       if (control == btnDiscoveryMode)
         LastFMStation.DiscoveryMode = btnDiscoveryMode.Selected;
       if (control == btnSubmitProfile)
-        AudioscrobblerBase.SubmitRadioSongs = btnSubmitProfile.Selected;
+        AudioscrobblerBase.IsSubmittingRadioSongs = btnSubmitProfile.Selected;
 
       base.OnClicked(controlId, control, actionType);
     }
@@ -556,8 +552,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
           LastFMStation.TuneIntoWebPlaylist(LastFMStation.StreamsUser);
           break;
       }
-      // The official client does also fetch 2 lists...
-      RebuildStreamList();
+      //// The official client does also fetch 2 lists...
+      //RebuildStreamList();
       StartPlaybackNow();
     }
 
@@ -784,7 +780,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     bool GetXSPFPlaylist()
     {
       _radioTrackList.Clear();
-      _radioTrackList = InfoScrobbler.getRadioPlaylist(@"http://ws.audioscrobbler.com/radio/xspf.php?sk=" + AudioscrobblerBase.RadioSession + "&discovery=" + Convert.ToString(LastFMStation.DiscoveryEnabledInt) + "&desktop=1.4.1.57486");
+      _radioTrackList = InfoScrobbler.getRadioPlaylist(@"http://ws.audioscrobbler.com/radio/xspf.php?sk=" + AudioscrobblerBase.RadioSession + "&discovery=" + Convert.ToString(LastFMStation.DiscoveryEnabledInt) + "&desktop=" + AudioscrobblerBase.ClientFakeVersion);
 
       Log.Debug("GUIRadioLastFM: Parsed XSPF Playlist for current radio stream");
 
@@ -1196,12 +1192,14 @@ namespace MediaPortal.GUI.RADIOLASTFM
     {
       // LastFMStation.SendControlCommand(StreamControls.lovetrack);
       AudioscrobblerBase.CurrentSubmitSong.AudioscrobblerAction = SongAction.L;
+      AudioscrobblerBase.DoLoveTrackNow();
     }
 
     private void OnBanClicked()
     {
       // LastFMStation.SendControlCommand(StreamControls.bantrack);
       AudioscrobblerBase.CurrentSubmitSong.AudioscrobblerAction = SongAction.B;
+      AudioscrobblerBase.DoBanTrackNow();
       OnSkipHandler(false);
     }
 

@@ -237,7 +237,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
       if (_currentSession != String.Empty)
       {
-        _isSubscriber = AudioscrobblerBase.Subscriber;
+        _isSubscriber = AudioscrobblerBase.IsSubscriber;
         //_currentRadioURL = "http://streamer1.last.fm/last.mp3?Session=" + _currentSession;
         _currentRadioURL = AudioscrobblerBase.RadioStreamLocation;
         _currentState = StreamPlaybackState.initialized;
@@ -383,7 +383,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       {
         if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/control.php?session=" + _currentSession + "&command=rtp"))
         {
-          AudioscrobblerBase.SubmitRadioSongs = true;
+          AudioscrobblerBase.IsSubmittingRadioSongs = true;
           Log.Info("StreamControl: Enabled submitting of radio tracks to profile");
         }
       }

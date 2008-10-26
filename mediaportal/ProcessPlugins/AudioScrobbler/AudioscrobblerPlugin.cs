@@ -180,7 +180,7 @@ namespace MediaPortal.Audioscrobbler
 
       if (Util.Utils.IsLastFMStream(AudioscrobblerBase.CurrentPlayingSong.FileName))
       {
-        if (!AudioscrobblerBase.SubmitRadioSongs)
+        if (!AudioscrobblerBase.IsSubmittingRadioSongs)
         {
           Log.Debug("Audioscrobbler plugin: radio submits disabled - ignore state change");
           return;
@@ -210,7 +210,7 @@ namespace MediaPortal.Audioscrobbler
             break;
           Thread.Sleep(500);
         }
-        AudioscrobblerBase.AnnounceNowPlaying();
+        AudioscrobblerBase.DoAnnounceNowPlaying();
       }
 
       _alertTime = GetAlertTime();

@@ -31,20 +31,22 @@ using System.Collections.Generic;
 using System.Collections;
 using System.IO;
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Xml;
+
 using MediaPortal.Util;
 using MediaPortal.Services;
 using MediaPortal.Threading;
 using MediaPortal.GUI.Library;
 using MediaPortal.Configuration;
-using System.Runtime.CompilerServices;
 
 #endregion
 
 namespace MediaPortal.Music.Database
 {
   #region argument types
+
   public enum lastFMFeed
   {
     recenttracks,
@@ -78,12 +80,30 @@ namespace MediaPortal.Music.Database
     favorites = 2,
   }
 
+  /// <summary>
+  /// Filter by Artist, Album or Track
+  /// </summary>
   public enum songFilterType
   {
     Artist,
     Album,
     Track
   }
+
+  /// <summary>
+  /// One of these: loveTrack, unLoveTrack, banTrack, unBanTrack, addTrackToUserPlaylist, removeRecentlyListenedTrack, removeFriend
+  /// </summary>
+  public enum XmlRpcType
+  {
+    loveTrack,
+    unLoveTrack,
+    banTrack,
+    unBanTrack,
+    addTrackToUserPlaylist,
+    removeRecentlyListenedTrack,
+    removeFriend,
+  }
+
   #endregion
 
   #region Async request definitions
@@ -528,6 +548,7 @@ namespace MediaPortal.Music.Database
     #endregion
 
     #region SongComparer
+
     private static bool IsSongBelowMinPercentage(Song aSong)
     {
       try
@@ -708,14 +729,6 @@ namespace MediaPortal.Music.Database
           break;
       }
 
-      //switch (tmpRMode)
-      //{
-      //  case 0: _currentOfflineMode = offlineMode.random; break;
-      //  case 1: _currentOfflineMode = offlineMode.timesplayed; break;
-      //  case 2: _currentOfflineMode = offlineMode.favorites; break;
-      //  default: _currentOfflineMode = offlineMode.random; break;
-      //}
-
       _randomNessPercent = (tmpRand >= 25) ? tmpRand : 77;
       ArtistMatchPercent = 100 - (int)(0.9 * _randomNessPercent);
       _unwantedTags = buildTagBlacklist();
@@ -725,6 +738,7 @@ namespace MediaPortal.Music.Database
     #endregion
 
     #region Public getters and setters
+
     /// <summary>
     /// Allows to change the minimum match percentage to include similar artists
     /// </summary>
@@ -1840,6 +1854,7 @@ namespace MediaPortal.Music.Database
     #endregion
 
     #region XML - Parsers
+
     private List<Song> ParseXMLDocForAlbumInfo(string artist_, string album_)
     {
       List<Song> AlbumInfoList = new List<Song>(10);
@@ -2460,7 +2475,109 @@ namespace MediaPortal.Music.Database
 
     #endregion
 
+    #region Last.fm radio actions
+
+    public string GetRadioLoveRequest(string aUser, string aChallenge, string aAuth, string aArtist, string aTitle)
+    {
+      return BuildXmlRpcRequest(XmlRpcType.loveTrack, aUser, aChallenge, aAuth, aArtist, aTitle, String.Empty);
+    }
+
+    public string GetRadioUnLoveRequest(string aUser, string aChallenge, string aAuth, string aArtist, string aTitle)
+    {
+      return BuildXmlRpcRequest(XmlRpcType.unLoveTrack, aUser, aChallenge, aAuth, aArtist, aTitle, String.Empty);
+    }
+
+    public string GetRadioBanRequest(string aUser, string aChallenge, string aAuth, string aArtist, string aTitle)
+    {
+      return BuildXmlRpcRequest(XmlRpcType.banTrack, aUser, aChallenge, aAuth, aArtist, aTitle, String.Empty);
+    }
+
+    public string GetRadioUnBanRequest(string aUser, string aChallenge, string aAuth, string aArtist, string aTitle)
+    {
+      return BuildXmlRpcRequest(XmlRpcType.unBanTrack, aUser, aChallenge, aAuth, aArtist, aTitle, String.Empty);
+    }
+
+    public string GetRadioAddTrackToPlaylistRequest(string aUser, string aChallenge, string aAuth, string aArtist, string aTitle)
+    {
+      return BuildXmlRpcRequest(XmlRpcType.addTrackToUserPlaylist, aUser, aChallenge, aAuth, aArtist, aTitle, String.Empty);
+    }
+
+    /// <summary>
+    /// Formats an XML post header for last.fm's api access
+    /// </summary>
+    /// <param name="aMethodType">Is a type of the method to be called: e.g. LoveTrack, BanTrack, etc</param>
+    /// <param name="aUser">The users last.fm username.</param>
+    /// <param name="aChallenge">The current UNIX timestamp.</param>
+    /// <param name="aAuth">The authentication token, a 32-byte ASCII hexadecimal representation of the MD5 hash of the users last.fm password and the timestamp: md5(md5(password) + timestamp)</param>
+    /// <param name="aArtist">The artist to get love/ban.</param>
+    /// <param name="aTitle">The track title to get love/ban.</param>
+    /// <param name="aFriendsUserName">The friends name to remove.</param>
+    /// <returns>The XML data in string format</returns>
+    private string BuildXmlRpcRequest(XmlRpcType aMethodType, string aUser, string aChallenge, string aAuth, string aArtist, string aTitle, string aFriendsUserName)
+    {
+      string ResultXml = String.Empty;
+      List<string> AllParams = new List<string>(5);
+      try
+      {
+        if (!String.IsNullOrEmpty(aUser))
+          AllParams.Add(aUser);
+        if (!String.IsNullOrEmpty(aChallenge))
+          AllParams.Add(aChallenge);
+        if (!String.IsNullOrEmpty(aAuth))
+          AllParams.Add(aAuth);
+        if (aMethodType == XmlRpcType.removeFriend)
+        {
+          if (!String.IsNullOrEmpty(aFriendsUserName))
+            AllParams.Add(aFriendsUserName);
+        }
+        else
+        {
+          if (!String.IsNullOrEmpty(aArtist))
+            AllParams.Add(aArtist);
+          if (!String.IsNullOrEmpty(aTitle))
+            AllParams.Add(aTitle);
+        }
+
+        using (MemoryStream memoryStream = new MemoryStream())
+        {
+          XmlWriterSettings settings = new XmlWriterSettings();
+          //settings.Indent = true;
+          //settings.IndentChars = ("    ");
+          settings.CloseOutput = true;
+          // If i use Encodings.UTF8 the BOM will be prepended...
+          settings.Encoding = new UTF8Encoding(false);
+
+          using (XmlWriter writer = XmlWriter.Create(memoryStream, settings))
+          {
+            writer.WriteStartElement("methodCall");
+            writer.WriteElementString("methodName", aMethodType.ToString());
+            writer.WriteStartElement("params");
+            foreach (string singleParam in AllParams)
+            {
+              writer.WriteStartElement("param");
+              writer.WriteStartElement("value");
+              writer.WriteElementString("string", singleParam);
+              writer.WriteEndElement();
+              writer.WriteEndElement();
+            }
+            writer.WriteEndElement();
+            writer.WriteEndElement();
+            writer.Flush();
+          }
+          ResultXml = Encoding.UTF8.GetString(memoryStream.GetBuffer());
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("AudioscrobblerUtils: Error in BuildXmlRpcRequest - {0}", ex.Message);
+      }
+      return ResultXml;
+    }
+
+    #endregion
+
     #region Utils
+
     public string DecodeUtf8String(string aUtf8String)
     {
       if (_decodeUtf8)
@@ -2508,6 +2625,7 @@ namespace MediaPortal.Music.Database
 
       return aUnfilteredList;
     }
+
     #endregion
   }
 }
