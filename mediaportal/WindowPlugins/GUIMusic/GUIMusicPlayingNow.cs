@@ -1710,7 +1710,7 @@ namespace MediaPortal.GUI.Music
         //int height = ImgCoverArt.Height;
 
         System.Drawing.Size vizSize = new System.Drawing.Size(width, height);
-        System.Drawing.Point vizLoc = new System.Drawing.Point((int)ImgCoverArt.Location.X, (int)ImgCoverArt.Location.Y);
+        System.Drawing.Point vizLoc = new System.Drawing.Point((int)ImgCoverArt.Location.X+GUIGraphicsContext.OffsetX, (int)ImgCoverArt.Location.Y+GUIGraphicsContext.OffsetX);
         vizWindow.Size = vizSize;
         vizWindow.Location = vizLoc;
         vizWindow.Visible = true;
