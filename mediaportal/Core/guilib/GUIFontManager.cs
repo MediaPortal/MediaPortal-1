@@ -510,6 +510,8 @@ namespace MediaPortal.GUI.Library
         _d3dxSprite = null;
         _d3dxSpriteUsed = false;
       }
+      _listFontTextures.Clear();
+      _listFontObjects.Clear();
     }
 
     /// <summary>
