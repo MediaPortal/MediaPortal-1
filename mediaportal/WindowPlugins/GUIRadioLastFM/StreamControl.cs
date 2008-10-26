@@ -61,10 +61,10 @@ namespace MediaPortal.GUI.RADIOLASTFM
   {
     offline = 0,
     initialized = 1,
-    starting = 2,
-    streaming = 3,
-    paused = 4,
-    nocontent = 5,
+    nocontent = 2,
+    starting = 3,
+    streaming = 4,
+    paused = 5,
   }
 
   /// <summary>
@@ -116,19 +116,19 @@ namespace MediaPortal.GUI.RADIOLASTFM
     /// <summary>
     /// The "filename" used by the player to access the stream
     /// </summary>
-    private string _currentRadioURL = string.Empty;
+    private string _currentRadioURL = String.Empty;
     /// <summary>
     /// The user associated Session ID - from the response to the Audioscrobbler handshake
     /// </summary>
-    private string _currentSession = string.Empty;
+    private string _currentSession = String.Empty;
     /// <summary>
     /// The last.fm user from you configured in the Audioscrobbler plugin
     /// </summary>
-    private string _currentUser = string.Empty;
+    private string _currentUser = String.Empty;
     /// <summary>
     /// The last.fm user which stream will be tuned to
     /// </summary>
-    private string _currentStreamsUser = string.Empty;
+    private string _currentStreamsUser = String.Empty;
     /// <summary>
     /// Did you pay for exclusive member options
     /// </summary>
@@ -235,7 +235,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       _currentStreamsUser = _currentUser;
       _currentSession = AudioscrobblerBase.RadioSession;
 
-      if (_currentSession != string.Empty)
+      if (_currentSession != String.Empty)
       {
         _isSubscriber = AudioscrobblerBase.Subscriber;
         //_currentRadioURL = "http://streamer1.last.fm/last.mp3?Session=" + _currentSession;
@@ -251,7 +251,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     private void OnRadioLoginFailed()
     {
       _currentState = StreamPlaybackState.offline;
-      _currentSession = string.Empty;
+      _currentSession = String.Empty;
       _isInit = false; // need to check that..
       RadioSettingsError();
     }
@@ -377,15 +377,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
       LoadSettings();
     }
 
-    //public void UpdateNowPlaying(bool delayed)
-    //{
-    //  if (delayed)
-    //    // give the site some time to update and sync with the stream switch
-    //    SendDelayedCommandRequest(@"http://ws.audioscrobbler.com/radio/np.php?session=" + _currentSession, 4750);
-    //  else
-    //    SendCommandRequest(@"http://ws.audioscrobbler.com/radio/np.php?session=" + _currentSession);
-    //}
-
     public void ToggleRecordToProfile(bool submitTracks_)
     {
       if (submitTracks_)
@@ -418,29 +409,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
       return success;
     }
-
-    //public void SendControlCommand(StreamControls command_)
-    //{
-    //  if (_currentState == StreamPlaybackState.streaming)
-    //  {
-    //    string baseUrl = @"http://ws.audioscrobbler.com/radio/control.php?session=" + _currentSession;
-
-    //    switch (command_)
-    //    {
-    //      case StreamControls.skiptrack:
-    //        SendCommandRequest(baseUrl + @"&command=skip");
-    //        break;
-    //      case StreamControls.lovetrack:
-    //        SendCommandRequest(baseUrl + @"&command=love");
-    //        break;
-    //      case StreamControls.bantrack:
-    //        SendCommandRequest(baseUrl + @"&command=ban");
-    //        break;
-    //    }
-    //  }
-    //  else
-    //    Log.Info("StreamControl: Currently not streaming - ignoring command");
-    //}
 
     #endregion
 
@@ -523,17 +491,20 @@ namespace MediaPortal.GUI.RADIOLASTFM
         return false;
     }
 
-    public bool TuneIntoArtist(string artist_)
+    public bool TuneIntoArtists(List<String> artists_)
     {
-      string TuneArtist = AudioscrobblerBase.getValidURLLastFMString(artist_);
-
-      if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/adjust.php?session=" + _currentSession + @"&url=lastfm://artist/" + TuneArtist + "/similarartists"))
+      string TuneArtists = String.Empty;
+      foreach (string singleArtist in artists_)
+      {
+        TuneArtists += AudioscrobblerBase.getValidURLLastFMString(singleArtist) +",";
+      }
+      // remove trailing comma
+      TuneArtists = TuneArtists.Remove(TuneArtists.Length - 1);
+      if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/adjust.php?session=" + _currentSession + @"&url=lastfm://artist/" + TuneArtists + "/similarartists&lang=de"))
       {
         _currentTuneType = StreamType.Artist;
-        Log.Info("StreamControl: Tune into artists similar to: {0}", artist_);
-
-        GUIPropertyManager.SetProperty("#Play.Current.Lastfm.CurrentStream", "Artists similar to: " + artist_);
-
+        Log.Info("StreamControl: Tune into artists similar to: {0}", TuneArtists);
+        GUIPropertyManager.SetProperty("#Play.Current.Lastfm.CurrentStream", "Artists similar to: " + TuneArtists);
         return true;
       }
       else
@@ -542,8 +513,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     public bool TuneIntoTags(List<String> tags_)
     {
-      string TuneTags = string.Empty;
-
+      string TuneTags = String.Empty;
       foreach (string singleTag in tags_)
       {
         TuneTags += AudioscrobblerBase.getValidURLLastFMString(singleTag) + ",";
@@ -565,7 +535,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
     public bool TuneIntoWebPlaylist(string username_)
     {
       string TuneUser = AudioscrobblerBase.getValidURLLastFMString(username_);
-      //ext.last.fm/
       if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/adjust.php?session=" + _currentSession + @"&url=lastfm://user/" + TuneUser + "/playlist"))
       {
         _currentTuneType = StreamType.Playlist;
@@ -620,7 +589,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       // parse the response
       try
       {
-        string responseMessage = string.Empty;
+        string responseMessage = String.Empty;
         if (responseList.Count > 0)
         {
           List<string> responseStrings = new List<string>(responseList);

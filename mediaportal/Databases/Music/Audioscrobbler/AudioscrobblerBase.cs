@@ -607,16 +607,17 @@ namespace MediaPortal.Music.Database
     private static bool AttemptRadioHandshake()
     {
       // http://ws.audioscrobbler.com/radio/handshake.php?version=1.3.1.1&platform=win32&username=f1n4rf1n&passwordmd5=3847af7ab43a1c31503e8bef7736c41f&language=de&player=wmplayer HTTP/1.1
-
+      // http://ws.audioscrobbler.com/radio/handshake.php?version=1.4.1.57486&platform=win32&platformversion=Windows%20XP&username=f1n4rf1n&passwordmd5=3847af7ab43a1c31503e8bef7736c41f&language=de&player=wmplayer
       string tmpUser = System.Web.HttpUtility.UrlEncode(username).ToLower();
       string tmpPass = HashSingleString(password);
       string url = RADIO_SCROBBLER_URL
                  + "handshake.php?"
-                 + "version=" + "1.3.2.9"
+                 + "version=" + "1.4.1.57486"
                  + "&platform=" + "win32"
+                 + "&platformversion=" + "Windows%20XP"
                  + "&username=" + tmpUser
                  + "&passwordmd5=" + tmpPass
-                 + "&language=" + "en"
+                 + "&language=" + "de"
                  + "&player=unknown";
 
       // Parse handshake response
