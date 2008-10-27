@@ -20,6 +20,7 @@
       <width>670</width>
       <height>142</height>
       <texture>osd_bg.png</texture>
+      <visible>player.hasmedia</visible>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
@@ -32,6 +33,7 @@
       <width>90</width>
       <height>90</height>
       <texture>hover_LastFmRadio.png</texture>
+      <visible>player.hasmedia</visible>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>

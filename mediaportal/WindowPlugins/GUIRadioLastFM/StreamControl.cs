@@ -45,16 +45,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
   #region enums
 
   /// <summary>
-  /// Obsolete - the "old" last.fm radio was using an uninteruptable stream, the XSPF playlist mode uses single mp3 files
-  /// </summary>
-  public enum PlaybackType
-  {
-    Unknown = 0,
-    Continuously = 1,
-    PlaylistPlayer = 2,
-  }
-
-  /// <summary>
   /// Indicates the current playback status
   /// </summary>
   public enum StreamPlaybackState : int
@@ -148,7 +138,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     private StreamPlaybackState _currentState = StreamPlaybackState.offline;
     private StreamType _currentTuneType = StreamType.Recommended;
-    private PlaybackType _currentPlaybackType = PlaybackType.Unknown;
+
     /// <summary>
     /// The time of the last http access
     /// </summary>
@@ -176,17 +166,10 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     #region Examples
 
-    // 4. http.request.uri = Request URI: http://ws.audioscrobbler.com/ass/upgrade.php?platform=win&version=1.0.7&lang=en&user=f1n4rf1n
-    // 5. http.request.uri = Request URI: http://ws.audioscrobbler.com/radio/np.php?session=e5b0c80f5b5d0937d407fb77a913cb6a
+    // 4. http.request.uri = Request URI: http://ws.audioscrobbler.com/ass/upgrade.php?platform=win&version=1.0.7&lang=en&user=
+    // 5. http.request.uri = Request URI: http://ws.audioscrobbler.com/radio/np.php?session=
     // 6. http.request.uri = Request URI: http://ws.audioscrobbler.com/ass/artistmetadata.php?artist=Sportfreunde%20Stiller&lang=en
     // 7. http.request.uri = Request URI: http://ws.audioscrobbler.com/ass/metadata.php?artist=Sportfreunde%20Stiller&track=Alles%20Das&album=Macht%20doch%20was%20ihr%20wollt%20-%20Ich%20geh%2527%20jetzt%2521
-
-    // SKIP Button
-    // 8. http.request.uri = Request URI: http://ws.audioscrobbler.com/radio/control.php?session=e5b0c80f5b5d0937d407fb77a913cb6a&command=skip
-
-    // XSPF Playlist
-    // GET  ws.audioscrobbler.com/radio/xspf.php?sk=e5b0c80f5b5d0937d407fb77a913cb6a&discovery=0&desktop=1.3.1.1
-
 
     //price=
     //shopname=
@@ -258,7 +241,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     #endregion
 
-    #region getters & setters
+    #region Getters & Setters
 
     /// <summary>
     /// The active last.fm user for the plugin
@@ -319,18 +302,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
       }
     }
 
-    public PlaybackType CurrentPlaybackType
-    {
-      get { return _currentPlaybackType; }
-
-      set
-      {
-        if (value != _currentPlaybackType)
-          _currentPlaybackType = value;
-        Log.Debug("StreamControl: Setting CurrentPlaybackType to {0}", _currentPlaybackType.ToString());
-      }
-    }
-
     public bool DiscoveryMode
     {
       get { return _discoveryMode; }
@@ -387,12 +358,12 @@ namespace MediaPortal.GUI.RADIOLASTFM
           Log.Info("StreamControl: Enabled submitting of radio tracks to profile");
         }
       }
-      else
-        if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/control.php?session=" + _currentSession + "&command=nortp"))
-        {
-          if (CurrentPlaybackType != PlaybackType.PlaylistPlayer)
-            Log.Info("StreamControl: Disabled submitting of radio tracks to profile");
-        }
+      //else
+      //  if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/control.php?session=" + _currentSession + "&command=nortp"))
+      //  {
+      //    if (CurrentPlaybackType != PlaybackType.PlaylistPlayer)
+      //      Log.Info("StreamControl: Disabled submitting of radio tracks to profile");
+      //  }
     }
 
     public bool ToggleDiscoveryMode(bool enableDiscovery_)

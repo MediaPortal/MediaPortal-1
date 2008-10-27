@@ -39,6 +39,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     }
 
     #region Serialisation
+
     private void LoadSettings()
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
@@ -47,8 +48,9 @@ namespace MediaPortal.GUI.RADIOLASTFM
         checkBoxShowBallonTips.Checked = xmlreader.GetValueAsBool("audioscrobbler", "showballontips", true);
         checkBoxSubmitToProfile.Checked = xmlreader.GetValueAsBool("audioscrobbler", "submitradiotracks", true);
         checkBoxDirectSkip.Checked = xmlreader.GetValueAsBool("audioscrobbler", "directskip", true);
-        numericUpDownListEntries.Value = xmlreader.GetValueAsInt("audioscrobbler", "listentrycount", 12);
+        numericUpDownListEntries.Value = xmlreader.GetValueAsInt("audioscrobbler", "listentrycount", 16);
         comboBoxStreamPlayerType.SelectedIndex = xmlreader.GetValueAsInt("audioscrobbler", "streamplayertype", 0);
+        checkBoxOneClickMode.Checked = xmlreader.GetValueAsBool("audioscrobbler", "oneclickstart", false);
       }
     }
 
@@ -59,12 +61,16 @@ namespace MediaPortal.GUI.RADIOLASTFM
         xmlwriter.SetValueAsBool("audioscrobbler", "showtrayicon", checkBoxUseTrayIcon.Checked);
         xmlwriter.SetValueAsBool("audioscrobbler", "showballontips", checkBoxShowBallonTips.Checked);
         xmlwriter.SetValueAsBool("audioscrobbler", "submitradiotracks", checkBoxSubmitToProfile.Checked);
-        xmlwriter.SetValueAsBool("audioscrobbler", "directskip", checkBoxDirectSkip.Checked);        
+        xmlwriter.SetValueAsBool("audioscrobbler", "directskip", checkBoxDirectSkip.Checked);
         xmlwriter.SetValue("audioscrobbler", "listentrycount", numericUpDownListEntries.Value);
         xmlwriter.SetValue("audioscrobbler", "streamplayertype", 0);// comboBoxStreamPlayerType.SelectedIndex);
+        xmlwriter.SetValueAsBool("audioscrobbler", "oneclickstart", checkBoxOneClickMode.Checked);
       }
     }
+
     #endregion
+
+    #region Control handling
 
     private void buttonCancel_Click(object sender, EventArgs e)
     {
@@ -90,5 +96,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         checkBoxShowBallonTips.Enabled = false;
       }
     }
+
+    #endregion
   }
 }
