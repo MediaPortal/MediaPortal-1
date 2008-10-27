@@ -1525,9 +1525,13 @@
     <String id="34013">Oppdagelsesmodus</String>
     <String id="34014">Overfør til profil</String>
     <String id="34015">Oppfrisk tags/venner</String>
+    <String id="34016">Spill lignende artister</String>
+    <String id="34017">Spill lignende tagger</String>
     <String id="34020">Gjeldende stream: </String>
     <String id="34030">Ingen tagger</String>
     <String id="34031">Ingen venner</String>
+    <String id="34032">Ingen artister</String>
+    <String id="34039">Tune til valgte artist(er): </String>
     <String id="34040">Anbefalt radio</String>
     <String id="34041">Spille fra valgte Tag: </String>
     <String id="34042">Ingen tag har blitt valgt enda</String>
@@ -1544,6 +1548,10 @@
     <String id="34053">Avspilling av valgte stream feilet</String>
     <String id="34054">Radio handshake feilet!</String>
     <String id="34055">Stream midlertidig utilgjengelig</String>
+    <String id="34060">Skriv inn tagg(er)...</String>
+    <String id="34061">Skriv inn brukernavn...</String>
+    <String id="34062">Skriv inn artist(er)...</String>
+    <String id="34063">Ingen artist har blitt valgt enda</String>
     <String id="40001">Venter på hvilemodus</String>
     <String id="40002">MediaPortal er ikke i bruk, men fortsatt opptatt.</String>
     <String id="40003">Når alle oppgaver er ferdige, vil MediaPortal gå over i hvilemodus.</String>
