@@ -715,12 +715,16 @@
                     }
                     string strLeft = "";
                     string strRight = "";
-                    int segmentCount = 0x10;
+                    int segmentCount = this.LCD_CONFIG.ColumnsText;
                     if (this.EQSettings._useVUindicators)
                     {
                         strLeft = "L";
                         strRight = "R";
-                        segmentCount = 15;
+                        segmentCount--;
+                    }
+                    if (this.DoDebug)
+                    {
+                      Log.Info("LCDHypeWrapper.RenderEQ(): segment count: {0}", segmentCount);
                     }
                     for (int j = 0; j < segmentCount; j++)
                     {
