@@ -654,7 +654,7 @@ public class MediaPortalApp : D3DApp, IRender
       if (screenNumber < 0 || screenNumber >= Screen.AllScreens.Length)
         screenNumber = 0;
       Log.Info("currentScreenNr:" + screenNumber);
-      GUIGraphicsContext.currentScreen = Screen.AllScreens[screenNumber];      
+      GUIGraphicsContext.currentScreen = Screen.AllScreens[screenNumber];
     }
     // check if MediaPortal is already running...
     Log.Info("Main: Checking for running MediaPortal instance");
@@ -1138,7 +1138,7 @@ public class MediaPortalApp : D3DApp, IRender
         Log.Info("Main: OnResume - set GUIGraphicsContext.State.LOST");
         GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
       }
-      
+
       EXECUTION_STATE oldState = EXECUTION_STATE.ES_CONTINUOUS;
       bool turnMonitorOn;
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
@@ -3249,12 +3249,10 @@ public class MediaPortalApp : D3DApp, IRender
   /// Get the current time from the system.
   /// </summary>
   /// <returns>A string containing the current time.</returns>
-  // TODO: Localize the time settings based on the user preferences
   protected string GetTime()
   {
     DateTime cur = DateTime.Now;
-    string strTime = cur.ToString(CultureInfo.CurrentCulture.DateTimeFormat.LongTimePattern);
-    return strTime;
+    return cur.ToString(System.Threading.Thread.CurrentThread.CurrentUICulture.DateTimeFormat.LongTimePattern);
   }
 
   protected string GetDay()
