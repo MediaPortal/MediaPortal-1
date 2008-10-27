@@ -1543,6 +1543,8 @@
     <String id="34053">Riproduzione del flusso selezionato fallita</String>
     <String id="34054">Inizializzazione radio fallita!</String>
     <String id="34055">I Flussi potrebbero essere temporaneamente non disponibili</String>
+    <String id="34060">Inserire una tag...</String>
+    <String id="34061">Inserire Utente...</String>
     <String id="40001">In attesa per Standby</String>
     <String id="40002">MediaPortal non è in uso, ma è ancora occupato.</String>
     <String id="40003">Quanto tutte le attività correnti saranno concluse, MediaPortal andrà in modalità Standby.</String>
