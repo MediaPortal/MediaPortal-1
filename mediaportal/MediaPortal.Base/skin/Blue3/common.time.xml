@@ -4,7 +4,7 @@
     <control>
       <description>Date</description>
       <type>label</type>
-      <id>200</id>
+      <id>0</id>
       <posX>700</posX>
       <posY>30</posY>
       <label>#date</label>
@@ -17,7 +17,7 @@
     <control>
       <description>Time</description>
       <type>label</type>
-      <id>201</id>
+      <id>0</id>
       <posX>700</posX>
       <posY>48</posY>
       <label>#time</label>
