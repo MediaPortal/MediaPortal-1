@@ -245,7 +245,12 @@ namespace TvLibrary.Implementations.DVB
         RunGraph(ch.SubChannelId);
         Log.Log.Info("dvbt: tune: Graph running. Returning {0}", ch.ToString());
         return ch;
-      } catch (Exception ex)
+      }
+      catch (TvExceptionNoSignal ex)
+      {        
+        throw ex;
+      }
+      catch (Exception ex)
       {
         Log.Log.Write(ex);
         throw ex;
