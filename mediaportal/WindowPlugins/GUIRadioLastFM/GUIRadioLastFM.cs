@@ -288,6 +288,9 @@ namespace MediaPortal.GUI.RADIOLASTFM
             if (btnChooseArtist.Label != GUILocalizeStrings.Get(34032)) // no artists
             {
               LastFMStation.TuneIntoArtists(BuildListFromString(btnChooseArtist.Label));
+              // fetch 2x for stream to change
+              if (LastFMStation.CurrentStreamState == StreamPlaybackState.streaming)                
+                RebuildStreamList(false);
               RebuildStreamList(true);
             }
           }
@@ -302,6 +305,9 @@ namespace MediaPortal.GUI.RADIOLASTFM
             if (btnChooseTag.Label != GUILocalizeStrings.Get(34030)) // no tags
             {
               LastFMStation.TuneIntoTags(BuildListFromString(btnChooseTag.Label));
+              // fetch 2x for stream to change
+              if (LastFMStation.CurrentStreamState == StreamPlaybackState.streaming)
+                RebuildStreamList(false);
               RebuildStreamList(true);
             }
           }
@@ -316,6 +322,9 @@ namespace MediaPortal.GUI.RADIOLASTFM
             if (btnChooseFriend.Label != GUILocalizeStrings.Get(34031)) // no friends
             {
               LastFMStation.TuneIntoPersonalRadio(btnChooseFriend.Label);
+              // fetch 2x for stream to change
+              if (LastFMStation.CurrentStreamState == StreamPlaybackState.streaming)
+                RebuildStreamList(false);
               RebuildStreamList(true);
             }
           }
@@ -593,12 +602,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
           return;
       }
 
-      if (LastFMStation.CurrentStreamState != StreamPlaybackState.offline)
-      {
-        //OnPlaybackStopped();
-        g_Player.Stop();
-      }
-
       switch (TuneIntoSelected)
       {
         case StreamType.Recommended:
@@ -634,6 +637,9 @@ namespace MediaPortal.GUI.RADIOLASTFM
           break;
       }
 
+      // fetch 2x for stream to change
+      //if (LastFMStation.CurrentStreamState == StreamPlaybackState.streaming)
+        RebuildStreamList(false);
       RebuildStreamList(true);
     }
 
@@ -1113,7 +1119,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     {
       _radioTrackList.Clear();
       _radioTrackList = aSonglist;
-      Log.Debug("GUIRadioLastFM: Playlist fetch successful - adding {0} songs from a list called {1}", _radioTrackList.Count, System.Web.HttpUtility.UrlDecode(aPlaylistName));
+      Log.Debug("GUIRadioLastFM: Playlist fetch successful - adding {0} songs from a list called {1}", _radioTrackList.Count, aPlaylistName);
       for (int i = 0; i < _radioTrackList.Count; i++)
       {
         Log.Debug("GUIRadioLastFM: Track {0} : {1}", Convert.ToString(i + 1), _radioTrackList[i].ToLastFMString());
@@ -1125,16 +1131,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
       {
         try
         {
-          if (GUIGraphicsContext.form.InvokeRequired)
-          {
-            GUIGraphicsContext.form.Invoke(new ThreadStopPlayer(StopPlaybackIfNeed));
-            GUIGraphicsContext.form.Invoke(new ThreadStartBass(PlayPlayListStreams), new object[] { _radioTrackList[0] });
-          }
-          else
-          {
-            StopPlaybackIfNeed();
-            PlayPlayListStreams(_radioTrackList[0]);
-          }
+          GUIGraphicsContext.form.Invoke(new ThreadStopPlayer(StopPlaybackIfNeed));
+          GUIGraphicsContext.form.Invoke(new ThreadStartBass(PlayPlayListStreams), new object[] { _radioTrackList[0] });
         }
         catch (Exception ex)
         {
@@ -1342,7 +1340,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       dlg.Reset();
       dlg.SetHeading(34016); // // Play current similar tags
 
-      dlg.Add(GUILocalizeStrings.Get(188)); // Select all
+      // dlg.Add(GUILocalizeStrings.Get(188)); // Select all
       for (int i = 0; i < _similarArtistCache.Count; i++)
       {
         dlg.Add(_similarArtistCache[i]);
@@ -1355,17 +1353,19 @@ namespace MediaPortal.GUI.RADIOLASTFM
       if (dlg.SelectedId == -1)
         return;
 
-      if (dlg.SelectedId == 1)
+      //if (dlg.SelectedId == 1)
+      //{
+      //  btnChooseArtist.Label = BuildStringFromList(_similarArtistCache);
+      //  LastFMStation.TuneIntoArtists(_similarArtistCache);
+      //}
+      //else
       {
-        btnChooseArtist.Label = BuildStringFromList(_similarArtistCache);
-        LastFMStation.TuneIntoArtists(_similarArtistCache);
+        btnChooseArtist.Label = _similarArtistCache[dlg.SelectedId - 1];
+        LastFMStation.TuneIntoArtists(BuildListFromString(_similarArtistCache[dlg.SelectedId - 1]));
       }
-      else
-      {
-        btnChooseArtist.Label = _similarArtistCache[dlg.SelectedId - 2];
-        LastFMStation.TuneIntoArtists(BuildListFromString(_similarArtistCache[dlg.SelectedId - 2]));
-      }
-
+      // fetch 2x for stream to change
+      if (LastFMStation.CurrentStreamState == StreamPlaybackState.streaming)
+        RebuildStreamList(false);
       RebuildStreamList(true);
     }
 
@@ -1377,7 +1377,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       dlg.Reset();
       dlg.SetHeading(34017); // // Play current similar tags
 
-      dlg.Add(GUILocalizeStrings.Get(188)); // Select all
+      // dlg.Add(GUILocalizeStrings.Get(188)); // Select all
       for (int i = 0; i < _trackTagsCache.Count; i++)
       {
         dlg.Add(_trackTagsCache[i]);
@@ -1390,17 +1390,19 @@ namespace MediaPortal.GUI.RADIOLASTFM
       if (dlg.SelectedId == -1)
         return;
 
-      if (dlg.SelectedId == 1)
+      //if (dlg.SelectedId == 1)
+      //{
+      //  btnChooseTag.Label = BuildStringFromList(_trackTagsCache);
+      //  LastFMStation.TuneIntoTags(_trackTagsCache);
+      //}
+      //else
       {
-        btnChooseTag.Label = BuildStringFromList(_trackTagsCache);
-        LastFMStation.TuneIntoTags(_trackTagsCache);
+        btnChooseTag.Label = _trackTagsCache[dlg.SelectedId - 1];
+        LastFMStation.TuneIntoTags(BuildListFromString(_trackTagsCache[dlg.SelectedId - 1]));
       }
-      else
-      {
-        btnChooseTag.Label = _trackTagsCache[dlg.SelectedId - 2];
-        LastFMStation.TuneIntoTags(BuildListFromString(_trackTagsCache[dlg.SelectedId - 2]));
-      }
-
+      // fetch 2x for stream to change
+      if (LastFMStation.CurrentStreamState == StreamPlaybackState.streaming)
+        RebuildStreamList(false);
       RebuildStreamList(true);
     }
 

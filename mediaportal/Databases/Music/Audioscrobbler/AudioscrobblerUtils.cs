@@ -1593,7 +1593,7 @@ namespace MediaPortal.Music.Database
     }
 
     [MethodImpl(MethodImplOptions.Synchronized)]
-    public static string DownloadTempFile(string imageUrl, bool retryHttpError)    
+    public static string DownloadTempFile(string imageUrl, bool retryHttpError)
     {
       string tmpFile = PathUtility.GetSecureTempFileName();
       try
@@ -2468,7 +2468,7 @@ namespace MediaPortal.Music.Database
 
         try
         {
-          string cachedList = DownloadTempFile(aLocation);
+          string cachedList = DownloadTempFile(aLocation, aShouldRetry);
           doc.Load(cachedList);
 
           using (XmlReader reader = XmlReader.Create(cachedList))
@@ -2478,9 +2478,9 @@ namespace MediaPortal.Music.Database
             {
               if (reader.HasValue)
               {
-                aPlaylistName = reader.Value;
+                aPlaylistName = GetRadioPlaylistName(reader.Value);
                 break;
-              }              
+              }
             }
           }
         }
@@ -2629,6 +2629,51 @@ namespace MediaPortal.Music.Database
     #endregion
 
     #region Utils
+
+    public string GetRadioPlaylistName(string aUrlEncodedXmlString)
+    {
+      string outName = aUrlEncodedXmlString;
+      try
+      {
+        outName = System.Web.HttpUtility.UrlDecode(aUrlEncodedXmlString);
+
+        string user = String.Empty;
+        if (outName.EndsWith("Radio")) // Blue Man Group Radio
+        {
+          user = outName.Remove(outName.Length - 6);
+          Log.Info("AudioscrobblerUtils: Currently playing tracks related to {0}", user);
+        }
+        else
+          if (outName.EndsWith("Library"))
+          {
+            user = outName.Remove(outName.Length - 10);
+            Log.Info("AudioscrobblerUtils: Currently playing personal radio of {0}", user);
+          }
+          else
+            if (outName.EndsWith("Loved Tracks"))
+            {
+              user = outName.Remove(outName.Length - 15);
+              Log.Info("AudioscrobblerUtils: Currently playing favorite tracks of {0}", user);
+            }
+            else
+              if (outName.EndsWith("Recommendations"))
+              {
+                user = outName.Remove(outName.Length - 15);
+                Log.Info("AudioscrobblerUtils: Currently playing recommendations of {0}", user);
+              }
+              else
+                if (outName.EndsWith("Loved Tracks"))
+                {
+                  user = outName.Remove(outName.Length - 15);
+                  Log.Info("AudioscrobblerUtils: Currently playing neighbourhood radio of {0}", user);
+                }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("AudioscrobblerUtils: Error getting XSFP playlist name - {0},{1}", ex.Message, ex.StackTrace);
+      }
+      return outName;
+    }
 
     public string DecodeUtf8String(string aUtf8String)
     {
