@@ -35,7 +35,7 @@ namespace MediaPortal.DeployTool.Sections
       InitializeComponent();
       type = DialogType.TvEngineType;
       labelSectionHeader.Text = "";
-      imgTVE3.Image = Images.Choose_button_on;
+      bTVE3.Image = Images.Choose_button_on;
       tve3Checked = true;
       UpdateUI();
     }
@@ -64,18 +64,20 @@ namespace MediaPortal.DeployTool.Sections
 
     #endregion
 
-    private void imgTVE2_Click(object sender, EventArgs e)
+   
+    private void bTVE2_Click(object sender, EventArgs e)
     {
-      imgTVE2.Image = Images.Choose_button_on;
-      imgTVE3.Image = Images.Choose_button_off;
+      bTVE2.Image = Images.Choose_button_on;
+      bTVE3.Image = Images.Choose_button_off;
       tve3Checked = false;
     }
 
-    private void imgTVE3_Click(object sender, EventArgs e)
+    private void bTVE3_Click(object sender, EventArgs e)
     {
-      imgTVE2.Image = Images.Choose_button_off;
-      imgTVE3.Image = Images.Choose_button_on;
+      bTVE2.Image = Images.Choose_button_off;
+      bTVE3.Image = Images.Choose_button_on;
       tve3Checked = true;
     }
+
   }
 }

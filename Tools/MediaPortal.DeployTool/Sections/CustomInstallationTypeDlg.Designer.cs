@@ -31,15 +31,12 @@ namespace MediaPortal.DeployTool.Sections
       this.labelSingleSeat = new System.Windows.Forms.Label();
       this.labelMaster = new System.Windows.Forms.Label();
       this.labelClient = new System.Windows.Forms.Label();
-      this.imgSingle = new System.Windows.Forms.PictureBox();
-      this.imgMaster = new System.Windows.Forms.PictureBox();
-      this.imgClient = new System.Windows.Forms.PictureBox();
       this.rbSingleSeat = new System.Windows.Forms.Label();
       this.rbTvServerMaster = new System.Windows.Forms.Label();
       this.rbClient = new System.Windows.Forms.Label();
-      ((System.ComponentModel.ISupportInitialize)(this.imgSingle)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.imgMaster)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.imgClient)).BeginInit();
+      this.bSingle = new System.Windows.Forms.Button();
+      this.bMaster = new System.Windows.Forms.Button();
+      this.bClient = new System.Windows.Forms.Button();
       this.SuspendLayout();
       // 
       // labelSectionHeader
@@ -58,7 +55,7 @@ namespace MediaPortal.DeployTool.Sections
       this.labelSingleSeat.Size = new System.Drawing.Size(243, 13);
       this.labelSingleSeat.TabIndex = 9;
       this.labelSingleSeat.Text = "This will install a single seat configuration";
-      this.labelSingleSeat.Click += new System.EventHandler(this.imgSingle_Click);
+      this.labelSingleSeat.Click += new System.EventHandler(this.bSingle_Click);
       // 
       // labelMaster
       // 
@@ -70,7 +67,7 @@ namespace MediaPortal.DeployTool.Sections
       this.labelMaster.Size = new System.Drawing.Size(278, 13);
       this.labelMaster.TabIndex = 10;
       this.labelMaster.Text = "This will install a dedicated server configuration";
-      this.labelMaster.Click += new System.EventHandler(this.imgMaster_Click);
+      this.labelMaster.Click += new System.EventHandler(this.bMaster_Click);
       // 
       // labelClient
       // 
@@ -82,43 +79,7 @@ namespace MediaPortal.DeployTool.Sections
       this.labelClient.Size = new System.Drawing.Size(240, 13);
       this.labelClient.TabIndex = 12;
       this.labelClient.Text = "This will install a client only configuration";
-      this.labelClient.Click += new System.EventHandler(this.imgClient_Click);
-      // 
-      // imgSingle
-      // 
-      this.imgSingle.Cursor = System.Windows.Forms.Cursors.Hand;
-      this.imgSingle.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      this.imgSingle.Location = new System.Drawing.Point(25, 40);
-      this.imgSingle.Name = "imgSingle";
-      this.imgSingle.Size = new System.Drawing.Size(21, 21);
-      this.imgSingle.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-      this.imgSingle.TabIndex = 20;
-      this.imgSingle.TabStop = false;
-      this.imgSingle.Click += new System.EventHandler(this.imgSingle_Click);
-      // 
-      // imgMaster
-      // 
-      this.imgMaster.Cursor = System.Windows.Forms.Cursors.Hand;
-      this.imgMaster.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      this.imgMaster.Location = new System.Drawing.Point(25, 110);
-      this.imgMaster.Name = "imgMaster";
-      this.imgMaster.Size = new System.Drawing.Size(21, 21);
-      this.imgMaster.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-      this.imgMaster.TabIndex = 21;
-      this.imgMaster.TabStop = false;
-      this.imgMaster.Click += new System.EventHandler(this.imgMaster_Click);
-      // 
-      // imgClient
-      // 
-      this.imgClient.Cursor = System.Windows.Forms.Cursors.Hand;
-      this.imgClient.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      this.imgClient.Location = new System.Drawing.Point(25, 180);
-      this.imgClient.Name = "imgClient";
-      this.imgClient.Size = new System.Drawing.Size(21, 21);
-      this.imgClient.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-      this.imgClient.TabIndex = 23;
-      this.imgClient.TabStop = false;
-      this.imgClient.Click += new System.EventHandler(this.imgClient_Click);
+      this.labelClient.Click += new System.EventHandler(this.bClient_Click);
       // 
       // rbSingleSeat
       // 
@@ -131,7 +92,7 @@ namespace MediaPortal.DeployTool.Sections
       this.rbSingleSeat.Size = new System.Drawing.Size(325, 13);
       this.rbSingleSeat.TabIndex = 24;
       this.rbSingleSeat.Text = "MediaPortal Singleseat installation (stand alone)";
-      this.rbSingleSeat.Click += new System.EventHandler(this.imgSingle_Click);
+      this.rbSingleSeat.Click += new System.EventHandler(this.bSingle_Click);
       // 
       // rbTvServerMaster
       // 
@@ -144,7 +105,7 @@ namespace MediaPortal.DeployTool.Sections
       this.rbTvServerMaster.Size = new System.Drawing.Size(222, 13);
       this.rbTvServerMaster.TabIndex = 25;
       this.rbTvServerMaster.Text = "MediaPortal dedicated TV-Server";
-      this.rbTvServerMaster.Click += new System.EventHandler(this.imgMaster_Click);
+      this.rbTvServerMaster.Click += new System.EventHandler(this.bMaster_Click);
       // 
       // rbClient
       // 
@@ -157,19 +118,64 @@ namespace MediaPortal.DeployTool.Sections
       this.rbClient.Size = new System.Drawing.Size(298, 13);
       this.rbClient.TabIndex = 27;
       this.rbClient.Text = "MediaPortal Client (connects to a TV-Server)";
-      this.rbClient.Click += new System.EventHandler(this.imgClient_Click);
+      this.rbClient.Click += new System.EventHandler(this.bClient_Click);
+      // 
+      // bSingle
+      // 
+      this.bSingle.Cursor = System.Windows.Forms.Cursors.Hand;
+      this.bSingle.FlatAppearance.BorderSize = 0;
+      this.bSingle.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+      this.bSingle.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+      this.bSingle.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+      this.bSingle.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      this.bSingle.Location = new System.Drawing.Point(12, 40);
+      this.bSingle.Name = "bSingle";
+      this.bSingle.Size = new System.Drawing.Size(37, 23);
+      this.bSingle.TabIndex = 28;
+      this.bSingle.UseVisualStyleBackColor = true;
+      this.bSingle.Click += new System.EventHandler(this.bSingle_Click);
+      // 
+      // bMaster
+      // 
+      this.bMaster.Cursor = System.Windows.Forms.Cursors.Hand;
+      this.bMaster.FlatAppearance.BorderSize = 0;
+      this.bMaster.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+      this.bMaster.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+      this.bMaster.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+      this.bMaster.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      this.bMaster.Location = new System.Drawing.Point(12, 111);
+      this.bMaster.Name = "bMaster";
+      this.bMaster.Size = new System.Drawing.Size(37, 23);
+      this.bMaster.TabIndex = 29;
+      this.bMaster.UseVisualStyleBackColor = true;
+      this.bMaster.Click += new System.EventHandler(this.bMaster_Click);
+      // 
+      // bClient
+      // 
+      this.bClient.Cursor = System.Windows.Forms.Cursors.Hand;
+      this.bClient.FlatAppearance.BorderSize = 0;
+      this.bClient.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+      this.bClient.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+      this.bClient.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+      this.bClient.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      this.bClient.Location = new System.Drawing.Point(12, 180);
+      this.bClient.Name = "bClient";
+      this.bClient.Size = new System.Drawing.Size(37, 23);
+      this.bClient.TabIndex = 30;
+      this.bClient.UseVisualStyleBackColor = true;
+      this.bClient.Click += new System.EventHandler(this.bClient_Click);
       // 
       // CustomInstallationTypeDlg
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_middle_empty;
+      this.Controls.Add(this.bClient);
+      this.Controls.Add(this.bMaster);
+      this.Controls.Add(this.bSingle);
       this.Controls.Add(this.rbClient);
       this.Controls.Add(this.rbTvServerMaster);
       this.Controls.Add(this.rbSingleSeat);
-      this.Controls.Add(this.imgClient);
-      this.Controls.Add(this.imgMaster);
-      this.Controls.Add(this.imgSingle);
       this.Controls.Add(this.labelClient);
       this.Controls.Add(this.labelMaster);
       this.Controls.Add(this.labelSingleSeat);
@@ -180,15 +186,12 @@ namespace MediaPortal.DeployTool.Sections
       this.Controls.SetChildIndex(this.labelSingleSeat, 0);
       this.Controls.SetChildIndex(this.labelMaster, 0);
       this.Controls.SetChildIndex(this.labelClient, 0);
-      this.Controls.SetChildIndex(this.imgSingle, 0);
-      this.Controls.SetChildIndex(this.imgMaster, 0);
-      this.Controls.SetChildIndex(this.imgClient, 0);
       this.Controls.SetChildIndex(this.rbSingleSeat, 0);
       this.Controls.SetChildIndex(this.rbTvServerMaster, 0);
       this.Controls.SetChildIndex(this.rbClient, 0);
-      ((System.ComponentModel.ISupportInitialize)(this.imgSingle)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.imgMaster)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.imgClient)).EndInit();
+      this.Controls.SetChildIndex(this.bSingle, 0);
+      this.Controls.SetChildIndex(this.bMaster, 0);
+      this.Controls.SetChildIndex(this.bClient, 0);
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -199,11 +202,11 @@ namespace MediaPortal.DeployTool.Sections
     private System.Windows.Forms.Label labelSingleSeat;
     private System.Windows.Forms.Label labelMaster;
     private System.Windows.Forms.Label labelClient;
-    private System.Windows.Forms.PictureBox imgSingle;
-    private System.Windows.Forms.PictureBox imgMaster;
-    private System.Windows.Forms.PictureBox imgClient;
     private System.Windows.Forms.Label rbSingleSeat;
     private System.Windows.Forms.Label rbTvServerMaster;
     private System.Windows.Forms.Label rbClient;
+    private System.Windows.Forms.Button bSingle;
+    private System.Windows.Forms.Button bMaster;
+    private System.Windows.Forms.Button bClient;
   }
 }

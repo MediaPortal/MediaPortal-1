@@ -28,15 +28,12 @@ namespace MediaPortal.DeployTool.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      this.imgYesHD = new System.Windows.Forms.PictureBox();
-      this.imgNoHD = new System.Windows.Forms.PictureBox();
-      this.imgMaybeHD = new System.Windows.Forms.PictureBox();
       this.rbYesHD = new System.Windows.Forms.Label();
       this.rbNoHD = new System.Windows.Forms.Label();
       this.rbMaybeHD = new System.Windows.Forms.Label();
-      ((System.ComponentModel.ISupportInitialize)(this.imgYesHD)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.imgNoHD)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.imgMaybeHD)).BeginInit();
+      this.bYesHD = new System.Windows.Forms.Button();
+      this.bNoHD = new System.Windows.Forms.Button();
+      this.bMaybeHD = new System.Windows.Forms.Button();
       this.SuspendLayout();
       // 
       // labelSectionHeader
@@ -47,55 +44,19 @@ namespace MediaPortal.DeployTool.Sections
       this.labelSectionHeader.Size = new System.Drawing.Size(345, 16);
       this.labelSectionHeader.Text = "Do you want to watch HDTV with MediaPortal ?";
       // 
-      // imgYesHD
-      // 
-      this.imgYesHD.Cursor = System.Windows.Forms.Cursors.Hand;
-      this.imgYesHD.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      this.imgYesHD.Location = new System.Drawing.Point(233, 78);
-      this.imgYesHD.Name = "imgYesHD";
-      this.imgYesHD.Size = new System.Drawing.Size(21, 21);
-      this.imgYesHD.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-      this.imgYesHD.TabIndex = 13;
-      this.imgYesHD.TabStop = false;
-      this.imgYesHD.Click += new System.EventHandler(this.imgYesHD_Click);
-      // 
-      // imgNoHD
-      // 
-      this.imgNoHD.Cursor = System.Windows.Forms.Cursors.Hand;
-      this.imgNoHD.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      this.imgNoHD.Location = new System.Drawing.Point(233, 128);
-      this.imgNoHD.Name = "imgNoHD";
-      this.imgNoHD.Size = new System.Drawing.Size(21, 21);
-      this.imgNoHD.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-      this.imgNoHD.TabIndex = 14;
-      this.imgNoHD.TabStop = false;
-      this.imgNoHD.Click += new System.EventHandler(this.imgNoHD_Click);
-      // 
-      // imgMaybeHD
-      // 
-      this.imgMaybeHD.Cursor = System.Windows.Forms.Cursors.Hand;
-      this.imgMaybeHD.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      this.imgMaybeHD.Location = new System.Drawing.Point(233, 178);
-      this.imgMaybeHD.Name = "imgMaybeHD";
-      this.imgMaybeHD.Size = new System.Drawing.Size(21, 21);
-      this.imgMaybeHD.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-      this.imgMaybeHD.TabIndex = 15;
-      this.imgMaybeHD.TabStop = false;
-      this.imgMaybeHD.Click += new System.EventHandler(this.imgMaybeHD_Click);
-      // 
       // rbYesHD
       // 
       this.rbYesHD.AutoSize = true;
       this.rbYesHD.Cursor = System.Windows.Forms.Cursors.Hand;
       this.rbYesHD.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.rbYesHD.ForeColor = System.Drawing.Color.White;
-      this.rbYesHD.Location = new System.Drawing.Point(265, 82);
+      this.rbYesHD.Location = new System.Drawing.Point(271, 82);
       this.rbYesHD.MaximumSize = new System.Drawing.Size(350, 0);
       this.rbYesHD.Name = "rbYesHD";
       this.rbYesHD.Size = new System.Drawing.Size(283, 13);
       this.rbYesHD.TabIndex = 16;
       this.rbYesHD.Text = "Yes, I will use MediaPortal  to watch HD content.";
-      this.rbYesHD.Click += new System.EventHandler(this.imgYesHD_Click);
+      this.rbYesHD.Click += new System.EventHandler(this.bYesHD_Click);
       // 
       // rbNoHD
       // 
@@ -103,13 +64,13 @@ namespace MediaPortal.DeployTool.Sections
       this.rbNoHD.Cursor = System.Windows.Forms.Cursors.Hand;
       this.rbNoHD.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.rbNoHD.ForeColor = System.Drawing.Color.White;
-      this.rbNoHD.Location = new System.Drawing.Point(265, 132);
+      this.rbNoHD.Location = new System.Drawing.Point(271, 132);
       this.rbNoHD.MaximumSize = new System.Drawing.Size(350, 0);
       this.rbNoHD.Name = "rbNoHD";
       this.rbNoHD.Size = new System.Drawing.Size(286, 13);
       this.rbNoHD.TabIndex = 17;
       this.rbNoHD.Text = "No, I won\'t use MediaPortal to watch HD content.";
-      this.rbNoHD.Click += new System.EventHandler(this.imgNoHD_Click);
+      this.rbNoHD.Click += new System.EventHandler(this.bNoHD_Click);
       // 
       // rbMaybeHD
       // 
@@ -117,38 +78,80 @@ namespace MediaPortal.DeployTool.Sections
       this.rbMaybeHD.Cursor = System.Windows.Forms.Cursors.Hand;
       this.rbMaybeHD.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.rbMaybeHD.ForeColor = System.Drawing.Color.White;
-      this.rbMaybeHD.Location = new System.Drawing.Point(265, 182);
+      this.rbMaybeHD.Location = new System.Drawing.Point(271, 182);
       this.rbMaybeHD.MaximumSize = new System.Drawing.Size(350, 0);
       this.rbMaybeHD.Name = "rbMaybeHD";
       this.rbMaybeHD.Size = new System.Drawing.Size(193, 13);
       this.rbMaybeHD.TabIndex = 18;
       this.rbMaybeHD.Text = "I don\'t know what is HD content.";
-      this.rbMaybeHD.Click += new System.EventHandler(this.imgMaybeHD_Click);
+      this.rbMaybeHD.Click += new System.EventHandler(this.bMaybeHD_Click);
+      // 
+      // bYesHD
+      // 
+      this.bYesHD.Cursor = System.Windows.Forms.Cursors.Hand;
+      this.bYesHD.FlatAppearance.BorderSize = 0;
+      this.bYesHD.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+      this.bYesHD.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+      this.bYesHD.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+      this.bYesHD.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      this.bYesHD.Location = new System.Drawing.Point(228, 77);
+      this.bYesHD.Name = "bYesHD";
+      this.bYesHD.Size = new System.Drawing.Size(37, 23);
+      this.bYesHD.TabIndex = 19;
+      this.bYesHD.UseVisualStyleBackColor = true;
+      this.bYesHD.Click += new System.EventHandler(this.bYesHD_Click);
+      // 
+      // bNoHD
+      // 
+      this.bNoHD.Cursor = System.Windows.Forms.Cursors.Hand;
+      this.bNoHD.FlatAppearance.BorderSize = 0;
+      this.bNoHD.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+      this.bNoHD.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+      this.bNoHD.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+      this.bNoHD.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      this.bNoHD.Location = new System.Drawing.Point(228, 127);
+      this.bNoHD.Name = "bNoHD";
+      this.bNoHD.Size = new System.Drawing.Size(37, 23);
+      this.bNoHD.TabIndex = 20;
+      this.bNoHD.UseVisualStyleBackColor = true;
+      this.bNoHD.Click += new System.EventHandler(this.bNoHD_Click);
+      // 
+      // bMaybeHD
+      // 
+      this.bMaybeHD.Cursor = System.Windows.Forms.Cursors.Hand;
+      this.bMaybeHD.FlatAppearance.BorderSize = 0;
+      this.bMaybeHD.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+      this.bMaybeHD.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+      this.bMaybeHD.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+      this.bMaybeHD.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      this.bMaybeHD.Location = new System.Drawing.Point(228, 177);
+      this.bMaybeHD.Name = "bMaybeHD";
+      this.bMaybeHD.Size = new System.Drawing.Size(37, 23);
+      this.bMaybeHD.TabIndex = 21;
+      this.bMaybeHD.UseVisualStyleBackColor = true;
+      this.bMaybeHD.Click += new System.EventHandler(this.bMaybeHD_Click);
       // 
       // WatchHDTvDlg
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_middle_TV_install;
+      this.Controls.Add(this.bMaybeHD);
+      this.Controls.Add(this.bNoHD);
+      this.Controls.Add(this.bYesHD);
       this.Controls.Add(this.rbMaybeHD);
       this.Controls.Add(this.rbNoHD);
       this.Controls.Add(this.rbYesHD);
-      this.Controls.Add(this.imgMaybeHD);
-      this.Controls.Add(this.imgNoHD);
-      this.Controls.Add(this.imgYesHD);
       this.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.Name = "WatchHDTvDlg";
       this.Size = new System.Drawing.Size(632, 251);
       this.Controls.SetChildIndex(this.labelSectionHeader, 0);
-      this.Controls.SetChildIndex(this.imgYesHD, 0);
-      this.Controls.SetChildIndex(this.imgNoHD, 0);
-      this.Controls.SetChildIndex(this.imgMaybeHD, 0);
       this.Controls.SetChildIndex(this.rbYesHD, 0);
       this.Controls.SetChildIndex(this.rbNoHD, 0);
       this.Controls.SetChildIndex(this.rbMaybeHD, 0);
-      ((System.ComponentModel.ISupportInitialize)(this.imgYesHD)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.imgNoHD)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.imgMaybeHD)).EndInit();
+      this.Controls.SetChildIndex(this.bYesHD, 0);
+      this.Controls.SetChildIndex(this.bNoHD, 0);
+      this.Controls.SetChildIndex(this.bMaybeHD, 0);
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -156,12 +159,12 @@ namespace MediaPortal.DeployTool.Sections
 
     #endregion
 
-    private System.Windows.Forms.PictureBox imgYesHD;
-    private System.Windows.Forms.PictureBox imgNoHD;
-    private System.Windows.Forms.PictureBox imgMaybeHD;
     private System.Windows.Forms.Label rbYesHD;
     private System.Windows.Forms.Label rbNoHD;
     private System.Windows.Forms.Label rbMaybeHD;
+    private System.Windows.Forms.Button bYesHD;
+    private System.Windows.Forms.Button bNoHD;
+    private System.Windows.Forms.Button bMaybeHD;
 
 
   }

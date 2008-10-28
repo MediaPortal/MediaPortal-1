@@ -9,7 +9,7 @@ namespace MediaPortal.DeployTool.Sections
     {
       InitializeComponent();
       type = DialogType.DBMSType;
-      imgMS.Image = Images.Choose_button_on;
+      bMS.Image = Images.Choose_button_on;
       dbmsType = 1;
       UpdateUI();
     }
@@ -56,27 +56,27 @@ namespace MediaPortal.DeployTool.Sections
     }
     #endregion
 
-    private void imgMS_Click(object sender, EventArgs e)
+    private void bMS_Click(object sender, EventArgs e)
     {
-      imgMS.Image = Images.Choose_button_on;
-      imgMySQL.Image = Images.Choose_button_off;
-      imgExists.Image = Images.Choose_button_off;
+      bMS.Image = Images.Choose_button_on;
+      bMySQL.Image = Images.Choose_button_off;
+      bExists.Image = Images.Choose_button_off;
       dbmsType = 1;
     }
 
-    private void imgMySQL_Click(object sender, EventArgs e)
+    private void bMySQL_Click(object sender, EventArgs e)
     {
-      imgMS.Image = Images.Choose_button_off;
-      imgMySQL.Image = Images.Choose_button_on;
-      imgExists.Image = Images.Choose_button_off;
+      bMS.Image = Images.Choose_button_off;
+      bMySQL.Image = Images.Choose_button_on;
+      bExists.Image = Images.Choose_button_off;
       dbmsType = 2;
     }
 
-    private void imgExists_Click(object sender, EventArgs e)
+    private void bExists_Click(object sender, EventArgs e)
     {
-      imgMS.Image = Images.Choose_button_off;
-      imgMySQL.Image = Images.Choose_button_off;
-      imgExists.Image = Images.Choose_button_on;
+      bMS.Image = Images.Choose_button_off;
+      bMySQL.Image = Images.Choose_button_off;
+      bExists.Image = Images.Choose_button_on;
       dbmsType = 3;
     }
   }

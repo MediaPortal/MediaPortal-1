@@ -29,12 +29,10 @@ namespace MediaPortal.DeployTool.Sections
     private void InitializeComponent()
     {
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DownloadOnlyDlg));
-      this.imgInstallNow = new System.Windows.Forms.PictureBox();
-      this.imgDownloadOnly = new System.Windows.Forms.PictureBox();
       this.rbInstallNow = new System.Windows.Forms.Label();
       this.rbDownloadOnly = new System.Windows.Forms.Label();
-      ((System.ComponentModel.ISupportInitialize)(this.imgInstallNow)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.imgDownloadOnly)).BeginInit();
+      this.bInstallNow = new System.Windows.Forms.Button();
+      this.bDownloadOnly = new System.Windows.Forms.Button();
       this.SuspendLayout();
       // 
       // labelSectionHeader
@@ -45,42 +43,18 @@ namespace MediaPortal.DeployTool.Sections
       this.labelSectionHeader.Size = new System.Drawing.Size(348, 112);
       this.labelSectionHeader.Text = resources.GetString("labelSectionHeader.Text");
       // 
-      // imgInstallNow
-      // 
-      this.imgInstallNow.Cursor = System.Windows.Forms.Cursors.Hand;
-      this.imgInstallNow.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      this.imgInstallNow.Location = new System.Drawing.Point(200, 154);
-      this.imgInstallNow.Name = "imgInstallNow";
-      this.imgInstallNow.Size = new System.Drawing.Size(21, 21);
-      this.imgInstallNow.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-      this.imgInstallNow.TabIndex = 11;
-      this.imgInstallNow.TabStop = false;
-      this.imgInstallNow.Click += new System.EventHandler(this.imgInstallNow_Click);
-      // 
-      // imgDownloadOnly
-      // 
-      this.imgDownloadOnly.Cursor = System.Windows.Forms.Cursors.Hand;
-      this.imgDownloadOnly.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      this.imgDownloadOnly.Location = new System.Drawing.Point(200, 189);
-      this.imgDownloadOnly.Name = "imgDownloadOnly";
-      this.imgDownloadOnly.Size = new System.Drawing.Size(21, 21);
-      this.imgDownloadOnly.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-      this.imgDownloadOnly.TabIndex = 12;
-      this.imgDownloadOnly.TabStop = false;
-      this.imgDownloadOnly.Click += new System.EventHandler(this.imgDownloadOnly_Click);
-      // 
       // rbInstallNow
       // 
       this.rbInstallNow.AutoSize = true;
       this.rbInstallNow.Cursor = System.Windows.Forms.Cursors.Hand;
       this.rbInstallNow.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.rbInstallNow.ForeColor = System.Drawing.Color.White;
-      this.rbInstallNow.Location = new System.Drawing.Point(230, 158);
+      this.rbInstallNow.Location = new System.Drawing.Point(238, 153);
       this.rbInstallNow.Name = "rbInstallNow";
       this.rbInstallNow.Size = new System.Drawing.Size(176, 13);
-      this.rbInstallNow.TabIndex = 13;
+      this.rbInstallNow.TabIndex = 20;
       this.rbInstallNow.Text = "Start with the installation now";
-      this.rbInstallNow.Click += new System.EventHandler(this.imgInstallNow_Click);
+      this.rbInstallNow.Click += new System.EventHandler(this.bInstallNow_Click);
       // 
       // rbDownloadOnly
       // 
@@ -88,31 +62,62 @@ namespace MediaPortal.DeployTool.Sections
       this.rbDownloadOnly.Cursor = System.Windows.Forms.Cursors.Hand;
       this.rbDownloadOnly.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.rbDownloadOnly.ForeColor = System.Drawing.Color.White;
-      this.rbDownloadOnly.Location = new System.Drawing.Point(230, 193);
+      this.rbDownloadOnly.Location = new System.Drawing.Point(238, 188);
       this.rbDownloadOnly.Name = "rbDownloadOnly";
       this.rbDownloadOnly.Size = new System.Drawing.Size(216, 13);
-      this.rbDownloadOnly.TabIndex = 14;
+      this.rbDownloadOnly.TabIndex = 20;
       this.rbDownloadOnly.Text = "Only download required components";
-      this.rbDownloadOnly.Click += new System.EventHandler(this.imgDownloadOnly_Click);
+      this.rbDownloadOnly.Click += new System.EventHandler(this.bDownloadOnly_Click);
+      // 
+      // bInstallNow
+      // 
+      this.bInstallNow.Cursor = System.Windows.Forms.Cursors.Hand;
+      this.bInstallNow.FlatAppearance.BorderSize = 0;
+      this.bInstallNow.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+      this.bInstallNow.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+      this.bInstallNow.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+      this.bInstallNow.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      this.bInstallNow.Location = new System.Drawing.Point(195, 148);
+      this.bInstallNow.Name = "bInstallNow";
+      this.bInstallNow.Size = new System.Drawing.Size(37, 23);
+      this.bInstallNow.TabIndex = 1;
+      this.bInstallNow.TabStop = true;
+      this.bInstallNow.BringToFront();
+      this.bInstallNow.UseVisualStyleBackColor = true;
+      this.bInstallNow.Click += new System.EventHandler(this.bInstallNow_Click);
+      // 
+      // bDownloadOnly
+      // 
+      this.bDownloadOnly.Cursor = System.Windows.Forms.Cursors.Hand;
+      this.bDownloadOnly.FlatAppearance.BorderSize = 0;
+      this.bDownloadOnly.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+      this.bDownloadOnly.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+      this.bDownloadOnly.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+      this.bDownloadOnly.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      this.bDownloadOnly.Location = new System.Drawing.Point(195, 183);
+      this.bDownloadOnly.Name = "bDownloadOnly";
+      this.bDownloadOnly.Size = new System.Drawing.Size(37, 23);
+      this.bDownloadOnly.TabIndex = 2;
+      this.bDownloadOnly.TabStop = true;
+      this.bDownloadOnly.UseVisualStyleBackColor = true;
+      this.bDownloadOnly.Click += new System.EventHandler(this.bDownloadOnly_Click);
       // 
       // DownloadOnlyDlg
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_middle_internet_connection;
+      this.Controls.Add(this.bDownloadOnly);
+      this.Controls.Add(this.bInstallNow);
       this.Controls.Add(this.rbDownloadOnly);
       this.Controls.Add(this.rbInstallNow);
-      this.Controls.Add(this.imgDownloadOnly);
-      this.Controls.Add(this.imgInstallNow);
       this.Name = "DownloadOnlyDlg";
       this.Size = new System.Drawing.Size(669, 251);
       this.Controls.SetChildIndex(this.labelSectionHeader, 0);
-      this.Controls.SetChildIndex(this.imgInstallNow, 0);
-      this.Controls.SetChildIndex(this.imgDownloadOnly, 0);
       this.Controls.SetChildIndex(this.rbInstallNow, 0);
       this.Controls.SetChildIndex(this.rbDownloadOnly, 0);
-      ((System.ComponentModel.ISupportInitialize)(this.imgInstallNow)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.imgDownloadOnly)).EndInit();
+      this.Controls.SetChildIndex(this.bInstallNow, 0);
+      this.Controls.SetChildIndex(this.bDownloadOnly, 0);
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -120,10 +125,10 @@ namespace MediaPortal.DeployTool.Sections
 
     #endregion
 
-    private System.Windows.Forms.PictureBox imgInstallNow;
-    private System.Windows.Forms.PictureBox imgDownloadOnly;
     private System.Windows.Forms.Label rbInstallNow;
     private System.Windows.Forms.Label rbDownloadOnly;
+    private System.Windows.Forms.Button bInstallNow;
+    private System.Windows.Forms.Button bDownloadOnly;
 
   }
 }

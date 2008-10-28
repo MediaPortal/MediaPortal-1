@@ -40,12 +40,12 @@ namespace MediaPortal.DeployTool.Sections
       labelSectionHeader.Text = "";
       if (Utils.Check64bit())
       {
-        img64bit.Image = Images.Choose_button_on;
+        b64bit.Image = Images.Choose_button_on;
         arch64 = true;
       }
       else
       {
-        img32bit.Image = Images.Choose_button_on;
+        b32bit.Image = Images.Choose_button_on;
         arch64 = false;
       }
 
@@ -97,17 +97,18 @@ namespace MediaPortal.DeployTool.Sections
 
     #endregion
 
-    private void img32bit_Click(object sender, EventArgs e)
+    
+    private void b32bit_Click(object sender, EventArgs e)
     {
-      img32bit.Image = Images.Choose_button_on;
-      img64bit.Image = Images.Choose_button_off;
+      b32bit.Image = Images.Choose_button_on;
+      b64bit.Image = Images.Choose_button_off;
       arch64 = false;
     }
 
-    private void img64bit_Click(object sender, EventArgs e)
+    private void b64bit_Click(object sender, EventArgs e)
     {
-      img32bit.Image = Images.Choose_button_off;
-      img64bit.Image = Images.Choose_button_on;
+      b32bit.Image = Images.Choose_button_off;
+      b64bit.Image = Images.Choose_button_on;
       arch64 = true;
     }
   }

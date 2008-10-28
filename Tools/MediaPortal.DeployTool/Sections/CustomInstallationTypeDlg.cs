@@ -34,7 +34,7 @@ namespace MediaPortal.DeployTool.Sections
     {
       InitializeComponent();
       type = DialogType.CUSTOM_INSTALLATION_TYPE;
-      imgSingle.Image = Images.Choose_button_on;
+      bSingle.Image = Images.Choose_button_on;
       installType = 1;
       UpdateUI();
     }
@@ -88,27 +88,28 @@ namespace MediaPortal.DeployTool.Sections
     }
     #endregion
 
-    private void imgSingle_Click(object sender, EventArgs e)
+    
+    private void bSingle_Click(object sender, EventArgs e)
     {
-      imgSingle.Image = Images.Choose_button_on;
-      imgMaster.Image = Images.Choose_button_off;
-      imgClient.Image = Images.Choose_button_off;
+      bSingle.Image = Images.Choose_button_on;
+      bMaster.Image = Images.Choose_button_off;
+      bClient.Image = Images.Choose_button_off;
       installType = 1;
     }
 
-    private void imgMaster_Click(object sender, EventArgs e)
+    private void bMaster_Click(object sender, EventArgs e)
     {
-      imgSingle.Image = Images.Choose_button_off;
-      imgMaster.Image = Images.Choose_button_on;
-      imgClient.Image = Images.Choose_button_off;
+      bSingle.Image = Images.Choose_button_off;
+      bMaster.Image = Images.Choose_button_on;
+      bClient.Image = Images.Choose_button_off;
       installType = 2;
     }
 
-    private void imgClient_Click(object sender, EventArgs e)
+    private void bClient_Click(object sender, EventArgs e)
     {
-      imgSingle.Image = Images.Choose_button_off;
-      imgMaster.Image = Images.Choose_button_off;
-      imgClient.Image = Images.Choose_button_on;
+      bSingle.Image = Images.Choose_button_off;
+      bMaster.Image = Images.Choose_button_off;
+      bClient.Image = Images.Choose_button_on;
       installType = 3;
     }
   }

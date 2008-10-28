@@ -39,7 +39,7 @@ namespace MediaPortal.DeployTool.Sections
       InitializeComponent();
       type = DialogType.WatchTV;
       labelSectionHeader.Text = "";
-      imgYes.Image = Images.Choose_button_on;
+      bYes.Image = Images.Choose_button_on;
       rbYesChecked = true;
       UpdateUI();
     }
@@ -68,17 +68,18 @@ namespace MediaPortal.DeployTool.Sections
 
     #endregion
 
-    private void imgYes_Click(object sender, EventArgs e)
+    
+    private void bYes_Click(object sender, EventArgs e)
     {
-      imgYes.Image = Images.Choose_button_on;
-      imgNo.Image = Images.Choose_button_off;
+      bYes.Image = Images.Choose_button_on;
+      bNo.Image = Images.Choose_button_off;
       rbYesChecked = true;
     }
 
-    private void imgNo_Click(object sender, EventArgs e)
+    private void bNo_Click(object sender, EventArgs e)
     {
-      imgYes.Image = Images.Choose_button_off;
-      imgNo.Image = Images.Choose_button_on;
+      bYes.Image = Images.Choose_button_off;
+      bNo.Image = Images.Choose_button_on;
       rbYesChecked = false;
     }
   }

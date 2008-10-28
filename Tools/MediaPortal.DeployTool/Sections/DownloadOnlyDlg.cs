@@ -36,7 +36,7 @@ namespace MediaPortal.DeployTool.Sections
       InitializeComponent();
       type = DialogType.DownloadOnly;
       labelSectionHeader.Text = "";
-      imgInstallNow.Image = Images.Choose_button_on;
+      bInstallNow.Image = Images.Choose_button_on;
       rbDownloadOnlyChecked = false;
       UpdateUI();
     }
@@ -64,19 +64,21 @@ namespace MediaPortal.DeployTool.Sections
 
     #endregion
 
-    private void imgInstallNow_Click(object sender, EventArgs e)
-    {
-      imgInstallNow.Image = Images.Choose_button_on;
-      imgDownloadOnly.Image = Images.Choose_button_off;
-      rbDownloadOnlyChecked = false;
-    }
+      private void bInstallNow_Click(object sender, EventArgs e)
+      {
+          bInstallNow.Image = Images.Choose_button_on;
+          bDownloadOnly.Image = Images.Choose_button_off;
+          rbDownloadOnlyChecked = false;
+      }
 
-    private void imgDownloadOnly_Click(object sender, EventArgs e)
-    {
-      imgInstallNow.Image = Images.Choose_button_off;
-      imgDownloadOnly.Image = Images.Choose_button_on;
-      rbDownloadOnlyChecked = true;
-    }
+      private void bDownloadOnly_Click(object sender, EventArgs e)
+      {
+          bInstallNow.Image = Images.Choose_button_off;
+          bDownloadOnly.Image = Images.Choose_button_on;
+          rbDownloadOnlyChecked = true;
+      }
+
+    
 
   }
 }

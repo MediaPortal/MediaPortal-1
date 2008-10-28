@@ -36,7 +36,7 @@ namespace MediaPortal.DeployTool.Sections
       InitializeComponent();
       type = DialogType.BASE_INSTALLATION_TYPE;
       labelSectionHeader.Text = "";
-      imgOneClick.Image = Images.Choose_button_on;
+      bOneClick.Image = Images.Choose_button_on;
       rbOneClickChecked = true;
       UpdateUI();
     }
@@ -81,26 +81,29 @@ namespace MediaPortal.DeployTool.Sections
     }
     #endregion
 
-    private void imgOneClick_Click(object sender, EventArgs e)
-    {
-      imgOneClick.Image = Images.Choose_button_on;
-      imgAdvanced.Image = Images.Choose_button_off;
-      rbOneClickChecked = true;
-    }
+   
     private void rbOneClick_Click(object sender, EventArgs e)
     {
-      imgOneClick_Click(sender, e);
+      bOneClick_Click(sender, e);
     }
 
-    private void imgAdvanced_Click(object sender, EventArgs e)
-    {
-      imgOneClick.Image = Images.Choose_button_off;
-      imgAdvanced.Image = Images.Choose_button_on;
-      rbOneClickChecked = false;
-    }
     private void rbAdvanced_Click(object sender, EventArgs e)
     {
-      imgAdvanced_Click(sender, e);
+      bAdvanced_Click(sender, e);
+    }
+
+    private void bOneClick_Click(object sender, EventArgs e)
+    {
+      bOneClick.Image = Images.Choose_button_on;
+      bAdvanced.Image = Images.Choose_button_off;
+      rbOneClickChecked = true;
+    }
+
+    private void bAdvanced_Click(object sender, EventArgs e)
+    {
+      bOneClick.Image = Images.Choose_button_off;
+      bAdvanced.Image = Images.Choose_button_on;
+      rbOneClickChecked = false;
     }
   }
 }

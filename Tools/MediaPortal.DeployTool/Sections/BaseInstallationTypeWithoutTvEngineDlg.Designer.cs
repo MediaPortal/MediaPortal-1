@@ -30,14 +30,12 @@ namespace MediaPortal.DeployTool.Sections
     {
       this.rbAdvanced = new System.Windows.Forms.Label();
       this.rbOneClick = new System.Windows.Forms.Label();
-      this.imgOneClick = new System.Windows.Forms.PictureBox();
       this.labelAdvancedDesc = new System.Windows.Forms.Label();
       this.labelAdvancedCaption = new System.Windows.Forms.Label();
       this.labelOneClickDesc = new System.Windows.Forms.Label();
       this.labelOneClickCaption = new System.Windows.Forms.Label();
-      this.imgAdvanced = new System.Windows.Forms.PictureBox();
-      ((System.ComponentModel.ISupportInitialize)(this.imgOneClick)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.imgAdvanced)).BeginInit();
+      this.bOneClick = new System.Windows.Forms.Button();
+      this.bAdvanced = new System.Windows.Forms.Button();
       this.SuspendLayout();
       // 
       // labelSectionHeader
@@ -73,18 +71,6 @@ namespace MediaPortal.DeployTool.Sections
       this.rbOneClick.Text = "Do a one click installation";
       this.rbOneClick.Click += new System.EventHandler(this.rbOneClick_Click);
       // 
-      // imgOneClick
-      // 
-      this.imgOneClick.Cursor = System.Windows.Forms.Cursors.Hand;
-      this.imgOneClick.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      this.imgOneClick.Location = new System.Drawing.Point(200, 81);
-      this.imgOneClick.Name = "imgOneClick";
-      this.imgOneClick.Size = new System.Drawing.Size(21, 21);
-      this.imgOneClick.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-      this.imgOneClick.TabIndex = 19;
-      this.imgOneClick.TabStop = false;
-      this.imgOneClick.Click += new System.EventHandler(this.imgOneClick_Click);
-      // 
       // labelAdvancedDesc
       // 
       this.labelAdvancedDesc.BackColor = System.Drawing.Color.Transparent;
@@ -95,7 +81,7 @@ namespace MediaPortal.DeployTool.Sections
       this.labelAdvancedDesc.Size = new System.Drawing.Size(321, 46);
       this.labelAdvancedDesc.TabIndex = 18;
       this.labelAdvancedDesc.Text = "The advanced installation allows you to specify installation locations and other " +
-                                    "settings";
+          "settings";
       // 
       // labelAdvancedCaption
       // 
@@ -119,7 +105,7 @@ namespace MediaPortal.DeployTool.Sections
       this.labelOneClickDesc.Size = new System.Drawing.Size(321, 46);
       this.labelOneClickDesc.TabIndex = 16;
       this.labelOneClickDesc.Text = "All required applications will be installed into their default locations and with" +
-                                    " the default settings.";
+          " the default settings.";
       // 
       // labelOneClickCaption
       // 
@@ -133,27 +119,45 @@ namespace MediaPortal.DeployTool.Sections
       this.labelOneClickCaption.TabIndex = 15;
       this.labelOneClickCaption.Text = "One Click Installation";
       // 
-      // imgAdvanced
+      // bOneClick
       // 
-      this.imgAdvanced.Cursor = System.Windows.Forms.Cursors.Hand;
-      this.imgAdvanced.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      this.imgAdvanced.Location = new System.Drawing.Point(200, 195);
-      this.imgAdvanced.Name = "imgAdvanced";
-      this.imgAdvanced.Size = new System.Drawing.Size(21, 21);
-      this.imgAdvanced.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-      this.imgAdvanced.TabIndex = 22;
-      this.imgAdvanced.TabStop = false;
-      this.imgAdvanced.Click += new System.EventHandler(this.imgAdvanced_Click);
+      this.bOneClick.Cursor = System.Windows.Forms.Cursors.Hand;
+      this.bOneClick.FlatAppearance.BorderSize = 0;
+      this.bOneClick.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+      this.bOneClick.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+      this.bOneClick.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+      this.bOneClick.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      this.bOneClick.Location = new System.Drawing.Point(187, 80);
+      this.bOneClick.Name = "bOneClick";
+      this.bOneClick.Size = new System.Drawing.Size(37, 23);
+      this.bOneClick.TabIndex = 23;
+      this.bOneClick.UseVisualStyleBackColor = true;
+      this.bOneClick.Click += new System.EventHandler(this.bOneClick_Click);
+      // 
+      // bAdvanced
+      // 
+      this.bAdvanced.Cursor = System.Windows.Forms.Cursors.Hand;
+      this.bAdvanced.FlatAppearance.BorderSize = 0;
+      this.bAdvanced.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+      this.bAdvanced.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+      this.bAdvanced.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+      this.bAdvanced.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      this.bAdvanced.Location = new System.Drawing.Point(187, 194);
+      this.bAdvanced.Name = "bAdvanced";
+      this.bAdvanced.Size = new System.Drawing.Size(37, 23);
+      this.bAdvanced.TabIndex = 24;
+      this.bAdvanced.UseVisualStyleBackColor = true;
+      this.bAdvanced.Click += new System.EventHandler(this.bAdvanced_Click);
       // 
       // BaseInstallationTypeWithoutTvEngineDlg
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_middle_one_click_install_choose;
-      this.Controls.Add(this.imgAdvanced);
+      this.Controls.Add(this.bAdvanced);
+      this.Controls.Add(this.bOneClick);
       this.Controls.Add(this.rbAdvanced);
       this.Controls.Add(this.rbOneClick);
-      this.Controls.Add(this.imgOneClick);
       this.Controls.Add(this.labelAdvancedDesc);
       this.Controls.Add(this.labelAdvancedCaption);
       this.Controls.Add(this.labelOneClickDesc);
@@ -165,12 +169,10 @@ namespace MediaPortal.DeployTool.Sections
       this.Controls.SetChildIndex(this.labelOneClickDesc, 0);
       this.Controls.SetChildIndex(this.labelAdvancedCaption, 0);
       this.Controls.SetChildIndex(this.labelAdvancedDesc, 0);
-      this.Controls.SetChildIndex(this.imgOneClick, 0);
       this.Controls.SetChildIndex(this.rbOneClick, 0);
       this.Controls.SetChildIndex(this.rbAdvanced, 0);
-      this.Controls.SetChildIndex(this.imgAdvanced, 0);
-      ((System.ComponentModel.ISupportInitialize)(this.imgOneClick)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.imgAdvanced)).EndInit();
+      this.Controls.SetChildIndex(this.bOneClick, 0);
+      this.Controls.SetChildIndex(this.bAdvanced, 0);
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -180,12 +182,12 @@ namespace MediaPortal.DeployTool.Sections
 
     private System.Windows.Forms.Label rbAdvanced;
     private System.Windows.Forms.Label rbOneClick;
-    private System.Windows.Forms.PictureBox imgOneClick;
     private System.Windows.Forms.Label labelAdvancedDesc;
     private System.Windows.Forms.Label labelAdvancedCaption;
     private System.Windows.Forms.Label labelOneClickDesc;
     private System.Windows.Forms.Label labelOneClickCaption;
-    private System.Windows.Forms.PictureBox imgAdvanced;
+    private System.Windows.Forms.Button bOneClick;
+    private System.Windows.Forms.Button bAdvanced;
 
 
   }

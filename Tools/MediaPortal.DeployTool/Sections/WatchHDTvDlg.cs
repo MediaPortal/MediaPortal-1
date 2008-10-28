@@ -36,7 +36,7 @@ namespace MediaPortal.DeployTool.Sections
       InitializeComponent();
       type = DialogType.WatchHDTv;
       labelSectionHeader.Text = "";
-      imgYesHD.Image = Images.Choose_button_on;
+      bYesHD.Image = Images.Choose_button_on;
       rbYesChecked = true;
       UpdateUI();
     }
@@ -64,29 +64,32 @@ namespace MediaPortal.DeployTool.Sections
     }
 
     #endregion
-
-    private void imgYesHD_Click(object sender, EventArgs e)
+    
+    
+    private void bYesHD_Click(object sender, EventArgs e)
     {
-      imgYesHD.Image = Images.Choose_button_on;
-      imgNoHD.Image = Images.Choose_button_off;
-      imgMaybeHD.Image = Images.Choose_button_off;
+      bYesHD.Image = Images.Choose_button_on;
+      bNoHD.Image = Images.Choose_button_off;
+      bMaybeHD.Image = Images.Choose_button_off;
       rbYesChecked = true;
     }
 
-    private void imgNoHD_Click(object sender, EventArgs e)
+    private void bNoHD_Click(object sender, EventArgs e)
     {
-      imgYesHD.Image = Images.Choose_button_off;
-      imgNoHD.Image = Images.Choose_button_on;
-      imgMaybeHD.Image = Images.Choose_button_off;
+      bYesHD.Image = Images.Choose_button_off;
+      bNoHD.Image = Images.Choose_button_on;
+      bMaybeHD.Image = Images.Choose_button_off;
       rbYesChecked = false;
     }
 
-    private void imgMaybeHD_Click(object sender, EventArgs e)
+    private void bMaybeHD_Click(object sender, EventArgs e)
     {
-      imgYesHD.Image = Images.Choose_button_off;
-      imgNoHD.Image = Images.Choose_button_off;
-      imgMaybeHD.Image = Images.Choose_button_on;
+      bYesHD.Image = Images.Choose_button_off;
+      bNoHD.Image = Images.Choose_button_off;
+      bMaybeHD.Image = Images.Choose_button_on;
       rbYesChecked = false;
     }
+
+    
   }
 }
