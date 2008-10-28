@@ -848,6 +848,24 @@ namespace TvPlugin
           {
             g_Player.Stop();
           }
+          if (g_Player.IsTimeShifting)
+          {
+            Log.Debug("TVFullscreen: user request to stop");
+            GUIDialogPlayStop dlgPlayStop = (GUIDialogPlayStop)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PLAY_STOP);
+            if (dlgPlayStop != null)
+            {
+              dlgPlayStop.SetHeading(GUILocalizeStrings.Get(605));
+              dlgPlayStop.SetLine(1, GUILocalizeStrings.Get(2550));
+              dlgPlayStop.SetLine(2, GUILocalizeStrings.Get(2551));
+              dlgPlayStop.SetDefaultToStop(false);
+              dlgPlayStop.DoModal(GetID);
+              if (dlgPlayStop.IsStopConfirmed)
+              {
+                Log.Debug("TVFullscreen: stop confirmed");
+                g_Player.Stop();
+              }
+            }
+          }
           break;
       }
 

@@ -1187,6 +1187,10 @@
     <String id="2514">Back to the text</String>
     <String id="2515">Images</String>
     <String id="2516" prefix="My ">Wikipedia</String>
+    <String id="2550">Do you really want to STOP liveTv ?</String>
+    <String id="2551">(timeshift file will be lost)</String>
+    <String id="2552">Stop</String>
+    <String id="2553">Play</String>
     <String id="2599">Undetermined</String>
     <String id="2600">English</String>
     <String id="2601">German</String>
@@ -1590,6 +1594,7 @@
     <String id="100035">Basic home</String>
     <String id="100100">Yes/No dialogue</String>
     <String id="100101">Progress dialogue</String>
+    <String id="100102">Play/Stop dialogue</String>
     <String id="100500">Music/playlist</String>
     <String id="100501">Music/shares</String>
     <String id="100502">Music/albums</String>

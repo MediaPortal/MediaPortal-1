@@ -187,6 +187,7 @@ namespace MediaPortal.InputDevices
             case (int)GUIWindow.Window.WINDOW_DIALOG_TEXT:
             case (int)GUIWindow.Window.WINDOW_DIALOG_TVGUIDE:
             case (int)GUIWindow.Window.WINDOW_DIALOG_YES_NO:
+            case (int)GUIWindow.Window.WINDOW_DIALOG_PLAY_STOP:
             case (int)GUIWindow.Window.WINDOW_INVALID:
             case (int)GUIWindow.Window.WINDOW_MINI_GUIDE:
             case (int)GUIWindow.Window.WINDOW_TV_CROP_SETTINGS:
