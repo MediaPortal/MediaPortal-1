@@ -1146,7 +1146,11 @@
         <String id="2513">Kig venligst i logfilen.</String>
         <String id="2514">Gå tilbage til teksten</String>
         <String id="2515">Billeder</String>
-        <String id="2516" prefix="Min ">Wikipedia</String>
+        <String id="2516" prefix="Min ">Wikipedia</String>        
+        <String id="2550">Vil du virkelig stoppe live TV?</String>
+    		<String id="2551">(tidsforskydning vil gå tabt)</String>
+    		<String id="2552">Stop</String>
+    		<String id="2553">Afspil</String>            
         <String id="2599">Ubesluttet</String>
         <String id="2600">Engelsk</String>
         <String id="2601">Tysk</String>
@@ -1503,7 +1507,7 @@
         <String id="40001">Venter på Standby</String>
         <String id="40002">MediaPortal benyttes ikke, men er stadig optaget</String>
         <String id="40003">Når alle nuværende opgaver af afsluttet går MediaPortal på standby.</String>
-        <String id="99845">TV.com søgning</String>
+        <String id="99845">TV.com søgning</String>        
         <String id="100000">Hjem</String>
         <String id="100001" prefix="Mit ">TV</String>
         <String id="100002" prefix="Mine ">Billeder</String>
@@ -1540,6 +1544,7 @@
         <String id="100035">Simpelt hjem</String>
         <String id="100100">Ja/nej dialog</String>
         <String id="100101">Forløbsdialog</String>
+        <String id="100102">Afspil/Stop dialog</String>
         <String id="100500" prefix="Min ">Musik/playliste</String>
         <String id="100501" prefix="Min ">Musik/filer</String>
         <String id="100502" prefix="Min ">Musik/albums</String>
