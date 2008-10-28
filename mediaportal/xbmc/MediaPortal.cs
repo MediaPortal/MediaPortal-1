@@ -454,43 +454,43 @@ public class MediaPortalApp : D3DApp, IRender
         try
         {
 #endif
-        Application.DoEvents();
-        if (splashScreen != null)
-          splashScreen.SetInformation("Initializing DirectX...");
-
-        MediaPortalApp app = new MediaPortalApp();
-        Log.Debug("Main: Initializing DirectX");
-        if (app.CreateGraphicsSample())
-        {
-          IMessageFilter filter = new ThreadMessageFilter(app);
-          Application.AddMessageFilter(filter);
-          // Initialize Input Devices
+          Application.DoEvents();
           if (splashScreen != null)
-            splashScreen.SetInformation("Initializing input devices...");
-          InputDevices.Init();
-          try
+            splashScreen.SetInformation("Initializing DirectX...");
+
+          MediaPortalApp app = new MediaPortalApp();
+          Log.Debug("Main: Initializing DirectX");
+          if (app.CreateGraphicsSample())
           {
-            //app.PreRun();
-            Log.Info("Main: Running");
-            GUIGraphicsContext.BlankScreen = false;
-            Application.Run(app);
-            app.Focus();
-            Debug.WriteLine("after Application.Run");
+            IMessageFilter filter = new ThreadMessageFilter(app);
+            Application.AddMessageFilter(filter);
+            // Initialize Input Devices
+            if (splashScreen != null)
+              splashScreen.SetInformation("Initializing input devices...");
+            InputDevices.Init();
+            try
+            {
+              //app.PreRun();
+              Log.Info("Main: Running");
+              GUIGraphicsContext.BlankScreen = false;
+              Application.Run(app);
+              app.Focus();
+              Debug.WriteLine("after Application.Run");
+            }
+            //#if !DEBUG
+            catch (Exception ex)
+            {
+              Log.Error(ex);
+              Log.Error("MediaPortal stopped due to an exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+              _mpCrashed = true;
+            }
+            //#endif
+            finally
+            {
+              Application.RemoveMessageFilter(filter);
+            }
+            app.OnExit();
           }
-          //#if !DEBUG
-          catch (Exception ex)
-          {
-            Log.Error(ex);
-            Log.Error("MediaPortal stopped due to an exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
-            _mpCrashed = true;
-          }
-          //#endif
-          finally
-          {
-            Application.RemoveMessageFilter(filter);
-          }
-          app.OnExit();
-        }
 #if !DEBUG
         }
         catch (Exception ex)
@@ -889,7 +889,12 @@ public class MediaPortalApp : D3DApp, IRender
         }
       }
 
-      if (!PluginManager.WndProc(ref msg))
+      if (PluginManager.WndProc(ref msg))
+      {
+        // msg.Result = new IntPtr(0); <-- do plugins really set it on their own?
+        return;
+      }
+      else
       {
         Action action;
         char key;
@@ -930,6 +935,7 @@ public class MediaPortalApp : D3DApp, IRender
           return;
         }
       }
+
       // plugins menu clicked?
       if (msg.Msg == WM_SYSCOMMAND && msg.WParam.ToInt32() == SC_SCREENSAVE)
       {
