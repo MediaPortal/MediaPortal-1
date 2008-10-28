@@ -159,7 +159,8 @@ namespace MediaPortal.DeployTool
       SwitchDialog(_currentDialog);
     }
 
-    private void pictureBox2_Click(object sender, EventArgs e)
+    
+    private void bExit_Click(object sender, EventArgs e)
     {
       string message = Utils.GetBestTranslation("Exit_Installation");
       const string caption = "MediaPortal";
@@ -171,7 +172,6 @@ namespace MediaPortal.DeployTool
       {
         Application.Exit();
       }
-
     }
   }
 }
