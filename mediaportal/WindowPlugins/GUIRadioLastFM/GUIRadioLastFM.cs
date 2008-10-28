@@ -1136,7 +1136,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       if (facadeRadioPlaylist != null)
         facadeRadioPlaylist.Clear();
 
-      Log.Debug("GUIRadioLastFM: Playlist fetch successful - adding {0} songs from a list called {1}", _radioTrackList.Count, aPlaylistName);
+      Log.Debug("GUIRadioLastFM: Playlist fetch successful - adding {0} songs from a list called {1}", _radioTrackList.Count, GetRadioPlaylistName(aPlaylistName));
       for (int i = 0; i < _radioTrackList.Count; i++)
       {
         Log.Debug("GUIRadioLastFM: Track {0} : {1}", Convert.ToString(i + 1), _radioTrackList[i].ToLastFMString());
@@ -1484,6 +1484,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
                   Log.Info("GUIRadioLastFM: Currently playing saved playlist {0}", outName);
                   LastFMStation.CurrentPlaylistType = StreamType.Playlist;
                 } // maybe there is more to come.
+
+        GUIPropertyManager.SetProperty("#Play.Current.Lastfm.CurrentStream", outName);
       }
       catch (Exception ex)
       {

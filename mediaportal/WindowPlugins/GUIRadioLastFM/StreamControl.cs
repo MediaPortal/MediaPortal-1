@@ -401,7 +401,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       {
         _currentTuneType = StreamType.Library;
         Log.Info("StreamControl: Tune into personal station of: {0}", username_);
-        GUIPropertyManager.SetProperty("#Play.Current.Lastfm.CurrentStream", GUILocalizeStrings.Get(34043) + username_);
+        // GUIPropertyManager.SetProperty("#Play.Current.Lastfm.CurrentStream", GUILocalizeStrings.Get(34043) + username_);
         return true;
       }
       else
@@ -416,7 +416,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       {
         _currentTuneType = StreamType.Neighbourhood;
         Log.Info("StreamControl: Tune into neighbour station of: {0}", username_);
-        GUIPropertyManager.SetProperty("#Play.Current.Lastfm.CurrentStream", GUILocalizeStrings.Get(34048)); // My neighbour radio
+        // GUIPropertyManager.SetProperty("#Play.Current.Lastfm.CurrentStream", GUILocalizeStrings.Get(34048)); // My neighbour radio
         return true;
       }
       else
@@ -431,7 +431,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       {
         _currentTuneType = StreamType.Loved;
         Log.Info("StreamControl: Tune into loved tracks of: {0}", username_);
-        GUIPropertyManager.SetProperty("#Play.Current.Lastfm.CurrentStream", GUILocalizeStrings.Get(34044) + username_);
+        // GUIPropertyManager.SetProperty("#Play.Current.Lastfm.CurrentStream", GUILocalizeStrings.Get(34044) + username_);
         return true;
       }
       else
@@ -447,7 +447,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         _currentTuneType = StreamType.Group;
         Log.Info("StreamControl: Tune into group radio for: {0}", groupname_);
 
-        GUIPropertyManager.SetProperty("#Play.Current.Lastfm.CurrentStream", "Group radio of: " + groupname_);
+        // GUIPropertyManager.SetProperty("#Play.Current.Lastfm.CurrentStream", "Group radio of: " + groupname_);
 
         return true;
       }
@@ -463,7 +463,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       {
         _currentTuneType = StreamType.Recommended;
         Log.Info("StreamControl: Tune into recommended station for: {0}", username_);
-        GUIPropertyManager.SetProperty("#Play.Current.Lastfm.CurrentStream", GUILocalizeStrings.Get(34040));
+        // GUIPropertyManager.SetProperty("#Play.Current.Lastfm.CurrentStream", GUILocalizeStrings.Get(34040));
         return true;
       }
       else
@@ -483,7 +483,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       {
         _currentTuneType = StreamType.Artist;
         Log.Info("StreamControl: Tune into artists similar to: {0}", TuneArtists);
-        GUIPropertyManager.SetProperty("#Play.Current.Lastfm.CurrentStream", "Artists similar to: " + TuneArtists);
+        // GUIPropertyManager.SetProperty("#Play.Current.Lastfm.CurrentStream", "Artists similar to: " + TuneArtists);
         return true;
       }
       else
@@ -504,7 +504,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       {
         _currentTuneType = StreamType.Tag;
         Log.Info("StreamControl: Tune into tags: {0}", TuneTags);
-        GUIPropertyManager.SetProperty("#Play.Current.Lastfm.CurrentStream", GUILocalizeStrings.Get(34041) + TuneTags);
+        // GUIPropertyManager.SetProperty("#Play.Current.Lastfm.CurrentStream", GUILocalizeStrings.Get(34041) + TuneTags);
         return true;
       }
       else
@@ -518,7 +518,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       {
         _currentTuneType = StreamType.Playlist;
         Log.Info("StreamControl: Tune into web playlist of: {0}", username_);
-        GUIPropertyManager.SetProperty("#Play.Current.Lastfm.CurrentStream", GUILocalizeStrings.Get(34049));
+        // GUIPropertyManager.SetProperty("#Play.Current.Lastfm.CurrentStream", GUILocalizeStrings.Get(34049));
         return true;
       }
       else
