@@ -1595,6 +1595,7 @@
     <String id="100035">Startbildschirm</String>
     <String id="100100">Ja/Nein Dialog</String>
     <String id="100101">Bitte warten...</String>
+    <String id="100102">Weiter/Stop Dialog</String>
     <String id="100500" prefix="Meine ">Musik/Wiedergabeliste</String>
     <String id="100501" prefix="Meine ">Musik/Dateien</String>
     <String id="100502" prefix="Mein ">Musik/Alben</String>
