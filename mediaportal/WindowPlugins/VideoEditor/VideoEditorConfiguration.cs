@@ -32,36 +32,43 @@ using System.Text;
 using System.Windows.Forms;
 using DShowNET;
 using DirectShowLib;
+using System.Diagnostics;
 
 namespace WindowPlugins.VideoEditor
 {
-	public partial class VideoEditorConfiguration : MediaPortal.UserInterface.Controls.MPConfigForm
-	{
-		public VideoEditorConfiguration()
-		{
-			InitializeComponent();
+  public partial class VideoEditorConfiguration : MediaPortal.UserInterface.Controls.MPConfigForm
+  {
+    public VideoEditorConfiguration()
+    {
+      InitializeComponent();
       LoadSettings();
-		}
+    }
 
-		private void button1_Click(object sender, EventArgs e)
-		{
-			OpenFileDialog diag = new OpenFileDialog();
-			diag.Filter = "exe-File (*.exe)|*.exe";
-			if(diag.ShowDialog() == DialogResult.OK)
-			{
-				if(System.IO.File.Exists(diag.FileName))
-				{
-					mencoderPath.Text = diag.FileName;
-				}
-			}
-		}
+    private void button1_Click(object sender, EventArgs e)
+    {
+      OpenFileDialog diag = new OpenFileDialog();
+      diag.Filter = "exe-File (*.exe)|*.exe";
+      try
+      {
+        diag.InitialDirectory = System.IO.Path.GetDirectoryName(mencoderPath.Text);
+      }
+      catch (Exception) { }
 
-		private void okButton_Click(object sender, EventArgs e)
-		{
+      if (diag.ShowDialog() == DialogResult.OK)
+      {
+        if (System.IO.File.Exists(diag.FileName))
+        {
+          mencoderPath.Text = diag.FileName;
+        }
+      }
+    }
+
+    private void okButton_Click(object sender, EventArgs e)
+    {
       SaveSettings();
-			this.DialogResult = DialogResult.OK;
-			this.Close();
-		}
+      this.DialogResult = DialogResult.OK;
+      this.Close();
+    }
 
     private void SaveSettings()
     {
@@ -79,11 +86,20 @@ namespace WindowPlugins.VideoEditor
       }
     }
 
-		private void cancelButton_Click(object sender, EventArgs e)
-		{
+    private void cancelButton_Click(object sender, EventArgs e)
+    {
       LoadSettings();
       DialogResult = DialogResult.Cancel;
-			this.Close();
-		}
-	}
+      this.Close();
+    }
+
+    private void linkLblMencoderHint_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    {
+      try
+      {
+        Process.Start("http://www.mplayerhq.hu");
+      }
+      catch (Exception) { }
+    }
+  }
 }

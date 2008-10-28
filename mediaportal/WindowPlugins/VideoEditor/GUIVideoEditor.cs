@@ -76,7 +76,7 @@ namespace WindowPlugins.VideoEditor
     int cntDrives = 0;
     string[] drives = new string[maxDrives];
     string currentFolder = "";
-    VirtualDirectory directory = new VirtualDirectory();
+    VirtualDirectory directory = VirtualDirectories.Instance.Movies;
     ArrayList extensions;
     VideoEditorPreview cutScr;
     List<System.IO.FileInfo> joiningList;
@@ -140,8 +140,13 @@ namespace WindowPlugins.VideoEditor
         joiningList = new List<System.IO.FileInfo>();
         progressBar.Visible = false;
 
-
-        LoadListControl(currentFolder, extensions);
+        if (currentFolder == "")
+        {
+          LoadShares();
+          LoadDrives();
+        }
+        else
+          LoadListControl(currentFolder, extensions);
         CheckHasMencoder();
       }
       catch (Exception ex)
@@ -579,14 +584,8 @@ namespace WindowPlugins.VideoEditor
     {
       try
       {
-        if (folder == "" || !System.IO.File.Exists(folder))
-        {
-          LoadShares();
-          LoadDrives();
-        }
-        else
-          if (folder != null && folder != "")
-            folder = MediaPortal.Util.Utils.RemoveTrailingSlash(folder);
+        if (folder != null && folder != "")
+          folder = MediaPortal.Util.Utils.RemoveTrailingSlash(folder);
 
         //directory;
         ArrayList itemlist;
@@ -608,7 +607,7 @@ namespace WindowPlugins.VideoEditor
           {
             GUIListItem pItem = new GUIListItem(item.Label);
             pItem.IsFolder = true;
-            pItem.Path = String.Format(@"{0}\{1}", folder, item.Label);
+            pItem.Path = item.Path;
             if (item.Label == "..")
             {
               string prevFolder = "";
