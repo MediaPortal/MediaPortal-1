@@ -1118,7 +1118,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       if (_radioTrackList.Count > 0)
       {
         // clear the current playing track as the URL invalidates after one request
-        _radioTrackList.RemoveAt(0);
+        _radioTrackList.Remove(AudioscrobblerBase.CurrentPlayingSong);
         Log.Debug("GUIRadioLastFM: Playlist fetching failed - removing current track");
         if (aPlayNow)
           PlayPlayListStreams(_radioTrackList[0]);
@@ -1142,7 +1142,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       for (int i = 0; i < _radioTrackList.Count; i++)
       {
         Log.Debug("GUIRadioLastFM: Track {0} : {1}", Convert.ToString(i + 1), _radioTrackList[i].ToLastFMString());
-        if (facadeRadioPlaylist != null)
+        if (facadeRadioPlaylist != null && aPlayNow)
         {
           GUIListItem item = new GUIListItem(_radioTrackList[i].ToShortString());
           item.Label = _radioTrackList[i].Artist + " - " + _radioTrackList[i].Title;

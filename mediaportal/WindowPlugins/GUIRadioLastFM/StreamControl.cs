@@ -134,14 +134,17 @@ namespace MediaPortal.GUI.RADIOLASTFM
     /// </summary>
     private bool _isInit = false;
     /// <summary>
-    /// Contains all playlist relevant track informations
+    /// Streaming or no content
     /// </summary>
-    private MusicTag CurrentSongTag;
-
     private StreamPlaybackState _currentState = StreamPlaybackState.offline;
+    /// <summary>
+    /// Type of desired music
+    /// </summary>
     private StreamType _currentTuneType = StreamType.Recommended;
+    /// <summary>
+    /// Type of most recent playlist
+    /// </summary>
     private StreamType _currentPlaylistType = StreamType.Unknown;
-
     /// <summary>
     /// The time of the last http access
     /// </summary>
