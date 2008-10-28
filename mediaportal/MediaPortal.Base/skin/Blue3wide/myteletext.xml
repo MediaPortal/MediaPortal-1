@@ -16,10 +16,8 @@
       <type>image</type>
       <id>1</id>
       <posX>106</posX>
-      <posY>25</posY>
-      <width>705</width>
-      <height>87</height>
-      <texture>teletext_logo.png</texture>
+      <posY>12</posY>
+      <texture>television_logo.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
@@ -73,6 +71,9 @@
     </control>
     <control>
       <type>group</type>
+      <posX>71</posX>
+      <posY>121</posY>
+      <layout>StackLayout</layout>
       <description>group element</description>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
@@ -86,7 +87,6 @@
         <onup>17</onup>
         <ondown>503</ondown>
         <onright>502</onright>
-        <width>302</width>
       </control>
       <control>
         <description>Page200</description>
@@ -95,7 +95,6 @@
         <posX>106</posX>
         <posY>163</posY>
         <label>591</label>
-        <width>302</width>
         <onup>502</onup>
         <ondown>504</ondown>
         <onright>503</onright>
@@ -107,7 +106,6 @@
         <posX>106</posX>
         <posY>206</posY>
         <label>592</label>
-        <width>302</width>
         <onup>503</onup>
         <ondown>505</ondown>
         <onright>504</onright>
@@ -119,7 +117,6 @@
         <posX>106</posX>
         <posY>248</posY>
         <label>593</label>
-        <width>302</width>
         <font>font13</font>
         <textcolor>ffffffff</textcolor>
         <colordiffuse>ffffffff</colordiffuse>
@@ -134,7 +131,6 @@
         <posX>106</posX>
         <posY>291</posY>
         <label>594</label>
-        <width>302</width>
         <onup>505</onup>
         <ondown>507</ondown>
         <onright>506</onright>
@@ -184,37 +180,35 @@
         <posX>106</posX>
         <posY>333</posY>
         <label>595</label>
-        <width>302</width>
         <onup>506</onup>
         <ondown>502</ondown>
         <onright>507</onright>
       </control>
     </control>
     <control>
-      <description>TV background</description>
+      <description>video rectangle</description>
       <type>image</type>
-      <id>1</id>
-      <posX>106</posX>
-      <posY>525</posY>
-      <width>320</width>
-      <height>168</height>
-      <colordiffuse>60ffffff</colordiffuse>
-      <texture>previewbackground.png</texture>
-      <animation effect="fade" time="250">WindowOpen</animation>
+      <id>0</id>
+      <posX>78</posX>
+      <posY>523</posY>
+      <width>240</width>
+      <height>155</height>
+      <texture>Picture_cover.png</texture>
       <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
     </control>
     <control>
-      <description>TV preview window</description>
+      <description>video preview window</description>
       <type>videowindow</type>
       <id>508</id>
-      <posX>115</posX>
+      <posX>89</posX>
       <posY>531</posY>
-      <width>302</width>
-      <height>156</height>
+      <width>217</width>
+      <height>138</height>
       <action>18</action>
       <textureFocus>tv_green_border.png</textureFocus>
-      <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
     </control>
   </controls>
 </window>
