@@ -1187,6 +1187,10 @@
     <String id="2514">Tilbake til tekst</String>
     <String id="2515">Bilder</String>
     <String id="2516" prefix="Min ">Wikipedia</String>
+    <String id="2550">Vil du virkelig STOPPE Live TV?</String>
+    <String id="2551">(tidsskifte fil vil bli slettet)</String>
+    <String id="2552">Stopp</String>
+    <String id="2553">Spill</String>
     <String id="2599">Ukjent</String>
     <String id="2600">Engelsk</String>
     <String id="2601">Tysk</String>
@@ -1592,6 +1596,7 @@
     <String id="100035">Basic home</String>
     <String id="100100">Ja/nei-dialog</String>
     <String id="100101">Fremdriftsdialog</String>
+    <String id="100102">Spill/Stopp dialog</String>
     <String id="100500" prefix="Min ">Musikk/spilleliste</String>
     <String id="100501" prefix="Min ">Musikk/filer</String>
     <String id="100502" prefix="Min ">Musikk/album</String>
