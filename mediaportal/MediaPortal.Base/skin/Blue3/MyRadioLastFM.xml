@@ -232,8 +232,9 @@
       <description>Similar artists box</description>
       <id>0</id>
       <posX>60</posX>
-      <posY>313</posY>
-      <width>240</width>
+      <posY>311</posY>
+      <width>270</width>
+      <height>70</height>
       <label>#Play.Current.Lastfm.SimilarArtists</label>
       <font>font13</font>
       <align>left</align>
@@ -246,8 +247,9 @@
       <description>Track tags box</description>
       <id>0</id>
       <posX>60</posX>
-      <posY>363</posY>
-      <width>240</width>
+      <posY>369</posY>
+      <width>270</width>
+      <height>70</height>
       <label>#Play.Current.Lastfm.TrackTags</label>
       <font>font13</font>
       <align>left</align>

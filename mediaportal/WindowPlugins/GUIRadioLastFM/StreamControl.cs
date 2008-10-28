@@ -197,7 +197,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     #region Serialisation
 
-    private void LoadSettings()
+    public void LoadSettings()
     {
       httpcommand = new AsyncGetRequest();
       httpcommand.workerFinished += new AsyncGetRequest.AsyncGetRequestCompleted(OnParseAsyncResponse);
@@ -226,7 +226,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         _isSubscriber = AudioscrobblerBase.IsSubscriber;
         //_currentRadioURL = "http://streamer1.last.fm/last.mp3?Session=" + _currentSession;
         _currentRadioURL = AudioscrobblerBase.RadioStreamLocation;
-        _currentState = StreamPlaybackState.initialized;
+        _currentState = StreamPlaybackState.initialized;        
         _isInit = true;
         RadioSettingsSuccess();
       }
@@ -324,10 +324,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
       set
       {
-        if (value != _discoveryMode)
-        {
-          ToggleDiscoveryMode(value);
-        }
+        value = _discoveryMode;
       }
     }
 
@@ -359,43 +356,38 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     #region Control functions
 
-    public void LoadConfig()
-    {
-      LoadSettings();
-    }
+    //public void ToggleRecordToProfile(bool submitTracks_)
+    //{
+    //  //if (submitTracks_)
+    //  //{
+    //  //  if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/control.php?session=" + _currentSession + "&command=rtp"))
+    //  //  {
+    //  //    AudioscrobblerBase.IsSubmittingRadioSongs = true;
+    //  //    Log.Info("StreamControl: Enabled submitting of radio tracks to profile");
+    //  //  }
+    //  //}
+    //  //else
+    //  //  if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/control.php?session=" + _currentSession + "&command=nortp"))
+    //  //  {
+    //  //    if (CurrentPlaybackType != PlaybackType.PlaylistPlayer)
+    //  //      Log.Info("StreamControl: Disabled submitting of radio tracks to profile");
+    //  //  }
+    //}
 
-    public void ToggleRecordToProfile(bool submitTracks_)
-    {
-      if (submitTracks_)
-      {
-        if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/control.php?session=" + _currentSession + "&command=rtp"))
-        {
-          AudioscrobblerBase.IsSubmittingRadioSongs = true;
-          Log.Info("StreamControl: Enabled submitting of radio tracks to profile");
-        }
-      }
-      //else
-      //  if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/control.php?session=" + _currentSession + "&command=nortp"))
-      //  {
-      //    if (CurrentPlaybackType != PlaybackType.PlaylistPlayer)
-      //      Log.Info("StreamControl: Disabled submitting of radio tracks to profile");
-      //  }
-    }
+    //public bool ToggleDiscoveryMode(bool enableDiscovery_)
+    //{
+    //  bool success = false;
+    //  string actionCommand = enableDiscovery_ ? "on" : "off";
 
-    public bool ToggleDiscoveryMode(bool enableDiscovery_)
-    {
-      bool success = false;
-      string actionCommand = enableDiscovery_ ? "on" : "off";
+    //  if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/adjust.php?session=" + _currentSession + @"&url=lastfm://settings/discovery/" + actionCommand))
+    //  {
+    //    success = true;
+    //    _discoveryMode = enableDiscovery_;
+    //    Log.Info("StreamControl: Toggled discovery mode {0}", actionCommand);
+    //  }
 
-      if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/adjust.php?session=" + _currentSession + @"&url=lastfm://settings/discovery/" + actionCommand))
-      {
-        success = true;
-        _discoveryMode = enableDiscovery_;
-        Log.Info("StreamControl: Toggled discovery mode {0}", actionCommand);
-      }
-
-      return success;
-    }
+    //  return success;
+    //}
 
     #endregion
 

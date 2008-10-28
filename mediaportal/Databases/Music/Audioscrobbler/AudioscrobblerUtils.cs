@@ -1487,6 +1487,22 @@ namespace MediaPortal.Music.Database
       return fetchRandomTracks(offlineMode.favorites);
     }
 
+    public string GetSongAlbumImage(Song aSong)
+    {
+      string ImagePath = String.Empty;
+      try
+      {
+        string albumThumbName = Util.Utils.MakeFileName(string.Format("{0}-{1}{2}", aSong.Artist, aSong.Album, ".jpg"));
+        if (fetchWebImage(aSong.WebImage, albumThumbName, Thumbs.MusicAlbum))
+          ImagePath = string.Format(@"{0}\{1}", Thumbs.MusicAlbum, albumThumbName);
+      }
+      catch (Exception ex)
+      {
+        Log.Error("AudioscrobblerUtils: Error getting album image by song - {0}", ex.Message);
+      }
+      return ImagePath;
+    }
+
     public List<Song> getRadioPlaylist(bool retryOnHttpError, string fullAdressWithSession, out string playlistName)
     {
       return ParseXSPFtrackList(retryOnHttpError, fullAdressWithSession, out playlistName);
