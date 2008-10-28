@@ -440,6 +440,36 @@ namespace MediaPortal.Music.Database
     }
   }
 
+  public class XspfPlaylistRequest : ScrobblerUtilsRequest
+  {
+    public bool AttemptRetryOnHttpError;
+    public string UrlWithSession;
+    public string ListName;
+    public bool StartPlayback;
+
+    public delegate void XspfPlaylistRequestHandler(XspfPlaylistRequest request, List<Song> songs, string listname, bool startnow);
+    public XspfPlaylistRequestHandler XspfPlaylistRequestCompleted;
+
+    public XspfPlaylistRequest(bool attemptRetryOnHttpError, string urlWithSession, bool startPlay)
+      : base(RequestType.GetRadioPlaylist)
+    {
+      AttemptRetryOnHttpError = attemptRetryOnHttpError;
+      UrlWithSession = urlWithSession;
+      StartPlayback = startPlay;
+    }
+    public XspfPlaylistRequest(bool attemptRetryOnHttpError, string urlWithSession, bool startPlay, XspfPlaylistRequestHandler handler)
+      : this(attemptRetryOnHttpError, urlWithSession, startPlay)
+    {
+      XspfPlaylistRequestCompleted += handler;
+    }
+    public override void PerformRequest()
+    {
+      List<Song> songs = AudioscrobblerUtils.Instance.getRadioPlaylist(AttemptRetryOnHttpError, UrlWithSession, out ListName);
+      if (XspfPlaylistRequestCompleted != null)
+        XspfPlaylistRequestCompleted(this, songs, ListName, StartPlayback);
+    }
+  }
+
   #endregion
 
   public class AudioscrobblerUtils
@@ -1457,9 +1487,9 @@ namespace MediaPortal.Music.Database
       return fetchRandomTracks(offlineMode.favorites);
     }
 
-    public List<Song> getRadioPlaylist(string fullAdressWithSession)
+    public List<Song> getRadioPlaylist(bool retryOnHttpError, string fullAdressWithSession, out string playlistName)
     {
-      return ParseXSPFtrackList(fullAdressWithSession);
+      return ParseXSPFtrackList(retryOnHttpError, fullAdressWithSession, out playlistName);
     }
 
     #endregion
@@ -1559,6 +1589,12 @@ namespace MediaPortal.Music.Database
     [MethodImpl(MethodImplOptions.Synchronized)]
     public static string DownloadTempFile(string imageUrl)
     {
+      return DownloadTempFile(imageUrl, true);
+    }
+
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    public static string DownloadTempFile(string imageUrl, bool retryHttpError)    
+    {
       string tmpFile = PathUtility.GetSecureTempFileName();
       try
       {
@@ -1577,7 +1613,7 @@ namespace MediaPortal.Music.Database
           catch (WebException wex)
           {
             // If error e.g. 503, server busy, etc wait and try again.
-            if (wex.Status == WebExceptionStatus.ProtocolError)
+            if (wex.Status == WebExceptionStatus.ProtocolError && retryHttpError)
             {
               HttpWebResponse httpResponse = (HttpWebResponse)wex.Response;
               switch (httpResponse.StatusCode)
@@ -2422,8 +2458,9 @@ namespace MediaPortal.Music.Database
 
     #region XSPF - Parser
 
-    private List<Song> ParseXSPFtrackList(string aLocation)
+    private List<Song> ParseXSPFtrackList(bool aShouldRetry, string aLocation, out string aPlaylistName)
     {
+      aPlaylistName = String.Empty;
       List<Song> XSPFPlaylist = new List<Song>(5);
       try
       {
@@ -2431,11 +2468,26 @@ namespace MediaPortal.Music.Database
 
         try
         {
-          doc.Load(DownloadTempFile(aLocation));
+          string cachedList = DownloadTempFile(aLocation);
+          doc.Load(cachedList);
+
+          using (XmlReader reader = XmlReader.Create(cachedList))
+          {
+            reader.ReadToFollowing("title");
+            while (reader.Read())
+            {
+              if (reader.HasValue)
+              {
+                aPlaylistName = reader.Value;
+                break;
+              }              
+            }
+          }
         }
         catch (Exception exd)
         {
-          Log.Error("AudioscrobblerUtils: Couldn't fetch XSFP Radio tracklist - {0}", exd.Message);
+          Log.Error("AudioscrobblerUtils: Couldn't load XSFP Radio tracklist - {0}", exd.Message);
+          return XSPFPlaylist;
         }
 
         XmlNodeList nodes = doc.SelectNodes(@"//playlist/trackList/track");

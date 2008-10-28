@@ -62,6 +62,7 @@ namespace MediaPortal.Music.Database
       GetRandomTracks,
       GetUnhearedTracks,
       GetFavoriteTracks,
+      GetRadioPlaylist,
       Unknown
     }
 

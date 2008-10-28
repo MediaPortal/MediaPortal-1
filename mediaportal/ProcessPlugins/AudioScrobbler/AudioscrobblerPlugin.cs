@@ -89,23 +89,22 @@ namespace MediaPortal.Audioscrobbler
 
     private void OnSongLoadedThread()
     {
-      for (int i = 0; i < 15; i++)
+      int i = 0;
+      for (i = 0; i < 15; i++)
       {
         if (AudioscrobblerBase.CurrentSubmitSong.AudioScrobblerStatus == SongStatus.Init)
           break;
-
-        Log.Debug("Audioscrobbler plugin: Waiting for submit to finish");
         Thread.Sleep(1000);
       }
+      Log.Debug("Audioscrobbler plugin: Waited {0} seconds for reinit of submit track", i);
 
-      for (int i = 0; i < 15; i++)
+      for (i = 0; i < 15; i++)
       {
         if (AudioscrobblerBase.CurrentPlayingSong.AudioScrobblerStatus == SongStatus.Loaded)
           break;
-
-        Log.Debug("Audioscrobbler plugin: Waiting for lookup of current track.");
         Thread.Sleep(1000);
       }
+      Log.Debug("Audioscrobbler plugin: Waited {0} seconds for lookup of current track", i);
 
       if (AudioscrobblerBase.CurrentPlayingSong.Artist != String.Empty)
       {

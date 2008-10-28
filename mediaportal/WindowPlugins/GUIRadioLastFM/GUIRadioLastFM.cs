@@ -48,6 +48,19 @@ namespace MediaPortal.GUI.RADIOLASTFM
   [PluginIcons("WindowPlugins.GUIRadioLastFM.BallonRadio.gif", "WindowPlugins.GUIRadioLastFM.BallonRadioDisabled.gif")]
   public class GUIRadioLastFM : GUIWindow, ISetupForm, IShowPlugin
   {
+    #region Event delegates
+
+    public delegate void PlaylistUpdated(List<Song> songs, string listname, bool playnow);
+    public event PlaylistUpdated PlaylistUpdateSuccess;
+
+    public delegate void PlaylistEmpty(bool playnow);
+    public event PlaylistEmpty PlaylistUpdateError;
+
+    protected delegate void ThreadStartBass(Song starttrack);
+    protected delegate void ThreadStopPlayer();
+
+    #endregion
+
     #region Variables
 
     private enum SkinControlIDs
@@ -93,6 +106,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     private ScrobblerUtilsRequest _lastUsersTopArtistsRequest;
     private ScrobblerUtilsRequest _lastUsersTagsRequest;
     private ScrobblerUtilsRequest _lastUsersFriendsRequest;
+    private ScrobblerUtilsRequest _lastRadioPlaylistRequest;
 
     #endregion
 
@@ -165,6 +179,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
       LastFMStation.RadioSettingsSuccess += new StreamControl.RadioSettingsLoaded(OnRadioSettingsSuccess);
       LastFMStation.RadioSettingsError += new StreamControl.RadioSettingsFailed(OnRadioSettingsError);
+      this.PlaylistUpdateSuccess +=new PlaylistUpdated(OnPlaylistUpdateSuccess);
+      this.PlaylistUpdateError += new PlaylistEmpty(OnPlaylistUpdateError);
 
       return bResult;
     }
@@ -224,6 +240,15 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     public override void DeInit()
     {
+      g_Player.PlayBackStarted -= new g_Player.StartedHandler(PlayBackStartedHandler);
+      g_Player.PlayBackStopped -= new g_Player.StoppedHandler(PlayBackStoppedHandler);
+      g_Player.PlayBackEnded -= new g_Player.EndedHandler(PlayBackEndedHandler);
+
+      LastFMStation.RadioSettingsSuccess -= new StreamControl.RadioSettingsLoaded(OnRadioSettingsSuccess);
+      LastFMStation.RadioSettingsError -= new StreamControl.RadioSettingsFailed(OnRadioSettingsError);
+      this.PlaylistUpdateSuccess -= new PlaylistUpdated(OnPlaylistUpdateSuccess);
+      this.PlaylistUpdateError -= new PlaylistEmpty(OnPlaylistUpdateError);
+
       if (_trayBallonSongChange != null)
       {
         _trayBallonSongChange.Visible = false;
@@ -241,6 +266,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
         InfoScrobbler.RemoveRequest(_lastUsersTopArtistsRequest);
       if (_lastUsersFriendsRequest != null)
         InfoScrobbler.RemoveRequest(_lastUsersFriendsRequest);
+      if (_lastRadioPlaylistRequest != null)
+        InfoScrobbler.RemoveRequest(_lastRadioPlaylistRequest);
 
       base.DeInit();
     }
@@ -261,8 +288,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
             if (btnChooseArtist.Label != GUILocalizeStrings.Get(34032)) // no artists
             {
               LastFMStation.TuneIntoArtists(BuildListFromString(btnChooseArtist.Label));
-              RebuildStreamList();
-              StartPlaybackNow();
+              RebuildStreamList(true);
             }
           }
         }
@@ -276,8 +302,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
             if (btnChooseTag.Label != GUILocalizeStrings.Get(34030)) // no tags
             {
               LastFMStation.TuneIntoTags(BuildListFromString(btnChooseTag.Label));
-              RebuildStreamList();
-              StartPlaybackNow();
+              RebuildStreamList(true);
             }
           }
         }
@@ -291,8 +316,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
             if (btnChooseFriend.Label != GUILocalizeStrings.Get(34031)) // no friends
             {
               LastFMStation.TuneIntoPersonalRadio(btnChooseFriend.Label);
-              RebuildStreamList();
-              StartPlaybackNow();
+              RebuildStreamList(true);
             }
           }
         }
@@ -609,30 +633,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
           LastFMStation.TuneIntoWebPlaylist(LastFMStation.StreamsUser);
           break;
       }
-      // The official client does also fetch 2 lists...
-      RebuildStreamList();
-      StartPlaybackNow();
-    }
 
-    private void StartPlaybackNow()
-    {
-      if (g_Player.Playing)
-      {
-        Log.Debug("GUIRadioLastFM: StartPlaybackNow is stopping current playback");
-        g_Player.Stop();
-      }
-
-      if (RebuildStreamList())
-      {
-        if (PlayPlayListStreams(_radioTrackList[0]))
-        {
-          return;
-        }
-        else
-          PlayBackFailedHandler();
-      }
-      else
-        PlayBackNoMoreContentHandler();
+      RebuildStreamList(true);
     }
 
     private string BuildStringFromList(List<string> aList)
@@ -755,9 +757,12 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     #region Playlist functions
 
-    private bool RebuildStreamList()
+    private void RebuildStreamList(bool StartPlayback)
     {
-      return GetXSPFPlaylist();
+      Thread fetchThread = new Thread(new ParameterizedThreadStart(UpdateXspfPlaylistAndStartPlayback));
+      fetchThread.IsBackground = true;
+      fetchThread.Name = "Last.fm XSPF fetcher";
+      fetchThread.Start((object)StartPlayback);
     }
 
     private bool AddStreamSongToPlaylist(ref Song song)
@@ -790,57 +795,64 @@ namespace MediaPortal.GUI.RADIOLASTFM
       return true;
     }
 
-    public bool PlayPlayListStreams(Song aStreamSong)
+    public void PlayPlayListStreams(Song aStreamSong)
     {
-      GUIWaitCursor.Show();
-      if (g_Player.Playing)
+      bool playSuccess = false;      
+      try
       {
-        g_Player.Stop();
+        GUIWaitCursor.Show();
+        if (g_Player.Playing)
+        {
+          g_Player.Stop();
+        }
+        LastFMStation.CurrentStreamState = StreamPlaybackState.starting;
+
+        _streamSong = aStreamSong;
+
+        Song addSong = aStreamSong.Clone();
+        AddStreamSongToPlaylist(ref addSong);
+
+        PlaylistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_RADIO_STREAMS;
+        PlayList Playlist = PlaylistPlayer.GetPlaylist(PlaylistPlayer.CurrentPlaylistType);
+
+        if (Playlist == null)
+          return;
+
+        // Avoid an endless loop when a song cannot be played.
+        PlaylistPlayer.RepeatPlaylist = false;
+
+        // I found out, you have to send "Cookie: Session=[sessionID]" in the header of the request of the MP3 file. 
+        PlaylistPlayer.Play(0);
+
+        LastFMStation.CurrentStreamState = StreamPlaybackState.streaming;
+        //LastFMStation.ToggleRecordToProfile(false);    
+        LastFMStation.ToggleDiscoveryMode(LastFMStation.DiscoveryMode);
+
+        playSuccess = g_Player.Playing;
       }
-      LastFMStation.CurrentStreamState = StreamPlaybackState.starting;
-
-      _streamSong = aStreamSong;
-
-      Song addSong = aStreamSong.Clone();
-      AddStreamSongToPlaylist(ref addSong);
-
-      PlaylistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_RADIO_STREAMS;
-      PlayList Playlist = PlaylistPlayer.GetPlaylist(PlaylistPlayer.CurrentPlaylistType);
-
-      if (Playlist == null)
-        return false;
-
-      // Avoid an endless loop when a song cannot be played.
-      PlaylistPlayer.RepeatPlaylist = false;
-
-      // I found out, you have to send "Cookie: Session=[sessionID]" in the header of the request of the MP3 file. 
-      PlaylistPlayer.Play(0);
-
-      LastFMStation.CurrentStreamState = StreamPlaybackState.streaming;
-      //LastFMStation.ToggleRecordToProfile(false);    
-      LastFMStation.ToggleDiscoveryMode(LastFMStation.DiscoveryMode);
-
-      GUIWaitCursor.Hide();
-      return g_Player.Playing;
+      finally
+      {
+        GUIWaitCursor.Hide();
+        if (!playSuccess)
+          PlayBackFailedHandler();
+      }
     }
 
     #endregion
 
     #region Internet Lookups
 
-    bool GetXSPFPlaylist()
+    private void UpdateXspfPlaylistAndStartPlayback(object aStartPlayback)
     {
-      _radioTrackList.Clear();
-      _radioTrackList = InfoScrobbler.getRadioPlaylist(@"http://ws.audioscrobbler.com/radio/xspf.php?sk=" + AudioscrobblerBase.RadioSession + "&discovery=" + Convert.ToString(LastFMStation.DiscoveryEnabledInt) + "&desktop=" + AudioscrobblerBase.ClientFakeVersion);
-
-      Log.Debug("GUIRadioLastFM: Parsed XSPF Playlist for current radio stream");
-
-      for (int i = 0; i < _radioTrackList.Count; i++)
-      {
-        Log.Debug("GUIRadioLastFM: Track {0} : {1}", Convert.ToString(i + 1), _radioTrackList[i].ToLastFMString());
-      }
-
-      return (_radioTrackList.Count > 0);
+      GUIWaitCursor.Show();
+      Log.Debug("GUIRadioLastFM: Update XSPF Playlist now...");
+      XspfPlaylistRequest request = new XspfPlaylistRequest(
+        true,
+        @"http://ws.audioscrobbler.com/radio/xspf.php?sk=" + AudioscrobblerBase.RadioSession + "&discovery=" + Convert.ToString(LastFMStation.DiscoveryEnabledInt) + "&desktop=" + AudioscrobblerBase.ClientFakeVersion,
+        (bool)aStartPlayback,
+        new XspfPlaylistRequest.XspfPlaylistRequestHandler(OnUpdateXspfPlaylistCompleted));
+      _lastRadioPlaylistRequest = request;
+      InfoScrobbler.AddRequest(request);
     }
 
     private void UpdateUsersTopArtists(string _serviceUser)
@@ -902,6 +914,14 @@ namespace MediaPortal.GUI.RADIOLASTFM
       _lastTrackTagRequest = request;
       _trackTagsCache.Clear();
       InfoScrobbler.AddRequest(request);
+    }
+
+    private void OnUpdateXspfPlaylistCompleted(ScrobblerUtilsRequest aRequest, List<Song> aSongList, string aPlaylistName, bool aPlayNow)
+    {
+      if (aSongList.Count > 0)
+        PlaylistUpdateSuccess(aSongList, aPlaylistName, aPlayNow);
+      else
+        PlaylistUpdateError(aPlayNow);
     }
 
     public void OnUpdateArtistCoverCompleted(ArtistInfoRequest request, Song song)
@@ -1056,9 +1076,72 @@ namespace MediaPortal.GUI.RADIOLASTFM
       ShowSongTrayBallon(GUILocalizeStrings.Get(34050), " ", 1, false); // Stream stopped
     }
 
+    private void StopPlaybackIfNeed()
+    {
+      if (g_Player.Playing)
+      {
+        Log.Debug("GUIRadioLastFM: StartPlaybackNow is stopping current playback");
+        g_Player.Stop();
+      }
+    }
+
     #endregion
 
     #region Handlers
+
+    private void OnPlaylistUpdateError(bool aPlayNow)
+    {      
+      GUIWaitCursor.Hide();
+
+      if (_radioTrackList.Count > 0)
+      {
+        // clear the current playing track as the URL invalidates after one request
+        _radioTrackList.RemoveAt(0);
+        Log.Debug("GUIRadioLastFM: Playlist fetching failed - removing current track");
+        if (aPlayNow)
+          PlayPlayListStreams(_radioTrackList[0]);
+      }
+      else
+        if (aPlayNow)
+        {
+          Log.Debug("GUIRadioLastFM: Playlist fetching failed - no more items left...");
+          PlayBackNoMoreContentHandler();
+        }
+    }
+
+    private void OnPlaylistUpdateSuccess(List<Song> aSonglist, string aPlaylistName, bool aPlayNow)
+    {
+      _radioTrackList.Clear();
+      _radioTrackList = aSonglist;
+      Log.Debug("GUIRadioLastFM: Playlist fetch successful - adding {0} songs from a list called {1}", _radioTrackList.Count, System.Web.HttpUtility.UrlDecode(aPlaylistName));
+      for (int i = 0; i < _radioTrackList.Count; i++)
+      {
+        Log.Debug("GUIRadioLastFM: Track {0} : {1}", Convert.ToString(i + 1), _radioTrackList[i].ToLastFMString());
+      }
+
+      GUIWaitCursor.Hide();
+
+      if (aPlayNow)
+      {
+        try
+        {
+          if (GUIGraphicsContext.form.InvokeRequired)
+          {
+            GUIGraphicsContext.form.Invoke(new ThreadStopPlayer(StopPlaybackIfNeed));
+            GUIGraphicsContext.form.Invoke(new ThreadStartBass(PlayPlayListStreams), new object[] { _radioTrackList[0] });
+          }
+          else
+          {
+            StopPlaybackIfNeed();
+            PlayPlayListStreams(_radioTrackList[0]);
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("GUIRadioLastFM: Could not invoke BASS to start playback - {0}", ex.Message);
+        }
+      }
+    }
 
     private void OnRadioSettingsSuccess()
     {
@@ -1096,7 +1179,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       AudioscrobblerBase.CurrentPlayingSong = _streamSong;
       AudioscrobblerBase.CurrentPlayingSong.Source = SongSource.L;
 
-      RebuildStreamList();
+      RebuildStreamList(false);
     }
 
     private void OnPlaybackStarted()
@@ -1138,7 +1221,9 @@ namespace MediaPortal.GUI.RADIOLASTFM
     private void OnSkipHandler(bool directSkip)
     {
       if (_radioTrackList.Count < 1)
-        RebuildStreamList();
+      {
+        RebuildStreamList(true);
+      }
 
       if (_radioTrackList.Count > 0)
       {
@@ -1169,7 +1254,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
     {
       if (!Util.Utils.IsLastFMStream(filename) || (LastFMStation.CurrentStreamState != StreamPlaybackState.streaming && LastFMStation.CurrentStreamState != StreamPlaybackState.starting))
         return;
-
       OnPlaybackStarted();
 
       Thread stateThread = new Thread(new ParameterizedThreadStart(SetAudioScrobblerTrackThread));
@@ -1189,22 +1273,14 @@ namespace MediaPortal.GUI.RADIOLASTFM
     {
       if (!Util.Utils.IsLastFMStream(filename) || LastFMStation.CurrentStreamState != StreamPlaybackState.streaming)
         return;
-
       try
       {
+        Log.Info("GUIRadioLastFM: PlayBackEnded for this selection - trying restart of same stream...");
+
         g_Player.Stop();
-
-        Log.Debug("GUIRadioLastFM: PlayBackEnded for this selection - trying restart...");
-        if (RebuildStreamList())
-        {
-          if (PlayPlayListStreams(_radioTrackList[0]))
-          {
-            return;
-          }
-        }
-
         OnPlaybackStopped();
-        PlayBackNoMoreContentHandler();
+
+        RebuildStreamList(true);
       }
       catch (Exception ex)
       {
@@ -1239,14 +1315,12 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     private static void OnLoveClicked()
     {
-      // LastFMStation.SendControlCommand(StreamControls.lovetrack);
       AudioscrobblerBase.CurrentSubmitSong.AudioscrobblerAction = SongAction.L;
       AudioscrobblerBase.DoLoveTrackNow();
     }
 
     private void OnBanClicked()
     {
-      // LastFMStation.SendControlCommand(StreamControls.bantrack);
       AudioscrobblerBase.CurrentSubmitSong.AudioscrobblerAction = SongAction.B;
       AudioscrobblerBase.DoBanTrackNow();
       OnSkipHandler(false);
@@ -1259,8 +1333,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         AudioscrobblerBase.CurrentSubmitSong.AudioscrobblerAction = SongAction.S;
       OnSkipHandler(false);
     }
-
-
+    
     private void OnPlaySimilarArtistsClicked()
     {
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
@@ -1293,9 +1366,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         LastFMStation.TuneIntoArtists(BuildListFromString(_similarArtistCache[dlg.SelectedId - 2]));
       }
 
-      //// The official client does also fetch 2 lists...
-      RebuildStreamList();
-      StartPlaybackNow();
+      RebuildStreamList(true);
     }
 
     private void OnPlaySimilarTagsClicked()
@@ -1330,9 +1401,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         LastFMStation.TuneIntoTags(BuildListFromString(_trackTagsCache[dlg.SelectedId - 2]));
       }
 
-      //// The official client does also fetch 2 lists...
-      RebuildStreamList();
-      StartPlaybackNow();
+      RebuildStreamList(true);
     }
 
     #endregion
