@@ -198,6 +198,7 @@ namespace TvLibrary.Implementations.DVB
           if (_eventPMT.WaitOne(timeoutPMT, true))
           {
             _eventPMT.Close();
+            _eventPMT = null;
             TimeSpan ts = DateTime.Now - dtNow;
             Log.Log.Debug("WaitForPMT: Found PMT after {0} seconds.", ts.TotalSeconds);
             foundPMT = true;                                    
@@ -258,7 +259,11 @@ namespace TvLibrary.Implementations.DVB
           }                              
         }
       }
-      _eventPMT.Close();
+      if (_eventPMT != null)
+      {
+        _eventPMT.Close();
+        _eventPMT = null;
+      }
       return foundPMT;  
     }
 
@@ -889,6 +894,7 @@ namespace TvLibrary.Implementations.DVB
               if (!_eventCA.WaitOne(10000, true)) //wait 10 sec for CA to arrive.
               {
                 _eventCA.Close();
+                _eventCA = null;
                 TimeSpan ts = DateTime.Now - dtNow;
                 Log.Log.Info("subch:{0} SendPmt:no CA found after {1} seconds", _subChannelId, ts.TotalSeconds);
                 return false;
@@ -898,8 +904,9 @@ namespace TvLibrary.Implementations.DVB
                 TimeSpan ts = DateTime.Now - dtNow;
                 Log.Log.Info("subch:{0} SendPmt:CA found after {1}seconds", _subChannelId, ts.TotalSeconds);
                 foundCA = true;
-              }
-              _eventCA.Close();              
+                _eventCA.Close();
+                _eventCA = null;
+              }              
             }
           }
         }
@@ -1032,8 +1039,11 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public int OnCaReceived()
     {
-      _eventCA.Set();
-      Log.Log.WriteFile("subch:OnCaReceived()");
+      if (_eventCA != null)
+      {
+        Log.Log.WriteFile("subch:OnCaReceived()");
+        _eventCA.Set();
+      }      
 
       return 0;
     }
@@ -1046,9 +1056,12 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <returns></returns>
     public int OnPMTReceived()
-    {     
-      Log.Log.WriteFile("subch:{0} OnPMTReceived() {1}", _subChannelId, GraphRunning());     
-      _eventPMT.Set();
+    {           
+      if (_eventPMT != null)
+      {
+        Log.Log.WriteFile("subch:{0} OnPMTReceived() {1}", _subChannelId, GraphRunning());
+        _eventPMT.Set();
+      }
       return 0;
     }
 
