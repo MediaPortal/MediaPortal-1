@@ -529,7 +529,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       dlg.Add(desiredTag);
 
       if (btnChooseFriend.Label != String.Empty)
-        desiredFriend = GUILocalizeStrings.Get(34043) + btnChooseFriend.Label; // 4 - Personal radio of: 
+        desiredFriend = GUILocalizeStrings.Get(34043) + btnChooseFriend.Label; // 4 - Library radio of: 
       else
         desiredFriend = GUILocalizeStrings.Get(34045);                         // No Friend has been chosen yet
       dlg.Add(desiredFriend);
@@ -568,12 +568,12 @@ namespace MediaPortal.GUI.RADIOLASTFM
         case 3:          
           if (btnChooseTag.Label == GUILocalizeStrings.Get(34030))
             return; // bail out if no tags available
-          TuneIntoSelected = StreamType.Tags;
+          TuneIntoSelected = StreamType.Tag;
           break;
         case 4:          
           if (btnChooseFriend.Label == GUILocalizeStrings.Get(34031))
             return; // bail out if no friends have been made
-          TuneIntoSelected = StreamType.Personal;
+          TuneIntoSelected = StreamType.Library;
           LastFMStation.StreamsUser = btnChooseFriend.Label;
           break;
         case 5:          
@@ -583,7 +583,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
           LastFMStation.StreamsUser = btnChooseFriend.Label;
           break;
         case 6:
-          TuneIntoSelected = StreamType.Neighbours;
+          TuneIntoSelected = StreamType.Neighbourhood;
           LastFMStation.StreamsUser = LastFMStation.AccountUser;
           break;
         case 7:
@@ -591,7 +591,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
           LastFMStation.StreamsUser = LastFMStation.AccountUser;
           break;
         case 8:
-          TuneIntoSelected = StreamType.Personal;
+          TuneIntoSelected = StreamType.Library;
           LastFMStation.StreamsUser = LastFMStation.AccountUser;
           break;
         case 9:
@@ -616,7 +616,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
           LastFMStation.TuneIntoArtists(BuildListFromString(btnChooseArtist.Label));
           break;
 
-        case StreamType.Personal:
+        case StreamType.Library:
           LastFMStation.TuneIntoPersonalRadio(LastFMStation.StreamsUser);
           break;
 
@@ -624,11 +624,11 @@ namespace MediaPortal.GUI.RADIOLASTFM
           LastFMStation.TuneIntoLovedTracks(LastFMStation.StreamsUser);
           break;
 
-        case StreamType.Tags:          
+        case StreamType.Tag:          
           LastFMStation.TuneIntoTags(BuildListFromString(btnChooseTag.Label));
           break;
 
-        case StreamType.Neighbours:
+        case StreamType.Neighbourhood:
           LastFMStation.TuneIntoNeighbourRadio(LastFMStation.StreamsUser);
           break;
 
@@ -1409,6 +1409,61 @@ namespace MediaPortal.GUI.RADIOLASTFM
     #endregion
 
     #region Utils
+
+    public string GetRadioPlaylistName(string aUrlEncodedXmlString)
+    {
+      string outName = aUrlEncodedXmlString;
+      try
+      {
+        outName = System.Web.HttpUtility.UrlDecode(aUrlEncodedXmlString);
+
+        string user = String.Empty;
+        if (outName.EndsWith("Radio")) // Blue Man Group Radio
+        {
+          user = outName.Remove(outName.Length - 6);
+          Log.Info("GUIRadioLastFM: Currently playing tracks related to {0}", user);
+          LastFMStation.CurrentPlaylistType = StreamType.Radio;
+        }
+        else
+          if (outName.EndsWith("Library"))
+          {
+            user = outName.Remove(outName.Length - 10);
+            Log.Info("GUIRadioLastFM: Currently playing personal radio of {0}", user);
+            LastFMStation.CurrentPlaylistType = StreamType.Library;
+          }
+          else
+            if (outName.EndsWith("Loved Tracks"))
+            {
+              user = outName.Remove(outName.Length - 15);
+              Log.Info("GUIRadioLastFM: Currently playing favorite tracks of {0}", user);
+              LastFMStation.CurrentPlaylistType = StreamType.Loved;
+            }
+            else
+              if (outName.EndsWith("Recommendations"))
+              {
+                user = outName.Remove(outName.Length - 18);
+                Log.Info("GUIRadioLastFM: Currently playing recommendations of {0}", user);
+                LastFMStation.CurrentPlaylistType = StreamType.Recommended;
+              }
+              else
+                if (outName.EndsWith("Neighbourhood"))
+                {
+                  user = outName.Remove(outName.Length - 16);
+                  Log.Info("GUIRadioLastFM: Currently playing neighbourhood radio of {0}", user);
+                  LastFMStation.CurrentPlaylistType = StreamType.Neighbourhood;
+                }
+                else
+                {
+                  Log.Info("GUIRadioLastFM: Currently playing saved playlist {0}", outName);
+                  LastFMStation.CurrentPlaylistType = StreamType.Playlist;
+                } // maybe there is more to come.
+      }
+      catch (Exception ex)
+      {
+        Log.Error("AudioscrobblerUtils: Error getting XSFP playlist name - {0},{1}", ex.Message, ex.StackTrace);
+      }
+      return outName;
+    }
 
     private void ShowSongTrayBallon(string notifyTitle, string notifyMessage_, int showSeconds_, bool popup_)
     {

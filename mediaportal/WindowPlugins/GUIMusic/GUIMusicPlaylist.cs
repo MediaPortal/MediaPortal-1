@@ -1282,7 +1282,7 @@ namespace MediaPortal.GUI.Music
           }
           catch (Exception ex)
           {
-            Log.Error("ScrobbleLookupThread: exception on lookup Neighbours - {0}", ex.Message);
+            Log.Error("ScrobbleLookupThread: exception on lookup Neighbourhood - {0}", ex.Message);
           }
           //}
           break;

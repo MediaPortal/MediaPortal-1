@@ -75,11 +75,13 @@ namespace MediaPortal.GUI.RADIOLASTFM
     Artist = 0,
     Group = 1,
     Loved = 2,
-    Personal = 3,
+    Library = 3,
     Recommended = 4,
-    Tags = 5,
-    Neighbours = 6,
+    Tag = 5,
+    Neighbourhood = 6,
     Playlist = 7,
+    Radio = 8,
+    Unknown = 9,
   }
 
   #endregion
@@ -138,6 +140,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     private StreamPlaybackState _currentState = StreamPlaybackState.offline;
     private StreamType _currentTuneType = StreamType.Recommended;
+    private StreamType _currentPlaylistType = StreamType.Unknown;
 
     /// <summary>
     /// The time of the last http access
@@ -285,9 +288,22 @@ namespace MediaPortal.GUI.RADIOLASTFM
       }
     }
 
+    /// <summary>
+    /// Is the current tuned radio someone's favorite or recommendations, etc
+    /// </summary>
     public StreamType CurrentTuneType
     {
       get { return _currentTuneType; }
+      set { _currentTuneType = value; }
+    }
+
+    /// <summary>
+    /// Is the most recent playlist someone's favorite or recommendations, etc
+    /// </summary>
+    public StreamType CurrentPlaylistType
+    {
+      get { return _currentPlaylistType; }
+      set { _currentPlaylistType = value; }
     }
 
     public StreamPlaybackState CurrentStreamState
@@ -391,7 +407,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
       if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/adjust.php?session=" + _currentSession + @"&url=lastfm://user/" + TuneUser + "/personal"))
       {
-        _currentTuneType = StreamType.Personal;
+        _currentTuneType = StreamType.Library;
         Log.Info("StreamControl: Tune into personal station of: {0}", username_);
         GUIPropertyManager.SetProperty("#Play.Current.Lastfm.CurrentStream", GUILocalizeStrings.Get(34043) + username_);
         return true;
@@ -406,7 +422,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
       if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/adjust.php?session=" + _currentSession + @"&url=lastfm://user/" + TuneUser + "/neighbours"))
       {
-        _currentTuneType = StreamType.Neighbours;
+        _currentTuneType = StreamType.Neighbourhood;
         Log.Info("StreamControl: Tune into neighbour station of: {0}", username_);
         GUIPropertyManager.SetProperty("#Play.Current.Lastfm.CurrentStream", GUILocalizeStrings.Get(34048)); // My neighbour radio
         return true;
@@ -494,7 +510,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
       if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/adjust.php?session=" + _currentSession + @"&url=lastfm://globaltags/" + TuneTags))
       {
-        _currentTuneType = StreamType.Tags;
+        _currentTuneType = StreamType.Tag;
         Log.Info("StreamControl: Tune into tags: {0}", TuneTags);
         GUIPropertyManager.SetProperty("#Play.Current.Lastfm.CurrentStream", GUILocalizeStrings.Get(34041) + TuneTags);
         return true;
