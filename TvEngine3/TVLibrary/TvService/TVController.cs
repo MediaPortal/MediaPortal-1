@@ -1379,9 +1379,45 @@ namespace TvService
         if (_cards[cardId].DataBaseCard.Enabled == false) return TvResult.CardIsDisabled;
         //if (!CardPresent(cardId)) return TvResult.CardIsDisabled;
 
+        if (_cards[cardId].Card.SubChannels.Length > 0)
+        {
+          bool isRec = _cards[cardId].Recorder.IsRecordingAnyUser();
+          if (!isRec)
+          {
+            TvCardContext context = (TvCardContext)_cards[cardId].Card.Context;
+            User[] users = context.Users;
+
+            foreach (User userObj in users)
+            {
+              if (userObj.Name.Equals(user.Name))
+              {
+                if (userObj.SubChannel > -1)
+                {
+                  _cards[cardId].Card.FreeSubChannelContinueGraph(userObj.SubChannel);
+                }
+                break;
+              }
+            }
+          }
+        }
+
+
+
+        //on tune we need to remember to remove the previous subchannel before tuning the next one.
+        // but only if the subchannel is free, meaning not recording and no other users attached.          
+        if (user.SubChannel > 0 && _cards[cardId].Card.SubChannels.Length > -1)
+        {
+          bool isRec = _cards[cardId].Recorder.IsRecordingAnyUser();
+          if (!isRec)
+          {
+            _cards[cardId].Card.FreeSubChannelContinueGraph(user.SubChannel);
+          }
+        }
+        
         Fire(this, new TvServerEventArgs(TvServerEventType.StartZapChannel, GetVirtualCard(user), user, channel));
         TvResult res = _cards[cardId].Tuner.Tune(ref user, channel, idChannel);
 
+        
 
         /*if (res == TvResult.Succeeded)
         {
@@ -2196,11 +2232,17 @@ namespace TvService
           if (isTS)
           {
             User[] users = tvcard.Users.GetUsers();
-            for (int j = 0; j < users.Length; j++)
+            for (int j = users.Length-1; j > -1; j--)
             {              
               User u = users[j];
               if (user.Name.Equals(u.Name)) continue;
               IChannel tmpChannel = tvcard.CurrentChannel(ref u);
+
+              if (tmpChannel == null)
+              {
+                tvcard.Users.RemoveUser(u); //removing inactive user which shouldnt happen, but atleast its better than having timeshfiting fail.
+                continue;
+              }
 
               bool isDiffTS = tvcard.Tuner.IsDifferentTransponder(tuneChannel, tmpChannel);
 
@@ -2209,7 +2251,7 @@ namespace TvService
                 Log.Write("Controller: kicking leech user {0} off card {1} since owner {2} changed transponder", u.Name, cardInfo.Card.Name, user.Name);
                 StopTimeShifting(ref u, TvStoppedReason.OwnerChangedTS);
               }
-            }
+            }           
           }
           
           //tune to the new channel                  
@@ -3166,6 +3208,31 @@ namespace TvService
       {
         if (_cards[user.CardId].DataBaseCard.Enabled == false) return TvResult.CardIsDisabled;
         //if (!CardPresent(user.CardId)) return TvResult.CardIsDisabled;
+
+        //on tune we need to remember to remove the previous subchannel before tuning the next one.
+        // but only if the subchannel is free, meaning not recording and no other users attached.                  
+        if (_cards[user.CardId].Card.SubChannels.Length > 0)
+        {
+          bool isRec = _cards[user.CardId].Recorder.IsRecordingAnyUser();
+          if (!isRec)
+          {
+            TvCardContext context = (TvCardContext)_cards[user.CardId].Card.Context;
+            User[] users = context.Users;
+
+            foreach (User userObj in users)
+            {
+              if (userObj.Name.Equals(user.Name))
+              {
+                if (userObj.SubChannel > -1)
+                {
+                  _cards[user.CardId].Card.FreeSubChannelContinueGraph(userObj.SubChannel);
+                }
+                break;
+              }
+            }            
+          }
+        }
+
         Fire(this, new TvServerEventArgs(TvServerEventType.StartZapChannel, GetVirtualCard(user), user, channel));
         TvResult result = _cards[user.CardId].Tuner.CardTune(ref user, channel, dbChannel);
         Log.Info("Controller: {0} {1} {2}", user.Name, user.CardId, user.SubChannel);

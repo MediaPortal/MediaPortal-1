@@ -277,6 +277,13 @@ namespace TvLibrary.Interfaces
     /// <param name="id">The id.</param>
     /// <returns></returns>
     ITvSubChannel GetSubChannel(int id);
+
+    /// <summary>
+    /// Frees the sub channel.
+    /// </summary>
+    /// <param name="id">The id.</param>
+    void FreeSubChannelContinueGraph(int id);
+
     /// <summary>
     /// Frees the sub channel.
     /// </summary>

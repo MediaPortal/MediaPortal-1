@@ -592,12 +592,31 @@ namespace TvLibrary.Implementations
 
     #region subchannel management
     /// <summary>
+    /// Frees the sub channel. but keeps the graph running.
+    /// </summary>
+    /// <param name="id">Handle to the subchannel.</param>
+    public virtual void FreeSubChannelContinueGraph(int id)
+    {
+      // this method is overriden in tvcardbase      
+      FreeSubChannel(id, true);
+    }
+
+    /// <summary>
     /// Frees the sub channel.
     /// </summary>
     /// <param name="id">Handle to the subchannel.</param>
-    public void FreeSubChannel(int id)
+    public virtual void FreeSubChannel(int id)
     {
-      Log.Log.Info("tvcard:FreeSubChannel:{0} #{1}", _mapSubChannels.Count, id);
+      FreeSubChannel(id, false);
+    }
+
+    /// <summary>
+    /// Frees the sub channel.
+    /// </summary>
+    /// <param name="id">Handle to the subchannel.</param>
+    private void FreeSubChannel(int id, bool continueGraph)
+    {
+      Log.Log.Info("tvcard:FreeSubChannel:{0} #{1} keep graph={2}", _mapSubChannels.Count, id, continueGraph);
       if (_mapSubChannels.ContainsKey(id))
       {
         if (_mapSubChannels[id].IsTimeShifting)
@@ -610,10 +629,12 @@ namespace TvLibrary.Implementations
         {
           Log.Log.Info("tvcard:FreeSubChannel :{0} - is recording (skipped)", id);
           return;
-        }        
+        }
+
 
         _mapSubChannels[id].Decompose();
         _mapSubChannels.Remove(id);
+
 
         /*if (_conditionalAccess != null)
         {         
@@ -628,10 +649,12 @@ namespace TvLibrary.Implementations
       if (_mapSubChannels.Count == 0)
       {
         _subChannelId = 0;
-        StopGraph();
+        if (!continueGraph)
+        {
+          StopGraph();
+        }
       }
     }
-
     /// <summary>
     /// Frees all sub channels.
     /// </summary>

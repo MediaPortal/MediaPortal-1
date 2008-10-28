@@ -527,6 +527,15 @@ namespace TvLibrary.Implementations.Hybrid
     }
 
     /// <summary>
+    /// Frees the sub channel.
+    /// </summary>
+    /// <param name="id">The id.</param>
+    public void FreeSubChannelContinueGraph(int id)
+    {
+      _group.FreeSubChannel(id);
+    }
+
+    /// <summary>
     /// Reloads the quality control configuration
     /// </summary>
     public void ReloadQualityControlConfiguration()

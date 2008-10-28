@@ -207,6 +207,7 @@ namespace TvService
       return false;
     }
 
+
     
     public bool IsRecordingChannel(string channelName)
     {
@@ -251,6 +252,28 @@ namespace TvService
         return false;
       }
     }
+
+    public bool IsRecordingAnyUser ()
+    {
+      User[] users = _cardHandler.Users.GetUsers();
+      if (users == null) return false;
+      if (users.Length == 0) return false;
+
+      for (int i = 0; i < users.Length; ++i)
+      {
+        User user = users[i];
+        if (!user.IsAdmin) continue;
+        if (_cardHandler.CurrentChannelName(ref user) == null) continue;
+        
+        if (_cardHandler.Recorder.IsRecording(ref user))
+        {
+          return true;
+        }
+        
+      }
+      return false;
+    }    
+
     /// <summary>
     /// Returns if the card is recording or not
     /// </summary>

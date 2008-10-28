@@ -144,9 +144,13 @@ namespace TvService
       context.GetUser(ref user);
       context.Remove(user);
       if (context.ContainsUsersForSubchannel(user.SubChannel) == false)
-      {
-        Log.Info("card: free subchannel sub:{0}", user.SubChannel);
-        _cardHandler.Card.FreeSubChannel(user.SubChannel);
+      {   
+        //only remove subchannel if it exists.
+        if (_cardHandler.Card.GetSubChannel(user.SubChannel) != null)
+        {
+          Log.Info("card: free subchannel sub:{0}", user.SubChannel);
+          _cardHandler.Card.FreeSubChannel(user.SubChannel);
+        }
       }
 
       if (_cardHandler.IsIdle)

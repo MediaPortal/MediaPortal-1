@@ -115,6 +115,27 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     #region subchannel management
+
+    public override void FreeSubChannelContinueGraph(int id)
+    {
+      base.FreeSubChannelContinueGraph(id);
+
+      if (_mdplugs != null)
+      {
+        _mdplugs.FreeChannel(_mapSubChannels[id].CurrentChannel.Name);
+        //_mdplugs.FreeAllChannels();
+      }
+    }
+
+    public override void FreeSubChannel(int id)
+    {
+      if (_mdplugs != null) 
+      {
+        _mdplugs.FreeChannel(_mapSubChannels[id].CurrentChannel.Name);
+      }
+      base.FreeSubChannel(id);
+    }
+
     /// <summary>
     /// Allocates a new instance of TvDvbChannel which handles the new subchannel
     /// </summary>
@@ -372,6 +393,12 @@ namespace TvLibrary.Implementations.DVB
       _epgGrabbing = false;
       _isScanning = false;
       FreeAllSubChannels();
+
+      if (_mdplugs != null)
+      {
+        _mdplugs.FreeAllChannels();
+      }
+
       if (_graphBuilder == null) return;
       if (_conditionalAccess.AllowedToStopGraph)
       {

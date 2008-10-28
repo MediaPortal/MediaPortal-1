@@ -300,6 +300,16 @@ namespace TvLibrary.Implementations.RadioWebStream
     public void FreeSubChannel(int id)
     {
     }
+
+    /// <summary>
+    /// Frees the sub channel.
+    /// </summary>
+    /// <param name="id">The id.</param>
+    public void FreeSubChannelContinueGraph(int id)
+    {
+      
+    }
+
     /// <summary>
     /// Gets the sub channel.
     /// </summary>
