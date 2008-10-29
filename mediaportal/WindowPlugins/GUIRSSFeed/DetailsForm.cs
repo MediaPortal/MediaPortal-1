@@ -62,7 +62,6 @@ namespace GUIRSSFeed
       // The InitializeComponent() call is required for Windows Forms designer support.
       //
       InitializeComponent();
-      buttonBrowse.Click += new EventHandler(browseFile);
 
       if (ID > -1)
       {
@@ -111,7 +110,7 @@ namespace GUIRSSFeed
       dlg.FilterIndex = 0;
       dlg.Title = "Select Site Icon";
       dlg.ShowDialog();
-      if (dlg.FileName != "")
+      if (!String.IsNullOrEmpty(dlg.FileName))
       {
         textImage.Text = dlg.FileName;
       }
@@ -242,13 +241,13 @@ namespace GUIRSSFeed
       // buttonBrowse
       // 
       this.buttonBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonBrowse.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this.buttonBrowse.Location = new System.Drawing.Point(401, 126);
       this.buttonBrowse.Name = "buttonBrowse";
       this.buttonBrowse.Size = new System.Drawing.Size(75, 23);
       this.buttonBrowse.TabIndex = 10;
       this.buttonBrowse.Text = "Browse";
       this.buttonBrowse.UseVisualStyleBackColor = true;
+      this.buttonBrowse.Click += new System.EventHandler(this.browseFile);
       // 
       // labelFeedName
       // 
@@ -316,7 +315,7 @@ namespace GUIRSSFeed
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
       this.Name = "DetailsForm";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-      this.Text = "DetailsForm";
+      this.Text = "RSS News - Setup - DetailsForm";
       this.ResumeLayout(false);
       this.PerformLayout();
 

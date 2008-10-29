@@ -454,7 +454,7 @@ namespace GUIRSSFeed
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
       this.Name = "SetupForm";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-      this.Text = "My News - Setup";
+      this.Text = "RSS News - Setup";
       this.Load += new System.EventHandler(this.SetupForm_Load);
       this.mpGroupBox1.ResumeLayout(false);
       this.mpGroupBox2.ResumeLayout(false);
