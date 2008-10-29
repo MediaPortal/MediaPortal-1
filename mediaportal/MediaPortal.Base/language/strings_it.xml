@@ -1187,6 +1187,10 @@
     <String id="2514">Ritorna all'articolo</String>
     <String id="2515">Immagini</String>
     <String id="2516" prefix="La Mia ">Wikipedia</String>
+    <String id="2550">Si vuole veramente fermare la TV in diretta ?</String>
+    <String id="2551">(il file di timeshift verrà perso)</String>
+    <String id="2552">Stop</String>
+    <String id="2553">Riproduci</String>
     <String id="2599">Indeterminato</String>
     <String id="2600">Inglese</String>
     <String id="2601">Tedesco</String>
@@ -1524,9 +1528,13 @@
     <String id="34013">Modalità scoperta</String>
     <String id="34014">Sottometti al profilo</String>
     <String id="34015">Ricarica tags/amici</String>
+    <String id="34016">Riproduci un aritista simile</String>
+    <String id="34017">Riproduci un tag simile</String>
     <String id="34020">Flusso corrente:</String>
     <String id="34030">Nessuna tag</String>
     <String id="34031">Nessun amico</String>
+    <String id="34032">Nessun artista</String>
+    <String id="34039">Sintonizza sull'artista scelto:</String>
     <String id="34040">Radio raccomandate</String>
     <String id="34041">Sintonizza sulla tag scelta: </String>
     <String id="34042">Nessuna tag è stata scelta</String>
@@ -1545,6 +1553,8 @@
     <String id="34055">I Flussi potrebbero essere temporaneamente non disponibili</String>
     <String id="34060">Inserire una tag...</String>
     <String id="34061">Inserire Utente...</String>
+    <String id="34062">Inserire l'artista...</String>
+    <String id="34063">Nessun artista è stato ancora scelto</String>
     <String id="40001">In attesa per Standby</String>
     <String id="40002">MediaPortal non è in uso, ma è ancora occupato.</String>
     <String id="40003">Quanto tutte le attività correnti saranno concluse, MediaPortal andrà in modalità Standby.</String>
@@ -1584,6 +1594,7 @@
     <String id="100035">Home semplificata</String>
     <String id="100100">Dialogo Sì/No</String>
     <String id="100101">Dialogo di progresso</String>
+    <String id="100102">Dialogo di Play/Stop</String>
     <String id="100500">Musica/Playlist</String>
     <String id="100501">Musica/File</String>
     <String id="100502">Musica/Album</String>
