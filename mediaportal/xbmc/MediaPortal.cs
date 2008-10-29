@@ -868,27 +868,6 @@ public class MediaPortalApp : D3DApp, IRender
         Application.Exit();
       }
 
-      if (_dontMinimizeOnLostFocus)
-      {
-        // piba,  Better dual screen support.
-        // prevent MediaPortal from minimizing
-        //
-        // this could happen with 2 monitors attached and MediaPortal running on secondary screen(TV)
-        // When popup window or virusscanner update pops up MediaPortal would minimize
-        // Reproduction was clicking on primary monitor while playing a HD movie on the TV (while playing a low res recording it didnt happen..)
-        //
-        if (msg.Msg == WM_NCACTIVATE && msg.WParam.ToInt32() == 0)
-        {
-          if (g_Player.Playing && (g_Player.IsTV || g_Player.IsVideo || g_Player.IsDVD))
-          {
-            Log.Debug("{0}  abortedMessage {1}", msg.ToString());
-            //Prevent minimizing MP when playing video and clicking on secondary screen.
-            msg.Result = new IntPtr(0);
-            return;
-          }
-        }
-      }
-
       if (PluginManager.WndProc(ref msg))
       {
         // msg.Result = new IntPtr(0); <-- do plugins really set it on their own?
@@ -3111,8 +3090,8 @@ public class MediaPortalApp : D3DApp, IRender
       GUIGraphicsContext.DX9Device.RenderState.ReferenceAlpha = 0x01;
       GUIGraphicsContext.DX9Device.RenderState.AlphaFunction = Compare.GreaterEqual;
     }
-    return;  //?
-
+    return;  //? can code below be removed? ( Revision: 15524 Author: yamp Date: 17:04:11, dinsdag 14 augustus 2007 Message: fixed perspective for 3d rotations )
+    
     GUIGraphicsContext.DX9Device.RenderState.ZBufferEnable = true;
     GUIGraphicsContext.DX9Device.RenderState.AlphaBlendEnable = true;
     GUIGraphicsContext.DX9Device.RenderState.SourceBlend = Blend.SourceAlpha;

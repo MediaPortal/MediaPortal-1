@@ -109,15 +109,17 @@ namespace MediaPortal.Player
         //Manually add codecs based on file extension if not in auto-settings
         if (bAutoDecoderSettings == false)
         {
-          // add the VMR9 in the graph
-          Vmr9 = new VMR9Util();
-          Vmr9.AddVMR9(graphBuilder);
-          Vmr9.Enable(false);
-
           // switch back to directx fullscreen mode
           Log.Info("VideoPlayerVMR9: Enabling DX9 exclusive mode");
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
           GUIWindowManager.SendMessage(msg);
+
+          // add the VMR9 in the graph
+          // after enabeling exclusive mode, if done first it causes MediPortal to minimize if for example the "Windows key" is pressed while playing a video
+          Vmr9 = new VMR9Util();
+          Vmr9.AddVMR9(graphBuilder);
+          Vmr9.Enable(false);
+
           string extension = System.IO.Path.GetExtension(m_strCurrentFile).ToLower();
           if (extension.Equals(".dvr-ms") || extension.Equals(".mpg") || extension.Equals(".mpeg") || extension.Equals(".bin") || extension.Equals(".dat"))
           {
@@ -231,7 +233,7 @@ namespace MediaPortal.Player
           const string g_wszWMACHiResOutput = "_HIRESOUTPUT";
           object val = true;
           IPropertyBag propBag = (IPropertyBag)baseFilter;
-          hr = propBag.Write(g_wszWMACHiResOutput, ref val);
+          hr = propBag.Write(g_wszWMACHiResOutput, ref val);          
           if (hr != 0)
           {
             Log.Info("VideoPlayerVMR9: Write failed: g_wszWMACHiResOutput {0}", hr);

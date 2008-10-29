@@ -118,8 +118,7 @@ namespace MediaPortal
     internal static bool _fullscreenOverride = false;
     internal static bool _windowedOverride = false;
     internal static int _screenNumberOverride = -1;// 0 or higher means it is set
-    internal static bool _dontMinimizeOnLostFocus = false;// true will stop MediaPortal from minimizing when secondary screen is clicked or a popup window shows up (for example:messenger or virusscan update window) (by  piba)
-
+    
     protected Caps Caps
     {
       get { return graphicsCaps; }
@@ -335,7 +334,6 @@ namespace MediaPortal
         alwaysOnTop = xmlreader.GetValueAsBool("general", "alwaysontop", false);
         debugChangeDeviceHack = xmlreader.GetValueAsBool("debug", "changedevicehack", false);
         _disableMouseEvents = xmlreader.GetValueAsBool("remote", "CentareaJoystickMap", false);
-        _dontMinimizeOnLostFocus = xmlreader.GetValueAsBool("general", "DontMinimizeOnLostFocus", false);
       }
 
       // When clipCursorWhenFullscreen is TRUE, the cursor is limited to
