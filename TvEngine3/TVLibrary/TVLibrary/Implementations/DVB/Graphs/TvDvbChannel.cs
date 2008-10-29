@@ -228,12 +228,13 @@ namespace TvLibrary.Implementations.DVB
                       _filterTIF.Stop();
                   }
                 }
+                else
+                {                  
+                  retries++;
+                  Thread.Sleep(waitInterval);                  
+                }
               }
-              if (!sendPmtToCamDone)
-              {
-                retries++;
-                Thread.Sleep(waitInterval);
-              }
+              
             }
             catch (Exception ex)
             {
