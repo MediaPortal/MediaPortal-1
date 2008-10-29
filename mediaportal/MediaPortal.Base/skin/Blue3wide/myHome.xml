@@ -4,7 +4,7 @@
   <id>0</id>
   <defaultcontrol>50</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
-  <autohidetopbar>yes</autohidetopbar>
+  <disabletopbar>yes</disabletopbar>
   <controls>
     <control>
       <description>background image</description>

@@ -136,6 +136,28 @@ namespace MediaPortal.GUI.RADIOLASTFM
     private void Worker_LoadSettings()
     {
       GUIWaitCursor.Show();
+
+      // Do the tasks needed everytime we enter the plugin:
+      string ThumbFileName = String.Empty;
+      if (AudioscrobblerBase.CurrentPlayingSong != null && AudioscrobblerBase.CurrentPlayingSong.Artist != String.Empty)
+      {
+        // If we leave and reenter the plugin try to set the correct duration
+        GUIPropertyManager.SetProperty("#trackduration", Util.Utils.SecondsToHMSString(AudioscrobblerBase.CurrentPlayingSong.Duration));
+        ThumbFileName = Util.Utils.GetCoverArtName(Thumbs.MusicArtists, AudioscrobblerBase.CurrentPlayingSong.Artist);
+      }
+      // repopulate the facade after maybe exiting the plugin
+      if (facadeRadioPlaylist != null)
+      {
+        facadeRadioPlaylist.Clear();
+        foreach (Song listTrack in _radioTrackList)
+        {
+          GUIGraphicsContext.form.Invoke(new ThreadFacadeAddItem(AddItemToFacadeControl), new object[] { listTrack });
+        }
+      }
+      SetThumbnails(ThumbFileName);
+
+      // Do proper first time initialisation
+
       if (!LastFMStation.IsInit || LastFMStation.AccountUser != AudioscrobblerBase.Username)
       {
         LastFMStation.LoadSettings();
@@ -220,27 +242,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
         btnChooseFriend.Label = GUILocalizeStrings.Get(34031);
       }
 
-      GUIPropertyManager.SetProperty("#trackduration", " ");
-      string ThumbFileName = String.Empty;
+      GUIPropertyManager.SetProperty("#trackduration", " ");      
 
-      if (AudioscrobblerBase.CurrentPlayingSong != null && AudioscrobblerBase.CurrentPlayingSong.Artist != String.Empty)
-      {
-        // If we leave and reenter the plugin try to set the correct duration
-        GUIPropertyManager.SetProperty("#trackduration", Util.Utils.SecondsToHMSString(AudioscrobblerBase.CurrentPlayingSong.Duration));
-        ThumbFileName = Util.Utils.GetCoverArtName(Thumbs.MusicArtists, AudioscrobblerBase.CurrentPlayingSong.Artist);
-      }
-
-      // repopulate the facade after maybe exiting the plugin
-      if (facadeRadioPlaylist != null)
-      {
-        facadeRadioPlaylist.Clear();
-        foreach (Song listTrack in _radioTrackList)
-        {
-          GUIGraphicsContext.form.Invoke(new ThreadFacadeAddItem(AddItemToFacadeControl), new object[] { listTrack });  
-        }
-      }
-
-      SetThumbnails(ThumbFileName);
       LoadSettings();
     }
 
