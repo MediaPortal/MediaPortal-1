@@ -48,6 +48,7 @@ using Gentle.Framework;
 
 namespace TvPlugin
 {
+  [PluginIcons("TvPlugin.Radio.gif", "TvPlugin.RadioDisabled.gif")]
   public class Radio : GUIWindow, IComparer<GUIListItem>, ISetupForm, IShowPlugin
   {
     #region enums
