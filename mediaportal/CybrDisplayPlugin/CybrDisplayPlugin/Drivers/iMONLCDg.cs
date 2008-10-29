@@ -17,6 +17,7 @@
   using System.Runtime.InteropServices;
   using System.Security.Cryptography;
   using System.Text;
+  using System.ServiceProcess;
   using System.Threading;
   using System.Windows.Forms;
   using System.Xml;
@@ -1195,6 +1196,22 @@
     public void Dispose()
     {
       MediaPortal.GUI.Library.Log.Debug("iMONLCDg.Dispose(): called", new object[0]);
+      //
+      // If IRSS (Input Remote Suite Server by and-81) is installed
+      // we need to restart the service to re-register dll handler
+      //
+      string irss_srv = "InputService";
+      foreach (ServiceController ctrl in ServiceController.GetServices())
+      {
+        if (ctrl.ServiceName.ToLower() == "inputservice")
+        {
+          MediaPortal.GUI.Library.Log.Debug("iMONLCDg.Dispose(): Restarting \"input service\" from IRSS", new object[0]);
+          ctrl.Stop();
+          ctrl.WaitForStatus(ServiceControllerStatus.Stopped);
+          ctrl.Start();
+          ctrl.WaitForStatus(ServiceControllerStatus.Running);
+        }
+      }
       MediaPortal.GUI.Library.Log.Debug("iMONLCDg.Dispose(): completed", new object[0]);
     }
 
@@ -7504,9 +7521,9 @@
         }
         XmlSerializer serializer = new XmlSerializer(typeof(DataTable));
         TextWriter textWriter = new StreamWriter(Config.GetFile(Config.Dir.Config, "CybrDisplay_imonlcdg_font.xml"));
-        MediaPortal.GUI.Library.Log.Debug( "SaveFontData(): Serializing data", new object [0 ]) ;
-        serializer .Serialize(textWriter, this.FontData);
-        MediaPortal.GUI.Library.Log.Debug ("SaveFontData(): Writing data to file" , new object[ 0] );
+        MediaPortal.GUI.Library.Log.Debug("SaveFontData(): Serializing data", new object[0]);
+        serializer.Serialize(textWriter, this.FontData);
+        MediaPortal.GUI.Library.Log.Debug("SaveFontData(): Writing data to file", new object[0]);
         textWriter.Close();
         MediaPortal.GUI.Library.Log.Debug("SaveFontData(): completed", new object[0]);
       }
@@ -7516,8 +7533,8 @@
     {
       private bool _diskFlash;
       private bool _diskInverted;
-      private readonly ulong[] _DiskMask = new ulong[] { 0x80fe0000000000L, 0x80fd0000000000L, 0x80fb0000000000L , 0x80f70000000000L, 0x80ef0000000000L, 0x80df0000000000L, 0x80bf0000000000L, 0x807f0000000000L };
-      private readonly ulong[] _DiskMaskInv = new ulong[] { 0x80010000000000L, 0x80020000000000L, 0x80040000000000L , 0x80080000000000L, 0x80100000000000L, 0x80200000000000L, 0x80400000000000L, 0x80800000000000L };
+      private readonly ulong[ ] _DiskMask = new ulong[] { 0x80fe0000000000L, 0x80fd0000000000L, 0x80fb0000000000L, 0x80f70000000000L, 0x80ef0000000000L, 0x80df0000000000L, 0x80bf0000000000L , 0x807f0000000000L };
+      private readonly ulong[ ] _DiskMaskInv = new ulong[] { 0x80010000000000L, 0x80020000000000L, 0x80040000000000L, 0x80080000000000L, 0x80100000000000L, 0x80200000000000L, 0x80400000000000L, 0x80800000000000L };
       private bool _diskOn;
       private bool _diskRotate;
       private bool _diskRotateClockwise = true;
