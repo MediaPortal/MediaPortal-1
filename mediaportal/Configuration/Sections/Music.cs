@@ -411,9 +411,9 @@ namespace MediaPortal.Configuration.Sections
         }
 
         ShowVizInNowPlayingChkBox.Checked = xmlreader.GetValueAsBool("musicmisc", "showVisInNowPlaying", false);
-        checkBoxDisableCoverLookups.Checked = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmthumbs", true) ? true : false;
-        checkBoxDisableAlbumLookups.Checked = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmtopalbums", true) ? true : false;
-        checkBoxDisableTagLookups.Checked = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmtracktags", true) ? true : false;
+        checkBoxDisableCoverLookups.Checked = !(xmlreader.GetValueAsBool("musicmisc", "fetchlastfmcovers", true));
+        checkBoxDisableAlbumLookups.Checked = !(xmlreader.GetValueAsBool("musicmisc", "fetchlastfmtopalbums", true));
+        checkBoxDisableTagLookups.Checked = !(xmlreader.GetValueAsBool("musicmisc", "fetchlastfmtracktags", true));
         radioButtonEnqueue.Checked = EnqueueNext = xmlreader.GetValueAsBool("musicmisc", "enqueuenext", true);
         radioButtonAddFile.Checked = !EnqueueNext;
       }
@@ -556,7 +556,7 @@ namespace MediaPortal.Configuration.Sections
 
         xmlwriter.SetValue("musicmisc", "lyrics", showLyrics);
         xmlwriter.SetValueAsBool("musicmisc", "showVisInNowPlaying", ShowVizInNowPlayingChkBox.Checked);
-        xmlwriter.SetValueAsBool("musicmisc", "fetchlastfmthumbs", !checkBoxDisableCoverLookups.Checked);
+        xmlwriter.SetValueAsBool("musicmisc", "fetchlastfmcovers", !checkBoxDisableCoverLookups.Checked);
         xmlwriter.SetValueAsBool("musicmisc", "fetchlastfmtopalbums", !checkBoxDisableAlbumLookups.Checked);
         xmlwriter.SetValueAsBool("musicmisc", "fetchlastfmtracktags", !checkBoxDisableTagLookups.Checked);
         xmlwriter.SetValueAsBool("musicmisc", "enqueuenext", radioButtonEnqueue.Checked);

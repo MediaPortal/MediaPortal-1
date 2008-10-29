@@ -232,7 +232,7 @@ namespace MediaPortal.GUI.Music
 
         UseID3 = xmlreader.GetValueAsBool("musicfiles", "showid3", true);
 
-        _doArtistLookups = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmthumbs", true);
+        _doArtistLookups = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmcovers", true);
         _doAlbumLookups = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmtopalbums", true);
         _doTrackTagLookups = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmtracktags", true);
         _enqueueDefault = xmlreader.GetValueAsBool("musicmisc", "enqueuenext", true);

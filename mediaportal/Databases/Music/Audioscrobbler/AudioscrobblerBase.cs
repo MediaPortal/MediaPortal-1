@@ -135,6 +135,7 @@ namespace MediaPortal.Music.Database
 
     // Utils
     private static bool _artistsStripped = false;
+    private static bool _getLastfmCover = true;
     private static string _artistPrefixes = string.Empty;
 
     // Other internal properties.    
@@ -200,6 +201,7 @@ namespace MediaPortal.Music.Database
         _recordToProfile = xmlreader.GetValueAsBool("audioscrobbler", "submitradiotracks", true);
         _artistPrefixes = xmlreader.GetValueAsString("musicfiles", "artistprefixes", "The, Les, Die");
         _artistsStripped = xmlreader.GetValueAsBool("musicfiles", "stripartistprefixes", false);
+        _getLastfmCover = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmcovers", true);
 
         string tmpPass;
 
@@ -356,12 +358,21 @@ namespace MediaPortal.Music.Database
     /// </summary>
     public static bool IsSubscriber
     {
-      get
-      {
-        return _subscriber;
-      }
+      get { return _subscriber; }
     }
 
+    /// <summary>
+    /// Is downloading covers from last.fm enabled?
+    /// </summary>
+    public static bool IsFetchingCovers
+    {
+      get { return _getLastfmCover; }
+      set { _getLastfmCover = value; }
+    }
+
+    /// <summary>
+    /// This is the "desktop application"'s version appended in web headers and requests.
+    /// </summary>
     public static string ClientFakeVersion
     {
       get { return CLIENT_FAKE_VERSION; }
@@ -572,7 +583,7 @@ namespace MediaPortal.Music.Database
           AttemptRadioHandshake();
           break;
         case HandshakeType.Init:
-          AttemptSubmitNow();          
+          AttemptSubmitNow();
           break;
         case HandshakeType.Submit:
           AttemptSubmitNow();

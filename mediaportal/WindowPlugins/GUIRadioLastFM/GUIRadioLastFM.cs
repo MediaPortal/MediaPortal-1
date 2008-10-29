@@ -58,6 +58,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     protected delegate void ThreadStartBass(Song starttrack);
     protected delegate void ThreadStopPlayer();
+    protected delegate void ThreadFacadeAddItem(Song songitem);
 
     #endregion
 
@@ -227,6 +228,16 @@ namespace MediaPortal.GUI.RADIOLASTFM
         // If we leave and reenter the plugin try to set the correct duration
         GUIPropertyManager.SetProperty("#trackduration", Util.Utils.SecondsToHMSString(AudioscrobblerBase.CurrentPlayingSong.Duration));
         ThumbFileName = Util.Utils.GetCoverArtName(Thumbs.MusicArtists, AudioscrobblerBase.CurrentPlayingSong.Artist);
+      }
+
+      // repopulate the facade after maybe exiting the plugin
+      if (facadeRadioPlaylist != null)
+      {
+        facadeRadioPlaylist.Clear();
+        foreach (Song listTrack in _radioTrackList)
+        {
+          GUIGraphicsContext.form.Invoke(new ThreadFacadeAddItem(AddItemToFacadeControl), new object[] { listTrack });  
+        }
       }
 
       SetThumbnails(ThumbFileName);
@@ -1131,6 +1142,18 @@ namespace MediaPortal.GUI.RADIOLASTFM
         }
     }
 
+    private void AddItemToFacadeControl(Song aSong)
+    {
+      GUIListItem item = new GUIListItem(aSong.ToShortString());
+      item.Label = aSong.Artist + " - " + aSong.Title;
+
+      string iconThumb = InfoScrobbler.GetSongAlbumImage(aSong);
+      item.ThumbnailImage = item.IconImage = item.IconImageBig = iconThumb;
+      item.MusicTag = aSong.ToMusicTag();
+
+      facadeRadioPlaylist.Add(item);
+    }
+
     private void OnPlaylistUpdateSuccess(List<Song> aSonglist, string aPlaylistName, bool aPlayNow)
     {
       _radioTrackList.Clear();
@@ -1142,15 +1165,11 @@ namespace MediaPortal.GUI.RADIOLASTFM
       for (int i = 0; i < _radioTrackList.Count; i++)
       {
         Log.Debug("GUIRadioLastFM: Track {0} : {1}", Convert.ToString(i + 1), _radioTrackList[i].ToLastFMString());
-        if (facadeRadioPlaylist != null && aPlayNow)
+        // We refresh the playlist after the track started without StartPlaybackNow
+        // therefore the negated setting does only display the list which won't change inmediately
+        if (facadeRadioPlaylist != null && !aPlayNow)
         {
-          GUIListItem item = new GUIListItem(_radioTrackList[i].ToShortString());
-          item.Label = _radioTrackList[i].Artist + " - " + _radioTrackList[i].Title;
-
-          string iconThumb = InfoScrobbler.GetSongAlbumImage(_radioTrackList[i]);
-          item.ThumbnailImage = item.IconImage = item.IconImageBig = iconThumb;
-          item.MusicTag = _radioTrackList[i].ToMusicTag();
-          facadeRadioPlaylist.Add(item);
+          GUIGraphicsContext.form.Invoke(new ThreadFacadeAddItem(AddItemToFacadeControl), new object[] { _radioTrackList[i] });
         }
       }
 

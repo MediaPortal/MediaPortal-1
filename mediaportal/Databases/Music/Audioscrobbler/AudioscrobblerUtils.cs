@@ -510,7 +510,7 @@ namespace MediaPortal.Music.Database
     /// Static constructor
     /// </summary>
     static AudioscrobblerUtils()
-    {
+    {      
     }
 
     /// <summary>
@@ -730,8 +730,7 @@ namespace MediaPortal.Music.Database
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        _defaultUser = xmlreader.GetValueAsString("audioscrobbler", "user", "");
-        _doCoverLookups = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmthumbs", true);
+        _defaultUser = xmlreader.GetValueAsString("audioscrobbler", "user", "");        
         _decodeUtf8 = xmlreader.GetValueAsBool("audioscrobbler", "decodeutf8", false);
       }
 
@@ -1523,7 +1522,7 @@ namespace MediaPortal.Music.Database
     {
       bool success = false;
 
-      if (!_doCoverLookups)
+      if (!AudioscrobblerBase.IsFetchingCovers)
         return success;
 
       fileName = Util.Utils.MakeFileName(fileName);
