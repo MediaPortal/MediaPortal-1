@@ -2632,6 +2632,7 @@ namespace MediaPortal.Music.Database
             writer.Flush();
           }
           ResultXml = Encoding.UTF8.GetString(memoryStream.GetBuffer());
+          Log.Debug("AudioscrobblerUtils: Successfully created XMLRPC call for method {0}", aMethodType.ToString());
         }
       }
       catch (Exception ex)

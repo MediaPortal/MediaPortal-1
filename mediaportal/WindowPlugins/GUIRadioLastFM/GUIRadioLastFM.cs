@@ -217,7 +217,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
       {
         OnSkipHandler(false);
       }
-
       base.OnAction(action);
     }
 
@@ -426,6 +425,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         hasPlayableSelection = true;
       }
       GUIPropertyManager.SetProperty("#selecteditem", btnChooseArtist.Label);
+      Log.Debug("GUIRadioLastFM: Picked artist - {0}", btnChooseArtist.Label);
       return hasPlayableSelection;
     }
 
@@ -470,6 +470,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         hasPlayableSelection = true;
       }
       GUIPropertyManager.SetProperty("#selecteditem", btnChooseTag.Label);
+      Log.Debug("GUIRadioLastFM: Picked tag - {0}", btnChooseTag.Label);
       return hasPlayableSelection;
     }
 
@@ -514,6 +515,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         hasPlayableSelection = true;
       }
       GUIPropertyManager.SetProperty("#selecteditem", btnChooseFriend.Label);
+      Log.Debug("GUIRadioLastFM: Picked friend - {0}", btnChooseFriend.Label);
       return hasPlayableSelection;
     }
 
@@ -706,6 +708,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
             {
               if ((int)Action.ActionType.ACTION_SELECT_ITEM == message.Param1)
               {
+                Log.Debug("GUIRadioLastFM: OnMessage - selected playlist item {0}", _radioTrackList[facadeRadioPlaylist.SelectedListItemIndex].ToShortString());
                 PlayPlayListStreams(_radioTrackList[facadeRadioPlaylist.SelectedListItemIndex]);
               }
             }
@@ -1271,7 +1274,9 @@ namespace MediaPortal.GUI.RADIOLASTFM
     {
       if (_radioTrackList.Count < 1)
       {
+        Log.Warn("GUIRadioLastFM: OnSkipHandler - Empty playlist. Forced rebuilding now!");
         RebuildStreamList(true);
+        return;
       }
 
       if (_radioTrackList.Count > 0)
@@ -1367,12 +1372,14 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     private static void OnLoveClicked()
     {
+      Log.Info("GUIRadioLastFM: Going to love track {0}", AudioscrobblerBase.CurrentSubmitSong.ToShortString());
       AudioscrobblerBase.CurrentSubmitSong.AudioscrobblerAction = SongAction.L;
       AudioscrobblerBase.DoLoveTrackNow();
     }
 
     private void OnBanClicked()
     {
+      Log.Info("GUIRadioLastFM: Going to ban track {0}", AudioscrobblerBase.CurrentSubmitSong.ToShortString());
       AudioscrobblerBase.CurrentSubmitSong.AudioscrobblerAction = SongAction.B;
       AudioscrobblerBase.DoBanTrackNow();
       OnSkipHandler(false);
@@ -1380,6 +1387,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     private void OnSkipClicked()
     {
+      Log.Info("GUIRadioLastFM: Going to skip track {0}", AudioscrobblerBase.CurrentSubmitSong.ToShortString());
       // Only mark tracks as skipped if it has not been played long enough for a regular submit
       if (AudioscrobblerBase.CurrentSubmitSong.AudioScrobblerStatus == SongStatus.Loaded)
         AudioscrobblerBase.CurrentSubmitSong.AudioscrobblerAction = SongAction.S;
@@ -1417,6 +1425,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         btnChooseArtist.Label = _similarArtistCache[dlg.SelectedId - 1];
         LastFMStation.TuneIntoArtists(BuildListFromString(_similarArtistCache[dlg.SelectedId - 1]));
       }
+      Log.Info("GUIRadioLastFM: Picking similar artist {0}", btnChooseArtist.Label);
       // fetch 2x for stream to change
       if (LastFMStation.CurrentStreamState == StreamPlaybackState.streaming)
         RebuildStreamList(false);
@@ -1455,6 +1464,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         LastFMStation.TuneIntoTags(BuildListFromString(_trackTagsCache[dlg.SelectedId - 1]));
       }
       // fetch 2x for stream to change
+      Log.Info("GUIRadioLastFM: Picking similar tag {0}", btnChooseTag.Label);
       if (LastFMStation.CurrentStreamState == StreamPlaybackState.streaming)
         RebuildStreamList(false);
       RebuildStreamList(true);
