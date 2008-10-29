@@ -5,8 +5,8 @@ REM Check for Microsoft Antispyware .BAT bug
 if exist .\kernel32.dll exit 1
 
 REM Hack to remove dll not needed in root 
-//del *.dll
-//del *.ax
+del *.dll
+del *.ax
 
 REM Support
 xcopy /y %1\MediaPortal.Support\bin\%2\MediaPortal.Support.* .
@@ -54,14 +54,6 @@ xcopy /y %1\ProcessPlugins\MusicShareWatcher\MusicShareWatcher\bin\%2\MusicShare
 
 REM CybrDisplayPlugin
 xcopy /y %1\CybrDisplayPlugin\bin\%2\CybrDisplayPlugin.* plugins\process\
-REM Worldmap
-xcopy /y %1\GUIWorldmap\bin\%2\GUIWorldMap.*  plugins\Windows\
-xcopy /y %1\GUIWorldmap\bin\%2\System.Data.SQLite.DLL  plugins\Windows\
-xcopy /y /S %1\GUIWorldmap\skinfiles\*  skin\
-
-REM ViewModeSwitcher
-xcopy /y %1\ViewModeSwitcher\bin\%2\ViewModeSwitcher.* plugins\process\
-xcopy /y %1\ViewModeSwitcher\bin\%2\ViewModeSwitcherHelpe*.* plugins\process\
 
 REM RemotePlugins
 xcopy /y %1\RemotePlugins\bin\%2\RemotePlugins.* .
@@ -104,5 +96,3 @@ xcopy /y %1\WatchDog\bin\%2\MediaFoundation.dll .
 REM MPInstaller
 xcopy /y %1\MPInstaller\bin\%2\MPInstaller.Library.* .
 xcopy /y %1\MPInstaller\bin\%2\MPInstaller.* .
-
-del dialogs.*
