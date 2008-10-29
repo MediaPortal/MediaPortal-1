@@ -2516,9 +2516,9 @@ public class MediaPortalApp : D3DApp, IRender
   protected override void mousemove(MouseEventArgs e)
   {
     // Disable first mouse action when mouse was hidden
+    base.mousemove(e);
     if (!_showCursor)
     {
-      base.mousemove(e);
       return;
     }
     // Calculate Mouse position

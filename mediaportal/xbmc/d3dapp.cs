@@ -2257,7 +2257,6 @@ namespace MediaPortal
     /// </summary>
     protected override void OnMouseMove(MouseEventArgs e)
     {
-      _mouseTimeOutTimer = DateTime.Now;
       if ((GUIGraphicsContext.DX9Device != null) && (!GUIGraphicsContext.DX9Device.Disposed))
         // Move the D3D cursor
         GUIGraphicsContext.DX9Device.SetCursorPosition(e.X, e.Y, false);
