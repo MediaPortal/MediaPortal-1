@@ -164,7 +164,7 @@ namespace MediaPortal
 
     private void FullScreenSplashScreen_Activated(object sender, EventArgs e)
     {
-      Cursor.Position = new Point(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
+      //Cursor.Position = new Point(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
     }
 
     private void FullScreenSplashScreen_Load(object sender, EventArgs e)

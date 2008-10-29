@@ -3408,6 +3408,12 @@ public class MediaPortalApp : D3DApp, IRender
     {
       return;
     }
+#if !DEBUG
+    if (splashScreen != null)
+    {
+      splashScreen.AllowWindowOverlay((Form)form);
+    }
+#endif
     form.ShowDialog(this);
   }
 
