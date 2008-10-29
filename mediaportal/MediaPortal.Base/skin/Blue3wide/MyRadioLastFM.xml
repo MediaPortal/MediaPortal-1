@@ -19,12 +19,26 @@
             <id>0</id>
             <posX>106</posX>
             <posY>25</posY>
-            <width>160</width>
-            <height>157</height>
+            <width>155</width>
+            <height>155</height>
+            <visible>player.hasmedia</visible>
             <texture flipY="true" diffuse="Thumb_Mask.png">hover_last.fm radio.png</texture>
             <animation effect="fade" time="250">WindowOpen</animation>
             <animation effect="fade" time="250">WindowClose</animation>
         </control>
+        <control>
+            <type>image</type>
+            <description>title image</description>
+            <id>0</id>
+            <posX>643</posX>
+            <posY>165</posY>
+            <width>400</width>
+            <height>400</height>
+            <visible>!player.hasmedia</visible>
+            <texture>hover_last.fm radio.png</texture>
+            <animation effect="fade" time="250">WindowOpen</animation>
+            <animation effect="fade" time="250">WindowClose</animation>
+        </control>        
         <control>
             <type>image</type>
             <description>nowplaying background</description>
@@ -131,8 +145,8 @@
             <type>fadelabel</type>
             <description>track label</description>
             <id>0</id>
-            <posX>119</posX>
-            <posY>506</posY>
+            <posX>117</posX>
+            <posY>505</posY>
             <width>414</width>
             <height>25</height>
             <label>#Play.Current.Title</label>
@@ -163,12 +177,12 @@
             <type>fadelabel</type>
             <description>artist label</description>
             <id>0</id>
-            <posX>119</posX>
-            <posY>447</posY>
+            <posX>117</posX>
+            <posY>446</posY>
             <width>300</width>
             <height>25</height>
             <label>#Play.Current.Artist</label>
-            <font>font16</font>
+            <font>font18</font>
             <disabledcolor>ff808080</disabledcolor>
             <textcolor>black</textcolor>
             <animation effect="fade" time="250">WindowOpen</animation>
@@ -183,7 +197,7 @@
             <width>300</width>
             <height>25</height>
             <label>#Play.Current.Artist</label>
-            <font>font16</font>
+            <font>font18</font>
             <!-- <textcolor>80ffffff</textcolor> -->
             <disabledcolor>ff808080</disabledcolor>
             <animation effect="fade" time="250">WindowOpen</animation>
@@ -199,7 +213,7 @@
             <label>#Play.Current.Album</label>
             <font>font14</font>
             <align>left</align>
-            <textcolor>ffffffff</textcolor>
+            <textcolor>80ffffff</textcolor>
             <animation effect="fade" time="250">WindowOpen</animation>
             <animation effect="fade" time="250">WindowClose</animation>
         </control>
@@ -226,7 +240,7 @@
             <label>#currentplaytime</label>
             <font>font14</font>
             <align>left</align>
-            <textcolor>white</textcolor>
+            <textcolor>80ffffff</textcolor>
             <visible>player.hasmedia</visible>
             <animation effect="fade" time="250">WindowOpen</animation>
             <animation effect="fade" time="250">WindowClose</animation>
@@ -240,15 +254,29 @@
             <label>#trackduration</label>
             <font>font14</font>
             <align>right</align>
-            <textcolor>white</textcolor>
+            <textcolor>80ffffff</textcolor>
             <visible>player.hasmedia</visible>
             <animation effect="fade" time="250">WindowOpen</animation>
             <animation effect="fade" time="250">WindowClose</animation>
         </control>
         <control>
+            <type>label</type>
+            <description>similar hint</description>
+            <id>443</id>
+            <posX>116</posX>
+            <posY>567</posY>
+            <label>34039</label>
+            <font>font14</font>
+            <align>left</align>
+            <textcolor>80ffffff</textcolor>
+            <visible>control.hastext(444)</visible>
+            <animation effect="fade" time="250">WindowOpen</animation>
+            <animation effect="fade" time="250">WindowClose</animation>
+        </control>        
+        <control>
             <type>textbox</type>
             <description>Similar artists box</description>
-            <id>0</id>
+            <id>444</id>
             <posX>116</posX>
             <posY>606</posY>
             <width>373</width>
@@ -260,9 +288,23 @@
             <animation effect="fade" time="250">WindowClose</animation>
         </control>
         <control>
+            <type>label</type>
+            <description>tag hint</description>
+            <id>332</id>
+            <posX>876</posX>
+            <posY>567</posY>
+            <label>34041</label>
+            <font>font14</font>
+            <align>left</align>
+            <textcolor>80ffffff</textcolor>
+            <visible>control.hastext(333)</visible>
+            <animation effect="fade" time="250">WindowOpen</animation>
+            <animation effect="fade" time="250">WindowClose</animation>
+        </control>         
+        <control>
             <type>textbox</type>
             <description>Track tags box</description>
-            <id>0</id>
+            <id>333</id>
             <posX>876</posX>
             <posY>606</posY>
             <width>373</width>
@@ -288,8 +330,8 @@
         <font2>font11</font2>
         <font3>font11</font3>
         <!--         <textcolor>ffb2d4f5</textcolor> -->
-<!--         <textcolor2>ffb2d4f5</textcolor2>
-        <textcolor3>cfb2d4f5</textcolor3> -->
+        <textcolor2>80ffffff</textcolor2>
+        <!--<textcolor3>cfb2d4f5</textcolor3> -->
         <textXOff>44</textXOff>
         <textXOff2>75</textXOff2>
         <textXOff3>222</textXOff3>

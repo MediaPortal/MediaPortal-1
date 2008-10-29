@@ -395,7 +395,7 @@ namespace MediaPortal.GUI.Library
         // Have a boolean expression
         // Check if this was added before
 
-        for (int it = 0 ; it < m_CombinedValues.Count ; it++)
+        for (int it = 0; it < m_CombinedValues.Count; it++)
         {
           if (String.Compare(strCondition, m_CombinedValues[it].m_info, true) == 0)
             return m_CombinedValues[it].m_id;
@@ -416,7 +416,7 @@ namespace MediaPortal.GUI.Library
       strTest = strTest.TrimStart(new char[] { ' ' });
       strTest = strTest.TrimEnd(new char[] { ' ' });
       if (strTest.Length == 0) return 0;
-      
+
       bool bNegate = strTest[0] == '!';
       int ret = 0;
       string strCategory = "";
@@ -832,7 +832,7 @@ namespace MediaPortal.GUI.Library
     static int AddMultiInfo(GUIInfo info)
     {
       // check to see if we have this info already
-      for (int i = 0 ; i < m_multiInfo.Count ; i++)
+      for (int i = 0; i < m_multiInfo.Count; i++)
         if (m_multiInfo[i] == info)
           return (int)i + MULTI_INFO_START;
       // return the new offset
@@ -843,7 +843,7 @@ namespace MediaPortal.GUI.Library
     static int ConditionalStringParameter(string parameter)
     {
       // check to see if we have this parameter already
-      for (int i = 0 ; i < m_stringParameters.Count ; i++)
+      for (int i = 0; i < m_stringParameters.Count; i++)
         if (parameter == m_stringParameters[i])
           return (int)i;
       // return the new offset
@@ -869,7 +869,7 @@ namespace MediaPortal.GUI.Library
 
       string operand = "";
 
-      for (int i = 0 ; i < expression.Length ; i++)
+      for (int i = 0; i < expression.Length; i++)
       {
         if (GetOperator(expression[i]) != 0)
         {
@@ -960,7 +960,7 @@ namespace MediaPortal.GUI.Library
       // stack to save our bool state as we go
       Stack<bool> save = new Stack<bool>();
 
-      for (int i = 0 ; i < expression.m_postfix.Count ; ++i)
+      for (int i = 0; i < expression.m_postfix.Count; ++i)
       {
         int expr = expression.m_postfix[i];
         if (expr == -OPERATOR_NOT)
@@ -1341,10 +1341,10 @@ namespace MediaPortal.GUI.Library
 
           break;
         case CONTROL_GROUP_HAS_FOCUS:
-        //  GUIWindow win = GUIWindowManager.GetWindow(dwContextWindow);
-        //  if (win == null) win = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-        //  if (win != null)
-        //    bReturn = win.ControlGroupHasFocus(info.m_data1, info.m_data2);
+          //  GUIWindow win = GUIWindowManager.GetWindow(dwContextWindow);
+          //  if (win == null) win = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
+          //  if (win != null)
+          //    bReturn = win.ControlGroupHasFocus(info.m_data1, info.m_data2);
           bReturn = false;
 
           break;
@@ -1365,6 +1365,18 @@ namespace MediaPortal.GUI.Library
               GUIFadeLabel control2 = pWindow.GetControl(info.m_data1) as GUIFadeLabel;
               if (control2 != null)
                 bReturn = control2.HasText;
+              else
+              {
+                GUITextControl control3 = pWindow.GetControl(info.m_data1) as GUITextControl;
+                if (control3 != null)
+                  bReturn = control3.HasText;
+                else
+                {
+                  GUITextScrollUpControl control4 = pWindow.GetControl(info.m_data1) as GUITextScrollUpControl;
+                  if (control4 != null)
+                    bReturn = control4.SubItemCount > 0;
+                }
+              }
             }
           }
           break;
