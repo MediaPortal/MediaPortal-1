@@ -131,7 +131,14 @@ namespace TvLibrary.Implementations.DVB
     {
       if (_mdplugs != null) 
       {
-        _mdplugs.FreeChannel(_mapSubChannels[id].CurrentChannel.Name);
+        if (_mapSubChannels.ContainsKey(id))
+        {
+          IChannel currentCh = _mapSubChannels[id].CurrentChannel;
+          if (currentCh != null)
+          {
+            _mdplugs.FreeChannel(currentCh.Name);
+          }
+        }
       }
       base.FreeSubChannel(id);
     }
