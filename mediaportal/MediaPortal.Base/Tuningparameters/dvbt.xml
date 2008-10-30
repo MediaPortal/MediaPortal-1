@@ -6,6 +6,7 @@
 <!--   - Croatia   -->
 <!--   - Czech Republic   -->
 <!--   - Danmmark   -->
+<!--   - Estonia   -->
 <!--   - Europe   -->
 <!--   - Finland   -->
 <!--   - France   -->
@@ -387,6 +388,11 @@
     <carrier frequency="778000" bandwidth="8"></carrier>
     <carrier frequency="826000" bandwidth="8"></carrier>
     <carrier frequency="834000" bandwidth="8"></carrier>
+  </country>
+  <country name="Estonia - Tallinn" offset="125">
+    <carrier frequency="666000" bandwidth="8" />
+    <carrier frequency="818000" bandwidth="8" />
+    <carrier frequency="778000" bandwidth="8" />
   </country>
   <country name="Europe - All countries" offset="167">
     <carrier frequency="84500"></carrier>
