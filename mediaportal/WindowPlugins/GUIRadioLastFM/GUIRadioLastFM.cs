@@ -709,7 +709,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
               if ((int)Action.ActionType.ACTION_SELECT_ITEM == message.Param1)
               {
                 Log.Debug("GUIRadioLastFM: OnMessage - selected playlist item {0}", _radioTrackList[facadeRadioPlaylist.SelectedListItemIndex].ToShortString());
-                PlayPlayListStreams(_radioTrackList[facadeRadioPlaylist.SelectedListItemIndex]);
+                GUIGraphicsContext.form.Invoke(new ThreadStartBass(PlayPlayListStreams), new object[] { _radioTrackList[facadeRadioPlaylist.SelectedListItemIndex] });                
               }
             }
           }
@@ -1138,7 +1138,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         _radioTrackList.Remove(AudioscrobblerBase.CurrentPlayingSong);
         Log.Debug("GUIRadioLastFM: Playlist fetching failed - removing current track");
         if (aPlayNow)
-          PlayPlayListStreams(_radioTrackList[0]);
+          GUIGraphicsContext.form.Invoke(new ThreadStartBass(PlayPlayListStreams), new object[] { _radioTrackList[0] });
       }
       else
         if (aPlayNow)
@@ -1282,7 +1282,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       if (_radioTrackList.Count > 0)
       {
         if (_configDirectSkip || directSkip)
-          PlayPlayListStreams(_radioTrackList[0]);
+          GUIGraphicsContext.form.Invoke(new ThreadStartBass(PlayPlayListStreams), new object[] { _radioTrackList[0] });
         else
         {
           GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
@@ -1297,7 +1297,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
           if (dlg.SelectedId == -1)
             return;
 
-          PlayPlayListStreams(_radioTrackList[dlg.SelectedId - 1]);
+          GUIGraphicsContext.form.Invoke(new ThreadStartBass(PlayPlayListStreams), new object[] { _radioTrackList[dlg.SelectedId - 1] });
         }
       }
       else
@@ -1329,12 +1329,19 @@ namespace MediaPortal.GUI.RADIOLASTFM
         return;
       try
       {
-        Log.Info("GUIRadioLastFM: PlayBackEnded for this selection - trying restart of same stream...");
+        if (_radioTrackList.Count > 0)
+        {
+          GUIGraphicsContext.form.Invoke(new ThreadStartBass(PlayPlayListStreams), new object[] { _radioTrackList[0] });
+        }
+        else
+        {
+          Log.Info("GUIRadioLastFM: PlayBackEnded for this selection - trying restart of same stream...");
 
-        g_Player.Stop();
-        OnPlaybackStopped();
+          g_Player.Stop();
+          OnPlaybackStopped();
 
-        RebuildStreamList(true);
+          RebuildStreamList(true);
+        }
       }
       catch (Exception ex)
       {

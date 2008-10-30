@@ -588,9 +588,9 @@ namespace MediaPortal.GUI.Music
     protected override void OnPageLoad()
     {
       // watch if we're still playing a last.fm radio stream
-      if (g_Player.Playing)
-        if (Util.Utils.IsLastFMStream(g_Player.CurrentFile))
-          g_Player.Stop();
+      //if (g_Player.Playing)
+      //  if (Util.Utils.IsLastFMStream(g_Player.CurrentFile))
+      //    g_Player.Stop();
 
       if (m_database == null)
         m_database = MusicDatabase.Instance;

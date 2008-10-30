@@ -324,6 +324,7 @@
         <height>444</height>
         <width>414</width>
         <onleft>10</onleft>
+        <onright>123</onright>
         <!--         <onup>2</onup>
         <ondown>2</ondown> -->
         <font>font11</font>
