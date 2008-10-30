@@ -55,10 +55,10 @@
         <label>335</label>
         <posX>888</posX>
         <posY>357</posY>
-        <textXOff>35</textXOff>
+        <textXOff>50</textXOff>
         <textYOff>2</textYOff>
         <width>152</width>
-        <height>31</height>
+        <height>41</height>
         <textureFocus>button_small_settings_focus.png</textureFocus>
         <textureNoFocus>button_small_settings_nofocus.png</textureNoFocus>
         <onleft>8</onleft>
@@ -81,10 +81,10 @@
         <label>424</label>
         <posX>888</posX>
         <posY>400</posY>
-        <textXOff>35</textXOff>
+        <textXOff>50</textXOff>
         <textYOff>2</textYOff>
         <width>152</width>
-        <height>31</height>
+        <height>41</height>
         <textureFocus>button_small_settings_focus.png</textureFocus>
         <textureNoFocus>button_small_settings_nofocus.png</textureNoFocus>
         <onup>8</onup>
@@ -107,10 +107,10 @@
         <label>424</label>
         <posX>888</posX>
         <posY>442</posY>
-        <textXOff>35</textXOff>
+        <textXOff>50</textXOff>
         <textYOff>2</textYOff>
         <width>152</width>
-        <height>31</height>
+        <height>41</height>
         <textureFocus>button_small_settings_focus.png</textureFocus>
         <textureNoFocus>button_small_settings_nofocus.png</textureNoFocus>
         <onleft>10</onleft>

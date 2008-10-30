@@ -34,7 +34,6 @@
             <description>Playing_back</description>
             <id>0</id>
             <texture>Playing_front1.png</texture>
-            <animation effect="fade" time="250">WindowOpen</animation>      
         </control>
         <control>
             <type>image</type>
@@ -90,7 +89,7 @@
             <keepaspectratio>yes</keepaspectratio>
             <centered>yes</centered>
             <zoom>yes</zoom>
-            <animation effect="fade" time="250">WindowOpen</animation>      
+            <animation effect="fade" time="250">WindowOpen</animation>
         </control>
         <control>
             <type>image</type>
@@ -113,9 +112,9 @@
             <height>25</height>
             <label>#Play.Current.Title</label>
             <font>font18</font>
-            <textcolor>black</textcolor> 
+            <textcolor>black</textcolor>
             <animation effect="fade" time="150">WindowOpen</animation>
-        </control>    
+        </control>
         <control>
             <type>fadelabel</type>
             <description>Title label</description>
@@ -140,7 +139,7 @@
             <font>font16</font>
             <textcolor>black</textcolor>
             <animation effect="fade" time="150">WindowOpen</animation>
-        </control>    
+        </control>
         <control>
             <type>fadelabel</type>
             <description>Artist label</description>
@@ -165,7 +164,7 @@
             <font>font16</font>
             <textcolor>black</textcolor>
             <animation effect="fade" time="250">WindowOpen</animation>
-        </control>    
+        </control>
         <control>
             <type>fadelabel</type>
             <description>track label</description>

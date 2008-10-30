@@ -559,16 +559,16 @@
     <id>6</id>
     <posX>97</posX>
     <posY>287</posY>
-    <width>260</width>
-    <height>40</height>
+    <width>252</width>
+    <height>45</height>
     <label>457</label>
     <textXOff>26</textXOff>
-    <textYOff>6</textYOff>
+    <textYOff>4</textYOff>
     <textXOff2>17</textXOff2>
-    <textYOff2>6</textYOff2>
-    <textureFocus>menu_list_focus.png</textureFocus>
-    <textureNoFocus>menu_list_nofocus.png</textureNoFocus>
-    <texturebg>menu_list_nofocus.png</texturebg>
+    <textYOff2>4</textYOff2>
+    <textureFocus>menu_list_focus1.png</textureFocus>
+    <textureNoFocus>menu_list_nofocus1.png</textureNoFocus>
+    <texturebg>menu_list_nofocus1.png</texturebg>
     <textureLeft>arrow_round_left_nofocus.png</textureLeft>
     <textureLeftFocus>arrow_round_left_focus.png</textureLeftFocus>
     <textureRight>arrow_round_right_nofocus.png</textureRight>
