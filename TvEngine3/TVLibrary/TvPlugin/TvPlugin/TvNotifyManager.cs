@@ -94,6 +94,7 @@ namespace TvPlugin
 
     public static void ForceUpdate()
     {
+      if (!_enableRecNotification) return;
       AddActiveRecordings();
       CheckForStoppedRecordings();
     }
