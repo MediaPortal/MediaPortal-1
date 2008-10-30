@@ -60,8 +60,8 @@ namespace TvPlugin
     //private IList _notifiedRecordingsStarted;
     // private IList _notifiedRecordingsFailed;
 
-    private Dictionary<int, Recording> _actualRecordings;
-    private Dictionary<int, Schedule> _notifiedRecordingsStarted;
+    private static Dictionary<int, Recording> _actualRecordings;
+    private static Dictionary<int, Schedule> _notifiedRecordingsStarted;
 
     private User _dummyuser;
 
@@ -85,8 +85,17 @@ namespace TvPlugin
       _timer.Interval = 15000;
       _timer.Enabled = true;
       _timer.Tick += new EventHandler(_timer_Tick);
+    }
 
+    public static bool RecordingNotificationEnabled
+    {
+      get { return _enableRecNotification; }
+    }
 
+    public static void ForceUpdate()
+    {
+      AddActiveRecordings();
+      CheckForStoppedRecordings();
     }
 
     public static void OnNotifiesChanged()
@@ -95,7 +104,7 @@ namespace TvPlugin
       _notifiesListChanged = true;
     }
 
-    private Recording CheckForStoppedRecordings()
+    private static Recording CheckForStoppedRecordings()
     {
       Recording stoppedRec = null;
       IList recordings = TvDatabase.Recording.ListAllActive();
@@ -129,7 +138,7 @@ namespace TvPlugin
       return stoppedRec;
     }
 
-    private Recording AddActiveRecordings()
+    private static Recording AddActiveRecordings()
     {
       Recording newRecAdded = null;
       IList recordings = TvDatabase.Recording.ListAllActive();
@@ -151,7 +160,7 @@ namespace TvPlugin
       return newRecAdded;
     }
 
-    private void UpdateActiveRecordings()
+    private static void UpdateActiveRecordings()
     {
       _actualRecordings = new Dictionary<int, Recording>();
 
@@ -190,7 +199,7 @@ namespace TvPlugin
       }
     }
 
-    private void Notify(string heading, string mainMsg, string channelName)
+    private bool Notify(string heading, string mainMsg, string channelName)
     {
       GUIDialogNotify pDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
       if (pDlgNotify != null)
@@ -207,9 +216,22 @@ namespace TvPlugin
         {
           pDlgNotify.SetText(mainMsg);
         }
-        pDlgNotify.TimeOut = 10;
-        pDlgNotify.DoModal(GUIWindowManager.ActiveWindow);
+        pDlgNotify.TimeOut = 5;
+
+        
+        try
+        {
+          pDlgNotify.DoModal(GUIWindowManager.ActiveWindow);          
+        }
+        catch
+        {
+          //ignore
+          // ex- the notify dialogue will cause an error if rendered while mini TV epg is active.
+          return false;                    
+        }
+        
       }
+      return true;
     }
 
     void _timer_Tick(object sender, EventArgs e)
@@ -293,7 +315,10 @@ namespace TvPlugin
                   if (TVHome.Navigator.Channel.IdChannel != rec.IdChannel && (int)TVHome.TvServer.GetChannelState(rec.IdChannel, _dummyuser) == 0) //not tunnable
                   {
                     Log.Debug("TVPlugIn: No free card available for {0}. Notifying user.", rec.ProgramName);
-                    Notify(GUILocalizeStrings.Get(1004), String.Format("{0}. {1}", rec.ProgramName, GUILocalizeStrings.Get(200055)), TVHome.Navigator.CurrentChannel);
+                    if (Notify(GUILocalizeStrings.Get(1004), String.Format("{0}. {1}", rec.ProgramName, GUILocalizeStrings.Get(200055)), TVHome.Navigator.CurrentChannel))
+                    {
+                      _notifiedRecordings.Add(rec);
+                    }
                     return;
                   }
                 }
@@ -337,7 +362,10 @@ namespace TvPlugin
                 //text = GUILocalizeStrings.Get(736);//no tvguide data available
             }
 
-            Notify(GUILocalizeStrings.Get(1446), text, newRecording.ReferencedChannel().DisplayName);
+            if (!Notify(GUILocalizeStrings.Get(1446), text, newRecording.ReferencedChannel().DisplayName))
+            {
+              _actualRecordings.Remove(newRecording.IdRecording);
+            }
             return;
           }         
           //check if rec. has ended.                
@@ -370,7 +398,10 @@ namespace TvPlugin
               //text = GUILocalizeStrings.Get(736);//no tvguide data available
             }
             //Recording stopped:                    
-            Notify(GUILocalizeStrings.Get(1447), text, stoppedRec.ReferencedChannel().DisplayName);
+            if (!Notify(GUILocalizeStrings.Get(1447), text, stoppedRec.ReferencedChannel().DisplayName))
+            {
+              _actualRecordings.Add(stoppedRec.IdRecording, stoppedRec);
+            }
             return; //we do not want to show any more notifications.
           }
           

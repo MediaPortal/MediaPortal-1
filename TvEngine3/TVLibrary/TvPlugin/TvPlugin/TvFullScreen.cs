@@ -918,6 +918,7 @@ namespace TvPlugin
           if (!_dlgYesNo.IsConfirmed) return true;
 
           server.StopRecordingSchedule(card.RecordingScheduleId);
+          
           GUIDialogNotify dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
           if (dlgNotify == null) return true;
           string logo = Utils.GetCoverArt(Thumbs.TVChannel, channel.DisplayName);
@@ -940,6 +941,7 @@ namespace TvPlugin
 
           _notifyDialogVisible = true;
           dlgNotify.DoModal(GUIWindowManager.ActiveWindow);
+          TvNotifyManager.ForceUpdate();
           _notifyDialogVisible = false;
           return true;
         }
@@ -995,7 +997,7 @@ namespace TvPlugin
             TVHome.ViewChannel(ch);
             _isStartingTSForRecording = false;
           }
-
+          
           GUIDialogNotify dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
           if (dlgNotify == null) return true;
           string logo = Utils.GetCoverArt(Thumbs.TVChannel, channel.DisplayName);
@@ -1017,6 +1019,10 @@ namespace TvPlugin
           dlgNotify.TimeOut = 5;
           _notifyDialogVisible = true;
           dlgNotify.DoModal(GUIWindowManager.ActiveWindow);
+
+          TvNotifyManager.ForceUpdate();
+          
+
           _notifyDialogVisible = false;
         }
         return true;
