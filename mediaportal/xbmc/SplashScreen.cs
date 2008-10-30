@@ -49,7 +49,7 @@ namespace MediaPortal
     private bool AllowWindowOverlayRequested = false;
     private SplashForm frm;
     private FullScreenSplashScreen frmFull;
-    private Form MediaPortalAppForm = null;
+    private Form OutDatedSkinForm = null;
     private string info;
 
     public SplashScreen()
@@ -78,10 +78,10 @@ namespace MediaPortal
     /// <summary>
     /// Allows other windows to overlay the splashscreen
     /// </summary>
-    public void AllowWindowOverlay(Form MPAppForm)
+    public void AllowWindowOverlay(Form FrmOutdatedSkin)
     {
       AllowWindowOverlayRequested = true;
-      MediaPortalAppForm = MPAppForm;
+      OutDatedSkinForm = FrmOutdatedSkin;
     }
 
     /// <summary>
@@ -182,23 +182,32 @@ namespace MediaPortal
       string oldInfo = null;
       bool delayedStopAllowed = false;
       int stopRequestTime = 0; 
-      while (!delayedStopAllowed && (frmFull.Focused || MediaPortalAppForm != null)) //run until stop of splashscreen is requested
+      while (!delayedStopAllowed && (frmFull.Focused || OutDatedSkinForm != null)) //run until stop of splashscreen is requested
       {
         if (stopRequested && stopRequestTime == 0) // store the current time when stop of the splashscreen is requested
         {
           stopRequestTime = System.Environment.TickCount;
           frmFull.TopMost = false; // allow the splashscreen to be overlayed by other windows (like the mp main screen)
         }
-        if (AllowWindowOverlayRequested == true) // Allow other Windows to Overlay the splashscreen
+        if (AllowWindowOverlayRequested == true && OutDatedSkinForm != null) // Allow other Windows to Overlay the splashscreen
         {
-          frmFull.TopMost = false;
-          if (MediaPortalAppForm != null)
+          if (OutDatedSkinForm.Visible)  // prepare everything to let the Outdated skin message appear
           {
-            MediaPortalAppForm.TopMost = true;
-            MediaPortalAppForm.BringToFront();
+            if (frmFull.Focused)
+            {
+              frmFull.TopMost = false;
+              OutDatedSkinForm.TopMost = true;
+              OutDatedSkinForm.BringToFront();
+              Cursor.Show();
+            }
           }
-          Cursor.Show();
-          AllowWindowOverlayRequested = false;
+          else
+          {
+            AllowWindowOverlayRequested = false;
+            frmFull.TopMost = true;
+            frmFull.BringToFront();
+            Cursor.Hide();
+          }
         }
         if ((stopRequestTime != 0) && ((System.Environment.TickCount - 5000) > stopRequestTime)) delayedStopAllowed = true; // if stop is requested for more than 5sec ... leave the loop
 

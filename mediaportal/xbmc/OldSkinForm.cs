@@ -37,14 +37,12 @@ namespace MediaPortal
 	{
 		private MediaPortal.UserInterface.Controls.MPLabel label1;
 		private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxIgnoreMsg;
-		private MediaPortal.UserInterface.Controls.MPButton button1;
-
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+    private MediaPortal.UserInterface.Controls.MPButton bClose;
+    private System.ComponentModel.IContainer components;
+    private System.Windows.Forms.Timer CloseTimer;
 
     private int _nagCount = 0;
+    private int _CloseInSeconds = 15;
 
 		public OldSkinForm()
 		{
@@ -80,9 +78,11 @@ namespace MediaPortal
 		/// </summary>
 		private void InitializeComponent()
 		{
+      this.components = new System.ComponentModel.Container();
       this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.checkBoxIgnoreMsg = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.button1 = new MediaPortal.UserInterface.Controls.MPButton();
+      this.bClose = new MediaPortal.UserInterface.Controls.MPButton();
+      this.CloseTimer = new System.Windows.Forms.Timer(this.components);
       this.SuspendLayout();
       // 
       // label1
@@ -105,29 +105,35 @@ namespace MediaPortal
       this.checkBoxIgnoreMsg.TabIndex = 0;
       this.checkBoxIgnoreMsg.Text = "Do not show this message again";
       this.checkBoxIgnoreMsg.UseVisualStyleBackColor = true;
-      this.checkBoxIgnoreMsg.Visible = false;
       // 
-      // button1
+      // bClose
       // 
-      this.button1.Location = new System.Drawing.Point(206, 128);
-      this.button1.Name = "button1";
-      this.button1.Size = new System.Drawing.Size(103, 23);
-      this.button1.TabIndex = 1;
-      this.button1.Text = "Ignore and try..";
-      this.button1.UseVisualStyleBackColor = true;
-      this.button1.Click += new System.EventHandler(this.button1_Click);
+      this.bClose.Location = new System.Drawing.Point(206, 128);
+      this.bClose.Name = "bClose";
+      this.bClose.Size = new System.Drawing.Size(114, 23);
+      this.bClose.TabIndex = 1;
+      this.bClose.Text = "Ignore and try (15) ...";
+      this.bClose.UseVisualStyleBackColor = true;
+      this.bClose.Click += new System.EventHandler(this.bClose_Click);
+      // 
+      // CloseTimer
+      // 
+      this.CloseTimer.Enabled = true;
+      this.CloseTimer.Interval = 1000;
+      this.CloseTimer.Tick += new System.EventHandler(this.CloseTimer_Tick);
       // 
       // OldSkinForm
       // 
-      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.BackColor = System.Drawing.Color.OrangeRed;
       this.ClientSize = new System.Drawing.Size(345, 163);
-      this.Controls.Add(this.button1);
+      this.Controls.Add(this.bClose);
       this.Controls.Add(this.checkBoxIgnoreMsg);
       this.Controls.Add(this.label1);
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+      this.Location = new System.Drawing.Point(100, 70);
       this.Name = "OldSkinForm";
-      this.StartPosition = System.Windows.Forms.FormStartPosition.WindowsDefaultLocation;
+      this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
       this.Text = "Warning! Outdated skin!";
       this.ResumeLayout(false);
       this.PerformLayout();
@@ -135,7 +141,7 @@ namespace MediaPortal
 		}
 		#endregion
 
-		private void button1_Click(object sender, System.EventArgs e)
+		private void bClose_Click(object sender, System.EventArgs e)
 		{
       _nagCount++;
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
@@ -180,5 +186,19 @@ namespace MediaPortal
 			if (versionBlue3Skin==versionSkin) return true;
 			return false;
 		}
+
+    private void CloseTimer_Tick(object sender, System.EventArgs e)
+    {
+      _CloseInSeconds--;
+      if (_CloseInSeconds > 0)
+      {
+        bClose.Text = string.Format("Ignore and try ({0}) ...", _CloseInSeconds);
+      }
+      else
+      {
+        CloseTimer.Enabled = false;
+        bClose_Click(sender, e);
+      }
+    }
 	}
 }
