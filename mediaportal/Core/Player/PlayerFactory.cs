@@ -160,7 +160,18 @@ namespace MediaPortal.Player
 
     public IPlayer Create(string fileName, g_Player.MediaType type)
     {
-      return Create(fileName, type);
+      try
+      {
+        g_Player.MediaType? paramType = type as g_Player.MediaType?;
+        if (paramType.HasValue)
+          return Create(fileName, type);
+
+      }
+      catch (Exception ex)
+      {
+        Log.Error("PlayerFactory: Error creating player instance - {0}", ex.Message);
+      }
+      return (Create(fileName, null));
     }
 
     /// <summary>
@@ -171,153 +182,155 @@ namespace MediaPortal.Player
     /// <returns></returns>
     private IPlayer Create(string fileName, g_Player.MediaType? mtype)
     {
-      // Get settings only once
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      try
       {
-        string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "Internal dshow player");
-        int streamPlayer = xmlreader.GetValueAsInt("audioscrobbler", "streamplayertype", 0);
-        bool Vmr9Enabled = xmlreader.GetValueAsBool("musicvideo", "useVMR9", true);
-
-        // Free BASS to avoid problems with Digital Audio, when watching movies
-        if (BassMusicPlayer.IsDefaultMusicPlayer)
+        // Get settings only once
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
-          if (!Util.Utils.IsAudio(fileName))
-            BassMusicPlayer.Player.FreeBass();
-        }
+          string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "Internal dshow player");
+          int streamPlayer = xmlreader.GetValueAsInt("audioscrobbler", "streamplayertype", 0);
+          bool Vmr9Enabled = xmlreader.GetValueAsBool("musicvideo", "useVMR9", true);
 
-        IPlayer newPlayer = null;
-        if (fileName.ToLower().IndexOf("rtsp:") >= 0)
-        {
-          if (mtype.HasValue)
-            return new TSReaderPlayer(mtype.Value);
-          else
-            return new TSReaderPlayer();
-        }
-
-        if (fileName.StartsWith("mms:") && fileName.EndsWith(".ymvp"))
-        {
-          if (Vmr9Enabled)
-            return new VideoPlayerVMR9();
-          else
-            return new AudioPlayerWMP9();
-        }
-
-        string extension = Path.GetExtension(fileName).ToLower();
-        if (extension != ".tv" && extension != ".sbe" && extension != ".dvr-ms" && fileName.ToLower().IndexOf(".tsbuffer") < 0 && fileName.ToLower().IndexOf("radio.tsbuffer") < 0)
-        {
-          newPlayer = GetExternalPlayer(fileName);
-          if (newPlayer != null)
+          // Free BASS to avoid problems with Digital Audio, when watching movies
+          if (BassMusicPlayer.IsDefaultMusicPlayer)
           {
-            Log.Info("PlayerFactory: Disabling DX9 exclusive mode");
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
-            GUIWindowManager.SendMessage(msg);
-            return newPlayer;
+            if (!Util.Utils.IsAudio(fileName))
+              BassMusicPlayer.Player.FreeBass();
           }
-        }
 
-        if (Util.Utils.IsVideo(fileName))
-        {
-          if (extension == ".tv" || extension == ".sbe" || extension == ".dvr-ms")
-          {
-            //if (extension == ".sbe" || extension == ".dvr-ms")
-            //{
-            //  //GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TIMESHIFT, 0, 0, 0, 0, 0, null);
-            //  //GUIWindowManager.SendMessage(msg);
-            //}
-            newPlayer = new Player.StreamBufferPlayer9();
-            return newPlayer;
-          }
-        }
-
-        // Use TsReader for timeshift buffer file for TvEngine3 & .ts recordings etc.
-        if (extension == ".tsbuffer" || extension == ".ts")
-        {
-          if (fileName.ToLower().IndexOf("radio.tsbuffer") >= 0)
+          if (fileName.ToLower().IndexOf("rtsp:") >= 0)
           {
             if (mtype.HasValue)
-              return new BaseTSReaderPlayer(mtype.Value);
+              return new TSReaderPlayer(mtype.Value);
             else
-              return new Player.BaseTSReaderPlayer();
-          }
-          if (mtype.HasValue)
-            return new Player.TSReaderPlayer(mtype.Value);
-          else
-            return new Player.TSReaderPlayer();
-        }
-
-        if (!Util.Utils.IsAVStream(fileName) && Util.Utils.IsVideo(fileName))
-        {
-          if (mtype.HasValue)
-            return new Player.VideoPlayerVMR9(mtype.Value);
-          else
-            newPlayer = new Player.VideoPlayerVMR9();
-          return newPlayer;
-        }
-
-        if (extension == ".radio")
-        {
-          newPlayer = new Player.RadioTuner();
-          return newPlayer;
-        }
-
-        if (Util.Utils.IsCDDA(fileName))
-        {
-          // Check if, we should use BASS for CD Playback
-          if (String.Compare(strAudioPlayer, "BASS engine", true) == 0)
-          {
-            if (BassMusicPlayer.BassFreed)
-              BassMusicPlayer.Player.InitBass();
-
-            return BassMusicPlayer.Player;
+              return new TSReaderPlayer();
           }
 
-          newPlayer = new Player.AudioPlayerWMP9();
-          return newPlayer;
-        }
-
-        if (Util.Utils.IsAudio(fileName))
-        {
-          // choose player for Internet radio streams 
-          if (Util.Utils.IsLastFMStream(fileName))
+          if (fileName.StartsWith("mms:") && fileName.EndsWith(".ymvp"))
           {
-            switch (streamPlayer)
+            if (Vmr9Enabled)
+              return new VideoPlayerVMR9();
+            else
+              return new AudioPlayerWMP9();
+          }
+
+          string extension = Path.GetExtension(fileName).ToLower();
+          if (extension != ".tv" && extension != ".sbe" && extension != ".dvr-ms" && fileName.ToLower().IndexOf(".tsbuffer") < 0 && fileName.ToLower().IndexOf("radio.tsbuffer") < 0)
+          {
+            IPlayer newPlayer = GetExternalPlayer(fileName);
+            if (newPlayer != null)
             {
-              case 0:
-                if (BassMusicPlayer.BassFreed)
-                  BassMusicPlayer.Player.InitBass();
-                return BassMusicPlayer.Player;
-              case 1:
-                return new Player.AudioPlayerWMP9();
-              case 2:
-                return new Player.AudioPlayerVMR7();
-              default:
-                if (BassMusicPlayer.BassFreed)
-                  BassMusicPlayer.Player.InitBass();
-                return BassMusicPlayer.Player;
+              Log.Info("PlayerFactory: Disabling DX9 exclusive mode");
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
+              GUIWindowManager.SendMessage(msg);
+              return newPlayer;
             }
           }
 
-          if (String.Compare(strAudioPlayer, "BASS engine", true) == 0)
+          if (Util.Utils.IsVideo(fileName))
           {
-            if (BassMusicPlayer.BassFreed)
-              BassMusicPlayer.Player.InitBass();
-
-            return BassMusicPlayer.Player;
+            if (extension == ".tv" || extension == ".sbe" || extension == ".dvr-ms")
+            {
+              //if (extension == ".sbe" || extension == ".dvr-ms")
+              //{
+              //  //GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TIMESHIFT, 0, 0, 0, 0, 0, null);
+              //  //GUIWindowManager.SendMessage(msg);
+              //}
+              return new Player.StreamBufferPlayer9();
+            }
           }
 
-          else if (String.Compare(strAudioPlayer, "Windows Media Player 9", true) == 0)
+          // Use TsReader for timeshift buffer file for TvEngine3 & .ts recordings etc.
+          if (extension == ".tsbuffer" || extension == ".ts")
           {
-            newPlayer = new Player.AudioPlayerWMP9();
-            return newPlayer;
+            if (fileName.ToLower().IndexOf("radio.tsbuffer") >= 0)
+            {
+              if (mtype.HasValue)
+                return new BaseTSReaderPlayer(mtype.Value);
+              else
+                return new Player.BaseTSReaderPlayer();
+            }
+            if (mtype.HasValue)
+              return new Player.TSReaderPlayer(mtype.Value);
+            else
+              return new Player.TSReaderPlayer();
           }
-          newPlayer = new Player.AudioPlayerVMR7();
-          return newPlayer;
+
+          if (!Util.Utils.IsAVStream(fileName) && Util.Utils.IsVideo(fileName))
+          {
+            if (mtype.HasValue)
+            {
+              return new Player.VideoPlayerVMR9(mtype.Value);
+            }
+            else
+              return new Player.VideoPlayerVMR9();
+          }
+
+          if (extension == ".radio")
+          {
+            return new Player.RadioTuner();
+          }
+
+          if (Util.Utils.IsCDDA(fileName))
+          {
+            // Check if, we should use BASS for CD Playback
+            if (String.Compare(strAudioPlayer, "BASS engine", true) == 0)
+            {
+              if (BassMusicPlayer.BassFreed)
+                BassMusicPlayer.Player.InitBass();
+
+              return BassMusicPlayer.Player;
+            }
+            else
+              return new Player.AudioPlayerWMP9();
+          }
+
+          if (Util.Utils.IsAudio(fileName))
+          {
+            // choose player for Internet radio streams 
+            if (Util.Utils.IsLastFMStream(fileName))
+            {
+              switch (streamPlayer)
+              {
+                case 0:
+                  if (BassMusicPlayer.BassFreed)
+                    BassMusicPlayer.Player.InitBass();
+                  return BassMusicPlayer.Player;
+                case 1:
+                  return new Player.AudioPlayerWMP9();
+                case 2:
+                  return new Player.AudioPlayerVMR7();
+                default:
+                  if (BassMusicPlayer.BassFreed)
+                    BassMusicPlayer.Player.InitBass();
+                  return BassMusicPlayer.Player;
+              }
+            }
+
+            if (String.Compare(strAudioPlayer, "BASS engine", true) == 0)
+            {
+              if (BassMusicPlayer.BassFreed)
+                BassMusicPlayer.Player.InitBass();
+
+              return BassMusicPlayer.Player;
+            }
+            else if (String.Compare(strAudioPlayer, "Windows Media Player 9", true) == 0)
+            {
+              return new Player.AudioPlayerWMP9();
+            }
+            else
+              return new Player.AudioPlayerVMR7();
+          }
+
+          // Use WMP Player as Default
+          return new Player.AudioPlayerWMP9();
         }
-
-        // Use WMP Player as Default
-        newPlayer = new Player.AudioPlayerWMP9();
-        return newPlayer;
+      }
+      finally
+      {
+        Log.Debug("PlayerFactory: Successfully created player instance for file - {0}", fileName);
       }
     }
+
   }
 }
