@@ -331,7 +331,7 @@ int MultiFileReader::RefreshTSBufferFile()
     Loop-- ;
   } while ( Error && Loop ) ; // If Error is set, try again...until Loop reaches 0.
  
-  if (Loop < 9)
+  if (Loop < 8)
   {
     Log("MultiFileReader has waited %d times for TSbuffer integrity.", 10-Loop) ;
 

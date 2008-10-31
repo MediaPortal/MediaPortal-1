@@ -87,7 +87,7 @@ void CTsHeader::Decode(byte *data)
 	PayloadUnitStart=(data[1] & 0x40)>0?true:false;
 	TransportPriority=(data[1] & 0x20)>0?true:false;
 	Pid=((data[1] & 0x1F) <<8)+data[2];
-	TScrambling=data[3] & 0xC0;
+	TScrambling=data[3] & 0x80;
 	AdaptionControl=(data[3]>>4) & 0x3;
 	HasAdaptionField=((data[3] & 0x20)==0x20);
 	HasPayload=((data[3] & 0x10)==0x10);
