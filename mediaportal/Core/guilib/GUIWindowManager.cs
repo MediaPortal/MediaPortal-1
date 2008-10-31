@@ -73,12 +73,13 @@ namespace MediaPortal.GUI.Library
         if (milliSecondsLeft > 0)
         {
           Thread.Sleep((int)milliSecondsLeft);
+          //Log.Debug("GUIWindowManager: Wait for desired framerate - sleeping {0} ms.", milliSecondsLeft);
         }
         else
         {
           // Allow to finish other thread context
           Thread.Sleep(0);
-          Log.Debug("GUIWindowManager: Cannot reach desired framerate - please check your system config!");
+          //Log.Debug("GUIWindowManager: Cannot reach desired framerate - please check your system config!");
         }
       }
     }
