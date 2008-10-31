@@ -122,7 +122,7 @@ public class DXUtil
   {
     // Use QueryPerformanceFrequency() to get frequency of timer.  If QPF is
     // not supported, we will timeGetTime() which returns milliseconds.
-    // rtv: we need to query the frequency everytime since it will change
+    // rtv: we need to query the frequency everytime since it might change
     // on Cool&Quiet enabled systems. Another case would be a threaded call 
     // executed on another cpu core which uses a different clock speed.
     long qwTicksPerSec = 0;

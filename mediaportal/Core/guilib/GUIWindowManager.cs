@@ -25,11 +25,11 @@
 
 using System;
 using System.Threading;
-using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Security;
-using System.Runtime.InteropServices;
+//using System.Reflection;
+//using System.Security;
+//using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace MediaPortal.GUI.Library
 {
@@ -45,14 +45,16 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class GUIWindowManager
   {
-    private static long startFrame = 0;
-    private static long endFrame = 0;
-    
-    [System.Security.SuppressUnmanagedCodeSecurity] // We won't use this maliciously
-    [DllImport("kernel32")]
-    private static extern bool QueryPerformanceCounter(ref long PerformanceCount);
+    private static Stopwatch clockWatch = new Stopwatch();
+
+    //  private static long startFrame = 0;
+    //  private static long endFrame = 0;
+    //  [System.Security.SuppressUnmanagedCodeSecurity] // We won't use this maliciously
+    //  [DllImport("kernel32")]
+    //  private static extern bool QueryPerformanceCounter(ref long PerformanceCount);
 
     #region Frame limiting code
+
     private static void WaitForFrameClock()
     {
       long milliSecondsLeft;
@@ -60,30 +62,43 @@ namespace MediaPortal.GUI.Library
 
       // frame limiting code.
       // sleep as long as there are ticks left for this frame
-      QueryPerformanceCounter(ref endFrame);
-      timeElapsed = endFrame - startFrame;
+      //QueryPerformanceCounter(ref endFrame);
+      clockWatch.Stop();
+      timeElapsed = clockWatch.ElapsedTicks;
+      //timeElapsed = endFrame - startFrame;
+
       if (timeElapsed < GUIGraphicsContext.DesiredFrameTime)
       {
-        milliSecondsLeft = (((GUIGraphicsContext.DesiredFrameTime - timeElapsed) * 1000) / DXUtil.TicksPerSecond);
+        milliSecondsLeft = (((GUIGraphicsContext.DesiredFrameTime - timeElapsed) * 1000) / Stopwatch.Frequency);
         if (milliSecondsLeft > 0)
         {
           Thread.Sleep((int)milliSecondsLeft);
         }
+        else
+        {
+          // Allow to finish other thread context
+          Thread.Sleep(0);
+          Log.Debug("GUIWindowManager: Cannot reach desired framerate - please check your system config!");
+        }
       }
     }
+
     private static void StartFrameClock()
     {
-      QueryPerformanceCounter(ref startFrame);
+      //QueryPerformanceCounter(ref startFrame);
+      clockWatch.Reset();
+      clockWatch.Start();
     }
-    #endregion  
-    
+
+    #endregion
+
     public enum FocusState
     {
       NOT_FOCUSED = 0,
       FOCUSED = 1,
       JUST_LOST_FOCUS = 2
     };
-  
+
     #region delegates and events
     public delegate void ThreadMessageHandler(object sender, GUIMessage message);
     public delegate void OnCallBackHandler();
@@ -226,7 +241,7 @@ namespace MediaPortal.GUI.Library
       }
       if (message != null)
       {
-        lock( _listThreadMessagesLock  )
+        lock (_listThreadMessagesLock)
         {
           _listThreadMessages.Add(message);
         }
@@ -246,8 +261,8 @@ namespace MediaPortal.GUI.Library
 
     static void CallbackMsg(GUIMessage msg)
     {
-      CallbackEnv env = (CallbackEnv) msg.Object;
-      env.result= env.callback(env.param1, env.param2, env.data);
+      CallbackEnv env = (CallbackEnv)msg.Object;
+      env.result = env.callback(env.param1, env.param2, env.data);
       env.finished.Set();
     }
 
@@ -269,7 +284,7 @@ namespace MediaPortal.GUI.Library
       env.param2 = param2;
       env.data = data;
 
-      GUIMessage msg= new GUIMessage(GUIMessage.MessageType.GUI_MSG_CALLBACK, 0, 0, 0, 0, 0, env);
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CALLBACK, 0, 0, 0, 0, 0, env);
       SendThreadMessage(msg);
 
       // if this is the main thread, then dispatch the messages
@@ -294,7 +309,7 @@ namespace MediaPortal.GUI.Library
       {
         List<GUIMessage> list;
         //				System.Diagnostics.Debug.WriteLine("process messages");
-        lock( _listThreadMessagesLock  ) // need lock when switching queues
+        lock (_listThreadMessagesLock) // need lock when switching queues
         {
           list = _listThreadMessages;
           _listThreadMessages = new List<GUIMessage>();
@@ -745,7 +760,7 @@ namespace MediaPortal.GUI.Library
           newWindowIndex = previousWindowIndex;
           // Check if replacement window was fault, ifso return to home
           if (replaceWindow)
-          {            
+          {
             // activate HOME window
             newWindowId = (int)GUIWindow.Window.WINDOW_HOME;
             for (int i = 0; i < _windowCount; i++)
@@ -792,9 +807,9 @@ namespace MediaPortal.GUI.Library
           OnActivateWindow(newWindow.GetID);
         msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, newWindow.GetID, 0, 0, _previousActiveWindowId, 0, null);
         newWindow.OnMessage(msg);
-        
-        
-        
+
+
+
       }
       catch (Exception ex)
       {
@@ -803,7 +818,7 @@ namespace MediaPortal.GUI.Library
       finally
       {
         _isSwitchingToNewWindow = false;
-      }      
+      }
     }
 
     /// <summary>
@@ -1264,10 +1279,10 @@ namespace MediaPortal.GUI.Library
         else
         {
           //System.Diagnostics.Debugger.Launch();
-          GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + ActiveWindow));          
+          GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + ActiveWindow));
           GUIPropertyManager.SetProperty("#currentmoduleid", Convert.ToString(ActiveWindow));
         }
-        
+
         _routedWindow = null;
         _shouldRefresh = true;
       }
@@ -1281,7 +1296,7 @@ namespace MediaPortal.GUI.Library
         _routedWindow = GetWindow(dialogId);
         Log.Debug("WindowManager: route {0}:{1}->{2}:{3}",
                  GetWindow(ActiveWindow), ActiveWindow, _routedWindow, dialogId);
-        _currentWindowName = GUIPropertyManager.GetProperty("#currentmodule");        
+        _currentWindowName = GUIPropertyManager.GetProperty("#currentmodule");
       }
     }
 
