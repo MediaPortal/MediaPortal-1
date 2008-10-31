@@ -48,6 +48,8 @@ namespace SetupTv.Sections
       this.textBoxChannel = new System.Windows.Forms.TextBox();
       this.label1 = new System.Windows.Forms.Label();
       this.tabPage3 = new System.Windows.Forms.TabPage();
+      this.label43 = new System.Windows.Forms.Label();
+      this.textBoxDVBCPmt = new System.Windows.Forms.TextBox();
       this.textBoxSymbolRate = new System.Windows.Forms.TextBox();
       this.label6 = new System.Windows.Forms.Label();
       this.textBoxSID = new System.Windows.Forms.TextBox();
@@ -59,10 +61,11 @@ namespace SetupTv.Sections
       this.label7 = new System.Windows.Forms.Label();
       this.label8 = new System.Windows.Forms.Label();
       this.tabPage4 = new System.Windows.Forms.TabPage();
-      this.textBoxDVBSVideo = new System.Windows.Forms.TextBox();
-      this.label48 = new System.Windows.Forms.Label();
-      this.textBoxDVBSAudio = new System.Windows.Forms.TextBox();
-      this.label49 = new System.Windows.Forms.Label();
+      this.checkBoxDVBSfta = new System.Windows.Forms.CheckBox();
+      this.label27 = new System.Windows.Forms.Label();
+      this.textBoxDVBSProvider = new System.Windows.Forms.TextBox();
+      this.textBoxDVBSPmt = new System.Windows.Forms.TextBox();
+      this.label34 = new System.Windows.Forms.Label();
       this.textBoxDVBSChannel = new System.Windows.Forms.TextBox();
       this.label47 = new System.Windows.Forms.Label();
       this.comboBoxRollOff = new System.Windows.Forms.ComboBox();
@@ -90,10 +93,8 @@ namespace SetupTv.Sections
       this.label15 = new System.Windows.Forms.Label();
       this.label16 = new System.Windows.Forms.Label();
       this.tabPage5 = new System.Windows.Forms.TabPage();
-      this.textBoxVideo = new System.Windows.Forms.TextBox();
-      this.label43 = new System.Windows.Forms.Label();
-      this.textBoxAudio = new System.Windows.Forms.TextBox();
-      this.label46 = new System.Windows.Forms.Label();
+      this.textBoxPmt = new System.Windows.Forms.TextBox();
+      this.label50 = new System.Windows.Forms.Label();
       this.textBoxDVBTChannel = new System.Windows.Forms.TextBox();
       this.channelDVBT = new System.Windows.Forms.Label();
       this.comboBoxBandWidth = new System.Windows.Forms.ComboBox();
@@ -107,6 +108,8 @@ namespace SetupTv.Sections
       this.label20 = new System.Windows.Forms.Label();
       this.label21 = new System.Windows.Forms.Label();
       this.tabPage6 = new System.Windows.Forms.TabPage();
+      this.label26 = new System.Windows.Forms.Label();
+      this.textBoxQamPmt = new System.Windows.Forms.TextBox();
       this.textBoxQamSID = new System.Windows.Forms.TextBox();
       this.textBoxQamTSID = new System.Windows.Forms.TextBox();
       this.textBoxQamONID = new System.Windows.Forms.TextBox();
@@ -117,10 +120,6 @@ namespace SetupTv.Sections
       this.label38 = new System.Windows.Forms.Label();
       this.comboBoxQAMModulation = new System.Windows.Forms.ComboBox();
       this.label37 = new System.Windows.Forms.Label();
-      this.textBoxVideoPid = new System.Windows.Forms.TextBox();
-      this.label27 = new System.Windows.Forms.Label();
-      this.textBoxAudioPid = new System.Windows.Forms.TextBox();
-      this.label26 = new System.Windows.Forms.Label();
       this.textBoxMinor = new System.Windows.Forms.TextBox();
       this.textBoxMajor = new System.Windows.Forms.TextBox();
       this.textBoxProgram = new System.Windows.Forms.TextBox();
@@ -137,6 +136,15 @@ namespace SetupTv.Sections
       this.edFMFreq = new System.Windows.Forms.TextBox();
       this.label42 = new System.Windows.Forms.Label();
       this.mpButtonCancel = new MediaPortal.UserInterface.Controls.MPButton();
+      this.checkBoxDVBCfta = new System.Windows.Forms.CheckBox();
+      this.label46 = new System.Windows.Forms.Label();
+      this.textBoxDVBCProvider = new System.Windows.Forms.TextBox();
+      this.checkBoxDVBTfta = new System.Windows.Forms.CheckBox();
+      this.label48 = new System.Windows.Forms.Label();
+      this.textBoxDVBTProvider = new System.Windows.Forms.TextBox();
+      this.checkBoxQamfta = new System.Windows.Forms.CheckBox();
+      this.label49 = new System.Windows.Forms.Label();
+      this.textBoxQamProvider = new System.Windows.Forms.TextBox();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.tabPage2.SuspendLayout();
@@ -363,6 +371,11 @@ namespace SetupTv.Sections
       // 
       // tabPage3
       // 
+      this.tabPage3.Controls.Add(this.checkBoxDVBCfta);
+      this.tabPage3.Controls.Add(this.label46);
+      this.tabPage3.Controls.Add(this.textBoxDVBCProvider);
+      this.tabPage3.Controls.Add(this.label43);
+      this.tabPage3.Controls.Add(this.textBoxDVBCPmt);
       this.tabPage3.Controls.Add(this.textBoxSymbolRate);
       this.tabPage3.Controls.Add(this.label6);
       this.tabPage3.Controls.Add(this.textBoxSID);
@@ -380,9 +393,26 @@ namespace SetupTv.Sections
       this.tabPage3.Text = "DVB-C";
       this.tabPage3.UseVisualStyleBackColor = true;
       // 
+      // label43
+      // 
+      this.label43.AutoSize = true;
+      this.label43.Location = new System.Drawing.Point(17, 148);
+      this.label43.Name = "label43";
+      this.label43.Size = new System.Drawing.Size(43, 13);
+      this.label43.TabIndex = 34;
+      this.label43.Text = "PmtPid:";
+      // 
+      // textBoxDVBCPmt
+      // 
+      this.textBoxDVBCPmt.Location = new System.Drawing.Point(95, 145);
+      this.textBoxDVBCPmt.Name = "textBoxDVBCPmt";
+      this.textBoxDVBCPmt.Size = new System.Drawing.Size(146, 20);
+      this.textBoxDVBCPmt.TabIndex = 33;
+      this.textBoxDVBCPmt.Text = "-1";
+      // 
       // textBoxSymbolRate
       // 
-      this.textBoxSymbolRate.Location = new System.Drawing.Point(95, 116);
+      this.textBoxSymbolRate.Location = new System.Drawing.Point(95, 119);
       this.textBoxSymbolRate.Name = "textBoxSymbolRate";
       this.textBoxSymbolRate.Size = new System.Drawing.Size(146, 20);
       this.textBoxSymbolRate.TabIndex = 4;
@@ -391,7 +421,7 @@ namespace SetupTv.Sections
       // label6
       // 
       this.label6.AutoSize = true;
-      this.label6.Location = new System.Drawing.Point(17, 119);
+      this.label6.Location = new System.Drawing.Point(17, 122);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(59, 13);
       this.label6.TabIndex = 32;
@@ -467,10 +497,11 @@ namespace SetupTv.Sections
       // 
       // tabPage4
       // 
-      this.tabPage4.Controls.Add(this.textBoxDVBSVideo);
-      this.tabPage4.Controls.Add(this.label48);
-      this.tabPage4.Controls.Add(this.textBoxDVBSAudio);
-      this.tabPage4.Controls.Add(this.label49);
+      this.tabPage4.Controls.Add(this.checkBoxDVBSfta);
+      this.tabPage4.Controls.Add(this.label27);
+      this.tabPage4.Controls.Add(this.textBoxDVBSProvider);
+      this.tabPage4.Controls.Add(this.textBoxDVBSPmt);
+      this.tabPage4.Controls.Add(this.label34);
       this.tabPage4.Controls.Add(this.textBoxDVBSChannel);
       this.tabPage4.Controls.Add(this.label47);
       this.tabPage4.Controls.Add(this.comboBoxRollOff);
@@ -504,39 +535,49 @@ namespace SetupTv.Sections
       this.tabPage4.Text = "DVB-S";
       this.tabPage4.UseVisualStyleBackColor = true;
       // 
-      // textBoxDVBSVideo
+      // checkBoxDVBSfta
       // 
-      this.textBoxDVBSVideo.Location = new System.Drawing.Point(276, 60);
-      this.textBoxDVBSVideo.Name = "textBoxDVBSVideo";
-      this.textBoxDVBSVideo.Size = new System.Drawing.Size(114, 20);
-      this.textBoxDVBSVideo.TabIndex = 69;
-      this.textBoxDVBSVideo.Text = "-1";
+      this.checkBoxDVBSfta.AutoSize = true;
+      this.checkBoxDVBSfta.Location = new System.Drawing.Point(276, 115);
+      this.checkBoxDVBSfta.Name = "checkBoxDVBSfta";
+      this.checkBoxDVBSfta.Size = new System.Drawing.Size(78, 17);
+      this.checkBoxDVBSfta.TabIndex = 76;
+      this.checkBoxDVBSfta.Text = "Free To Air";
+      this.checkBoxDVBSfta.TextAlign = System.Drawing.ContentAlignment.TopRight;
+      this.checkBoxDVBSfta.UseVisualStyleBackColor = true;
       // 
-      // label48
+      // label27
       // 
-      this.label48.AutoSize = true;
-      this.label48.Location = new System.Drawing.Point(220, 64);
-      this.label48.Name = "label48";
-      this.label48.Size = new System.Drawing.Size(52, 13);
-      this.label48.TabIndex = 71;
-      this.label48.Text = "VideoPid:";
+      this.label27.AutoSize = true;
+      this.label27.Location = new System.Drawing.Point(220, 88);
+      this.label27.Name = "label27";
+      this.label27.Size = new System.Drawing.Size(49, 13);
+      this.label27.TabIndex = 75;
+      this.label27.Text = "Provider:";
       // 
-      // textBoxDVBSAudio
+      // textBoxDVBSProvider
       // 
-      this.textBoxDVBSAudio.Location = new System.Drawing.Point(276, 84);
-      this.textBoxDVBSAudio.Name = "textBoxDVBSAudio";
-      this.textBoxDVBSAudio.Size = new System.Drawing.Size(114, 20);
-      this.textBoxDVBSAudio.TabIndex = 68;
-      this.textBoxDVBSAudio.Text = "-1";
+      this.textBoxDVBSProvider.Location = new System.Drawing.Point(276, 85);
+      this.textBoxDVBSProvider.Name = "textBoxDVBSProvider";
+      this.textBoxDVBSProvider.Size = new System.Drawing.Size(114, 20);
+      this.textBoxDVBSProvider.TabIndex = 74;
       // 
-      // label49
+      // textBoxDVBSPmt
       // 
-      this.label49.AutoSize = true;
-      this.label49.Location = new System.Drawing.Point(220, 87);
-      this.label49.Name = "label49";
-      this.label49.Size = new System.Drawing.Size(52, 13);
-      this.label49.TabIndex = 70;
-      this.label49.Text = "AudioPid:";
+      this.textBoxDVBSPmt.Location = new System.Drawing.Point(276, 59);
+      this.textBoxDVBSPmt.Name = "textBoxDVBSPmt";
+      this.textBoxDVBSPmt.Size = new System.Drawing.Size(114, 20);
+      this.textBoxDVBSPmt.TabIndex = 73;
+      this.textBoxDVBSPmt.Text = "-1";
+      // 
+      // label34
+      // 
+      this.label34.AutoSize = true;
+      this.label34.Location = new System.Drawing.Point(220, 62);
+      this.label34.Name = "label34";
+      this.label34.Size = new System.Drawing.Size(43, 13);
+      this.label34.TabIndex = 72;
+      this.label34.Text = "PmtPid:";
       // 
       // textBoxDVBSChannel
       // 
@@ -841,10 +882,11 @@ namespace SetupTv.Sections
       // 
       // tabPage5
       // 
-      this.tabPage5.Controls.Add(this.textBoxVideo);
-      this.tabPage5.Controls.Add(this.label43);
-      this.tabPage5.Controls.Add(this.textBoxAudio);
-      this.tabPage5.Controls.Add(this.label46);
+      this.tabPage5.Controls.Add(this.checkBoxDVBTfta);
+      this.tabPage5.Controls.Add(this.label48);
+      this.tabPage5.Controls.Add(this.textBoxDVBTProvider);
+      this.tabPage5.Controls.Add(this.textBoxPmt);
+      this.tabPage5.Controls.Add(this.label50);
       this.tabPage5.Controls.Add(this.textBoxDVBTChannel);
       this.tabPage5.Controls.Add(this.channelDVBT);
       this.tabPage5.Controls.Add(this.comboBoxBandWidth);
@@ -864,39 +906,22 @@ namespace SetupTv.Sections
       this.tabPage5.Text = "DVB-T";
       this.tabPage5.UseVisualStyleBackColor = true;
       // 
-      // textBoxVideo
+      // textBoxPmt
       // 
-      this.textBoxVideo.Location = new System.Drawing.Point(103, 175);
-      this.textBoxVideo.Name = "textBoxVideo";
-      this.textBoxVideo.Size = new System.Drawing.Size(146, 20);
-      this.textBoxVideo.TabIndex = 29;
-      this.textBoxVideo.Text = "-1";
+      this.textBoxPmt.Location = new System.Drawing.Point(103, 175);
+      this.textBoxPmt.Name = "textBoxPmt";
+      this.textBoxPmt.Size = new System.Drawing.Size(146, 20);
+      this.textBoxPmt.TabIndex = 33;
+      this.textBoxPmt.Text = "-1";
       // 
-      // label43
+      // label50
       // 
-      this.label43.AutoSize = true;
-      this.label43.Location = new System.Drawing.Point(25, 178);
-      this.label43.Name = "label43";
-      this.label43.Size = new System.Drawing.Size(52, 13);
-      this.label43.TabIndex = 31;
-      this.label43.Text = "VideoPid:";
-      // 
-      // textBoxAudio
-      // 
-      this.textBoxAudio.Location = new System.Drawing.Point(103, 201);
-      this.textBoxAudio.Name = "textBoxAudio";
-      this.textBoxAudio.Size = new System.Drawing.Size(146, 20);
-      this.textBoxAudio.TabIndex = 28;
-      this.textBoxAudio.Text = "-1";
-      // 
-      // label46
-      // 
-      this.label46.AutoSize = true;
-      this.label46.Location = new System.Drawing.Point(25, 204);
-      this.label46.Name = "label46";
-      this.label46.Size = new System.Drawing.Size(52, 13);
-      this.label46.TabIndex = 30;
-      this.label46.Text = "AudioPid:";
+      this.label50.AutoSize = true;
+      this.label50.Location = new System.Drawing.Point(25, 178);
+      this.label50.Name = "label50";
+      this.label50.Size = new System.Drawing.Size(43, 13);
+      this.label50.TabIndex = 32;
+      this.label50.Text = "PmtPid:";
       // 
       // textBoxDVBTChannel
       // 
@@ -1006,6 +1031,11 @@ namespace SetupTv.Sections
       // 
       // tabPage6
       // 
+      this.tabPage6.Controls.Add(this.checkBoxQamfta);
+      this.tabPage6.Controls.Add(this.label49);
+      this.tabPage6.Controls.Add(this.textBoxQamProvider);
+      this.tabPage6.Controls.Add(this.label26);
+      this.tabPage6.Controls.Add(this.textBoxQamPmt);
       this.tabPage6.Controls.Add(this.textBoxQamSID);
       this.tabPage6.Controls.Add(this.textBoxQamTSID);
       this.tabPage6.Controls.Add(this.textBoxQamONID);
@@ -1016,10 +1046,6 @@ namespace SetupTv.Sections
       this.tabPage6.Controls.Add(this.label38);
       this.tabPage6.Controls.Add(this.comboBoxQAMModulation);
       this.tabPage6.Controls.Add(this.label37);
-      this.tabPage6.Controls.Add(this.textBoxVideoPid);
-      this.tabPage6.Controls.Add(this.label27);
-      this.tabPage6.Controls.Add(this.textBoxAudioPid);
-      this.tabPage6.Controls.Add(this.label26);
       this.tabPage6.Controls.Add(this.textBoxMinor);
       this.tabPage6.Controls.Add(this.textBoxMajor);
       this.tabPage6.Controls.Add(this.textBoxProgram);
@@ -1033,9 +1059,26 @@ namespace SetupTv.Sections
       this.tabPage6.Text = "ATSC";
       this.tabPage6.UseVisualStyleBackColor = true;
       // 
+      // label26
+      // 
+      this.label26.AutoSize = true;
+      this.label26.Location = new System.Drawing.Point(23, 236);
+      this.label26.Name = "label26";
+      this.label26.Size = new System.Drawing.Size(43, 13);
+      this.label26.TabIndex = 69;
+      this.label26.Text = "PmtPid:";
+      // 
+      // textBoxQamPmt
+      // 
+      this.textBoxQamPmt.Location = new System.Drawing.Point(103, 233);
+      this.textBoxQamPmt.Name = "textBoxQamPmt";
+      this.textBoxQamPmt.Size = new System.Drawing.Size(146, 20);
+      this.textBoxQamPmt.TabIndex = 68;
+      this.textBoxQamPmt.Text = "-1";
+      // 
       // textBoxQamSID
       // 
-      this.textBoxQamSID.Location = new System.Drawing.Point(103, 259);
+      this.textBoxQamSID.Location = new System.Drawing.Point(103, 207);
       this.textBoxQamSID.Name = "textBoxQamSID";
       this.textBoxQamSID.Size = new System.Drawing.Size(146, 20);
       this.textBoxQamSID.TabIndex = 64;
@@ -1043,7 +1086,7 @@ namespace SetupTv.Sections
       // 
       // textBoxQamTSID
       // 
-      this.textBoxQamTSID.Location = new System.Drawing.Point(103, 233);
+      this.textBoxQamTSID.Location = new System.Drawing.Point(103, 181);
       this.textBoxQamTSID.Name = "textBoxQamTSID";
       this.textBoxQamTSID.Size = new System.Drawing.Size(146, 20);
       this.textBoxQamTSID.TabIndex = 63;
@@ -1051,7 +1094,7 @@ namespace SetupTv.Sections
       // 
       // textBoxQamONID
       // 
-      this.textBoxQamONID.Location = new System.Drawing.Point(103, 207);
+      this.textBoxQamONID.Location = new System.Drawing.Point(103, 155);
       this.textBoxQamONID.Name = "textBoxQamONID";
       this.textBoxQamONID.Size = new System.Drawing.Size(146, 20);
       this.textBoxQamONID.TabIndex = 62;
@@ -1060,7 +1103,7 @@ namespace SetupTv.Sections
       // label39
       // 
       this.label39.AutoSize = true;
-      this.label39.Location = new System.Drawing.Point(23, 236);
+      this.label39.Location = new System.Drawing.Point(23, 184);
       this.label39.Name = "label39";
       this.label39.Size = new System.Drawing.Size(64, 13);
       this.label39.TabIndex = 67;
@@ -1069,7 +1112,7 @@ namespace SetupTv.Sections
       // label40
       // 
       this.label40.AutoSize = true;
-      this.label40.Location = new System.Drawing.Point(23, 262);
+      this.label40.Location = new System.Drawing.Point(23, 210);
       this.label40.Name = "label40";
       this.label40.Size = new System.Drawing.Size(55, 13);
       this.label40.TabIndex = 66;
@@ -1078,7 +1121,7 @@ namespace SetupTv.Sections
       // label41
       // 
       this.label41.AutoSize = true;
-      this.label41.Location = new System.Drawing.Point(23, 210);
+      this.label41.Location = new System.Drawing.Point(23, 158);
       this.label41.Name = "label41";
       this.label41.Size = new System.Drawing.Size(59, 13);
       this.label41.TabIndex = 65;
@@ -1110,7 +1153,7 @@ namespace SetupTv.Sections
             "Mod8Vsb",
             "Mod64Qam",
             "Mod256Qam"});
-      this.comboBoxQAMModulation.Location = new System.Drawing.Point(103, 180);
+      this.comboBoxQAMModulation.Location = new System.Drawing.Point(103, 128);
       this.comboBoxQAMModulation.Name = "comboBoxQAMModulation";
       this.comboBoxQAMModulation.Size = new System.Drawing.Size(146, 21);
       this.comboBoxQAMModulation.TabIndex = 58;
@@ -1118,45 +1161,11 @@ namespace SetupTv.Sections
       // label37
       // 
       this.label37.AutoSize = true;
-      this.label37.Location = new System.Drawing.Point(23, 183);
+      this.label37.Location = new System.Drawing.Point(23, 131);
       this.label37.Name = "label37";
       this.label37.Size = new System.Drawing.Size(62, 13);
       this.label37.TabIndex = 59;
       this.label37.Text = "Modulation:";
-      // 
-      // textBoxVideoPid
-      // 
-      this.textBoxVideoPid.Location = new System.Drawing.Point(103, 127);
-      this.textBoxVideoPid.Name = "textBoxVideoPid";
-      this.textBoxVideoPid.Size = new System.Drawing.Size(146, 20);
-      this.textBoxVideoPid.TabIndex = 4;
-      this.textBoxVideoPid.Text = "-1";
-      // 
-      // label27
-      // 
-      this.label27.AutoSize = true;
-      this.label27.Location = new System.Drawing.Point(23, 130);
-      this.label27.Name = "label27";
-      this.label27.Size = new System.Drawing.Size(52, 13);
-      this.label27.TabIndex = 27;
-      this.label27.Text = "VideoPid:";
-      // 
-      // textBoxAudioPid
-      // 
-      this.textBoxAudioPid.Location = new System.Drawing.Point(103, 153);
-      this.textBoxAudioPid.Name = "textBoxAudioPid";
-      this.textBoxAudioPid.Size = new System.Drawing.Size(146, 20);
-      this.textBoxAudioPid.TabIndex = 3;
-      this.textBoxAudioPid.Text = "-1";
-      // 
-      // label26
-      // 
-      this.label26.AutoSize = true;
-      this.label26.Location = new System.Drawing.Point(23, 156);
-      this.label26.Name = "label26";
-      this.label26.Size = new System.Drawing.Size(52, 13);
-      this.label26.TabIndex = 25;
-      this.label26.Text = "AudioPid:";
       // 
       // textBoxMinor
       // 
@@ -1311,6 +1320,87 @@ namespace SetupTv.Sections
       this.mpButtonCancel.UseVisualStyleBackColor = true;
       this.mpButtonCancel.Click += new System.EventHandler(this.mpButtonCancel_Click);
       // 
+      // checkBoxDVBCfta
+      // 
+      this.checkBoxDVBCfta.AutoSize = true;
+      this.checkBoxDVBCfta.Location = new System.Drawing.Point(95, 201);
+      this.checkBoxDVBCfta.Name = "checkBoxDVBCfta";
+      this.checkBoxDVBCfta.Size = new System.Drawing.Size(78, 17);
+      this.checkBoxDVBCfta.TabIndex = 79;
+      this.checkBoxDVBCfta.Text = "Free To Air";
+      this.checkBoxDVBCfta.TextAlign = System.Drawing.ContentAlignment.TopRight;
+      this.checkBoxDVBCfta.UseVisualStyleBackColor = true;
+      // 
+      // label46
+      // 
+      this.label46.AutoSize = true;
+      this.label46.Location = new System.Drawing.Point(17, 174);
+      this.label46.Name = "label46";
+      this.label46.Size = new System.Drawing.Size(49, 13);
+      this.label46.TabIndex = 78;
+      this.label46.Text = "Provider:";
+      // 
+      // textBoxDVBCProvider
+      // 
+      this.textBoxDVBCProvider.Location = new System.Drawing.Point(95, 171);
+      this.textBoxDVBCProvider.Name = "textBoxDVBCProvider";
+      this.textBoxDVBCProvider.Size = new System.Drawing.Size(146, 20);
+      this.textBoxDVBCProvider.TabIndex = 77;
+      // 
+      // checkBoxDVBTfta
+      // 
+      this.checkBoxDVBTfta.AutoSize = true;
+      this.checkBoxDVBTfta.Location = new System.Drawing.Point(103, 231);
+      this.checkBoxDVBTfta.Name = "checkBoxDVBTfta";
+      this.checkBoxDVBTfta.Size = new System.Drawing.Size(78, 17);
+      this.checkBoxDVBTfta.TabIndex = 79;
+      this.checkBoxDVBTfta.Text = "Free To Air";
+      this.checkBoxDVBTfta.TextAlign = System.Drawing.ContentAlignment.TopRight;
+      this.checkBoxDVBTfta.UseVisualStyleBackColor = true;
+      // 
+      // label48
+      // 
+      this.label48.AutoSize = true;
+      this.label48.Location = new System.Drawing.Point(25, 204);
+      this.label48.Name = "label48";
+      this.label48.Size = new System.Drawing.Size(49, 13);
+      this.label48.TabIndex = 78;
+      this.label48.Text = "Provider:";
+      // 
+      // textBoxDVBTProvider
+      // 
+      this.textBoxDVBTProvider.Location = new System.Drawing.Point(103, 201);
+      this.textBoxDVBTProvider.Name = "textBoxDVBTProvider";
+      this.textBoxDVBTProvider.Size = new System.Drawing.Size(146, 20);
+      this.textBoxDVBTProvider.TabIndex = 77;
+      // 
+      // checkBoxQamfta
+      // 
+      this.checkBoxQamfta.AutoSize = true;
+      this.checkBoxQamfta.Location = new System.Drawing.Point(282, 262);
+      this.checkBoxQamfta.Name = "checkBoxQamfta";
+      this.checkBoxQamfta.Size = new System.Drawing.Size(78, 17);
+      this.checkBoxQamfta.TabIndex = 79;
+      this.checkBoxQamfta.Text = "Free To Air";
+      this.checkBoxQamfta.TextAlign = System.Drawing.ContentAlignment.TopRight;
+      this.checkBoxQamfta.UseVisualStyleBackColor = true;
+      // 
+      // label49
+      // 
+      this.label49.AutoSize = true;
+      this.label49.Location = new System.Drawing.Point(23, 262);
+      this.label49.Name = "label49";
+      this.label49.Size = new System.Drawing.Size(49, 13);
+      this.label49.TabIndex = 78;
+      this.label49.Text = "Provider:";
+      // 
+      // textBoxQamProvider
+      // 
+      this.textBoxQamProvider.Location = new System.Drawing.Point(103, 259);
+      this.textBoxQamProvider.Name = "textBoxQamProvider";
+      this.textBoxQamProvider.Size = new System.Drawing.Size(146, 20);
+      this.textBoxQamProvider.TabIndex = 77;
+      // 
       // FormEditChannel
       // 
       this.AcceptButton = this.mpButtonOk;
@@ -1411,10 +1501,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.TextBox textBoxName;
     private System.Windows.Forms.Label label25;
     private System.Windows.Forms.CheckBox checkBoxVisibleInTvGuide;
-    private System.Windows.Forms.TextBox textBoxVideoPid;
-    private System.Windows.Forms.Label label27;
-    private System.Windows.Forms.TextBox textBoxAudioPid;
-    private System.Windows.Forms.Label label26;
     private System.Windows.Forms.Label label28;
     private System.Windows.Forms.ComboBox comboBoxVideoSource;
     private System.Windows.Forms.Label label30;
@@ -1450,16 +1536,28 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label42;
     private System.Windows.Forms.TextBox textBoxDVBTChannel;
     private System.Windows.Forms.Label channelDVBT;
-    private System.Windows.Forms.TextBox textBoxVideo;
-    private System.Windows.Forms.Label label43;
-    private System.Windows.Forms.TextBox textBoxAudio;
-    private System.Windows.Forms.Label label46;
     private System.Windows.Forms.TextBox textBoxDVBSChannel;
     private System.Windows.Forms.Label label47;
-    private System.Windows.Forms.TextBox textBoxDVBSVideo;
-    private System.Windows.Forms.Label label48;
-    private System.Windows.Forms.TextBox textBoxDVBSAudio;
-    private System.Windows.Forms.Label label49;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonCancel;
+    private System.Windows.Forms.Label label34;
+    private System.Windows.Forms.TextBox textBoxDVBSPmt;
+    private System.Windows.Forms.TextBox textBoxPmt;
+    private System.Windows.Forms.Label label50;
+    private System.Windows.Forms.Label label43;
+    private System.Windows.Forms.TextBox textBoxDVBCPmt;
+    private System.Windows.Forms.TextBox textBoxQamPmt;
+    private System.Windows.Forms.Label label26;
+    private System.Windows.Forms.Label label27;
+    private System.Windows.Forms.TextBox textBoxDVBSProvider;
+    private System.Windows.Forms.CheckBox checkBoxDVBSfta;
+    private System.Windows.Forms.CheckBox checkBoxDVBCfta;
+    private System.Windows.Forms.Label label46;
+    private System.Windows.Forms.TextBox textBoxDVBCProvider;
+    private System.Windows.Forms.CheckBox checkBoxDVBTfta;
+    private System.Windows.Forms.Label label48;
+    private System.Windows.Forms.TextBox textBoxDVBTProvider;
+    private System.Windows.Forms.CheckBox checkBoxQamfta;
+    private System.Windows.Forms.Label label49;
+    private System.Windows.Forms.TextBox textBoxQamProvider;
   }
 }

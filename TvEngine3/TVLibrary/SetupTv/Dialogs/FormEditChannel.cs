@@ -129,7 +129,7 @@ namespace SetupTv.Sections
         //ATSC
         if (textBoxProgram.Text.Length != 0)
         {
-          int physical, frequency, major, minor, audio, video, onid, tsid, sid;
+          int physical, frequency, major, minor, onid, tsid, sid, pmt;
           if (Int32.TryParse(textBoxProgram.Text, out physical))
           {
             if (Int32.TryParse(textBoxFrequency.Text, out frequency))
@@ -138,48 +138,46 @@ namespace SetupTv.Sections
               {
                 if (Int32.TryParse(textBoxMinor.Text, out minor))
                 {
-                  if (Int32.TryParse(textBoxAudioPid.Text, out audio))
+                  if (Int32.TryParse(textBoxQamONID.Text, out onid))
                   {
-                    if (Int32.TryParse(textBoxVideoPid.Text, out video))
+                    if (Int32.TryParse(textBoxQamTSID.Text, out tsid))
                     {
-                      if (Int32.TryParse(textBoxQamONID.Text, out onid))
+                      if (Int32.TryParse(textBoxQamSID.Text, out sid))
                       {
-                        if (Int32.TryParse(textBoxQamTSID.Text, out tsid))
+                        if (Int32.TryParse(textBoxQamPmt.Text, out pmt))
                         {
-                          if (Int32.TryParse(textBoxQamSID.Text, out sid))
+                          if (physical > 0 && major >= 0 && minor >= 0)
                           {
-                            if (physical > 0 && major >= 0 && minor >= 0)
+                            ATSCChannel atscChannel = new ATSCChannel();
+                            atscChannel.IsTv = _isTv;
+                            atscChannel.IsRadio = !_isTv;
+                            atscChannel.Name = _channel.Name;
+                            atscChannel.PhysicalChannel = physical;
+                            atscChannel.Frequency = frequency;
+                            atscChannel.MajorChannel = major;
+                            atscChannel.MinorChannel = minor;
+                            atscChannel.Provider = textBoxQamProvider.Text;
+                            atscChannel.FreeToAir = checkBoxQamfta.Checked;
+                            switch (comboBoxQAMModulation.SelectedIndex)
                             {
-                              ATSCChannel atscChannel = new ATSCChannel();
-                              atscChannel.IsTv = _isTv;
-                              atscChannel.IsRadio = !_isTv;
-                              atscChannel.Name = _channel.Name;
-                              atscChannel.PhysicalChannel = physical;
-                              atscChannel.Frequency = frequency;
-                              atscChannel.MajorChannel = major;
-                              atscChannel.MinorChannel = minor;
-                              atscChannel.AudioPid = audio;
-                              atscChannel.VideoPid = video;
-                              switch (comboBoxQAMModulation.SelectedIndex)
-                              {
-                                case 0:
-                                  atscChannel.ModulationType = ModulationType.ModNotSet;
-                                  break;
-                                case 1:
-                                  atscChannel.ModulationType = ModulationType.Mod8Vsb;
-                                  break;
-                                case 2:
-                                  atscChannel.ModulationType = ModulationType.Mod64Qam;
-                                  break;
-                                case 3:
-                                  atscChannel.ModulationType = ModulationType.Mod256Qam;
-                                  break;
-                              }
-                              atscChannel.NetworkId = onid;
-                              atscChannel.TransportId = tsid;
-                              atscChannel.ServiceId = sid;
-                              layer.AddTuningDetails(_channel, atscChannel);
+                              case 0:
+                                atscChannel.ModulationType = ModulationType.ModNotSet;
+                                break;
+                              case 1:
+                                atscChannel.ModulationType = ModulationType.Mod8Vsb;
+                                break;
+                              case 2:
+                                atscChannel.ModulationType = ModulationType.Mod64Qam;
+                                break;
+                              case 3:
+                                atscChannel.ModulationType = ModulationType.Mod256Qam;
+                                break;
                             }
+                            atscChannel.NetworkId = onid;
+                            atscChannel.TransportId = tsid;
+                            atscChannel.ServiceId = sid;
+                            atscChannel.PmtPid = pmt;
+                            layer.AddTuningDetails(_channel, atscChannel);
                           }
                         }
                       }
@@ -194,7 +192,7 @@ namespace SetupTv.Sections
         //DVB-C
         if (textboxFreq.Text.Length != 0)
         {
-          int freq, onid, tsid, sid, symbolrate;
+          int freq, onid, tsid, sid, symbolrate, pmt;
           if (Int32.TryParse(textboxFreq.Text, out freq))
           {
             if (Int32.TryParse(textBoxONID.Text, out onid))
@@ -205,18 +203,24 @@ namespace SetupTv.Sections
                 {
                   if (Int32.TryParse(textBoxSymbolRate.Text, out symbolrate))
                   {
-                    if (onid > 0 && tsid >= 0 && sid >= 0)
+                    if (Int32.TryParse(textBoxDVBCPmt.Text, out pmt))
                     {
-                      DVBCChannel dvbcChannel = new DVBCChannel();
-                      dvbcChannel.IsTv = _isTv;
-                      dvbcChannel.IsRadio = !_isTv;
-                      dvbcChannel.Name = _channel.Name;
-                      dvbcChannel.Frequency = freq;
-                      dvbcChannel.NetworkId = onid;
-                      dvbcChannel.TransportId = tsid;
-                      dvbcChannel.ServiceId = sid;
-                      dvbcChannel.SymbolRate = symbolrate;
-                      layer.AddTuningDetails(_channel, dvbcChannel);
+                      if (onid > 0 && tsid >= 0 && sid >= 0)
+                      {
+                        DVBCChannel dvbcChannel = new DVBCChannel();
+                        dvbcChannel.IsTv = _isTv;
+                        dvbcChannel.IsRadio = !_isTv;
+                        dvbcChannel.Name = _channel.Name;
+                        dvbcChannel.Frequency = freq;
+                        dvbcChannel.NetworkId = onid;
+                        dvbcChannel.TransportId = tsid;
+                        dvbcChannel.ServiceId = sid;
+                        dvbcChannel.SymbolRate = symbolrate;
+                        dvbcChannel.PmtPid = pmt;
+                        dvbcChannel.Provider = textBoxDVBCProvider.Text;
+                        dvbcChannel.FreeToAir = checkBoxDVBCfta.Checked;
+                        layer.AddTuningDetails(_channel, dvbcChannel);
+                      }
                     }
                   }
                 }
@@ -228,7 +232,7 @@ namespace SetupTv.Sections
         //DVB-S
         if (textBox5.Text.Length != 0)
         {
-          int lcn, freq, onid, tsid, sid, symbolrate, switchfreq, video, audio;
+          int lcn, freq, onid, tsid, sid, symbolrate, switchfreq, pmt;
           if (Int32.TryParse(textBoxDVBSChannel.Text, out lcn))
           {
             if (Int32.TryParse(textBox5.Text, out freq))
@@ -243,56 +247,54 @@ namespace SetupTv.Sections
                     {
                       if (Int32.TryParse(textBoxSwitch.Text, out switchfreq))
                       {
-                        if (Int32.TryParse(textBoxDVBSVideo.Text, out video))
+                        if (Int32.TryParse(textBoxDVBSPmt.Text, out pmt))
                         {
-                          if (Int32.TryParse(textBoxDVBSAudio.Text, out audio))
+                          if (onid > 0 && tsid >= 0 && sid >= 0)
                           {
-                            if (onid > 0 && tsid >= 0 && sid >= 0)
+                            DVBSChannel dvbsChannel = new DVBSChannel();
+                            dvbsChannel.IsTv = _isTv;
+                            dvbsChannel.IsRadio = !_isTv;
+                            dvbsChannel.Name = _channel.Name;
+                            dvbsChannel.Frequency = freq;
+                            dvbsChannel.NetworkId = onid;
+                            dvbsChannel.TransportId = tsid;
+                            dvbsChannel.ServiceId = sid;
+                            dvbsChannel.SymbolRate = symbolrate;
+                            dvbsChannel.SwitchingFrequency = switchfreq;
+                            dvbsChannel.InnerFecRate = (BinaryConvolutionCodeRate)(comboBoxInnerFecRate.SelectedIndex - 1);
+                            dvbsChannel.Pilot = (Pilot)(comboBoxPilot.SelectedIndex - 1);
+                            dvbsChannel.Rolloff = (RollOff)(comboBoxRollOff.SelectedIndex - 1);
+                            dvbsChannel.ModulationType = (ModulationType)(comboBoxModulation.SelectedIndex - 1);
+                            dvbsChannel.LogicalChannelNumber = lcn;
+                            dvbsChannel.PmtPid = pmt;
+                            dvbsChannel.Provider = textBoxDVBSProvider.Text;
+                            dvbsChannel.FreeToAir = checkBoxDVBSfta.Checked;
+                            switch (comboBoxPol.SelectedIndex)
                             {
-                              DVBSChannel dvbsChannel = new DVBSChannel();
-                              dvbsChannel.IsTv = _isTv;
-                              dvbsChannel.IsRadio = !_isTv;
-                              dvbsChannel.Name = _channel.Name;
-                              dvbsChannel.Frequency = freq;
-                              dvbsChannel.NetworkId = onid;
-                              dvbsChannel.TransportId = tsid;
-                              dvbsChannel.ServiceId = sid;
-                              dvbsChannel.SymbolRate = symbolrate;
-                              dvbsChannel.SwitchingFrequency = switchfreq;
-                              dvbsChannel.InnerFecRate = (BinaryConvolutionCodeRate)(comboBoxInnerFecRate.SelectedIndex - 1);
-                              dvbsChannel.Pilot = (Pilot)(comboBoxPilot.SelectedIndex + 1);
-                              dvbsChannel.Rolloff = (RollOff)(comboBoxRollOff.SelectedIndex + 1);
-                              dvbsChannel.ModulationType = (ModulationType)(comboBoxModulation.SelectedIndex + 1);
-                              dvbsChannel.LogicalChannelNumber = lcn;
-                              dvbsChannel.VideoPid = audio;
-                              dvbsChannel.AudioPid = video;
-                              switch (comboBoxPol.SelectedIndex)
-                              {
-                                case 0:
-                                  dvbsChannel.Polarisation = Polarisation.LinearH;
-                                  break;
-                                case 1:
-                                  dvbsChannel.Polarisation = Polarisation.LinearV;
-                                  break;
-                                case 2:
-                                  dvbsChannel.Polarisation = Polarisation.CircularL;
-                                  break;
-                                case 3:
-                                  dvbsChannel.Polarisation = Polarisation.CircularR;
-                                  break;
-                              }
-                              dvbsChannel.DisEqc = (DisEqcType)comboBoxDisEqc.SelectedIndex;
-                              /*IList satellites = Satellite.ListAll();
-                              foreach (Satellite sat in satellites)
-                              {
-                                if (sat.SatelliteName == comboBoxSatellite.SelectedItem.ToString())
-                                {
-                                  dvbsChannel.SatelliteIndex = sat.IdSatellite;
-                                  break;
-                                }
-                              }*/
-                              layer.AddTuningDetails(_channel, dvbsChannel);
+                              case 0:
+                                dvbsChannel.Polarisation = Polarisation.LinearH;
+                                break;
+                              case 1:
+                                dvbsChannel.Polarisation = Polarisation.LinearV;
+                                break;
+                              case 2:
+                                dvbsChannel.Polarisation = Polarisation.CircularL;
+                                break;
+                              case 3:
+                                dvbsChannel.Polarisation = Polarisation.CircularR;
+                                break;
                             }
+                            dvbsChannel.DisEqc = (DisEqcType)comboBoxDisEqc.SelectedIndex;
+                            /*IList satellites = Satellite.ListAll();
+                            foreach (Satellite sat in satellites)
+                            {
+                              if (sat.SatelliteName == comboBoxSatellite.SelectedItem.ToString())
+                              {
+                                dvbsChannel.SatelliteIndex = sat.IdSatellite;
+                                break;
+                              }
+                            }*/
+                            layer.AddTuningDetails(_channel, dvbsChannel);
                           }
                         }
                       }
@@ -307,7 +309,7 @@ namespace SetupTv.Sections
         //DVB-T
         if (textBoxDVBTfreq.Text.Length != 0)
         {
-          int lcn, freq, onid, tsid, sid, audio, video;
+          int lcn, freq, onid, tsid, sid, pmt;
           if (Int32.TryParse(textBoxDVBTChannel.Text, out lcn))
           {
             if (Int32.TryParse(textBoxDVBTfreq.Text, out freq))
@@ -318,29 +320,27 @@ namespace SetupTv.Sections
                 {
                   if (Int32.TryParse(textBox6.Text, out sid))
                   {
-                    if (Int32.TryParse(textBoxAudio.Text, out audio))
+                    if (Int32.TryParse(textBoxPmt.Text, out pmt))
                     {
-                      if (Int32.TryParse(textBoxVideo.Text, out video))
+                      if (onid > 0 && tsid >= 0 && sid >= 0)
                       {
-                        if (onid > 0 && tsid >= 0 && sid >= 0)
-                        {
-                          DVBTChannel dvbtChannel = new DVBTChannel();
-                          dvbtChannel.IsTv = _isTv;
-                          dvbtChannel.IsRadio = !_isTv;
-                          dvbtChannel.Name = _channel.Name;
-                          dvbtChannel.LogicalChannelNumber = lcn;
-                          dvbtChannel.Frequency = freq;
-                          dvbtChannel.NetworkId = onid;
-                          dvbtChannel.TransportId = tsid;
-                          dvbtChannel.ServiceId = sid;
-                          if (comboBoxBandWidth.SelectedIndex == 0)
-                            dvbtChannel.BandWidth = 7;
-                          else
-                            dvbtChannel.BandWidth = 8;
-                          dvbtChannel.VideoPid = video;
-                          dvbtChannel.AudioPid = audio;
-                          layer.AddTuningDetails(_channel, dvbtChannel);
-                        }
+                        DVBTChannel dvbtChannel = new DVBTChannel();
+                        dvbtChannel.IsTv = _isTv;
+                        dvbtChannel.IsRadio = !_isTv;
+                        dvbtChannel.Name = _channel.Name;
+                        dvbtChannel.LogicalChannelNumber = lcn;
+                        dvbtChannel.Frequency = freq;
+                        dvbtChannel.NetworkId = onid;
+                        dvbtChannel.TransportId = tsid;
+                        dvbtChannel.ServiceId = sid;
+                        dvbtChannel.Provider = textBoxDVBTProvider.Text;
+                        dvbtChannel.FreeToAir = checkBoxDVBTfta.Checked;
+                        if (comboBoxBandWidth.SelectedIndex == 0)
+                          dvbtChannel.BandWidth = 7;
+                        else
+                          dvbtChannel.BandWidth = 8;
+                        dvbtChannel.PmtPid = pmt;
+                        layer.AddTuningDetails(_channel, dvbtChannel);
                       }
                     }
                   }
@@ -397,8 +397,6 @@ namespace SetupTv.Sections
           detail.Frequency = Int32.Parse(textBoxFrequency.Text);
           detail.MajorChannel = Int32.Parse(textBoxMajor.Text);
           detail.MinorChannel = Int32.Parse(textBoxMinor.Text);
-          detail.AudioPid = Int32.Parse(textBoxAudioPid.Text);
-          detail.VideoPid = Int32.Parse(textBoxVideoPid.Text);
           switch (comboBoxQAMModulation.SelectedIndex)
           {
             case 0:
@@ -417,6 +415,9 @@ namespace SetupTv.Sections
           detail.NetworkId = Int32.Parse(textBoxQamONID.Text);
           detail.TransportId = Int32.Parse(textBoxQamTSID.Text);
           detail.ServiceId = Int32.Parse(textBoxQamSID.Text);
+          detail.PmtPid = Int32.Parse(textBoxQamPmt.Text);
+          detail.Provider = textBoxQamProvider.Text;
+          detail.FreeToAir = checkBoxQamfta.Checked;
           detail.Persist();
         }
 
@@ -428,6 +429,9 @@ namespace SetupTv.Sections
           detail.TransportId = Int32.Parse(textBoxTSID.Text);
           detail.ServiceId = Int32.Parse(textBoxSID.Text);
           detail.Symbolrate = Int32.Parse(textBoxSymbolRate.Text);
+          detail.PmtPid = Int32.Parse(textBoxDVBCPmt.Text);
+          detail.Provider = textBoxDVBCProvider.Text;
+          detail.FreeToAir = checkBoxDVBCfta.Checked;
           detail.Persist();
         }
 
@@ -446,8 +450,9 @@ namespace SetupTv.Sections
           detail.RollOff = (int)(RollOff)(comboBoxRollOff.SelectedIndex - 1);
           detail.Modulation = (int)(ModulationType)(comboBoxModulation.SelectedIndex - 1);
           detail.ChannelNumber = Int32.Parse(textBoxDVBSChannel.Text);
-          detail.VideoPid = Int32.Parse(textBoxDVBSVideo.Text);
-          detail.AudioPid = Int32.Parse(textBoxDVBSAudio.Text);
+          detail.PmtPid = Int32.Parse(textBoxDVBSPmt.Text);
+          detail.Provider = textBoxDVBSProvider.Text;
+          detail.FreeToAir = checkBoxDVBSfta.Checked;
           switch (comboBoxPol.SelectedIndex)
           {
             case 0:
@@ -490,12 +495,13 @@ namespace SetupTv.Sections
           detail.NetworkId = Int32.Parse(textBox8.Text);
           detail.TransportId = Int32.Parse(textBox7.Text);
           detail.ServiceId = Int32.Parse(textBox6.Text);
+          detail.Provider = textBoxDVBTProvider.Text;
+          detail.FreeToAir = checkBoxDVBTfta.Checked;
           if (comboBoxBandWidth.SelectedIndex == 0)
             detail.Bandwidth = 7;
           else
             detail.Bandwidth = 8;
-          detail.AudioPid = Int32.Parse(textBoxAudio.Text);
-          detail.VideoPid = Int32.Parse(textBoxVideo.Text);
+          detail.PmtPid = Int32.Parse(textBoxPmt.Text);
           detail.Persist();
         }
         //Webstream tab
@@ -593,8 +599,6 @@ namespace SetupTv.Sections
           textBoxFrequency.Text = detail.Frequency.ToString();
           textBoxMajor.Text = detail.MajorChannel.ToString();
           textBoxMinor.Text = detail.MinorChannel.ToString();
-          textBoxAudioPid.Text = detail.AudioPid.ToString();
-          textBoxVideoPid.Text = detail.VideoPid.ToString();
           switch ((ModulationType)detail.Modulation)
           {
             case ModulationType.ModNotSet:
@@ -613,6 +617,9 @@ namespace SetupTv.Sections
           textBoxQamONID.Text = detail.NetworkId.ToString();
           textBoxQamTSID.Text = detail.TransportId.ToString();
           textBoxQamSID.Text = detail.ServiceId.ToString();
+          textBoxQamPmt.Text = detail.PmtPid.ToString();
+          textBoxQamProvider.Text = detail.Provider;
+          checkBoxQamfta.Checked = detail.FreeToAir;
         }
 
         //DVB-C Tab
@@ -624,6 +631,9 @@ namespace SetupTv.Sections
           textBoxTSID.Text = detail.TransportId.ToString();
           textBoxSID.Text = detail.ServiceId.ToString();
           textBoxSymbolRate.Text = detail.Symbolrate.ToString();
+          textBoxDVBCPmt.Text = detail.PmtPid.ToString();
+          textBoxDVBCProvider.Text = detail.Provider;
+          checkBoxDVBCfta.Checked = detail.FreeToAir;
         }
 
         //DVB-S Tab
@@ -637,8 +647,9 @@ namespace SetupTv.Sections
           textBox1.Text = detail.Symbolrate.ToString();
           textBoxSwitch.Text = detail.SwitchingFrequency.ToString();
           textBoxDVBSChannel.Text = detail.ChannelNumber.ToString();
-          textBoxDVBSVideo.Text = detail.VideoPid.ToString();
-          textBoxDVBSAudio.Text = detail.AudioPid.ToString();
+          textBoxDVBSPmt.Text = detail.PmtPid.ToString();
+          textBoxDVBSProvider.Text = detail.Provider ;
+          checkBoxDVBSfta.Checked = detail.FreeToAir ;
           switch ((Polarisation)detail.Polarisation)
           {
             case Polarisation.LinearH:
@@ -690,12 +701,13 @@ namespace SetupTv.Sections
           textBox8.Text = detail.NetworkId.ToString();
           textBox7.Text = detail.TransportId.ToString();
           textBox6.Text = detail.ServiceId.ToString();
+          textBoxDVBTProvider.Text = detail.Provider;
+          checkBoxDVBTfta.Checked = detail.FreeToAir;
           if (detail.Bandwidth == 7)
             comboBoxBandWidth.SelectedIndex = 0;
           else
             comboBoxBandWidth.SelectedIndex = 1;
-          textBoxVideo.Text = detail.VideoPid.ToString();
-          textBoxAudio.Text = detail.AudioPid.ToString();
+          textBoxPmt.Text = detail.PmtPid.ToString();
         }
 
         //Webstream Tab
