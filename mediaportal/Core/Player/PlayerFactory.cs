@@ -158,20 +158,18 @@ namespace MediaPortal.Player
       return Create(fileName, null);
     }
 
+    //[Obsolete("Do not use this anymore", false)]
     public IPlayer Create(string fileName, g_Player.MediaType type)
     {
       try
       {
-        g_Player.MediaType? paramType = type as g_Player.MediaType?;
-        if (paramType.HasValue)
-          return Create(fileName, type);
-
+        return Create(fileName, (object)type);
       }
       catch (Exception ex)
       {
         Log.Error("PlayerFactory: Error creating player instance - {0}", ex.Message);
+        return (Create(fileName, null));
       }
-      return (Create(fileName, null));
     }
 
     /// <summary>
@@ -180,10 +178,12 @@ namespace MediaPortal.Player
     /// <param name="fileName"></param>
     /// <param name="type"></param>
     /// <returns></returns>
-    private IPlayer Create(string fileName, g_Player.MediaType? mtype)
+    private IPlayer Create(string fileName, object type)
     {
       try
       {
+        g_Player.MediaType mtype = (g_Player.MediaType)type;
+
         // Get settings only once
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
@@ -200,8 +200,8 @@ namespace MediaPortal.Player
 
           if (fileName.ToLower().IndexOf("rtsp:") >= 0)
           {
-            if (mtype.HasValue)
-              return new TSReaderPlayer(mtype.Value);
+            if (mtype != null)
+              return new TSReaderPlayer(mtype);
             else
               return new TSReaderPlayer();
           }
@@ -245,22 +245,22 @@ namespace MediaPortal.Player
           {
             if (fileName.ToLower().IndexOf("radio.tsbuffer") >= 0)
             {
-              if (mtype.HasValue)
-                return new BaseTSReaderPlayer(mtype.Value);
+              if (mtype != null)
+                return new BaseTSReaderPlayer(mtype);
               else
                 return new Player.BaseTSReaderPlayer();
             }
-            if (mtype.HasValue)
-              return new Player.TSReaderPlayer(mtype.Value);
+            if (mtype != null)
+              return new Player.TSReaderPlayer(mtype);
             else
               return new Player.TSReaderPlayer();
           }
 
           if (!Util.Utils.IsAVStream(fileName) && Util.Utils.IsVideo(fileName))
           {
-            if (mtype.HasValue)
+            if (mtype != null)
             {
-              return new Player.VideoPlayerVMR9(mtype.Value);
+              return new Player.VideoPlayerVMR9(mtype);
             }
             else
               return new Player.VideoPlayerVMR9();
