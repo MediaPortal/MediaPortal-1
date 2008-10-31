@@ -176,10 +176,10 @@ namespace TvPlugin
           {
             Log.Info("TvSetup: TvService is stopped - trying to start...");
             ctrl.Start();
-            // Wait until service started but no longer than 5 seconds
+            // Wait until service started but no longer than 30 seconds
             try
             {
-              ctrl.WaitForStatus(ServiceControllerStatus.Running, new TimeSpan(0, 0, 5));
+              ctrl.WaitForStatus(ServiceControllerStatus.Running, new TimeSpan(0, 0, 30));
             }
             catch (Exception)
             {
