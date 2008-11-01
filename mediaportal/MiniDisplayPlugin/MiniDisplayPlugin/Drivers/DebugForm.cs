@@ -32,12 +32,12 @@
         private AdvancedSettings AdvSettings = AdvancedSettings.Load();
         private byte[] bitmapData;
       private Container components = null;
-        private CybrDisplay.DisplayControl DisplaySettings;
+        private MiniDisplay.DisplayControl DisplaySettings;
         private bool DoDebug;
         private bool DrawingText;
         private object dWriteMutex = new object();
         private static object DWriteMutex = new object();
-        private CybrDisplay.EQControl EQSettings;
+        private MiniDisplay.EQControl EQSettings;
         private string errorMessage = "";
         private int gCols;
         private int gLines;
@@ -45,7 +45,7 @@
         private bool isDisabled;
         private DateTime LastSettingsCheck = DateTime.Now;
         private string[] LastText;
-        private CybrDisplay.SystemStatus MPStatus = new CybrDisplay.SystemStatus();
+        private MiniDisplay.SystemStatus MPStatus = new MiniDisplay.SystemStatus();
         private DateTime SettingsLastModTime;
         private Bitmap tBitmap;
         private int tCols;
@@ -142,7 +142,7 @@
                     }
                     this.EQSettings.Render_MaxValue = (this.EQSettings.UseNormalEq | this.EQSettings.UseStereoEq) ? ((int) bounds.Height) : ((int) bounds.Width);
                     this.EQSettings.Render_BANDS = this.EQSettings.UseNormalEq ? 0x10 : (this.EQSettings.UseStereoEq ? 8 : 1);
-                    CybrDisplay.ProcessEqData(ref this.EQSettings);
+                    MiniDisplay.ProcessEqData(ref this.EQSettings);
                     Monitor.Enter(obj3 = DWriteMutex);
                     try
                     {
@@ -274,7 +274,7 @@
                         return;
                     }
                 }
-                CybrDisplay.GetSystemStatus(ref this.MPStatus);
+                MiniDisplay.GetSystemStatus(ref this.MPStatus);
                 this.Check_Idle_State();
                 if (((!this.MPStatus.MediaPlayer_Active | !this.MPStatus.MediaPlayer_Playing) & this.DisplaySettings.BlankDisplayWithVideo) & (this.DisplaySettings.BlankDisplayWhenIdle & !this._mpIsIdle))
                 {
@@ -501,7 +501,7 @@
         {
             lock (DWriteMutex)
             {
-                this.EQSettings._EqDataAvailable = CybrDisplay.GetEQ(ref this.EQSettings);
+                this.EQSettings._EqDataAvailable = MiniDisplay.GetEQ(ref this.EQSettings);
                 if (this.EQSettings._EqDataAvailable)
                 {
                     this._displayThread.Priority = ThreadPriority.AboveNormal;
@@ -583,8 +583,8 @@
             {
                 Log.Info("DebugForm.InitializeDriver(): Platform: {0}", new object[] { Environment.OSVersion.VersionString });
             }
-            CybrDisplay.InitEQ(ref this.EQSettings);
-            CybrDisplay.InitDisplayControl(ref this.DisplaySettings);
+            MiniDisplay.InitEQ(ref this.EQSettings);
+            MiniDisplay.InitDisplayControl(ref this.DisplaySettings);
             this.LoadAdvancedSettings();
             Log.Info("DebugForm.InitializeDriver(): Advanced options - Force Graphic Text: {0}", new object[] { Settings.Instance.ForceGraphicText });
             Log.Info("DebugForm.InitializeDriver(): Advanced options - Equalizer Display: {0}", new object[] { this.EQSettings.UseEqDisplay });

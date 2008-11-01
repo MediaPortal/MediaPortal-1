@@ -29,9 +29,9 @@
         protected override void Dispose(bool disposing)
         {
             Log.Info("PropertyBrowser.Dispose(): called.", new object[0]);
-            lock (CybrDisplay.PropertyBrowserMutex)
+            lock (MiniDisplay.PropertyBrowserMutex)
             {
-                CybrDisplay.DisablePropertyBrowser();
+                MiniDisplay.DisablePropertyBrowser();
             }
             if (disposing && (this.components != null))
             {

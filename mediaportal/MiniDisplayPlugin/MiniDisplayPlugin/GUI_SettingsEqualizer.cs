@@ -21,7 +21,7 @@
         protected GUIToggleButtonControl btnUseEqualizer = new GUIToggleButtonControl(0x4da7);
         [SkinControl(0x15)]
         protected GUISelectButtonControl btnUseStyle = new GUISelectButtonControl(0x4da7);
-        private CybrDisplay.EQControl EQSettings = new CybrDisplay.EQControl();
+        private MiniDisplay.EQControl EQSettings = new MiniDisplay.EQControl();
         private bool selectedDelayStart;
         private int selectedDelayStartIndex;
         private bool selectedShowTitle;

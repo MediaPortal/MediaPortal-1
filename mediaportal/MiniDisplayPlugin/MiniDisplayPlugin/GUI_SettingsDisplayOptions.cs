@@ -29,7 +29,7 @@
         protected GUIToggleButtonControl btnProgress = new GUIToggleButtonControl(0x4da8);
         [SkinControl(30)]
         protected GUIToggleButtonControl btnVolume = new GUIToggleButtonControl(0x4da8);
-        private CybrDisplayPlugin.CybrDisplay.DisplayOptions DisplayOptions = new CybrDisplayPlugin.CybrDisplay.DisplayOptions();
+        private CybrDisplayPlugin.MiniDisplay.DisplayOptions DisplayOptions = new CybrDisplayPlugin.MiniDisplay.DisplayOptions();
         private bool selectedCustomFont;
         private bool selectedCustomIcons;
         private bool selectedDiskIcon;

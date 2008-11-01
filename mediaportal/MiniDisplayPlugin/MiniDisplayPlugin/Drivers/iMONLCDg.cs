@@ -138,13 +138,13 @@
     private CustomFont CFont;
     private readonly BitmapConverter converter = new BitmapConverter(true);
     private LargeIcon CustomLargeIcon;
-    private CybrDisplayPlugin.CybrDisplay.DisplayOptions DisplayOptions;
-    private CybrDisplay.DisplayControl DisplaySettings;
+    private CybrDisplayPlugin.MiniDisplay.DisplayOptions DisplayOptions;
+    private MiniDisplay.DisplayControl DisplaySettings;
     private bool DoDebug;
     private static DeviceVolumeMonitor DVM;
     private bool DVMactive;
     private static object DWriteMutex = new object();
-    private CybrDisplay.EQControl EQSettings;
+    private MiniDisplay.EQControl EQSettings;
     private string IdleMessage = string.Empty;
     //private char IMON_CHAR_1_BAR;
     //private char IMON_CHAR_2_BARS = '\x0001';
@@ -196,7 +196,7 @@
          };
     private static int[] MCEModifierToKeyModifier = new int[] { 0, 0x20000, 0x10000, 0, 0x40000, 0, 0, 0, 0x5b, 0, 0, 0, 0, 0, 0, 0 };
     private static string[] MCEModifierToModifierString = new string[] { "*", "^{*}", "+{*}", "^{+{*}}", "%{*}", "%{^{*}}", "%{+{*}}", "%{^{+{*}}}", "*", "^{*}", "+{*}", "+{^{*}}", "%{*}", "%{^{*}}", "%{+{*}}", "%{+{^{*}}}" };
-    private CybrDisplay.SystemStatus MPStatus = new CybrDisplay.SystemStatus();
+    private MiniDisplay.SystemStatus MPStatus = new MiniDisplay.SystemStatus();
     private DateTime NullTime;
     private int progLevel;
     private static object RemoteMutex = new object();
@@ -906,7 +906,7 @@
             this.EQSettings.Render_MaxValue = 6;
             this.EQSettings.EqArray[0] = 0;
           }
-          CybrDisplay.ProcessEqData(ref this.EQSettings);
+          MiniDisplay.ProcessEqData(ref this.EQSettings);
           for (int i = 0; i < this.EQSettings.Render_BANDS; i++)
           {
             switch (this.EQSettings.EqArray[0])
@@ -944,7 +944,7 @@
           {
             this.EQSettings.Render_MaxValue = 0x4b;
           }
-          CybrDisplay.ProcessEqData(ref this.EQSettings);
+          MiniDisplay.ProcessEqData(ref this.EQSettings);
         }
       }
       else
@@ -962,7 +962,7 @@
           this.EQSettings.Render_MaxValue = 6;
           this.EQSettings.EqArray[0] = 0;
         }
-        CybrDisplay.ProcessEqData(ref this.EQSettings);
+        MiniDisplay.ProcessEqData(ref this.EQSettings);
         for (int k = 0; k < this.EQSettings.Render_BANDS; k++)
         {
           switch (this.EQSettings.EqArray[0])
@@ -1047,7 +1047,7 @@
       }
       try
       {
-        CybrDisplay.GetSystemStatus(ref this.MPStatus);
+        MiniDisplay.GetSystemStatus(ref this.MPStatus);
         this.Check_Idle_State();
         if (this.EQSettings._EqDataAvailable || this._IsDisplayOff)
         {
@@ -1931,7 +1931,7 @@
     {
       lock (DWriteMutex)
       {
-        this.EQSettings._EqDataAvailable = CybrDisplay.GetEQ(ref this.EQSettings);
+        this.EQSettings._EqDataAvailable = MiniDisplay.GetEQ(ref this.EQSettings);
         if (this.EQSettings._EqDataAvailable)
         {
           this._iconThread.Priority = ThreadPriority.AboveNormal;
@@ -3437,9 +3437,9 @@
     public void Setup(string port, int lines, int cols, int delay, int linesG, int colsG, int timeG, bool backLight, int backlightLevel, bool contrast, int contrastLevel, bool blankOnExit)
     {
       MediaPortal.GUI.Library.Log.Info("(IDisplay) iMONLCDg.Setup(): called", new object[0]);
-      CybrDisplay.InitEQ(ref this.EQSettings);
-      CybrDisplay.InitDisplayControl(ref this.DisplaySettings);
-      CybrDisplay.InitDisplayOptions(ref this.DisplayOptions);
+      MiniDisplay.InitEQ(ref this.EQSettings);
+      MiniDisplay.InitDisplayControl(ref this.DisplaySettings);
+      MiniDisplay.InitDisplayOptions(ref this.DisplayOptions);
       this.InitRemoteSettings(ref this.RemoteSettings);
       this._BlankDisplayOnExit = blankOnExit;
       this._Backlight = false;
@@ -3783,7 +3783,7 @@
     {
       this.progLevel = 0;
       this.volLevel = 0;
-      if ((this.MPStatus.MediaPlayer_Playing || CybrDisplay.IsCaptureCardViewing()) & this.DisplayOptions.VolumeDisplay)
+      if ((this.MPStatus.MediaPlayer_Playing || MiniDisplay.IsCaptureCardViewing()) & this.DisplayOptions.VolumeDisplay)
       {
         try
         {
@@ -3994,9 +3994,9 @@
             icon.Animate();
             if (this.DoDebug)
             {
-              MediaPortal.GUI.Library.Log.Info("iMONLCDg.UpdateIcons(): Checking TV Card status: IsAnyCardRecording = {0}, IsViewing = {1}", new object[] { CybrDisplay.IsCaptureCardRecording().ToString(), CybrDisplay.IsCaptureCardViewing().ToString() });
+              MediaPortal.GUI.Library.Log.Info("iMONLCDg.UpdateIcons(): Checking TV Card status: IsAnyCardRecording = {0}, IsViewing = {1}", new object[] { MiniDisplay.IsCaptureCardRecording().ToString(), MiniDisplay.IsCaptureCardViewing().ToString() });
             }
-            CybrDisplay.GetSystemStatus(ref this.MPStatus);
+            MiniDisplay.GetSystemStatus(ref this.MPStatus);
             this.Check_Idle_State();
             if (this.DoDebug)
             {
@@ -4011,7 +4011,7 @@
             {
               num8 = 1;
             }
-            if (CybrDisplay.IsCaptureCardViewing() && !this.MPStatus.Media_IsTimeshifting)
+            if (MiniDisplay.IsCaptureCardViewing() && !this.MPStatus.Media_IsTimeshifting)
             {
               icon.On();
               icon.InvertOn();
@@ -4084,7 +4084,7 @@
                 this._iconThread.Priority = ThreadPriority.BelowNormal;
               }
             }
-            if ((!CybrDisplay.Player_Playing() & !CybrDisplay.IsCaptureCardViewing()) || (this.DisplayOptions.DiskIcon & !this.DisplayOptions.DiskMediaStatus))
+            if ((!MiniDisplay.Player_Playing() & !MiniDisplay.IsCaptureCardViewing()) || (this.DisplayOptions.DiskIcon & !this.DisplayOptions.DiskMediaStatus))
             {
               int num9 = 0;
               if (this.DisplayOptions.DiskIcon)
@@ -4170,7 +4170,7 @@
             _stopUpdateIconThread = false;
             break;
           }
-          CybrDisplay.GetSystemStatus(ref this.MPStatus);
+          MiniDisplay.GetSystemStatus(ref this.MPStatus);
           if (((!this.MPStatus.MediaPlayer_Active | !this.MPStatus.MediaPlayer_Playing) & this.DisplaySettings.BlankDisplayWithVideo) & (this.DisplaySettings.BlankDisplayWhenIdle & !this._mpIsIdle))
           {
             this.DisplayOn();
@@ -7411,7 +7411,7 @@
       private readonly DataColumn CData5 = new DataColumn("CData5");
       private readonly DataColumn CID = new DataColumn("CharID");
       private static byte[,] CstmFont;
-      private CybrDisplay.DisplayOptions CustomOptions = XMLUTILS.LoadDisplayOptionsSettings();
+      private MiniDisplay.DisplayOptions CustomOptions = XMLUTILS.LoadDisplayOptionsSettings();
       private DataTable FontData = new DataTable("Character");
 
       public void CloseFont()
@@ -7808,7 +7808,7 @@
     private class LargeIcon
     {
       private static byte[,] CustomIcons;
-      private CybrDisplay.DisplayOptions CustomOptions = XMLUTILS.LoadDisplayOptionsSettings();
+      private MiniDisplay.DisplayOptions CustomOptions = XMLUTILS.LoadDisplayOptionsSettings();
       private readonly DataColumn IData0 = new DataColumn("IData0");
       private readonly DataColumn IData1 = new DataColumn("IData1");
       private readonly DataColumn IData10 = new DataColumn("IData10");

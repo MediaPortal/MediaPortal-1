@@ -34,14 +34,14 @@
         private int _Tcols;
         private int _Trows;
         private CommandStrings CommandSet;
-        private CybrDisplay.DisplayControl DisplaySettings;
+        private MiniDisplay.DisplayControl DisplaySettings;
         private bool DoDebug = Assembly.GetEntryAssembly().FullName.Contains("Configuration");
         private object DWriteMutex = new object();
         private object EqWriteMutex = new object();
         private readonly GSDisplay GSD = new GSDisplay();
         private string IdleMessage = string.Empty;
         private DateTime LastSettingsCheck = DateTime.Now;
-        private CybrDisplay.SystemStatus MPStatus = new CybrDisplay.SystemStatus();
+        private MiniDisplay.SystemStatus MPStatus = new MiniDisplay.SystemStatus();
         private DateTime SettingsLastModTime;
         private object ThreadMutex = new object();
 
@@ -124,7 +124,7 @@
                         _stopDisplayThread = false;
                         return;
                     }
-                    CybrDisplay.GetSystemStatus(ref this.MPStatus);
+                    MiniDisplay.GetSystemStatus(ref this.MPStatus);
                     if ((!this.MPStatus.MediaPlayer_Active & this.DisplaySettings.BlankDisplayWithVideo) & (this.DisplaySettings.BlankDisplayWhenIdle & !this._mpIsIdle))
                     {
                         this.DisplayOn();
@@ -350,7 +350,7 @@
             else
             {
                 this.UpdateAdvancedSettings();
-                CybrDisplay.GetSystemStatus(ref this.MPStatus);
+                MiniDisplay.GetSystemStatus(ref this.MPStatus);
                 if (this.DoDebug)
                 {
                     Log.Info("GenericSerial.SetLine() Called", new object[0]);
@@ -421,7 +421,7 @@
             this.DoDebug = Assembly.GetEntryAssembly().FullName.Contains("Configuration") | Settings.Instance.ExtensiveLogging;
             Log.Info("{0}", new object[] { this.Description });
             Log.Info("GenericSerial.Setup(): called", new object[0]);
-            CybrDisplay.InitDisplayControl(ref this.DisplaySettings);
+            MiniDisplay.InitDisplayControl(ref this.DisplaySettings);
             this.InitCommandSet(ref this.CommandSet);
             this._BlankDisplayOnExit = _blankOnExit;
             this.LoadAdvancedSettings();

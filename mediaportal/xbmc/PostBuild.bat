@@ -52,8 +52,8 @@ xcopy /y %1\ProcessPlugins\bin\%2\ProcessPlugins.* plugins\process\
 xcopy /y %1\ProcessPlugins\MusicShareWatcher\MusicShareWatcherHelper\bin\%2\MusicShareWatcherHelper.* .
 xcopy /y %1\ProcessPlugins\MusicShareWatcher\MusicShareWatcher\bin\%2\MusicShareWatcher.exe .
 
-REM CybrDisplayPlugin
-xcopy /y %1\CybrDisplayPlugin\bin\%2\CybrDisplayPlugin.* plugins\process\
+REM MiniDisplayPlugin
+xcopy /y %1\MiniDisplayPlugin\bin\%2\MiniDisplayPlugin.* plugins\process\
 
 REM RemotePlugins
 xcopy /y %1\RemotePlugins\bin\%2\RemotePlugins.* .

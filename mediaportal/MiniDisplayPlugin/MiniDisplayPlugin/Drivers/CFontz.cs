@@ -35,16 +35,16 @@
         private int _Trows;
         private bool _UseKeypad;
         private readonly CFDisplay CFD = new CFDisplay();
-        private CybrDisplay.DisplayControl DisplaySettings;
+        private MiniDisplay.DisplayControl DisplaySettings;
         private string DisplayType = string.Empty;
         private bool DoDebug = Assembly.GetEntryAssembly().FullName.Contains("Configuration");
         private object DWriteMutex = new object();
-        private CybrDisplay.EQControl EQSettings;
+        private MiniDisplay.EQControl EQSettings;
         private object EqWriteMutex = new object();
         private string IdleMessage = string.Empty;
         private KeyPadControl KPSettings;
         private DateTime LastSettingsCheck = DateTime.Now;
-        private CybrDisplay.SystemStatus MPStatus = new CybrDisplay.SystemStatus();
+        private MiniDisplay.SystemStatus MPStatus = new MiniDisplay.SystemStatus();
         private DateTime SettingsLastModTime;
         private object ThreadMutex = new object();
 
@@ -129,7 +129,7 @@
                         this.EQSettings.Render_BANDS = 0x10;
                     }
                 }
-                CybrDisplay.ProcessEqData(ref this.EQSettings);
+                MiniDisplay.ProcessEqData(ref this.EQSettings);
                 this.RenderEQ(this.EQSettings.EqArray);
                 this.EQSettings._LastEQupdate = DateTime.Now;
             }
@@ -224,7 +224,7 @@
                         _stopUpdateEqThread = false;
                         return;
                     }
-                    CybrDisplay.GetSystemStatus(ref this.MPStatus);
+                    MiniDisplay.GetSystemStatus(ref this.MPStatus);
                     if ((!this.MPStatus.MediaPlayer_Active & this.DisplaySettings.BlankDisplayWithVideo) & (this.DisplaySettings.BlankDisplayWhenIdle & !this._mpIsIdle))
                     {
                         this.DisplayOn();
@@ -266,7 +266,7 @@
         {
             lock (this.DWriteMutex)
             {
-                this.EQSettings._EqDataAvailable = CybrDisplay.GetEQ(ref this.EQSettings);
+                this.EQSettings._EqDataAvailable = MiniDisplay.GetEQ(ref this.EQSettings);
                 if (this.EQSettings._EqDataAvailable)
                 {
                     this._EqThread.Priority = ThreadPriority.AboveNormal;
@@ -480,7 +480,7 @@
                         Log.Info("CFontz.SetLine(): message sent to display", new object[0]);
                     }
                 }
-                CybrDisplay.GetSystemStatus(ref this.MPStatus);
+                MiniDisplay.GetSystemStatus(ref this.MPStatus);
                 if ((line == 0) && this.MPStatus.MP_Is_Idle)
                 {
                     if (this.DoDebug)
@@ -528,8 +528,8 @@
             this.DoDebug = Assembly.GetEntryAssembly().FullName.Contains("Configuration") | Settings.Instance.ExtensiveLogging;
             Log.Info("{0}", new object[] { this.Description });
             Log.Info("CFontz.Setup(): called", new object[0]);
-            CybrDisplay.InitEQ(ref this.EQSettings);
-            CybrDisplay.InitDisplayControl(ref this.DisplaySettings);
+            MiniDisplay.InitEQ(ref this.EQSettings);
+            MiniDisplay.InitDisplayControl(ref this.DisplaySettings);
             this.InitKeyPadSettings(ref this.KPSettings);
             this._BlankDisplayOnExit = _blankOnExit;
             this._BackLightControl = _backLight;
@@ -1583,7 +1583,7 @@
                 }
             }
 
-            public void DrawVerticalBarGraph(ref CybrDisplay.EQControl EQSettings, ref byte[] EqDataArray)
+            public void DrawVerticalBarGraph(ref MiniDisplay.EQControl EQSettings, ref byte[] EqDataArray)
             {
                 if (!((!this._isOpen | !this.commPort.IsOpen) | this._IsDisplayOff))
                 {

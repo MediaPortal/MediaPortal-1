@@ -18,8 +18,8 @@
   using System.Windows.Forms;
   using Un4seen.Bass;
 
-  [PluginIcons("CybrDisplayPlugin.lcd.gif", "CybrDisplayPlugin.lcd_deactivated.gif")]
-  public class CybrDisplay : IPlugin, ISetupForm
+  [PluginIcons("MiniDisplay.lcd.gif", "MiniDisplay.lcd_deactivated.gif")]
+  public class MiniDisplay : IPlugin, ISetupForm
   {
     private static int _IdleTimeout = 5;
     public static bool _PropertyBrowserAvailable = false;
@@ -47,7 +47,7 @@
     private object ThreadAccessMutex = new object();
     private static bool UseTVServer = false;
 
-    public CybrDisplay()
+    public MiniDisplay()
     {
     }
 

@@ -15,7 +15,7 @@
         protected GUIToggleButtonControl btnDisplayVideo = new GUIToggleButtonControl(0x4da9);
         [SkinControl(0x2c)]
         protected GUISelectButtonControl btnIdleDelay = new GUISelectButtonControl(0x4da9);
-        private CybrDisplayPlugin.CybrDisplay.DisplayControl DisplayControl = new CybrDisplayPlugin.CybrDisplay.DisplayControl();
+        private CybrDisplayPlugin.MiniDisplay.DisplayControl DisplayControl = new CybrDisplayPlugin.MiniDisplay.DisplayControl();
         private int selectedActionDelayIndex = -1;
         private bool selectedDisplayAction;
         private bool selectedDisplayIdle;

@@ -32,14 +32,14 @@
         private bool _UseContrast;
         private int _UseContrastLevel;
         private string _UsePort = string.Empty;
-        private CybrDisplay.DisplayControl DisplaySettings;
+        private MiniDisplay.DisplayControl DisplaySettings;
         private bool DoDebug = Assembly.GetEntryAssembly().FullName.Contains("Configuration");
         private object DWriteMutex = new object();
         private string IdleMessage = string.Empty;
         private DateTime LastSettingsCheck = DateTime.Now;
         private int LastVolLevel;
         private readonly MD8800_Display MD = new MD8800_Display();
-        private CybrDisplay.SystemStatus MPStatus = new CybrDisplay.SystemStatus();
+        private MiniDisplay.SystemStatus MPStatus = new MiniDisplay.SystemStatus();
         private DateTime SettingsLastModTime;
         private object ThreadMutex = new object();
         private int volLevel;
@@ -119,7 +119,7 @@
                         _stopUpdateEqThread = false;
                         return;
                     }
-                    CybrDisplay.GetSystemStatus(ref this.MPStatus);
+                    MiniDisplay.GetSystemStatus(ref this.MPStatus);
                     iconBitmap = MD8800_Display.ConvertPluginIconsToDisplayIcons(this.MPStatus.CurrentIconMask);
                     if ((!this.MPStatus.MediaPlayer_Active & this.DisplaySettings.BlankDisplayWithVideo) & (this.DisplaySettings.BlankDisplayWhenIdle & !this._mpIsIdle))
                     {
@@ -128,9 +128,9 @@
                     uint num2 = iconBitmap;
                     if (this.DoDebug)
                     {
-                        Log.Info("iMONLCDg.UpdateIcons(): Checking TV Card status: IsAnyCardRecording = {0}, IsViewing = {1}", new object[] { CybrDisplay.IsCaptureCardRecording().ToString(), CybrDisplay.IsCaptureCardViewing().ToString() });
+                        Log.Info("iMONLCDg.UpdateIcons(): Checking TV Card status: IsAnyCardRecording = {0}, IsViewing = {1}", new object[] { MiniDisplay.IsCaptureCardRecording().ToString(), MiniDisplay.IsCaptureCardViewing().ToString() });
                     }
-                    if (CybrDisplay.IsCaptureCardRecording())
+                    if (MiniDisplay.IsCaptureCardRecording())
                     {
                         iconBitmap |= 0x100;
                         if (this.DoDebug)
@@ -138,7 +138,7 @@
                             Log.Info("iMONLCDg.UpdateIcons(): Setting RECORDING icon", new object[0]);
                         }
                     }
-                    else if (CybrDisplay.IsCaptureCardViewing())
+                    else if (MiniDisplay.IsCaptureCardViewing())
                     {
                         iconBitmap |= 0x20;
                         if (this.DoDebug)
@@ -188,7 +188,7 @@
                             Log.Info("iMONLCDg.UpdateIcons(): Setting PAUSED icon", new object[0]);
                         }
                     }
-                    if (!this.MPStatus.MediaPlayer_Playing & !CybrDisplay.IsCaptureCardViewing())
+                    if (!this.MPStatus.MediaPlayer_Playing & !MiniDisplay.IsCaptureCardViewing())
                     {
                         iconBitmap |= 0x400;
                     }
@@ -420,7 +420,7 @@
                 }
                 if (line == (this._Trows - 1))
                 {
-                    CybrDisplay.GetSystemStatus(ref this.MPStatus);
+                    MiniDisplay.GetSystemStatus(ref this.MPStatus);
                 }
                 if ((line == (this._Trows - 1)) && this.MPStatus.MP_Is_Idle)
                 {
@@ -469,7 +469,7 @@
             this.DoDebug = Assembly.GetEntryAssembly().FullName.Contains("Configuration") | Settings.Instance.ExtensiveLogging;
             Log.Info("{0}", new object[] { this.Description });
             Log.Info("MD8800.Setup(): called", new object[0]);
-            CybrDisplay.InitDisplayControl(ref this.DisplaySettings);
+            MiniDisplay.InitDisplayControl(ref this.DisplaySettings);
             this._BlankDisplayOnExit = _blankOnExit;
             this._UseBackLight = _backLight;
             this._UseBackLightLevel = _backLightLevel;
@@ -514,7 +514,7 @@
         private void ShowVolumeLevel()
         {
             this.volLevel = 0;
-            if (this.MPStatus.MediaPlayer_Playing || CybrDisplay.IsCaptureCardViewing())
+            if (this.MPStatus.MediaPlayer_Playing || MiniDisplay.IsCaptureCardViewing())
             {
                 try
                 {

@@ -72,7 +72,7 @@
 
     public SetupForm()
     {
-      Log.Info("CybrDisplay.SetupForm(): {0}", new object[] { CybrDisplay.Plugin_Version });
+      Log.Info("CybrDisplay.SetupForm(): {0}", new object[] { MiniDisplay.Plugin_Version });
       this.InitializeComponent();
       this.cmbPort.SelectedIndex = 0;
       this.cmbType.DataSource = Settings.Instance.Drivers;

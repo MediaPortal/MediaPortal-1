@@ -68,7 +68,7 @@
 
         private static XmlNodeList BuildMenuXML_DisplayControl(XmlDocument doc)
         {
-            CybrDisplay.DisplayControl control = LoadDisplayControlSettings();
+            MiniDisplay.DisplayControl control = LoadDisplayControlSettings();
             XmlDocumentFragment fragment = doc.CreateDocumentFragment();
             fragment.AppendChild(BuildMenuNode(doc, "togglebutton", 40, "Blank Display with Video", "", "", "", "", xWidth, "", "17", ""));
             if (control.BlankDisplayWithVideo)
@@ -90,7 +90,7 @@
         private static XmlNodeList BuildMenuXML_DisplayOptions(XmlDocument doc)
         {
             XmlDocumentFragment fragment = doc.CreateDocumentFragment();
-            CybrDisplay.DisplayOptions options = new CybrDisplay.DisplayOptions();
+            MiniDisplay.DisplayOptions options = new MiniDisplay.DisplayOptions();
             string type = Settings.Instance.Type;
             if (type != null)
             {
@@ -144,7 +144,7 @@
 
         private static XmlNodeList BuildMenuXML_Equalizer(XmlDocument doc)
         {
-            CybrDisplay.EQControl control = LoadEqualizerSettings();
+            MiniDisplay.EQControl control = LoadEqualizerSettings();
             XmlDocumentFragment fragment = doc.CreateDocumentFragment();
             fragment.AppendChild(BuildMenuNode(doc, "togglebutton", 20, "Use Equalizer", "", "", "", "", xWidth, "", "17", ""));
             if (control.UseEqDisplay)
@@ -535,9 +535,9 @@
             return control;
         }
 
-        public static CybrDisplay.DisplayControl LoadDisplayControlSettings()
+        public static MiniDisplay.DisplayControl LoadDisplayControlSettings()
         {
-            CybrDisplay.DisplayControl control = new CybrDisplay.DisplayControl();
+            MiniDisplay.DisplayControl control = new MiniDisplay.DisplayControl();
             string type = Settings.Instance.Type;
             if (type.Equals("iMONLCDg"))
             {
@@ -601,9 +601,9 @@
             return control;
         }
 
-        public static CybrDisplay.DisplayOptions LoadDisplayOptionsSettings()
+        public static MiniDisplay.DisplayOptions LoadDisplayOptionsSettings()
         {
-            CybrDisplay.DisplayOptions options = new CybrDisplay.DisplayOptions();
+            MiniDisplay.DisplayOptions options = new MiniDisplay.DisplayOptions();
             string type = Settings.Instance.Type;
             if (type.Equals("iMONLCDg"))
             {
@@ -629,9 +629,9 @@
             return options;
         }
 
-        public static CybrDisplay.EQControl LoadEqualizerSettings()
+        public static MiniDisplay.EQControl LoadEqualizerSettings()
         {
-            CybrDisplay.EQControl control = new CybrDisplay.EQControl();
+            MiniDisplay.EQControl control = new MiniDisplay.EQControl();
             string type = Settings.Instance.Type;
             if (type.Equals("iMONLCDg"))
             {
@@ -763,7 +763,7 @@
             }
         }
 
-        public static void SaveDisplayControlSettings(CybrDisplay.DisplayControl DisplayControl)
+        public static void SaveDisplayControlSettings(MiniDisplay.DisplayControl DisplayControl)
         {
             string type = Settings.Instance.Type;
             if (type.Equals("iMONLCDg"))
@@ -840,7 +840,7 @@
             }
         }
 
-        public static void SaveDisplayOptionsSettings(CybrDisplay.DisplayOptions DisplayOptions)
+        public static void SaveDisplayOptionsSettings(MiniDisplay.DisplayOptions DisplayOptions)
         {
             string type = Settings.Instance.Type;
             if (type.Equals("iMONLCDg"))
@@ -876,7 +876,7 @@
             }
         }
 
-        public static void SaveEqualizerSettings(CybrDisplay.EQControl EQSettings)
+        public static void SaveEqualizerSettings(MiniDisplay.EQControl EQSettings)
         {
             string type = Settings.Instance.Type;
             if (type.Equals("iMONLCDg"))

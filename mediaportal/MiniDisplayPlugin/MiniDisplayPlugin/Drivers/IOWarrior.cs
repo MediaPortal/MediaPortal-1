@@ -674,10 +674,10 @@
             private BitmapConverter bitmaputils = new BitmapConverter();
             private byte[] byLocal = new byte[0x400];
             private byte[] byOldImage = new byte[0x400];
-            private CybrDisplay.DisplayControl DisplaySettings;
+            private MiniDisplay.DisplayControl DisplaySettings;
             private bool DoDebug;
             private object DWriteMutex = new object();
-            private CybrDisplay.EQControl EQSettings;
+            private MiniDisplay.EQControl EQSettings;
             private int iDispHeight = 0x40;
             private int iDispWidth = 0x80;
             private string IdleMessage = ((CybrDisplayPlugin.Settings.Instance.IdleMessage != string.Empty) ? CybrDisplayPlugin.Settings.Instance.IdleMessage : "MediaPortal");
@@ -687,7 +687,7 @@
             private Bitmap IOW_Surface;
             private byte[] m_Buffer;
             private const MethodAttributes METHOD_ATTRIBUTES = (MethodAttributes.PinvokeImpl | MethodAttributes.HideBySig | MethodAttributes.Static | MethodAttributes.Public);
-            private CybrDisplay.SystemStatus MPStatus = new CybrDisplay.SystemStatus();
+            private MiniDisplay.SystemStatus MPStatus = new MiniDisplay.SystemStatus();
             private static ModuleBuilder s_mb;
             private bool stopDisplayUpdateThread;
             private object StopMutex = new object();
@@ -871,7 +871,7 @@
                         }
                         this.EQSettings.Render_MaxValue = (this.EQSettings.UseNormalEq | this.EQSettings.UseStereoEq) ? ((int) textBounds.Height) : ((int) textBounds.Width);
                         this.EQSettings.Render_BANDS = this.EQSettings.UseNormalEq ? 0x10 : (this.EQSettings.UseStereoEq ? 8 : 1);
-                        CybrDisplay.ProcessEqData(ref this.EQSettings);
+                        MiniDisplay.ProcessEqData(ref this.EQSettings);
                         Monitor.Enter(obj3 = this.DWriteMutex);
                         try
                         {
@@ -1003,7 +1003,7 @@
                             return;
                         }
                     }
-                    CybrDisplay.GetSystemStatus(ref this.MPStatus);
+                    MiniDisplay.GetSystemStatus(ref this.MPStatus);
                     if (this.DoDebug)
                     {
                         Log.Info("IOWarrior.IOWDisplay.DisplayUpdate() Collecting status...", new object[0]);
@@ -1094,7 +1094,7 @@
             {
                 lock (this.DWriteMutex)
                 {
-                    this.EQSettings._EqDataAvailable = CybrDisplay.GetEQ(ref this.EQSettings);
+                    this.EQSettings._EqDataAvailable = MiniDisplay.GetEQ(ref this.EQSettings);
                     if (this.EQSettings._EqDataAvailable)
                     {
                         this._displayThread.Priority = ThreadPriority.AboveNormal;
@@ -1401,8 +1401,8 @@
             {
                 Log.Info("IOWarrior.IOWDisplay.OpenDisplay() - called", new object[0]);
                 this.AdvSettings = UseSettings;
-                CybrDisplay.InitEQ(ref this.EQSettings);
-                CybrDisplay.InitDisplayControl(ref this.DisplaySettings);
+                MiniDisplay.InitEQ(ref this.EQSettings);
+                MiniDisplay.InitDisplayControl(ref this.DisplaySettings);
                 this.ParseAdvancedSettings();
                 try
                 {

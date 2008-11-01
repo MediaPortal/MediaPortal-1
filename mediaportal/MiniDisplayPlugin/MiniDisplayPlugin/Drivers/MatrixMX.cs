@@ -34,16 +34,16 @@
         private int _Tcols;
         private int _Trows;
         private bool _UseKeypad;
-        private CybrDisplay.DisplayControl DisplaySettings;
+        private MiniDisplay.DisplayControl DisplaySettings;
         private bool DoDebug = Assembly.GetEntryAssembly().FullName.Contains("Configuration");
         private object DWriteMutex = new object();
-        private CybrDisplay.EQControl EQSettings;
+        private MiniDisplay.EQControl EQSettings;
         private object EqWriteMutex = new object();
         private string IdleMessage = string.Empty;
         private KeyPadControl KPSettings;
         private DateTime LastSettingsCheck = DateTime.Now;
         private readonly MODisplay MOD = new MODisplay();
-        private CybrDisplay.SystemStatus MPStatus = new CybrDisplay.SystemStatus();
+        private MiniDisplay.SystemStatus MPStatus = new MiniDisplay.SystemStatus();
         private DateTime SettingsLastModTime;
         private object ThreadMutex = new object();
 
@@ -128,7 +128,7 @@
                         this.EQSettings.Render_BANDS = 0x10;
                     }
                 }
-                CybrDisplay.ProcessEqData(ref this.EQSettings);
+                MiniDisplay.ProcessEqData(ref this.EQSettings);
                 this.RenderEQ(this.EQSettings.EqArray);
                 this.EQSettings._LastEQupdate = DateTime.Now;
             }
@@ -223,7 +223,7 @@
                         _stopUpdateEqThread = false;
                         return;
                     }
-                    CybrDisplay.GetSystemStatus(ref this.MPStatus);
+                    MiniDisplay.GetSystemStatus(ref this.MPStatus);
                     if ((!this.MPStatus.MediaPlayer_Active & this.DisplaySettings.BlankDisplayWithVideo) & (this.DisplaySettings.BlankDisplayWhenIdle & !this._mpIsIdle))
                     {
                         this.DisplayOn();
@@ -265,7 +265,7 @@
         {
             lock (this.DWriteMutex)
             {
-                this.EQSettings._EqDataAvailable = CybrDisplay.GetEQ(ref this.EQSettings);
+                this.EQSettings._EqDataAvailable = MiniDisplay.GetEQ(ref this.EQSettings);
                 if (this.EQSettings._EqDataAvailable)
                 {
                     this._EqThread.Priority = ThreadPriority.AboveNormal;
@@ -467,7 +467,7 @@
             else
             {
                 this.UpdateAdvancedSettings();
-                CybrDisplay.GetSystemStatus(ref this.MPStatus);
+                MiniDisplay.GetSystemStatus(ref this.MPStatus);
                 if (this.DoDebug)
                 {
                     Log.Info("MatrixMX.SetLine() Called", new object[0]);
@@ -538,8 +538,8 @@
             this.DoDebug = Assembly.GetEntryAssembly().FullName.Contains("Configuration") | Settings.Instance.ExtensiveLogging;
             Log.Info("{0}", new object[] { this.Description });
             Log.Info("MatrixMX.Setup(): called", new object[0]);
-            CybrDisplay.InitEQ(ref this.EQSettings);
-            CybrDisplay.InitDisplayControl(ref this.DisplaySettings);
+            MiniDisplay.InitEQ(ref this.EQSettings);
+            MiniDisplay.InitDisplayControl(ref this.DisplaySettings);
             this.InitKeyPadSettings(ref this.KPSettings);
             this._BlankDisplayOnExit = _blankOnExit;
             this._BackLightControl = _useBackLight;

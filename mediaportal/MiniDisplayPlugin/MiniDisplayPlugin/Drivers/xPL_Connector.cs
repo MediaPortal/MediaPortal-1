@@ -34,8 +34,8 @@
         private XplListener Listener;
         private readonly string mDeviceID = "cdisplay";
         private string mInstanceID = "";
-        private CybrDisplay.SystemStatus MPStatus = new CybrDisplay.SystemStatus();
-        private CybrDisplay.SystemStatus MPStatus_old = new CybrDisplay.SystemStatus();
+        private MiniDisplay.SystemStatus MPStatus = new MiniDisplay.SystemStatus();
+        private MiniDisplay.SystemStatus MPStatus_old = new MiniDisplay.SystemStatus();
         private readonly string mVendorID = "mportal";
         private InputHandler rHandler;
         private DateTime SettingsLastModTime;
@@ -657,7 +657,7 @@
         private void UpdateMPStatus()
         {
             this.MPStatus_old = this.MPStatus;
-            CybrDisplay.GetSystemStatus(ref this.MPStatus);
+            MiniDisplay.GetSystemStatus(ref this.MPStatus);
             if (this.MPStatus.Equals(this.MPStatus_old))
             {
                 this._StatusChanged = false;
@@ -725,8 +725,8 @@
         {
             object obj2 = string.Empty;
             string strMessage = string.Concat(new object[] { obj2, "duration=", this.MPStatus.Media_Duration.ToString(), '\n' });
-            string str2 = CybrDisplay.PluginIconsToAudioFormat(this.MPStatus.CurrentIconMask).Replace("ICON_", "").Trim().Replace(" ", ", ");
-            string str3 = CybrDisplay.PluginIconsToVideoFormat(this.MPStatus.CurrentIconMask).Replace("ICON_", "").Trim().Replace(" ", ", ");
+            string str2 = MiniDisplay.PluginIconsToAudioFormat(this.MPStatus.CurrentIconMask).Replace("ICON_", "").Trim().Replace(" ", ", ");
+            string str3 = MiniDisplay.PluginIconsToVideoFormat(this.MPStatus.CurrentIconMask).Replace("ICON_", "").Trim().Replace(" ", ", ");
             if (!str2.Equals(string.Empty) && !str3.Equals(string.Empty))
             {
                 object obj3 = strMessage;

@@ -6,7 +6,7 @@
     <ProjectGuid>{8635D515-A5D4-4FB7-BD30-71770651E18B}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <AssemblyName>CybrDisplayPlugin</AssemblyName>
+    <AssemblyName>MiniDisplayPlugin</AssemblyName>
     <DefaultClientScript>JScript</DefaultClientScript>
     <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
     <DefaultTargetSchema>IE50</DefaultTargetSchema>
@@ -61,23 +61,11 @@
   <ItemGroup>
     <Reference Include="Bass.Net">
       <Name>Bass.Net</Name>
-      <HintPath>..\xbmc\bin\Release\Bass.Net.dll</HintPath>
-    </Reference>
-    <Reference Include="Core">
-      <Name>Core</Name>
-      <HintPath>..\xbmc\bin\Release\Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Dialogs">
-      <Name>Dialogs</Name>
-      <HintPath>..\xbmc\bin\Release\plugins\Windows\Dialogs.dll</HintPath>
+      <HintPath>..\MediaPortal.Base\Bass.Net.dll</HintPath>
     </Reference>
     <Reference Include="LibDriverCoreClient">
       <Name>LibDriverCoreClient</Name>
-      <HintPath>..\xbmc\bin\Release\LibDriverCoreClient.dll</HintPath>
-    </Reference>
-    <Reference Include="RemotePlugins">
-      <Name>RemotePlugins</Name>
-      <HintPath>..\xbmc\bin\Release\RemotePlugins.dll</HintPath>
+      <HintPath>..\MediaPortal.Base\LibDriverCoreClient.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
@@ -95,212 +83,204 @@
     <Reference Include="System.Xml">
       <Name>System.Xml</Name>
     </Reference>
-    <Reference Include="TVCapture">
-      <Name>TVCapture</Name>
-      <HintPath>..\xbmc\bin\Release\TVCapture.dll</HintPath>
-    </Reference>
-    <Reference Include="Utils">
-      <Name>Utils</Name>
-      <HintPath>..\xbmc\bin\Release\Utils.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\BaseDisplay.cs">
+    <Compile Include="MiniDisplayPlugin\BaseDisplay.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\BitmapConverter.cs">
+    <Compile Include="MiniDisplayPlugin\BitmapConverter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\ByteArray.cs">
+    <Compile Include="MiniDisplayPlugin\ByteArray.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\CybrDisplay.cs">
+    <Compile Include="MiniDisplayPlugin\MiniDisplay.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\DisplayHandler.cs">
+    <Compile Include="MiniDisplayPlugin\DisplayHandler.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Drivers\CFontz.cs">
+    <Compile Include="MiniDisplayPlugin\Drivers\CFontz.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Drivers\CFontz_AdvancedSetupForm.cs">
+    <Compile Include="MiniDisplayPlugin\Drivers\CFontz_AdvancedSetupForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Drivers\DebugForm.cs">
+    <Compile Include="MiniDisplayPlugin\Drivers\DebugForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Drivers\DebugForm_AdvancedSetupForm.cs">
+    <Compile Include="MiniDisplayPlugin\Drivers\DebugForm_AdvancedSetupForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Drivers\GenericSerial.cs">
+    <Compile Include="MiniDisplayPlugin\Drivers\GenericSerial.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Drivers\GenericSerial_AdvancedSetupForm.cs">
+    <Compile Include="MiniDisplayPlugin\Drivers\GenericSerial_AdvancedSetupForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Drivers\iMONDisplay.cs">
+    <Compile Include="MiniDisplayPlugin\Drivers\iMONDisplay.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Drivers\iMONLCDg.cs">
+    <Compile Include="MiniDisplayPlugin\Drivers\iMONLCDg.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Drivers\iMONLCDg_AdvancedSetupForm.cs">
+    <Compile Include="MiniDisplayPlugin\Drivers\iMONLCDg_AdvancedSetupForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Drivers\iMONLCDg_FontEdit.cs">
+    <Compile Include="MiniDisplayPlugin\Drivers\iMONLCDg_FontEdit.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Drivers\iMONLCDg_IconEdit.cs">
+    <Compile Include="MiniDisplayPlugin\Drivers\iMONLCDg_IconEdit.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Drivers\IOWarrior.cs">
+    <Compile Include="MiniDisplayPlugin\Drivers\IOWarrior.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Drivers\IOWarrior_AdvancedSetupForm.cs">
+    <Compile Include="MiniDisplayPlugin\Drivers\IOWarrior_AdvancedSetupForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Drivers\ISession.cs">
+    <Compile Include="MiniDisplayPlugin\Drivers\ISession.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Drivers\LCDHypeWrapper.cs">
+    <Compile Include="MiniDisplayPlugin\Drivers\LCDHypeWrapper.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Drivers\LCDHypeWrapper_AdvancedSetupForm.cs">
+    <Compile Include="MiniDisplayPlugin\Drivers\LCDHypeWrapper_AdvancedSetupForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Drivers\LCDHypeWrapper_SetupPickerForm.cs">
+    <Compile Include="MiniDisplayPlugin\Drivers\LCDHypeWrapper_SetupPickerForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Drivers\MatrixGX.cs">
+    <Compile Include="MiniDisplayPlugin\Drivers\MatrixGX.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Drivers\MatrixGX_AdvancedSetupForm.cs">
+    <Compile Include="MiniDisplayPlugin\Drivers\MatrixGX_AdvancedSetupForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Drivers\MatrixMX.cs">
+    <Compile Include="MiniDisplayPlugin\Drivers\MatrixMX.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Drivers\MatrixMX_AdvancedSetupForm.cs">
+    <Compile Include="MiniDisplayPlugin\Drivers\MatrixMX_AdvancedSetupForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Drivers\MCEDisplay.cs">
+    <Compile Include="MiniDisplayPlugin\Drivers\MCEDisplay.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Drivers\MD8800.cs">
+    <Compile Include="MiniDisplayPlugin\Drivers\MD8800.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Drivers\MD8800_AdvancedSetupForm.cs">
+    <Compile Include="MiniDisplayPlugin\Drivers\MD8800_AdvancedSetupForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Drivers\VLSYS_AdvancedSetupForm.cs">
+    <Compile Include="MiniDisplayPlugin\Drivers\VLSYS_AdvancedSetupForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Drivers\VLSYS_Mplay.cs">
+    <Compile Include="MiniDisplayPlugin\Drivers\VLSYS_Mplay.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Drivers\xPL_Connector.cs">
+    <Compile Include="MiniDisplayPlugin\Drivers\xPL_Connector.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Drivers\xPL_Connector_AdvancedSetupForm.cs">
+    <Compile Include="MiniDisplayPlugin\Drivers\xPL_Connector_AdvancedSetupForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\GUI_SettingsBacklight.cs">
+    <Compile Include="MiniDisplayPlugin\GUI_SettingsBacklight.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\GUI_SettingsDisplayControl.cs">
+    <Compile Include="MiniDisplayPlugin\GUI_SettingsDisplayControl.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\GUI_SettingsDisplayOptions.cs">
+    <Compile Include="MiniDisplayPlugin\GUI_SettingsDisplayOptions.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\GUI_SettingsEqualizer.cs">
+    <Compile Include="MiniDisplayPlugin\GUI_SettingsEqualizer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\GUI_SettingsKeyPad.cs">
+    <Compile Include="MiniDisplayPlugin\GUI_SettingsKeyPad.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\GUI_SettingsMain.cs">
+    <Compile Include="MiniDisplayPlugin\GUI_SettingsMain.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\GUI_SettingsRemote.cs">
+    <Compile Include="MiniDisplayPlugin\GUI_SettingsRemote.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\IDisplay.cs">
+    <Compile Include="MiniDisplayPlugin\IDisplay.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\MessageEditForm.cs">
+    <Compile Include="MiniDisplayPlugin\MessageEditForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Properties\Resources.cs">
+    <Compile Include="MiniDisplayPlugin\Properties\Resources.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\PropertyBrowser.cs">
+    <Compile Include="MiniDisplayPlugin\PropertyBrowser.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Settings.cs">
+    <Compile Include="MiniDisplayPlugin\Settings.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Setting\Alignment.cs">
+    <Compile Include="MiniDisplayPlugin\Setting\Alignment.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Setting\AndCondition.cs">
+    <Compile Include="MiniDisplayPlugin\Setting\AndCondition.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Setting\Condition.cs">
+    <Compile Include="MiniDisplayPlugin\Setting\Condition.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Setting\FixedValue.cs">
+    <Compile Include="MiniDisplayPlugin\Setting\FixedValue.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Setting\Image.cs">
+    <Compile Include="MiniDisplayPlugin\Setting\Image.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Setting\IsNullCondition.cs">
+    <Compile Include="MiniDisplayPlugin\Setting\IsNullCondition.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Setting\Line.cs">
+    <Compile Include="MiniDisplayPlugin\Setting\Line.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Setting\Message.cs">
+    <Compile Include="MiniDisplayPlugin\Setting\Message.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Setting\NotNullCondition.cs">
+    <Compile Include="MiniDisplayPlugin\Setting\NotNullCondition.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Setting\OrCondition.cs">
+    <Compile Include="MiniDisplayPlugin\Setting\OrCondition.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Setting\Parse.cs">
+    <Compile Include="MiniDisplayPlugin\Setting\Parse.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Setting\PerformanceCounter.cs">
+    <Compile Include="MiniDisplayPlugin\Setting\PerformanceCounter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Setting\Property.cs">
+    <Compile Include="MiniDisplayPlugin\Setting\Property.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Setting\Text.cs">
+    <Compile Include="MiniDisplayPlugin\Setting\Text.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Setting\TextProgressBar.cs">
+    <Compile Include="MiniDisplayPlugin\Setting\TextProgressBar.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Setting\Value.cs">
+    <Compile Include="MiniDisplayPlugin\Setting\Value.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\SetupForm.cs">
+    <Compile Include="MiniDisplayPlugin\SetupForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Status.cs">
+    <Compile Include="MiniDisplayPlugin\Status.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\Win32Functions.cs">
+    <Compile Include="MiniDisplayPlugin\Win32Functions.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CybrDisplayPlugin\XMLUTILS.cs">
+    <Compile Include="MiniDisplayPlugin\XMLUTILS.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="MCEDisplay_Interop\IMediaStatusSession.cs">
@@ -342,27 +322,34 @@
     <Compile Include="xPL\XplSource.cs">
       <SubType>Code</SubType>
     </Compile>
-    <EmbeddedResource Include="CybrDisplayPlugin.Drivers.CFontz_AdvancedSetupForm.resources" />
-    <EmbeddedResource Include="CybrDisplayPlugin.Drivers.DebugForm.resources" />
-    <EmbeddedResource Include="CybrDisplayPlugin.Drivers.GenericSerial_AdvancedSetupForm.resources" />
-    <EmbeddedResource Include="CybrDisplayPlugin.Drivers.iMONLCDg_AdvancedSetupForm.resources" />
-    <EmbeddedResource Include="CybrDisplayPlugin.Drivers.iMONLCDg_IconEdit.resources" />
-    <EmbeddedResource Include="CybrDisplayPlugin.Drivers.IOWarrior_AdvancedSetupForm.resources" />
-    <EmbeddedResource Include="CybrDisplayPlugin.Drivers.MatrixGX_AdvancedSetupForm.resources" />
-    <EmbeddedResource Include="CybrDisplayPlugin.Drivers.MatrixMX_AdvancedSetupForm.resources" />
-    <EmbeddedResource Include="CybrDisplayPlugin.Drivers.MD8800_AdvancedSetupForm.resources" />
-    <EmbeddedResource Include="CybrDisplayPlugin.Drivers.VLSYS_AdvancedSetupForm.resources" />
-    <EmbeddedResource Include="CybrDisplayPlugin.Drivers.xPL_Connector_AdvancedSetupForm.resources" />
-    <EmbeddedResource Include="CybrDisplayPlugin.lcd.gif" />
-    <EmbeddedResource Include="CybrDisplayPlugin.lcd_deactivated.gif" />
-    <EmbeddedResource Include="CybrDisplayPlugin.MessageEditForm.resources" />
-    <EmbeddedResource Include="CybrDisplayPlugin.Properties.Resources.resources" />
-    <EmbeddedResource Include="CybrDisplayPlugin.PropertyBrowser.resources" />
-    <EmbeddedResource Include="CybrDisplayPlugin.SetupForm.resources" />
-    <EmbeddedResource Include="CybrDisplayPlugin\Drivers\LCDHypeWrapper_AdvancedSetupForm.resx">
+    <EmbeddedResource Include="MiniDisplay.lcd.gif" />
+    <EmbeddedResource Include="MiniDisplay.lcd_deactivated.gif" />
+    <EmbeddedResource Include="MiniDisplayPlugin\Drivers\LCDHypeWrapper_AdvancedSetupForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>LCDHypeWrapper_AdvancedSetupForm.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Core.csproj">
+      <Project>{02FFFC1F-2555-4B99-8B01-3432D0673855}</Project>
+      <Name>Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Dialogs\Dialogs.csproj">
+      <Project>{396C5208-5D46-4A11-92C1-FD0F2F42D7DD}</Project>
+      <Name>Dialogs</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RemotePlugins\RemotePlugins.csproj">
+      <Project>{0A234721-1F13-4DF8-9B1E-64D9E3111203}</Project>
+      <Name>RemotePlugins</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TVCapture\TVCapture.csproj">
+      <Project>{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}</Project>
+      <Name>TVCapture</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Utils\Utils.csproj">
+      <Project>{6DA0E4DF-6230-4642-98B5-E690BB6942BB}</Project>
+      <Name>Utils</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

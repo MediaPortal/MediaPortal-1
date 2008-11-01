@@ -18,7 +18,7 @@
       private bool IDisplayToMCE = false;
         private Thread mainThread;
         private MCESession mediaSession = new HomeSession();
-        private CybrDisplay.SystemStatus MPStatus = new CybrDisplay.SystemStatus();
+        private MiniDisplay.SystemStatus MPStatus = new MiniDisplay.SystemStatus();
         private bool playSwitched;
         private static bool stopRequested = false;
         private static object ThreadMutex = new object();
@@ -79,7 +79,7 @@
                 if (this.playSwitched)
                 {
                     Thread.Sleep(100);
-                    CybrDisplay.GetSystemStatus(ref this.MPStatus);
+                    MiniDisplay.GetSystemStatus(ref this.MPStatus);
                     if (this.mediaSession != null)
                     {
                         this.mediaSession.Dispose();
@@ -234,7 +234,7 @@
 
         public class HomeSession : MCEDisplay.MCESession
         {
-            private CybrDisplay.SystemStatus MPStatus = new CybrDisplay.SystemStatus();
+            private MiniDisplay.SystemStatus MPStatus = new MiniDisplay.SystemStatus();
             private MediaStatusPropertyTag oldMenu;
             private string oldTitle = string.Empty;
 
@@ -260,7 +260,7 @@
             public override void Process()
             {
                 MediaStatusPropertyTag tag;
-                CybrDisplay.GetSystemStatus(ref this.MPStatus);
+                MiniDisplay.GetSystemStatus(ref this.MPStatus);
                 switch (GUIWindowManager.ActiveWindow)
                 {
                     case 0:
@@ -512,7 +512,7 @@
         {
             private int LastPlayState;
             private string LastPlayTime;
-            private CybrDisplay.SystemStatus MPStatus = new CybrDisplay.SystemStatus();
+            private MiniDisplay.SystemStatus MPStatus = new MiniDisplay.SystemStatus();
 
             public MusicSession()
             {
@@ -553,7 +553,7 @@
                 object[] vals = new object[0];
                 string property = GUIPropertyManager.GetProperty("#currentplaytime");
                 int num = base.Duration2Int(property);
-                CybrDisplay.GetSystemStatus(ref this.MPStatus);
+                MiniDisplay.GetSystemStatus(ref this.MPStatus);
                 int num2 = -1;
                 if (this.MPStatus.MediaPlayer_Paused)
                 {
@@ -891,7 +891,7 @@
         public class VideoSession : MCEDisplay.MCESession
         {
             private int LastPlayState;
-            private CybrDisplay.SystemStatus MPStatus = new CybrDisplay.SystemStatus();
+            private MiniDisplay.SystemStatus MPStatus = new MiniDisplay.SystemStatus();
 
             public VideoSession()
             {
@@ -929,7 +929,7 @@
                 MediaStatusPropertyTag[] tags = null;
                 object[] vals = null;
                 base.SetStatus(tags, vals);
-                CybrDisplay.GetSystemStatus(ref this.MPStatus);
+                MiniDisplay.GetSystemStatus(ref this.MPStatus);
                 int num = -1;
                 if (this.MPStatus.MediaPlayer_Paused)
                 {
