@@ -30,6 +30,7 @@ using System.Reflection;
 using MediaPortal.Util;
 using MediaPortal.GUI.Library;
 using MediaPortal.Configuration;
+using System.Runtime.CompilerServices;
 
 namespace MediaPortal.Player
 {
@@ -154,24 +155,31 @@ namespace MediaPortal.Player
       return null;
     }
 
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public IPlayer Create(string fileName)
     {
-      return Create(fileName, null);
+      IPlayer newPlayer = Create(fileName, null);
+      return newPlayer;
     }
 
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public IPlayer Create(string fileName, g_Player.MediaType type)
     {
+      IPlayer newPlayer = null;
       try
       {
         g_Player.MediaType? paramType = type as g_Player.MediaType?;
         if (paramType.HasValue)
-          return Create(fileName, paramType.Value);
+          newPlayer = Create(fileName, paramType);
+        else
+          newPlayer = Create(fileName, null);
       }
       catch (Exception ex)
       {
         Log.Error("PlayerFactory: Error creating player instance - {0}", ex.Message);
+        newPlayer = Create(fileName, null);
       }
-      return (Create(fileName, null));
+      return newPlayer;
     }
 
     /// <summary>
@@ -180,10 +188,15 @@ namespace MediaPortal.Player
     /// <param name="fileName"></param>
     /// <param name="type"></param>
     /// <returns></returns>
-    private IPlayer Create(string fileName, g_Player.MediaType? mtype)
+    private IPlayer Create(string aFileName, g_Player.MediaType? aMediaType)
     {
       try
       {
+        // Set to anything here as it will only be passed if aMediaType is not null
+        g_Player.MediaType localType = g_Player.MediaType.Video;
+        if (aMediaType != null)
+          localType = (g_Player.MediaType)aMediaType;
+
         // Get settings only once
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
@@ -194,19 +207,19 @@ namespace MediaPortal.Player
           // Free BASS to avoid problems with Digital Audio, when watching movies
           if (BassMusicPlayer.IsDefaultMusicPlayer)
           {
-            if (!Util.Utils.IsAudio(fileName))
+            if (!Util.Utils.IsAudio(aFileName))
               BassMusicPlayer.Player.FreeBass();
           }
 
-          if (fileName.ToLower().IndexOf("rtsp:") >= 0)
+          if (aFileName.ToLower().IndexOf("rtsp:") >= 0)
           {
-            if (mtype.HasValue)
-              return new TSReaderPlayer(mtype.Value);
+            if (aMediaType != null)
+              return new TSReaderPlayer(localType);
             else
               return new TSReaderPlayer();
           }
 
-          if (fileName.StartsWith("mms:") && fileName.EndsWith(".ymvp"))
+          if (aFileName.StartsWith("mms:") && aFileName.EndsWith(".ymvp"))
           {
             if (Vmr9Enabled)
               return new VideoPlayerVMR9();
@@ -214,10 +227,10 @@ namespace MediaPortal.Player
               return new AudioPlayerWMP9();
           }
 
-          string extension = Path.GetExtension(fileName).ToLower();
-          if (extension != ".tv" && extension != ".sbe" && extension != ".dvr-ms" && fileName.ToLower().IndexOf(".tsbuffer") < 0 && fileName.ToLower().IndexOf("radio.tsbuffer") < 0)
+          string extension = Path.GetExtension(aFileName).ToLower();
+          if (extension != ".tv" && extension != ".sbe" && extension != ".dvr-ms" && aFileName.ToLower().IndexOf(".tsbuffer") < 0 && aFileName.ToLower().IndexOf("radio.tsbuffer") < 0)
           {
-            IPlayer newPlayer = GetExternalPlayer(fileName);
+            IPlayer newPlayer = GetExternalPlayer(aFileName);
             if (newPlayer != null)
             {
               Log.Info("PlayerFactory: Disabling DX9 exclusive mode");
@@ -227,7 +240,7 @@ namespace MediaPortal.Player
             }
           }
 
-          if (Util.Utils.IsVideo(fileName))
+          if (Util.Utils.IsVideo(aFileName))
           {
             if (extension == ".tv" || extension == ".sbe" || extension == ".dvr-ms")
             {
@@ -243,24 +256,24 @@ namespace MediaPortal.Player
           // Use TsReader for timeshift buffer file for TvEngine3 & .ts recordings etc.
           if (extension == ".tsbuffer" || extension == ".ts")
           {
-            if (fileName.ToLower().IndexOf("radio.tsbuffer") >= 0)
+            if (aFileName.ToLower().IndexOf("radio.tsbuffer") >= 0)
             {
-              if (mtype.HasValue)
-                return new BaseTSReaderPlayer(mtype.Value);
+              if (aMediaType != null)
+                return new BaseTSReaderPlayer(localType);
               else
                 return new Player.BaseTSReaderPlayer();
             }
-            if (mtype.HasValue)
-              return new Player.TSReaderPlayer(mtype.Value);
+            if (aMediaType != null)
+              return new Player.TSReaderPlayer(localType);
             else
               return new Player.TSReaderPlayer();
           }
 
-          if (!Util.Utils.IsAVStream(fileName) && Util.Utils.IsVideo(fileName))
+          if (!Util.Utils.IsAVStream(aFileName) && Util.Utils.IsVideo(aFileName))
           {
-            if (mtype.HasValue)
+            if (aMediaType != null)
             {
-              return new Player.VideoPlayerVMR9(mtype.Value);
+              return new Player.VideoPlayerVMR9(localType);
             }
             else
               return new Player.VideoPlayerVMR9();
@@ -271,7 +284,7 @@ namespace MediaPortal.Player
             return new Player.RadioTuner();
           }
 
-          if (Util.Utils.IsCDDA(fileName))
+          if (Util.Utils.IsCDDA(aFileName))
           {
             // Check if, we should use BASS for CD Playback
             if (String.Compare(strAudioPlayer, "BASS engine", true) == 0)
@@ -285,7 +298,7 @@ namespace MediaPortal.Player
               return new Player.AudioPlayerWMP9();
           }
 
-          if (Util.Utils.IsAudio(fileName))
+          if (Util.Utils.IsAudio(aFileName))
           {
             //// choose player for Internet radio streams 
             //if (Util.Utils.IsLastFMStream(fileName))
@@ -328,7 +341,7 @@ namespace MediaPortal.Player
       }
       finally
       {
-        Log.Debug("PlayerFactory: Successfully created player instance for file - {0}", fileName);
+        Log.Debug("PlayerFactory: Successfully created player instance for file - {0}", aFileName);
       }
     }
 
