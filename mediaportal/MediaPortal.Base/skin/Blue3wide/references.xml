@@ -563,9 +563,9 @@
     <height>45</height>
     <label>457</label>
     <textXOff>26</textXOff>
-    <textYOff>4</textYOff>
+    <textYOff>6</textYOff>
     <textXOff2>17</textXOff2>
-    <textYOff2>4</textYOff2>
+    <textYOff2>6</textYOff2>
     <textureFocus>menu_list_focus1.png</textureFocus>
     <textureNoFocus>menu_list_nofocus1.png</textureNoFocus>
     <texturebg>menu_list_nofocus1.png</texturebg>
@@ -573,7 +573,7 @@
     <textureLeftFocus>arrow_round_left_focus.png</textureLeftFocus>
     <textureRight>arrow_round_right_nofocus.png</textureRight>
     <textureRightFocus>arrow_round_right_focus.png</textureRightFocus>
-    <font>font13</font>
+    <font>font12</font>
     <textcolor>white</textcolor>
     <colordiffuse>white</colordiffuse>
     <disabledcolor>60ffffff</disabledcolor>
