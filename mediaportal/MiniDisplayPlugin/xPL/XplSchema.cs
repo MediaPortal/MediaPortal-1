@@ -1,13 +1,13 @@
-﻿namespace xPL
-{
-    using System;
-    using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 
-    [StructLayout(LayoutKind.Sequential)]
-    public struct XplSchema
-    {
-        public string msgClass;
-        public string msgType;
-    }
+namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
+{
+  [StructLayout(LayoutKind.Sequential)]
+  public struct XplSchema
+  {
+    public string msgClass;
+    public string msgType;
+  }
 }
 

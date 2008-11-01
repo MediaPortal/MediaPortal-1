@@ -1,29 +1,29 @@
-﻿namespace CybrDisplayPlugin.Drivers
-{
-  using CybrDisplayPlugin;
-  using MediaPortal.Configuration;
-  using MediaPortal.GUI.Library;
-  using MediaPortal.InputDevices;
-  using MediaPortal.Ripper;
-  using Microsoft.Win32;
-  using System;
-  using System.Data;
-  using System.Diagnostics;
-  using System.Drawing;
-  using System.Drawing.Imaging;
-  using System.IO;
-  using System.Reflection;
-  using System.Runtime.CompilerServices;
-  using System.Runtime.InteropServices;
-  using System.Security.Cryptography;
-  using System.Text;
-  using System.ServiceProcess;
-  using System.Threading;
-  using System.Windows.Forms;
-  using System.Xml;
-  using System.Xml.Serialization;
-  using Win32.Utils.Cd;
+﻿using System;
+using System.Data;
+using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Text;
+using System.ServiceProcess;
+using System.Threading;
+using System.Windows.Forms;
+using System.Xml;
+using System.Xml.Serialization;
+using Microsoft.Win32;
+using Win32.Utils.Cd;
+using MediaPortal.ProcessPlugins.MiniDisplayPlugin;
+using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
+using MediaPortal.InputDevices;
+using MediaPortal.Ripper;
 
+namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
+{
   public class iMONLCDg : BaseDisplay, IDisplay, IDisposable
   {
     private bool _Backlight;
@@ -138,7 +138,7 @@
     private CustomFont CFont;
     private readonly BitmapConverter converter = new BitmapConverter(true);
     private LargeIcon CustomLargeIcon;
-    private CybrDisplayPlugin.MiniDisplay.DisplayOptions DisplayOptions;
+    private MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplay.DisplayOptions DisplayOptions;
     private MiniDisplay.DisplayControl DisplaySettings;
     private bool DoDebug;
     private static DeviceVolumeMonitor DVM;
@@ -224,8 +224,7 @@
             this.DVMactive = true;
           }
         }
-      }
-      catch (Exception exception)
+      } catch (Exception exception)
       {
         this.DVMactive = true;
         MediaPortal.GUI.Library.Log.Debug("iMONLCDg.ActivateDVM(): caught exception: {0}", new object[] { exception });
@@ -434,7 +433,7 @@
               }
             }
             MediaPortal.GUI.Library.Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): VFD Manager Stopped", new object[0]);
-            CybrDisplayPlugin.Win32Functions.RedrawNotificationArea();
+            MediaPortal.ProcessPlugins.MiniDisplayPlugin.Win32Functions.RedrawNotificationArea();
             process = new Process();
             process.StartInfo.WorkingDirectory = this.FindAntecManagerPath();
             process.StartInfo.FileName = "VFD.exe";
@@ -474,7 +473,7 @@
             }
           }
           MediaPortal.GUI.Library.Log.Info("iMONLCDg.Check_iMON_Manager_Status(): Inconsistant state: Antec VFD Manager Stopped", new object[0]);
-          CybrDisplayPlugin.Win32Functions.RedrawNotificationArea();
+          MediaPortal.ProcessPlugins.MiniDisplayPlugin.Win32Functions.RedrawNotificationArea();
         }
       }
       MediaPortal.GUI.Library.Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): Checking SoundGraph iMON Manager registry subkey.", new object[0]);
@@ -540,7 +539,7 @@
               }
             }
             MediaPortal.GUI.Library.Log.Info("iMONLCDg.Check_iMON_Manager_Status(): iMON Manager Stopped", new object[0]);
-            CybrDisplayPlugin.Win32Functions.RedrawNotificationArea();
+            MediaPortal.ProcessPlugins.MiniDisplayPlugin.Win32Functions.RedrawNotificationArea();
             process = new Process();
             process.StartInfo.WorkingDirectory = this.FindSoundGraphManagerPath();
             process.StartInfo.FileName = "iMON.exe";
@@ -580,7 +579,7 @@
             }
           }
           MediaPortal.GUI.Library.Log.Info("iMONLCDg.Check_iMON_Manager_Status(): Inconsistant state: Soundgraph iMON Manager Stopped", new object[0]);
-          CybrDisplayPlugin.Win32Functions.RedrawNotificationArea();
+          MediaPortal.ProcessPlugins.MiniDisplayPlugin.Win32Functions.RedrawNotificationArea();
         }
       }
       MediaPortal.GUI.Library.Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): iMON/VFD Manager configuration check completed", new object[0]);
@@ -1076,8 +1075,7 @@
         {
           this.SendText3R(this._lines[0]);
         }
-      }
-      catch (Exception exception)
+      } catch (Exception exception)
       {
         MediaPortal.GUI.Library.Log.Debug("iMONLCDg.DisplayLines(): CAUGHT EXCEPTION {0}", new object[] { exception });
       }
@@ -1800,7 +1798,7 @@
                 }
               }
               MediaPortal.GUI.Library.Log.Debug("iMONLCDg.ForceManagerRestart(): VFD Manager Stopped", new object[0]);
-              CybrDisplayPlugin.Win32Functions.RedrawNotificationArea();
+              MediaPortal.ProcessPlugins.MiniDisplayPlugin.Win32Functions.RedrawNotificationArea();
               process = new Process();
               process.StartInfo.WorkingDirectory = str;
               process.StartInfo.FileName = "VFD.exe";
@@ -1844,7 +1842,7 @@
                 }
               }
               MediaPortal.GUI.Library.Log.Debug("iMONLCDg.ForceManagerRestart(): iMON Manager Stopped", new object[0]);
-              CybrDisplayPlugin.Win32Functions.RedrawNotificationArea();
+              MediaPortal.ProcessPlugins.MiniDisplayPlugin.Win32Functions.RedrawNotificationArea();
               process = new Process();
               process.StartInfo.WorkingDirectory = str2;
               process.StartInfo.FileName = "iMON.exe";
@@ -2171,7 +2169,7 @@
           }
         }
         MediaPortal.GUI.Library.Log.Info("iMONLCDg.KillManager(): Antec VFD Manager Stopped", new object[0]);
-        CybrDisplayPlugin.Win32Functions.RedrawNotificationArea();
+        MediaPortal.ProcessPlugins.MiniDisplayPlugin.Win32Functions.RedrawNotificationArea();
       }
       processesByName = Process.GetProcessesByName("iMON");
       if (processesByName.Length > 0)
@@ -2192,7 +2190,7 @@
           }
         }
         MediaPortal.GUI.Library.Log.Info("iMONLCDg.KillManager(): Soundgraph iMON Manager Stopped", new object[0]);
-        CybrDisplayPlugin.Win32Functions.RedrawNotificationArea();
+        MediaPortal.ProcessPlugins.MiniDisplayPlugin.Win32Functions.RedrawNotificationArea();
       }
     }
 
@@ -2269,7 +2267,7 @@
       this.DisplaySettings._Shutdown1 = Settings.Instance.Shutdown1;
       this.DisplaySettings._Shutdown2 = Settings.Instance.Shutdown2;
       this.DisplaySettings._DisplayControlTimeout = this.DisplaySettings.DisplayActionTime * 0x989680;
-      FileInfo info = new FileInfo(Config.GetFile(Config.Dir.Config, "CybrDisplay_imonlcdg.xml"));
+      FileInfo info = new FileInfo(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg.xml"));
       this.SettingsLastModTime = info.LastWriteTime;
       this.LastSettingsCheck = DateTime.Now;
     }
@@ -2627,7 +2625,7 @@
         this._IMON.iMONRC_ChangeRCSet(num2);
         this._IMON.iMONRC_Uninit();
       }
-      zero = CybrDisplayPlugin.Win32Functions.CreateFile(fileName, 0xc0000000, 3, IntPtr.Zero, 3, 0, IntPtr.Zero);
+      zero = MediaPortal.ProcessPlugins.MiniDisplayPlugin.Win32Functions.CreateFile(fileName, 0xc0000000, 3, IntPtr.Zero, 3, 0, IntPtr.Zero);
       if ((((int)zero) == -1) | (((int)zero) == 0))
       {
         MediaPortal.GUI.Library.Log.Info("iMONLCDg.Remote_Run(): Unable to open RC device - thread not started", new object[0]);
@@ -2655,10 +2653,10 @@
             {
               MediaPortal.GUI.Library.Log.Info("iMONLCDg.Remote_Run(): Remote Manager Thread terminating", new object[0]);
               _stopRemoteThread = false;
-              CybrDisplayPlugin.Win32Functions.CloseHandle(zero);
+              MediaPortal.ProcessPlugins.MiniDisplayPlugin.Win32Functions.CloseHandle(zero);
               return;
             }
-            CybrDisplayPlugin.Win32Functions.DeviceIoControl(zero, 0x222030, null, 0, outBuffer, 8, ref bytesReturned, IntPtr.Zero);
+            MediaPortal.ProcessPlugins.MiniDisplayPlugin.Win32Functions.DeviceIoControl(zero, 0x222030, null, 0, outBuffer, 8, ref bytesReturned, IntPtr.Zero);
             if ((outBuffer[0] != 0xff) | (outBuffer[0] != 0))
             {
               str = string.Empty;
@@ -2706,7 +2704,7 @@
         }
         this._IMON.iMONRC_Uninit();
       }
-      zero = CybrDisplayPlugin.Win32Functions.CreateFile(fileName, 0xc0000000, 3, IntPtr.Zero, 3, 0, IntPtr.Zero);
+      zero = MediaPortal.ProcessPlugins.MiniDisplayPlugin.Win32Functions.CreateFile(fileName, 0xc0000000, 3, IntPtr.Zero, 3, 0, IntPtr.Zero);
       if ((((int)zero) == -1) | (((int)zero) == 0))
       {
         MediaPortal.GUI.Library.Log.Info("iMONLCDg.Remote_Run(): Unable to open RC device - thread not started", new object[0]);
@@ -2726,10 +2724,10 @@
             {
               MediaPortal.GUI.Library.Log.Info("iMONLCDg.Remote_Run(): Remote Manager Thread terminating", new object[0]);
               _stopRemoteThread = false;
-              CybrDisplayPlugin.Win32Functions.CloseHandle(zero);
+              MediaPortal.ProcessPlugins.MiniDisplayPlugin.Win32Functions.CloseHandle(zero);
               return;
             }
-            CybrDisplayPlugin.Win32Functions.DeviceIoControl(zero, 0x222030, null, 0, outBuffer, 8, ref bytesReturned, IntPtr.Zero);
+            MediaPortal.ProcessPlugins.MiniDisplayPlugin.Win32Functions.DeviceIoControl(zero, 0x222030, null, 0, outBuffer, 8, ref bytesReturned, IntPtr.Zero);
             if (outBuffer[0] == 0x80)
             {
               string str2 = string.Empty;
@@ -2804,7 +2802,7 @@
           inBuffer[4] = inBuffer[5] = num5;
         }
         inBuffer[7] = (byte)i;
-        CybrDisplayPlugin.Win32Functions.DeviceIoControl(dHandle, 0x222018, inBuffer, 8, null, 0, ref bytesReturned, IntPtr.Zero);
+        MediaPortal.ProcessPlugins.MiniDisplayPlugin.Win32Functions.DeviceIoControl(dHandle, 0x222018, inBuffer, 8, null, 0, ref bytesReturned, IntPtr.Zero);
       }
     }
 
@@ -2865,8 +2863,7 @@
               {
                 flag2 = true;
               }
-            }
-            catch (Exception exception)
+            } catch (Exception exception)
             {
               MediaPortal.GUI.Library.Log.Info("iMONLCDg.Remote_Start(): CAUGHT EXCEPTION while loading InputHander - {0}", new object[] { exception });
               flag2 = false;
@@ -2997,7 +2994,7 @@
                   }
                 }
                 MediaPortal.GUI.Library.Log.Info("iMONLCDg.RestartFrontview(): Antec Manager Stopped", new object[0]);
-                CybrDisplayPlugin.Win32Functions.RedrawNotificationArea();
+                MediaPortal.ProcessPlugins.MiniDisplayPlugin.Win32Functions.RedrawNotificationArea();
                 process = new Process();
                 process.StartInfo.WorkingDirectory = this.FindAntecManagerPath();
                 process.StartInfo.FileName = "VFD.exe";
@@ -3049,7 +3046,7 @@
                   }
                 }
                 MediaPortal.GUI.Library.Log.Info("iMONLCDg.RestartFrontview(): iMON Manager Stopped", new object[0]);
-                CybrDisplayPlugin.Win32Functions.RedrawNotificationArea();
+                MediaPortal.ProcessPlugins.MiniDisplayPlugin.Win32Functions.RedrawNotificationArea();
                 process = new Process();
                 process.StartInfo.WorkingDirectory = this.FindSoundGraphManagerPath();
                 process.StartInfo.FileName = "iMON.exe";
@@ -3129,8 +3126,7 @@
           this.SendData_Error_Count = 0;
           Thread.Sleep(this._delay);
         }
-      }
-      catch (Exception exception)
+      } catch (Exception exception)
       {
         this._isDisabled = true;
         this._errorMessage = exception.Message;
@@ -3390,8 +3386,7 @@
           {
             MediaPortal.GUI.Library.Log.Info("(IDisplay) iMONLCDg.SetLine(): completed", new object[0]);
           }
-        }
-        catch (Exception exception)
+        } catch (Exception exception)
         {
           MediaPortal.GUI.Library.Log.Debug("(IDisplay) iMONLCDg.SetLine(): CAUGHT EXCEPTION {0}", new object[] { exception });
         }
@@ -3534,8 +3529,7 @@
           {
             MediaPortal.GUI.Library.Log.Info("iMONLCDg.Setup(): Hardware AutoDetect not available", new object[0]);
           }
-        }
-        catch (Exception exception)
+        } catch (Exception exception)
         {
           MediaPortal.GUI.Library.Log.Info("iMONLCDg.Setup(): RC TEST FAILED... SG_RC.dll not found. Exception: {0}", new object[] { exception.ToString() });
         }
@@ -3585,8 +3579,7 @@
             }
             Registry.CurrentUser.Close();
           }
-        }
-        catch (Exception exception2)
+        } catch (Exception exception2)
         {
           MediaPortal.GUI.Library.Log.Info("iMONLCDg.Setup(): registry test caught exception {0}", new object[] { exception2.ToString() });
         }
@@ -3649,8 +3642,7 @@
             MediaPortal.GUI.Library.Log.Info("(IDisplay) iMONLCDg.Setup(): iMON Display device found", new object[0]);
             this._IMON.iMONVFD_Uninit();
           }
-        }
-        catch (Exception exception3)
+        } catch (Exception exception3)
         {
           this._isDisabled = true;
           this._errorMessage = exception3.Message;
@@ -3764,7 +3756,7 @@
         inBuffer[4] = (byte)now.Hour;
         inBuffer[5] = (byte)now.Minute;
         inBuffer[6] = (byte)now.Second;
-        zero = CybrDisplayPlugin.Win32Functions.CreateFile(fileName, 0xc0000000, 3, IntPtr.Zero, 3, 0, IntPtr.Zero);
+        zero = MediaPortal.ProcessPlugins.MiniDisplayPlugin.Win32Functions.CreateFile(fileName, 0xc0000000, 3, IntPtr.Zero, 3, 0, IntPtr.Zero);
         if ((((int)zero) == -1) | (((int)zero) == 0))
         {
           MediaPortal.GUI.Library.Log.Info("iMONLCDg.SetVFDClock(): Unable to open device - clock not set", new object[0]);
@@ -3772,9 +3764,9 @@
         else
         {
           MediaPortal.GUI.Library.Log.Info("iMONLCDg.SetVFDClock(): setting the VFD clock", new object[0]);
-          CybrDisplayPlugin.Win32Functions.DeviceIoControl(zero, 0x222018, inBuffer, 8, null, 0, ref bytesReturned, IntPtr.Zero);
-          CybrDisplayPlugin.Win32Functions.DeviceIoControl(zero, 0x222018, buffer2, 8, null, 0, ref bytesReturned, IntPtr.Zero);
-          CybrDisplayPlugin.Win32Functions.CloseHandle(zero);
+          MediaPortal.ProcessPlugins.MiniDisplayPlugin.Win32Functions.DeviceIoControl(zero, 0x222018, inBuffer, 8, null, 0, ref bytesReturned, IntPtr.Zero);
+          MediaPortal.ProcessPlugins.MiniDisplayPlugin.Win32Functions.DeviceIoControl(zero, 0x222018, buffer2, 8, null, 0, ref bytesReturned, IntPtr.Zero);
+          MediaPortal.ProcessPlugins.MiniDisplayPlugin.Win32Functions.CloseHandle(zero);
         }
       }
     }
@@ -3791,8 +3783,7 @@
           {
             this.volLevel = this.MPStatus.SystemVolumeLevel / 0x800;
           }
-        }
-        catch (Exception exception)
+        } catch (Exception exception)
         {
           if (this.DoDebug)
           {
@@ -3862,9 +3853,9 @@
         {
           MediaPortal.GUI.Library.Log.Info("iMONLCDg.UpdateAdvancedSettings(): called", new object[0]);
         }
-        if (File.Exists(Config.GetFile(Config.Dir.Config, "CybrDisplay_imonlcdg.xml")))
+        if (File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg.xml")))
         {
-          FileInfo info = new FileInfo(Config.GetFile(Config.Dir.Config, "CybrDisplay_imonlcdg.xml"));
+          FileInfo info = new FileInfo(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg.xml"));
           if (info.LastWriteTime.Ticks > this.SettingsLastModTime.Ticks)
           {
             if (this.DoDebug)
@@ -4200,8 +4191,7 @@
               this._iconThread.Priority = ThreadPriority.BelowNormal;
             }
           }
-        }
-        catch (Exception exception)
+        } catch (Exception exception)
         {
           MediaPortal.GUI.Library.Log.Info("iMONLCDg.VFD_EQ_Update(): CAUGHT EXCEPTION - EXITING! - {0}", new object[] { exception });
           break;
@@ -6647,8 +6637,7 @@
           writer.Close();
           flag = true;
           MediaPortal.GUI.Library.Log.Info("iMONLCDg.AdvancedSettings.CreateDefaultRemoteMapping: remote mapping file created", new object[0]);
-        }
-        catch
+        } catch
         {
           MediaPortal.GUI.Library.Log.Info("iMONLCDg.AdvancedSettings.CreateDefaultRemoteMapping: Error saving remote mapping to XML file", new object[0]);
           flag = false;
@@ -6707,11 +6696,11 @@
       {
         iMONLCDg.AdvancedSettings settings;
         MediaPortal.GUI.Library.Log.Info("iMONLCDg.AdvancedSettings.Load(): started", new object[0]);
-        if (File.Exists(Config.GetFile(Config.Dir.Config, "CybrDisplay_imonlcdg.xml")))
+        if (File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg.xml")))
         {
           MediaPortal.GUI.Library.Log.Info("iMONLCDg.AdvancedSettings.Load(): Loading settings from XML file", new object[0]);
           XmlSerializer serializer = new XmlSerializer(typeof(iMONLCDg.AdvancedSettings));
-          XmlTextReader xmlReader = new XmlTextReader(Config.GetFile(Config.Dir.Config, "CybrDisplay_imonlcdg.xml"));
+          XmlTextReader xmlReader = new XmlTextReader(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg.xml"));
           settings = (iMONLCDg.AdvancedSettings)serializer.Deserialize(xmlReader);
           xmlReader.Close();
         }
@@ -6746,7 +6735,7 @@
           MediaPortal.GUI.Library.Log.Info("iMONLCDg.AdvancedSettings.Save(): Saving settings to XML file", new object[0]);
         }
         XmlSerializer serializer = new XmlSerializer(typeof(iMONLCDg.AdvancedSettings));
-        XmlTextWriter writer = new XmlTextWriter(Config.GetFile(Config.Dir.Config, "CybrDisplay_imonlcdg.xml"), Encoding.UTF8);
+        XmlTextWriter writer = new XmlTextWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg.xml"), Encoding.UTF8);
         writer.Formatting = Formatting.Indented;
         writer.Indentation = 2;
         serializer.Serialize((XmlWriter)writer, ToSave);
@@ -7462,11 +7451,11 @@
       private bool LoadCustomFontData()
       {
         MediaPortal.GUI.Library.Log.Debug("LoadCustomFontData(): called", new object[0]);
-        if (File.Exists(Config.GetFile(Config.Dir.Config, "CybrDisplay_imonlcdg_font.xml")))
+        if (File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_font.xml")))
         {
           this.FontData.Rows.Clear();
           XmlSerializer serializer = new XmlSerializer(typeof(DataTable));
-          XmlTextReader xmlReader = new XmlTextReader(Config.GetFile(Config.Dir.Config, "CybrDisplay_imonlcdg_font.xml"));
+          XmlTextReader xmlReader = new XmlTextReader(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_font.xml"));
           MediaPortal.GUI.Library.Log.Debug("LoadCustomFontData(): DeSerializing data", new object[0]);
           this.FontData = (DataTable)serializer.Deserialize(xmlReader);
           MediaPortal.GUI.Library.Log.Debug("LoadCustomFontData(): Read data from file", new object[0]);
@@ -7520,7 +7509,7 @@
           this.FontData.Rows.Add(row);
         }
         XmlSerializer serializer = new XmlSerializer(typeof(DataTable));
-        TextWriter textWriter = new StreamWriter(Config.GetFile(Config.Dir.Config, "CybrDisplay_imonlcdg_font.xml"));
+        TextWriter textWriter = new StreamWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_font.xml"));
         MediaPortal.GUI.Library.Log.Debug("SaveFontData(): Serializing data", new object[0]);
         serializer.Serialize(textWriter, this.FontData);
         MediaPortal.GUI.Library.Log.Debug("SaveFontData(): Writing data to file", new object[0]);
@@ -7533,8 +7522,8 @@
     {
       private bool _diskFlash;
       private bool _diskInverted;
-      private readonly ulong[ ] _DiskMask = new ulong[] { 0x80fe0000000000L, 0x80fd0000000000L, 0x80fb0000000000L, 0x80f70000000000L, 0x80ef0000000000L, 0x80df0000000000L, 0x80bf0000000000L , 0x807f0000000000L };
-      private readonly ulong[ ] _DiskMaskInv = new ulong[] { 0x80010000000000L, 0x80020000000000L, 0x80040000000000L, 0x80080000000000L, 0x80100000000000L, 0x80200000000000L, 0x80400000000000L, 0x80800000000000L };
+      private readonly ulong[] _DiskMask = new ulong[] { 0x80fe0000000000L, 0x80fd0000000000L, 0x80fb0000000000L, 0x80f70000000000L, 0x80ef0000000000L, 0x80df0000000000L, 0x80bf0000000000L, 0x807f0000000000L };
+      private readonly ulong[] _DiskMaskInv = new ulong[] { 0x80010000000000L, 0x80020000000000L, 0x80040000000000L, 0x80080000000000L, 0x80100000000000L, 0x80200000000000L, 0x80400000000000L, 0x80800000000000L };
       private bool _diskOn;
       private bool _diskRotate;
       private bool _diskRotateClockwise = true;
@@ -7953,11 +7942,11 @@
       private bool LoadLargeIconData()
       {
         MediaPortal.GUI.Library.Log.Debug("LoadLargeIconData(): called", new object[0]);
-        if (File.Exists(Config.GetFile(Config.Dir.Config, "CybrDisplay_imonlcdg_icons.xml")))
+        if (File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_icons.xml")))
         {
           this.LIconData.Rows.Clear();
           XmlSerializer serializer = new XmlSerializer(typeof(DataTable));
-          XmlTextReader xmlReader = new XmlTextReader(Config.GetFile(Config.Dir.Config, "CybrDisplay_imonlcdg_icons.xml"));
+          XmlTextReader xmlReader = new XmlTextReader(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_icons.xml"));
           MediaPortal.GUI.Library.Log.Debug("LoadLargeIconData(): DeSerializing data", new object[0]);
           this.LIconData = (DataTable)serializer.Deserialize(xmlReader);
           MediaPortal.GUI.Library.Log.Debug("LoadLargeIconData(): Read data from file", new object[0]);
@@ -8007,7 +7996,7 @@
           this.LIconData.Rows.Add(row);
         }
         XmlSerializer serializer = new XmlSerializer(typeof(DataTable));
-        TextWriter textWriter = new StreamWriter(Config.GetFile(Config.Dir.Config, "CybrDisplay_imonlcdg_icons.xml"));
+        TextWriter textWriter = new StreamWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_icons.xml"));
         MediaPortal.GUI.Library.Log.Debug("SaveDefaultLargeIconData(): Serializing data", new object[0]);
         serializer.Serialize(textWriter, this.LIconData);
         MediaPortal.GUI.Library.Log.Debug("SaveDefaultLargeIconData(): Writing data to file", new object[0]);

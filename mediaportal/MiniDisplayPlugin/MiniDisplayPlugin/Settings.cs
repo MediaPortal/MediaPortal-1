@@ -1,18 +1,18 @@
-﻿namespace CybrDisplayPlugin
-{
-  using CybrDisplayPlugin.Drivers;
-  using CybrDisplayPlugin.Setting;
-  using MediaPortal.Configuration;
-  using MediaPortal.GUI.Library;
-  using System;
-  using System.Collections.Generic;
-  using System.Drawing;
-  using System.Globalization;
-  using System.IO;
-  using System.Text;
-  using System.Xml;
-  using System.Xml.Serialization;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Globalization;
+using System.IO;
+using System.Text;
+using System.Xml;
+using System.Xml.Serialization;
+using MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers;
+using MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting;
+using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
 
+namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
+{
   [Serializable]
   public class Settings
   {
@@ -65,13 +65,13 @@
       _settings.CustomCharacters = new int[][] { new int[] { 12, 30, 30, 30, 30, 30, 30, 12 }, new int[] { 0x66, 0xff, 0xff, 0xf6, 240, 240, 240, 0x60 } };
       Message item = new Message();
       item.Status = Status.Idle;
-      item.Lines.Add(new Line(new Text("MediaPortal"), CybrDisplayPlugin.Setting.Alignment.Centered));
-      item.Lines.Add(new Line(new Property("#time"), CybrDisplayPlugin.Setting.Alignment.Centered));
+      item.Lines.Add(new Line(new Text("MediaPortal"), MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting.Alignment.Centered));
+      item.Lines.Add(new Line(new Property("#time"), MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting.Alignment.Centered));
       _settings.Messages.Add(item);
       item = new Message();
       item.Status = Status.Dialog;
-      item.Lines.Add(new Line(new Property("#DialogLabel"), CybrDisplayPlugin.Setting.Alignment.Centered));
-      item.Lines.Add(new Line(new Property("#DialogItem"), CybrDisplayPlugin.Setting.Alignment.Centered));
+      item.Lines.Add(new Line(new Property("#DialogLabel"), MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting.Alignment.Centered));
+      item.Lines.Add(new Line(new Property("#DialogItem"), MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting.Alignment.Centered));
       _settings.Messages.Add(item);
       item = new Message();
       item.Status = Status.Action;
@@ -190,81 +190,81 @@
     private static Settings Load()
     {
       Settings settings;
-      if (File.Exists(Config.GetFile(Config.Dir.Config, "CybrDisplay.xml")))
+      if (File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay.xml")))
       {
-        Log.Info("CybrDisplay.Settings.Load() - Loading settings from configuration file", new object[0]);
+        Log.Info("MiniDisplay.Settings.Load() - Loading settings from configuration file", new object[0]);
         XmlSerializer serializer = new XmlSerializer(typeof(Settings));
-        XmlTextReader xmlReader = new XmlTextReader(Config.GetFile(Config.Dir.Config, "CybrDisplay.xml"));
+        XmlTextReader xmlReader = new XmlTextReader(Config.GetFile(Config.Dir.Config, "MiniDisplay.xml"));
         settings = (Settings)serializer.Deserialize(xmlReader);
         xmlReader.Close();
         settings.IdleMessage = FindIdleMessage(settings);
         return settings;
       }
-      Log.Info("CybrDisplay.Settings.Load() - Loading default settings", new object[0]);
+      Log.Info("MiniDisplay.Settings.Load() - Loading default settings", new object[0]);
       settings = new Settings();
       Default(settings);
-      Log.Info("CybrDisplay.Settings.Load() - Loaded default settings", new object[0]);
+      Log.Info("MiniDisplay.Settings.Load() - Loaded default settings", new object[0]);
       settings.IdleMessage = FindIdleMessage(settings);
       return settings;
     }
 
     private void LoadDrivers()
     {
-      Log.Info("CybrDisplay.Settings.LoadDrivers(): Loading drivers...", new object[0]);
+      Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading drivers...", new object[0]);
       List<IDisplay> list = new List<IDisplay>();
       if (this.ExtensiveLogging)
       {
-        Log.Info("CybrDisplay.Settings.LoadDrivers(): Loading xPL_Connector...", new object[0]);
+        Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading xPL_Connector...", new object[0]);
       }
       list.Add(new xPL_Connector());
       if (this.ExtensiveLogging)
       {
-        Log.Info("CybrDisplay.Settings.LoadDrivers(): Loading IOWarrior...", new object[0]);
+        Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading IOWarrior...", new object[0]);
       }
       list.Add(new IOWarrior());
       if (this.ExtensiveLogging)
       {
-        Log.Info("CybrDisplay.Settings.LoadDrivers(): Loading GenericSerial...", new object[0]);
+        Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading GenericSerial...", new object[0]);
       }
       list.Add(new GenericSerial());
       if (this.ExtensiveLogging)
       {
-        Log.Info("CybrDisplay.Settings.LoadDrivers(): Loading MCEDisplay...", new object[0]);
+        Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading MCEDisplay...", new object[0]);
       }
       list.Add(new MCEDisplay());
       if (this.ExtensiveLogging)
       {
-        Log.Info("CybrDisplay.Settings.LoadDrivers(): Loading CFontz...", new object[0]);
+        Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading CFontz...", new object[0]);
       }
       list.Add(new CFontz());
       if (this.ExtensiveLogging)
       {
-        Log.Info("CybrDisplay.Settings.LoadDrivers(): Loading iMONLCD Graphics...", new object[0]);
+        Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading iMONLCD Graphics...", new object[0]);
       }
       list.Add(new iMONLCDg());
       if (this.ExtensiveLogging)
       {
-        Log.Info("CybrDisplay.Settings.LoadDrivers(): Loading MatrixMX...", new object[0]);
+        Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading MatrixMX...", new object[0]);
       }
       list.Add(new MatrixMX());
       if (this.ExtensiveLogging)
       {
-        Log.Info("CybrDisplay.Settings.LoadDrivers(): Loading MatrixGX...", new object[0]);
+        Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading MatrixGX...", new object[0]);
       }
       list.Add(new MatrixGX());
       if (this.ExtensiveLogging)
       {
-        Log.Info("CybrDisplay.Settings.LoadDrivers(): Loading MD8800...", new object[0]);
+        Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading MD8800...", new object[0]);
       }
       list.Add(new MD8800());
       if (this.ExtensiveLogging)
       {
-        Log.Info("CybrDisplay.Settings.LoadDrivers(): Loading VLSYS_Mplay...", new object[0]);
+        Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading VLSYS_Mplay...", new object[0]);
       }
       list.Add(new VLSYS_Mplay());
       if (this.ExtensiveLogging)
       {
-        Log.Info("CybrDisplay.Settings.LoadDrivers(): Loading Debug Display...", new object[0]);
+        Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading Debug Display...", new object[0]);
       }
       list.Add(new DebugForm());
       if (this.m_EnableLCDHype)
@@ -280,7 +280,7 @@
           {
             if (this.ExtensiveLogging)
             {
-              Log.Info("CybrDisplay.Settings.LoadDrivers(): Loading LCDHype Driver {0}...", new object[] { info2.FullName });
+              Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading LCDHype Driver {0}...", new object[] { info2.FullName });
             }
             list.Add(new LCDHypeWrapper(info2.FullName));
           }
@@ -289,7 +289,7 @@
       this.m_Drivers = list;
       if (this.ExtensiveLogging)
       {
-        Log.Info("CybrDisplay.Settings.LoadDrivers(): Driver loading complete...", new object[0]);
+        Log.Info("MiniDisplay.Settings.LoadDrivers(): Driver loading complete...", new object[0]);
       }
     }
 
@@ -302,7 +302,7 @@
     public static void Save()
     {
       XmlSerializer serializer = new XmlSerializer(typeof(Settings));
-      XmlTextWriter writer = new XmlTextWriter(Config.GetFile(Config.Dir.Config, "CybrDisplay.xml"), Encoding.UTF8);
+      XmlTextWriter writer = new XmlTextWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay.xml"), Encoding.UTF8);
       writer.Formatting = Formatting.Indented;
       writer.Indentation = 2;
       serializer.Serialize((XmlWriter)writer, Instance);
@@ -634,19 +634,19 @@
       {
         if (this.ExtensiveLogging)
         {
-          Log.Debug("CybrDisplay.Settings.LCDType: Determining configured display type...", new object[0]);
+          Log.Debug("MiniDisplay.Settings.LCDType: Determining configured display type...", new object[0]);
         }
         if (this.Type == null)
         {
           if (this.ExtensiveLogging)
           {
-            Log.Debug("CybrDisplay.Settings.LCDType: Completed - Requested type was NULL.  Returning first type found...", new object[0]);
+            Log.Debug("MiniDisplay.Settings.LCDType: Completed - Requested type was NULL.  Returning first type found...", new object[0]);
           }
           return this.Drivers[0];
         }
         if (this.ExtensiveLogging)
         {
-          Log.Info("CybrDisplay.Settings.LCDType: Configured for display type: {0}", new object[] { this.Type });
+          Log.Info("MiniDisplay.Settings.LCDType: Configured for display type: {0}", new object[] { this.Type });
         }
         foreach (IDisplay display in this.Drivers)
         {
@@ -654,14 +654,14 @@
           {
             if (this.ExtensiveLogging)
             {
-              Log.Debug("CybrDisplay.Settings.LCDType: Completed - Requested type was found.", new object[0]);
+              Log.Debug("MiniDisplay.Settings.LCDType: Completed - Requested type was found.", new object[0]);
             }
             return display;
           }
         }
         if (this.ExtensiveLogging)
         {
-          Log.Error("CybrDisplay.Settings.LCDType: Confleted - Requested type {0} NOT FOUND.", new object[] { this.Type });
+          Log.Error("MiniDisplay.Settings.LCDType: Confleted - Requested type {0} NOT FOUND.", new object[] { this.Type });
         }
         return this.Drivers[0];
       }

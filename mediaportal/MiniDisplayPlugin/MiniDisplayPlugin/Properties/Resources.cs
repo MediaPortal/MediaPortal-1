@@ -1,13 +1,13 @@
-﻿namespace CybrDisplayPlugin.Properties
-{
-    using System;
-    using System.CodeDom.Compiler;
-    using System.ComponentModel;
-    using System.Diagnostics;
-    using System.Globalization;
-    using System.Resources;
-    using System.Runtime.CompilerServices;
+﻿using System;
+using System.CodeDom.Compiler;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Globalization;
+using System.Resources;
+using System.Runtime.CompilerServices;
 
+namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Properties
+{
     [CompilerGenerated, GeneratedCode("System.Resources.Tools.StronglyTypedResourceBuilder", "2.0.0.0"), DebuggerNonUserCode]
     internal class Resources
     {
@@ -38,7 +38,7 @@
             {
                 if (object.ReferenceEquals(resourceMan, null))
                 {
-                    System.Resources.ResourceManager manager = new System.Resources.ResourceManager("CybrDisplayPlugin.Properties.Resources", typeof(Resources).Assembly);
+                    System.Resources.ResourceManager manager = new System.Resources.ResourceManager("MiniDisplayPlugin.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = manager;
                 }
                 return resourceMan;

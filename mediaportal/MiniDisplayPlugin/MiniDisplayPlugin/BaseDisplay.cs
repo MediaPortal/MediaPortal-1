@@ -1,12 +1,12 @@
-﻿namespace CybrDisplayPlugin
-{
-    using System;
+﻿using System;
 
-    public abstract class BaseDisplay
+namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
+{
+  public abstract class BaseDisplay
+  {
+    protected BaseDisplay()
     {
-        protected BaseDisplay()
-        {
-        }
     }
+  }
 }
 

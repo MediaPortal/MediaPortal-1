@@ -1,22 +1,22 @@
-﻿namespace xPL
-{
-  using CybrDisplayPlugin;
-  using MediaPortal.GUI.Library;
-  using Microsoft.Win32;
-  using System;
-  using System.Collections;
-  using System.Collections.Generic;
-  using System.Diagnostics;
-  using System.IO;
-  using System.Net;
-  using System.Net.Sockets;
-  using System.Reflection;
-  using System.Runtime.CompilerServices;
-  using System.Text;
-  using System.Threading;
-  using System.Timers;
-  using System.Xml;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Net;
+using System.Net.Sockets;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Text;
+using System.Threading;
+using System.Timers;
+using System.Xml;
+using Microsoft.Win32;
+using MediaPortal.ProcessPlugins.MiniDisplayPlugin;
+using MediaPortal.GUI.Library;
 
+namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
+{
   public class XplListener : IDisposable
   {
     private bool _suppressDuplicateMessages;
@@ -133,8 +133,7 @@
             return true;
           }
         }
-      }
-      catch
+      } catch
       {
       }
       return false;
@@ -154,8 +153,7 @@
           this.sockIncoming.Shutdown(SocketShutdown.Both);
           this.sockIncoming.Close();
         }
-      }
-      catch
+      } catch
       {
       }
     }
@@ -168,8 +166,7 @@
         {
           this.Dispose();
         }
-      }
-      catch
+      } catch
       {
       }
     }
@@ -180,8 +177,7 @@
       {
         Version version = Assembly.GetEntryAssembly().GetName().Version;
         return string.Concat(new object[] { version.Major, ".", version.Minor, ".", version.Build, ".", version.Revision });
-      }
-      catch
+      } catch
       {
         return "0.0.0.0";
       }
@@ -231,8 +227,7 @@
                       try
                       {
                         num5 = int.Parse(s);
-                      }
-                      catch
+                      } catch
                       {
                         num5 = 5;
                       }
@@ -258,8 +253,7 @@
                         this.XplConfigItemDone(key, s);
                       }
                     }
-                  }
-                  catch (Exception exception)
+                  } catch (Exception exception)
                   {
                     this.LogError(exception.Message);
                   }
@@ -278,8 +272,7 @@
                   {
                     this.XplReConfigDone();
                   }
-                }
-                catch
+                } catch
                 {
                 }
                 this.SaveState();
@@ -377,8 +370,7 @@
           this.XPL_Portnum = port;
           port = 0;
           continue;
-        }
-        catch
+        } catch
         {
           if (this.DoDebug)
           {
@@ -441,8 +433,7 @@
           flag = true;
           this.LogInfo("Configuration loaded OK.");
         }
-      }
-      catch (Exception exception)
+      } catch (Exception exception)
       {
         this.LogError("Loading did not succeed: " + exception.Message);
       }
@@ -668,8 +659,7 @@
                 }
               }
             }
-          }
-          catch (Exception exception)
+          } catch (Exception exception)
           {
             this.LogError(exception.ToString());
           }
@@ -707,8 +697,7 @@
           writer.WriteEndElement();
           writer.Flush();
           writer.Close();
-        }
-        catch (Exception exception)
+        } catch (Exception exception)
         {
           this.LogError("Error saving state: " + exception.ToString());
         }
@@ -757,8 +746,7 @@
           str = str + this.XplHBeatItems();
         }
         new XplMsg(str + "}" + '\n').Send();
-      }
-      catch (Exception exception)
+      } catch (Exception exception)
       {
         this.LogError("Error sending heartbeat: " + exception.ToString());
       }
@@ -803,8 +791,7 @@
               MediaPortal.GUI.Library.Log.Info("xPL.XplListener.sListenOnIP: using \"{0}\" as default value", new object[] { str });
             }
           }
-        }
-        catch
+        } catch
         {
           if (extensiveLogging)
           {
@@ -911,8 +898,7 @@
             try
             {
               this.XplOnTimer();
-            }
-            catch
+            } catch
             {
             }
           }
@@ -975,8 +961,7 @@
         try
         {
           return int.Parse(this.ConfigItems.ConfigItem("interval").Value);
-        }
-        catch
+        } catch
         {
           this.HBeat_Interval = 5;
           return 5;
@@ -1058,8 +1043,7 @@
           try
           {
             any = IPAddress.Parse(listenOnIP);
-          }
-          catch (Exception exception)
+          } catch (Exception exception)
           {
             throw new Exception("Could not decode to valid IPAddress: " + listenOnIP, exception);
           }
@@ -1099,8 +1083,7 @@
             {
               str = "ANY";
             }
-          }
-          catch
+          } catch
           {
             if (this.DoDebug)
             {
@@ -1344,9 +1327,9 @@
 
     public class XplEventArgs : EventArgs
     {
-      public xPL.XplMsg XplMsg;
+      public MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL.XplMsg XplMsg;
 
-      public XplEventArgs(xPL.XplMsg x)
+      public XplEventArgs(MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL.XplMsg x)
       {
         this.XplMsg = x;
       }

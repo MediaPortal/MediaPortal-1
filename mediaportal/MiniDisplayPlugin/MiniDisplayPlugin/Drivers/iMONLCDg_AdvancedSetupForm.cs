@@ -1,15 +1,15 @@
-﻿namespace CybrDisplayPlugin.Drivers
-{
-  using MediaPortal.Configuration;
-  using MediaPortal.GUI.Library;
-  using MediaPortal.UserInterface.Controls;
-  using System;
-  using System.ComponentModel;
-  using System.Drawing;
-  using System.IO;
-  using System.Windows.Forms;
+﻿using System;
+using System.ComponentModel;
+using System.Drawing;
+using System.IO;
+using System.Windows.Forms;
+using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
+using MediaPortal.UserInterface.Controls;
 
-  public class iMONLCDg_AdvancedSetupForm : Form
+namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
+{
+  public class iMONLCDg_AdvancedSetupForm : MediaPortal.UserInterface.Controls.MPConfigForm
   {
     private MPButton btnOK;
     private MPButton btnReset;

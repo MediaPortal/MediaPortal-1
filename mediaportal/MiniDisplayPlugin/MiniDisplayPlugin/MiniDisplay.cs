@@ -1,23 +1,23 @@
-﻿namespace CybrDisplayPlugin
-{
-  using CybrDisplayPlugin.Setting;
-  using DShowNET.AudioMixer;
-  using MediaPortal.Configuration;
-  using MediaPortal.Dialogs;
-  using MediaPortal.GUI.Library;
-  using MediaPortal.Player;
-  using MediaPortal.Profile;
-  using MediaPortal.TV.Recording;
-  using Microsoft.Win32;
-  using System;
-  using System.Collections;
-  using System.IO;
-  using System.Reflection;
-  using System.Runtime.InteropServices;
-  using System.Threading;
-  using System.Windows.Forms;
-  using Un4seen.Bass;
+﻿using System;
+using System.Collections;
+using System.IO;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Threading;
+using System.Windows.Forms;
+using Un4seen.Bass;
+using DShowNET.AudioMixer;
+using Microsoft.Win32;
+using MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting;
+using MediaPortal.Configuration;
+using MediaPortal.Dialogs;
+using MediaPortal.GUI.Library;
+using MediaPortal.Player;
+using MediaPortal.Profile;
+using MediaPortal.TV.Recording;
 
+namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
+{
   [PluginIcons("MiniDisplay.lcd.gif", "MiniDisplay.lcd_deactivated.gif")]
   public class MiniDisplay : IPlugin, ISetupForm
   {
@@ -40,7 +40,7 @@
     //private bool ScreenSaverActiveAtStart;
     //private int ScreenSaverTimeOut;
     private GUIWindow SetupWindow = new GUI_SettingsMain();
-    private CybrDisplayPlugin.Status status;
+    private MediaPortal.ProcessPlugins.MiniDisplayPlugin.Status status;
     private static object StatusMutex = new object();
     private bool stopRequested;
     private Thread t;
@@ -58,9 +58,9 @@
 
     private void browser_Closing(object sender, FormClosingEventArgs e)
     {
-      if (CybrDisplayPlugin.Settings.Instance.ExtensiveLogging)
+      if (MediaPortal.ProcessPlugins.MiniDisplayPlugin.Settings.Instance.ExtensiveLogging)
       {
-        Log.Info("CybrDisplay.browser_Closing(): PropertyBrowser is closing.", new object[0]);
+        Log.Info("MiniDisplay.browser_Closing(): PropertyBrowser is closing.", new object[0]);
       }
       this.browser = null;
     }
@@ -94,62 +94,61 @@
       {
         try
         {
-          this.display = CybrDisplayPlugin.Settings.Instance.LCDType;
+          this.display = MediaPortal.ProcessPlugins.MiniDisplayPlugin.Settings.Instance.LCDType;
           if (this.display == null)
           {
-            Log.Info("CybrDisplay.DoStart(): Internal display type not found.  Plugin not started!!!", new object[0]);
+            Log.Info("MiniDisplay.DoStart(): Internal display type not found.  Plugin not started!!!", new object[0]);
             return;
           }
-          Log.Info("CybrDisplay.DoStart(): Starting background thread", new object[0]);
+          Log.Info("MiniDisplay.DoStart(): Starting background thread", new object[0]);
           this.stopRequested = false;
           this.t = new Thread(new ThreadStart(this.Run));
           this.t.Priority = ThreadPriority.Lowest;
-          this.t.Name = "CybrDisplay";
+          this.t.Name = "MiniDisplay";
           this.t.TrySetApartmentState(ApartmentState.MTA);
           this.t.Start();
           GUIWindowManager.OnNewAction += new OnActionHandler(this.GUIWindowManager_OnNewAction);
           Thread.Sleep(100);
           if (!this.t.IsAlive)
           {
-            Log.Info("CybrDisplay.DoStart(): ERROR - backgrund thread NOT STARTED", new object[0]);
+            Log.Info("MiniDisplay.DoStart(): ERROR - backgrund thread NOT STARTED", new object[0]);
           }
-        }
-        catch (Exception exception)
+        } catch (Exception exception)
         {
-          Log.Info("CybrDisplay.DoStart: Exception while starting plugin: " + exception.Message, new object[0]);
+          Log.Info("MiniDisplay.DoStart: Exception while starting plugin: " + exception.Message, new object[0]);
           if ((this.t != null) && this.t.IsAlive)
           {
             this.t.Abort();
           }
           this.t = null;
         }
-        Log.Info("CybrDisplay.DoStart(): Completed", new object[0]);
+        Log.Info("MiniDisplay.DoStart(): Completed", new object[0]);
       }
     }
 
     private void DoStop()
     {
-      Log.Info("CybrDisplay.DoStop(): Called.", new object[0]);
+      Log.Info("MiniDisplay.DoStop(): Called.", new object[0]);
       try
       {
         if ((this.t == null) || !this.t.IsAlive)
         {
-          Log.Info("CybrDisplay.DoStop(): ERROR - background thread not running.", new object[0]);
+          Log.Info("MiniDisplay.DoStop(): ERROR - background thread not running.", new object[0]);
         }
         else
         {
-          Log.Info("CybrDisplay.DoStop(): waiting for background thread access.", new object[0]);
+          Log.Info("MiniDisplay.DoStop(): waiting for background thread access.", new object[0]);
           lock (this.ThreadAccessMutex)
           {
             this.stopRequested = true;
           }
-          Log.Info("CybrDisplay.DoStop(): Requesting background thread to stop.", new object[0]);
+          Log.Info("MiniDisplay.DoStop(): Requesting background thread to stop.", new object[0]);
           DateTime time = DateTime.Now.AddSeconds(5.0);
           while (this.t.IsAlive && (DateTime.Now.Ticks < time.Ticks))
           {
-            if (CybrDisplayPlugin.Settings.Instance.ExtensiveLogging)
+            if (MediaPortal.ProcessPlugins.MiniDisplayPlugin.Settings.Instance.ExtensiveLogging)
             {
-              Log.Info("CybrDisplay.DoStop: Background thread still alive, waiting 100ms...", new object[0]);
+              Log.Info("MiniDisplay.DoStop: Background thread still alive, waiting 100ms...", new object[0]);
             }
             Thread.Sleep(100);
           }
@@ -157,16 +156,15 @@
           {
             this.t.Abort();
             Thread.Sleep(100);
-            Log.Info("CybrDisplay.DoStop(): Forcing display thread shutdown. t.IsAlive = {0}", new object[] { this.t.IsAlive });
+            Log.Info("MiniDisplay.DoStop(): Forcing display thread shutdown. t.IsAlive = {0}", new object[] { this.t.IsAlive });
           }
-          if (CybrDisplayPlugin.Settings.Instance.ExtensiveLogging)
+          if (MediaPortal.ProcessPlugins.MiniDisplayPlugin.Settings.Instance.ExtensiveLogging)
           {
-            Log.Info("CybrDisplay.DoStop(): Background thread has stopped.", new object[0]);
+            Log.Info("MiniDisplay.DoStop(): Background thread has stopped.", new object[0]);
           }
           this.t = null;
         }
-      }
-      catch (Exception exception)
+      } catch (Exception exception)
       {
         Log.Error(exception);
       }
@@ -177,54 +175,54 @@
       bool flag = false;
       try
       {
-        if (CybrDisplayPlugin.Settings.Instance.ExtensiveLogging)
+        if (MediaPortal.ProcessPlugins.MiniDisplayPlugin.Settings.Instance.ExtensiveLogging)
         {
-          Log.Debug("CybrDisplay Processing status.", new object[0]);
+          Log.Debug("MiniDisplay Processing status.", new object[0]);
         }
         GUIWindow.Window activeWindow = (GUIWindow.Window)GUIWindowManager.ActiveWindow;
-        if (CybrDisplayPlugin.Settings.Instance.ExtensiveLogging)
+        if (MediaPortal.ProcessPlugins.MiniDisplayPlugin.Settings.Instance.ExtensiveLogging)
         {
           Log.Debug("Active window is {0}", new object[] { activeWindow.ToString() });
         }
-        this.status = CybrDisplayPlugin.Status.Idle;
+        this.status = MediaPortal.ProcessPlugins.MiniDisplayPlugin.Status.Idle;
         if (g_Player.Player != null)
         {
-          if (CybrDisplayPlugin.Settings.Instance.ExtensiveLogging)
+          if (MediaPortal.ProcessPlugins.MiniDisplayPlugin.Settings.Instance.ExtensiveLogging)
           {
             Log.Debug("Active player detected", new object[0]);
           }
           GUIPropertyManager.SetProperty("#paused", g_Player.Paused ? "true" : string.Empty);
           if (g_Player.IsDVD)
           {
-            this.status = CybrDisplayPlugin.Status.PlayingDVD;
+            this.status = MediaPortal.ProcessPlugins.MiniDisplayPlugin.Status.PlayingDVD;
             flag = true;
           }
           else if (g_Player.IsRadio)
           {
-            this.status = CybrDisplayPlugin.Status.PlayingRadio;
+            this.status = MediaPortal.ProcessPlugins.MiniDisplayPlugin.Status.PlayingRadio;
           }
           else if (g_Player.IsMusic)
           {
-            this.status = CybrDisplayPlugin.Status.PlayingMusic;
+            this.status = MediaPortal.ProcessPlugins.MiniDisplayPlugin.Status.PlayingMusic;
           }
           else if (g_Player.IsTimeShifting)
           {
-            this.status = CybrDisplayPlugin.Status.Timeshifting;
+            this.status = MediaPortal.ProcessPlugins.MiniDisplayPlugin.Status.Timeshifting;
             flag = true;
           }
           else if (g_Player.IsTVRecording)
           {
-            this.status = CybrDisplayPlugin.Status.PlayingRecording;
+            this.status = MediaPortal.ProcessPlugins.MiniDisplayPlugin.Status.PlayingRecording;
             flag = true;
           }
           else if (g_Player.IsTV)
           {
-            this.status = CybrDisplayPlugin.Status.PlayingTV;
+            this.status = MediaPortal.ProcessPlugins.MiniDisplayPlugin.Status.PlayingTV;
             flag = true;
           }
           else if (g_Player.IsVideo)
           {
-            this.status = CybrDisplayPlugin.Status.PlayingVideo;
+            this.status = MediaPortal.ProcessPlugins.MiniDisplayPlugin.Status.PlayingVideo;
             flag = true;
           }
           if (this.ControlScreenSaver && flag)
@@ -237,7 +235,7 @@
           GUIPropertyManager.SetProperty("#paused", string.Empty);
           if (this.IsTVWindow((int)activeWindow))
           {
-            this.status = CybrDisplayPlugin.Status.PlayingTV;
+            this.status = MediaPortal.ProcessPlugins.MiniDisplayPlugin.Status.PlayingTV;
           }
           if (this.ControlScreenSaver)
           {
@@ -246,7 +244,7 @@
         }
         if ((DateTime.Now - this.lastAction) < new TimeSpan(0, 0, _IdleTimeout))
         {
-          this.status = CybrDisplayPlugin.Status.Action;
+          this.status = MediaPortal.ProcessPlugins.MiniDisplayPlugin.Status.Action;
         }
         if (GUIWindowManager.IsRouted)
         {
@@ -255,17 +253,17 @@
           GUIWindow.Window activeWindowEx = (GUIWindow.Window)GUIWindowManager.ActiveWindowEx;
           if (this.GetDialogInfo(activeWindowEx, ref dialogTitle, ref dialogHighlightedItem))
           {
-            this.status = CybrDisplayPlugin.Status.Dialog;
+            this.status = MediaPortal.ProcessPlugins.MiniDisplayPlugin.Status.Dialog;
             GUIPropertyManager.GetProperty("#currentmodule");
             GUIPropertyManager.SetProperty("#DialogLabel", dialogTitle);
             GUIPropertyManager.SetProperty("#DialogItem", dialogHighlightedItem);
-            if (CybrDisplayPlugin.Settings.Instance.ExtensiveLogging)
+            if (MediaPortal.ProcessPlugins.MiniDisplayPlugin.Settings.Instance.ExtensiveLogging)
             {
               Log.Debug("DIALOG window is {0}: \"{1}\", \"{2}\"", new object[] { activeWindowEx.ToString(), dialogTitle, dialogHighlightedItem });
             }
           }
         }
-        if (CybrDisplayPlugin.Settings.Instance.ExtensiveLogging)
+        if (MediaPortal.ProcessPlugins.MiniDisplayPlugin.Settings.Instance.ExtensiveLogging)
         {
           Log.Debug("Detected status is {0}", new object[] { this.status.ToString() });
         }
@@ -273,36 +271,36 @@
         {
           MPStatus.CurrentPluginStatus = this.status;
           MPStatus.MP_Is_Idle = false;
-          if (this.status.Equals(CybrDisplayPlugin.Status.Idle))
+          if (this.status.Equals(MediaPortal.ProcessPlugins.MiniDisplayPlugin.Status.Idle))
           {
             MPStatus.MP_Is_Idle = true;
           }
           MPStatus.CurrentIconMask = SetPluginIcons();
-          if (this.status.Equals(CybrDisplayPlugin.Status.PlayingDVD))
+          if (this.status.Equals(MediaPortal.ProcessPlugins.MiniDisplayPlugin.Status.PlayingDVD))
           {
             MPStatus.Media_IsDVD = true;
           }
-          if (this.status.Equals(CybrDisplayPlugin.Status.PlayingRadio))
+          if (this.status.Equals(MediaPortal.ProcessPlugins.MiniDisplayPlugin.Status.PlayingRadio))
           {
             MPStatus.Media_IsRadio = true;
           }
-          if (this.status.Equals(CybrDisplayPlugin.Status.PlayingMusic))
+          if (this.status.Equals(MediaPortal.ProcessPlugins.MiniDisplayPlugin.Status.PlayingMusic))
           {
             MPStatus.Media_IsMusic = true;
           }
-          if (this.status.Equals(CybrDisplayPlugin.Status.PlayingRecording))
+          if (this.status.Equals(MediaPortal.ProcessPlugins.MiniDisplayPlugin.Status.PlayingRecording))
           {
             MPStatus.Media_IsTVRecording = true;
           }
-          if (this.status.Equals(CybrDisplayPlugin.Status.PlayingTV))
+          if (this.status.Equals(MediaPortal.ProcessPlugins.MiniDisplayPlugin.Status.PlayingTV))
           {
             MPStatus.Media_IsTV = true;
           }
-          if (this.status.Equals(CybrDisplayPlugin.Status.Timeshifting))
+          if (this.status.Equals(MediaPortal.ProcessPlugins.MiniDisplayPlugin.Status.Timeshifting))
           {
             MPStatus.Media_IsTVRecording = true;
           }
-          if (this.status.Equals(CybrDisplayPlugin.Status.PlayingVideo))
+          if (this.status.Equals(MediaPortal.ProcessPlugins.MiniDisplayPlugin.Status.PlayingVideo))
           {
             MPStatus.Media_IsVideo = true;
           }
@@ -312,17 +310,17 @@
         {
           if (((this.browser != null) && !this.browser.IsDisposed) && _PropertyBrowserAvailable)
           {
-            if (CybrDisplayPlugin.Settings.Instance.ExtensiveLogging)
+            if (MediaPortal.ProcessPlugins.MiniDisplayPlugin.Settings.Instance.ExtensiveLogging)
             {
-              Log.Info("CybrDisplayPlugin.DoWork(): Updating PropertyBrowser.", new object[0]);
+              Log.Info("MiniDisplayPlugin.DoWork(): Updating PropertyBrowser.", new object[0]);
             }
             this.browser.SetStatus(this.status);
             this.browser.SetActiveWindow(activeWindow);
           }
         }
-        foreach (CybrDisplayPlugin.Setting.Message message in CybrDisplayPlugin.Settings.Instance.Messages)
+        foreach (MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting.Message message in MediaPortal.ProcessPlugins.MiniDisplayPlugin.Settings.Instance.Messages)
         {
-          if (((message.Status == CybrDisplayPlugin.Status.Any) || (message.Status == this.status)) && ((message.Windows.Count == 0) || message.Windows.Contains((int)activeWindow)))
+          if (((message.Status == MediaPortal.ProcessPlugins.MiniDisplayPlugin.Status.Any) || (message.Status == this.status)) && ((message.Windows.Count == 0) || message.Windows.Contains((int)activeWindow)))
           {
             if (!message.Process(this.handler))
             {
@@ -330,8 +328,7 @@
             return;
           }
         }
-      }
-      catch (Exception exception)
+      } catch (Exception exception)
       {
         Log.Error(exception);
       }
@@ -463,9 +460,9 @@
                 if (control4.Focus)
                 {
                   DialogHighlightedItem = control4.Description;
-                  if (CybrDisplayPlugin.Settings.Instance.ExtensiveLogging)
+                  if (MediaPortal.ProcessPlugins.MiniDisplayPlugin.Settings.Instance.ExtensiveLogging)
                   {
-                    Log.Info("CybrDisplay.GetDialogInfo(): found WINDOW_DIALOG_OK buttoncontrol ID = {0} Label = \"{1}\" Desc = \"{2}\"", new object[] { control4.GetID, control4.Label, control4.Description });
+                    Log.Info("MiniDisplay.GetDialogInfo(): found WINDOW_DIALOG_OK buttoncontrol ID = {0} Label = \"{1}\" Desc = \"{2}\"", new object[] { control4.GetID, control4.Label, control4.Description });
                   }
                 }
               }
@@ -698,7 +695,7 @@
 
     internal static bool GetEQ(ref EQControl EQSETTINGS)
     {
-      bool extensiveLogging = CybrDisplayPlugin.Settings.Instance.ExtensiveLogging;
+      bool extensiveLogging = MediaPortal.ProcessPlugins.MiniDisplayPlugin.Settings.Instance.ExtensiveLogging;
       bool flag2 = (EQSETTINGS.UseStereoEq | EQSETTINGS.UseVUmeter) | EQSETTINGS.UseVUmeter2;
       if (g_Player.Player != null)
       {
@@ -734,8 +731,7 @@
               return false;
             }
           }
-        }
-        catch
+        } catch
         {
           EQSETTINGS._EQDisplayTitle = false;
           EQSETTINGS._LastEQTitle = (DateTime.Now.Ticks / 1000);
@@ -745,10 +741,9 @@
         try
         {
           handle = g_Player.Player.CurrentAudioStream;
-        }
-        catch (Exception exception)
+        } catch (Exception exception)
         {
-          Log.Debug("CybrDisplay.GetEQ(): Caugth exception obtaining audio stream: {0}", new object[] { exception });
+          Log.Debug("MiniDisplay.GetEQ(): Caugth exception obtaining audio stream: {0}", new object[] { exception });
           return false;
         }
         if ((handle != 0) & (handle != -1))
@@ -756,7 +751,7 @@
           int num2;
           if (extensiveLogging)
           {
-            Log.Info("CybrDisplay.GetEQ(): attempting to retrieve equalizer data from audio stream {0}", new object[] { handle });
+            Log.Info("MiniDisplay.GetEQ(): attempting to retrieve equalizer data from audio stream {0}", new object[] { handle });
           }
           try
           {
@@ -770,12 +765,11 @@
               num3 = -2147483646;
             }
             num2 = Un4seen.Bass.Bass.BASS_ChannelGetData(handle, ref EQSETTINGS.EqFftData[0], num3);
-          }
-          catch
+          } catch
           {
             if (extensiveLogging)
             {
-              Log.Info("CybrDisplay.GetEQ(): CAUGHT EXCeption - audio stream {0} disappeared", new object[] { handle });
+              Log.Info("MiniDisplay.GetEQ(): CAUGHT EXCeption - audio stream {0} disappeared", new object[] { handle });
             }
             return false;
           }
@@ -785,13 +779,13 @@
           }
           if (extensiveLogging)
           {
-            Log.Info("CybrDisplay.GetEQ(): unable to retreive equalizer data", new object[0]);
+            Log.Info("MiniDisplay.GetEQ(): unable to retreive equalizer data", new object[0]);
           }
           return false;
         }
         if (extensiveLogging)
         {
-          Log.Info("CybrDisplay.GetEQ(): Audio Stream not available", new object[0]);
+          Log.Info("MiniDisplay.GetEQ(): Audio Stream not available", new object[0]);
         }
       }
       return false;
@@ -800,19 +794,19 @@
     public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
     {
       string str;
-      strButtonText = "CybrDisplay Setup";
+      strButtonText = "MiniDisplay Setup";
       strButtonImage = null;
       strButtonImageFocus = null;
       strPictureImage = null;
-      if (Assembly.GetEntryAssembly().FullName.Contains("Configuration") | !File.Exists(Config.GetFile(Config.Dir.Config, "CybrDisplay.xml")))
+      if (Assembly.GetEntryAssembly().FullName.Contains("Configuration") | !File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay.xml")))
       {
         return false;
       }
-      if (((str = CybrDisplayPlugin.Settings.Instance.Type) == null) || (((str != "iMONLCDg") && (str != "MatrixMX")) && ((str != "MatrixGX") && (str != "VLSYS_Mplay"))))
+      if (((str = MediaPortal.ProcessPlugins.MiniDisplayPlugin.Settings.Instance.Type) == null) || (((str != "iMONLCDg") && (str != "MatrixMX")) && ((str != "MatrixGX") && (str != "VLSYS_Mplay"))))
       {
         return false;
       }
-      if (CybrDisplayPlugin.Settings.Instance.DisableGUISetup)
+      if (MediaPortal.ProcessPlugins.MiniDisplayPlugin.Settings.Instance.DisableGUISetup)
       {
         return false;
       }
@@ -854,8 +848,7 @@
           try
           {
             CurrentStatus.SystemVolumeLevel = AudioMixerHelper.GetVolume();
-          }
-          catch
+          } catch
           {
           }
           if (CurrentStatus.SystemVolumeLevel < 0)
@@ -863,8 +856,7 @@
             try
             {
               CurrentStatus.SystemVolumeLevel = VolumeHandler.Instance.Volume;
-            }
-            catch
+            } catch
             {
             }
           }
@@ -876,16 +868,14 @@
           {
             CurrentStatus.SystemVolumeLevel = g_Player.Volume;
             return;
-          }
-          catch
+          } catch
           {
             CurrentStatus.SystemVolumeLevel = 0;
             return;
           }
         }
         CurrentStatus.SystemVolumeLevel = 0;
-      }
-      catch
+      } catch
       {
         CurrentStatus.SystemVolumeLevel = 0;
         CurrentStatus.IsMuted = false;
@@ -901,12 +891,12 @@
         {
           if (settings.GetValueAsString("tvservice", "hostname", "") != string.Empty)
           {
-            Log.Info("CybrDisplay.GetTVSource(): Found configured TVServer installation", new object[0]);
+            Log.Info("MiniDisplay.GetTVSource(): Found configured TVServer installation", new object[0]);
             UseTVServer = true;
           }
           else
           {
-            Log.Info("CybrDisplay.GetTVSource(): Found TVServer installation", new object[0]);
+            Log.Info("MiniDisplay.GetTVSource(): Found TVServer installation", new object[0]);
           }
         }
       }
@@ -1048,13 +1038,13 @@
 
     private void LoadSetupWindows()
     {
-      if (CybrDisplayPlugin.Settings.Instance.DisableGUISetup)
+      if (MediaPortal.ProcessPlugins.MiniDisplayPlugin.Settings.Instance.DisableGUISetup)
       {
-        Log.Info("CybrDisplay.LoadSetupWindows(): Plugin setup explicitly disables GUI Setup.", new object[0]);
+        Log.Info("MiniDisplay.LoadSetupWindows(): Plugin setup explicitly disables GUI Setup.", new object[0]);
       }
       else
       {
-        Log.Info("CybrDisplay.LoadSetupWindows(): called", new object[0]);
+        Log.Info("MiniDisplay.LoadSetupWindows(): called", new object[0]);
         this.SetupWindow.Init();
         this.EqualizerWindow.Init();
         this.DisplayOptionsWindow.Init();
@@ -1318,15 +1308,15 @@
 
     public string PluginName()
     {
-      return "CybrDisplay";
+      return "MiniDisplay";
     }
 
     internal static void ProcessEqData(ref EQControl EQSettings)
     {
-      bool extensiveLogging = CybrDisplayPlugin.Settings.Instance.ExtensiveLogging;
+      bool extensiveLogging = MediaPortal.ProcessPlugins.MiniDisplayPlugin.Settings.Instance.ExtensiveLogging;
       if (extensiveLogging)
       {
-        Log.Info("CybrDisplay.ProcessEqData(): called... MaxValue = {0}, BANDS = {1}", new object[] { EQSettings.Render_MaxValue, EQSettings.Render_BANDS });
+        Log.Info("MiniDisplay.ProcessEqData(): called... MaxValue = {0}, BANDS = {1}", new object[] { EQSettings.Render_MaxValue, EQSettings.Render_BANDS });
       }
       if ((EQSettings.UseStereoEq || EQSettings.UseVUmeter) || EQSettings.UseVUmeter2)
       {
@@ -1359,7 +1349,7 @@
             int num5 = (int)((Math.Sqrt(((double)num8) / Math.Log10((double)num9)) * 1.7) * num);
             if (extensiveLogging)
             {
-              Log.Info("CybrDisplay.ProcessEqData(): Processing StereoEQ band {0}: L = {1}, R = {2}", new object[] { i, num4, num5 });
+              Log.Info("MiniDisplay.ProcessEqData(): Processing StereoEQ band {0}: L = {1}, R = {2}", new object[] { i, num4, num5 });
             }
             num4 = Math.Min(num, num4);
             EQSettings.EqArray[1 + i] = (byte)num4;
@@ -1400,7 +1390,7 @@
             }
             if (extensiveLogging)
             {
-              Log.Info("CybrDisplay.ProcessEqData.(): Processed StereoEQ mode {0} byte {1}: L = {2}, R = {3}.", new object[] { EQSettings.EqArray[0], i, EQSettings.EqArray[1 + (i * 2)].ToString(), EQSettings.EqArray[2 + (i * 2)].ToString() });
+              Log.Info("MiniDisplay.ProcessEqData.(): Processed StereoEQ mode {0} byte {1}: L = {2}, R = {3}.", new object[] { EQSettings.EqArray[0], i, EQSettings.EqArray[1 + (i * 2)].ToString(), EQSettings.EqArray[2 + (i * 2)].ToString() });
             }
           }
         }
@@ -1431,7 +1421,7 @@
             int num17 = (int)((Math.Sqrt(((double)num20) / Math.Log10((double)num21)) * 1.7) * num13);
             if (extensiveLogging)
             {
-              Log.Info("CybrDisplay.ProcessEqData(): Processing VUmeter band {0}: L = {1}, R = {2}", new object[] { j, num16, num17 });
+              Log.Info("MiniDisplay.ProcessEqData(): Processing VUmeter band {0}: L = {1}, R = {2}", new object[] { j, num16, num17 });
             }
             num16 = Math.Min(num13, num16);
             EQSettings.EqArray[1 + (j * 2)] = (byte)num16;
@@ -1472,7 +1462,7 @@
             }
             if (extensiveLogging)
             {
-              Log.Info("CybrDisplay.ProcessEqData(): Processed VUmeter byte {0}: L = {1}, R = {2}.", new object[] { j, EQSettings.EqArray[1 + (j * 2)].ToString(), EQSettings.EqArray[2 + (j * 2)].ToString() });
+              Log.Info("MiniDisplay.ProcessEqData(): Processed VUmeter byte {0}: L = {1}, R = {2}.", new object[] { j, EQSettings.EqArray[1 + (j * 2)].ToString(), EQSettings.EqArray[2 + (j * 2)].ToString() });
             }
           }
         }
@@ -1503,7 +1493,7 @@
           int num28 = (int)((Math.Sqrt(((double)num30) / Math.Log10((double)num31)) * 1.7) * num25);
           if (extensiveLogging)
           {
-            Log.Info("CybrDisplay.ProcessEqData(): Processing EQ band {0} = {1}", new object[] { k, num28 });
+            Log.Info("MiniDisplay.ProcessEqData(): Processing EQ band {0} = {1}", new object[] { k, num28 });
           }
           num28 = Math.Min(num25, num28);
           EQSettings.EqArray[1 + k] = (byte)num28;
@@ -1527,42 +1517,42 @@
           }
           if (extensiveLogging)
           {
-            Log.Info("CybrDisplay.ProcessEqData(): Processed EQ mode {0} byte {1} = {2}.", new object[] { EQSettings.EqArray[0], k, EQSettings.EqArray[1 + k].ToString() });
+            Log.Info("MiniDisplay.ProcessEqData(): Processed EQ mode {0} byte {1} = {2}.", new object[] { EQSettings.EqArray[0], k, EQSettings.EqArray[1 + k].ToString() });
           }
         }
       }
       if (extensiveLogging)
       {
-        Log.Info("CybrDisplay.ProcessEqData(): called", new object[0]);
+        Log.Info("MiniDisplay.ProcessEqData(): called", new object[0]);
       }
     }
 
     public void Run()
     {
       SystemEvents.PowerModeChanged += new PowerModeChangedEventHandler(this.SystemEvents_PowerModeChanged);
-      this.ControlScreenSaver = CybrDisplayPlugin.Settings.Instance.ControlScreenSaver;
-      Log.Info("CybrDisplay.Run(): Control ScreenSaver: {0}", new object[] { this.ControlScreenSaver.ToString() });
-      bool extensiveLogging = CybrDisplayPlugin.Settings.Instance.ExtensiveLogging;
+      this.ControlScreenSaver = MediaPortal.ProcessPlugins.MiniDisplayPlugin.Settings.Instance.ControlScreenSaver;
+      Log.Info("MiniDisplay.Run(): Control ScreenSaver: {0}", new object[] { this.ControlScreenSaver.ToString() });
+      bool extensiveLogging = MediaPortal.ProcessPlugins.MiniDisplayPlugin.Settings.Instance.ExtensiveLogging;
       bool flag2 = false;
       if (extensiveLogging)
       {
-        Log.Info("CybrDisplay.Run(): Entering CybrDisplay run loop.", new object[0]);
+        Log.Info("MiniDisplay.Run(): Entering MiniDisplay run loop.", new object[0]);
       }
       try
       {
         if (extensiveLogging)
         {
-          Log.Info("CybrDisplay.Run(): Creating CybrDisplay displayhandler.", new object[0]);
+          Log.Info("MiniDisplay.Run(): Creating MiniDisplay displayhandler.", new object[0]);
         }
         this.handler = new DisplayHandler(this.display);
         if (extensiveLogging)
         {
-          Log.Info("CybrDisplay.Run(): Starting CybrDisplay displayhandler.", new object[0]);
+          Log.Info("MiniDisplay.Run(): Starting MiniDisplay displayhandler.", new object[0]);
         }
         this.handler.Start();
         while (!this.stopRequested)
         {
-          if (!CybrDisplayPlugin.Settings.Instance.Type.Equals("MCEDisplay"))
+          if (!MediaPortal.ProcessPlugins.MiniDisplayPlugin.Settings.Instance.Type.Equals("MCEDisplay"))
           {
             try
             {
@@ -1570,10 +1560,9 @@
               {
                 this.DoWork();
               }
-            }
-            catch (Exception exception)
+            } catch (Exception exception)
             {
-              Log.Debug("CybrDisplay.Run(): CAUGHT EXCEPTION in DoWork() - {0}", new object[] { exception });
+              Log.Debug("MiniDisplay.Run(): CAUGHT EXCEPTION in DoWork() - {0}", new object[] { exception });
               if (exception.Message.Contains("ThreadAbortException"))
               {
                 this.stopRequested = true;
@@ -1585,10 +1574,9 @@
               {
                 this.handler.DisplayLines();
               }
-            }
-            catch (Exception exception2)
+            } catch (Exception exception2)
             {
-              Log.Debug("CybrDisplay.Run(): CAUGHT EXCEPTION in handler.DisplayLines() - {0}", new object[] { exception2 });
+              Log.Debug("MiniDisplay.Run(): CAUGHT EXCEPTION in handler.DisplayLines() - {0}", new object[] { exception2 });
               if (exception2.Message.Contains("ThreadAbortException"))
               {
                 this.stopRequested = true;
@@ -1596,12 +1584,12 @@
             }
             if (extensiveLogging)
             {
-              Log.Debug("CybrDisplay.Run(): CybrDisplay Sleeping...", new object[0]);
+              Log.Debug("MiniDisplay.Run(): MiniDisplay Sleeping...", new object[0]);
             }
-            Thread.Sleep(CybrDisplayPlugin.Settings.Instance.ScrollDelay);
+            Thread.Sleep(MediaPortal.ProcessPlugins.MiniDisplayPlugin.Settings.Instance.ScrollDelay);
             if (extensiveLogging)
             {
-              Log.Debug("CybrDisplay.Run(): CybrDisplay Sleeping... DONE", new object[0]);
+              Log.Debug("MiniDisplay.Run(): MiniDisplay Sleeping... DONE", new object[0]);
             }
           }
           else
@@ -1611,27 +1599,25 @@
         }
         if (extensiveLogging)
         {
-          Log.Info("CybrDisplay.Run(): Stopping CybrDisplay displayhandler.", new object[0]);
+          Log.Info("MiniDisplay.Run(): Stopping MiniDisplay displayhandler.", new object[0]);
         }
         flag2 = true;
         this.handler.Stop();
-      }
-      catch (ThreadAbortException)
+      } catch (ThreadAbortException)
       {
-        Log.Error("CybrDisplay.Run(): CAUGHT ThreadAbortException", new object[0]);
+        Log.Error("MiniDisplay.Run(): CAUGHT ThreadAbortException", new object[0]);
         if (!flag2)
         {
           this.handler.Stop();
           flag2 = true;
         }
-      }
-      catch (Exception exception3)
+      } catch (Exception exception3)
       {
-        Log.Error("CybrDisplay.Run(): CAUGHT EXCEPTION: {0}", new object[] { exception3 });
+        Log.Error("MiniDisplay.Run(): CAUGHT EXCEPTION: {0}", new object[] { exception3 });
       }
       if (extensiveLogging)
       {
-        Log.Info("CybrDisplay.Run(): Exiting CybrDisplay run loop.", new object[0]);
+        Log.Info("MiniDisplay.Run(): Exiting MiniDisplay run loop.", new object[0]);
       }
       if (this.ControlScreenSaver & !this.ScreenSaverActive)
       {
@@ -1814,9 +1800,9 @@
 
     public void ShowPlugin()
     {
-      Log.Info("CybrDisplay.ShowPlugin(): Called", new object[0]);
+      Log.Info("MiniDisplay.ShowPlugin(): Called", new object[0]);
       new SetupForm().ShowDialog();
-      Log.Info("CybrDisplay.ShowPlugin(): Completed", new object[0]);
+      Log.Info("MiniDisplay.ShowPlugin(): Completed", new object[0]);
     }
 
     internal static void ShowSystemStatus(ref SystemStatus CurrentStatus)
@@ -1825,25 +1811,25 @@
 
     public void Start()
     {
-      Log.Info("CybrDisplay.Start(): called", new object[0]);
-      Log.Info("CybrDisplay.Start(): {0}", new object[] { Plugin_Version });
-      Log.Info("CybrDisplay.Start(): plugin starting...", new object[0]);
-      if (!File.Exists(Config.GetFile(Config.Dir.Config, "CybrDisplay.xml")))
+      Log.Info("MiniDisplay.Start(): called", new object[0]);
+      Log.Info("MiniDisplay.Start(): {0}", new object[] { Plugin_Version });
+      Log.Info("MiniDisplay.Start(): plugin starting...", new object[0]);
+      if (!File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay.xml")))
       {
-        Log.Info("CybrDisplay.Start(): plugin not configured... Unable to start", new object[0]);
+        Log.Info("MiniDisplay.Start(): plugin not configured... Unable to start", new object[0]);
       }
       else
       {
-        Log.Info("CybrDisplay - constructor: forcing load of \"{0}\" as a window plugin", new object[] { Assembly.GetExecutingAssembly().Location });
+        Log.Info("MiniDisplay - constructor: forcing load of \"{0}\" as a window plugin", new object[] { Assembly.GetExecutingAssembly().Location });
         MPStatus = new SystemStatus();
         InitSystemStatus(ref MPStatus);
         this.GetTVSource();
         this.LoadSetupWindows();
-        if (CybrDisplayPlugin.Settings.Instance.ShowPropertyBrowser)
+        if (MediaPortal.ProcessPlugins.MiniDisplayPlugin.Settings.Instance.ShowPropertyBrowser)
         {
           lock (PropertyBrowserMutex)
           {
-            Log.Info("CybrDisplay.Start(): opening PropertyBrowser.", new object[0]);
+            Log.Info("MiniDisplay.Start(): opening PropertyBrowser.", new object[0]);
             this.browser = new PropertyBrowser();
             this.browser.FormClosing += new FormClosingEventHandler(this.browser_Closing);
             this.browser.Show();
@@ -1851,23 +1837,23 @@
           }
         }
         this.DoStart();
-        Log.Info("CybrDisplay.Start(): completed", new object[0]);
+        Log.Info("MiniDisplay.Start(): completed", new object[0]);
       }
     }
 
     public void Stop()
     {
-      Log.Info("CybrDisplay.Stop(): called", new object[0]);
-      if (CybrDisplayPlugin.Settings.Instance.ExtensiveLogging)
+      Log.Info("MiniDisplay.Stop(): called", new object[0]);
+      if (MediaPortal.ProcessPlugins.MiniDisplayPlugin.Settings.Instance.ExtensiveLogging)
       {
-        Log.Debug("CybrDisplay: Plugin is being stopped.", new object[0]);
+        Log.Debug("MiniDisplay: Plugin is being stopped.", new object[0]);
       }
       _PropertyBrowserAvailable = false;
       SystemEvents.PowerModeChanged -= new PowerModeChangedEventHandler(this.SystemEvents_PowerModeChanged);
       this.DoStop();
       if (this.browser != null)
       {
-        Log.Info("CybrDisplay.Stop(): closing PropertyBrowser.", new object[0]);
+        Log.Info("MiniDisplay.Stop(): closing PropertyBrowser.", new object[0]);
         this.browser.Close();
         this.browser = null;
       }
@@ -1876,19 +1862,19 @@
         this.display.Dispose();
         this.display = null;
       }
-      Log.Info("CybrDisplay.Stop(): completed", new object[0]);
+      Log.Info("MiniDisplay.Stop(): completed", new object[0]);
     }
 
     private void SystemEvents_PowerModeChanged(object sender, PowerModeChangedEventArgs e)
     {
-      if (CybrDisplayPlugin.Settings.Instance.ExtensiveLogging)
+      if (MediaPortal.ProcessPlugins.MiniDisplayPlugin.Settings.Instance.ExtensiveLogging)
       {
-        Log.Debug("CybrDisplay: SystemPowerModeChanged event was raised.", new object[0]);
+        Log.Debug("MiniDisplay: SystemPowerModeChanged event was raised.", new object[0]);
       }
       switch (e.Mode)
       {
         case PowerModes.Resume:
-          Log.Info("CybrDisplay: Resume from Suspend or Hibernation detected, starting plugin", new object[0]);
+          Log.Info("MiniDisplay: Resume from Suspend or Hibernation detected, starting plugin", new object[0]);
           SystemEvents.PowerModeChanged -= new PowerModeChangedEventHandler(this.SystemEvents_PowerModeChanged);
           this.DoStart();
           break;
@@ -1897,7 +1883,7 @@
           break;
 
         case PowerModes.Suspend:
-          Log.Info("CybrDisplay: Suspend or Hibernation detected, shutting down plugin", new object[0]);
+          Log.Info("MiniDisplay: Suspend or Hibernation detected, shutting down plugin", new object[0]);
           this.DoStop();
           return;
 
@@ -1976,7 +1962,7 @@
     {
       get
       {
-        return "CybrDisplay Plugin v05_07_2008";
+        return "MiniDisplay Plugin v05_07_2008";
       }
     }
 
@@ -2181,7 +2167,7 @@
     [StructLayout(LayoutKind.Sequential)]
     public struct SystemStatus
     {
-      public CybrDisplayPlugin.Status CurrentPluginStatus;
+      public MediaPortal.ProcessPlugins.MiniDisplayPlugin.Status CurrentPluginStatus;
       public ulong CurrentIconMask;
       public bool MP_Is_Idle;
       public int SystemVolumeLevel;

@@ -1,10 +1,10 @@
-﻿namespace CybrDisplayPlugin.Drivers
-{
-    using System;
+﻿using System;
 
-    public interface ISession : IDisposable
-    {
-        void Process();
-    }
+namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
+{
+  public interface ISession : IDisposable
+  {
+    void Process();
+  }
 }
 

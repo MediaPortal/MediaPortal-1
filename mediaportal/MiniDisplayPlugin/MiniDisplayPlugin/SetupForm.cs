@@ -1,17 +1,17 @@
-﻿namespace CybrDisplayPlugin
-{
-  using MediaPortal.Configuration;
-  using MediaPortal.GUI.Library;
-  using MediaPortal.UserInterface.Controls;
-  using System;
-  using System.ComponentModel;
-  using System.Drawing;
-  using System.IO;
-  using System.Threading;
-  using System.Windows.Forms;
+﻿using System;
+using System.ComponentModel;
+using System.Drawing;
+using System.IO;
+using System.Threading;
+using System.Windows.Forms;
+using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
+using MediaPortal.UserInterface.Controls;
 
-  [PluginIcons("CybrDisplayPlugin.lcd.gif", "CybrDisplayPlugin.lcd_deactivated.gif")]
-  public class SetupForm : Form
+namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
+{
+  [PluginIcons("MiniDisplayPlugin.lcd.gif", "MiniDisplayPlugin.lcd_deactivated.gif")]
+  public class SetupForm : MediaPortal.UserInterface.Controls.MPConfigForm
   {
     private MPButton btnAdvanced;
     private MPButton btnCancel;
@@ -72,7 +72,7 @@
 
     public SetupForm()
     {
-      Log.Info("CybrDisplay.SetupForm(): {0}", new object[] { MiniDisplay.Plugin_Version });
+      Log.Info("MiniDisplay.SetupForm(): {0}", new object[] { MiniDisplay.Plugin_Version });
       this.InitializeComponent();
       this.cmbPort.SelectedIndex = 0;
       this.cmbType.DataSource = Settings.Instance.Drivers;
@@ -114,7 +114,7 @@
         this.groupShutdown.Enabled = true;
       }
       this.VerifyLCDType();
-      if (!File.Exists(Config.GetFile(Config.Dir.Config, "CybrDisplay.xml")))
+      if (!File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay.xml")))
       {
         this.btnTest.Enabled = false;
       }
@@ -122,7 +122,7 @@
       {
         this.btnTest.Enabled = true;
       }
-      Log.Info("CybrDisplay.SetupForm(): constructor completed", new object[0]);
+      Log.Info("MiniDisplay.SetupForm(): constructor completed", new object[0]);
     }
 
     private void btnAdvanced_Click(object sender, EventArgs e)
@@ -132,10 +132,9 @@
       {
         this.lcd.Configure();
         this.VerifyLCDType();
-      }
-      catch (Exception exception)
+      } catch (Exception exception)
       {
-        Log.Error("CybrDisplay.SetupForm.btnAdvanced_Click(): CAUGHT EXCEPTION: {0}", new object[] { exception });
+        Log.Error("MiniDisplay.SetupForm.btnAdvanced_Click(): CAUGHT EXCEPTION: {0}", new object[] { exception });
       }
       finally
       {
@@ -157,10 +156,9 @@
     {
       try
       {
-        new MessageEditForm("CybrDisplay.xml").ShowDialog(this);
+        new MessageEditForm("MiniDisplay.xml").ShowDialog(this);
         base.Close();
-      }
-      catch
+      } catch
       {
         base.Close();
       }
@@ -176,17 +174,16 @@
         if (!this.lcd.IsDisabled)
         {
           this.lcd.Initialize();
-          this.lcd.SetLine(0, "CybrDisplay");
+          this.lcd.SetLine(0, "MiniDisplay");
           this.lcd.SetLine(1, this.lcd.Name);
           Thread.Sleep(0x1388);
           this.lcd.CleanUp();
         }
         base.Enabled = true;
         base.Activate();
-      }
-      catch (Exception exception)
+      } catch (Exception exception)
       {
-        Log.Error("CybrDisplay.SetupForm.btnAdvanced_Click(): CAUGHT EXCEPTION: {0}", new object[] { exception });
+        Log.Error("MiniDisplay.SetupForm.btnAdvanced_Click(): CAUGHT EXCEPTION: {0}", new object[] { exception });
         base.Enabled = true;
       }
       finally
@@ -713,7 +710,7 @@
       base.Controls.Add(this.groupBox1);
       base.Name = "SetupForm";
       base.StartPosition = FormStartPosition.CenterParent;
-      this.Text = "CybrDisplay - Setup";
+      this.Text = "MiniDisplay - Setup";
       base.Load += new EventHandler(this.SetupForm_Load);
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
@@ -732,12 +729,12 @@
 
     private void SetupForm_Load(object sender, EventArgs e)
     {
-      Log.Info("CybrDisplay.SetupForm.Load(): called", new object[0]);
+      Log.Info("MiniDisplay.SetupForm.Load(): called", new object[0]);
       foreach (FontFamily family in FontFamily.Families)
       {
         this.txtFont.Items.Add(family.Name);
       }
-      Log.Info("CybrDisplay.SetupForm.Load(): completed", new object[0]);
+      Log.Info("MiniDisplay.SetupForm.Load(): completed", new object[0]);
     }
 
     private void tbBrightness_ValueChanged(object sender, EventArgs e)
@@ -767,7 +764,7 @@
 
     private void VerifyLCDType()
     {
-      Log.Info("CybrDisplay.SetupForm.VerifyLCDType(): called", new object[0]);
+      Log.Info("MiniDisplay.SetupForm.VerifyLCDType(): called", new object[0]);
       this.lcd = this.cmbType.SelectedItem as IDisplay;
       if (this.lcd.IsDisabled)
       {
@@ -782,7 +779,7 @@
       this.gbGraphMode.Visible = this.lcd.SupportsGraphics;
       this.gbTextMode.Visible = this.lcd.SupportsText;
       Settings.Instance.LCDType = this.lcd;
-      Log.Info("CybrDisplay.SetupForm.Load(): completed", new object[0]);
+      Log.Info("MiniDisplay.SetupForm.Load(): completed", new object[0]);
     }
   }
 }

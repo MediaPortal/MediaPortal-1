@@ -1,12 +1,12 @@
-﻿namespace xPL
-{
-    using System;
+﻿using System;
 
-    public enum xplConfigTypes
-    {
-        xConfig,
-        xReconf,
-        xOption
-    }
+namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
+{
+  public enum xplConfigTypes
+  {
+    xConfig,
+    xReconf,
+    xOption
+  }
 }
 

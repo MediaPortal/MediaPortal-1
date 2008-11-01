@@ -1,12 +1,12 @@
-﻿namespace CybrDisplayPlugin.Setting
-{
-    using System;
+﻿using System;
 
-    public enum Alignment
-    {
-        Left,
-        Centered,
-        Right
-    }
+namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
+{
+  public enum Alignment
+  {
+    Left,
+    Centered,
+    Right
+  }
 }
 
