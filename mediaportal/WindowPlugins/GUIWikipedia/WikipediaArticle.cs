@@ -246,38 +246,6 @@ namespace Wikipedia
                     tempParsedArticle = builder.ToString();
                 }
 
-                // surrounded by {{ and }} is (atm) unusable stuff.
-                Log.Debug("Wikipedia: Remove unusable stuff 1.");
-                while (current < tempParsedArticle.Length && tempParsedArticle.IndexOf("{{", current) >= 0)
-                {
-                    builder = new StringBuilder(tempParsedArticle);
-                    iStart = tempParsedArticle.IndexOf("{{");
-                    int iStart2 = iStart;
-                    iEnd = tempParsedArticle.IndexOf("}}") + 2;
-
-                    // Between {{ and }} we can again have inner sets of {{ and }}
-                    while (tempParsedArticle.IndexOf("{{", iStart2 + 2) >= 0 && tempParsedArticle.IndexOf("{{", iStart2 + 2) < iEnd)
-                    {
-                        iStart2 = tempParsedArticle.IndexOf("{{", iStart2 + 2);
-                        iEnd = tempParsedArticle.IndexOf("}}", iStart2) + 2;
-                        iEnd = tempParsedArticle.IndexOf("}}", iEnd) + 2;
-                    }
-
-                    try
-                    {
-                        builder.Remove(iStart, iEnd - iStart);
-                    }
-                    catch (Exception e)
-                    {
-                        Log.Error(e.ToString());
-                        Log.Error(builder.ToString());
-                    }
-
-                    tempParsedArticle = builder.ToString();
-                    current = iStart + 2;
-                }
-                current = 0;
-
                 // surrounded by {| and |} is (atm) unusable stuff.
                 Log.Debug("Wikipedia: Remove unusable stuff 2.");
                 while (current < tempParsedArticle.Length && tempParsedArticle.IndexOf("{|", current) >= 0)
@@ -295,6 +263,7 @@ namespace Wikipedia
                         Log.Error(e.ToString());
                         Log.Error(builder.ToString());
                         current = iStart + 2;
+                        break;
                     }
 
                     tempParsedArticle = builder.ToString();
@@ -302,6 +271,36 @@ namespace Wikipedia
 
                 }
                 current = 0;
+
+                // surrounded by {{ and }} is (atm) unusable stuff.
+                Log.Debug("Wikipedia: Remove unusable stuff 1.");
+                while (current < tempParsedArticle.Length && tempParsedArticle.IndexOf("{{") >= 0)
+                {
+                    builder = new StringBuilder(tempParsedArticle);
+                    iStart = tempParsedArticle.IndexOf("{{");
+                    int tempposition = iStart;
+                    iEnd = tempParsedArticle.IndexOf("}}", iStart) + 2;
+
+                    // Find inner sets of "{{"
+                    while (tempParsedArticle.IndexOf("{{", tempposition + 2) >= 0 &&
+                        tempParsedArticle.IndexOf("{{", tempposition + 2) < iEnd)
+                    {
+                        tempposition = tempParsedArticle.IndexOf("{{", tempposition + 2);
+                        iEnd = tempParsedArticle.IndexOf("}}", iEnd) + 2;
+                    }
+
+                    try
+                    {
+                        builder.Remove(iStart, iEnd - iStart);
+                        tempParsedArticle = builder.ToString();
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Error(e.ToString());
+                        Log.Error(builder.ToString());
+                        break;
+                    }
+                }
 
                 // Remove audio links.
                 Log.Debug("Wikipedia: Remove audio links.");
@@ -365,6 +364,11 @@ namespace Wikipedia
                 Log.Debug("Wikipedia: Remove \'\'.");
                 builder.Replace("''", "");
 
+                // surrounded by '' and '' is italic text, atm also unusable.
+                Log.Debug("Wikipedia: Remove <small>-tags.");
+                builder.Replace("&lt;small&gt;", "");
+                builder.Replace("&lt;/small&gt;", "");
+
                 // Display === as newlines (meaning new line for every ===).
                 Log.Debug("Wikipedia: Display === as 1 newlines.");
                 builder.Replace("===", "\n");
@@ -389,6 +393,10 @@ namespace Wikipedia
                 Log.Debug("Wikipedia: Remove &amp;mdash;.");
                 builder.Replace("&amp;mdash;", "-");
 
+                // Display &shy;.
+                Log.Debug("Wikipedia: Remove &shy;.");
+                builder.Replace("&amp;shy;", "");
+
                 // Remove gallery tags.
                 Log.Debug("Wikipedia: Remove gallery tags.");
                 builder.Replace("&lt;gallery&gt;", "");
@@ -400,9 +408,9 @@ namespace Wikipedia
 
                 // Remove (too many) newlines
                 Log.Debug("Wikipedia: Remove (too many) newlines.");
-                builder.Replace("\n\n\n\n", "\n");
-                builder.Replace("\n\n\n", "\n");
-                builder.Replace("\n\n", "\n");
+                builder.Replace("\\n\\n\\n\\n", "\\n");
+                builder.Replace("\\n\\n\\n", "\\n");
+                builder.Replace("\\n\\n", "\\n");
 
                 // Remove (too many) newlines
                 Log.Debug("Wikipedia: Remove (too many) whitespaces.");
