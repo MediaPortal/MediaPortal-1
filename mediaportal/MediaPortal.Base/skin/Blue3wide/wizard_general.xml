@@ -6,9 +6,11 @@
   <allowoverlay>yes</allowoverlay>
   <controls>
     <control>
-      <type>image</type>
       <description>BG</description>
+      <type>image</type>
       <id>1</id>
+      <width>1366</width>
+      <height>768</height>
     </control>
     <control>
       <type>image</type>
