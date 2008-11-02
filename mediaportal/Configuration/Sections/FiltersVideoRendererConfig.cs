@@ -24,44 +24,43 @@ namespace MediaPortal.Configuration.Sections
       InitializeComponent();
     }
 
-    public override void OnSectionActivated()
+    public override void LoadSettings()
     {
-      base.OnSectionActivated();
-
-      if (_init == false)
+      base.LoadSettings();
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        //VMR9 settings
+        checkboxMpNonsquare.Checked = xmlreader.GetValueAsBool("general", "nonsquare", true); // http://msdn2.microsoft.com/en-us/library/ms787438(VS.85).aspx
+        checkboxDXEclusive.Checked = xmlreader.GetValueAsBool("general", "exclusivemode", true);
+        mpVMR9FilterMethod.Text = xmlreader.GetValueAsString("general", "dx9filteringmode", "Gaussian Quad Filtering"); // http://msdn2.microsoft.com/en-us/library/ms788066.aspx
+        checkBoxVMRWebStreams.Checked = xmlreader.GetValueAsBool("general", "usevrm9forwebstreams", true);
+        checkBoxDecimateMask.Checked = xmlreader.GetValueAsBool("general", "dx9decimatemask", false); // http://msdn2.microsoft.com/en-us/library/ms787452(VS.85).aspx
+
+        bool ValueEVR = false;
+
+        try
         {
-          //VMR9 settings
-          checkboxMpNonsquare.Checked = xmlreader.GetValueAsBool("general", "nonsquare", true); // http://msdn2.microsoft.com/en-us/library/ms787438(VS.85).aspx
-          checkboxDXEclusive.Checked = xmlreader.GetValueAsBool("general", "exclusivemode", true);
-          mpVMR9FilterMethod.Text = xmlreader.GetValueAsString("general", "dx9filteringmode", "Gaussian Quad Filtering"); // http://msdn2.microsoft.com/en-us/library/ms788066.aspx
-          checkBoxVMRWebStreams.Checked = xmlreader.GetValueAsBool("general", "usevrm9forwebstreams", true);
-          checkBoxDecimateMask.Checked = xmlreader.GetValueAsBool("general", "dx9decimatemask", false); // http://msdn2.microsoft.com/en-us/library/ms787452(VS.85).aspx
-
-          bool ValueEVR = false;
-
-          try
-          {
-            //EVR - VMR9 selection
-            OsDetection.OSVersionInfo os = new OsDetection.OperatingSystemVersion();
-            int ver = (os.OSMajorVersion * 10) + os.OSMinorVersion;
-            ValueEVR = ver >= 60 ? true : false;
-          }
-          catch (Exception ex)    
-          {
-            Log.Error("FilterVideoRendererConfig: Os detection unsuccessful - {0}", ex.Message);
-          }
-
-          radioButtonEVR.Checked = xmlreader.GetValueAsBool("general", "useEVRenderer", ValueEVR);
+          //EVR - VMR9 selection
+          OsDetection.OSVersionInfo os = new OsDetection.OperatingSystemVersion();
+          int ver = (os.OSMajorVersion * 10) + os.OSMinorVersion;
+          ValueEVR = ver >= 60 ? true : false;
         }
-        _init = true;
+        catch (Exception ex)
+        {
+          Log.Error("FilterVideoRendererConfig: Os detection unsuccessful - {0}", ex.Message);
+        }
+
+        radioButtonEVR.Checked = xmlreader.GetValueAsBool("general", "useEVRenderer", ValueEVR);
       }
     }
 
+    //public override void OnSectionActivated()
+    //{
+    //  base.OnSectionActivated();
+    //}
+
     public override void SaveSettings()
     {
-      if (_init == false) return;
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValueAsBool("general", "nonsquare", checkboxMpNonsquare.Checked);
