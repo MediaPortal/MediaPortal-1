@@ -1766,5 +1766,12 @@
 	<String id="200061">Den linken Kanal verwenden</String>
 	<String id="200062">Den rechten Kanal verwenden</String>
 	<String id="200063">Beide Kanäle mischen</String>
+	<String id="200064">Verbunden mit TvServer</String>
+	<String id="200065">Einige IP Ports sind blockiert</String>
+	<String id="200066">Keine Verbindung mit TvServer</String>
+	<String id="200067">Verbunden mit Datenbank</String>
+	<String id="200068">Keine Verbindung mit Datenbank</String>
+	<String id="200069">Alle IP Ports sind OK</String>
+	<String id="200070">Bitte Firewall überprüfen</String>	
   </Section>
 </Language>

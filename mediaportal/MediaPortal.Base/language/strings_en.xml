@@ -1765,5 +1765,12 @@
 	<String id="200061">Left channel to the left and right speakers</String>
 	<String id="200062">Right channel to the left and right speakers</String>
 	<String id="200063">Mix both</String>	
+	<String id="200064">Connected to TvServer</String>
+	<String id="200065">Some ports seem to be blocked</String>
+	<String id="200066">Unable to connect to the tvserver</String>
+	<String id="200067">Connected to database</String>
+	<String id="200068">Unable to connect to database</String>
+	<String id="200069">All ip ports seem to be fine</String>
+	<String id="200070">Please check firewall</String>
   </Section>
 </Language>
