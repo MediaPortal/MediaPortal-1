@@ -1771,5 +1771,12 @@
 	<String id="200061">Venstre kanal til venstre og høyre høytaler</String>
 	<String id="200062">Høyre kanal til venstre og høyre høytaler</String>
 	<String id="200063">Miks begge</String>
+	<String id="200064">Koblet til TV Server</String>
+	<String id="200065">Noen av portene ser ut til å være blokert</String>
+	<String id="200066">Kan ikke koble til TV Server</String>
+	<String id="200067">Koblet til databasen</String>
+	<String id="200068">Kan ikke koble til databasen</String>
+	<String id="200069">Alle IP porter ser ut til å fungere</String>
+	<String id="200070">Vennligst sjekk firewall instillinger</String>
   </Section>
 </Language>
