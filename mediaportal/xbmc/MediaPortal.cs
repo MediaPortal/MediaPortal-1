@@ -93,9 +93,11 @@ public class MediaPortalApp : D3DApp, IRender
   private bool restoreTopMost = false;
   private bool _startWithBasicHome = false;
   private bool _suspended = false;
+  private bool _runAutomaticResume = false;
   private bool ignoreContextMenuAction = false;
   private DateTime lastContextMenuAction = DateTime.MaxValue;
   private bool _onResumeRunning = false;
+  private bool _onResumeAutomaticRunning = false;
   protected string _dateFormat = string.Empty;
   protected bool _useLongDateFormat = false;
   private bool showLastActiveModule = false;
@@ -837,7 +839,7 @@ public class MediaPortalApp : D3DApp, IRender
           //handle an event. An application will not generally respond unless it is handling the event, because the user is not present.
           case PBT_APMRESUMEAUTOMATIC:
             Log.Info("Main: Windows has resumed from standby or hibernate mode to handle a requested event");
-            OnResume();
+            OnResumeAutomatic();
             break;
         }
       }
@@ -1054,6 +1056,7 @@ public class MediaPortalApp : D3DApp, IRender
       }
       //stop playback
       _suspended = true;
+      _runAutomaticResume = true;
       InputDevices.Stop();
       Log.Info("Main: Stopping recorder");
       Recorder.Stop();
@@ -1067,6 +1070,7 @@ public class MediaPortalApp : D3DApp, IRender
   }
   //called when windows wakes up again
   static object syncResume = new object();
+  static object syncResumeAutomatic = new object();
 
   private bool IsNetworkConnected()
   {
@@ -1096,11 +1100,38 @@ public class MediaPortalApp : D3DApp, IRender
     return connected;
   }
 
+  private void OnResumeAutomatic()
+  {
+    if (_onResumeAutomaticRunning == true)
+    {
+      Log.Info("Main: OnResumeAutomatic - already running -> return without further action");
+      return;
+    }
+    Log.Debug("Main: OnResumeAutomatic - set lock for syncronous inits");
+    lock (syncResumeAutomatic)
+    {
+      if (!_runAutomaticResume)
+      {
+        Log.Info("Main: OnResumeAutomatic - OnResume called but !_suspended");
+        return;
+      }
+
+      _onResumeAutomaticRunning = true;
+      Recorder.Stop();
+      if (!Recorder.Running)
+      {
+        Log.Info("Main: OnResumeAutomatic - Starting recorder");
+        Recorder.Start();
+      }
+
+      _onResumeAutomaticRunning = false;
+      _runAutomaticResume = false;
+      Log.Info("Main: OnResumeAutomatic - Done");
+    }
+  }
+
   private void OnResume()
   {
-    //System.Diagnostics.Debugger.Launch();
-    //wait for NIC's to get ready        
-    //bool res = IsNetworkConnected();    
     ignoreContextMenuAction = true;
     if (_onResumeRunning == true)
     {
@@ -1175,16 +1206,9 @@ public class MediaPortalApp : D3DApp, IRender
       }
       Log.Info("Main: OnResume - calling recover device");
       base.RecoverDevice();
-      Log.Info("Main: OnResume - recover device done");
-      Recorder.Stop();  // bug fix from Powerscheduler
-      if (!Recorder.Running)
+      if (turnMonitorOn)
       {
-        Log.Info("Main: OnResume - Starting recorder");
-        Recorder.Start();
-        if (turnMonitorOn)
-        {
-          SetThreadExecutionState(oldState);
-        }
+        SetThreadExecutionState(oldState);
       }
       Log.Info("Main: OnResume - init InputDevices");
       InputDevices.Init();
