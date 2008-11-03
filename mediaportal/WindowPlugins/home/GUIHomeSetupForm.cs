@@ -50,6 +50,7 @@ namespace MediaPortal.GUI.Home
         chkboxFixScrollbar.Checked = xmlreader.GetValueAsBool("home", "scrollfixed", false);
         chkBoxUseMyPlugins.Checked = xmlreader.GetValueAsBool("home", "usemyplugins", true);
         chkBoxAnimation.Checked = xmlreader.GetValueAsBool("home", "enableanimation", true);
+        checkBoxShowSeconds.Checked = xmlreader.GetValueAsBool("home", "LongTimeFormat", false);
         string text = xmlreader.GetValueAsString("home", "dateformat", "<Day> <DD>.<Month>");
         cboxFormat.Items.Add(text);
         if (!text.Equals("<Day> <DD>.<Month>")) cboxFormat.Items.Add("<Day> <DD>.<Month>");
@@ -67,6 +68,7 @@ namespace MediaPortal.GUI.Home
         xmlWriter.SetValueAsBool("home", "scrollfixed", chkboxFixScrollbar.Checked);
         xmlWriter.SetValueAsBool("home", "usemyplugins", chkBoxUseMyPlugins.Checked);
         xmlWriter.SetValueAsBool("home", "enableanimation", chkBoxAnimation.Checked);
+        xmlWriter.SetValueAsBool("home", "LongTimeFormat", checkBoxShowSeconds.Checked);
         xmlWriter.SetValue("home", "dateformat", cboxFormat.Text);
       }
       SaveMenuSorting();

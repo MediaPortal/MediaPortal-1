@@ -97,6 +97,7 @@ public class MediaPortalApp : D3DApp, IRender
   private DateTime lastContextMenuAction = DateTime.MaxValue;
   private bool _onResumeRunning = false;
   protected string _dateFormat = string.Empty;
+  protected bool _useLongDateFormat = false;
   private bool showLastActiveModule = false;
   private int lastActiveModule = -1;
   private bool lastActiveModuleFullscreen = false;
@@ -1492,6 +1493,8 @@ public class MediaPortalApp : D3DApp, IRender
     Log.Info("Main: Resizing windowmanager");
     using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
     {
+      _useLongDateFormat = xmlreader.GetValueAsBool("home", "LongTimeFormat", false);
+      _startWithBasicHome = xmlreader.GetValueAsBool("general", "startbasichome", false);
       bool autosize = xmlreader.GetValueAsBool("general", "autosize", true);
       if (autosize && !GUIGraphicsContext.Fullscreen)
       {
@@ -1523,10 +1526,6 @@ public class MediaPortalApp : D3DApp, IRender
     GUIWindowManager.PreInit();
     GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
     Log.Info("Main: Activating windowmanager");
-    using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-    {
-      _startWithBasicHome = xmlreader.GetValueAsBool("general", "startbasichome", false);
-    }
     if ((_startWithBasicHome) && (File.Exists(GUIGraphicsContext.Skin + @"\basichome.xml")))
       GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SECOND_HOME);
     else
@@ -1536,7 +1535,7 @@ public class MediaPortalApp : D3DApp, IRender
     {
       Log.Info("Main: DX9 size: {0}x{1}", GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth,
                GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight);
-      Log.Info("Main: Video RAM left: {0} KByte", GUIGraphicsContext.DX9Device.AvailableTextureMemory / 1024);
+      Log.Info("Main: Video memory left: {0} MB", GUIGraphicsContext.DX9Device.AvailableTextureMemory / 1048576); // consider the aperture size
     }
     SetupCamera2D();
     g_nAnisotropy = GUIGraphicsContext.DX9Device.DeviceCaps.MaxAnisotropy;
@@ -3090,60 +3089,7 @@ public class MediaPortalApp : D3DApp, IRender
       GUIGraphicsContext.DX9Device.RenderState.ReferenceAlpha = 0x01;
       GUIGraphicsContext.DX9Device.RenderState.AlphaFunction = Compare.GreaterEqual;
     }
-    return;  //? can code below be removed? ( Revision: 15524 Author: yamp Date: 17:04:11, dinsdag 14 augustus 2007 Message: fixed perspective for 3d rotations )
-    
-    GUIGraphicsContext.DX9Device.RenderState.ZBufferEnable = true;
-    GUIGraphicsContext.DX9Device.RenderState.AlphaBlendEnable = true;
-    GUIGraphicsContext.DX9Device.RenderState.SourceBlend = Blend.SourceAlpha;
-    GUIGraphicsContext.DX9Device.RenderState.DestinationBlend = Blend.InvSourceAlpha;
-    GUIGraphicsContext.DX9Device.RenderState.FillMode = FillMode.Solid;
-    GUIGraphicsContext.DX9Device.RenderState.CullMode = Cull.CounterClockwise;
-    GUIGraphicsContext.DX9Device.RenderState.StencilEnable = false;
-    //GUIGraphicsContext.DX9Device.RenderState.Clipping = true;
-    GUIGraphicsContext.DX9Device.ClipPlanes.DisableAll();
-    GUIGraphicsContext.DX9Device.RenderState.VertexBlend = VertexBlend.Disable;
-    GUIGraphicsContext.DX9Device.RenderState.IndexedVertexBlendEnable = false;
-    GUIGraphicsContext.DX9Device.RenderState.FogEnable = false;
-    //GUIGraphicsContext.DX9Device.RenderState.ColorWriteEnable = ColorWriteEnable.RedGreenBlueAlpha;
-    GUIGraphicsContext.DX9Device.TextureState[0].ColorOperation = TextureOperation.Modulate;
-    GUIGraphicsContext.DX9Device.TextureState[0].ColorArgument1 = TextureArgument.TextureColor;
-    GUIGraphicsContext.DX9Device.TextureState[0].ColorArgument2 = TextureArgument.Diffuse;
-    GUIGraphicsContext.DX9Device.TextureState[0].AlphaOperation = TextureOperation.Modulate;
-    GUIGraphicsContext.DX9Device.TextureState[0].AlphaArgument1 = TextureArgument.TextureColor;
-    GUIGraphicsContext.DX9Device.TextureState[0].AlphaArgument2 = TextureArgument.Diffuse;
-    //GUIGraphicsContext.DX9Device.TextureState[0].TextureCoordinateIndex = 0;
-    GUIGraphicsContext.DX9Device.TextureState[0].TextureTransform = TextureTransform.Disable; // REVIEW
-    GUIGraphicsContext.DX9Device.TextureState[1].ColorOperation = TextureOperation.Disable;
-    GUIGraphicsContext.DX9Device.TextureState[1].AlphaOperation = TextureOperation.Disable;
-    /*GUIGraphicsContext.DX9Device.SamplerState[0].MinFilter = TextureFilter.None;
-    GUIGraphicsContext.DX9Device.SamplerState[0].MagFilter = TextureFilter.None;G
-    GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter = TextureFilter.None;*/
-    if (supportsFiltering)
-    {
-      GUIGraphicsContext.DX9Device.SamplerState[0].MinFilter = TextureFilter.Linear;
-      GUIGraphicsContext.DX9Device.SamplerState[0].MagFilter = TextureFilter.Linear;
-      GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter = TextureFilter.Linear;
-      GUIGraphicsContext.DX9Device.SamplerState[0].MaxAnisotropy = g_nAnisotropy;
-      GUIGraphicsContext.DX9Device.SamplerState[1].MinFilter = TextureFilter.Linear;
-      GUIGraphicsContext.DX9Device.SamplerState[1].MagFilter = TextureFilter.Linear;
-      GUIGraphicsContext.DX9Device.SamplerState[1].MipFilter = TextureFilter.Linear;
-      GUIGraphicsContext.DX9Device.SamplerState[1].MaxAnisotropy = g_nAnisotropy;
-    }
-    else
-    {
-      GUIGraphicsContext.DX9Device.SamplerState[0].MinFilter = TextureFilter.Point;
-      GUIGraphicsContext.DX9Device.SamplerState[0].MagFilter = TextureFilter.Point;
-      GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter = TextureFilter.Point;
-      GUIGraphicsContext.DX9Device.SamplerState[1].MinFilter = TextureFilter.Point;
-      GUIGraphicsContext.DX9Device.SamplerState[1].MagFilter = TextureFilter.Point;
-      GUIGraphicsContext.DX9Device.SamplerState[1].MipFilter = TextureFilter.Point;
-    }
-    if (bSupportsAlphaBlend)
-    {
-      GUIGraphicsContext.DX9Device.RenderState.AlphaTestEnable = true;
-      GUIGraphicsContext.DX9Device.RenderState.ReferenceAlpha = 0x01;
-      GUIGraphicsContext.DX9Device.RenderState.AlphaFunction = Compare.GreaterEqual;
-    }
+    return;
   }
 
   /// <summary>
@@ -3231,13 +3177,15 @@ public class MediaPortalApp : D3DApp, IRender
   }
 
   /// <summary>
-  /// Get the current time from the system.
+  /// Get the current time from the system. Set the format in the Home plugin's config
   /// </summary>
   /// <returns>A string containing the current time.</returns>
   protected string GetTime()
   {
-    DateTime cur = DateTime.Now;
-    return cur.ToString(System.Threading.Thread.CurrentThread.CurrentUICulture.DateTimeFormat.LongTimePattern);
+    if (_useLongDateFormat)
+      return DateTime.Now.ToString(Thread.CurrentThread.CurrentUICulture.DateTimeFormat.LongTimePattern);
+    else
+      return DateTime.Now.ToString(Thread.CurrentThread.CurrentUICulture.DateTimeFormat.ShortTimePattern);
   }
 
   protected string GetDay()

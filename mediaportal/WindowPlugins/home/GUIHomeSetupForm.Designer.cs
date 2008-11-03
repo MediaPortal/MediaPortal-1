@@ -80,6 +80,7 @@ namespace MediaPortal.GUI.Home
       this.laName = new System.Windows.Forms.Label();
       this.pictureBox1 = new System.Windows.Forms.PictureBox();
       this.buUp = new System.Windows.Forms.Button();
+      this.checkBoxShowSeconds = new System.Windows.Forms.CheckBox();
       this.tabControl1.SuspendLayout();
       this.tabSettings.SuspendLayout();
       this.groupBox2.SuspendLayout();
@@ -143,6 +144,7 @@ namespace MediaPortal.GUI.Home
       this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Controls.Add(this.checkBoxShowSeconds);
       this.groupBox2.Controls.Add(this.tboxTest);
       this.groupBox2.Controls.Add(this.label2);
       this.groupBox2.Controls.Add(this.groupBox3);
@@ -187,9 +189,9 @@ namespace MediaPortal.GUI.Home
       this.groupBox3.Controls.Add(this.btnMonthText);
       this.groupBox3.Controls.Add(this.btnDayNumber);
       this.groupBox3.Controls.Add(this.btnDayText);
-      this.groupBox3.Location = new System.Drawing.Point(19, 115);
+      this.groupBox3.Location = new System.Drawing.Point(19, 101);
       this.groupBox3.Name = "groupBox3";
-      this.groupBox3.Size = new System.Drawing.Size(345, 131);
+      this.groupBox3.Size = new System.Drawing.Size(345, 121);
       this.groupBox3.TabIndex = 2;
       this.groupBox3.TabStop = false;
       this.groupBox3.Text = "Parameters  ( click on the text to create your own format )";
@@ -425,6 +427,16 @@ namespace MediaPortal.GUI.Home
       this.buUp.UseVisualStyleBackColor = true;
       this.buUp.Click += new System.EventHandler(this.buUp_Click);
       // 
+      // checkBoxShowSeconds
+      // 
+      this.checkBoxShowSeconds.AutoSize = true;
+      this.checkBoxShowSeconds.Location = new System.Drawing.Point(19, 236);
+      this.checkBoxShowSeconds.Name = "checkBoxShowSeconds";
+      this.checkBoxShowSeconds.Size = new System.Drawing.Size(193, 17);
+      this.checkBoxShowSeconds.TabIndex = 3;
+      this.checkBoxShowSeconds.Text = "Use long time format (with seconds)";
+      this.checkBoxShowSeconds.UseVisualStyleBackColor = true;
+      // 
       // GUIHomeSetupForm
       // 
       this.AcceptButton = this.btnOK;
@@ -484,5 +496,6 @@ namespace MediaPortal.GUI.Home
     private System.Windows.Forms.TreeView tvMenu;
     private System.Windows.Forms.PictureBox pictureBox1;
     private System.Windows.Forms.Label laName;
+    private System.Windows.Forms.CheckBox checkBoxShowSeconds;
   }
 }
