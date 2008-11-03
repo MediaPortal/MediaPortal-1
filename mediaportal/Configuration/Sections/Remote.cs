@@ -49,7 +49,7 @@ namespace MediaPortal.Configuration.Sections
     private FireDTVControl fireDTV = null;
 
     private MPCheckBox checkBoxMceEnabled;
-    private PictureBox pictureBoxMceUsa;
+    private PictureBox pictureBoxMce2005;
     private MPGroupBox groupBoxHcwSettings;
     private MPLabel labelHcwButtonRelease;
     private MPCheckBox checkBoxHcwAllowExternal;
@@ -152,7 +152,7 @@ namespace MediaPortal.Configuration.Sections
     private MPLabel LabelChannelNumber;
     private MPTextBox TextBoxChannelNumber;
     private MPCheckBox checkBoxMceExtendedLogging;
-    private PictureBox pictureBox1;
+    private PictureBox pictureBoxMCE2004;
     private MPCheckBox checkBoxHidGlobal;
     private MPCheckBox checkBoxHidExtendedLogging;
     private PictureBox pictureBox2;
@@ -168,6 +168,7 @@ namespace MediaPortal.Configuration.Sections
     private MPButton mpButton1;
     private MPCheckBox checkBoxCentareaReMapMouseButton;
     private MPCheckBox checkBoxMapJoystick;
+    private PictureBox pictureBoxMceVista;
     private MPLabel labelFireDTVModel;
 
     #endregion
@@ -576,15 +577,17 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.components = new System.ComponentModel.Container();
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Remote));
       this.toolTip = new System.Windows.Forms.ToolTip(this.components);
       this.tabControlRemotes = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPageMce = new MediaPortal.UserInterface.Controls.MPTabPage();
-      this.pictureBox1 = new System.Windows.Forms.PictureBox();
+      this.pictureBoxMceVista = new System.Windows.Forms.PictureBox();
+      this.pictureBoxMCE2004 = new System.Windows.Forms.PictureBox();
       this.groupBoxMceGeneral = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.checkBoxMceExtendedLogging = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxMceEnabled = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.buttonMceMapping = new MediaPortal.UserInterface.Controls.MPButton();
-      this.pictureBoxMceUsa = new System.Windows.Forms.PictureBox();
+      this.pictureBoxMce2005 = new System.Windows.Forms.PictureBox();
       this.tabPageHid = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.pictureBox2 = new System.Windows.Forms.PictureBox();
       this.groupBoxHidGeneral = new MediaPortal.UserInterface.Controls.MPGroupBox();
@@ -674,9 +677,10 @@ namespace MediaPortal.Configuration.Sections
       this.mpButton1 = new MediaPortal.UserInterface.Controls.MPButton();
       this.tabControlRemotes.SuspendLayout();
       this.tabPageMce.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMceVista)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMCE2004)).BeginInit();
       this.groupBoxMceGeneral.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMceUsa)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMce2005)).BeginInit();
       this.tabPageHid.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
       this.groupBoxHidGeneral.SuspendLayout();
@@ -726,9 +730,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabPageMce
       // 
-      this.tabPageMce.Controls.Add(this.pictureBox1);
+      this.tabPageMce.Controls.Add(this.pictureBoxMceVista);
+      this.tabPageMce.Controls.Add(this.pictureBoxMCE2004);
       this.tabPageMce.Controls.Add(this.groupBoxMceGeneral);
-      this.tabPageMce.Controls.Add(this.pictureBoxMceUsa);
+      this.tabPageMce.Controls.Add(this.pictureBoxMce2005);
       this.tabPageMce.Location = new System.Drawing.Point(4, 22);
       this.tabPageMce.Name = "tabPageMce";
       this.tabPageMce.Size = new System.Drawing.Size(464, 374);
@@ -736,15 +741,25 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageMce.Text = "Microsoft MCE";
       this.tabPageMce.UseVisualStyleBackColor = true;
       // 
-      // pictureBox1
+      // pictureBoxMceVista
       // 
-      this.pictureBox1.Image = global::MediaPortal.Configuration.Properties.Resources.remote_MceV1;
-      this.pictureBox1.Location = new System.Drawing.Point(140, 149);
-      this.pictureBox1.Name = "pictureBox1";
-      this.pictureBox1.Size = new System.Drawing.Size(122, 222);
-      this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-      this.pictureBox1.TabIndex = 4;
-      this.pictureBox1.TabStop = false;
+      this.pictureBoxMceVista.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxMceVista.Image")));
+      this.pictureBoxMceVista.Location = new System.Drawing.Point(268, 149);
+      this.pictureBoxMceVista.Name = "pictureBoxMceVista";
+      this.pictureBoxMceVista.Size = new System.Drawing.Size(122, 222);
+      this.pictureBoxMceVista.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+      this.pictureBoxMceVista.TabIndex = 5;
+      this.pictureBoxMceVista.TabStop = false;
+      // 
+      // pictureBoxMCE2004
+      // 
+      this.pictureBoxMCE2004.Image = global::MediaPortal.Configuration.Properties.Resources.remote_Mce2004;
+      this.pictureBoxMCE2004.Location = new System.Drawing.Point(12, 149);
+      this.pictureBoxMCE2004.Name = "pictureBoxMCE2004";
+      this.pictureBoxMCE2004.Size = new System.Drawing.Size(122, 222);
+      this.pictureBoxMCE2004.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+      this.pictureBoxMCE2004.TabIndex = 4;
+      this.pictureBoxMCE2004.TabStop = false;
       // 
       // groupBoxMceGeneral
       // 
@@ -795,15 +810,15 @@ namespace MediaPortal.Configuration.Sections
       this.buttonMceMapping.UseVisualStyleBackColor = true;
       this.buttonMceMapping.Click += new System.EventHandler(this.buttonMceMapping_Click);
       // 
-      // pictureBoxMceUsa
+      // pictureBoxMce2005
       // 
-      this.pictureBoxMceUsa.Image = global::MediaPortal.Configuration.Properties.Resources.remote_MceV2;
-      this.pictureBoxMceUsa.Location = new System.Drawing.Point(12, 149);
-      this.pictureBoxMceUsa.Name = "pictureBoxMceUsa";
-      this.pictureBoxMceUsa.Size = new System.Drawing.Size(122, 222);
-      this.pictureBoxMceUsa.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-      this.pictureBoxMceUsa.TabIndex = 3;
-      this.pictureBoxMceUsa.TabStop = false;
+      this.pictureBoxMce2005.Image = global::MediaPortal.Configuration.Properties.Resources.remote_Mce2005;
+      this.pictureBoxMce2005.Location = new System.Drawing.Point(140, 149);
+      this.pictureBoxMce2005.Name = "pictureBoxMce2005";
+      this.pictureBoxMce2005.Size = new System.Drawing.Size(122, 222);
+      this.pictureBoxMce2005.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+      this.pictureBoxMce2005.TabIndex = 3;
+      this.pictureBoxMce2005.TabStop = false;
       // 
       // tabPageHid
       // 
@@ -1824,10 +1839,11 @@ namespace MediaPortal.Configuration.Sections
       this.Size = new System.Drawing.Size(472, 408);
       this.tabControlRemotes.ResumeLayout(false);
       this.tabPageMce.ResumeLayout(false);
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMceVista)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMCE2004)).EndInit();
       this.groupBoxMceGeneral.ResumeLayout(false);
       this.groupBoxMceGeneral.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMceUsa)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMce2005)).EndInit();
       this.tabPageHid.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
       this.groupBoxHidGeneral.ResumeLayout(false);

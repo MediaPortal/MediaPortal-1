@@ -943,14 +943,15 @@
     <None Include="Resources\config.ico" />
     <None Include="Resources\wizard_background.png" />
     <None Include="Resources\wizard_header.jpg" />
-    <None Include="Resources\remote.MceEurope.png" />
-    <None Include="Resources\remote.MceUSA.png" />
     <None Include="Resources\remote.HidKeys.png" />
     <None Include="Resources\remote.FireDtv.png" />
     <None Include="Resources\remote.Centarea.png" />
     <Content Include="Resources\icon_folder.png" />
     <Content Include="Resources\icon_help.png" />
     <Content Include="Resources\icon_refresh.png" />
+    <None Include="Resources\remote.MceVista.png" />
+    <None Include="Resources\remote.Mce2004.png" />
+    <None Include="Resources\remote.Mce2005TT.png" />
     <Content Include="Wizards\DVD.xml" />
     <Content Include="Wizards\FirstTimeSetup.xml" />
     <Content Include="Wizards\Movies.xml" />

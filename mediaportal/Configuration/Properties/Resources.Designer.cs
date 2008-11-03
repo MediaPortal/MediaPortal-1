@@ -102,16 +102,23 @@ namespace MediaPortal.Configuration.Properties {
             }
         }
         
-        internal static System.Drawing.Bitmap remote_MceV1 {
+        internal static System.Drawing.Bitmap remote_Mce2004 {
             get {
-                object obj = ResourceManager.GetObject("remote_MceV1", resourceCulture);
+                object obj = ResourceManager.GetObject("remote_Mce2004", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
-        internal static System.Drawing.Bitmap remote_MceV2 {
+        internal static System.Drawing.Bitmap remote_Mce2005 {
             get {
-                object obj = ResourceManager.GetObject("remote_MceV2", resourceCulture);
+                object obj = ResourceManager.GetObject("remote_Mce2005", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap remote_MceVista {
+            get {
+                object obj = ResourceManager.GetObject("remote_MceVista", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -136,11 +136,14 @@
   <data name="remote_HidKeys" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\remote.HidKeys.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="remote_MceV1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\remote.MceUSA.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="remote_Mce2004" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\remote.Mce2004.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="remote_MceV2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\remote.MceEurope.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="remote_Mce2005" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\remote.Mce2005TT.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="remote_MceVista" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\remote.MceVista.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="splashscreen_configuration" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\splashscreen_configuration.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
