@@ -246,7 +246,7 @@ namespace TvPlugin
             if (pDlgOK != null)
             {
               pDlgOK.SetHeading(GUILocalizeStrings.Get(605));
-              pDlgOK.SetLine(1, "Connected to TvServer");
+              pDlgOK.SetLine(1, GUILocalizeStrings.Get(200064));  // Connected to TvServer
               pDlgOK.SetLine(2, "");
               pDlgOK.SetLine(3, "");
               pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
@@ -259,7 +259,7 @@ namespace TvPlugin
           {
             if (portErrors.Count > 0)
             {
-              pDlgOK.SetHeading("Some ports seem to be blocked");
+              pDlgOK.SetHeading(GUILocalizeStrings.Get(200065)); // Some ports seem to be blocked
               for (int i = 0; i < 4; i++)
               {
                 if (i < portErrors.Count)
@@ -271,18 +271,18 @@ namespace TvPlugin
             }
             pDlgOK.SetHeading(GUILocalizeStrings.Get(605));
             if (tvServerOk)
-              pDlgOK.SetLine(1, "Connected to TvServer");
+              pDlgOK.SetLine(1, GUILocalizeStrings.Get(200064));  // Connected to TvServer
             else
-              pDlgOK.SetLine(1, "Unable to connect to the tvserver");
+              pDlgOK.SetLine(1, GUILocalizeStrings.Get(200066));  // Unable to connect to TvServer
 
             if (databaseOk)
-              pDlgOK.SetLine(2, "Connected to database");
+              pDlgOK.SetLine(2, GUILocalizeStrings.Get(200067));  // Connected to database
             else
-              pDlgOK.SetLine(2, "Unable to connect to database");
+              pDlgOK.SetLine(2, GUILocalizeStrings.Get(200068));  // Unable to connect to database
             if (portErrors.Count==0)
-              pDlgOK.SetLine(3, "All ip ports seem to be fine");
+              pDlgOK.SetLine(3, GUILocalizeStrings.Get(200069));  // All ip ports seem to be fine
             else
-              pDlgOK.SetLine(3, "Please check firewall");
+              pDlgOK.SetLine(3, GUILocalizeStrings.Get(200070));  // Please check firewall
             pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
 
             return;
