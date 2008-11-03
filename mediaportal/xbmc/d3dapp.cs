@@ -118,6 +118,7 @@ namespace MediaPortal
     internal static bool _fullscreenOverride = false;
     internal static bool _windowedOverride = false;
     internal static int _screenNumberOverride = -1;// 0 or higher means it is set
+    protected bool _toggleFullWindowed = false;
     
     protected Caps Caps
     {
@@ -2005,6 +2006,7 @@ namespace MediaPortal
 
     protected void ToggleFullWindowed()
     {
+      _toggleFullWindowed = true;
       Log.Info("D3D: Fullscreen / windowed mode toggled");
       isMaximized = !isMaximized;
       //Force player to stop so as not to crash during toggle
@@ -2071,6 +2073,7 @@ namespace MediaPortal
         SwitchFullScreenOrWindowed(true);
       }
       OnDeviceReset(null, null);
+      _toggleFullWindowed = false;
     }
 
     /// <summary>
@@ -2287,7 +2290,7 @@ namespace MediaPortal
     /// <param name="e">Event arguments</param>
     protected override void OnSizeChanged(EventArgs e)
     {
-      if (GUIGraphicsContext.IsDirectX9ExUsed() && this.Visible && !_resizeOngoing)
+      if (GUIGraphicsContext.IsDirectX9ExUsed() && this.Visible && !_resizeOngoing && !_toggleFullWindowed)
       {
         SwitchFullScreenOrWindowed(false);
         OnDeviceReset(null, null);
