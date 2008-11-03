@@ -2391,7 +2391,9 @@ namespace MediaPortal
       }
       if (GUIGraphicsContext.IsDirectX9ExUsed())
       {
-        if (WindowState != _windowState)
+        // Window maximise / restore button pressed 
+        if (WindowState != _windowState && 
+            WindowState != FormWindowState.Minimized)
         {
           _windowState = WindowState;
           _ignoreNextResizeEvent = true;
