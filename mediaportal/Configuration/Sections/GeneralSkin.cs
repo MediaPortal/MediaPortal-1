@@ -403,9 +403,9 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.panelFitImage.Controls.Add(this.previewPictureBox);
-      this.panelFitImage.Location = new System.Drawing.Point(243, 22);
+      this.panelFitImage.Location = new System.Drawing.Point(221, 22);
       this.panelFitImage.Name = "panelFitImage";
-      this.panelFitImage.Size = new System.Drawing.Size(200, 200);
+      this.panelFitImage.Size = new System.Drawing.Size(222, 179);
       this.panelFitImage.TabIndex = 5;
       // 
       // previewPictureBox
@@ -413,10 +413,9 @@ namespace MediaPortal.Configuration.Sections
       this.previewPictureBox.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
       this.previewPictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
       this.previewPictureBox.Location = new System.Drawing.Point(0, 0);
-      this.previewPictureBox.MinimumSize = new System.Drawing.Size(200, 200);
       this.previewPictureBox.Name = "previewPictureBox";
-      this.previewPictureBox.Size = new System.Drawing.Size(200, 200);
-      this.previewPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+      this.previewPictureBox.Size = new System.Drawing.Size(222, 179);
+      this.previewPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
       this.previewPictureBox.TabIndex = 5;
       this.previewPictureBox.TabStop = false;
       // 
