@@ -1,5 +1,4 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>28</id>
   <defaultcontrol>2</defaultcontrol>
@@ -23,6 +22,8 @@
       <width>568</width>
       <height>900</height>
       <dimColor>00ffffff</dimColor>
+      <visible>!Control.HasFocus(50)</visible>
+      <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
       <control>
         <type>image</type>
         <posX>26</posX>
@@ -31,16 +32,10 @@
         <height>591</height>
         <texture>Backslide.png</texture>
         <colorDiffuse>fffffffff</colorDiffuse>
-        <visible>!Control.HasFocus(50)</visible>
-        <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
-        <animation effect="slide" time="450" end="-300,0" reversible="false">hidden</animation>
       </control>
       <control>
         <description>group element</description>
         <type>group</type>
-        <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
-        <animation effect="slide" time="450" end="-300,0" reversible="false">hidden</animation>
-        <visible>!Control.HasFocus(50)</visible>
         <control>
           <description>caption of the selected item</description>
           <type>label</type>
@@ -52,7 +47,7 @@
           <height>93</height>
           <font>font14</font>
           <label>#Play.Current.Title</label>
-          <visible>!Control.HasFocus(50)+player.hasmedia</visible>
+          <visible>player.hasmedia</visible>
         </control>
         <control>
           <description>caption of the selected item</description>
@@ -65,7 +60,7 @@
           <height>93</height>
           <font>font14</font>
           <label>#Play.Current.Artist</label>
-          <visible>!Control.HasFocus(50)+player.hasmedia</visible>
+          <visible>player.hasmedia</visible>
         </control>
         <control>
           <description>caption of the selected item</description>
@@ -78,7 +73,7 @@
           <height>93</height>
           <font>font14</font>
           <label>#Play.Current.Album</label>
-          <visible>!Control.HasFocus(50)+player.hasmedia</visible>
+          <visible>player.hasmedia</visible>
         </control>
         <control>
           <description>caption of the selected item2</description>
@@ -94,7 +89,7 @@
           <align>left</align>
           <textcolor>20ffffff</textcolor>
           <label>#currentplaytime</label>
-          <visible>!Control.HasFocus(50)+player.hasmedia</visible>
+          <visible>player.hasmedia</visible>
         </control>
         <control>
           <description>music logo</description>
@@ -108,7 +103,7 @@
           <keepaspectratio>yes</keepaspectratio>
           <centered>yes</centered>
           <texture flipY="true" diffuse="Thumb_Mask.png">#Play.Current.Thumb</texture>
-          <visible>!Control.HasFocus(50)+player.hasmedia</visible>
+          <visible>player.hasmedia</visible>
         </control>
         <control>
           <description>music logo</description>
@@ -120,7 +115,7 @@
           <width>142</width>
           <height>100</height>
           <texture flipY="true" diffuse="Thumb_Mask.png">Picture_cover.png</texture>
-          <visible>!Control.HasFocus(50)+player.hasmedia+control.hasthumb(600)</visible>
+          <visible>player.hasmedia+control.hasthumb(600)</visible>
         </control>
         <control>
           <description>Progress background</description>
@@ -131,7 +126,7 @@
           <width>320</width>
           <height>27</height>
           <texture>osd_progress_background.png</texture>
-          <visible>!Control.HasFocus(50)+player.hasmedia</visible>
+          <visible>player.hasmedia</visible>
         </control>
         <control>
           <description>progress bar</description>
@@ -142,13 +137,11 @@
           <width>336</width>
           <height>18</height>
           <label>#percentage</label>
-          <visible>!Control.HasFocus(50)+player.hasmedia</visible>
+          <visible>player.hasmedia</visible>
         </control>
         <control>
           <description>group element</description>
           <type>group</type>
-          <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
-          <animation effect="slide" time="450" end="-300,0" reversible="false">hidden</animation>
           <posX>71</posX>
           <posY>121</posY>
           <layout>StackLayout</layout>
@@ -245,7 +238,7 @@
       <width>227</width>
       <height>222</height>
       <texture flipY="true" diffuse="Thumb_Mask.png">missing_Coverart.png</texture>
-      <visible>facadeview.playlist|facadeview.album+Control.HasFocus(50)</visible>
+      <visible>[facadeview.playlist|facadeview.album]+Control.HasFocus(50)</visible>
       <animation effect="fade" time="450" reversible="false">visible</animation>
     </control>
     <control>
@@ -256,7 +249,7 @@
       <width>227</width>
       <height>222</height>
       <texture flipY="true" diffuse="Thumb_Mask.png">#selectedthumb</texture>
-      <visible>facadeview.playlist|facadeview.album+Control.HasFocus(50)</visible>
+      <visible>[facadeview.playlist|facadeview.album]+Control.HasFocus(50)</visible>
       <animation effect="fade" time="450" reversible="false">visible</animation>
     </control>
     <control>
@@ -267,7 +260,7 @@
       <width>245</width>
       <height>228</height>
       <texture flipY="true" diffuse="Thumb_Mask.png">Picture_cover.png</texture>
-      <visible>facadeview.playlist|facadeview.album+Control.HasFocus(50)</visible>
+      <visible>[facadeview.playlist|facadeview.album]+Control.HasFocus(50)</visible>
       <animation effect="fade" time="450" reversible="false">visible</animation>
     </control>
     <control>
@@ -279,7 +272,7 @@
       <width>355</width>
       <label>Info:</label>
       <font>font14</font>
-      <visible>facadeview.playlist|facadeview.album+Control.HasFocus(50)</visible>
+      <visible>[facadeview.playlist|facadeview.album]+Control.HasFocus(50)</visible>
       <animation effect="fade" time="450" reversible="false">visible</animation>
     </control>
     <control>
@@ -291,7 +284,7 @@
       <width>355</width>
       <label>#selecteditem</label>
       <font>font14</font>
-      <visible>facadeview.playlist|facadeview.album+Control.HasFocus(50)</visible>
+      <visible>[facadeview.playlist|facadeview.album]+Control.HasFocus(50)</visible>
       <animation effect="fade" time="450" reversible="false">visible</animation>
     </control>
     <control>
@@ -303,7 +296,7 @@
       <width>355</width>
       <label>#selecteditem2</label>
       <font>font14</font>
-      <visible>facadeview.playlist|facadeview.album+Control.HasFocus(50)</visible>
+      <visible>[facadeview.playlist|facadeview.album]+Control.HasFocus(50)</visible>
       <animation effect="fade" time="450" reversible="false">visible</animation>
     </control>
     <control>

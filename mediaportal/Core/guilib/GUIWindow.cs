@@ -1020,6 +1020,31 @@ namespace MediaPortal.GUI.Library
       return null;
     }
 
+    /// <summary>
+    /// calls UpdateVisibility for all children components
+    /// (also used for allowing to switch focus to a component that can only be 
+    /// focused if the current component is not active)
+    /// </summary>
+    public virtual void UpdateVisibility()
+    {
+      for (int x = 0; x < Children.Count; ++x)
+      {
+        GUIGroup grp = Children[x] as GUIGroup;
+        if (grp != null)
+        {
+          grp.UpdateVisibility();
+          foreach (GUIControl control in grp.Children)
+          {
+            control.UpdateVisibility();
+          }
+
+        }
+        else
+        {
+          ((GUIControl)Children[x]).UpdateVisibility();
+        }
+      }
+    }
 
     /// <summary>
     /// returns the ID of the control which has the focus
@@ -1379,6 +1404,11 @@ namespace MediaPortal.GUI.Library
                   GUIControl cntTarget = GetControl(message.TargetControlId);
                   if (cntTarget != null)
                   {
+                    // recalculate visibility, so a invisible item that is becoming visible 
+                    // becouse the previous component is no longer focused can be focused
+                    // mantis issue #1755
+					UpdateVisibility();
+
                     cntTarget.OnMessage(message);
                   }
                   cntTarget = null;
