@@ -354,8 +354,7 @@ namespace TvService
             } //while card end
           } //foreach tuningdetail end      
         }
-      }
-      Thread.CurrentThread.Abort();
+      }      
     }
 
     #endregion

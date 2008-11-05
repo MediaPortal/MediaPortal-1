@@ -714,8 +714,7 @@ namespace TvPlugin
         pDlgYESNO = (GUIDialogYesNo)Dialogue;
       }
       else
-      {
-        Thread.CurrentThread.Abort();
+      {        
         return;
       }
 
@@ -754,9 +753,7 @@ namespace TvPlugin
       {
         if (OnShowDlgCompleted != null)
           OnShowDlgCompleted(Dialogue);
-      }     
-
-      Thread.CurrentThread.Abort();
+      }           
     }
 
     public static bool HandleServerNotConnected()
