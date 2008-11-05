@@ -1,5 +1,4 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>102</id>
   <defaultcontrol>10</defaultcontrol>
@@ -10,12 +9,12 @@
       <description>Play button</description>
       <type>button</type>
       <id>10</id>
-      <posX>675</posX>
-      <posY>415</posY>
-      <textXOff>53</textXOff>
-      <textYOff>8</textYOff>
-      <width>186</width>
-      <height>47</height>
+      <posX>380</posX>
+      <posY>316</posY>
+      <textXOff>30</textXOff>
+      <textYOff>7</textYOff>
+      <width>105</width>
+      <height>38</height>
       <textureFocus>small_button_focus.png</textureFocus>
       <textureNoFocus>small_button_nofocus.png</textureNoFocus>
       <label>2553</label>
@@ -30,12 +29,12 @@
       <description>Stop button</description>
       <type>button</type>
       <id>11</id>
-      <posX>408</posX>
-      <posY>415</posY>
-      <textXOff>56</textXOff>
-      <textYOff>8</textYOff>
-      <width>186</width>
-      <height>47</height>
+      <posX>230</posX>
+      <posY>316</posY>
+      <textXOff>32</textXOff>
+      <textYOff>7</textYOff>
+      <width>105</width>
+      <height>38</height>
       <textureFocus>small_button_focus.png</textureFocus>
       <textureNoFocus>small_button_nofocus.png</textureNoFocus>
       <label>2552</label>
