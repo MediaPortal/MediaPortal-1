@@ -1765,5 +1765,12 @@
     <String id="200061">Canale sinistro in uscita su entrambe le casse</String>
     <String id="200062">Canale destro in uscita su entrambe le casse</String>
     <String id="200063">Mix di entrambi</String>
+    <String id="200064">Connesso al TvServer</String>
+    <String id="200065">Alcune porte sembrano essere bloccate</String>
+    <String id="200066">Impossibile connettersi al TvServer</String>
+    <String id="200067">Connesso al database</String>
+    <String id="200068">Impossibile connettersi al database</String>
+    <String id="200069">Tutte le porte ip sembrano essere a posto</String>
+    <String id="200070">Controllare il firewall</String>
   </Section>
 </Language>
