@@ -3207,9 +3207,9 @@ public class MediaPortalApp : D3DApp, IRender
   protected string GetTime()
   {
     if (_useLongDateFormat)
-      return DateTime.Now.ToString(Thread.CurrentThread.CurrentUICulture.DateTimeFormat.LongTimePattern);
+      return DateTime.Now.ToString(Thread.CurrentThread.CurrentCulture.DateTimeFormat.LongTimePattern);
     else
-      return DateTime.Now.ToString(Thread.CurrentThread.CurrentUICulture.DateTimeFormat.ShortTimePattern);
+      return DateTime.Now.ToString(Thread.CurrentThread.CurrentCulture.DateTimeFormat.ShortTimePattern);
   }
 
   protected string GetDay()
