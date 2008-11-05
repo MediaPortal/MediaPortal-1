@@ -43,9 +43,6 @@ namespace MediaPortal.Dialogs
 
     bool m_bConfirmed = false;
     bool m_DefaultStop = false;
-    int iStopKey = -1;
-    int iPlayKey = -1;
-    DateTime vmr7UpdateTimer = DateTime.Now;
 
     public GUIDialogPlayStop()
     {
@@ -61,8 +58,7 @@ namespace MediaPortal.Dialogs
     {
       //needRefresh = true;
       if (action.wID == Action.ActionType.ACTION_CLOSE_DIALOG ||
-          action.wID == Action.ActionType.ACTION_PREVIOUS_MENU ||
-          action.wID == Action.ActionType.ACTION_PLAY)
+          action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
       {
         m_DefaultStop = false;
         base.OnAction(action);
@@ -73,9 +69,19 @@ namespace MediaPortal.Dialogs
       //
       // es. "Do you really want to STOP play LiveTv ?" -> YES I want to STOP
       //
-      if (action.wID == Action.ActionType.ACTION_STOP)
+      if (action.wID == Action.ActionType.ACTION_STOP || action.m_key.KeyChar == 'b')
       {
         m_bConfirmed = true;
+        PageDestroy();
+        m_DefaultStop = false;
+        return;
+      }
+      //
+      // WARNING: See above comment to understand why PLAY, that is a semantic YES, here is a NO
+      //
+      if (action.wID == Action.ActionType.ACTION_PLAY || action.m_key.KeyChar == 'p')
+      {
+        m_bConfirmed = false;
         PageDestroy();
         m_DefaultStop = false;
         return;
@@ -102,8 +108,6 @@ namespace MediaPortal.Dialogs
             {
               GUIControl.FocusControl(GetID, btnStop.GetID);
             }
-            iStopKey = (int)btnStop.Label.ToLower()[0];
-            iPlayKey = (int)btnPlay.Label.ToLower()[0];
           }
           return true;
 
