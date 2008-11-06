@@ -2897,12 +2897,14 @@ namespace TvPlugin
 
           TVHome.Card = card; //Moved by joboehl - Only touch the card if starttimeshifting succeeded. 
 
+          bool wasPaused = g_Player.Paused;
+
           if (!g_Player.Playing || cardChanged)
           {
             StartPlay();
           }
 
-          if (!wasPlaying)
+          if (!wasPlaying || wasPaused)
           {
             SeekToEnd(true);
           }
