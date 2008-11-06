@@ -121,7 +121,7 @@
     <value>Möchten Sie mit MediaPortal fernsehen?</value>
   </data>
   <data name="WatchTV_on" xml:space="preserve">
-    <value>Ja, ich besitze eine TV-Karte und möchte mit MediaPortal fernsehen.</value>
+    <value>Ja, ich möchte mit MediaPortal fernsehen.</value>
   </data>
   <data name="WatchTV_off" xml:space="preserve">
     <value>Nein, ich möchte MediaPortal nicht zum Fernsehen verwenden.</value>
@@ -199,7 +199,7 @@ und integriert sich völlig transparent in die Oberfläche von MediaPortal.</val
     <value>MediaPortal "Einzelplatz"-Installation (alles auf einem Rechner)</value>
   </data>
   <data name="CustomInstallation_labelSingleSeat" xml:space="preserve">
-    <value>Diese Auswahl ist die richtige wenn Sie MediaPortal und den TV-Server auf einem PC installieren wollen.</value>
+    <value>Diese Auswahl ist die richtige, wenn Sie MediaPortal und den TV-Server auf einem PC installieren wollen.</value>
   </data>
   <data name="CustomInstallation_rbTvServerMaster" xml:space="preserve">
     <value>MediaPortal dedizierter TV-Server (Master Server mit SQL Server, ohne MediaPortal)</value>
@@ -317,7 +317,7 @@ Dieser PC versorgt andere PCs mit MediaPortal in Ihrem Netzwerk.</value>
     <value>Es ist ein Fehler bei der Installation der Anwendung [{0}] aufgetreten</value>
   </data>
   <data name="Install_labelHeadingInstall" xml:space="preserve">
-    <value>Klicken Sie "Installieren" um alle für die gewählte Konfiguration notwendigen Applikationen zu installieren.</value>
+    <value>Klicken Sie "Installieren", um alle für die gewählte Konfiguration notwendigen Applikationen zu installieren.</value>
   </data>
   <data name="Install_msgDownloading" xml:space="preserve">
     <value>Download läuft...</value>
@@ -447,8 +447,7 @@ Dieser PC versorgt andere PCs mit MediaPortal in Ihrem Netzwerk.</value>
   </data>
   <data name="DownloadOnly_labelSectionHeader" xml:space="preserve">
     <value>Für die Installation wird eine Internetverbindung benötigt.
- 
-Möchten sie die Installations-Schritte jetzt durchführen, oder lediglich die benötigten Dateien herunterladen um die eigentliche Installation später vorzunehmen?</value>
+Möchten Sie die Installations-Schritte jetzt durchführen oder lediglich die benötigten Dateien herunterladen, um die eigentliche Installation später vorzunehmen?</value>
   </data>
   <data name="DownloadOnly_no" xml:space="preserve">
     <value>Nur Downloads durchführen</value>
@@ -472,7 +471,7 @@ Möchten sie die Installations-Schritte jetzt durchführen, oder lediglich die b
     <value>Die benötigten Komponenten wurden erfolgreich heruntergeladen.</value>
   </data>
   <data name="Install_labelHeadingDownload" xml:space="preserve">
-    <value>Klicken Sie "Herunterladen" um den Internet-Download der nötigen Dateien jetzt zu starten.</value>
+    <value>Klicken Sie "Herunterladen", um den Internet-Download der nötigen Dateien jetzt zu starten.</value>
   </data>
   <data name="OS_Support" xml:space="preserve">
     <value>Ihr Betriebssystem wird leider nicht von MediaPortal unterstützt.</value>
