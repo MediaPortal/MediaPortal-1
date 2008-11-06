@@ -19,18 +19,18 @@
     <String id="15">Fredag</String>
     <String id="16">Lørdag</String>
     <String id="17">Søndag</String>
-    <String id="21">januar</String>
-    <String id="22">februar</String>
-    <String id="23">mars</String>
-    <String id="24">april</String>
-    <String id="25">mai</String>
-    <String id="26">juni</String>
-    <String id="27">juli</String>
-    <String id="28">august</String>
-    <String id="29">september</String>
-    <String id="30">oktober</String>
-    <String id="31">november</String>
-    <String id="32">desember</String>
+    <String id="21">Januar</String>
+    <String id="22">Februar</String>
+    <String id="23">Mars</String>
+    <String id="24">April</String>
+    <String id="25">Mai</String>
+    <String id="26">Juni</String>
+    <String id="27">Juli</String>
+    <String id="28">August</String>
+    <String id="29">September</String>
+    <String id="30">Oktober</String>
+    <String id="31">November</String>
+    <String id="32">Desember</String>
     <String id="50" prefix="Mine ">DVDer</String>
     <String id="100">Vis: Ikoner</String>
     <String id="101">Vis: Liste</String>
@@ -1711,6 +1711,7 @@
     <String id="107777" prefix="Min ">Sudoku</String>
     <String id="107890" prefix="Min ">Last.fm radio</String>
     <String id="108888">Musikk meny</String>
+    <String id="109811" prefix="Mine ">TV Serier</String>
     <String id="200000">Vennligst velg din EPG-grabber. Husk at hvis ditt land</String>
     <String id="200001">ikke er på listen må du legge inn EPG manuellt</String>
     <String id="200002">Nå kan du kartlegge EPG-kanalene til dine TV-kanaler</String>
