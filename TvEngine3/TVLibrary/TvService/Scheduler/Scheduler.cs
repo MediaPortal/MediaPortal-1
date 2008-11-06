@@ -678,10 +678,7 @@ namespace TvService
     void StopRecord(RecordingDetail recording)
     {
       try
-      {
-        recording.Recording.EndTime = DateTime.Now;
-        recording.Recording.Persist();
-
+      {        
         _user.CardId = recording.CardInfo.Id;
         _user.Name = string.Format("scheduler{0}", recording.Schedule.IdSchedule);
         _user.IsAdmin = true;        
@@ -689,32 +686,43 @@ namespace TvService
         if (_controller.SupportsSubChannels(recording.CardInfo.Id) == false)
         {
           _controller.StopTimeShifting(ref _user);
-        }               
-        
-        //DatabaseManager.Instance.SaveChanges();
+        }
 
-        if ((ScheduleRecordingType)recording.Schedule.ScheduleType == ScheduleRecordingType.Once)
+        Log.Write("Scheduler: stop record {0} {1}-{2} {3}", recording.Channel.Name, recording.RecordingStartDateTime, recording.EndTime, recording.Schedule.ProgramName);
+        if (_controller.StopRecording(ref _user))
         {
-          recording.Schedule.Delete();
-          // even for Once type , the schedule can initially be a serie
-          if (recording.IsSerie) _episodeManagement.OnScheduleEnded(recording.FileName, recording.Schedule, recording.Program);
-          _tvController.Fire(this, new TvServerEventArgs(TvServerEventType.ScheduleDeleted, new VirtualCard(_user), _user, recording.Schedule, null));
+          recording.Recording.EndTime = DateTime.Now;
+          recording.Recording.Persist();
+
+          _recordingsInProgressList.Remove(recording); //only remove recording from the list, if we are succesful       
+
+          if ((ScheduleRecordingType)recording.Schedule.ScheduleType == ScheduleRecordingType.Once)
+          {
+            recording.Schedule.Delete();
+            // even for Once type , the schedule can initially be a serie
+            if (recording.IsSerie) _episodeManagement.OnScheduleEnded(recording.FileName, recording.Schedule, recording.Program);
+            _tvController.Fire(this, new TvServerEventArgs(TvServerEventType.ScheduleDeleted, new VirtualCard(_user), _user, recording.Schedule, null));
+          }
+          else
+          {
+            Log.Debug("Scheduler: endtime={0}, Program.EndTime={1}, postRecTime={2}", recording.EndTime, recording.Program.EndTime, recording.Schedule.PostRecordInterval);
+            if (DateTime.Now <= recording.Program.EndTime.AddMinutes(recording.Schedule.PostRecordInterval))
+            {
+              CanceledSchedule canceled = new CanceledSchedule(recording.Schedule.IdSchedule, recording.Program.StartTime);
+              canceled.Persist();
+            }
+            _episodeManagement.OnScheduleEnded(recording.FileName, recording.Schedule, recording.Program);
+          }		
+
+          _tvController.Fire(this, new TvServerEventArgs(TvServerEventType.RecordingEnded, new VirtualCard(_user), _user, recording.Schedule, recording.Recording));
         }
         else
         {
-          Log.Debug("Scheduler: endtime={0}, Program.EndTime={1}, postRecTime={2}", recording.EndTime, recording.Program.EndTime, recording.Schedule.PostRecordInterval);
-          if (DateTime.Now <= recording.Program.EndTime.AddMinutes(recording.Schedule.PostRecordInterval))
-          {
-            CanceledSchedule canceled = new CanceledSchedule(recording.Schedule.IdSchedule, recording.Program.StartTime);
-            canceled.Persist();
-          }
-          _episodeManagement.OnScheduleEnded(recording.FileName, recording.Schedule, recording.Program);
-        }
-				_recordingsInProgressList.Remove(recording); //only remove recording from the list, if we are succesful       
-
-        Log.Write("Scheduler: stop record {0} {1}-{2} {3}", recording.Channel.Name, recording.RecordingStartDateTime, recording.EndTime, recording.Schedule.ProgramName);
-        _controller.StopRecording(ref _user);
-        _tvController.Fire(this, new TvServerEventArgs(TvServerEventType.RecordingEnded, new VirtualCard(_user), _user, recording.Schedule, recording.Recording));
+          Log.Write("Scheduler: stop record did not succeed (trying again in 1 min.) {0} {1}-{2} {3}", recording.Channel.Name, recording.RecordingStartDateTime, recording.EndTime, recording.Schedule.ProgramName);
+          recording.Recording.EndTime = recording.Recording.EndTime.AddMinutes(1); //lets try and stop the recording in 1 min. again.
+          recording.Recording.Persist();
+        }        
+        //DatabaseManager.Instance.SaveChanges();        		        
       }
       catch (Exception ex)
       {
