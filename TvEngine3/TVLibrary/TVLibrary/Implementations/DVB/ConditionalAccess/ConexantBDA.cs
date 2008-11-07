@@ -145,8 +145,30 @@ namespace TvLibrary.Implementations.DVB
     public void SendDiseqCommand(ScanParameters parameters, DVBSChannel channel)
     {
       if (_isConexant == false) return;
-      bool hiBand = BandTypeConverter.IsHiBand(channel, parameters);
       int antennaNr = BandTypeConverter.GetAntennaNr(channel);
+      //hack - bypass diseqc settings for single LNB implementations
+      if (antennaNr == 0) return;
+      //end of hack
+
+      //get previous diseqc message - debug purposes only.
+      /*Log.Log.Info("Conexant: Get diseqc");
+      int length;
+      int hrget = _propertySet.Get(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, _tempInstance, 188, _tempValue, 188, out length);
+      string str = "";
+      for (int i = 0; i < 4; ++i)
+        str += String.Format("0x{0:X} ", Marshal.ReadByte(_tempValue, i));
+      for (int i = 160; i < 188; i = (i + 4))
+        str += String.Format("0x{0:X} ", Marshal.ReadByte(_ptrDiseqc, i));
+      Log.Log.WriteFile("Conexant: getdiseqc: {0}", str);*/
+
+      //clear the message params before writing in order to avoid corruption of the diseqc message.
+      for (int i = 0; i < 188; ++i)
+      {
+        Marshal.WriteByte(_ptrDiseqc, i, (byte)0x00);
+      }
+
+      bool hiBand = BandTypeConverter.IsHiBand(channel, parameters);
+      
 
       //bit 0	(1)	: 0=low band, 1 = hi band
       //bit 1 (2) : 0=vertical, 1 = horizontal
@@ -165,26 +187,33 @@ namespace TvLibrary.Implementations.DVB
       cmd |= (byte)((antennaNr - 1) << 2);
 
       int len = 188;//sizeof(DISEQC_MESSAGE_PARAMS);
-      ulong diseqc = 0xE0103800;
+      ulong diseqc = 0xE0103800;//currently committed switches only. i.e. ports 1-4
       diseqc += cmd;
 
-      Marshal.WriteByte(_ptrDiseqc, 0, (byte)((diseqc >> 24) & 0xff));
-      Marshal.WriteByte(_ptrDiseqc, 1, (byte)((diseqc >> 16) & 0xff));
-      Marshal.WriteByte(_ptrDiseqc, 2, (byte)((diseqc >> 8) & 0xff));
-      Marshal.WriteByte(_ptrDiseqc, 3, (byte)(diseqc & 0xff));
+      Marshal.WriteByte(_ptrDiseqc, 0, (byte)((diseqc >> 24) & 0xff));//framing byte
+      Marshal.WriteByte(_ptrDiseqc, 1, (byte)((diseqc >> 16) & 0xff));//address byte
+      Marshal.WriteByte(_ptrDiseqc, 2, (byte)((diseqc >> 8) & 0xff));//command byte
+      Marshal.WriteByte(_ptrDiseqc, 3, (byte)(diseqc & 0xff));//data byte (port group 0)
       Marshal.WriteInt32(_ptrDiseqc, 160, (Int32)4);//send_message_length
       Marshal.WriteInt32(_ptrDiseqc, 164, (Int32)0);//receive_message_length
       Marshal.WriteInt32(_ptrDiseqc, 168, (Int32)3);//amplitude_attenuation
-      Marshal.WriteByte(_ptrDiseqc, 172, (int)BurstModulationType.TONE_BURST_MODULATED);//default to tone_burst_modulated
+      if (antennaNr == 1)//for simple diseqc switches (i.e. 22KHz tone burst)
+      {
+        Marshal.WriteByte(_ptrDiseqc, 172, (int)BurstModulationType.TONE_BURST_UNMODULATED);//
+      }
+      else
+      {
+        Marshal.WriteByte(_ptrDiseqc, 172, (int)BurstModulationType.TONE_BURST_MODULATED);//default to tone_burst_modulated
+      }
       Marshal.WriteByte(_ptrDiseqc, 176, (int)DisEqcVersion.DISEQC_VER_1X);//default
       Marshal.WriteByte(_ptrDiseqc, 180, (int)RxMode.RXMODE_NOREPLY);//default
-      Marshal.WriteByte(_ptrDiseqc, 184, 1);//last_message TRUE
+      Marshal.WriteByte(_ptrDiseqc, 184, 1);//last_message TRUE */
 
       string txt = "";
       for (int i = 0; i < 4; ++i)
         txt += String.Format("0x{0:X} ", Marshal.ReadByte(_ptrDiseqc, i));
-      for (int i = 160; i < 185; i = (i + 4))
-        txt += String.Format("0x{0:X} ", Marshal.ReadByte(_ptrDiseqc, i));
+      for (int i = 160; i < 188; i = (i + 4))
+        txt += String.Format("0x{0:X} ", Marshal.ReadInt32(_ptrDiseqc, i));
       Log.Log.WriteFile("Conexant: SendDiseq: {0}", txt);
 
       int hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, _ptrDiseqc, len, _ptrDiseqc, len);
