@@ -1,7 +1,7 @@
 ﻿<Applications>
   <DirectX9c>
     <URL>http://install.team-mediaportal.com/DirectX</URL>
-    <FILE>directx_mar2008_redist.exe</FILE>
+    <FILE>directx_aug2008_redist.exe</FILE>
     <TYPE>Automatic</TYPE>
   </DirectX9c>
   <MSSQLExpress32>
