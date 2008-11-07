@@ -157,8 +157,8 @@ namespace TvService
         TimeSpan ts = DateTime.Now - _scheduleCheckTimer;
         if (ts.TotalSeconds < ScheduleInterval) return;
 
-        DoSchedule();
         HandleRecordingList();
+        DoSchedule();
         HandleSleepMode();
         _scheduleCheckTimer = DateTime.Now;
       }
