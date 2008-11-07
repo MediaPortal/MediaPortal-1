@@ -60,6 +60,8 @@ namespace TvPlugin
     const int MaxDaysInGuide = 30;
     const int RowID = 1000;
     const int ColID = 10;
+
+    const int GUIDE_COMPONENTID_START = 50000;// Start for numbering IDs of automaticaly generated TVguide components for channels and programs
     #endregion
 
     #region enums
@@ -204,12 +206,13 @@ namespace TvPlugin
 
     public override int GetFocusControlId()
     {
-      if (_cursorX >= 0) return 1;
-      GUIControl c = GetControl((int)Controls.SPINCONTROL_DAY);
-      if (c != null && c.Focus == true) return (int)Controls.SPINCONTROL_DAY;
-      c = GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL);
-      if (c != null && c.Focus == true) return (int)Controls.SPINCONTROL_TIME_INTERVAL;
-      return -1;
+      int focusedId = base.GetFocusControlId();
+      if (_cursorX >= 0 || focusedId == (int)Controls.SPINCONTROL_DAY || focusedId == (int)Controls.SPINCONTROL_TIME_INTERVAL)
+      {
+        return focusedId;
+      }
+      else
+        return -1;
     }
 
     protected void Initialize()
@@ -269,7 +272,7 @@ namespace TvPlugin
           break;
 
         case Action.ActionType.ACTION_SELECT_ITEM:
-          if (GetFocusControlId() == 1)
+          if (GetFocusControlId() != -1)
           {
             if (_cursorY == 0)
             {
@@ -283,7 +286,7 @@ namespace TvPlugin
           break;
 
         case Action.ActionType.ACTION_RECORD:
-          if ((GetFocusControlId() == 1) && (_cursorY > 0) && (_cursorX >= 0))
+          if ((GetFocusControlId() != -1) && (_cursorY > 0) && (_cursorX >= 0))
             OnRecord();
           break;
 
@@ -313,16 +316,16 @@ namespace TvPlugin
                   }
                 }
               }
-              if (control.GetID >= 100)
+              if (control.GetID >= GUIDE_COMPONENTID_START)
               {
                 if (x >= control.XPosition && x < control.XPosition + control.Width)
                 {
                   if (y >= control.YPosition && y < control.YPosition + control.Height)
                   {
                     int iControlId = control.GetID;
-                    if (iControlId >= 100)
+                    if (iControlId >= GUIDE_COMPONENTID_START)
                     {
-                      iControlId -= 100;
+                      iControlId -= GUIDE_COMPONENTID_START;
                       int iCursorY = (iControlId / RowID);
                       iControlId -= iCursorY * RowID;
                       if (iControlId % ColID == 0)
@@ -730,7 +733,7 @@ namespace TvPlugin
               SetFocus();
               return true;
             }
-            if (iControl >= 100)
+            if (iControl >= GUIDE_COMPONENTID_START)
             {
               OnSelectItem(true);
               Update(false);
@@ -1073,7 +1076,7 @@ namespace TvPlugin
         for (int i = 0 ; i < controlList.Count ; ++i)
         {
           GUIControl cntl = (GUIControl)controlList[i];
-          if (cntl.GetID >= 100)
+          if (cntl.GetID >= GUIDE_COMPONENTID_START)
           {
             cntl.IsVisible = false;
           }
@@ -1393,7 +1396,7 @@ namespace TvPlugin
         }
 
         int ypos = GetControl(ichan + (int)Controls.IMG_CHAN1).YPosition;
-        int iControlId = 100 + ichan * RowID + 0 * ColID;
+        int iControlId = GUIDE_COMPONENTID_START + ichan * RowID + 0 * ColID;
         GUIButton3PartControl img = (GUIButton3PartControl)GetControl(iControlId);
 
         if (img == null)
@@ -1715,7 +1718,7 @@ namespace TvPlugin
               iEndXPos = iStartXPos + 6; // at least 1 pixel width
 
             int ypos = GetControl(iChannel + (int)Controls.IMG_CHAN1).YPosition;
-            int iControlId = 100 + iChannel * RowID + iProgram * ColID;
+            int iControlId = GUIDE_COMPONENTID_START + iChannel * RowID + iProgram * ColID;
             GUIButton3PartControl img = (GUIButton3PartControl)GetControl(iControlId);
             int iWidth = iEndXPos - iStartXPos;
             if (iWidth > 3)
@@ -1863,7 +1866,7 @@ namespace TvPlugin
       int iProgramCount = 0;
       for (int iProgram = 0 ; iProgram < _numberOfBlocks * 5 ; ++iProgram)
       {
-        int iControlId = 100 + iChannel * RowID + iProgram * ColID;
+        int iControlId = GUIDE_COMPONENTID_START + iChannel * RowID + iProgram * ColID;
         GUIControl cntl = GetControl(iControlId);
         if (cntl != null && cntl.IsVisible)
           iProgramCount++;
@@ -1944,7 +1947,7 @@ namespace TvPlugin
       int iCurOff = _channelOffset;
       int iX1, iX2;
       //      int iNewWidth=0;
-      int iControlId = 100 + _cursorX * RowID + (_cursorY - 1) * ColID;
+      int iControlId = GUIDE_COMPONENTID_START + _cursorX * RowID + (_cursorY - 1) * ColID;
       GUIControl control = GetControl(iControlId);
       if (control == null)
         return;
@@ -1971,7 +1974,7 @@ namespace TvPlugin
 
         for (int x = 1 ; x < ColID ; x++)
         {
-          iControlId = 100 + _cursorX * RowID + (x - 1) * ColID;
+          iControlId = GUIDE_COMPONENTID_START + _cursorX * RowID + (x - 1) * ColID;
           control = GetControl(iControlId);
           if (control != null)
           {
@@ -2072,7 +2075,7 @@ namespace TvPlugin
       int iCurOff = _channelOffset;
 
       int iX1, iX2;
-      int iControlId = 100 + _cursorX * RowID + (_cursorY - 1) * ColID;
+      int iControlId = GUIDE_COMPONENTID_START + _cursorX * RowID + (_cursorY - 1) * ColID;
       GUIControl control = GetControl(iControlId);
       if (control == null)
         return;
@@ -2102,7 +2105,7 @@ namespace TvPlugin
 
         for (int x = 1 ; x < ColID ; x++)
         {
-          iControlId = 100 + _cursorX * RowID + (x - 1) * ColID;
+          iControlId = GUIDE_COMPONENTID_START + _cursorX * RowID + (x - 1) * ColID;
           control = GetControl(iControlId);
           if (control != null)
           {
@@ -2198,7 +2201,7 @@ namespace TvPlugin
         SetFocus();
         return;
       }
-      int iControlId = 100 + _cursorX * RowID + (_cursorY - 1) * ColID;
+      int iControlId = GUIDE_COMPONENTID_START + _cursorX * RowID + (_cursorY - 1) * ColID;
       GUIButton3PartControl img = (GUIButton3PartControl)GetControl(iControlId);
       if (null != img)
       {
@@ -2266,7 +2269,7 @@ namespace TvPlugin
       else
       {
         Correct();
-        int iControlId = 100 + _cursorX * RowID + (_cursorY - 1) * ColID;
+        int iControlId = GUIDE_COMPONENTID_START + _cursorX * RowID + (_cursorY - 1) * ColID;
         GUIButton3PartControl img = GetControl(iControlId) as GUIButton3PartControl;
         if (null != img && img.IsVisible)
         {
@@ -2292,7 +2295,7 @@ namespace TvPlugin
       else
       {
         Correct();
-        int iControlId = 100 + _cursorX * RowID + (_cursorY - 1) * ColID;
+        int iControlId = GUIDE_COMPONENTID_START + _cursorX * RowID + (_cursorY - 1) * ColID;
         GUIButton3PartControl img = GetControl(iControlId) as GUIButton3PartControl;
         if (null != img && img.IsVisible)
         {
@@ -2313,7 +2316,7 @@ namespace TvPlugin
       {
         while (_cursorY > 0)
         {
-          iControlId = 100 + _cursorX * RowID + (_cursorY - 1) * ColID;
+          iControlId = GUIDE_COMPONENTID_START + _cursorX * RowID + (_cursorY - 1) * ColID;
           GUIControl cntl = GetControl(iControlId);
           if (cntl == null)
             _cursorY--;
@@ -2329,7 +2332,7 @@ namespace TvPlugin
       {
         while (_cursorX > 0)
         {
-          iControlId = 100 + _cursorX * RowID + (0) * ColID;
+          iControlId = GUIDE_COMPONENTID_START + _cursorX * RowID + (0) * ColID;
           GUIControl cntl = GetControl(iControlId);
           if (cntl == null)
             _cursorX--;
