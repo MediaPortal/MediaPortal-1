@@ -51,43 +51,58 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void InitializeComponent()
     {
-      this.groupBox1 = new MPGroupBox();
-      this.btnOK = new MPButton();
-      this.btnReset = new MPButton();
-      base.SuspendLayout();
-      this.groupBox1.Anchor = AnchorStyles.Right | AnchorStyles.Left | AnchorStyles.Bottom | AnchorStyles.Top;
-      this.groupBox1.FlatStyle = FlatStyle.Popup;
-      this.groupBox1.Location = new Point(9, 6);
+      this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.btnOK = new MediaPortal.UserInterface.Controls.MPButton();
+      this.btnReset = new MediaPortal.UserInterface.Controls.MPButton();
+      this.SuspendLayout();
+      // 
+      // groupBox1
+      // 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBox1.Location = new System.Drawing.Point(9, 6);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new Size(0x165, 0x7c);
+      this.groupBox1.Size = new System.Drawing.Size(357, 124);
       this.groupBox1.TabIndex = 4;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = " xPL_Connector Configuration ";
-      this.btnOK.Anchor = AnchorStyles.Right | AnchorStyles.Left | AnchorStyles.Bottom;
-      this.btnOK.Location = new Point(0x11e, 0x88);
+      // 
+      // btnOK
+      // 
+      this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnOK.Location = new System.Drawing.Point(286, 136);
       this.btnOK.Name = "btnOK";
-      this.btnOK.Size = new Size(80, 0x17);
-      this.btnOK.TabIndex = 0x6c;
+      this.btnOK.Size = new System.Drawing.Size(80, 23);
+      this.btnOK.TabIndex = 108;
       this.btnOK.Text = "&OK";
       this.btnOK.UseVisualStyleBackColor = true;
-      this.btnOK.Click += new EventHandler(this.btnOK_Click);
-      this.btnReset.Anchor = AnchorStyles.Right | AnchorStyles.Left | AnchorStyles.Bottom;
-      this.btnReset.Location = new Point(200, 0x88);
+      this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
+      // 
+      // btnReset
+      // 
+      this.btnReset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnReset.Location = new System.Drawing.Point(200, 136);
       this.btnReset.Name = "btnReset";
-      this.btnReset.Size = new Size(80, 0x17);
-      this.btnReset.TabIndex = 0x6d;
+      this.btnReset.Size = new System.Drawing.Size(80, 23);
+      this.btnReset.TabIndex = 109;
       this.btnReset.Text = "&RESET";
       this.btnReset.UseVisualStyleBackColor = true;
-      this.btnReset.Click += new EventHandler(this.btnReset_Click);
-      base.AutoScaleDimensions = new SizeF(6f, 13f);
-      base.ClientSize = new Size(0x17a, 0xa5);
-      base.Controls.Add(this.btnOK);
-      base.Controls.Add(this.btnReset);
-      base.Controls.Add(this.groupBox1);
-      base.Name = "xPL_Connector_AdvancedSetupForm";
-      base.StartPosition = FormStartPosition.CenterParent;
-      this.Text = "Advanced Settings";
-      base.ResumeLayout(false);
+      this.btnReset.Click += new System.EventHandler(this.btnReset_Click);
+      // 
+      // xPL_Connector_AdvancedSetupForm
+      // 
+      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+      this.ClientSize = new System.Drawing.Size(378, 165);
+      this.Controls.Add(this.btnOK);
+      this.Controls.Add(this.btnReset);
+      this.Controls.Add(this.groupBox1);
+      this.Name = "xPL_Connector_AdvancedSetupForm";
+      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+      this.Text = "MiniDisplay - Setup - Advanced Settings";
+      this.ResumeLayout(false);
+
     }
   }
 }

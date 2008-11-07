@@ -1163,11 +1163,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.headerLabel = new MediaPortal.UserInterface.Controls.MPGradientLabel();
       this.buttonNew = new MediaPortal.UserInterface.Controls.MPButton();
       this.groupBoxMessageEdit = new System.Windows.Forms.GroupBox();
-      this.groupBoxMessageType = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.comboBoxMessageType = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpLabel13 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.groupBoxStatus = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.ComboBoxStatusProperty = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.groupBoxProcess = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.groupBoxTextProgressBar = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.mpTPBlength = new MediaPortal.UserInterface.Controls.MPTextBox();
@@ -1193,6 +1188,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.textBoxProcessValue = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.comboBoxProcessType = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.groupBoxMessageType = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.comboBoxMessageType = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpLabel13 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.groupBoxStatus = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.ComboBoxStatusProperty = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.groupBoxWindow = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.comboBoxWindowProperty = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.groupBoxLine = new MediaPortal.UserInterface.Controls.MPGroupBox();
@@ -1269,11 +1269,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.mpLabel4 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.TextBoxTranslateFrom = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.groupBoxMessageEdit.SuspendLayout();
-      this.groupBoxMessageType.SuspendLayout();
-      this.groupBoxStatus.SuspendLayout();
       this.groupBoxProcess.SuspendLayout();
       this.groupBoxTextProgressBar.SuspendLayout();
       this.GroupBoxCondition.SuspendLayout();
+      this.groupBoxMessageType.SuspendLayout();
+      this.groupBoxStatus.SuspendLayout();
       this.groupBoxWindow.SuspendLayout();
       this.groupBoxLine.SuspendLayout();
       this.groupboxCharacterEdit.SuspendLayout();
@@ -1295,6 +1295,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // labelExpand
       // 
+      this.labelExpand.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.labelExpand.AutoSize = true;
       this.labelExpand.Location = new System.Drawing.Point(328, 374);
       this.labelExpand.Name = "labelExpand";
@@ -1305,7 +1306,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // buttonDefault
       // 
-      this.buttonDefault.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.buttonDefault.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonDefault.Location = new System.Drawing.Point(268, 442);
       this.buttonDefault.Name = "buttonDefault";
       this.buttonDefault.Size = new System.Drawing.Size(75, 23);
@@ -1384,7 +1385,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // buttonCancel
       // 
       this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this.buttonCancel.Location = new System.Drawing.Point(505, 442);
       this.buttonCancel.Name = "buttonCancel";
       this.buttonCancel.Size = new System.Drawing.Size(75, 23);
@@ -1422,9 +1422,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // groupBoxMessageEdit
       // 
+      this.groupBoxMessageEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxMessageEdit.Controls.Add(this.groupBoxProcess);
       this.groupBoxMessageEdit.Controls.Add(this.groupBoxMessageType);
       this.groupBoxMessageEdit.Controls.Add(this.groupBoxStatus);
-      this.groupBoxMessageEdit.Controls.Add(this.groupBoxProcess);
       this.groupBoxMessageEdit.Controls.Add(this.groupBoxWindow);
       this.groupBoxMessageEdit.Controls.Add(this.groupBoxLine);
       this.groupBoxMessageEdit.Location = new System.Drawing.Point(344, 46);
@@ -1435,65 +1438,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.groupBoxMessageEdit.Text = "Message Editor";
       this.groupBoxMessageEdit.Visible = false;
       // 
-      // groupBoxMessageType
-      // 
-      this.groupBoxMessageType.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBoxMessageType.Controls.Add(this.comboBoxMessageType);
-      this.groupBoxMessageType.Controls.Add(this.mpLabel13);
-      this.groupBoxMessageType.Enabled = false;
-      this.groupBoxMessageType.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxMessageType.Location = new System.Drawing.Point(7, 105);
-      this.groupBoxMessageType.Name = "groupBoxMessageType";
-      this.groupBoxMessageType.Size = new System.Drawing.Size(224, 40);
-      this.groupBoxMessageType.TabIndex = 35;
-      this.groupBoxMessageType.TabStop = false;
-      this.groupBoxMessageType.Text = "Message ";
-      // 
-      // comboBoxMessageType
-      // 
-      this.comboBoxMessageType.BorderColor = System.Drawing.Color.Empty;
-      this.comboBoxMessageType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxMessageType.Location = new System.Drawing.Point(80, 13);
-      this.comboBoxMessageType.Name = "comboBoxMessageType";
-      this.comboBoxMessageType.Size = new System.Drawing.Size(121, 21);
-      this.comboBoxMessageType.TabIndex = 25;
-      this.comboBoxMessageType.SelectedIndexChanged += new System.EventHandler(this.comboBoxMessageType_SelectedIndexChanged);
-      // 
-      // mpLabel13
-      // 
-      this.mpLabel13.AutoSize = true;
-      this.mpLabel13.Location = new System.Drawing.Point(24, 16);
-      this.mpLabel13.Name = "mpLabel13";
-      this.mpLabel13.Size = new System.Drawing.Size(34, 13);
-      this.mpLabel13.TabIndex = 16;
-      this.mpLabel13.Text = "Type:";
-      // 
-      // groupBoxStatus
-      // 
-      this.groupBoxStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBoxStatus.Controls.Add(this.ComboBoxStatusProperty);
-      this.groupBoxStatus.Enabled = false;
-      this.groupBoxStatus.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxStatus.Location = new System.Drawing.Point(7, 13);
-      this.groupBoxStatus.Name = "groupBoxStatus";
-      this.groupBoxStatus.Size = new System.Drawing.Size(224, 42);
-      this.groupBoxStatus.TabIndex = 34;
-      this.groupBoxStatus.TabStop = false;
-      this.groupBoxStatus.Text = " Status ";
-      // 
-      // ComboBoxStatusProperty
-      // 
-      this.ComboBoxStatusProperty.BorderColor = System.Drawing.Color.Empty;
-      this.ComboBoxStatusProperty.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.ComboBoxStatusProperty.Location = new System.Drawing.Point(24, 15);
-      this.ComboBoxStatusProperty.Name = "ComboBoxStatusProperty";
-      this.ComboBoxStatusProperty.Size = new System.Drawing.Size(176, 21);
-      this.ComboBoxStatusProperty.TabIndex = 25;
-      this.ComboBoxStatusProperty.SelectionChangeCommitted += new System.EventHandler(this.ComboBoxStatusProperty_SelectionChangeCommitted);
-      // 
       // groupBoxProcess
       // 
-      this.groupBoxProcess.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxProcess.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxProcess.Controls.Add(this.groupBoxTextProgressBar);
       this.groupBoxProcess.Controls.Add(this.GroupBoxCondition);
       this.groupBoxProcess.Controls.Add(this.mpLabel1);
@@ -1511,7 +1460,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // groupBoxTextProgressBar
       // 
-      this.groupBoxTextProgressBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxTextProgressBar.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxTextProgressBar.Controls.Add(this.mpTPBlength);
       this.groupBoxTextProgressBar.Controls.Add(this.mpLabel12);
       this.groupBoxTextProgressBar.Controls.Add(this.mpTPBFillChar);
@@ -1633,6 +1584,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // mpTextBoxValueProperty
       // 
+      this.mpTextBoxValueProperty.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpTextBoxValueProperty.BorderColor = System.Drawing.Color.Empty;
       this.mpTextBoxValueProperty.Location = new System.Drawing.Point(92, 85);
       this.mpTextBoxValueProperty.MaxLength = 100;
@@ -1661,6 +1614,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // mpTextBoxTargetProperty
       // 
+      this.mpTextBoxTargetProperty.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpTextBoxTargetProperty.BorderColor = System.Drawing.Color.Empty;
       this.mpTextBoxTargetProperty.Location = new System.Drawing.Point(92, 108);
       this.mpTextBoxTargetProperty.MaxLength = 100;
@@ -1671,7 +1626,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // GroupBoxCondition
       // 
-      this.GroupBoxCondition.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.GroupBoxCondition.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.GroupBoxCondition.Controls.Add(this.mpLabel2);
       this.GroupBoxCondition.Controls.Add(this.mpLabel3);
       this.GroupBoxCondition.Controls.Add(this.textBoxCondValue);
@@ -1705,6 +1662,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // textBoxCondValue
       // 
+      this.textBoxCondValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxCondValue.BorderColor = System.Drawing.Color.Empty;
       this.textBoxCondValue.Enabled = false;
       this.textBoxCondValue.Location = new System.Drawing.Point(56, 52);
@@ -1716,6 +1675,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // ComboBoxCondType
       // 
+      this.ComboBoxCondType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.ComboBoxCondType.BorderColor = System.Drawing.Color.Empty;
       this.ComboBoxCondType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.ComboBoxCondType.ForeColor = System.Drawing.Color.DarkGreen;
@@ -1746,6 +1707,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // textBoxProcessValue
       // 
+      this.textBoxProcessValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxProcessValue.BorderColor = System.Drawing.Color.Empty;
       this.textBoxProcessValue.Enabled = false;
       this.textBoxProcessValue.Location = new System.Drawing.Point(67, 52);
@@ -1757,6 +1720,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // comboBoxProcessType
       // 
+      this.comboBoxProcessType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxProcessType.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxProcessType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxProcessType.ForeColor = System.Drawing.Color.DarkGreen;
@@ -1767,9 +1732,72 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.comboBoxProcessType.TabIndex = 14;
       this.comboBoxProcessType.SelectionChangeCommitted += new System.EventHandler(this.comboBoxProcessType_SelectionChangeCommitted);
       // 
+      // groupBoxMessageType
+      // 
+      this.groupBoxMessageType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxMessageType.Controls.Add(this.comboBoxMessageType);
+      this.groupBoxMessageType.Controls.Add(this.mpLabel13);
+      this.groupBoxMessageType.Enabled = false;
+      this.groupBoxMessageType.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxMessageType.Location = new System.Drawing.Point(7, 105);
+      this.groupBoxMessageType.Name = "groupBoxMessageType";
+      this.groupBoxMessageType.Size = new System.Drawing.Size(224, 40);
+      this.groupBoxMessageType.TabIndex = 35;
+      this.groupBoxMessageType.TabStop = false;
+      this.groupBoxMessageType.Text = "Message ";
+      // 
+      // comboBoxMessageType
+      // 
+      this.comboBoxMessageType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxMessageType.BorderColor = System.Drawing.Color.Empty;
+      this.comboBoxMessageType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxMessageType.Location = new System.Drawing.Point(80, 13);
+      this.comboBoxMessageType.Name = "comboBoxMessageType";
+      this.comboBoxMessageType.Size = new System.Drawing.Size(121, 21);
+      this.comboBoxMessageType.TabIndex = 25;
+      this.comboBoxMessageType.SelectedIndexChanged += new System.EventHandler(this.comboBoxMessageType_SelectedIndexChanged);
+      // 
+      // mpLabel13
+      // 
+      this.mpLabel13.AutoSize = true;
+      this.mpLabel13.Location = new System.Drawing.Point(24, 16);
+      this.mpLabel13.Name = "mpLabel13";
+      this.mpLabel13.Size = new System.Drawing.Size(34, 13);
+      this.mpLabel13.TabIndex = 16;
+      this.mpLabel13.Text = "Type:";
+      // 
+      // groupBoxStatus
+      // 
+      this.groupBoxStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxStatus.Controls.Add(this.ComboBoxStatusProperty);
+      this.groupBoxStatus.Enabled = false;
+      this.groupBoxStatus.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxStatus.Location = new System.Drawing.Point(7, 13);
+      this.groupBoxStatus.Name = "groupBoxStatus";
+      this.groupBoxStatus.Size = new System.Drawing.Size(224, 42);
+      this.groupBoxStatus.TabIndex = 34;
+      this.groupBoxStatus.TabStop = false;
+      this.groupBoxStatus.Text = " Status ";
+      // 
+      // ComboBoxStatusProperty
+      // 
+      this.ComboBoxStatusProperty.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.ComboBoxStatusProperty.BorderColor = System.Drawing.Color.Empty;
+      this.ComboBoxStatusProperty.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.ComboBoxStatusProperty.Location = new System.Drawing.Point(24, 15);
+      this.ComboBoxStatusProperty.Name = "ComboBoxStatusProperty";
+      this.ComboBoxStatusProperty.Size = new System.Drawing.Size(176, 21);
+      this.ComboBoxStatusProperty.TabIndex = 25;
+      this.ComboBoxStatusProperty.SelectionChangeCommitted += new System.EventHandler(this.ComboBoxStatusProperty_SelectionChangeCommitted);
+      // 
       // groupBoxWindow
       // 
-      this.groupBoxWindow.Anchor = System.Windows.Forms.AnchorStyles.Right;
+      this.groupBoxWindow.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxWindow.Controls.Add(this.comboBoxWindowProperty);
       this.groupBoxWindow.Enabled = false;
       this.groupBoxWindow.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -1782,6 +1810,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // comboBoxWindowProperty
       // 
+      this.comboBoxWindowProperty.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxWindowProperty.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxWindowProperty.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxWindowProperty.ForeColor = System.Drawing.Color.Blue;
@@ -1794,7 +1824,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // groupBoxLine
       // 
-      this.groupBoxLine.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxLine.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxLine.Controls.Add(this.comboBoxAlignment);
       this.groupBoxLine.Controls.Add(this.labelLine);
       this.groupBoxLine.Enabled = false;
@@ -1808,6 +1839,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // comboBoxAlignment
       // 
+      this.comboBoxAlignment.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxAlignment.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxAlignment.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxAlignment.Location = new System.Drawing.Point(80, 13);
@@ -2593,7 +2626,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // MessageEditForm
       // 
-      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScroll = true;
       this.ClientSize = new System.Drawing.Size(590, 475);
       this.Controls.Add(this.labelExpand);
@@ -2614,17 +2647,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.Name = "MessageEditForm";
       this.ShowInTaskbar = false;
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-      this.Text = "MediaPortal - Setup";
+      this.Text = "MiniDisplay - Setup - Configuration Editor";
       this.groupBoxMessageEdit.ResumeLayout(false);
-      this.groupBoxMessageType.ResumeLayout(false);
-      this.groupBoxMessageType.PerformLayout();
-      this.groupBoxStatus.ResumeLayout(false);
       this.groupBoxProcess.ResumeLayout(false);
       this.groupBoxProcess.PerformLayout();
       this.groupBoxTextProgressBar.ResumeLayout(false);
       this.groupBoxTextProgressBar.PerformLayout();
       this.GroupBoxCondition.ResumeLayout(false);
       this.GroupBoxCondition.PerformLayout();
+      this.groupBoxMessageType.ResumeLayout(false);
+      this.groupBoxMessageType.PerformLayout();
+      this.groupBoxStatus.ResumeLayout(false);
       this.groupBoxWindow.ResumeLayout(false);
       this.groupBoxLine.ResumeLayout(false);
       this.groupBoxLine.PerformLayout();

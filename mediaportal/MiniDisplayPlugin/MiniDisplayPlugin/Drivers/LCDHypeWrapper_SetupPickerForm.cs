@@ -74,8 +74,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // btnMiniDisplay
       // 
-      this.btnMiniDisplay.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
       this.btnMiniDisplay.Location = new System.Drawing.Point(190, 19);
       this.btnMiniDisplay.Name = "btnMiniDisplay";
       this.btnMiniDisplay.Size = new System.Drawing.Size(176, 47);
@@ -86,8 +84,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // btnLCDHype
       // 
-      this.btnLCDHype.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
       this.btnLCDHype.Location = new System.Drawing.Point(6, 19);
       this.btnLCDHype.Name = "btnLCDHype";
       this.btnLCDHype.Size = new System.Drawing.Size(176, 47);
@@ -105,7 +101,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.Name = "LCDHypeWrapper_SetupPickerForm";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
       this.Tag = "";
-      this.Text = "Configuration Type Select";
+      this.Text = "MiniDisplay - Setup - Configuration Type Select";
       this.groupBox1.ResumeLayout(false);
       this.ResumeLayout(false);
 

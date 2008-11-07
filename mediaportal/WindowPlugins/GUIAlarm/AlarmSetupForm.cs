@@ -441,7 +441,7 @@ namespace MediaPortal.GUI.Alarm
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
       this.Name = "AlarmSetupForm";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-      this.Text = "My Alarm - Setup";
+      this.Text = "Alarm - Setup";
       this.Load += new System.EventHandler(this.AlarmSetupFrom_Load);
       this.grpSounds.ResumeLayout(false);
       this.grpSounds.PerformLayout();

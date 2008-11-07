@@ -324,10 +324,6 @@
     </Compile>
     <EmbeddedResource Include="MiniDisplay.lcd.gif" />
     <EmbeddedResource Include="MiniDisplay.lcd_deactivated.gif" />
-    <EmbeddedResource Include="MiniDisplayPlugin\Drivers\LCDHypeWrapper_AdvancedSetupForm.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>LCDHypeWrapper_AdvancedSetupForm.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj">

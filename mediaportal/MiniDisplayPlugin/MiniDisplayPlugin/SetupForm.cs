@@ -220,91 +220,120 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
     private void InitializeComponent()
     {
-      this.components = new Container();
-      this.btnAdvanced = new MPButton();
-      this.cmbPort = new MPComboBox();
-      this.label1 = new MPLabel();
-      this.groupBox1 = new MPGroupBox();
-      this.btnTest = new MPButton();
-      this.cbControlScreenSaver = new MPCheckBox();
-      this.groupShutdown = new GroupBox();
-      this.label11 = new Label();
-      this.label6 = new Label();
-      this.mpShutdown2 = new TextBox();
-      this.mpShutdown1 = new TextBox();
-      this.cbContrast = new MPCheckBox();
-      this.cbDisplayOff = new MPCheckBox();
-      this.lblBrightness = new MPLabel();
-      this.tbBrightness = new TrackBar();
-      this.btnTestDisplay = new MPButton();
-      this.lblContrast = new MPLabel();
-      this.tbContrast = new TrackBar();
-      this.txtScrollDelay = new MPTextBox();
-      this.gbGraphMode = new MPGroupBox();
-      this.txtPixelsToScroll = new MPTextBox();
-      this.mpLabel5 = new MPLabel();
-      this.ckForceGraphicText = new MPCheckBox();
-      this.txtFontSize = new MPTextBox();
-      this.mpLabel2 = new MPLabel();
-      this.txtFont = new MPComboBox();
-      this.mpLabel1 = new MPLabel();
-      this.label8 = new MPLabel();
-      this.txtTimG = new MPTextBox();
-      this.txtRowsG = new MPTextBox();
-      this.txtColsG = new MPTextBox();
-      this.label9 = new MPLabel();
-      this.label10 = new MPLabel();
-      this.mpLabel3 = new MPLabel();
-      this.gbTextMode = new MPGroupBox();
-      this.mpPrefixChar = new MPTextBox();
-      this.mpLabel6 = new MPLabel();
-      this.txtCharsToScroll = new MPTextBox();
-      this.mpLabel4 = new MPLabel();
-      this.label2 = new MPLabel();
-      this.txtTim = new MPTextBox();
-      this.txtRows = new MPTextBox();
-      this.txtCols = new MPTextBox();
-      this.label4 = new MPLabel();
-      this.label3 = new MPLabel();
-      this.label7 = new MPLabel();
-      this.cmbType = new MPComboBox();
-      this.cbLight = new MPCheckBox();
-      this.cbPropertyBrowser = new MPCheckBox();
-      this.btnOK = new MPButton();
-      this.errorProvider = new ErrorProvider(this.components);
-      this.cbExtensiveLogging = new MPCheckBox();
-      this.mpDisableGUISetup = new MPCheckBox();
-      this.btnCancel = new MPButton();
+      this.components = new System.ComponentModel.Container();
+      this.btnAdvanced = new MediaPortal.UserInterface.Controls.MPButton();
+      this.cmbPort = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.btnTest = new MediaPortal.UserInterface.Controls.MPButton();
+      this.cbControlScreenSaver = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.groupShutdown = new System.Windows.Forms.GroupBox();
+      this.label11 = new System.Windows.Forms.Label();
+      this.label6 = new System.Windows.Forms.Label();
+      this.mpShutdown2 = new System.Windows.Forms.TextBox();
+      this.mpShutdown1 = new System.Windows.Forms.TextBox();
+      this.cbContrast = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.cbDisplayOff = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.lblBrightness = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.tbBrightness = new System.Windows.Forms.TrackBar();
+      this.btnTestDisplay = new MediaPortal.UserInterface.Controls.MPButton();
+      this.lblContrast = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.tbContrast = new System.Windows.Forms.TrackBar();
+      this.txtScrollDelay = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.gbGraphMode = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.txtPixelsToScroll = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.mpLabel5 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.ckForceGraphicText = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.txtFontSize = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.txtFont = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label8 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.txtTimG = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.txtRowsG = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.txtColsG = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label9 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label10 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.gbTextMode = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpPrefixChar = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.mpLabel6 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.txtCharsToScroll = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.mpLabel4 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.txtTim = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.txtRows = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.txtCols = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label7 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.cmbType = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.cbLight = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.cbPropertyBrowser = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.btnOK = new MediaPortal.UserInterface.Controls.MPButton();
+      this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
+      this.cbExtensiveLogging = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.mpDisableGUISetup = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.btnCancel = new MediaPortal.UserInterface.Controls.MPButton();
       this.groupBox1.SuspendLayout();
       this.groupShutdown.SuspendLayout();
-      this.tbBrightness.BeginInit();
-      this.tbContrast.BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.tbBrightness)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.tbContrast)).BeginInit();
       this.gbGraphMode.SuspendLayout();
       this.gbTextMode.SuspendLayout();
-      ((ISupportInitialize)this.errorProvider).BeginInit();
-      base.SuspendLayout();
-      this.btnAdvanced.Anchor = AnchorStyles.Right | AnchorStyles.Top;
-      this.btnAdvanced.Location = new Point(0x10f, 0x29);
+      ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
+      this.SuspendLayout();
+      // 
+      // btnAdvanced
+      // 
+      this.btnAdvanced.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnAdvanced.Location = new System.Drawing.Point(271, 41);
       this.btnAdvanced.Name = "btnAdvanced";
-      this.btnAdvanced.Size = new Size(0x58, 0x17);
+      this.btnAdvanced.Size = new System.Drawing.Size(88, 23);
       this.btnAdvanced.TabIndex = 70;
       this.btnAdvanced.Text = "&Advanced";
       this.btnAdvanced.UseVisualStyleBackColor = true;
-      this.btnAdvanced.Click += new EventHandler(this.btnAdvanced_Click);
-      this.cmbPort.BorderColor = Color.Empty;
-      this.cmbPort.DropDownStyle = ComboBoxStyle.DropDownList;
-      this.cmbPort.Items.AddRange(new object[] { "LPT1", "LPT2", "LPT3", "LPT4", "USB", "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "NONE", "localhost" });
-      this.cmbPort.Location = new Point(40, 0x2a);
+      this.btnAdvanced.Click += new System.EventHandler(this.btnAdvanced_Click);
+      // 
+      // cmbPort
+      // 
+      this.cmbPort.BorderColor = System.Drawing.Color.Empty;
+      this.cmbPort.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.cmbPort.Items.AddRange(new object[] {
+            "LPT1",
+            "LPT2",
+            "LPT3",
+            "LPT4",
+            "USB",
+            "COM1",
+            "COM2",
+            "COM3",
+            "COM4",
+            "COM5",
+            "COM6",
+            "COM7",
+            "COM8",
+            "NONE",
+            "localhost"});
+      this.cmbPort.Location = new System.Drawing.Point(40, 42);
       this.cmbPort.Name = "cmbPort";
-      this.cmbPort.Size = new Size(0x40, 0x15);
+      this.cmbPort.Size = new System.Drawing.Size(64, 21);
       this.cmbPort.TabIndex = 20;
-      this.label1.Location = new Point(8, 0x2a);
+      // 
+      // label1
+      // 
+      this.label1.Location = new System.Drawing.Point(8, 42);
       this.label1.Name = "label1";
-      this.label1.Size = new Size(0x20, 0x17);
+      this.label1.Size = new System.Drawing.Size(32, 23);
       this.label1.TabIndex = 2;
       this.label1.Text = "Port";
-      this.label1.TextAlign = ContentAlignment.MiddleLeft;
-      this.groupBox1.Anchor = AnchorStyles.Right | AnchorStyles.Left | AnchorStyles.Bottom | AnchorStyles.Top;
+      this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      // 
+      // groupBox1
+      // 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.btnTest);
       this.groupBox1.Controls.Add(this.cbControlScreenSaver);
       this.groupBox1.Controls.Add(this.groupShutdown);
@@ -325,122 +354,171 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.groupBox1.Controls.Add(this.btnAdvanced);
       this.groupBox1.Controls.Add(this.cmbPort);
       this.groupBox1.Controls.Add(this.label1);
-      this.groupBox1.FlatStyle = FlatStyle.Popup;
-      this.groupBox1.Location = new Point(8, 8);
+      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBox1.Location = new System.Drawing.Point(8, 8);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new Size(0x175, 0x188);
+      this.groupBox1.Size = new System.Drawing.Size(373, 392);
       this.groupBox1.TabIndex = 3;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Configuration";
-      this.btnTest.Anchor = AnchorStyles.Right | AnchorStyles.Left | AnchorStyles.Bottom;
-      this.btnTest.Location = new Point(0x10f, 0x152);
+      // 
+      // btnTest
+      // 
+      this.btnTest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnTest.Location = new System.Drawing.Point(271, 338);
       this.btnTest.Name = "btnTest";
-      this.btnTest.Size = new Size(0x5c, 0x30);
-      this.btnTest.TabIndex = 0x53;
+      this.btnTest.Size = new System.Drawing.Size(92, 48);
+      this.btnTest.TabIndex = 83;
       this.btnTest.Text = "Configuration Editor";
       this.btnTest.UseVisualStyleBackColor = true;
-      this.btnTest.Click += new EventHandler(this.btnTest_Click);
-      this.cbControlScreenSaver.Anchor = AnchorStyles.Left | AnchorStyles.Bottom;
+      this.btnTest.Click += new System.EventHandler(this.btnTest_Click);
+      // 
+      // cbControlScreenSaver
+      // 
       this.cbControlScreenSaver.AutoSize = true;
-      this.cbControlScreenSaver.FlatStyle = FlatStyle.Popup;
-      this.cbControlScreenSaver.Location = new Point(8, 0x106);
+      this.cbControlScreenSaver.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbControlScreenSaver.Location = new System.Drawing.Point(8, 262);
       this.cbControlScreenSaver.Name = "cbControlScreenSaver";
-      this.cbControlScreenSaver.Size = new Size(0xdb, 0x11);
-      this.cbControlScreenSaver.TabIndex = 0x52;
+      this.cbControlScreenSaver.Size = new System.Drawing.Size(219, 17);
+      this.cbControlScreenSaver.TabIndex = 82;
       this.cbControlScreenSaver.Text = "Disable ScreenSaver when playing Video";
       this.cbControlScreenSaver.UseVisualStyleBackColor = true;
+      // 
+      // groupShutdown
+      // 
+      this.groupShutdown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.groupShutdown.Controls.Add(this.label11);
       this.groupShutdown.Controls.Add(this.label6);
       this.groupShutdown.Controls.Add(this.mpShutdown2);
       this.groupShutdown.Controls.Add(this.mpShutdown1);
-      this.groupShutdown.Location = new Point(8, 0x141);
+      this.groupShutdown.Location = new System.Drawing.Point(8, 321);
       this.groupShutdown.Name = "groupShutdown";
-      this.groupShutdown.Size = new Size(0xbf, 0x41);
-      this.groupShutdown.TabIndex = 0x4c;
+      this.groupShutdown.Size = new System.Drawing.Size(191, 65);
+      this.groupShutdown.TabIndex = 76;
       this.groupShutdown.TabStop = false;
       this.groupShutdown.Text = " ShutDown Message ";
+      // 
+      // label11
+      // 
       this.label11.AutoSize = true;
-      this.label11.Location = new Point(6, 0x2b);
+      this.label11.Location = new System.Drawing.Point(6, 43);
       this.label11.Name = "label11";
-      this.label11.Size = new Size(0x24, 13);
-      this.label11.TabIndex = 0x4f;
+      this.label11.Size = new System.Drawing.Size(36, 13);
+      this.label11.TabIndex = 79;
       this.label11.Text = "Line 2";
+      // 
+      // label6
+      // 
       this.label6.AutoSize = true;
-      this.label6.Location = new Point(6, 20);
+      this.label6.Location = new System.Drawing.Point(6, 20);
       this.label6.Name = "label6";
-      this.label6.Size = new Size(0x24, 13);
-      this.label6.TabIndex = 0x4e;
+      this.label6.Size = new System.Drawing.Size(36, 13);
+      this.label6.TabIndex = 78;
       this.label6.Text = "Line 1";
-      this.mpShutdown2.Location = new Point(0x2e, 40);
+      // 
+      // mpShutdown2
+      // 
+      this.mpShutdown2.Location = new System.Drawing.Point(46, 40);
       this.mpShutdown2.Name = "mpShutdown2";
-      this.mpShutdown2.Size = new Size(0x8b, 20);
-      this.mpShutdown2.TabIndex = 0x4d;
-      this.mpShutdown1.Location = new Point(0x2e, 0x11);
+      this.mpShutdown2.Size = new System.Drawing.Size(139, 20);
+      this.mpShutdown2.TabIndex = 77;
+      // 
+      // mpShutdown1
+      // 
+      this.mpShutdown1.Location = new System.Drawing.Point(46, 17);
       this.mpShutdown1.Name = "mpShutdown1";
-      this.mpShutdown1.Size = new Size(0x8b, 20);
-      this.mpShutdown1.TabIndex = 0x4c;
+      this.mpShutdown1.Size = new System.Drawing.Size(139, 20);
+      this.mpShutdown1.TabIndex = 76;
+      // 
+      // cbContrast
+      // 
       this.cbContrast.AutoSize = true;
       this.cbContrast.Checked = true;
-      this.cbContrast.CheckState = CheckState.Checked;
-      this.cbContrast.FlatStyle = FlatStyle.Popup;
-      this.cbContrast.Location = new Point(190, 0x106);
+      this.cbContrast.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.cbContrast.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbContrast.Location = new System.Drawing.Point(190, 262);
       this.cbContrast.Name = "cbContrast";
-      this.cbContrast.Size = new Size(0x62, 0x11);
-      this.cbContrast.TabIndex = 0x51;
+      this.cbContrast.Size = new System.Drawing.Size(98, 17);
+      this.cbContrast.TabIndex = 81;
       this.cbContrast.Text = "Control contrast";
       this.cbContrast.UseVisualStyleBackColor = true;
       this.cbContrast.Visible = false;
+      // 
+      // cbDisplayOff
+      // 
       this.cbDisplayOff.AutoSize = true;
-      this.cbDisplayOff.FlatStyle = FlatStyle.Popup;
-      this.cbDisplayOff.Location = new Point(8, 0xea);
+      this.cbDisplayOff.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbDisplayOff.Location = new System.Drawing.Point(8, 234);
       this.cbDisplayOff.Name = "cbDisplayOff";
-      this.cbDisplayOff.Size = new Size(0x8a, 0x11);
+      this.cbDisplayOff.Size = new System.Drawing.Size(138, 17);
       this.cbDisplayOff.TabIndex = 80;
       this.cbDisplayOff.Text = "Turn OFF display on exit";
       this.cbDisplayOff.UseVisualStyleBackColor = true;
-      this.lblBrightness.Location = new Point(0x10, 280);
+      // 
+      // lblBrightness
+      // 
+      this.lblBrightness.Location = new System.Drawing.Point(16, 280);
       this.lblBrightness.Name = "lblBrightness";
-      this.lblBrightness.Size = new Size(0x60, 0x10);
-      this.lblBrightness.TabIndex = 0x4f;
+      this.lblBrightness.Size = new System.Drawing.Size(96, 16);
+      this.lblBrightness.TabIndex = 79;
       this.lblBrightness.Text = "Brightness: ";
-      this.tbBrightness.Location = new Point(15, 0x125);
-      this.tbBrightness.Maximum = 0xff;
+      // 
+      // tbBrightness
+      // 
+      this.tbBrightness.Location = new System.Drawing.Point(15, 293);
+      this.tbBrightness.Maximum = 255;
       this.tbBrightness.Name = "tbBrightness";
-      this.tbBrightness.Size = new Size(160, 0x2d);
-      this.tbBrightness.TabIndex = 0x4e;
+      this.tbBrightness.Size = new System.Drawing.Size(160, 45);
+      this.tbBrightness.TabIndex = 78;
       this.tbBrightness.TickFrequency = 8;
-      this.tbBrightness.TickStyle = TickStyle.None;
-      this.tbBrightness.Value = 0x7f;
-      this.tbBrightness.ValueChanged += new EventHandler(this.tbBrightness_ValueChanged);
-      this.btnTestDisplay.Anchor = AnchorStyles.Right | AnchorStyles.Top;
-      this.btnTestDisplay.Location = new Point(0xb3, 0x29);
+      this.tbBrightness.TickStyle = System.Windows.Forms.TickStyle.None;
+      this.tbBrightness.Value = 127;
+      this.tbBrightness.ValueChanged += new System.EventHandler(this.tbBrightness_ValueChanged);
+      // 
+      // btnTestDisplay
+      // 
+      this.btnTestDisplay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnTestDisplay.Location = new System.Drawing.Point(179, 41);
       this.btnTestDisplay.Name = "btnTestDisplay";
-      this.btnTestDisplay.Size = new Size(0x58, 0x17);
-      this.btnTestDisplay.TabIndex = 0x4d;
+      this.btnTestDisplay.Size = new System.Drawing.Size(88, 23);
+      this.btnTestDisplay.TabIndex = 77;
       this.btnTestDisplay.Text = "&Test Display";
       this.btnTestDisplay.UseVisualStyleBackColor = true;
-      this.btnTestDisplay.Click += new EventHandler(this.btnTestDisplay_Click);
-      this.lblContrast.Location = new Point(0xbb, 280);
+      this.btnTestDisplay.Click += new System.EventHandler(this.btnTestDisplay_Click);
+      // 
+      // lblContrast
+      // 
+      this.lblContrast.Location = new System.Drawing.Point(187, 280);
       this.lblContrast.Name = "lblContrast";
-      this.lblContrast.Size = new Size(0x60, 0x10);
-      this.lblContrast.TabIndex = 0x4a;
+      this.lblContrast.Size = new System.Drawing.Size(96, 16);
+      this.lblContrast.TabIndex = 74;
       this.lblContrast.Text = "Contrast:";
-      this.tbContrast.Location = new Point(0xba, 0x125);
-      this.tbContrast.Maximum = 0xff;
+      // 
+      // tbContrast
+      // 
+      this.tbContrast.Location = new System.Drawing.Point(186, 293);
+      this.tbContrast.Maximum = 255;
       this.tbContrast.Name = "tbContrast";
-      this.tbContrast.Size = new Size(160, 0x2d);
-      this.tbContrast.TabIndex = 0x49;
+      this.tbContrast.Size = new System.Drawing.Size(160, 45);
+      this.tbContrast.TabIndex = 73;
       this.tbContrast.TickFrequency = 8;
-      this.tbContrast.TickStyle = TickStyle.None;
-      this.tbContrast.Value = 0x7f;
-      this.tbContrast.ValueChanged += new EventHandler(this.tbContrast_ValueChanged);
-      this.txtScrollDelay.BorderColor = Color.Empty;
-      this.txtScrollDelay.Location = new Point(0x60, 0xd1);
+      this.tbContrast.TickStyle = System.Windows.Forms.TickStyle.None;
+      this.tbContrast.Value = 127;
+      this.tbContrast.ValueChanged += new System.EventHandler(this.tbContrast_ValueChanged);
+      // 
+      // txtScrollDelay
+      // 
+      this.txtScrollDelay.BorderColor = System.Drawing.Color.Empty;
+      this.txtScrollDelay.Location = new System.Drawing.Point(96, 209);
       this.txtScrollDelay.Name = "txtScrollDelay";
-      this.txtScrollDelay.Size = new Size(0x30, 20);
-      this.txtScrollDelay.TabIndex = 0x34;
+      this.txtScrollDelay.Size = new System.Drawing.Size(48, 20);
+      this.txtScrollDelay.TabIndex = 52;
       this.txtScrollDelay.Text = "300";
-      this.gbGraphMode.Anchor = AnchorStyles.Right | AnchorStyles.Left | AnchorStyles.Top;
+      // 
+      // gbGraphMode
+      // 
+      this.gbGraphMode.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.gbGraphMode.Controls.Add(this.txtPixelsToScroll);
       this.gbGraphMode.Controls.Add(this.mpLabel5);
       this.gbGraphMode.Controls.Add(this.ckForceGraphicText);
@@ -454,100 +532,156 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.gbGraphMode.Controls.Add(this.txtColsG);
       this.gbGraphMode.Controls.Add(this.label9);
       this.gbGraphMode.Controls.Add(this.label10);
-      this.gbGraphMode.FlatStyle = FlatStyle.Popup;
-      this.gbGraphMode.Location = new Point(0xa8, 0x44);
+      this.gbGraphMode.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.gbGraphMode.Location = new System.Drawing.Point(168, 68);
       this.gbGraphMode.Name = "gbGraphMode";
-      this.gbGraphMode.Size = new Size(0xbf, 0xbc);
-      this.gbGraphMode.TabIndex = 0x48;
+      this.gbGraphMode.Size = new System.Drawing.Size(191, 188);
+      this.gbGraphMode.TabIndex = 72;
       this.gbGraphMode.TabStop = false;
       this.gbGraphMode.Text = "GraphMode";
-      this.txtPixelsToScroll.BorderColor = Color.Empty;
-      this.txtPixelsToScroll.Location = new Point(0x56, 0x87);
+      // 
+      // txtPixelsToScroll
+      // 
+      this.txtPixelsToScroll.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.txtPixelsToScroll.BorderColor = System.Drawing.Color.Empty;
+      this.txtPixelsToScroll.Location = new System.Drawing.Point(86, 135);
       this.txtPixelsToScroll.Name = "txtPixelsToScroll";
-      this.txtPixelsToScroll.Size = new Size(0x30, 20);
-      this.txtPixelsToScroll.TabIndex = 0x39;
+      this.txtPixelsToScroll.Size = new System.Drawing.Size(48, 20);
+      this.txtPixelsToScroll.TabIndex = 57;
       this.txtPixelsToScroll.Text = "10";
-      this.mpLabel5.Location = new Point(8, 0x85);
+      // 
+      // mpLabel5
+      // 
+      this.mpLabel5.Location = new System.Drawing.Point(8, 133);
       this.mpLabel5.Name = "mpLabel5";
-      this.mpLabel5.Size = new Size(80, 0x17);
-      this.mpLabel5.TabIndex = 0x38;
+      this.mpLabel5.Size = new System.Drawing.Size(80, 23);
+      this.mpLabel5.TabIndex = 56;
       this.mpLabel5.Text = "Pixels to scroll";
-      this.mpLabel5.TextAlign = ContentAlignment.MiddleLeft;
+      this.mpLabel5.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      // 
+      // ckForceGraphicText
+      // 
       this.ckForceGraphicText.AutoSize = true;
-      this.ckForceGraphicText.FlatStyle = FlatStyle.Popup;
-      this.ckForceGraphicText.Location = new Point(11, 0xa1);
+      this.ckForceGraphicText.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.ckForceGraphicText.Location = new System.Drawing.Point(11, 161);
       this.ckForceGraphicText.Name = "ckForceGraphicText";
-      this.ckForceGraphicText.Size = new Size(0x7b, 0x11);
-      this.ckForceGraphicText.TabIndex = 0x37;
+      this.ckForceGraphicText.Size = new System.Drawing.Size(123, 17);
+      this.ckForceGraphicText.TabIndex = 55;
       this.ckForceGraphicText.Text = "Force Graphical Text";
       this.ckForceGraphicText.UseVisualStyleBackColor = true;
-      this.txtFontSize.BorderColor = Color.Empty;
-      this.txtFontSize.Location = new Point(0x56, 110);
+      // 
+      // txtFontSize
+      // 
+      this.txtFontSize.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.txtFontSize.BorderColor = System.Drawing.Color.Empty;
+      this.txtFontSize.Location = new System.Drawing.Point(86, 110);
       this.txtFontSize.Name = "txtFontSize";
-      this.txtFontSize.Size = new Size(0x30, 20);
-      this.txtFontSize.TabIndex = 0x36;
+      this.txtFontSize.Size = new System.Drawing.Size(48, 20);
+      this.txtFontSize.TabIndex = 54;
       this.txtFontSize.Text = "10";
-      this.mpLabel2.Location = new Point(8, 110);
+      // 
+      // mpLabel2
+      // 
+      this.mpLabel2.Location = new System.Drawing.Point(8, 110);
       this.mpLabel2.Name = "mpLabel2";
-      this.mpLabel2.Size = new Size(0x40, 0x17);
-      this.mpLabel2.TabIndex = 0x35;
+      this.mpLabel2.Size = new System.Drawing.Size(64, 23);
+      this.mpLabel2.TabIndex = 53;
       this.mpLabel2.Text = "Font Size";
-      this.mpLabel2.TextAlign = ContentAlignment.MiddleLeft;
-      this.txtFont.Anchor = AnchorStyles.Right | AnchorStyles.Left | AnchorStyles.Top;
-      this.txtFont.BorderColor = Color.Empty;
-      this.txtFont.Location = new Point(0x56, 0x57);
+      this.mpLabel2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      // 
+      // txtFont
+      // 
+      this.txtFont.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.txtFont.BorderColor = System.Drawing.Color.Empty;
+      this.txtFont.Location = new System.Drawing.Point(86, 87);
       this.txtFont.Name = "txtFont";
-      this.txtFont.Size = new Size(0x63, 0x15);
-      this.txtFont.TabIndex = 0x34;
+      this.txtFont.Size = new System.Drawing.Size(99, 21);
+      this.txtFont.TabIndex = 52;
       this.txtFont.Text = "Arial Black";
-      this.mpLabel1.Location = new Point(8, 0x57);
+      // 
+      // mpLabel1
+      // 
+      this.mpLabel1.Location = new System.Drawing.Point(8, 87);
       this.mpLabel1.Name = "mpLabel1";
-      this.mpLabel1.Size = new Size(80, 0x17);
-      this.mpLabel1.TabIndex = 0x33;
+      this.mpLabel1.Size = new System.Drawing.Size(80, 23);
+      this.mpLabel1.TabIndex = 51;
       this.mpLabel1.Text = "Font";
-      this.mpLabel1.TextAlign = ContentAlignment.MiddleLeft;
-      this.label8.Location = new Point(8, 0x10);
+      this.mpLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      // 
+      // label8
+      // 
+      this.label8.Location = new System.Drawing.Point(8, 16);
       this.label8.Name = "label8";
-      this.label8.Size = new Size(0x40, 0x17);
+      this.label8.Size = new System.Drawing.Size(64, 23);
       this.label8.TabIndex = 3;
       this.label8.Text = "Columns";
-      this.label8.TextAlign = ContentAlignment.MiddleLeft;
-      this.txtTimG.BorderColor = Color.Empty;
-      this.txtTimG.Location = new Point(0x56, 0x40);
+      this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      // 
+      // txtTimG
+      // 
+      this.txtTimG.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.txtTimG.BorderColor = System.Drawing.Color.Empty;
+      this.txtTimG.Location = new System.Drawing.Point(86, 64);
       this.txtTimG.Name = "txtTimG";
-      this.txtTimG.Size = new Size(0x30, 20);
+      this.txtTimG.Size = new System.Drawing.Size(48, 20);
       this.txtTimG.TabIndex = 50;
       this.txtTimG.Text = "1";
-      this.txtRowsG.BorderColor = Color.Empty;
-      this.txtRowsG.Location = new Point(0x56, 40);
+      // 
+      // txtRowsG
+      // 
+      this.txtRowsG.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.txtRowsG.BorderColor = System.Drawing.Color.Empty;
+      this.txtRowsG.Location = new System.Drawing.Point(86, 40);
       this.txtRowsG.Name = "txtRowsG";
-      this.txtRowsG.Size = new Size(0x30, 20);
+      this.txtRowsG.Size = new System.Drawing.Size(48, 20);
       this.txtRowsG.TabIndex = 40;
       this.txtRowsG.Text = "240";
-      this.txtColsG.BorderColor = Color.Empty;
-      this.txtColsG.Location = new Point(0x56, 0x10);
+      // 
+      // txtColsG
+      // 
+      this.txtColsG.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.txtColsG.BorderColor = System.Drawing.Color.Empty;
+      this.txtColsG.Location = new System.Drawing.Point(86, 16);
       this.txtColsG.Name = "txtColsG";
-      this.txtColsG.Size = new Size(0x30, 20);
+      this.txtColsG.Size = new System.Drawing.Size(48, 20);
       this.txtColsG.TabIndex = 30;
       this.txtColsG.Text = "320";
-      this.label9.Location = new Point(8, 0x40);
+      // 
+      // label9
+      // 
+      this.label9.Location = new System.Drawing.Point(8, 64);
       this.label9.Name = "label9";
-      this.label9.Size = new Size(80, 0x17);
+      this.label9.Size = new System.Drawing.Size(80, 23);
       this.label9.TabIndex = 5;
       this.label9.Text = "Comm. Delay";
-      this.label9.TextAlign = ContentAlignment.MiddleLeft;
-      this.label10.Location = new Point(8, 40);
+      this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      // 
+      // label10
+      // 
+      this.label10.Location = new System.Drawing.Point(8, 40);
       this.label10.Name = "label10";
-      this.label10.Size = new Size(0x48, 0x17);
+      this.label10.Size = new System.Drawing.Size(72, 23);
       this.label10.TabIndex = 4;
       this.label10.Text = "Rows";
-      this.label10.TextAlign = ContentAlignment.MiddleLeft;
-      this.mpLabel3.Location = new Point(5, 0xcf);
+      this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      // 
+      // mpLabel3
+      // 
+      this.mpLabel3.Location = new System.Drawing.Point(5, 207);
       this.mpLabel3.Name = "mpLabel3";
-      this.mpLabel3.Size = new Size(80, 0x17);
-      this.mpLabel3.TabIndex = 0x33;
+      this.mpLabel3.Size = new System.Drawing.Size(80, 23);
+      this.mpLabel3.TabIndex = 51;
       this.mpLabel3.Text = "Scroll Delay";
-      this.mpLabel3.TextAlign = ContentAlignment.MiddleLeft;
+      this.mpLabel3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      // 
+      // gbTextMode
+      // 
       this.gbTextMode.Controls.Add(this.mpPrefixChar);
       this.gbTextMode.Controls.Add(this.mpLabel6);
       this.gbTextMode.Controls.Add(this.txtCharsToScroll);
@@ -558,173 +692,236 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.gbTextMode.Controls.Add(this.txtCols);
       this.gbTextMode.Controls.Add(this.label4);
       this.gbTextMode.Controls.Add(this.label3);
-      this.gbTextMode.FlatStyle = FlatStyle.Popup;
-      this.gbTextMode.Location = new Point(8, 0x44);
+      this.gbTextMode.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.gbTextMode.Location = new System.Drawing.Point(8, 68);
       this.gbTextMode.Name = "gbTextMode";
-      this.gbTextMode.Size = new Size(0x98, 0x88);
-      this.gbTextMode.TabIndex = 0x47;
+      this.gbTextMode.Size = new System.Drawing.Size(152, 136);
+      this.gbTextMode.TabIndex = 71;
       this.gbTextMode.TabStop = false;
       this.gbTextMode.Text = "TextMode";
-      this.mpPrefixChar.BorderColor = Color.Empty;
-      this.mpPrefixChar.Location = new Point(0x58, 0x70);
+      // 
+      // mpPrefixChar
+      // 
+      this.mpPrefixChar.BorderColor = System.Drawing.Color.Empty;
+      this.mpPrefixChar.Location = new System.Drawing.Point(88, 112);
       this.mpPrefixChar.Name = "mpPrefixChar";
-      this.mpPrefixChar.Size = new Size(0x30, 20);
-      this.mpPrefixChar.TabIndex = 0x38;
+      this.mpPrefixChar.Size = new System.Drawing.Size(48, 20);
+      this.mpPrefixChar.TabIndex = 56;
       this.mpPrefixChar.Visible = false;
-      this.mpLabel6.Location = new Point(8, 0x70);
+      // 
+      // mpLabel6
+      // 
+      this.mpLabel6.Location = new System.Drawing.Point(8, 112);
       this.mpLabel6.Name = "mpLabel6";
-      this.mpLabel6.Size = new Size(0x58, 0x17);
-      this.mpLabel6.TabIndex = 0x37;
+      this.mpLabel6.Size = new System.Drawing.Size(88, 23);
+      this.mpLabel6.TabIndex = 55;
       this.mpLabel6.Text = "Line Prefix     0x";
-      this.mpLabel6.TextAlign = ContentAlignment.MiddleLeft;
+      this.mpLabel6.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       this.mpLabel6.Visible = false;
-      this.txtCharsToScroll.BorderColor = Color.Empty;
-      this.txtCharsToScroll.Location = new Point(0x58, 0x57);
+      // 
+      // txtCharsToScroll
+      // 
+      this.txtCharsToScroll.BorderColor = System.Drawing.Color.Empty;
+      this.txtCharsToScroll.Location = new System.Drawing.Point(88, 87);
       this.txtCharsToScroll.Name = "txtCharsToScroll";
-      this.txtCharsToScroll.Size = new Size(0x30, 20);
-      this.txtCharsToScroll.TabIndex = 0x36;
+      this.txtCharsToScroll.Size = new System.Drawing.Size(48, 20);
+      this.txtCharsToScroll.TabIndex = 54;
       this.txtCharsToScroll.Text = "1";
-      this.mpLabel4.Location = new Point(8, 0x57);
+      // 
+      // mpLabel4
+      // 
+      this.mpLabel4.Location = new System.Drawing.Point(8, 87);
       this.mpLabel4.Name = "mpLabel4";
-      this.mpLabel4.Size = new Size(80, 0x17);
-      this.mpLabel4.TabIndex = 0x35;
+      this.mpLabel4.Size = new System.Drawing.Size(80, 23);
+      this.mpLabel4.TabIndex = 53;
       this.mpLabel4.Text = "#Chars to scroll";
-      this.mpLabel4.TextAlign = ContentAlignment.MiddleLeft;
-      this.label2.Location = new Point(8, 0x10);
+      this.mpLabel4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      // 
+      // label2
+      // 
+      this.label2.Location = new System.Drawing.Point(8, 16);
       this.label2.Name = "label2";
-      this.label2.Size = new Size(0x40, 0x17);
+      this.label2.Size = new System.Drawing.Size(64, 23);
       this.label2.TabIndex = 3;
       this.label2.Text = "Columns";
-      this.label2.TextAlign = ContentAlignment.MiddleLeft;
-      this.txtTim.BorderColor = Color.Empty;
-      this.txtTim.Location = new Point(0x58, 0x40);
+      this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      // 
+      // txtTim
+      // 
+      this.txtTim.BorderColor = System.Drawing.Color.Empty;
+      this.txtTim.Location = new System.Drawing.Point(88, 64);
       this.txtTim.Name = "txtTim";
-      this.txtTim.Size = new Size(0x30, 20);
+      this.txtTim.Size = new System.Drawing.Size(48, 20);
       this.txtTim.TabIndex = 50;
       this.txtTim.Text = "1";
-      this.txtRows.BorderColor = Color.Empty;
-      this.txtRows.Location = new Point(0x58, 40);
+      // 
+      // txtRows
+      // 
+      this.txtRows.BorderColor = System.Drawing.Color.Empty;
+      this.txtRows.Location = new System.Drawing.Point(88, 40);
       this.txtRows.Name = "txtRows";
-      this.txtRows.Size = new Size(0x30, 20);
+      this.txtRows.Size = new System.Drawing.Size(48, 20);
       this.txtRows.TabIndex = 40;
       this.txtRows.Text = "2";
-      this.txtCols.BorderColor = Color.Empty;
-      this.txtCols.Location = new Point(0x58, 0x10);
+      // 
+      // txtCols
+      // 
+      this.txtCols.BorderColor = System.Drawing.Color.Empty;
+      this.txtCols.Location = new System.Drawing.Point(88, 16);
       this.txtCols.Name = "txtCols";
-      this.txtCols.Size = new Size(0x30, 20);
+      this.txtCols.Size = new System.Drawing.Size(48, 20);
       this.txtCols.TabIndex = 30;
       this.txtCols.Text = "16";
-      this.txtCols.TextChanged += new EventHandler(this.txtCols_TextChanged);
-      this.label4.Location = new Point(8, 0x40);
+      this.txtCols.TextChanged += new System.EventHandler(this.txtCols_TextChanged);
+      // 
+      // label4
+      // 
+      this.label4.Location = new System.Drawing.Point(8, 64);
       this.label4.Name = "label4";
-      this.label4.Size = new Size(80, 0x17);
+      this.label4.Size = new System.Drawing.Size(80, 23);
       this.label4.TabIndex = 5;
       this.label4.Text = "Comm. Delay";
-      this.label4.TextAlign = ContentAlignment.MiddleLeft;
-      this.label3.Location = new Point(8, 40);
+      this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      // 
+      // label3
+      // 
+      this.label3.Location = new System.Drawing.Point(8, 40);
       this.label3.Name = "label3";
-      this.label3.Size = new Size(0x48, 0x17);
+      this.label3.Size = new System.Drawing.Size(72, 23);
       this.label3.TabIndex = 4;
       this.label3.Text = "Rows";
-      this.label3.TextAlign = ContentAlignment.MiddleLeft;
-      this.label7.Location = new Point(8, 0x10);
+      this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      // 
+      // label7
+      // 
+      this.label7.Location = new System.Drawing.Point(8, 16);
       this.label7.Name = "label7";
-      this.label7.Size = new Size(0x20, 0x17);
+      this.label7.Size = new System.Drawing.Size(32, 23);
       this.label7.TabIndex = 11;
       this.label7.Text = "Type";
-      this.label7.TextAlign = ContentAlignment.MiddleLeft;
-      this.cmbType.Anchor = AnchorStyles.Right | AnchorStyles.Left | AnchorStyles.Top;
-      this.cmbType.BorderColor = Color.Empty;
-      this.cmbType.DropDownStyle = ComboBoxStyle.DropDownList;
-      this.cmbType.Location = new Point(40, 0x10);
+      this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      // 
+      // cmbType
+      // 
+      this.cmbType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.cmbType.BorderColor = System.Drawing.Color.Empty;
+      this.cmbType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.cmbType.Location = new System.Drawing.Point(40, 16);
       this.cmbType.Name = "cmbType";
-      this.cmbType.Size = new Size(0x13f, 0x15);
+      this.cmbType.Size = new System.Drawing.Size(319, 21);
       this.cmbType.Sorted = true;
       this.cmbType.TabIndex = 10;
-      this.cmbType.SelectionChangeCommitted += new EventHandler(this.cmbType_SelectionChangeCommitted);
+      this.cmbType.SelectionChangeCommitted += new System.EventHandler(this.cmbType_SelectionChangeCommitted);
+      // 
+      // cbLight
+      // 
       this.cbLight.AutoSize = true;
       this.cbLight.Checked = true;
-      this.cbLight.CheckState = CheckState.Checked;
-      this.cbLight.FlatStyle = FlatStyle.Popup;
-      this.cbLight.Location = new Point(0x13, 0x106);
+      this.cbLight.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.cbLight.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbLight.Location = new System.Drawing.Point(19, 262);
       this.cbLight.Name = "cbLight";
-      this.cbLight.Size = new Size(0x6c, 0x11);
+      this.cbLight.Size = new System.Drawing.Size(108, 17);
       this.cbLight.TabIndex = 60;
       this.cbLight.Text = "Control brightness";
       this.cbLight.UseVisualStyleBackColor = true;
       this.cbLight.Visible = false;
-      this.cbLight.CheckedChanged += new EventHandler(this.cbLight_CheckedChanged);
-      this.cbPropertyBrowser.Anchor = AnchorStyles.Left | AnchorStyles.Bottom;
+      this.cbLight.CheckedChanged += new System.EventHandler(this.cbLight_CheckedChanged);
+      // 
+      // cbPropertyBrowser
+      // 
+      this.cbPropertyBrowser.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.cbPropertyBrowser.AutoSize = true;
-      this.cbPropertyBrowser.FlatStyle = FlatStyle.Popup;
-      this.cbPropertyBrowser.Location = new Point(8, 0x1b5);
+      this.cbPropertyBrowser.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbPropertyBrowser.Location = new System.Drawing.Point(8, 437);
       this.cbPropertyBrowser.Name = "cbPropertyBrowser";
-      this.cbPropertyBrowser.Size = new Size(0x84, 0x11);
+      this.cbPropertyBrowser.Size = new System.Drawing.Size(132, 17);
       this.cbPropertyBrowser.TabIndex = 4;
       this.cbPropertyBrowser.Text = "Show property browser";
       this.cbPropertyBrowser.UseVisualStyleBackColor = true;
-      this.btnOK.Anchor = AnchorStyles.Right | AnchorStyles.Left | AnchorStyles.Bottom;
-      this.btnOK.Location = new Point(0xd5, 0x1a9);
+      // 
+      // btnOK
+      // 
+      this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnOK.Location = new System.Drawing.Point(213, 425);
       this.btnOK.Name = "btnOK";
-      this.btnOK.Size = new Size(0x4e, 0x17);
+      this.btnOK.Size = new System.Drawing.Size(78, 23);
       this.btnOK.TabIndex = 5;
       this.btnOK.Text = "&OK";
       this.btnOK.UseVisualStyleBackColor = true;
-      this.btnOK.Click += new EventHandler(this.btnOK_Click);
+      this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
+      // 
+      // errorProvider
+      // 
       this.errorProvider.ContainerControl = this;
-      this.cbExtensiveLogging.Anchor = AnchorStyles.Left | AnchorStyles.Bottom;
+      // 
+      // cbExtensiveLogging
+      // 
+      this.cbExtensiveLogging.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.cbExtensiveLogging.AutoSize = true;
-      this.cbExtensiveLogging.FlatStyle = FlatStyle.Popup;
-      this.cbExtensiveLogging.Location = new Point(8, 420);
+      this.cbExtensiveLogging.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbExtensiveLogging.Location = new System.Drawing.Point(8, 420);
       this.cbExtensiveLogging.Name = "cbExtensiveLogging";
-      this.cbExtensiveLogging.Size = new Size(0x6b, 0x11);
+      this.cbExtensiveLogging.Size = new System.Drawing.Size(107, 17);
       this.cbExtensiveLogging.TabIndex = 6;
       this.cbExtensiveLogging.Text = "Extensive logging";
       this.cbExtensiveLogging.UseVisualStyleBackColor = true;
-      this.mpDisableGUISetup.Anchor = AnchorStyles.Left | AnchorStyles.Bottom;
+      // 
+      // mpDisableGUISetup
+      // 
+      this.mpDisableGUISetup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.mpDisableGUISetup.AutoSize = true;
-      this.mpDisableGUISetup.FlatStyle = FlatStyle.Popup;
-      this.mpDisableGUISetup.Location = new Point(8, 0x193);
+      this.mpDisableGUISetup.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpDisableGUISetup.Location = new System.Drawing.Point(8, 403);
       this.mpDisableGUISetup.Name = "mpDisableGUISetup";
-      this.mpDisableGUISetup.Size = new Size(0x70, 0x11);
-      this.mpDisableGUISetup.TabIndex = 0x4d;
+      this.mpDisableGUISetup.Size = new System.Drawing.Size(112, 17);
+      this.mpDisableGUISetup.TabIndex = 77;
       this.mpDisableGUISetup.Text = "Disable GUI Setup";
       this.mpDisableGUISetup.UseVisualStyleBackColor = true;
-      this.btnCancel.Anchor = AnchorStyles.Right | AnchorStyles.Left | AnchorStyles.Bottom;
-      this.btnCancel.Location = new Point(0x129, 0x1a9);
+      // 
+      // btnCancel
+      // 
+      this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+      this.btnCancel.Location = new System.Drawing.Point(297, 425);
       this.btnCancel.Name = "btnCancel";
-      this.btnCancel.Size = new Size(0x4e, 0x17);
-      this.btnCancel.TabIndex = 0x4e;
+      this.btnCancel.Size = new System.Drawing.Size(78, 23);
+      this.btnCancel.TabIndex = 78;
       this.btnCancel.Text = "&Cancel";
       this.btnCancel.UseVisualStyleBackColor = true;
-      this.btnCancel.Click += new EventHandler(this.btnCancel_Click);
-      base.AcceptButton = this.btnOK;
-      this.AutoScaleBaseSize = new Size(5, 13);
-      base.CancelButton = this.btnCancel;
-      base.ClientSize = new Size(0x185, 0x1c6);
-      base.Controls.Add(this.btnCancel);
-      base.Controls.Add(this.mpDisableGUISetup);
-      base.Controls.Add(this.cbExtensiveLogging);
-      base.Controls.Add(this.btnOK);
-      base.Controls.Add(this.cbPropertyBrowser);
-      base.Controls.Add(this.groupBox1);
-      base.Name = "SetupForm";
-      base.StartPosition = FormStartPosition.CenterParent;
+      this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+      // 
+      // SetupForm
+      // 
+      this.AcceptButton = this.btnOK;
+      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+      this.CancelButton = this.btnCancel;
+      this.ClientSize = new System.Drawing.Size(389, 454);
+      this.Controls.Add(this.btnCancel);
+      this.Controls.Add(this.mpDisableGUISetup);
+      this.Controls.Add(this.cbExtensiveLogging);
+      this.Controls.Add(this.btnOK);
+      this.Controls.Add(this.cbPropertyBrowser);
+      this.Controls.Add(this.groupBox1);
+      this.Name = "SetupForm";
+      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
       this.Text = "MiniDisplay - Setup";
-      base.Load += new EventHandler(this.SetupForm_Load);
+      this.Load += new System.EventHandler(this.SetupForm_Load);
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
       this.groupShutdown.ResumeLayout(false);
       this.groupShutdown.PerformLayout();
-      this.tbBrightness.EndInit();
-      this.tbContrast.EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.tbBrightness)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.tbContrast)).EndInit();
       this.gbGraphMode.ResumeLayout(false);
       this.gbGraphMode.PerformLayout();
       this.gbTextMode.ResumeLayout(false);
       this.gbTextMode.PerformLayout();
-      ((ISupportInitialize)this.errorProvider).EndInit();
-      base.ResumeLayout(false);
-      base.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
+      this.ResumeLayout(false);
+      this.PerformLayout();
+
     }
 
     private void SetupForm_Load(object sender, EventArgs e)

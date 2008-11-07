@@ -9,7 +9,7 @@ using MediaPortal.UserInterface.Controls;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 {
-  public class PropertyBrowser : MediaPortal.UserInterface.Controls.MPConfigForm
+  public class PropertyBrowser : MediaPortal.UserInterface.Controls.MPForm
   {
     private IContainer components = null;
     private DataGrid dataGrid1;
@@ -58,71 +58,98 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
     private void InitializeComponent()
     {
-      this.dataGrid1 = new DataGrid();
-      this.panel1 = new Panel();
-      this.txtStatus = new MPTextBox();
-      this.label2 = new MPLabel();
-      this.txtActiveWindow = new MPTextBox();
-      this.label1 = new MPLabel();
-      this.dataGrid1.BeginInit();
+      this.dataGrid1 = new System.Windows.Forms.DataGrid();
+      this.panel1 = new System.Windows.Forms.Panel();
+      this.txtStatus = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.txtActiveWindow = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      ((System.ComponentModel.ISupportInitialize)(this.dataGrid1)).BeginInit();
       this.panel1.SuspendLayout();
-      base.SuspendLayout();
-      this.dataGrid1.Anchor = AnchorStyles.Right | AnchorStyles.Left | AnchorStyles.Bottom | AnchorStyles.Top;
+      this.SuspendLayout();
+      // 
+      // dataGrid1
+      // 
+      this.dataGrid1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.dataGrid1.DataMember = "";
-      this.dataGrid1.HeaderForeColor = SystemColors.ControlText;
-      this.dataGrid1.Location = new Point(0, 0);
+      this.dataGrid1.HeaderForeColor = System.Drawing.SystemColors.ControlText;
+      this.dataGrid1.Location = new System.Drawing.Point(0, 0);
       this.dataGrid1.Name = "dataGrid1";
       this.dataGrid1.ReadOnly = true;
-      this.dataGrid1.Size = new Size(0x150, 0xfe);
+      this.dataGrid1.Size = new System.Drawing.Size(336, 254);
       this.dataGrid1.TabIndex = 0;
+      // 
+      // panel1
+      // 
       this.panel1.Controls.Add(this.txtStatus);
       this.panel1.Controls.Add(this.label2);
       this.panel1.Controls.Add(this.txtActiveWindow);
       this.panel1.Controls.Add(this.label1);
-      this.panel1.Dock = DockStyle.Bottom;
-      this.panel1.Location = new Point(0, 0xfe);
+      this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
+      this.panel1.Location = new System.Drawing.Point(0, 254);
       this.panel1.Name = "panel1";
-      this.panel1.Size = new Size(0x150, 0x40);
+      this.panel1.Size = new System.Drawing.Size(336, 64);
       this.panel1.TabIndex = 1;
-      this.txtStatus.Anchor = AnchorStyles.Right | AnchorStyles.Left | AnchorStyles.Bottom;
-      this.txtStatus.BorderColor = Color.Empty;
-      this.txtStatus.Location = new Point(0x60, 0x20);
+      // 
+      // txtStatus
+      // 
+      this.txtStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.txtStatus.BorderColor = System.Drawing.Color.Empty;
+      this.txtStatus.Location = new System.Drawing.Point(96, 32);
       this.txtStatus.Name = "txtStatus";
       this.txtStatus.ReadOnly = true;
-      this.txtStatus.Size = new Size(0xde, 20);
+      this.txtStatus.Size = new System.Drawing.Size(222, 20);
       this.txtStatus.TabIndex = 3;
-      this.label2.Anchor = AnchorStyles.Left | AnchorStyles.Bottom;
-      this.label2.Location = new Point(8, 0x20);
+      // 
+      // label2
+      // 
+      this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.label2.Location = new System.Drawing.Point(8, 32);
       this.label2.Name = "label2";
-      this.label2.Size = new Size(80, 0x17);
+      this.label2.Size = new System.Drawing.Size(80, 23);
       this.label2.TabIndex = 2;
       this.label2.Text = "Status";
-      this.label2.TextAlign = ContentAlignment.MiddleLeft;
-      this.txtActiveWindow.Anchor = AnchorStyles.Right | AnchorStyles.Left | AnchorStyles.Bottom;
-      this.txtActiveWindow.BorderColor = Color.Empty;
-      this.txtActiveWindow.Location = new Point(0x60, 8);
+      this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      // 
+      // txtActiveWindow
+      // 
+      this.txtActiveWindow.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.txtActiveWindow.BorderColor = System.Drawing.Color.Empty;
+      this.txtActiveWindow.Location = new System.Drawing.Point(96, 8);
       this.txtActiveWindow.Name = "txtActiveWindow";
       this.txtActiveWindow.ReadOnly = true;
-      this.txtActiveWindow.Size = new Size(0xde, 20);
+      this.txtActiveWindow.Size = new System.Drawing.Size(222, 20);
       this.txtActiveWindow.TabIndex = 1;
-      this.label1.Anchor = AnchorStyles.Left | AnchorStyles.Bottom;
-      this.label1.Location = new Point(8, 8);
+      // 
+      // label1
+      // 
+      this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.label1.Location = new System.Drawing.Point(8, 8);
       this.label1.Name = "label1";
-      this.label1.Size = new Size(80, 0x17);
+      this.label1.Size = new System.Drawing.Size(80, 23);
       this.label1.TabIndex = 0;
       this.label1.Text = "Active Window";
-      this.label1.TextAlign = ContentAlignment.MiddleLeft;
-      base.ClientSize = new Size(0x150, 0x13e);
-      base.Controls.Add(this.dataGrid1);
-      base.Controls.Add(this.panel1);
-      base.Name = "PropertyBrowser";
-      this.Text = "Property Browser";
-      base.TopMost = true;
-      base.Load += new EventHandler(this.PropertyBrowser_Load);
-      this.dataGrid1.EndInit();
+      this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      // 
+      // PropertyBrowser
+      // 
+      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+      this.ClientSize = new System.Drawing.Size(336, 318);
+      this.Controls.Add(this.dataGrid1);
+      this.Controls.Add(this.panel1);
+      this.Name = "PropertyBrowser";
+      this.Text = "MiniDisplay - Property Browser";
+      this.TopMost = true;
+      this.Load += new System.EventHandler(this.PropertyBrowser_Load);
+      ((System.ComponentModel.ISupportInitialize)(this.dataGrid1)).EndInit();
       this.panel1.ResumeLayout(false);
       this.panel1.PerformLayout();
-      base.ResumeLayout(false);
+      this.ResumeLayout(false);
+
     }
 
     private void PropertyBrowser_Load(object sender, EventArgs e)

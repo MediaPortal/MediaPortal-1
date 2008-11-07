@@ -20,7 +20,7 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
-  public class DebugForm : MediaPortal.UserInterface.Controls.MPConfigForm, IDisplay, IDisposable
+  public class DebugForm : MediaPortal.UserInterface.Controls.MPForm, IDisplay, IDisposable
   {
     private Thread _displayThread;
     private bool _IsDisplayOff;
@@ -542,27 +542,34 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void InitializeComponent()
     {
-      this.graphicDisplay = new PictureBox();
-      ((ISupportInitialize)this.graphicDisplay).BeginInit();
-      base.SuspendLayout();
-      this.graphicDisplay.BackColor = Color.Lime;
-      this.graphicDisplay.Dock = DockStyle.Fill;
-      this.graphicDisplay.Location = new Point(0, 0);
+      this.graphicDisplay = new System.Windows.Forms.PictureBox();
+      ((System.ComponentModel.ISupportInitialize)(this.graphicDisplay)).BeginInit();
+      this.SuspendLayout();
+      // 
+      // graphicDisplay
+      // 
+      this.graphicDisplay.BackColor = System.Drawing.Color.Lime;
+      this.graphicDisplay.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.graphicDisplay.Location = new System.Drawing.Point(0, 0);
       this.graphicDisplay.Name = "graphicDisplay";
-      this.graphicDisplay.Size = new Size(360, 0x52);
+      this.graphicDisplay.Size = new System.Drawing.Size(360, 82);
       this.graphicDisplay.TabIndex = 0;
       this.graphicDisplay.TabStop = false;
       this.graphicDisplay.WaitOnLoad = true;
-      this.AutoScaleBaseSize = new Size(14, 0x16);
-      this.BackColor = Color.FromArgb(0x80, 0xff, 0x80);
-      base.ClientSize = new Size(360, 0x52);
-      base.Controls.Add(this.graphicDisplay);
-      this.Font = new Font("Lucida Console", 16f);
-      base.Name = "DebugForm";
-      this.Text = "MediaPortal Status";
-      base.TopMost = true;
-      ((ISupportInitialize)this.graphicDisplay).EndInit();
-      base.ResumeLayout(false);
+      // 
+      // DebugForm
+      // 
+      this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 21F);
+      this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
+      this.ClientSize = new System.Drawing.Size(360, 82);
+      this.Controls.Add(this.graphicDisplay);
+      this.Font = new System.Drawing.Font("Lucida Console", 16F);
+      this.Name = "DebugForm";
+      this.Text = "MiniDisplay - Debug (Preview)";
+      this.TopMost = true;
+      ((System.ComponentModel.ISupportInitialize)(this.graphicDisplay)).EndInit();
+      this.ResumeLayout(false);
+
     }
 
     private void InitializeDriver()

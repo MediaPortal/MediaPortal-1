@@ -725,7 +725,7 @@ namespace MediaPortal.GUI.GUIBurner
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
       this.Name = "BurnerSetupForm";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-      this.Text = "My Burner - Setup";
+      this.Text = "Burner - Setup";
       this.groupBoxSupportFiles.ResumeLayout(false);
       this.groupBoxSupportFiles.PerformLayout();
       this.groupBoxOptions.ResumeLayout(false);

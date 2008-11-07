@@ -257,6 +257,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // groupBox7
       // 
+      this.groupBox7.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox7.Controls.Add(this.groupEQstyle);
       this.groupBox7.Controls.Add(this.cmbDelayEqTime);
       this.groupBox7.Controls.Add(this.lblRestrictEQ);
@@ -278,6 +281,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // groupEQstyle
       // 
+      this.groupEQstyle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupEQstyle.Controls.Add(this.cbUseVUmeter2);
       this.groupEQstyle.Controls.Add(this.cbVUindicators);
       this.groupEQstyle.Controls.Add(this.cbUseVUmeter);
@@ -347,8 +352,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // cmbDelayEqTime
       // 
-      this.cmbDelayEqTime.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
       this.cmbDelayEqTime.BorderColor = System.Drawing.Color.Empty;
       this.cmbDelayEqTime.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cmbDelayEqTime.Items.AddRange(new object[] {
@@ -390,6 +393,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // lblRestrictEQ
       // 
+      this.lblRestrictEQ.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.lblRestrictEQ.Location = new System.Drawing.Point(103, 124);
       this.lblRestrictEQ.Name = "lblRestrictEQ";
       this.lblRestrictEQ.Size = new System.Drawing.Size(116, 17);
@@ -399,8 +403,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // cmbEQTitleDisplayTime
       // 
-      this.cmbEQTitleDisplayTime.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
       this.cmbEQTitleDisplayTime.BorderColor = System.Drawing.Color.Empty;
       this.cmbEQTitleDisplayTime.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cmbEQTitleDisplayTime.Items.AddRange(new object[] {
@@ -442,8 +444,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // cmbEQTitleShowTime
       // 
-      this.cmbEQTitleShowTime.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
       this.cmbEQTitleShowTime.BorderColor = System.Drawing.Color.Empty;
       this.cmbEQTitleShowTime.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cmbEQTitleShowTime.Items.AddRange(new object[] {
@@ -622,6 +622,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // groupBox5
       // 
+      this.groupBox5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox5.Controls.Add(this.mpEnableDisplayActionTime);
       this.groupBox5.Controls.Add(this.cmbBlankIdleTime);
       this.groupBox5.Controls.Add(this.mpEnableDisplayAction);
@@ -636,8 +638,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // mpEnableDisplayActionTime
       // 
-      this.mpEnableDisplayActionTime.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpEnableDisplayActionTime.BorderColor = System.Drawing.Color.Empty;
       this.mpEnableDisplayActionTime.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpEnableDisplayActionTime.Items.AddRange(new object[] {
@@ -669,8 +669,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // cmbBlankIdleTime
       // 
-      this.cmbBlankIdleTime.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
       this.cmbBlankIdleTime.BorderColor = System.Drawing.Color.Empty;
       this.cmbBlankIdleTime.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cmbBlankIdleTime.Items.AddRange(new object[] {
@@ -745,8 +743,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // btnOK
       // 
-      this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.btnOK.Location = new System.Drawing.Point(286, 369);
       this.btnOK.Name = "btnOK";
       this.btnOK.Size = new System.Drawing.Size(80, 23);
@@ -757,8 +754,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // btnReset
       // 
-      this.btnReset.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnReset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.btnReset.Location = new System.Drawing.Point(200, 369);
       this.btnReset.Name = "btnReset";
       this.btnReset.Size = new System.Drawing.Size(80, 23);
@@ -777,7 +773,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.Controls.Add(this.groupBox1);
       this.Name = "LCDHypeWrapper_AdvancedSetupForm";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-      this.Text = "Advanced Settings";
+      this.Text = "MiniDisplay - Setup - Advanced Settings";
       this.Load += new System.EventHandler(this.LCDHypeWrapper_AdvancedSetupForm_Load);
       this.groupBox1.ResumeLayout(false);
       this.groupBox7.ResumeLayout(false);
@@ -787,6 +783,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.groupBox5.ResumeLayout(false);
       this.groupBox5.PerformLayout();
       this.ResumeLayout(false);
+
     }
 
     private void LCDHypeWrapper_AdvancedSetupForm_Load(object sender, EventArgs e)

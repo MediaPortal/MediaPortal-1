@@ -801,9 +801,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     private void InitializeComponent()
     {
       this.groupBoxConfiguration = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.mpForceKeyBoardMode = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.groupBox1 = new System.Windows.Forms.GroupBox();
+      this.mpMonitorPowerState = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBoxManager = new System.Windows.Forms.GroupBox();
+      this.mpForceManagerReload = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpRestartFrontview = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.mpForceKeyBoardMode = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpForceManagerRestart = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpEnsureManagerStartup = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBoxHardware = new System.Windows.Forms.GroupBox();
@@ -844,7 +847,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.mpRestrictEQ = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.cmbEqRate = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpDelayEQ = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.mpMonitorPowerState = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBoxDisplayOptions = new System.Windows.Forms.GroupBox();
       this.ckDiskIcon = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.ckDiskMediaStatus = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -859,9 +861,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.mpUseInvertedIcons = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.btnOK = new MediaPortal.UserInterface.Controls.MPButton();
       this.btnReset = new MediaPortal.UserInterface.Controls.MPButton();
-      this.groupBox1 = new System.Windows.Forms.GroupBox();
-      this.mpForceManagerReload = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBoxConfiguration.SuspendLayout();
+      this.groupBox1.SuspendLayout();
       this.groupBoxManager.SuspendLayout();
       this.groupBoxHardware.SuspendLayout();
       this.groupBoxRemoteControl.SuspendLayout();
@@ -870,7 +871,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.groupboxEqualizerOptions.SuspendLayout();
       this.groupEQstyle.SuspendLayout();
       this.groupBoxDisplayOptions.SuspendLayout();
-      this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
       // groupBoxConfiguration
@@ -893,16 +893,25 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.groupBoxConfiguration.TabStop = false;
       this.groupBoxConfiguration.Text = "Configuration";
       // 
-      // mpForceKeyBoardMode
+      // groupBox1
       // 
-      this.mpForceKeyBoardMode.AutoSize = true;
-      this.mpForceKeyBoardMode.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpForceKeyBoardMode.Location = new System.Drawing.Point(14, 93);
-      this.mpForceKeyBoardMode.Name = "mpForceKeyBoardMode";
-      this.mpForceKeyBoardMode.Size = new System.Drawing.Size(235, 17);
-      this.mpForceKeyBoardMode.TabIndex = 129;
-      this.mpForceKeyBoardMode.Text = "Force to use KeyBoard mode with iMON Pad";
-      this.mpForceKeyBoardMode.UseVisualStyleBackColor = true;
+      this.groupBox1.Controls.Add(this.mpMonitorPowerState);
+      this.groupBox1.Location = new System.Drawing.Point(10, 232);
+      this.groupBox1.Name = "groupBox1";
+      this.groupBox1.Size = new System.Drawing.Size(305, 30);
+      this.groupBox1.TabIndex = 134;
+      this.groupBox1.TabStop = false;
+      // 
+      // mpMonitorPowerState
+      // 
+      this.mpMonitorPowerState.AutoSize = true;
+      this.mpMonitorPowerState.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpMonitorPowerState.Location = new System.Drawing.Point(13, 9);
+      this.mpMonitorPowerState.Name = "mpMonitorPowerState";
+      this.mpMonitorPowerState.Size = new System.Drawing.Size(153, 17);
+      this.mpMonitorPowerState.TabIndex = 80;
+      this.mpMonitorPowerState.Text = "Monitor PowerState Events";
+      this.mpMonitorPowerState.UseVisualStyleBackColor = true;
       // 
       // groupBoxManager
       // 
@@ -918,6 +927,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.groupBoxManager.TabStop = false;
       this.groupBoxManager.Text = "Antec/iMON Manager";
       // 
+      // mpForceManagerReload
+      // 
+      this.mpForceManagerReload.AutoSize = true;
+      this.mpForceManagerReload.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpForceManagerReload.Location = new System.Drawing.Point(14, 53);
+      this.mpForceManagerReload.Name = "mpForceManagerReload";
+      this.mpForceManagerReload.Size = new System.Drawing.Size(167, 17);
+      this.mpForceManagerReload.TabIndex = 130;
+      this.mpForceManagerReload.Text = "Force reload during driver start";
+      this.mpForceManagerReload.UseVisualStyleBackColor = true;
+      // 
       // mpRestartFrontview
       // 
       this.mpRestartFrontview.AutoSize = true;
@@ -928,6 +948,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.mpRestartFrontview.TabIndex = 128;
       this.mpRestartFrontview.Text = "Restart FrontView on exit";
       this.mpRestartFrontview.UseVisualStyleBackColor = true;
+      // 
+      // mpForceKeyBoardMode
+      // 
+      this.mpForceKeyBoardMode.AutoSize = true;
+      this.mpForceKeyBoardMode.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpForceKeyBoardMode.Location = new System.Drawing.Point(14, 93);
+      this.mpForceKeyBoardMode.Name = "mpForceKeyBoardMode";
+      this.mpForceKeyBoardMode.Size = new System.Drawing.Size(235, 17);
+      this.mpForceKeyBoardMode.TabIndex = 129;
+      this.mpForceKeyBoardMode.Text = "Force to use KeyBoard mode with iMON Pad";
+      this.mpForceKeyBoardMode.UseVisualStyleBackColor = true;
       // 
       // mpForceManagerRestart
       // 
@@ -1016,6 +1047,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // groupBoxRemoteControl
       // 
+      this.groupBoxRemoteControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxRemoteControl.Controls.Add(this.lblRemoteType);
       this.groupBoxRemoteControl.Controls.Add(this.cbRemoteType);
       this.groupBoxRemoteControl.Controls.Add(this.lblDelay);
@@ -1041,8 +1075,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // cbRemoteType
       // 
-      this.cbRemoteType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
       this.cbRemoteType.BorderColor = System.Drawing.Color.Empty;
       this.cbRemoteType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbRemoteType.Items.AddRange(new object[] {
@@ -1099,6 +1131,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // groupBoxDisplayControl
       // 
+      this.groupBoxDisplayControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxDisplayControl.Controls.Add(this.cmbBlankIdleTime);
       this.groupBoxDisplayControl.Controls.Add(this.mpEnableDisplayActionTime);
       this.groupBoxDisplayControl.Controls.Add(this.mpEnableDisplayAction);
@@ -1113,8 +1147,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // cmbBlankIdleTime
       // 
-      this.cmbBlankIdleTime.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
       this.cmbBlankIdleTime.BorderColor = System.Drawing.Color.Empty;
       this.cmbBlankIdleTime.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cmbBlankIdleTime.Items.AddRange(new object[] {
@@ -1156,8 +1188,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // mpEnableDisplayActionTime
       // 
-      this.mpEnableDisplayActionTime.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpEnableDisplayActionTime.BorderColor = System.Drawing.Color.Empty;
       this.mpEnableDisplayActionTime.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpEnableDisplayActionTime.Items.AddRange(new object[] {
@@ -1225,6 +1255,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // groupboxEqualizerOptions
       // 
+      this.groupboxEqualizerOptions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupboxEqualizerOptions.Controls.Add(this.cmbDelayEqTime);
       this.groupboxEqualizerOptions.Controls.Add(this.groupEQstyle);
       this.groupboxEqualizerOptions.Controls.Add(this.cmbEqMode);
@@ -1248,8 +1280,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // cmbDelayEqTime
       // 
-      this.cmbDelayEqTime.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
       this.cmbDelayEqTime.BorderColor = System.Drawing.Color.Empty;
       this.cmbDelayEqTime.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cmbDelayEqTime.Items.AddRange(new object[] {
@@ -1291,6 +1321,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // groupEQstyle
       // 
+      this.groupEQstyle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupEQstyle.Controls.Add(this.mpUseVUmeter2);
       this.groupEQstyle.Controls.Add(this.cbVUindicators);
       this.groupEQstyle.Controls.Add(this.mpUseVUmeter);
@@ -1394,8 +1426,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // cmbEQTitleDisplayTime
       // 
-      this.cmbEQTitleDisplayTime.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
       this.cmbEQTitleDisplayTime.BorderColor = System.Drawing.Color.Empty;
       this.cmbEQTitleDisplayTime.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cmbEQTitleDisplayTime.Items.AddRange(new object[] {
@@ -1446,8 +1476,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // cmbEQTitleShowTime
       // 
-      this.cmbEQTitleShowTime.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
       this.cmbEQTitleShowTime.BorderColor = System.Drawing.Color.Empty;
       this.cmbEQTitleShowTime.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cmbEQTitleShowTime.Items.AddRange(new object[] {
@@ -1536,8 +1564,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // cmbEqRate
       // 
-      this.cmbEqRate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
       this.cmbEqRate.BorderColor = System.Drawing.Color.Empty;
       this.cmbEqRate.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cmbEqRate.Items.AddRange(new object[] {
@@ -1619,19 +1645,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.mpDelayEQ.UseVisualStyleBackColor = true;
       this.mpDelayEQ.CheckedChanged += new System.EventHandler(this.mpDelayEQ_CheckedChanged);
       // 
-      // mpMonitorPowerState
-      // 
-      this.mpMonitorPowerState.AutoSize = true;
-      this.mpMonitorPowerState.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpMonitorPowerState.Location = new System.Drawing.Point(13, 9);
-      this.mpMonitorPowerState.Name = "mpMonitorPowerState";
-      this.mpMonitorPowerState.Size = new System.Drawing.Size(153, 17);
-      this.mpMonitorPowerState.TabIndex = 80;
-      this.mpMonitorPowerState.Text = "Monitor PowerState Events";
-      this.mpMonitorPowerState.UseVisualStyleBackColor = true;
-      // 
       // groupBoxDisplayOptions
       // 
+      this.groupBoxDisplayOptions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)));
       this.groupBoxDisplayOptions.Controls.Add(this.ckDiskIcon);
       this.groupBoxDisplayOptions.Controls.Add(this.ckDiskMediaStatus);
       this.groupBoxDisplayOptions.Controls.Add(this.ckDeviceMonitor);
@@ -1708,8 +1725,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // mpEditFont
       // 
-      this.mpEditFont.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpEditFont.Location = new System.Drawing.Point(215, 105);
       this.mpEditFont.Name = "mpEditFont";
       this.mpEditFont.Size = new System.Drawing.Size(63, 23);
@@ -1720,8 +1735,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // mpEditIcon
       // 
-      this.mpEditIcon.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpEditIcon.Location = new System.Drawing.Point(215, 141);
       this.mpEditIcon.Name = "mpEditIcon";
       this.mpEditIcon.Size = new System.Drawing.Size(63, 23);
@@ -1779,8 +1792,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // btnOK
       // 
-      this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.btnOK.Location = new System.Drawing.Point(563, 476);
       this.btnOK.Name = "btnOK";
       this.btnOK.Size = new System.Drawing.Size(78, 23);
@@ -1791,8 +1803,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // btnReset
       // 
-      this.btnReset.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnReset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.btnReset.Location = new System.Drawing.Point(479, 476);
       this.btnReset.Name = "btnReset";
       this.btnReset.Size = new System.Drawing.Size(78, 23);
@@ -1801,36 +1812,19 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.btnReset.UseVisualStyleBackColor = true;
       this.btnReset.Click += new System.EventHandler(this.btnReset_Click);
       // 
-      // groupBox1
-      // 
-      this.groupBox1.Controls.Add(this.mpMonitorPowerState);
-      this.groupBox1.Location = new System.Drawing.Point(10, 232);
-      this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(305, 30);
-      this.groupBox1.TabIndex = 134;
-      this.groupBox1.TabStop = false;
-      // 
-      // mpForceManagerReload
-      // 
-      this.mpForceManagerReload.AutoSize = true;
-      this.mpForceManagerReload.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpForceManagerReload.Location = new System.Drawing.Point(14, 53);
-      this.mpForceManagerReload.Name = "mpForceManagerReload";
-      this.mpForceManagerReload.Size = new System.Drawing.Size(167, 17);
-      this.mpForceManagerReload.TabIndex = 130;
-      this.mpForceManagerReload.Text = "Force reload during driver start";
-      this.mpForceManagerReload.UseVisualStyleBackColor = true;
-      // 
       // iMONLCDg_AdvancedSetupForm
       // 
+      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.ClientSize = new System.Drawing.Size(650, 504);
       this.Controls.Add(this.btnOK);
       this.Controls.Add(this.btnReset);
       this.Controls.Add(this.groupBoxConfiguration);
       this.Name = "iMONLCDg_AdvancedSetupForm";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-      this.Text = "Advanced Settings";
+      this.Text = "MiniDisplay - Setup - Advanced Settings";
       this.groupBoxConfiguration.ResumeLayout(false);
+      this.groupBox1.ResumeLayout(false);
+      this.groupBox1.PerformLayout();
       this.groupBoxManager.ResumeLayout(false);
       this.groupBoxManager.PerformLayout();
       this.groupBoxHardware.ResumeLayout(false);
@@ -1846,8 +1840,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.groupEQstyle.PerformLayout();
       this.groupBoxDisplayOptions.ResumeLayout(false);
       this.groupBoxDisplayOptions.PerformLayout();
-      this.groupBox1.ResumeLayout(false);
-      this.groupBox1.PerformLayout();
       this.ResumeLayout(false);
 
     }
