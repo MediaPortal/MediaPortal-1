@@ -19,6 +19,7 @@
             <width>670</width>
             <height>142</height>
             <texture>osd_bg.png</texture>
+            <visible>player.hasmedia</visible>
             <animation effect="fade" time="250">WindowOpen</animation>
             <animation effect="fade" time="250">WindowClose</animation>
         </control>
@@ -53,6 +54,7 @@
             <width>307</width>
             <height>358</height>
             <texture>nowplaying_background.png</texture>
+            <visible>player.hasmedia</visible>
             <animation effect="fade" time="250">WindowOpen</animation>
             <animation effect="fade" time="250">WindowClose</animation>
         </control>
@@ -67,6 +69,7 @@
             <texture>#Play.Current.ArtistThumb</texture>
             <!-- <texture>F:\\Quellen\\Mediaportal-trunk\\xbmc\\bin\\Debug\\skin\\BlueTwo\\media\\missing_coverart.png</texture>  -->
             <centered>yes</centered>
+            <visible>player.hasmedia</visible>
             <animation effect="fade" time="250">WindowOpen</animation>
             <animation effect="fade" time="250">WindowClose</animation>
         </control>
@@ -80,67 +83,71 @@
             <onleft>10</onleft>
             <onright>50</onright>
             <onup>666</onup>
-            <ondown>20</ondown>
+            <ondown>15</ondown>
             <animation effect="fade" time="250">WindowOpen</animation>
             <animation effect="fade" time="250">WindowClose</animation>
         </control>
+
         <control>
-            <description>chose tag</description>
-            <type>button</type>
-            <id>20</id>
+            <description>group element</description>
+            <type>group</type>
+            <layout>StackLayout</layout>
+            <animation effect="fade" time="250">WindowOpen</animation>
+            <animation effect="fade" time="250">WindowClose</animation>
             <posX>60</posX>
             <posY>151</posY>
-            <label>Tags</label>
-            <onleft>20</onleft>
-            <onright>50</onright>
-            <onup>10</onup>
-            <ondown>30</ondown>
-            <animation effect="fade" time="250">WindowOpen</animation>
-            <animation effect="fade" time="250">WindowClose</animation>
-        </control>
-        <control>
-            <description>choose friend</description>
-            <type>button</type>
-            <id>30</id>
-            <posX>60</posX>
-            <posY>185</posY>
-            <label>Friends</label>
-            <onleft>30</onleft>
-            <onright>50</onright>
-            <onup>20</onup>
-            <ondown>35</ondown>
-            <animation effect="fade" time="250">WindowOpen</animation>
-            <animation effect="fade" time="250">WindowClose</animation>
-        </control>
-        <control>
-            <description>toggle submit mode</description>
-            <type>togglebutton</type>
-            <id>35</id>
-            <posX>60</posX>
-            <posY>226</posY>
-            <label>34014</label>
-            <onleft>35</onleft>
-            <onright>35</onright>
-            <onup>30</onup>
-            <ondown>40</ondown>
-            <visible>true</visible>
-            <animation effect="fade" time="250">WindowOpen</animation>
-            <animation effect="fade" time="250">WindowClose</animation>
-        </control>      
-        <control>
-            <description>toggle discovery mode</description>
-            <type>togglebutton</type>
-            <id>40</id>
-            <posX>60</posX>
-            <posY>260</posY>
-            <label>34013</label>
-            <onleft>40</onleft>
-            <onright>50</onright>
-            <onup>35</onup>
-            <ondown>50</ondown>
-            <visible>false</visible>
-            <animation effect="fade" time="250">WindowOpen</animation>
-            <animation effect="fade" time="250">WindowClose</animation>
+            <control>
+                <description>choose artist</description>
+                <type>button</type>
+                <id>15</id>
+                <label>Artists</label>
+                <onleft>15</onleft>
+                <onright>123</onright>
+                <onup>10</onup>
+                <ondown>20</ondown>
+            </control>
+            <control>
+                <description>chose tag</description>
+                <type>button</type>
+                <id>20</id>
+                <label>Tags</label>
+                <onleft>20</onleft>
+                <onright>50</onright>
+                <onup>15</onup>
+                <ondown>30</ondown>
+            </control>
+            <control>
+                <description>choose friend</description>
+                <type>button</type>
+                <id>30</id>
+                <label>Friends</label>
+                <onleft>30</onleft>
+                <onright>50</onright>
+                <onup>20</onup>
+                <ondown>35</ondown>
+            </control>
+            <control>
+                <description>toggle submit mode</description>
+                <type>togglebutton</type>
+                <id>35</id>
+                <label>34014</label>
+                <onleft>35</onleft>
+                <onright>35</onright>
+                <onup>30</onup>
+                <ondown>40</ondown>
+                <visible>true</visible>
+            </control>      
+            <control>
+                <description>toggle discovery mode</description>
+                <type>togglebutton</type>
+                <id>40</id>
+                <label>34013</label>
+                <onleft>40</onleft>
+                <onright>50</onright>
+                <onup>35</onup>
+                <ondown>50</ondown>
+                <visible>false</visible>
+            </control> 
         </control>  
         <control>
             <type>fadelabel</type>
@@ -229,7 +236,7 @@
             <description>Similar artists box</description>
             <id>0</id>
             <posX>60</posX>
-            <posY>303</posY>
+            <posY>313</posY>
             <width>240</width>
             <label>#Play.Current.Lastfm.SimilarArtists</label>
             <font>font13</font>
@@ -243,7 +250,7 @@
             <description>Track tags box</description>
             <id>0</id>
             <posX>60</posX>
-            <posY>363</posY>
+            <posY>373</posY>
             <width>240</width>
             <label>#Play.Current.Lastfm.TrackTags</label>
             <font>font13</font>
