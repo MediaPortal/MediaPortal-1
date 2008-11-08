@@ -255,7 +255,7 @@ namespace MediaPortal.GUI.TV
           break;
 
         case Action.ActionType.ACTION_SELECT_ITEM:
-          if (GetFocusControlId() != -1)
+          if (GetFocusControlId() != -1 && _cursorX >= 0)
           {
             if (_cursorY == 0)
             {
