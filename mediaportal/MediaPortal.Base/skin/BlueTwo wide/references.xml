@@ -3,7 +3,7 @@
     <skin>
         <width>1366</width>
         <height>768</height>
-        <version>0.9.2.0</version>
+        <version>0.9.3.0</version>
     </skin>
     <control>
         <description>default image</description>
