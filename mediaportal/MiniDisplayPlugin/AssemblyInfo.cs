@@ -1,7 +1,7 @@
-﻿// Assembly MiniDisplayPlugin, Version 0.9.3.0
+﻿// Assembly MiniDisplayPlugin, Version 0.9.4.0
 
-[assembly: System.Reflection.AssemblyVersion("0.9.3.*")]
-[assembly: System.Reflection.AssemblyFileVersion("0.9.3.0")]
+[assembly: System.Reflection.AssemblyVersion("0.9.4.*")]
+[assembly: System.Reflection.AssemblyFileVersion("0.9.4.0")]
 [assembly: System.Reflection.AssemblyKeyName("")]
 [assembly: System.Reflection.AssemblyDelaySign(false)]
 [assembly: System.Reflection.AssemblyKeyFile("")]
