@@ -79,14 +79,14 @@ Var RemoveAll       ; Set, when the user decided to uninstall everything
 
 !define VER_MAJOR       0
 !define VER_MINOR       9
-!define VER_REVISION    4
+!define VER_REVISION    3
 !ifndef VER_BUILD
     !define VER_BUILD   0
 !endif
 !if ${VER_BUILD} == 0       # it's a stable release
-    !define VERSION "1.0 RC4"
+    !define VERSION "1.0 RC3"
 !else                       # it's an svn reöease
-    !define VERSION "1.0 RC4 SVN build ${VER_BUILD} for TESTING ONLY"
+    !define VERSION "1.0 RC3 SVN build ${VER_BUILD} for TESTING ONLY"
 !endif
 BrandingText "$(^Name) ${VERSION} by ${COMPANY}"
 
