@@ -173,5 +173,10 @@ namespace MediaPortal.DeployTool
         Application.Exit();
       }
     }
+
+    private void bHelp_Click(object sender, EventArgs e)
+    {
+      Process.Start("http://www.team-mediaportal.com/manual/MediaPortalTools/DeployTool#Usage");
+    }
   }
 }

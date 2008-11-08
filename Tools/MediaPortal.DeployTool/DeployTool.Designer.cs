@@ -30,17 +30,18 @@ namespace MediaPortal.DeployTool
     {
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DeployTool));
       this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-      this.bExit = new System.Windows.Forms.Button();
-      this.pictureBox1 = new System.Windows.Forms.PictureBox();
       this.splitContainer2 = new System.Windows.Forms.SplitContainer();
       this.nextButton = new System.Windows.Forms.Button();
       this.backButton = new System.Windows.Forms.Button();
+      this.bHelp = new System.Windows.Forms.Button();
+      this.bExit = new System.Windows.Forms.Button();
+      this.pictureBox1 = new System.Windows.Forms.PictureBox();
       this.splitContainer1.Panel1.SuspendLayout();
       this.splitContainer1.Panel2.SuspendLayout();
       this.splitContainer1.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
       this.splitContainer2.Panel2.SuspendLayout();
       this.splitContainer2.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
       this.SuspendLayout();
       // 
       // splitContainer1
@@ -56,6 +57,7 @@ namespace MediaPortal.DeployTool
       // 
       // splitContainer1.Panel1
       // 
+      this.splitContainer1.Panel1.Controls.Add(this.bHelp);
       this.splitContainer1.Panel1.Controls.Add(this.bExit);
       this.splitContainer1.Panel1.Controls.Add(this.pictureBox1);
       this.splitContainer1.Panel1.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -67,35 +69,6 @@ namespace MediaPortal.DeployTool
       this.splitContainer1.SplitterDistance = 122;
       this.splitContainer1.SplitterWidth = 1;
       this.splitContainer1.TabIndex = 0;
-      // 
-      // bExit
-      // 
-      this.bExit.BackColor = System.Drawing.Color.Transparent;
-      this.bExit.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-      this.bExit.Cursor = System.Windows.Forms.Cursors.Hand;
-      this.bExit.FlatAppearance.BorderSize = 0;
-      this.bExit.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
-      this.bExit.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
-      this.bExit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-      this.bExit.Image = global::MediaPortal.DeployTool.Images.exit41;
-      this.bExit.Location = new System.Drawing.Point(616, 16);
-      this.bExit.Name = "bExit";
-      this.bExit.Size = new System.Drawing.Size(30, 29);
-      this.bExit.TabIndex = 0;
-      this.bExit.UseVisualStyleBackColor = false;
-      this.bExit.Click += new System.EventHandler(this.bExit_Click);
-      // 
-      // pictureBox1
-      // 
-      this.pictureBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(198)))), ((int)(((byte)(198)))), ((int)(((byte)(198)))), ((int)(((byte)(198)))));
-      this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.pictureBox1.Image = global::MediaPortal.DeployTool.Images.Background_top;
-      this.pictureBox1.Location = new System.Drawing.Point(0, 0);
-      this.pictureBox1.Name = "pictureBox1";
-      this.pictureBox1.Size = new System.Drawing.Size(666, 122);
-      this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-      this.pictureBox1.TabIndex = 20;
-      this.pictureBox1.TabStop = false;
       // 
       // splitContainer2
       // 
@@ -151,6 +124,48 @@ namespace MediaPortal.DeployTool
       this.backButton.UseVisualStyleBackColor = true;
       this.backButton.Click += new System.EventHandler(this.backButton_Click);
       // 
+      // bHelp
+      // 
+      this.bHelp.Cursor = System.Windows.Forms.Cursors.Hand;
+      this.bHelp.FlatAppearance.BorderSize = 0;
+      this.bHelp.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+      this.bHelp.Image = global::MediaPortal.DeployTool.Images.helpIcon;
+      this.bHelp.Location = new System.Drawing.Point(579, 17);
+      this.bHelp.Name = "bHelp";
+      this.bHelp.Size = new System.Drawing.Size(33, 27);
+      this.bHelp.TabIndex = 21;
+      this.bHelp.UseVisualStyleBackColor = true;
+      this.bHelp.Click += new System.EventHandler(this.bHelp_Click);
+      // 
+      // bExit
+      // 
+      this.bExit.BackColor = System.Drawing.Color.Transparent;
+      this.bExit.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+      this.bExit.Cursor = System.Windows.Forms.Cursors.Hand;
+      this.bExit.FlatAppearance.BorderSize = 0;
+      this.bExit.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+      this.bExit.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+      this.bExit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+      this.bExit.Image = global::MediaPortal.DeployTool.Images.exit41;
+      this.bExit.Location = new System.Drawing.Point(616, 16);
+      this.bExit.Name = "bExit";
+      this.bExit.Size = new System.Drawing.Size(30, 29);
+      this.bExit.TabIndex = 0;
+      this.bExit.UseVisualStyleBackColor = false;
+      this.bExit.Click += new System.EventHandler(this.bExit_Click);
+      // 
+      // pictureBox1
+      // 
+      this.pictureBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(198)))), ((int)(((byte)(198)))), ((int)(((byte)(198)))), ((int)(((byte)(198)))));
+      this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.pictureBox1.Image = global::MediaPortal.DeployTool.Images.Background_top;
+      this.pictureBox1.Location = new System.Drawing.Point(0, 0);
+      this.pictureBox1.Name = "pictureBox1";
+      this.pictureBox1.Size = new System.Drawing.Size(666, 122);
+      this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+      this.pictureBox1.TabIndex = 20;
+      this.pictureBox1.TabStop = false;
+      // 
       // DeployTool
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -168,10 +183,10 @@ namespace MediaPortal.DeployTool
       this.splitContainer1.Panel1.PerformLayout();
       this.splitContainer1.Panel2.ResumeLayout(false);
       this.splitContainer1.ResumeLayout(false);
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
       this.splitContainer2.Panel2.ResumeLayout(false);
       this.splitContainer2.Panel2.PerformLayout();
       this.splitContainer2.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
       this.ResumeLayout(false);
 
     }
@@ -184,6 +199,7 @@ namespace MediaPortal.DeployTool
     private System.Windows.Forms.Button nextButton;
     private System.Windows.Forms.Button backButton;
     private System.Windows.Forms.Button bExit;
+    private System.Windows.Forms.Button bHelp;
 
 
   }

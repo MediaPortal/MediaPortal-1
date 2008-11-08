@@ -124,20 +124,20 @@
   <data name="Background_middle_empty" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Background middle empty.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Background_middle_one_click_install_choose" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Background middle one click install choose.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="Background_middle_TV_install" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Background middle TV install.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Background_middle_internet_connection" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Background middle internet connection.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Background_bottom" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Background bottom.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Background_middle_one_click_install_choose" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Background middle one click install choose.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Background_top" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Background top.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="exit41" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\exit41.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Background_bottom" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Background bottom.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Choose_button_off" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Choose button off.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -145,10 +145,13 @@
   <data name="Background_middle_TV__yes_no" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Background middle TV  yes no.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Background_middle_internet_connection" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Background middle internet connection.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Choose_button_on" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Choose button on.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="exit41" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\exit41.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="helpIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\helpIcon.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

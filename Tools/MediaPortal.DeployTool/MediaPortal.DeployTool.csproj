@@ -487,6 +487,7 @@
     <None Include="Resources\Choose button on.png" />
     <None Include="Resources\Choose button off.png" />
     <None Include="Resources\exit41.png" />
+    <None Include="Resources\helpIcon.png" />
     <Content Include="Resources\MePo_download.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
