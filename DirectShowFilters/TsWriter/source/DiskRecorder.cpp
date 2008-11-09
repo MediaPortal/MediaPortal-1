@@ -689,7 +689,14 @@ void CDiskRecorder::AddStream(PidInfo2 pidInfo)
       return;
     ++it;
   }
-
+  //ITV HD workaround, this enables TSWriter to timeshift / record & avoids no audio/video found.
+  if (pidInfo.streamType==SERVICE_TYPE_DVB_SUBTITLES2 && pidInfo.logicalStreamType==0xffffffff && pidInfo.elementaryPid==0xd49)
+  {
+    pidInfo.streamType=SERVICE_TYPE_VIDEO_H264;
+    pidInfo.logicalStreamType=SERVICE_TYPE_VIDEO_H264;
+    LogDebug("AddStream: set ITV HD video stream to H.264");
+  }
+  //end of workaround
 	if (IsStreamWanted(pidInfo.logicalStreamType))
 	{
 		PidInfo2 pi;
@@ -901,15 +908,15 @@ void CDiskRecorder::WriteTs(byte* tsPacket)
 
 			if (m_tsHeader.Pid==info.elementaryPid)
 			{
-				if (m_tsHeader.AdaptionFieldLength && (tsPacket[5] & 0x80)) LogDebug("Recorder:Pid %x : Discontinuity header bit set!", m_tsHeader.Pid);
-
+				if (m_tsHeader.AdaptionFieldLength && (tsPacket[5] & 0x80))
+          LogDebug("Recorder:Pid %x : Discontinuity header bit set!", m_tsHeader.Pid);
 				if (info.ccPrev!=255)
 				{
 					// Do not check 1st packet after channel change.
 					if (m_tsHeader.HasPayload)
 					{
 						// Check Ts packet continuity with payload, remove duplicate frames.
-						if ((m_tsHeader.ContinuityCounter != ((info.ccPrev+1) & 0x0F)))
+						/*if ((m_tsHeader.ContinuityCounter != ((info.ccPrev+1) & 0x0F)))
 						{
 							if (m_tsHeader.ContinuityCounter == info.ccPrev)
 							{	
@@ -926,7 +933,7 @@ void CDiskRecorder::WriteTs(byte* tsPacket)
 							}
 							else
 								LogDebug("Recorder:Pid %x Continuity error... %x ( prev %x )", m_tsHeader.Pid, m_tsHeader.ContinuityCounter, info.ccPrev) ;
-						}
+						}*/
 					}
 					else
 					{

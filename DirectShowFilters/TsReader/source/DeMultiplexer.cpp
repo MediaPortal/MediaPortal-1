@@ -136,7 +136,8 @@ void CDeMultiplexer::GetH264Media(CMediaType *pmt)
 	pmt->SetTemporalCompression(TRUE);
 	pmt->SetVariableSize();
 	if (m_mpeg2VideoInfo.hdr.dwReserved2==0)
-	{
+    //causes framesize errors
+	/*{
 		VIDEOINFO vinfo;
 		vinfo.rcSource.left=m_mpeg2VideoInfo.hdr.rcSource.left;
 		vinfo.rcSource.bottom=m_mpeg2VideoInfo.hdr.rcSource.bottom;
@@ -144,7 +145,10 @@ void CDeMultiplexer::GetH264Media(CMediaType *pmt)
 		pmt->SetFormat((BYTE*)&vinfo,sizeof(vinfo));
 	}
 	else
-		pmt->SetFormat(H264VideoFormat,sizeof(H264VideoFormat));
+		pmt->SetFormat(H264VideoFormat,sizeof(H264VideoFormat));*/
+		pmt->SetFormat((BYTE*)&m_mpeg2VideoInfo,sizeof(m_mpeg2VideoInfo));
+	else
+			pmt->SetFormat(g_Mpeg2ProgramVideo,sizeof(g_Mpeg2ProgramVideo));
 }
 
 void CDeMultiplexer::GetMpeg4Media(CMediaType *pmt)

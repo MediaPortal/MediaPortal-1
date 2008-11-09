@@ -135,13 +135,17 @@ bool CPmtParser::DecodePmt(CSection sections, int &pcr_pid, vector<PidInfo2>& pi
     pidInfo2.rawDescriptorSize=ES_info_length;
     if (pidInfo2.streamType!=SERVICE_TYPE_DVB_SUBTITLES2)
       pidInfo2.logicalStreamType=stream_type;
-    //ITV HD check, we now force this by program number to avoid issues with some australian broadcasts.
+    //ITV HD workaround
     if (pidInfo2.streamType==SERVICE_TYPE_DVB_SUBTITLES2 && program_number==10510)
     {
-      pidInfo2.streamType=SERVICE_TYPE_VIDEO_H264;
-      pidInfo2.logicalStreamType=SERVICE_TYPE_VIDEO_H264;
-      LogDebug("pmt parser set ITV HD video stream to H.264");
+      if (pidInfo2.logicalStreamType==0xffffffff && pidInfo2.elementaryPid==0xd49)
+      {
+        pidInfo2.streamType=SERVICE_TYPE_VIDEO_H264;
+        pidInfo2.logicalStreamType=SERVICE_TYPE_VIDEO_H264;
+        LogDebug("DecodePmt: set ITV HD video stream to H.264");
+      }
     }
+    //end of workaround
     if (pidInfo2.streamType==SERVICE_TYPE_DVB_SUBTITLES2)
       pidInfo2.logicalStreamType=-1;
 		memset(pidInfo2.rawDescriptorData,0xFF,ES_info_length);
