@@ -484,7 +484,7 @@
     <id>20</id>
     <posX>177</posX>
     <posY>406</posY>
-    <height>31</height>
+    <height>25</height>
     <texturebg>progress_back.png</texturebg>
     <lefttexture>osd_progress_left.png</lefttexture>
     <midtexture>osd_progress_mid.png</midtexture>

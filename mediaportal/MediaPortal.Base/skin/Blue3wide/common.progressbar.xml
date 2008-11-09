@@ -19,9 +19,9 @@
       <description>background</description>
       <type>image</type>
       <id>105</id>
-      <posX>193</posX>
+      <posX>190</posX>
       <posY>36</posY>
-      <width>718</width>
+      <width>721</width>
       <height>25</height>
       <texture>osd_progress_background.png</texture>
       <visible>no</visible>
@@ -32,7 +32,7 @@
       <description>Progress Bar</description>
       <type>progress</type>
       <id>1</id>
-      <posX>176</posX>
+      <posX>183</posX>
       <posY>37</posY>
       <width>712</width>
       <height>25</height>

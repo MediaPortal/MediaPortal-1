@@ -17,10 +17,10 @@
       <description>Play</description>
       <type>togglebutton</type>
       <id>213</id>
-      <posX>64</posX>
+      <posX>86</posX>
       <posY>531</posY>
-      <width>106</width>
-      <height>82</height>
+      <width>70</width>
+      <height>72</height>
       <AltTextureFocus>osd_pause_focus.png</AltTextureFocus>
       <AltTextureNoFocus>osd_pause_nofocus.png</AltTextureNoFocus>
       <textureFocus>osd_play_focus.png</textureFocus>
@@ -38,9 +38,9 @@
       <description>Subtitles Menu</description>
       <type>togglebutton</type>
       <id>218</id>
-      <posX>92</posX>
+      <posX>102</posX>
       <posY>618</posY>
-      <width>53</width>
+      <width>41</width>
       <height>41</height>
       <AltTextureFocus>osd_subtitles_focus.png</AltTextureFocus>
       <AltTextureNoFocus>osd_subtitles_nofocus.png</AltTextureNoFocus>

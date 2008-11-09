@@ -30,9 +30,9 @@
     <control>
       <description>progress bar background</description>
       <type>image</type>
-      <posX>193</posX>
+      <posX>190</posX>
       <posY>36</posY>
-      <width>718</width>
+      <width>721</width>
       <height>25</height>
       <texture>osd_progress_background.png</texture>
       <visible>window.isosdvisible|player.paused|player.rewinding|player.forwarding|Control.IsVisible(10)</visible>
@@ -43,7 +43,7 @@
       <description>progress bar</description>
       <type>progress</type>
       <id>1</id>
-      <posX>176</posX>
+      <posX>183</posX>
       <posY>37</posY>
       <width>712</width>
       <height>25</height>
