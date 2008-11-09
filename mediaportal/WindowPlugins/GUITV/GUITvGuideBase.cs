@@ -127,6 +127,7 @@ namespace MediaPortal.GUI.TV
     static bool _workerThreadRunning = false;
 
     bool _byIndex = false;
+    bool _useNewRecordingButtonColor = false;
 
     #endregion
 
@@ -179,6 +180,7 @@ namespace MediaPortal.GUI.TV
         _disableXMLTVImportOption = xmlreader.GetValueAsBool("plugins", "TV Movie Clickfinder", false);
         _byIndex = xmlreader.GetValueAsBool("mytv", "byindex", true);
       }
+      _useNewRecordingButtonColor = File.Exists(Path.Combine(GUIGraphicsContext.Skin, @"media\tvguide_recButton_Focus_middle.png"));
     }
 
     void SaveSettings()
@@ -1456,12 +1458,24 @@ namespace MediaPortal.GUI.TV
           img.TexutureIcon = Thumbs.TvNotifyIcon;
         if (bRecording)
         {
-          if (bConflict)
-            img.TexutureIcon = Thumbs.TvConflictRecordingIcon;
-          else if (bSeries)
-            img.TexutureIcon = Thumbs.TvRecordingSeriesIcon;
+          if (_useNewRecordingButtonColor)
+          {
+            img.TexutureFocusLeftName = "tvguide_recButton_Focus_left.png";
+            img.TexutureFocusMidName = "tvguide_recButton_Focus_middle.png";
+            img.TexutureFocusRightName = "tvguide_recButton_Focus_right.png";
+            img.TexutureNoFocusLeftName = "tvguide_recButton_noFocus_left.png";
+            img.TexutureNoFocusMidName = "tvguide_recButton_noFocus_middle.png";
+            img.TexutureNoFocusRightName = "tvguide_recButton_noFocus_right.png";
+          }
           else
-            img.TexutureIcon = Thumbs.TvRecordingIcon;
+          {
+            if (bConflict)
+              img.TexutureIcon = Thumbs.TvConflictRecordingIcon;
+            else if (bSeries)
+              img.TexutureIcon = Thumbs.TvRecordingSeriesIcon;
+            else
+              img.TexutureIcon = Thumbs.TvRecordingIcon;
+          }
         }
       }
     }//void RenderSingleChannel(TVChannel channel)
@@ -1680,12 +1694,24 @@ namespace MediaPortal.GUI.TV
               img.TexutureIcon = Thumbs.TvNotifyIcon;
             if (bRecording)
             {
-              if (bConflict)
-                img.TexutureIcon = Thumbs.TvConflictRecordingIcon;
-              else if (bSeries)
-                img.TexutureIcon = Thumbs.TvRecordingSeriesIcon;
+              if (_useNewRecordingButtonColor)
+              {
+                img.TexutureFocusLeftName = "tvguide_recButton_Focus_left.png";
+                img.TexutureFocusMidName = "tvguide_recButton_Focus_middle.png";
+                img.TexutureFocusRightName = "tvguide_recButton_Focus_right.png";
+                img.TexutureNoFocusLeftName = "tvguide_recButton_noFocus_left.png";
+                img.TexutureNoFocusMidName = "tvguide_recButton_noFocus_middle.png";
+                img.TexutureNoFocusRightName = "tvguide_recButton_noFocus_right.png";
+              }
               else
-                img.TexutureIcon = Thumbs.TvRecordingIcon;
+              {
+                if (bConflict)
+                  img.TexutureIcon = Thumbs.TvConflictRecordingIcon;
+                else if (bSeries)
+                  img.TexutureIcon = Thumbs.TvRecordingSeriesIcon;
+                else
+                  img.TexutureIcon = Thumbs.TvRecordingIcon;
+              }
             }
 
             img.Data = program.Clone();
@@ -2342,7 +2368,7 @@ namespace MediaPortal.GUI.TV
         return;
       }
       _tvGuideFileWatcher.EnableRaisingEvents = false;
-      
+
       if (!_workerThreadRunning)
       {
         _workerThreadRunning = true;
@@ -2532,7 +2558,7 @@ namespace MediaPortal.GUI.TV
         if (Recorder.IsAnyCardRecording())
         {
           if (_recordingList == null)
-             Log.Debug("EPG: _recordingList was not available");
+            Log.Debug("EPG: _recordingList was not available");
 
           // If you select the program which is currently recording open a dialog to ask if you want to see it from the beginning
           // imagine a sports event where you do not want to see the live point to be spoiled
