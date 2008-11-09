@@ -211,12 +211,14 @@ namespace MediaPortal.Configuration.Sections
         if (currentSkin == "NoSkin")
         {
           //Change default skin based on screen aspect ratio
-
-// no wide version yet available
-//if (screenRatio > 1.5)
-//  currentSkin = "Blue3 wide";
-//else
+          if (screenRatio > 1.5)
+          {
+            currentSkin = "Blue3wide";
+          }
+          else
+          {
             currentSkin = "Blue3";
+          }
         }
 
         //
