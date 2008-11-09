@@ -2332,7 +2332,7 @@ namespace TvPlugin
         GUIPropertyManager.SetProperty("#TV.Record.percent1", ((int)percentLivePoint).ToString());
         GUIPropertyManager.SetProperty("#TV.Record.percent2", "0");
         GUIPropertyManager.SetProperty("#TV.Record.percent3", "0");
-        GUIPropertyManager.SetProperty("#TV.View.channel", TvRecorded.ActiveRecording().ReferencedChannel().DisplayName + " (" + GUILocalizeStrings.Get(949) + ")");
+        GUIPropertyManager.SetProperty("#TV.View.channel", TvRecorded.ActiveRecording().ReferencedChannel().DisplayName + " (" + GUILocalizeStrings.Get(682) + ")");
         GUIPropertyManager.SetProperty("#TV.View.title", g_Player.currentTitle);
         GUIPropertyManager.SetProperty("#TV.View.description", g_Player.currentDescription);
 
