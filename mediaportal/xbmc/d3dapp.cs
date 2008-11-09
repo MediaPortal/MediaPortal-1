@@ -78,7 +78,7 @@ namespace MediaPortal
     protected bool _resizeOngoing = false; // this is true only when user is resizing the form
     protected bool _ignoreNextResizeEvent = false; // True if next event should be ignored (min/max happened)
     protected FormWindowState _windowState = FormWindowState.Normal;
-    protected Size _clientSize = new Size(0,0); 
+    protected Size _clientSize = new Size(0, 0);
     protected bool _minimizeOnStartup = false;  // Minimize to tray on startup and on gui exit
     protected bool _minimizeOnGuiExit = false;
     protected bool _shuttingDown = false;
@@ -119,7 +119,7 @@ namespace MediaPortal
     internal static bool _windowedOverride = false;
     internal static int _screenNumberOverride = -1;// 0 or higher means it is set
     protected bool _toggleFullWindowed = false;
-    
+
     protected Caps Caps
     {
       get { return graphicsCaps; }
@@ -292,8 +292,7 @@ namespace MediaPortal
         {
           UseMillisecondTiming = false;
         }
-      }
-      catch (Exception)
+      } catch (Exception)
       {
         UseMillisecondTiming = false;
         Log.Info("Exception");
@@ -453,13 +452,11 @@ namespace MediaPortal
         InitializeEnvironment();
         // Initialize the app's custom scene stuff
         OneTimeSceneInitialization();
-      }
-      catch (SampleException d3de)
+      } catch (SampleException d3de)
       {
         HandleSampleException(d3de, ApplicationMessage.ApplicationMustExit);
         return false;
-      }
-      catch
+      } catch
       {
         HandleSampleException(new SampleException(), ApplicationMessage.ApplicationMustExit);
         return false;
@@ -565,7 +562,7 @@ namespace MediaPortal
           break;// no need to loop again.. result would be the same
       }
 
-      EndWindowedDeviceComboSearch:
+    EndWindowedDeviceComboSearch:
       if (bestDeviceCombo == null)
       {
         return false;
@@ -675,7 +672,7 @@ namespace MediaPortal
           break;// no need to loop again.. result would be the same
       }
 
-      EndFullscreenDeviceComboSearch:
+    EndFullscreenDeviceComboSearch:
       if (bestDeviceCombo == null)
       {
         return false;
@@ -786,9 +783,9 @@ namespace MediaPortal
         presentParams.Windowed = true;
       }
       else
-      {                
+      {
         graphicsSettings.DisplayMode = GUIGraphicsContext.currentFullscreenAdapterInfo.CurrentDisplayMode;
-        
+
         presentParams.MultiSample = graphicsSettings.FullscreenMultisampleType;
         presentParams.MultiSampleQuality = graphicsSettings.FullscreenMultisampleQuality;
         presentParams.AutoDepthStencilFormat = graphicsSettings.FullscreenDepthStencilBufferFormat;
@@ -836,7 +833,7 @@ namespace MediaPortal
       {
         BuildPresentParamsFromSettings(true);
       }
-      else 
+      else
       {
         BuildPresentParamsFromSettings(bWindowed);
       }
@@ -861,8 +858,7 @@ namespace MediaPortal
         {
           Log.Debug("D3D: Switched to exclusive mode successfully");
         }
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         if (windowed)
         {
@@ -893,8 +889,7 @@ namespace MediaPortal
             GUIFontManager.LoadFonts(Config.GetFile(Config.Dir.Skin, m_strSkin, "fonts.xml"));
             GUIFontManager.InitializeDeviceObjects();
           }
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
           Log.Warn("D3D: mode failed - {0}", e.ToString());
         }
@@ -922,8 +917,7 @@ namespace MediaPortal
       {
         Log.Info("d3dapp: Graphic adapter '{0}' is using driver version '{1}'", adapterInfo.AdapterDetails.Description.Trim(), adapterInfo.AdapterDetails.DriverVersion.ToString());
         Log.Info("d3dapp: Pixel shaders supported: {0} (Version: {1}), Vertex shaders supported: {2} (Version: {3})", deviceInfo.Caps.PixelShaderCaps.NumberInstructionSlots, deviceInfo.Caps.PixelShaderVersion.ToString(), deviceInfo.Caps.VertexShaderCaps.NumberTemps, deviceInfo.Caps.VertexShaderVersion.ToString());
-      }
-      catch (Exception lex)
+      } catch (Exception lex)
       {
         Log.Warn("d3dapp: Error logging graphic device details - {0}", lex.Message);
       }
@@ -968,7 +962,7 @@ namespace MediaPortal
                                                                                createFlags | CreateFlags.MultiThreaded,
                                                                                presentParams);
         }
-        
+
         // Cache our local objects
         //renderState = GUIGraphicsContext.DX9Device.RenderState;
         //sampleState = GUIGraphicsContext.DX9Device.SamplerState;
@@ -1062,8 +1056,7 @@ namespace MediaPortal
           InitializeDeviceObjects();
           //OnDeviceReset(null, null);
           active = true;
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
           Log.Error("D3D: InitializeDeviceObjects - Exception: {0}", ex.ToString());
           // Cleanup before we try again
@@ -1074,8 +1067,7 @@ namespace MediaPortal
           if (this.Disposing)
             return;
         }
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Error(ex);
         // If that failed, fall back to the reference rasterizer
@@ -1104,7 +1096,7 @@ namespace MediaPortal
     /// Creates DirectX9 Ex device in unmanaged code as MDX is not supporting DX9 Ex 
     /// This device type is available only in Vista or later OS
     /// </summary>
-    private void CreateDirectX9ExDevice(CreateFlags createFlags)  
+    private void CreateDirectX9ExDevice(CreateFlags createFlags)
     {
       D3DPRESENT_PARAMETERS param = new D3DPRESENT_PARAMETERS();
       param.Windowed = 0;
@@ -1136,7 +1128,7 @@ namespace MediaPortal
       Direct3D.Direct3DCreate9Ex(32, out m_d3dEx);
       IntPtr d3dEx = Marshal.GetIUnknownForObject(m_d3dEx);
       Marshal.Release(d3dEx);
-   
+
       D3DDISPLAYMODEEX displaymodeEx = new D3DDISPLAYMODEEX();
 
       displaymodeEx.Size = (uint)Marshal.SizeOf(displaymodeEx);
@@ -1148,11 +1140,11 @@ namespace MediaPortal
       IntPtr prt = Marshal.AllocHGlobal(Marshal.SizeOf(displaymodeEx));
       Marshal.StructureToPtr(displaymodeEx, prt, true);
 
-      int hr = m_d3dEx.CreateDeviceEx(graphicsSettings.AdapterOrdinal, graphicsSettings.DevType, 
+      int hr = m_d3dEx.CreateDeviceEx(graphicsSettings.AdapterOrdinal, graphicsSettings.DevType,
         windowed ? ourRenderTarget.Handle : this.Handle, createFlags | CreateFlags.MultiThreaded, ref param,
         windowed ? IntPtr.Zero : prt, out dev);
       GUIGraphicsContext.DX9Device = new Device(dev);
-      
+
       // Reset must be done to get the MDX device internal state up to date
       GUIGraphicsContext.DX9Device.Reset(presentParams);
     }
@@ -1168,8 +1160,7 @@ namespace MediaPortal
       {
         if (UseMillisecondTiming)
           timeEndPeriod(MILLI_SECONDS_TIMER);
-      }
-      catch (Exception)
+      } catch (Exception)
       { }
 
       UseMillisecondTiming = false;
@@ -1404,18 +1395,17 @@ namespace MediaPortal
         try
         {
 #endif
-        if ((GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST) || (ActiveForm != this))
-        {
-          // Yield some CPU time to other processes
+          if ((GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST) || (ActiveForm != this))
+          {
+            // Yield some CPU time to other processes
 #if !PROFILING
-          Thread.Sleep(100); // 100 milliseconds
+            Thread.Sleep(100); // 100 milliseconds
 #endif
-        }
-        Render3DEnvironment();
+          }
+          Render3DEnvironment();
 #if DEBUG
 #else
-        }
-        catch (Exception ee)
+        } catch (Exception ee)
         {
           Log.Info("D3D: Exception {0}", ee);
           System.Windows.Forms.MessageBox.Show("An exception has occurred.  MediaPortal has to be closed.\r\n\r\n" + ee.ToString(), "Exception",
@@ -1464,23 +1454,21 @@ namespace MediaPortal
           Log.Debug("d3dapp: RecoverDevice called");
           // Test the cooperative level to see if it's okay to render
           GUIGraphicsContext.DX9Device.TestCooperativeLevel();
-        }
-        catch (DeviceLostException)
+        } catch (DeviceLostException)
         {
           // If the device was lost, do not render until we get it back
           isHandlingSizeChanges = false;
           isWindowActive = false;
           Log.Debug("d3dapp: DeviceLostException");
 
-          return;          
-        }
-        catch (DeviceNotResetException)
+          return;
+        } catch (DeviceNotResetException)
         {
           Log.Debug("d3dapp: DeviceNotResetException");
           m_bNeedReset = true;
         }
         if (m_bNeedReset)
-        {          
+        {
           // Check if the device needs to be resized.
 
           // If we are windowed, read the desktop mode and use the same format for
@@ -1509,8 +1497,7 @@ namespace MediaPortal
 
             GUIGraphicsContext.DX9Device.Reset(GUIGraphicsContext.DX9Device.PresentationParameters);
             m_bNeedReset = false;
-          }
-          catch (Exception ex)
+          } catch (Exception ex)
           {
             Log.Error("d3dapp: Reset failed - {0}/{1}", ex.Message);
             GUIGraphicsContext.DX9Device.DeviceLost -= new System.EventHandler(this.OnDeviceLost);
@@ -1539,8 +1526,7 @@ namespace MediaPortal
         //if (!GUIGraphicsContext.Vmr9Active)
         if (!GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
           Render(GUIGraphicsContext.TimePassed);
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Error("d3dapp: Exception: {0}", ex);
       }
@@ -1854,8 +1840,7 @@ namespace MediaPortal
 
         handle.Set();
         handle.Close();
-      }
-      catch
+      } catch
       { }
       if (GUIGraphicsContext.UseSeparateRenderThread)
       {
@@ -1870,11 +1855,11 @@ namespace MediaPortal
 
     private void ProcessLoop()
     {
-      while(true)
+      while (true)
       {
         OnProcess();
         FrameMove();
-        Thread.Sleep(50); 
+        Thread.Sleep(50);
       }
     }
 
@@ -1964,8 +1949,7 @@ namespace MediaPortal
             }
 
             return true;
-          }
-          catch (Exception e)
+          } catch (Exception e)
           {
             Log.Error("Error recalling last active module '{0}' - {1}", lastActiveModule, e.Message);
             //otherwise ignore.
@@ -2283,15 +2267,16 @@ namespace MediaPortal
       }
       base.OnResizeEnd(e);
     }
-    
+
     /// <summary>
     /// Handles the OnSizeChanged event, which isn't the same as the resize event.
     /// </summary>
     /// <param name="e">Event arguments</param>
     protected override void OnSizeChanged(EventArgs e)
     {
-      if (GUIGraphicsContext.IsDirectX9ExUsed() && this.Visible && !_resizeOngoing && !_toggleFullWindowed)
+      if (GUIGraphicsContext.IsDirectX9ExUsed() && this.Visible && !_resizeOngoing && !_toggleFullWindowed && !_ignoreNextResizeEvent && this.WindowState == _windowState)
       {
+        Log.Info("Main: OnSizeChanged - Resetting device");
         SwitchFullScreenOrWindowed(false);
         OnDeviceReset(null, null);
       }
@@ -2365,8 +2350,7 @@ namespace MediaPortal
         }
         active = !(this.WindowState == FormWindowState.Minimized);
         base.OnResize(e);
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Error("d3dapp: An error occured in OnResize - {0}", ex.Message);
       }
@@ -2395,7 +2379,7 @@ namespace MediaPortal
       if (GUIGraphicsContext.IsDirectX9ExUsed())
       {
         // Window maximise / restore button pressed 
-        if (WindowState != _windowState && 
+        if (WindowState != _windowState &&
             WindowState != FormWindowState.Minimized)
         {
           _windowState = WindowState;
@@ -2577,7 +2561,7 @@ namespace MediaPortal
       {
         Log.Info("D3D: Exception: {0}", ex.ToString());
 #else
-      catch (Exception)
+ catch (Exception)
       {
 #endif
       }
@@ -2811,32 +2795,32 @@ namespace MediaPortal
           OnProcess();
           FrameMove();
         }
-          StartFrameClock();
-          FullRender();
-          // rtv: trying to unify the FPS-Handling for all modules despite VMR renderer
-          //if (g_Player.Playing /*&& !g_Player.IsExternalPlayer*/ && g_Player.IsMusic)         
-          //if (g_Player.Playing /*&& !g_Player.IsExternalPlayer*/ && g_Player.IsMusic && !g_Player.HasVideo)
-          //if (g_Player.Playing && !g_Player.IsExternalPlayer && !g_Player.IsMusic && !g_Player.IsVideo)
-          //{
-          //  if (GUIGraphicsContext.CurrentFPS < GUIGraphicsContext.MaxFPS)
-          //    loopCount++;
-          //  //else if (loopCount > 0)
-          //  else if (GUIGraphicsContext.CurrentFPS > GUIGraphicsContext.MaxFPS)
-          //    loopCount--;
+        StartFrameClock();
+        FullRender();
+        // rtv: trying to unify the FPS-Handling for all modules despite VMR renderer
+        //if (g_Player.Playing /*&& !g_Player.IsExternalPlayer*/ && g_Player.IsMusic)         
+        //if (g_Player.Playing /*&& !g_Player.IsExternalPlayer*/ && g_Player.IsMusic && !g_Player.HasVideo)
+        //if (g_Player.Playing && !g_Player.IsExternalPlayer && !g_Player.IsMusic && !g_Player.IsVideo)
+        //{
+        //  if (GUIGraphicsContext.CurrentFPS < GUIGraphicsContext.MaxFPS)
+        //    loopCount++;
+        //  //else if (loopCount > 0)
+        //  else if (GUIGraphicsContext.CurrentFPS > GUIGraphicsContext.MaxFPS)
+        //    loopCount--;
 
-          //  sleepCount++;
-          //  if (sleepCount >= loopCount)
-          //  {
-          //    WaitForFrameClock();
-          //    sleepCount = 0;
-          //    UpdateStats();
-          //  }
-          //}
-          //else
-          {
-            loopCount = 1;
-            WaitForFrameClock();
-          }
+        //  sleepCount++;
+        //  if (sleepCount >= loopCount)
+        //  {
+        //    WaitForFrameClock();
+        //    sleepCount = 0;
+        //    UpdateStats();
+        //  }
+        //}
+        //else
+        {
+          loopCount = 1;
+          WaitForFrameClock();
+        }
         if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
           break;
         // Suggested by gibman. Let's see if this works. Can't be bad  
@@ -3227,7 +3211,7 @@ namespace MediaPortal
     [SuppressUnmanagedCodeSecurity] // We won't use this maliciously
     [DllImport("User32.dll", CharSet = CharSet.Auto)]
     public static extern void DisableProcessWindowsGhosting();
-    
+
     [SuppressUnmanagedCodeSecurity] // We won't use this maliciously
     [DllImport("winmm.dll")]
     public static extern IntPtr timeBeginPeriod(uint period);
