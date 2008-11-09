@@ -118,13 +118,20 @@ namespace TvLibrary.Implementations.DVB
 
     public override void FreeSubChannelContinueGraph(int id)
     {
-      base.FreeSubChannelContinueGraph(id);
-
       if (_mdplugs != null)
       {
-        _mdplugs.FreeChannel(_mapSubChannels[id].CurrentChannel.Name);
+        if (_mapSubChannels.ContainsKey(id))
+        {
+          BaseSubChannel subch = _mapSubChannels[id];
+          if (subch != null && subch.CurrentChannel != null)
+          {
+            _mdplugs.FreeChannel(subch.CurrentChannel.Name);
+          }
+        }
         //_mdplugs.FreeAllChannels();
       }
+
+      base.FreeSubChannelContinueGraph(id);      
     }
 
     public override void FreeSubChannel(int id)

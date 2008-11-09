@@ -625,10 +625,14 @@ namespace TvLibrary.Implementations.DVB
         Dictionary<int, ConditionalAccessContext>.Enumerator enSubch = _mapSubChannels.GetEnumerator() ;
         while (enSubch.MoveNext())
         {
+          
           ArrayList enPid = enSubch.Current.Value.HwPids ;
-          for (int i = 0; i < (int)enPid.Count; ++i)
+          if (enPid != null)
           {
-            if (!HwPids.Contains(enPid[i])) HwPids.Add(enPid[i]);
+            for (int i = 0; i < (int)enPid.Count; ++i)
+            {
+              if (!HwPids.Contains(enPid[i])) HwPids.Add(enPid[i]);
+            }
           }
         }
 
