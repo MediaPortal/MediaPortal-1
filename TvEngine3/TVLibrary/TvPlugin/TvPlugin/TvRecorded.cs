@@ -745,6 +745,10 @@ namespace TvPlugin
       {
         TvServer server = new TvServer();
         VirtualCard card;
+        if (aRecording.ReferencedChannel() == null)
+        {
+          return false;
+        }
         bool isRec = server.IsRecording(aRecording.ReferencedChannel().Name, out card);
 
         if (isRec)
@@ -804,8 +808,13 @@ namespace TvPlugin
 
           if (!File.Exists(strLogo))
           {
-            strLogo = Utils.GetCoverArt(Thumbs.TVChannel, aRecording.ReferencedChannel().DisplayName);
-            if (!File.Exists(strLogo))
+            Channel refCh = aRecording.ReferencedChannel();
+            if (refCh != null)
+            {
+              strLogo = Utils.GetCoverArt(Thumbs.TVChannel, aRecording.ReferencedChannel().DisplayName);
+            }
+            
+            if (refCh == null  || !File.Exists(strLogo))
               strLogo = aRecording.TimesWatched > 0 ? strDefaultSeenIcon : strDefaultUnseenIcon;
           }
           else
@@ -831,7 +840,8 @@ namespace TvPlugin
       }
       catch (NullReferenceException singleex)
       {
-        Log.Warn("TVRecorded: error building item from recording {0} - {1}", aRecording.FileName, singleex.Message);
+        item = null;
+        Log.Warn("TVRecorded: error building item from recording {0} - {1}", aRecording.FileName, singleex.Message + " stack: " + singleex.StackTrace);
       }
 
       return item;
@@ -989,7 +999,12 @@ namespace TvPlugin
         GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
         if (null == dlgYesNo) return false;
         dlgYesNo.SetHeading(GUILocalizeStrings.Get(900)); //resume movie?
-        dlgYesNo.SetLine(1, rec.ReferencedChannel().DisplayName);
+        string chName = "";
+        if (rec.ReferencedChannel() != null)
+        {
+          chName = rec.ReferencedChannel().DisplayName;
+        }
+        dlgYesNo.SetLine(1, chName);
         dlgYesNo.SetLine(2, rec.Title);
         dlgYesNo.SetLine(3, GUILocalizeStrings.Get(936) + Utils.SecondsToHMSString(rec.StopTime));
         dlgYesNo.SetDefaultToYes(true);
@@ -1177,7 +1192,14 @@ namespace TvPlugin
       {
         if (rec.TimesWatched > 0) dlgYesNo.SetHeading(GUILocalizeStrings.Get(653));
         else dlgYesNo.SetHeading(GUILocalizeStrings.Get(820));
-        dlgYesNo.SetLine(1, rec.ReferencedChannel().DisplayName);
+        string chName = "";
+
+        if (rec.ReferencedChannel() != null)
+        {
+          chName = rec.ReferencedChannel().DisplayName;
+        }
+
+        dlgYesNo.SetLine(1, chName);
         dlgYesNo.SetLine(2, rec.Title);
         dlgYesNo.SetLine(3, string.Empty);
         dlgYesNo.DoModal(GetID);
