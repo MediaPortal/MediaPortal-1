@@ -269,7 +269,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
       this.Name = "PluginSetupForm";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-      this.Text = "My Last.fm Radio - Setup";
+      this.Text = "Last.fm Radio - Setup";
       this.panelBannerAlign.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxBanner)).EndInit();
       this.groupBoxSettings.ResumeLayout(false);

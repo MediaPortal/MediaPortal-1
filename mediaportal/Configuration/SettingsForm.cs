@@ -1205,7 +1205,7 @@ namespace MediaPortal.Configuration
         }
         // is last.fm enabled but audioscrobbler is not? 
         bool audioScrobblerOn = xmlreader.GetValueAsBool("plugins", "Audioscrobbler", false);
-        bool lastFmOn = xmlreader.GetValueAsBool("plugins", "My Last.fm Radio", false);
+        bool lastFmOn = xmlreader.GetValueAsBool("plugins", "Last.fm Radio", false);
         if (lastFmOn && !audioScrobblerOn)
         {
           MessageBox.Show("Please configure the Audioscrobbler plugin to use Last.fm radio", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
