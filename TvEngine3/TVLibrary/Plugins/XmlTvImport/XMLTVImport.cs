@@ -608,10 +608,10 @@ namespace TvEngine
                         seriesNum = serEpNum.Substring(0, dot1);
                         episodeNum = serEpNum.Substring(dot1 + 1, dot2 - (dot1 + 1));
                         episodePart = serEpNum.Substring(dot2 + 1, serEpNum.Length - (dot2 + 1));
-
-                        seriesNum = CorrectEpisodeNum(seriesNum);
-                        episodeNum = CorrectEpisodeNum(episodeNum);
-                        episodePart = CorrectEpisodeNum(episodePart);
+                        //xmltv_ns is theorically zero-based number will be increased by one
+                        seriesNum = CorrectEpisodeNum(seriesNum,1);
+                        episodeNum = CorrectEpisodeNum(episodeNum,1);
+                        episodePart = CorrectEpisodeNum(episodePart,1);
                       }
                       else if (nodeEpisodeNumSystem == "onscreen")
                       {
@@ -619,14 +619,14 @@ namespace TvEngine
                         serEpNum = ConvertHTMLToAnsi(nodeEpisodeNum);
                         int num1 = serEpNum.IndexOf("#", 0);
                         if (num1 < 0) num1 = 0;
-                        episodeNum = CorrectEpisodeNum(serEpNum.Substring(num1, serEpNum.Length - num1));
+                        episodeNum = CorrectEpisodeNum(serEpNum.Substring(num1, serEpNum.Length - num1),0);
                       }
                     }
                     else  // fixing mantis bug 1486: XMLTV import doesn't take episode number from TVGuide.xml made by WebEPG 
                     {
                       // example: '5' like WebEPG is creating
                       serEpNum = ConvertHTMLToAnsi(nodeEpisodeNum.Replace(" ", ""));
-                      episodeNum = CorrectEpisodeNum(serEpNum);
+                      episodeNum = CorrectEpisodeNum(serEpNum,0);
                     }
                   }
 
@@ -851,8 +851,15 @@ namespace TvEngine
       return result;
     }
 
-    string CorrectEpisodeNum(string episodenum)
+    /// <summary>
+    /// Parse and correct ep. # in the episode string
+    /// </summary>
+    /// <param name="episodenum"></param>
+    /// <param name="nodeEpisodeNumSystemBase">int to add to the parsed episode num (depends on 0-based or not xmltv files)</param>
+    /// <returns></returns>
+    string CorrectEpisodeNum(string episodenum, int nodeEpisodeNumSystemBase)
     {
+
       if(episodenum == "")
         return episodenum;
 
@@ -864,7 +871,7 @@ namespace TvEngine
         try
         {
           int epnum = Convert.ToInt32(episodenum);
-          return Convert.ToString(epnum + 1);
+          return Convert.ToString(epnum + nodeEpisodeNumSystemBase);
         }
         catch (Exception)
         {
@@ -878,7 +885,7 @@ namespace TvEngine
           // Slash found -> assume it's formatted as <episode number>/<episodes>
           int epnum = Convert.ToInt32(episodenum.Substring(0, slashpos));
           int epcount = Convert.ToInt32(episodenum.Substring(slashpos + 1));
-          return Convert.ToString(epnum + 1) + "/" + Convert.ToString(epcount);
+          return Convert.ToString(epnum + nodeEpisodeNumSystemBase) + "/" + Convert.ToString(epcount);
         }
         catch (Exception)
         {
