@@ -183,10 +183,13 @@ namespace MediaPortal.GUI.Radio
 
     public override int GetFocusControlId()
     {
-      if (_cursorX >= 0) return 1;
-      if (GetControl((int)Controls.SPINCONTROL_DAY).Focus == true) return (int)Controls.SPINCONTROL_DAY;
-      if (GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL).Focus == true) return (int)Controls.SPINCONTROL_TIME_INTERVAL;
-      return -1;
+      int focusedId = base.GetFocusControlId();
+      if (_cursorX >= 0 || focusedId == (int)Controls.SPINCONTROL_DAY || focusedId == (int)Controls.SPINCONTROL_TIME_INTERVAL)
+      {
+        return focusedId;
+      }
+      else
+        return -1;
     }
 
     protected void Initialize()
@@ -215,7 +218,7 @@ namespace MediaPortal.GUI.Radio
           break;
 
         case Action.ActionType.ACTION_SELECT_ITEM:
-          if (GetFocusControlId() == 1)
+          if (GetFocusControlId() != -1 && _cursorX >= 0)
           {
             if (_cursorY == 0)
             {
