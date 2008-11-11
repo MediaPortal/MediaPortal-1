@@ -1763,9 +1763,12 @@ namespace MediaPortal.GUI.TV
 
             if (program.IsRunningAt(dt))
             {
-              img.TexutureNoFocusLeftName = "tvguide_button_left.png";
-              img.TexutureNoFocusMidName = "tvguide_button_middle.png";
-              img.TexutureNoFocusRightName = "tvguide_button_right.png";
+              if (img.TexutureFocusMidName != "tvguide_recButton_Focus_middle.png")
+              {
+                img.TexutureNoFocusLeftName = "tvguide_button_left.png";
+                img.TexutureNoFocusMidName = "tvguide_button_middle.png";
+                img.TexutureNoFocusRightName = "tvguide_button_right.png";
+              }
               if (selectCurrentShow && iChannel == _cursorX)
               {
                 _cursorY = iProgram + 1;
