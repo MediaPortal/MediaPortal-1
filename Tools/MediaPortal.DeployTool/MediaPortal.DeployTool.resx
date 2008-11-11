@@ -363,16 +363,16 @@ The PC will then act as dedicated TV-Server and provide other PC's in your LAN w
 (filename should be closed to the proposed one)</value>
   </data>
   <data name="ManualDownload_labelDesc" xml:space="preserve">
-    <value>Hit "continue" when you finished downloading the requested file</value>
+    <value>Hit "continue" when you finished downloading the requested file.</value>
   </data>
   <data name="ManualDownload_labelHeading" xml:space="preserve">
-    <value>You have to manually download the following file</value>
+    <value>You have to manually download the following file:</value>
   </data>
   <data name="ManualDownload_linkDir" xml:space="preserve">
     <value>Open directory</value>
   </data>
   <data name="ManualDownload_linkURL" xml:space="preserve">
-    <value>Link</value>
+    <value>Download link</value>
   </data>
   <data name="ManualDownload_Title" xml:space="preserve">
     <value>Manual download</value>
