@@ -830,15 +830,8 @@ namespace MediaPortal.Util
       }
       else
       {
-        try
-        {
-          strDirs = System.IO.Directory.GetDirectories(strDir + @"\");
-          strFiles = System.IO.Directory.GetFiles(strDir + @"\");
-        }
-        catch (Exception)
-        {
-        }
-
+        strDirs = Utils.GetDirectories(strDir + @"\");
+        strFiles = Utils.GetFiles(strDir + @"\");
 
         if (strDirs != null)
         {
@@ -978,15 +971,9 @@ namespace MediaPortal.Util
 
       string[] strDirs = null;
       string[] strFiles = null;
-      try
-      {
-        strDirs = System.IO.Directory.GetDirectories(strDir + @"\");
-        strFiles = System.IO.Directory.GetFiles(strDir + @"\");
-      }
-      catch (Exception)
-      {
-      }
 
+      strDirs = Utils.GetDirectories(strDir + @"\");
+      strFiles = Utils.GetFiles(strDir + @"\");
 
       GUIListItem item = null;
       if (!IsRootShare(strDir) || VirtualShare)
@@ -1717,13 +1704,10 @@ namespace MediaPortal.Util
         }
 
         if (!doesContainRedBookData)
-          try
-          {
-            strDirs = System.IO.Directory.GetDirectories(strDir + @"\");
-            strFiles = System.IO.Directory.GetFiles(strDir + @"\");
-          }
-          catch (Exception)
-          { }
+        {
+          strDirs = Utils.GetDirectories(strDir + @"\");
+          strFiles = Utils.GetFiles(strDir + @"\");
+        }
 
         if (strDirs != null)
         {
@@ -2002,15 +1986,9 @@ namespace MediaPortal.Util
 
       string[] strDirs = null;
       string[] strFiles = null;
-      try
-      {
-        strDirs = System.IO.Directory.GetDirectories(strDir + @"\");
-        strFiles = System.IO.Directory.GetFiles(strDir + @"\");
-      }
-      catch (Exception)
-      {
-      }
 
+      strDirs = Utils.GetDirectories(strDir + @"\");
+      strFiles = Utils.GetFiles(strDir + @"\");
 
       if (!IsRootShare(strDir) || VirtualShare)
       {

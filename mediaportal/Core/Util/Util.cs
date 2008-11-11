@@ -97,6 +97,25 @@ namespace MediaPortal.Util
     [DllImport("kernel32.dll", SetLastError = true)]
     static extern bool CloseHandle(IntPtr hObject);
 
+    [DllImport("mpr.dll")]
+    static extern int WNetAddConnection2A(ref NetResource pstNetRes, string psPassword, string psUsername, int piFlags);
+
+    private const int CONNECT_UPDATE_PROFILE = 0x00000001;
+    private const int RESOURCETYPE_DISK = 0x1;
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct NetResource
+    {
+      public int Scope;
+      public int Type;
+      public int DisplayType;
+      public int Usage;
+      public string LocalName;
+      public string RemoteName;
+      public string Comment;
+      public string Provider;
+    }
+
     public delegate void UtilEventHandler(Process proc, bool waitForExit);
     public static event UtilEventHandler OnStartExternal = null;	// Event: Start external process / waeberd & mPod
     public static event UtilEventHandler OnStopExternal = null;		// Event: Stop external process	/ waeberd & mPod
@@ -728,6 +747,134 @@ namespace MediaPortal.Util
       string strDrive = strPath.Substring(0, 2);
       if (getDriveType(strDrive) == 4) return true;
       return false;
+    }
+
+    public static bool IsPersistentNetwork(string strPath)
+    {
+      //IsNetwork doesn't work correctly, when the drive is disconnected (for whatever reason)
+      RegistryKey regKey = Registry.CurrentUser.OpenSubKey(string.Format(@"Network\{0}", strPath.Substring(0, 1)));
+
+      return (regKey != null);
+    }
+
+    public static bool TryReconnectNetwork(string strPath)
+    {
+      string driveLetter = strPath.Substring(0, 1);
+
+      try
+      {
+        RegistryKey regKey = Registry.CurrentUser.OpenSubKey(string.Format(@"Network\{0}", driveLetter));
+        if (regKey == null)
+          return false;
+
+        //we can't restore drives with stored auth data, so check it
+        object userName = regKey.GetValue("UserName", null);
+        if (userName != null)
+        {
+          switch (regKey.GetValueKind("UserName"))
+          {
+            case RegistryValueKind.DWord:
+              if ((int)userName != 0)
+                return false;
+
+              break;
+            case RegistryValueKind.String:
+              if (userName.ToString() != string.Empty)
+                return false;
+
+              break;
+          }
+        }
+
+        object remotePath = regKey.GetValue("RemotePath", null);
+        if (remotePath == null)
+          return false;
+
+        NetResource netRes = new NetResource();
+
+        netRes.Scope = 2;
+        netRes.Type = RESOURCETYPE_DISK;
+        netRes.DisplayType = 3;
+        netRes.Usage = 1;
+        netRes.RemoteName = remotePath.ToString();
+        netRes.LocalName = driveLetter + ":";
+
+        WNetAddConnection2A(ref netRes, null, null, CONNECT_UPDATE_PROFILE);
+      }
+      catch (Exception exp)
+      {
+        Log.Error("Could not reconnect network drive '{0}{1}'. Error: {2}", driveLetter, ":", exp.Message);
+
+        return false;
+      }
+
+      return true;
+    }
+
+    public static string[] GetDirectories(string path)
+    {
+      string[] dirs = null;
+
+      try
+      {
+        dirs = System.IO.Directory.GetDirectories(path);
+      }
+      catch (DirectoryNotFoundException)
+      {
+        if (Utils.IsPersistentNetwork(path))
+        {
+          if (Utils.TryReconnectNetwork(path))
+          {
+            try
+            {
+              dirs = System.IO.Directory.GetDirectories(path);
+            }
+            catch (Exception exp)
+            {
+              Log.Error("Could not open directory '{0}'. Error: {1}", path, exp.Message);
+            }
+          }
+        }
+      }
+      catch (Exception exp)
+      {
+        Log.Error("Could not open directory '{0}'. Error: {1}", path, exp.Message);
+      }
+
+      return dirs;
+    }
+
+    public static string[] GetFiles(string path)
+    {
+      string[] files = null;
+
+      try
+      {
+        files = System.IO.Directory.GetFiles(path);
+      }
+      catch (DirectoryNotFoundException)
+      {
+        if (Utils.IsPersistentNetwork(path))
+        {
+          if (Utils.TryReconnectNetwork(path))
+          {
+            try
+            {
+              files = System.IO.Directory.GetFiles(path);
+            }
+            catch (Exception exp)
+            {
+              Log.Error("Could not open directory '{0}'. Error: {1}", path, exp.Message);
+            }
+          }
+        }
+      }
+      catch (Exception exp)
+      {
+        Log.Error("Could not open directory '{0}'. Error: {1}", path, exp.Message);
+      }
+
+      return files;
     }
 
     public static bool IsHD(string strPath)
