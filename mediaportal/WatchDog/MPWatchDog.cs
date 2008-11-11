@@ -244,7 +244,7 @@ namespace WatchDog
     void PerformPostTestActions()
     {
       setStatus("Busy performing post-test actions...");
-      PostTestActions pta = new PostTestActions(_tempDir,_zipFile);
+      PostTestActions pta = new PostTestActions(_tempDir,tbZipFile.Text);
       pta.Show();
 
       // give windows 1 sec to render the form
