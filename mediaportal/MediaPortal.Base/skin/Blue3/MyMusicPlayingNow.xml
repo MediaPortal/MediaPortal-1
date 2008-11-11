@@ -68,26 +68,37 @@
       <type>image</type>
       <description>nowplaying background</description>
       <id>0</id>
-      <posX>389</posX>
+      <posX>369</posX>
       <posY>75</posY>
-      <width>311</width>
-      <height>313</height>
-      <texture>Playing_cover.png</texture>
+      <width>341</width>
+      <height>303</height>
+      <texture>CDcover.png</texture>
       <animation effect="fade" time="150">WindowOpen</animation>
     </control>
     <control>
       <type>image</type>
       <description>album art image</description>
       <id>112</id>
-      <posX>405</posX>
-      <posY>100</posY>
-      <width>260</width>
-      <height>260</height>
+      <posX>418</posX>
+      <posY>87</posY>
+      <width>267</width>
+      <height>273</height>
       <texture>-</texture>
-      <keepaspectratio>yes</keepaspectratio>
+      <keepaspectratio>no</keepaspectratio>
       <centered>yes</centered>
       <zoom>yes</zoom>
     </control>
+     <control>
+            <type>image</type>
+            <description>nowplaying shine</description>
+            <id>0</id>
+           <posX>369</posX>
+      <posY>75</posY>
+      <width>341</width>
+      <height>303</height>
+            <texture>CDcover_shine.png</texture>
+            <animation effect="fade" time="150">WindowOpen</animation>
+        </control>
     <control>
       <type>fadelabel</type>
       <description>track label</description>
@@ -128,8 +139,8 @@
       <type>fadelabel</type>
       <description>year label</description>
       <id>0</id>
-      <posX>666</posX>
-      <posY>80</posY>
+      <posX>692</posX>
+      <posY>60</posY>
       <width>90</width>
       <label>#Play.Current.Year</label>
       <font>font14</font>
@@ -140,8 +151,8 @@
       <type>fadelabel</type>
       <description>year label</description>
       <id>0</id>
-      <posX>665</posX>
-      <posY>79</posY>
+      <posX>691</posX>
+      <posY>59</posY>
       <width>90</width>
       <label>#Play.Current.Year</label>
       <font>font14</font>
@@ -153,8 +164,8 @@
       <type>fadelabel</type>
       <description>album label</description>
       <id>0</id>
-      <posX>406</posX>
-      <posY>80</posY>
+      <posX>386</posX>
+      <posY>60</posY>
       <width>180</width>
       <label>#Play.Current.Album</label>
       <font>font14</font>
@@ -166,8 +177,8 @@
       <type>fadelabel</type>
       <description>album label</description>
       <id>0</id>
-      <posX>404</posX>
-      <posY>79</posY>
+      <posX>384</posX>
+      <posY>59</posY>
       <width>180</width>
       <label>#Play.Current.Album</label>
       <font>font14</font>
