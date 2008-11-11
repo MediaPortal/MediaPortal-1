@@ -89,7 +89,7 @@ namespace TvLibrary.Implementations.Analog
     private DsDevice _captureDevice;
     private DsDevice _videoEncoderDevice;
     private DsDevice _audioEncoderDevice;
-    private DsDevice _multiplexerDevice;    
+    private DsDevice _multiplexerDevice;
     private DsROTEntry _rotEntry = null;
     private ICaptureGraphBuilder2 _capBuilder;
     private IBaseFilter _filterTvTuner = null;
@@ -157,8 +157,6 @@ namespace TvLibrary.Implementations.Analog
         if (_graphState == GraphState.Idle)
         {
           BuildGraph();
-          // Use Dummy subchannel ID which isn't possible. We need to start the graph and check the abilities of the tuner.
-          RunGraph(-1);
         }
         IAMTVTuner tuner = _filterTvTuner as IAMTVTuner;
         AMTunerModeType tunerModes;
@@ -383,16 +381,22 @@ namespace TvLibrary.Implementations.Analog
 
     public override bool LockedInOnSignal()
     {
-      //problems with analogue cards.
-      return true;
-      /*
+      if (_filterTvTuner == null)
+      {
+        return true;
+      }
+      IAMTVTuner tvTuner = _filterTvTuner as IAMTVTuner;
+      AMTunerSignalStrength signalStrength;
+      if (tvTuner == null)
+      {
+        Log.Log.WriteFile("analog: Problem can't find analog tv tuner");
+        return true;
+      }
       bool isLocked = false;
       DateTime timeStart = DateTime.Now;
       TimeSpan ts = timeStart - timeStart;
       while (!isLocked && ts.TotalSeconds < 2)
       {
-        IAMTVTuner tvTuner = _filterTvTuner as IAMTVTuner;
-        AMTunerSignalStrength signalStrength;
         tvTuner.SignalPresent(out signalStrength);
         isLocked = (signalStrength == AMTunerSignalStrength.SignalPresent || signalStrength == AMTunerSignalStrength.HasNoSignalStrength);
 
@@ -412,8 +416,7 @@ namespace TvLibrary.Implementations.Analog
       {
         Log.Log.WriteFile("analog:  LockedInOnSignal ok");
       }
-      return isLocked;      
-      */
+      return isLocked;
     }
 
     /// <summary>
@@ -422,7 +425,10 @@ namespace TvLibrary.Implementations.Analog
     /// </summary>
     protected override void UpdateSignalQuality(bool force)
     {
-      if (!force)
+      _tunerLocked = false;
+      _signalLevel = 0;
+      _signalQuality = 0;
+      if (!force && _lastSignalUpdate != null)
       {
         TimeSpan ts = DateTime.Now - _lastSignalUpdate;
         if (ts.TotalMilliseconds < 5000 || _graphState == GraphState.Idle)
@@ -431,21 +437,28 @@ namespace TvLibrary.Implementations.Analog
           return;
         }
       }
-      
+
       IAMTVTuner tvTuner = _filterTvTuner as IAMTVTuner;
-      AMTunerSignalStrength signalStrength;
-      tvTuner.SignalPresent(out signalStrength);
-      _tunerLocked = (signalStrength == AMTunerSignalStrength.SignalPresent || signalStrength == AMTunerSignalStrength.HasNoSignalStrength);
-      
-      if (_tunerLocked)
+      if (tvTuner != null)
       {
-        _signalLevel = 100;
-        _signalQuality = 100;
+        AMTunerSignalStrength signalStrength;
+        tvTuner.SignalPresent(out signalStrength);
+        _tunerLocked = (signalStrength == AMTunerSignalStrength.SignalPresent || signalStrength == AMTunerSignalStrength.HasNoSignalStrength);
+
+        if (_tunerLocked)
+        {
+          _signalLevel = 100;
+          _signalQuality = 100;
+        }
+        else
+        {
+          _signalLevel = 0;
+          _signalQuality = 0;
+        }
       }
       else
       {
-        _signalLevel = 0;
-        _signalQuality = 0;
+        Log.Log.WriteFile("analog: Problem can't find analog tv tuner");
       }
     }
 
@@ -3436,7 +3449,7 @@ namespace TvLibrary.Implementations.Analog
           }
         }
         _mapSubChannels[subChannel].OnGraphStart();
-      }      
+      }
 
       if (graphRunning)
       {
@@ -3456,7 +3469,7 @@ namespace TvLibrary.Implementations.Analog
         if (!LockedInOnSignal())
         {
           throw new TvExceptionNoSignal("Unable to tune to channel - no signal");
-        } 
+        }
         _mapSubChannels[subChannel].OnGraphStarted();
       }
     }
