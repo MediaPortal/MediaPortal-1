@@ -82,6 +82,7 @@ namespace MediaPortal.Configuration.Sections
 			{
         "Name",
         "Date",
+        "Year",
         "Size",
         "Track",
         "Duration",

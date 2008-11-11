@@ -521,6 +521,7 @@ namespace MediaPortal.GUI.Music
       if (where == "rating") return "iRating";
       if (where == "favorites") return "iFavorite";
       if (where == "recently added") return "dateAdded";
+      if (where == "date") return "dateAdded";
       return null;
     }
 
@@ -550,7 +551,8 @@ namespace MediaPortal.GUI.Music
       if (filter.Where == "artist" || filter.Where == "albumartist" || filter.Where == "genre")
         return GetField(filter.Where);
 
-      if (filter.DefaultSort == "Date") return GetField("year");
+      if (filter.DefaultSort == "Date") return GetField("date");
+      if (filter.DefaultSort == "Year") return GetField("year");
       if (filter.DefaultSort == "Name") return GetField("title");
       if (filter.DefaultSort == "Duration") return "iDuration";
 
