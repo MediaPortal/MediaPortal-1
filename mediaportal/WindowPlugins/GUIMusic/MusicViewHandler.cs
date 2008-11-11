@@ -193,7 +193,9 @@ namespace MediaPortal.GUI.Music
 
       if (CurrentLevel > 0)
       {
-        whereClause = "where " + whereClause;
+        // When grouping is active, we need to omit the "where ";
+        if (!whereClause.Trim().StartsWith("group ") && whereClause.Trim() != "")
+          whereClause = "where " + whereClause;
       }
 
       //execute the query
@@ -207,7 +209,7 @@ namespace MediaPortal.GUI.Music
         // Handle the grouping of songs
         if (definition.SqlOperator == "group")
         {
-          string searchTable = table;        
+          string searchTable = table;
           string countField = searchField;   // when grouping on ALnums, we need to count the artists
           // We don't have an album table anymore, so change the table to search for to tracks here.
           if (table == "album")
@@ -232,7 +234,7 @@ namespace MediaPortal.GUI.Music
             break;
 
           case "album":
-              sql = String.Format("select strAlbum, strAlbumArtist, strPath from tracks ");
+            sql = String.Format("select strAlbum, strAlbumArtist, strPath from tracks ");
             if (whereClause != string.Empty) sql += "where " + whereClause;
             sql += " group by strAlbum";   // We need to group on Artist, to show Albums with same name for different artists
             if (orderClause != string.Empty) sql += orderClause;
@@ -297,9 +299,19 @@ namespace MediaPortal.GUI.Music
           int previousRestriction = 0;
           if (defPrevious.SqlOperator == "group")
             previousRestriction = Convert.ToInt16(defPrevious.Restriction);
-          string field = GetField(defCurrent.Where);
-          sql = String.Format("select UPPER(SUBSTR({0},1,{3})) IX, Count(distinct {0}), * from tracks {1} {2}",
-                                            field, whereClause, orderClause, previousRestriction + Convert.ToInt16(defCurrent.Restriction));
+
+          // Build correct table for search
+          string searchTable = GetTable(defCurrent.Where);
+          string searchField = GetField(defCurrent.Where);
+          string countField = searchField;
+          // We don't have an album table anymore, so change the table to search for to tracks here.
+          if (table == "album")
+          {
+            searchTable = "tracks";
+            countField = "strAlbumArtist";
+          }
+          sql = String.Format("select UPPER(SUBSTR({0},1,{1})) IX, Count(distinct {2}), * from {3} {4} {5}",
+                                            searchField, previousRestriction + Convert.ToInt16(defCurrent.Restriction), countField, searchTable, whereClause, orderClause);
 
           database.GetSongsByIndex(sql, out songs, CurrentLevel, table);
         }
@@ -308,7 +320,7 @@ namespace MediaPortal.GUI.Music
           // Now we need to check the previous filters, if we were already on the tracks table previously
           // In this case the from clause must contain the tracks table only
           string from = String.Format("{1} from {0}", table, GetField(defCurrent.Where));
-          for (int i = CurrentLevel; i > - 1; i--)
+          for (int i = CurrentLevel; i > -1; i--)
           {
             FilterDefinition filter = (FilterDefinition)currentView.Filters[i];
             if (filter.Where != table)
@@ -343,7 +355,7 @@ namespace MediaPortal.GUI.Music
 
           string selectedArtist = currentSong.Artist;
           Database.DatabaseUtility.RemoveInvalidChars(ref selectedArtist);
-        
+
           whereClause += String.Format("strAlbumArtist like '%| {0} |%'", selectedArtist);
         }
 
@@ -356,6 +368,17 @@ namespace MediaPortal.GUI.Music
 
     void BuildSelect(FilterDefinition filter, ref string whereClause, int filterLevel)
     {
+      // Clear the WhereClause, if the previous levels contained grouping. otherwise we get wrong results
+      if (CurrentLevel != filterLevel)
+      {
+        if (filterLevel > 0)
+        {
+          FilterDefinition filterPrevious = (FilterDefinition)currentView.Filters[filterLevel - 1];
+          if (filterPrevious.SqlOperator == "group")
+            whereClause = "";
+        }
+      }
+
       if (filter.SqlOperator == "group")
       {
         // Don't need to include the grouping value, when it was on the first level
@@ -377,7 +400,7 @@ namespace MediaPortal.GUI.Music
         if (whereClause != "") whereClause += " and ";
         string selectedValue = filter.SelectedValue;
         Database.DatabaseUtility.RemoveInvalidChars(ref selectedValue);
-        
+
         // If we have a multiple values field then we need to compare with like
         if (IsMultipleValueField(GetField(filter.Where)))
           whereClause += String.Format("{0} like '%| {1} |%'", GetField(filter.Where), selectedValue);
@@ -398,7 +421,7 @@ namespace MediaPortal.GUI.Music
         }
         if (whereClause != "")
           whereClause += " and ";
-        
+
         string restriction = filter.Restriction;
         restriction = restriction.Replace("*", "%");
         Database.DatabaseUtility.RemoveInvalidChars(ref restriction);
@@ -463,7 +486,7 @@ namespace MediaPortal.GUI.Music
         case "strAlbumArtist":
         case "strGenre":
           return true;
-        
+
         default:
           return false;
       }
