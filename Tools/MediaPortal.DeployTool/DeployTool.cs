@@ -127,7 +127,7 @@ namespace MediaPortal.DeployTool
         //
         else
         {
-          Process.Start(Application.StartupPath + "\\HelpContent\\SetupGuide\\SetupGuide.htm");
+          Process.Start(Application.StartupPath + "\\HelpContent\\QuickSetupGuide\\QuickSetupGuide.htm");
         }
         Close();
         return;

@@ -492,7 +492,7 @@
     <Content Include="Resources\MePo_download.png" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="HelpContent\SetupGuide\" />
+    <Folder Include="HelpContent\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
