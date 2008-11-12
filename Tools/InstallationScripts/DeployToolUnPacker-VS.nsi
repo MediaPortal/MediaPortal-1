@@ -109,7 +109,7 @@ Section
   File "${svn_TVServer}\Setup\Release\package-tvengine.exe"
 
   SetOutPath $INSTDIR\SetupGuide-Dateien
-  File /r /x .svn /x *.pdb /x *.vshost.exe "${svn_DeployTool}\bin\Release\SetupGuide-Dateien\*"
+  File "${svn_DeployTool}\bin\Release\SetupGuide-Dateien\*"
   
 SectionEnd
 
