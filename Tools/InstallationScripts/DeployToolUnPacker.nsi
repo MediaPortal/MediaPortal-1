@@ -41,8 +41,11 @@
 # INCLUDE
 !include "include-DotNetFramework.nsh"
 
+# BUILD options
+;!define BUILD_USING_VS
 
-# BUILD sources  , comment to disable the preBuild
+# BUILD sources
+; comment one of the following lines to disable the preBuild
 !define BUILD_MediaPortal
 !define BUILD_TVServer
 !define BUILD_DeployTool
@@ -52,11 +55,19 @@
 ;!define SVN_REVISION "$WCREV$"    ; that's the string in version txt, after SubWCRev has been launched
 !include "version.txt"
 
+!ifdef BUILD_USING_VS
+!system '"$%ProgramFiles%\Microsoft Visual Studio 8\Common7\IDE\devenv.com" /rebuild Release "${svn_DeployVersionSVN}\DeployVersionSVN.sln"' = 0
+!else
 !system '"$%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /target:Rebuild "${svn_DeployVersionSVN}\DeployVersionSVN.sln"' = 0
+!endif
 
 !ifdef BUILD_MediaPortal
 !system '"${svn_DeployVersionSVN}\DeployVersionSVN\bin\Release\DeployVersionSVN.exe" /svn="${svn_MP}"' = 0
-!system '"$%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /target:Rebuild /property:Configuration=Release;Platform=x86 "${svn_MP}\MediaPortal.sln"' = 0
+  !ifdef BUILD_USING_VS
+  !system '"$%ProgramFiles%\Microsoft Visual Studio 8\Common7\IDE\devenv.com" /rebuild "Release|x86" "${svn_MP}\MediaPortal.sln"' = 0
+  !else
+  !system '"$%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /target:Rebuild /property:Configuration=Release;Platform=x86 "${svn_MP}\MediaPortal.sln"' = 0
+  !endif
 !system '"${svn_DeployVersionSVN}\DeployVersionSVN\bin\Release\DeployVersionSVN.exe" /svn="${svn_MP}"  /revert' = 0
 !endif
 
@@ -109,7 +120,7 @@ Section
   File "${svn_TVServer}\Setup\Release\package-tvengine.exe"
 
   SetOutPath $INSTDIR\SetupGuide
-  File "${svn_DeployTool}\HelpContent\SetupGuide\*"
+  File /r /x .svn "${svn_DeployTool}\HelpContent\SetupGuide\*"
 
 SectionEnd
 
