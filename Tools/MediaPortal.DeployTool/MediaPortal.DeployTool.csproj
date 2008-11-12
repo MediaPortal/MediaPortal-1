@@ -468,11 +468,6 @@
   <ItemGroup>
     <Content Include="ApplicationLocations.xml">
     </Content>
-    <Content Include="HelpContent\SetupGuide\SetupGuide-Dateien\common.css" />
-    <Content Include="HelpContent\SetupGuide\SetupGuide-Dateien\common.js" />
-    <Content Include="HelpContent\SetupGuide\SetupGuide-Dateien\Fpatch.htm" />
-    <Content Include="HelpContent\SetupGuide\SetupGuide-Dateien\print.css" />
-    <Content Include="HelpContent\SetupGuide\SetupGuide.htm" />
     <Content Include="Install.ico" />
     <Content Include="Interop.NetFwTypeLib.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -497,7 +492,7 @@
     <Content Include="Resources\MePo_download.png" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="HelpContent\DeployToolUsage\" />
+    <Folder Include="HelpContent\SetupGuide\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
