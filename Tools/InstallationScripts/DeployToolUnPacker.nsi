@@ -108,8 +108,8 @@ Section
   File "${svn_MP}\Setup\Release\package-mediaportal.exe"
   File "${svn_TVServer}\Setup\Release\package-tvengine.exe"
 
-  SetOutPath $INSTDIR\SetupGuide-Dateien
-  File "${svn_DeployTool}\bin\Release\SetupGuide-Dateien\*"
+  SetOutPath $INSTDIR\SetupGuide
+  File "${svn_DeployTool}\HelpContent\SetupGuide\*"
 
 SectionEnd
 
