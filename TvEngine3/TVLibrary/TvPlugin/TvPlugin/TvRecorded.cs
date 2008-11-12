@@ -1006,7 +1006,7 @@ namespace TvPlugin
         }
         dlgYesNo.SetLine(1, chName);
         dlgYesNo.SetLine(2, rec.Title);
-        dlgYesNo.SetLine(3, GUILocalizeStrings.Get(936) + Utils.SecondsToHMSString(rec.StopTime));
+        dlgYesNo.SetLine(3, GUILocalizeStrings.Get(936) + " " + Utils.SecondsToHMSString(rec.StopTime));
         dlgYesNo.SetDefaultToYes(true);
         dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
         if (!dlgYesNo.IsConfirmed) stoptime = 0;
