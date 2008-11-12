@@ -90,18 +90,33 @@ namespace MediaPortal.GUI.Music
 
 
         case SortMethod.Date:
-          if (item1.FileInfo == null) return -1;
-          if (item2.FileInfo == null) return -1;
-
-          item1.Label2 = item1.FileInfo.ModificationTime.ToShortDateString() + " " + item1.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
-          item2.Label2 = item2.FileInfo.ModificationTime.ToShortDateString() + " " + item2.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
-          if (bAscending)
+          if (item1.FileInfo == null || item2.FileInfo == null)
           {
-            return DateTime.Compare(item1.FileInfo.ModificationTime, item2.FileInfo.ModificationTime);
+            // We didn't get a FileInfo. So it's a DB View and we sort on Year
+            item1.Label2 = item1.Year.ToString();
+            item2.Label2 = item2.Year.ToString();
+            if (bAscending)
+            {
+              return (int)(item1.Year - item2.Year);
+            }
+            else
+            {
+              return (int)(item2.Year - item1.Year);
+            }
           }
           else
           {
-            return DateTime.Compare(item2.FileInfo.ModificationTime, item1.FileInfo.ModificationTime);
+            // Do sorting on File Date. Needed for Shares View
+            item1.Label2 = item1.FileInfo.ModificationTime.ToShortDateString() + " " + item1.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+            item2.Label2 = item2.FileInfo.ModificationTime.ToShortDateString() + " " + item2.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+            if (bAscending)
+            {
+              return DateTime.Compare(item1.FileInfo.ModificationTime, item2.FileInfo.ModificationTime);
+            }
+            else
+            {
+              return DateTime.Compare(item2.FileInfo.ModificationTime, item1.FileInfo.ModificationTime);
+            }
           }
 
         case SortMethod.Rating:

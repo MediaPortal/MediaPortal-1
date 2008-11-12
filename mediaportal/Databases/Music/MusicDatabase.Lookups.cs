@@ -213,16 +213,7 @@ namespace MediaPortal.Music.Database
           }
           if (filter == "album")
           {
-            columnIndex = (int)results.ColumnIndices["strAlbum"];
-            song.Album = fields.fields[columnIndex];
-            columnIndex = (int)results.ColumnIndices["strAlbumArtist"];
-            song.Artist = fields.fields[columnIndex].Trim(trimChars);
-            song.AlbumArtist = fields.fields[columnIndex].Trim(trimChars);
-
-            // Set the Pathname for Cover Art Retrieval
-            columnIndex = (int)results.ColumnIndices["strPath"];
-            //song.FileName = String.Format("{0}\\", System.IO.Path.GetDirectoryName(fields.fields[columnIndex]));
-            song.FileName = fields.fields[columnIndex];
+            AssignAllSongFieldsFromResultSet(ref song, results, i);
           }
           if (filter == "genre")
           {
