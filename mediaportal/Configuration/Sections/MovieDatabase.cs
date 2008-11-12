@@ -34,6 +34,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Video.Database;
 using MediaPortal.Util;
 using CSScriptLibrary;
+using System.Collections.Generic;
 
 #pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
@@ -55,6 +56,25 @@ namespace MediaPortal.Configuration.Sections
       #endregion
     }
 
+    private class DatabaseComparer : IComparer<ComboBoxItemDatabase>
+    {
+      #region IComparer<ComboBoxItemDatabase> Member
+
+      public int Compare(ComboBoxItemDatabase x, ComboBoxItemDatabase y)
+      {
+        if (x.language.Equals(y.language))
+        {
+          return x.title.CompareTo(y.title);
+        }
+        else
+        {
+          return x.language.CompareTo(y.language);
+        }
+      }
+
+      #endregion
+    }
+
     internal class ComboBoxItemDatabase
     {
       public string database;
@@ -66,7 +86,7 @@ namespace MediaPortal.Configuration.Sections
 
       public override string ToString()
       {
-        return String.Format("{0} ({1} - {2})", database, title, language);
+        return String.Format("{0}: {1} [{2}]", language, title, database);
       }
     }
     internal class ComboBoxItemMovie
@@ -101,8 +121,16 @@ namespace MediaPortal.Configuration.Sections
     }
     #endregion
 
+    // grabber index holds information/urls of available grabbers to download
     private string GrabberIndexFile = Config.GetFile(Config.Dir.Config, "MovieInfoGrabber.xml");
     private const string GrabberIndexURL = @"http://install.team-mediaportal.com/MP1/MovieInfoGrabber.xml";
+
+    /// <summary>
+    /// Dictionary contains all grabber scripts.
+    /// The Key is used for the filename, where the grabber is from.
+    /// Will be refreshed on start and after online update.
+    /// </summary>
+    private Dictionary<string, IIMDBScriptGrabber> grabberList;
 
     // The LVI being edited
     private ListViewItem _editItem;
@@ -1370,7 +1398,7 @@ namespace MediaPortal.Configuration.Sections
           }
         }
 
-        RefreshAvailableDatabases();
+        ReloadGrabberScripts();
       }
 
       settingsLoaded = true;
@@ -1489,7 +1517,7 @@ namespace MediaPortal.Configuration.Sections
       }
       SaveSettings();
 
-      RefreshAvailableDatabases();
+      UpdateAvailableScripts();
     }
 
     private void lvDatabase_KeyUp(Object o, KeyEventArgs e)
@@ -1582,7 +1610,7 @@ namespace MediaPortal.Configuration.Sections
 
       SaveSettings();
 
-      RefreshAvailableDatabases();
+      UpdateAvailableScripts();
     }
 
     private void mpButtonUpdateGrabber_Click(object sender, EventArgs e)
@@ -1669,7 +1697,7 @@ namespace MediaPortal.Configuration.Sections
 
       progressDialog.CloseProgress();
 
-      RefreshAvailableDatabases();
+      ReloadGrabberScripts();
     }
 
     private void mpNumericUpDownLimit_Leave(object sender, EventArgs e)
@@ -1713,13 +1741,16 @@ namespace MediaPortal.Configuration.Sections
       mpNumericUpDownLimit.Visible = false;
     }
 
-    private void RefreshAvailableDatabases()
+    /// <summary>
+    /// Search for all valid GrabberScript files found in scriptDirectory.
+    /// </summary>
+    private void ReloadGrabberScripts()
     {
-      mpComboBoxAvailableDatabases.Items.Clear();
+      grabberList = new Dictionary<string, IIMDBScriptGrabber>();
 
-      // load all available grabber scripts, but only add them to combobox if it is not activated
       Directory.CreateDirectory(IMDB.ScriptDirectory);
       DirectoryInfo di = new DirectoryInfo(IMDB.ScriptDirectory);
+
       FileInfo[] fileList = di.GetFiles("*.csscript", SearchOption.AllDirectories);
       foreach (FileInfo f in fileList)
       {
@@ -1728,26 +1759,7 @@ namespace MediaPortal.Configuration.Sections
           AsmHelper script = new AsmHelper(CSScriptLibrary.CSScript.Load(f.FullName, null, false));
           IIMDBScriptGrabber grabber = (IIMDBScriptGrabber)script.CreateObject("Grabber");
 
-          bool found = false;
-          foreach (ListViewItem item in lvDatabase.Items)
-          {
-            if (item.SubItems[chDatabaseDB.Index].Text == Path.GetFileNameWithoutExtension(f.FullName))
-            {
-              found = true;
-              break;
-            }
-          }
-
-          if (!found)
-          {
-            ComboBoxItemDatabase item = new ComboBoxItemDatabase();
-            item.database = Path.GetFileNameWithoutExtension(f.Name);
-            item.language = grabber.GetLanguage();
-            item.limit = IMDB.DEFAULT_SEARCH_LIMIT.ToString();
-            item.title = grabber.GetName();
-
-            mpComboBoxAvailableDatabases.Items.Add(item);
-          }
+          grabberList.Add(Path.GetFileNameWithoutExtension(f.FullName), grabber);
         }
         catch (Exception ex)
         {
@@ -1755,6 +1767,47 @@ namespace MediaPortal.Configuration.Sections
           Log.Error("Script grabber error file: {0}, message : {1}", f.FullName, ex.Message);
         }
       }
+
+      UpdateAvailableScripts();
+    }
+
+    /// <summary>
+    /// Reloads all grabber in the combobox, which are not used atm.
+    /// </summary>
+    private void UpdateAvailableScripts()
+    {
+      List<ComboBoxItemDatabase> dbList = new List<ComboBoxItemDatabase>();
+
+      foreach (KeyValuePair<string, IIMDBScriptGrabber> grabber in grabberList)
+      {
+        bool found = false;
+        foreach (ListViewItem item in lvDatabase.Items)
+        {
+          if (item.SubItems[chDatabaseDB.Index].Text == grabber.Key)
+          {
+            found = true;
+            break;
+          }
+        }
+
+        if (!found)
+        {
+          ComboBoxItemDatabase item = new ComboBoxItemDatabase();
+          item.database = grabber.Key;
+          item.language = grabber.Value.GetLanguage();
+          item.limit = IMDB.DEFAULT_SEARCH_LIMIT.ToString();
+          item.title = grabber.Value.GetName();
+
+          dbList.Add(item);
+        }
+      }
+
+      // sort all available db entries
+      dbList.Sort(new DatabaseComparer());
+
+      // add dbentries to comboBox
+      mpComboBoxAvailableDatabases.Items.Clear();
+      mpComboBoxAvailableDatabases.Items.AddRange(dbList.ToArray());
 
       // set the first entry "activ"
       if (mpComboBoxAvailableDatabases.Items.Count > 0)
@@ -1766,7 +1819,6 @@ namespace MediaPortal.Configuration.Sections
       {
         mpButtonAddGrabber.Enabled = false;
       }
-
     }
 
     private bool DownloadFile(string filepath, string url)
