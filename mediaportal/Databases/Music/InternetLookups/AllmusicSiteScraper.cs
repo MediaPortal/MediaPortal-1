@@ -92,6 +92,7 @@ namespace MediaPortal.Music.Database
     public bool FindInfo(SearchBy searchBy, string searchStr)
     {
       HTMLUtil util = new HTMLUtil();
+      searchStr = searchStr.Replace(",", ""); // Remove Comma, as it causes problems with Search
       string strPostData = String.Format("P=amg&opt1={0}&sql={1}&Image1.x=18&Image1.y=14", (int)searchBy, HttpUtility.UrlEncode(searchStr));
 
       string strHTML = PostHTTP(MAINURL + URLPROGRAM, strPostData);
