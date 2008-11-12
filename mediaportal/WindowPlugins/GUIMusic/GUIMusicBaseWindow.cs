@@ -493,6 +493,9 @@ namespace MediaPortal.GUI.Music
         case MusicSort.SortMethod.Date:
           strLine = GUILocalizeStrings.Get(104);
           break;
+        case MusicSort.SortMethod.Year:
+          strLine = GUILocalizeStrings.Get(104);    // Also display Date for Year
+          break;
         case MusicSort.SortMethod.Size:
           strLine = GUILocalizeStrings.Get(105);
           break;
