@@ -468,6 +468,21 @@
   <ItemGroup>
     <Content Include="ApplicationLocations.xml">
     </Content>
+    <Content Include="HelpContent\SetupGuide\SetupGuide.htm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\SetupGuide\SetupGuide_files\common.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\SetupGuide\SetupGuide_files\common.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\SetupGuide\SetupGuide_files\msie.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\SetupGuide\SetupGuide_files\print.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Install.ico" />
     <Content Include="Interop.NetFwTypeLib.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -490,9 +505,6 @@
     <None Include="Resources\exit41.png" />
     <None Include="Resources\helpIcon.png" />
     <Content Include="Resources\MePo_download.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="HelpContent\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
