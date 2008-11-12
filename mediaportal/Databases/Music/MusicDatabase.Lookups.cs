@@ -68,8 +68,8 @@ namespace MediaPortal.Music.Database
       aSong.MusicBrainzID = DatabaseUtility.Get(aResult, aRow, "tracks.musicBrainzID");
       try
       {
-        aSong.DateTimePlayed = DatabaseUtility.GetAsDateTime(aResult, aRow, "tracks.dateLastPlayed");
-        aSong.DateTimeModified = DatabaseUtility.GetAsDateTime(aResult, aRow, "tracks.dateAdded");
+        aSong.DateTimePlayed = DatabaseUtility.GetAsDateTime(aResult, aRow, "dateLastPlayed");
+        aSong.DateTimeModified = DatabaseUtility.GetAsDateTime(aResult, aRow, "dateAdded");
       }
       catch (Exception ex)
       {

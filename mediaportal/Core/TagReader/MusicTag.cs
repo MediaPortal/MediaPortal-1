@@ -56,6 +56,8 @@ namespace MediaPortal.TagReader
     internal int m_iDiscId = 0;
     internal int m_iNumDisc = 0;
     internal bool m_hasAlbumArtist = false;
+    internal DateTime m_dateTimeModified = DateTime.MinValue;
+    internal DateTime m_dateTimePlayed = DateTime.MinValue;
     #endregion
 
     #region ctor
@@ -88,6 +90,8 @@ namespace MediaPortal.TagReader
       CoverArtImageBytes = tag.CoverArtImageBytes;
       AlbumArtist = tag.AlbumArtist;
       Lyrics = tag.Lyrics;
+      DateTimePlayed = tag.DateTimePlayed;
+      DateTimeModified = tag.DateTimeModified;
     }
     #endregion
 
@@ -115,6 +119,8 @@ namespace MediaPortal.TagReader
       m_iDiscId = 0;
       m_iNumDisc = 0;
       m_hasAlbumArtist = false;
+      m_dateTimeModified = DateTime.MinValue;
+      m_dateTimePlayed = DateTime.MinValue;
     }
 
     public bool IsMissingData
@@ -318,6 +324,20 @@ namespace MediaPortal.TagReader
       set { m_CoverArtImageBytes = value; }
     }
 
+    public DateTime DateTimeModified
+    {
+      get { return m_dateTimeModified; }
+      set { m_dateTimeModified = value; }
+    }
+
+    /// <summary>
+    /// Last UTC time the song was played
+    /// </summary>
+    public DateTime DateTimePlayed
+    {
+      get { return m_dateTimePlayed; }
+      set { m_dateTimePlayed = value; }
+    }
 
     public Image CoverArtImage
     {

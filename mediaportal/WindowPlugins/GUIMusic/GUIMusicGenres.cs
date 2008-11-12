@@ -300,7 +300,9 @@ namespace MediaPortal.GUI.Music
       set
       {
         FilterDefinition def = (FilterDefinition)handler.View.Filters[handler.CurrentLevel];
-        if ((def.Where == "albumartist" || def.Where == "album") && value == MusicSort.SortMethod.Artist)
+        if (def.DefaultSort.ToLower() == "year")
+          sortby[handler.Views.IndexOf(handler.View), handler.CurrentLevel] = MusicSort.SortMethod.Year;
+        else if ((def.Where == "albumartist" || def.Where == "album") && value == MusicSort.SortMethod.Artist)
           sortby[handler.Views.IndexOf(handler.View), handler.CurrentLevel] = MusicSort.SortMethod.AlbumArtist;
         else
           sortby[handler.Views.IndexOf(handler.View), handler.CurrentLevel] = value;

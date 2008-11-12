@@ -467,6 +467,8 @@ namespace MediaPortal.Music.Database
       tmpTag.Rating = this.Rating;
       tmpTag.TimesPlayed = this.TimesPlayed;
       tmpTag.Lyrics = this.Lyrics;
+      tmpTag.DateTimeModified = this.DateTimeModified;
+      tmpTag.DateTimePlayed = this.DateTimePlayed;
 
       return tmpTag;
     }

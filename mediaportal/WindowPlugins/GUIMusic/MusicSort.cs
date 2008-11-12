@@ -47,7 +47,7 @@ namespace MediaPortal.GUI.Music
     public enum SortMethod
     {
       Name = 0,
-      Date = 1,
+      Date = 1,     // Shares View = File Modification Date, Database View = Date Added
       Size = 2,
       Track = 3,
       Duration = 4,
@@ -56,7 +56,8 @@ namespace MediaPortal.GUI.Music
       Album = 7,
       Filename = 8,
       Rating = 9,
-      AlbumArtist = 10  // Only used internally when albumartists or albums need to be sorted by Artist
+      AlbumArtist = 10,  // Only used internally when albumartists or albums need to be sorted by Artist
+      Year = 11      // Used Internally, when Sorting by Date is selected from GUI and Year defined as DefaultSort
     }
     public int Compare(GUIListItem item1, GUIListItem item2)
     {
@@ -92,16 +93,21 @@ namespace MediaPortal.GUI.Music
         case SortMethod.Date:
           if (item1.FileInfo == null || item2.FileInfo == null)
           {
-            // We didn't get a FileInfo. So it's a DB View and we sort on Year
-            item1.Label2 = item1.Year.ToString();
-            item2.Label2 = item2.Year.ToString();
+            // We didn't get a FileInfo. So it's a DB View and we sort on Date Added from DB
+            DateTime time1 = DateTime.MinValue;
+            DateTime time2 = DateTime.MinValue;
+            if (item1.MusicTag != null) time1 = ((MusicTag)item1.MusicTag).DateTimeModified;
+            if (item2.MusicTag != null) time2 = ((MusicTag)item2.MusicTag).DateTimeModified;
+
+            item1.Label2 = time1.ToShortDateString();
+            item2.Label2 = time2.ToShortDateString();
             if (bAscending)
             {
-              return (int)(item1.Year - item2.Year);
+              return DateTime.Compare(time1, time2);
             }
             else
             {
-              return (int)(item2.Year - item1.Year);
+              return DateTime.Compare(time2, time1);
             }
           }
           else
@@ -117,6 +123,18 @@ namespace MediaPortal.GUI.Music
             {
               return DateTime.Compare(item2.FileInfo.ModificationTime, item1.FileInfo.ModificationTime);
             }
+          }
+
+        case SortMethod.Year:
+          item1.Label2 = item1.Year.ToString();
+          item2.Label2 = item2.Year.ToString();
+          if (bAscending)
+          {
+            return (int)(item1.Year - item2.Year);
+          }
+          else
+          {
+            return (int)(item2.Year - item1.Year);
           }
 
         case SortMethod.Rating:
