@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html><head>
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="robots" content="noindex,nofollow">
+
+<title>TeamMediaPortal/MP1QuickSetupGuide - MediaPortal Manual Documentation</title>
+<script type="text/javascript" src="SetupGuide-Dateien/common.js"></script>
+
+<script type="text/javascript">
+<!-- // GUI edit link and i18n
+var gui_editor_link_href = "/manual/TeamMediaPortal/MP1QuickSetupGuide?action=edit&editor=gui";
+var gui_editor_link_text = "Edit (GUI)";
+//-->
+</script>
+
+<link rel="stylesheet" type="text/css" charset="utf-8" media="all" href="SetupGuide-Dateien/common.css">
+<link rel="stylesheet" type="text/css" charset="utf-8" media="all" href="SetupGuide-Dateien/print.css">
+
+<!-- css only for MSIE browsers -->
+<!--[if IE]>
+   <link rel="stylesheet" type="text/css" charset="utf-8" media="all" href="/moin_static180/modern/css/msie.css">
+<![endif]-->
+
+<link rel="stylesheet" type="text/css" charset="utf-8" media="all" href="SetupGuide-Dateien/Fpatch.htm">
+
+<link rel="alternate" type="application/wiki" title="Edit" href="http://www.team-mediaportal.com/manual/TeamMediaPortal/MP1QuickSetupGuide?action=edit">
+
+<link rel="Start" href="http://www.team-mediaportal.com/manual/Home">
+<link rel="Alternate" title="Wiki Markup" href="http://www.team-mediaportal.com/manual/TeamMediaPortal/MP1QuickSetupGuide?action=raw">
+<link rel="Alternate" media="print" title="Print View" href="http://www.team-mediaportal.com/manual/TeamMediaPortal/MP1QuickSetupGuide?action=print">
+<link rel="Up" href="http://www.team-mediaportal.com/manual/TeamMediaPortal">
+<link rel="Search" href="http://www.team-mediaportal.com/manual/FindPage">
+<link rel="Index" href="http://www.team-mediaportal.com/manual/TitleIndex">
+<link rel="Glossary" href="http://www.team-mediaportal.com/manual/WordIndex">
+<link rel="Help" href="http://www.team-mediaportal.com/manual/HelpOnFormatting">
+</head><body dir="ltr" lang="en">
+<div id="page" dir="ltr" lang="en">
+<div id="interwiki"><span><a href="http://www.team-mediaportal.com/manual/Home" rel="nofollow">MediaPortal Wiki</a></span></div>
+<ul id="pagelocation">
+<li><a href="http://www.team-mediaportal.com/manual/TeamMediaPortal">TeamMediaPortal</a></li><li><a class="backlink" href="http://www.team-mediaportal.com/manual/TeamMediaPortal/MP1QuickSetupGuide?action=fullsearch&amp;context=180&amp;value=linkto%3A%22TeamMediaPortal/MP1QuickSetupGuide%22" rel="nofollow" title="Click to do a full-text search for this title">MP1QuickSetupGuide</a></li>
+</ul>
+<div dir="ltr" id="content" lang="en"><span class="anchor" id="top"></span>
+<span class="anchor" id="line-1"></span><p class="line867">
+</p><h1 id="MediaPortal1SetupGuideforBeginners">MediaPortal 1 Setup Guide for Beginners</h1>
+<span class="anchor" id="line-2"></span><span class="anchor" id="line-3"></span><p class="line862">Welcome to the MediaPortal Setup Guide. <span class="anchor" id="line-4"></span>This guide has been written to ensure your first experience with MediaPortal will be quick and painless. <span class="anchor" id="line-5"></span>It includes not all but the most common sceneraios for a MediaPortal installation. <span class="anchor" id="line-6"></span><span class="anchor" id="line-7"></span></p><ul><li style="list-style-type: none;"><p class="line891"><strong>Note:</strong> Due to external links this page is best viewed with an active internet connection. <span class="anchor" id="line-8"></span><span class="anchor" id="line-9"></span></p></li></ul><p class="line867">
+</p><h3 id="Step1.3A-BeforeYouBegin">Step 1 :- Before You Begin</h3>
+<span class="anchor" id="line-10"></span><ul><li style="list-style-type: none;"><p class="line862">Before you begin the configuration of MediaPortal, make sure you have the following steps completed: <span class="anchor" id="line-11"></span><span class="anchor" id="line-12"></span></p></li><li class="gap"><p class="line862">Ensure your system complies the <a href="http://www.team-mediaportal.com/manual/GeneralRequirements">requirements</a>.
+As MediaPortal is developed based on the latest updates and hotfixes
+for Microsoft sofware, it is essential that your Windows installation
+is up to date with the latest service packs and hotfixes. To achive
+this simply run Windows update. <span class="anchor" id="line-13"></span></p></li><li style="list-style-type: none;"><p class="line862">For hotfixes which are not part of the <strong>Windows Update System</strong>, refer to the <a href="http://www.team-mediaportal.com/manual/GeneralRequirements">requirements</a>. <span class="anchor" id="line-14"></span></p></li><li>Install the latest drivers for your hardware (e.g. video card, TV card,...). <span class="anchor" id="line-15"></span></li><li><p class="line862">For <strong>Windows XP users that wish to use TV cards</strong>,
+you have to install the Microsoft DVB Hotfix to ensure smooth
+operation. The hotfix itself and more information about it can be found
+in the <a class="http" href="http://forum.team-mediaportal.com/general-support-51/patch-multi-dvb-tuner-issue-channel-scan-crash-windows-xp-6344/">MediaPortal forum</a> <span class="anchor" id="line-16"></span></p></li><li><p class="line862">Now you can complete the installation of MediaPortal. For indepth installation instructions, please review <a href="http://www.team-mediaportal.com/manual/MediaPortalTools/DeployTool">MediaPortal Deploy Tool Manual</a> <span class="anchor" id="line-17"></span><span class="anchor" id="line-18"></span></p></li><li class="gap" style="list-style-type: none;"><p class="line891"><strong>IMPORTANT NOTE:</strong>  <span class="anchor" id="line-19"></span></p></li><li style="list-style-type: none;"><p class="line862">For
+a MediaPortal installation there are 2 types of TV engines available.
+During the installation you were asked a question regarding the type of
+TV content you would like to watch.If you selected to watch HDTV during
+the installation process, then complete Step 2 :- TV Server Setup
+first, otherwise you can skip it and start with Step 3 :- MediaPortal
+Setup. For more information on the two different TV engines please
+visit <a href="http://www.team-mediaportal.com/manual/TV-Server/overview">TV Server Overview</a>. <span class="anchor" id="line-20"></span><span class="anchor" id="line-21"></span></p></li></ul><p class="line867">
+</p><h3 id="Step2.3ATVServerSetup">Step 2 : TV Server Setup</h3>
+<span class="anchor" id="line-22"></span><span class="anchor" id="line-23"></span><ul><li><p class="line862">After the installation of MediaPortal, start the TV-Server Configuration (a shortcut is placed onto your desktop). <span class="anchor" id="line-24"></span></p></li><li>When starting the configuration for the first time you are asked for the database password which you chose <span class="anchor" id="line-25"></span><p class="line862">during the installation (default is <strong>MediaPortal</strong>). Enter it and click Yes in the next popup to start the TV  service. <span class="anchor" id="line-26"></span></p></li><li><p class="line862">On the left hand menu side, browse to <em>TV Servers/Machine Name</em> and ensure all cards that have been installed in your computer are listed. <span class="anchor" id="line-27"></span></p></li><li><p class="line862">Select
+a displayed TV card and select your country/area on the right hand
+side(this sets a predefined list of known channels in your area and
+speeds up the scanning process). If you are using a <strong>CAM</strong> you additionally have to select its type (this is ignored for DVB-T cards). Once this have been configured, click the <em>Scan for Channels</em>
+button. The scanning process will now take about 5 to 30 minutes
+depending on the number of channels in your country. Complete this step
+for all of your TV cards. <span class="anchor" id="line-28"></span></p></li><li><p class="line862">If you have a <strong>hybrid TV card</strong>
+(both digital and analogue TV tuners on one card), you need to click
+the hybrid tab to setup a grouping to ensure resources are always
+available when switching between digital and analogue channels. More
+information about hybrid cards can be found in <a href="http://www.team-mediaportal.com/manual/TV-Server/Configuration/TVServers/HybridCards">Configuring Hybrid cards</a>. <span class="anchor" id="line-29"></span></p></li><li><p class="line862">If you want to obtain a program guide from the digital TV signal (EPG), then select <em>General Settings/ EPG</em> tab and enable it. <span class="anchor" id="line-30"></span></p></li><li><p class="line862">You can now move on with the configuration of the recording settings. Select <em>Recording Settings/Settings</em>
+tab and specify how many minutes before the program actually starts you
+want the recording to begin. (great for channels that don't stick to
+advertised times in their guides). Also specify how long you want the
+recording to continue after the program has finished. <span class="anchor" id="line-31"></span></p></li><li><p class="line862">Next is to set up the location of the recordings and the timeshifting files. Select <em>Recording settings/Recording Folders</em>
+tab. Now select each card installed in your system and change the
+recording path to your liking. Here you can also select the data format
+of the recorded files (ts stream or MPEG, ts is preferred) <span class="anchor" id="line-32"></span></p></li><li><p class="line862">A more detailed installation guide can be found in the MediaPortal wiki under <a href="http://www.team-mediaportal.com/manual/TV-Server">TV Server Manual</a>. <span class="anchor" id="line-33"></span><span class="anchor" id="line-34"></span><span class="anchor" id="line-35"></span></p></li></ul><p class="line867">
+</p><h3 id="Step3.3A-MediaPortalSetup">Step 3 :- MediaPortal Setup</h3>
+<span class="anchor" id="line-36"></span><span class="anchor" id="line-37"></span><ul><li><p class="line862">After installing MediaPortal, start MediaPortal Configuration (a shortcut is placed onto your desktop). <span class="anchor" id="line-38"></span></p></li><li><p class="line862">Browse to <em>Movies/Movie Folders</em> and specify the location of your movie collection. <span class="anchor" id="line-39"></span></p></li><li><p class="line862">Browse to <em>Movies/Movie Player</em> and specify your preferred codecs. If you are unsure of what codecs are, select MPV for video and MPA for audio. <span class="anchor" id="line-40"></span></p></li><li><p class="line862">Browse to <em>DVD/DVD Codecs</em> and specify your favored codecs. <span class="anchor" id="line-41"></span></p></li><li><p class="line862">Browse to <em>Music/Folders</em> and specify the location of your music collection. <span class="anchor" id="line-42"></span></p></li><li><p class="line862">Browse to <em>Pictures/Folders</em> and specify the location of your picture collection. <span class="anchor" id="line-43"></span></p></li><li><p class="line862">Browse to <em>Television</em> and specify your preferred codecs. <span class="anchor" id="line-44"></span></p></li><li>If you have selected to install the inbuilt TV Engine then continue with the Step 4, otherwise you can skip this step. <span class="anchor" id="line-45"></span><span class="anchor" id="line-46"></span></li></ul><p class="line867">
+</p><h3 id="Step4.3A-InbuiltTVEngine">Step 4 :- Inbuilt TV Engine</h3>
+<span class="anchor" id="line-47"></span><ul><li><p class="line862">Goto <em>Television/Capture Cards </em>and add your capture cards if they have not been automatically recognised. <span class="anchor" id="line-48"></span></p></li><li><p class="line862">Goto <em>Televsion/TV Channels</em>
+and look up your TV channels. This will import the channels for your
+area. If not all channels were found, you can manually add the missing
+ones. Visit the MediaPortal Wiki for more information. <span class="anchor" id="line-49"></span></p></li><li><p class="line862">Goto to <em>Television/Program Guide</em> and <span class="anchor" id="line-50"></span></p><ul><li>for DVB type cards, select "Grab EPG for DVB". <span class="anchor" id="line-51"></span></li><li>for Analogue and others, setup a XMLTV source guide from the internet. <span class="anchor" id="line-52"></span></li></ul></li><li><p class="line862">Goto <em>Television/Recording</em> and set your pre-record and post record timings for your scheduled programs. <span class="anchor" id="line-53"></span></p></li><li style="list-style-type: none;"><p class="line862">A more detailed installation guide can be found on the MediaPortal wiki under <a href="http://www.team-mediaportal.com/manual/MediaPortal_Manual_Index">MediaPortal Manual</a> <span class="anchor" id="line-54"></span><span class="anchor" id="line-55"></span></p></li></ul><p class="line867">
+</p><h3 id="Summary">Summary</h3>
+<span class="anchor" id="line-56"></span><ul><li style="list-style-type: none;"><p class="line862">Having
+finished the basic configuration of MediaPortal you are now ready to
+enjoy your media collection. If you want to further customise your
+MediaPortal installation, you can have a look at the<a class="http" href="http://www.team-mediaportal.com/manual/Home">MediaPortal Wiki</a> for more detailed documentation. <span class="anchor" id="line-57"></span></p></li></ul><span class="anchor" id="bottom"></span></div><p id="pageinfo" class="info" dir="ltr" lang="en">MediaPortal Wiki: TeamMediaPortal/MP1QuickSetupGuide  (last edited 2008-11-12 19:14:23 by <span title="flokel @ p54AAD9A1.dip.t-dialin.net[84.170.217.161]"><a href="http://www.team-mediaportal.com/manual/flokel" title="flokel @ p54AAD9A1.dip.t-dialin.net[84.170.217.161]">flokel</a></span>)</p>
+<div id="pagebottom"></div>
+</div>
+</body></html>

@@ -121,6 +121,14 @@ namespace MediaPortal.DeployTool
           process.StartInfo.UseShellExecute = true;
           process.Start();
         }
+
+        //
+        // If in install mode, start the included setup guide
+        //
+        else
+        {
+          Process.Start(Application.StartupPath + "\\HelpContent\\SetupGuide\\SetupGuide.htm");
+        }
         Close();
         return;
       }
