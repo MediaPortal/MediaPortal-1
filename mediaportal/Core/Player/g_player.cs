@@ -730,7 +730,7 @@ namespace MediaPortal.Player
         _currentStep = 0;
         _currentStepIndex = -1;
         _seekTimer = DateTime.MinValue;
-        _isInitalized = true;
+        
         _subs = null;
         Log.Info("g_Player.PlayAudioStream({0})", strURL);
         if (_player != null)
@@ -745,6 +745,7 @@ namespace MediaPortal.Player
           GUIGraphicsContext.form.Invalidate(true);
           _player = null;
         }
+        _isInitalized = true;
         if (strAudioPlayer == "BASS engine" && !isMusicVideo)
         {
           if (BassMusicPlayer.BassFreed)
@@ -795,8 +796,7 @@ namespace MediaPortal.Player
         _currentStepIndex = -1;
         _seekTimer = DateTime.MinValue;
         if (strURL == null) return false;
-        if (strURL.Length == 0) return false;
-        _isInitalized = true;
+        if (strURL.Length == 0) return false;        
         _subs = null;
         Log.Info("g_Player.PlayVideoStream({0})", strURL);
         if (_player != null)
@@ -812,6 +812,7 @@ namespace MediaPortal.Player
           _player = null;
           GC.Collect(); GC.Collect(); GC.Collect(); GC.Collect();
         }
+        _isInitalized = true;
         //int iUseVMR9inMYMovies = 0;
         //using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         //{
@@ -913,8 +914,7 @@ namespace MediaPortal.Player
         _currentStepIndex = -1;
         _seekTimer = DateTime.MinValue;
         if (strFile == null) return false;
-        if (strFile.Length == 0) return false;
-        _isInitalized = true;
+        if (strFile.Length == 0) return false;        
         _subs = null;
         Log.Info("g_Player.Play({0} {1})", strFile, type);
         if (_player != null)
@@ -929,6 +929,7 @@ namespace MediaPortal.Player
           _player = null;
           GC.Collect(); GC.Collect(); GC.Collect(); GC.Collect(); //?? ms-help://MS.VSCC.v80/MS.MSDN.v80/MS.NETDEVFX.v20.de/cpref2/html/M_System_GC_Collect_1_804c5d7d.htm
         }
+        _isInitalized = true;
         if (!MediaPortal.Util.Utils.IsAVStream(strFile) && MediaPortal.Util.Utils.IsVideo(strFile))
         {
           if (MediaPortal.Util.Utils.PlayMovie(strFile))
@@ -1038,8 +1039,7 @@ namespace MediaPortal.Player
         _currentStepIndex = -1;
         _seekTimer = DateTime.MinValue;
         if (strFile == null) return false;
-        if (strFile.Length == 0) return false;
-        _isInitalized = true;
+        if (strFile.Length == 0) return false;        
         _subs = null;
         Log.Info("g_Player.Play({0})", strFile);
         if (_player != null)
@@ -1070,6 +1070,7 @@ namespace MediaPortal.Player
             GC.Collect(); GC.Collect(); GC.Collect(); GC.Collect();
           }
         }
+        _isInitalized = true;
         if (!MediaPortal.Util.Utils.IsAVStream(strFile) && MediaPortal.Util.Utils.IsVideo(strFile))
         {
           // Free BASS to avoid problems with Digital Audio, when watching movies
