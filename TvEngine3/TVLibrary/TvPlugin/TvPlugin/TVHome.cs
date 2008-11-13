@@ -114,7 +114,7 @@ namespace TvPlugin
     static bool _showChannelStateIcons = true;
     private static bool _doingHandleServerNotConnected = false;
     private static bool _doingChannelChange = false;
-    private static bool _ServerNotConnectedHandled = false;
+    //private static bool _ServerNotConnectedHandled = false;
 
     // this var is used to block the user from hitting "record now" button multiple times
     // the sideeffect is that the user is able to record the same show twice.
@@ -762,7 +762,7 @@ namespace TvPlugin
       // the result could be that the dialogue is not shown.
       try
       {
-        if (_ServerNotConnectedHandled) return true; //still not connected
+        //if (_ServerNotConnectedHandled) return true; //still not connected
 
         if (_doingHandleServerNotConnected) return !TVHome.Connected;
         _doingHandleServerNotConnected = true;
@@ -792,7 +792,7 @@ namespace TvPlugin
             _doingHandleServerNotConnected = false;
             return true;
           }
-          _ServerNotConnectedHandled = true;
+          //_ServerNotConnectedHandled = true;
           GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
 
           if (pDlgOK != null)
@@ -1059,6 +1059,8 @@ namespace TvPlugin
     void OnPlayBackStopped(g_Player.MediaType type, int stoptime, string filename)
     {
       if (type != g_Player.MediaType.TV && type != g_Player.MediaType.Radio) return;
+
+      UpdateGUIonPlaybackStateChange(false);
 
       //gemx: fix for 0001181: Videoplayback does not work if tvservice.exe is not running 
       if (!TVHome.Connected) return;
@@ -1671,7 +1673,8 @@ namespace TvPlugin
         }
 
         UpdateStateOfRecButton();
-        UpdateProgressPercentageBar();
+        UpdateGUIonPlaybackStateChange();
+        //UpdateProgressPercentageBar();
         benchClock.Stop();
         Log.Warn("TVHome.OnClicked(): Total Time - {0} ms", benchClock.ElapsedMilliseconds.ToString());
 
@@ -2921,7 +2924,7 @@ namespace TvPlugin
 
           //GUIWaitCursor.Hide();
           _doingChannelChange = false;
-          _ServerNotConnectedHandled = false;
+          //_ServerNotConnectedHandled = false;
           //GUIWaitCursor.Hide();
           return true;
         }
