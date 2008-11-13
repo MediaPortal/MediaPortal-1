@@ -1,0 +1,66 @@
+TD {
+	BACKGROUND-COLOR: #ffffff
+}
+HTML {
+	FONT-SIZE: 12pt; BACKGROUND: #ffffff; FONT-FAMILY: Times, serif
+}
+BODY {
+	BACKGROUND: #ffffff; MARGIN: 1.5cm
+}
+A {
+	COLOR: black; TEXT-DECORATION: none
+}
+A:visited {
+	COLOR: black; TEXT-DECORATION: none
+}
+A.nonexistent {
+	COLOR: black; TEXT-DECORATION: none
+}
+A.badinterwiki {
+	COLOR: black; TEXT-DECORATION: none
+}
+A:hover {
+	TEXT-DECORATION: underline
+}
+.info A {
+	COLOR: gray
+}
+PRE {
+	FONT-SIZE: 10pt
+}
+A.interwiki:unknown {
+	content: attr(title) ":"
+}
+A.badinterwiki:unknown {
+	content: attr(title) ":"
+}
+A.interwiki IMG {
+	DISPLAY: none
+}
+A.badinterwiki IMG {
+	DISPLAY: none
+}
+.footnotes DIV {
+	BORDER-TOP: gray 1pt solid; BACKGROUND: #ffffff; WIDTH: 5em
+}
+#header {
+	DISPLAY: none; BACKGROUND: #ffffff
+}
+#sidebar {
+	DISPLAY: none; BACKGROUND: #ffffff
+}
+#footer {
+	DISPLAY: none; BACKGROUND: #ffffff
+}
+#timings {
+	DISPLAY: none; BACKGROUND: #ffffff
+}
+#credits {
+	DISPLAY: none; BACKGROUND: #ffffff
+}
+#interwiki {
+	DISPLAY: none; BACKGROUND: #ffffff
+}
+#pagelocation {
+	DISPLAY: none; BACKGROUND: #ffffff
+}

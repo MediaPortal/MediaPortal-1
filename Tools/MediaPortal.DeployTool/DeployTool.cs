@@ -190,45 +190,7 @@ namespace MediaPortal.DeployTool
 
     private void bHelp_Click(object sender, EventArgs e)
     {
-      string baseURL = "http://www.team-mediaportal.com/manual/MediaPortalTools/DeployTool";
-      DialogType curDialogType = GetCurrentDialog().type;
-      
-      // based on the current dialog screen the button links to the according section in wiki page
-      switch (curDialogType)
-      {
-        case DialogType.BASE_INSTALLATION_TYPE:  
-          Process.Start(baseURL + "#installationMode"); break;
-        case DialogType.BASE_INSTALLATION_TYPE_WITHOUT_TVENGINE:
-          Process.Start(baseURL + "#installationMode"); break;
-        case DialogType.CUSTOM_INSTALLATION_TYPE: 
-          Process.Start(baseURL + "#advancedInstallation"); break;
-        case DialogType.DBMSSettings:  
-          Process.Start(baseURL + "#dbPath"); break;
-        case DialogType.DBMSType:  
-          Process.Start(baseURL + "#database"); break;
-        case DialogType.DownloadOnly:  
-          Process.Start(baseURL + "#installationOptions"); break;
-        case DialogType.DownloadSettings:  
-          Process.Start(baseURL + "#downloadOnly"); break;
-        case DialogType.Finished:  
-          Process.Start(baseURL + "#installationFinished"); break;
-        case DialogType.Installation:  
-          Process.Start(baseURL + "#installation"); break;
-        case DialogType.MPSettings:  
-          Process.Start(baseURL + "#mpPath"); break;
-        case DialogType.TvEngineType: 
-          Process.Start(baseURL + "#tvEngineType"); break;
-        case DialogType.TvServerSettings:  
-          Process.Start(baseURL + "#tvPath"); break;
-        case DialogType.WatchHDTv:  
-          Process.Start(baseURL + "#hdtv"); break;
-        case DialogType.WatchTV:  
-          Process.Start(baseURL + "#tv"); break;
-        case DialogType.Welcome:  
-          Process.Start(baseURL + "#usage"); break;
-        default:
-          Process.Start(baseURL + ""); break;
-      }
+      Process.Start(Application.StartupPath + "\\HelpContent\\DeployToolGuide\\DeployToolGuide.htm");
     }
   }
 }

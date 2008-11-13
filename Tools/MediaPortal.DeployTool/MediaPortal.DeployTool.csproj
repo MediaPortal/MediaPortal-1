@@ -468,6 +468,69 @@
   <ItemGroup>
     <Content Include="ApplicationLocations.xml">
     </Content>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide.htm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\10_advancedInstall.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\11_dbType.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\12_dbInstall.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\13_mpInstall.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\14_tvServerInstall.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\15_installFiles.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\16_installFinished.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\1_language.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\2_setupMode.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\3_downloadSettings.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\4_downloadFiles.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\5_downloadFinished.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\6_watchTV.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\7_watchHDTV.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\8_tvEngine.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\9_installationMode.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\common.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\common.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\msie.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\print.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="HelpContent\SetupGuide\SetupGuide.htm">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

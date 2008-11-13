@@ -110,6 +110,9 @@ Section
 
   SetOutPath $INSTDIR\HelpContent\SetupGuide
   File /r /x .svn "${svn_DeployTool}\HelpContent\SetupGuide\*"
+  
+  SetOutPath $INSTDIR\HelpContent\DeployToolGuide
+  File /r /x .svn "${svn_DeployTool}\HelpContent\DeployToolGuide\*"
 
 SectionEnd
 
