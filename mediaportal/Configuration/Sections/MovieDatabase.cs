@@ -1840,7 +1840,7 @@ namespace MediaPortal.Configuration.Sections
           Application.DoEvents();
           using (Stream resStream = response.GetResponseStream())
           {
-            using (System.IO.TextReader tin = new StreamReader(resStream))
+            using (System.IO.TextReader tin = new StreamReader( resStream, System.Text.Encoding.Default))
             {
               using (System.IO.TextWriter tout = System.IO.File.CreateText(GrabberTempFile))
               {
