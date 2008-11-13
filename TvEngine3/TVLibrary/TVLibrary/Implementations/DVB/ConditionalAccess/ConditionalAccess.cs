@@ -45,6 +45,7 @@ namespace TvLibrary.Implementations.DVB
     /// CA decryption limit, 0 for disable CA
     /// </summary>
     int _decryptLimit = 0;
+    CamType _CamType = CamType.Default ;
 
     DigitalEverywhere _digitalEveryWhere = null;
     TechnoTrend _technoTrend = null;
@@ -82,6 +83,8 @@ namespace TvLibrary.Implementations.DVB
           Card c = layer.GetCardByDevicePath(card.DevicePath);                    
           _decryptLimit = c.DecryptLimit;          
           _useCam = c.CAM;
+          _CamType = (CamType)c.CamType ;
+          Log.Log.WriteFile("CAM is {0} model",_CamType);
         }
 
         _mapSubChannels = new Dictionary<int, ConditionalAccessContext>();
@@ -464,7 +467,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="PMT">byte array containing the PMT</param>
     /// <param name="pmtLength">length of the pmt array</param>
     /// <returns></returns>
-    private byte[] PatchPMT(byte[] PMT, int pmtLength, out int newPmtLength)
+    private byte[] PatchPMT_AstonCrypt2(byte[] PMT, int pmtLength, out int newPmtLength)
     {
       byte[] newPMT = new byte[1024] ;  // create a new array.
 
@@ -494,13 +497,12 @@ namespace TvLibrary.Implementations.DVB
     /// Sends the PMT to the CI module
     /// </summary>
     /// <param name="subChannel">The sub channel.</param>
-    /// <param name="camType">type of cam in use</param>
     /// <param name="channel">channel on which we are tuned</param>
     /// <param name="PMT">byte array containing the PMT</param>
     /// <param name="pmtLength">length of the pmt array</param>
     /// <param name="audioPid">pid of the current audio stream</param>
     /// <returns></returns>
-    public bool SendPMT(int subChannel, CamType camType, DVBBaseChannel channel, byte[] PMT, int pmtLength, int audioPid)
+    public bool SendPMT(int subChannel, DVBBaseChannel channel, byte[] PMT, int pmtLength, int audioPid)
     {
       try
       {
@@ -510,10 +512,18 @@ namespace TvLibrary.Implementations.DVB
 
         AddSubChannel(subChannel, channel);
         ConditionalAccessContext context = _mapSubChannels[subChannel];
-        context.CamType = camType;
+        context.CamType = _CamType;
         context.Channel = channel;
-        context.PMT = PatchPMT(PMT, pmtLength, out newLength);
-        context.PMTLength = newLength;
+        if (_CamType == CamType.Astoncrypt2)
+        {
+          context.PMT = PatchPMT_AstonCrypt2(PMT, pmtLength, out newLength);
+          context.PMTLength = newLength;
+        }
+        else
+        {
+          context.PMT = PMT;
+          context.PMTLength = pmtLength;
+        }
         context.AudioPid = audioPid;
         context.ServiceId = channel.ServiceId;
 

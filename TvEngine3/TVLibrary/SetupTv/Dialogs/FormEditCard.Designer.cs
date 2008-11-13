@@ -35,11 +35,13 @@ namespace SetupTv.Sections
       this.numericUpDownDecryptLimit = new System.Windows.Forms.NumericUpDown();
       this.mpButtonCancel = new MediaPortal.UserInterface.Controls.MPButton();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
+      this.checkBoxCAMenabled = new System.Windows.Forms.CheckBox();
       this.groupBox2 = new System.Windows.Forms.GroupBox();
       this.checkBoxAllowEpgGrab = new System.Windows.Forms.CheckBox();
       this.checkBoxPreloadCard = new System.Windows.Forms.CheckBox();
       this.groupBox3 = new System.Windows.Forms.GroupBox();
-      this.checkBoxCAMenabled = new System.Windows.Forms.CheckBox();
+      this.ComboBoxCamType = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.label5 = new MediaPortal.UserInterface.Controls.MPLabel();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDecryptLimit)).BeginInit();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
@@ -112,6 +114,8 @@ namespace SetupTv.Sections
       // 
       // groupBox1
       // 
+      this.groupBox1.Controls.Add(this.label5);
+      this.groupBox1.Controls.Add(this.ComboBoxCamType);
       this.groupBox1.Controls.Add(this.checkBoxCAMenabled);
       this.groupBox1.Controls.Add(this.label1);
       this.groupBox1.Controls.Add(this.label3);
@@ -119,15 +123,27 @@ namespace SetupTv.Sections
       this.groupBox1.Controls.Add(this.numericUpDownDecryptLimit);
       this.groupBox1.Location = new System.Drawing.Point(12, 12);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(310, 147);
+      this.groupBox1.Size = new System.Drawing.Size(310, 174);
       this.groupBox1.TabIndex = 7;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "CAM Setup";
       // 
+      // checkBoxCAMenabled
+      // 
+      this.checkBoxCAMenabled.AutoSize = true;
+      this.checkBoxCAMenabled.Location = new System.Drawing.Point(6, 19);
+      this.checkBoxCAMenabled.Name = "checkBoxCAMenabled";
+      this.checkBoxCAMenabled.RightToLeft = System.Windows.Forms.RightToLeft.No;
+      this.checkBoxCAMenabled.Size = new System.Drawing.Size(210, 17);
+      this.checkBoxCAMenabled.TabIndex = 6;
+      this.checkBoxCAMenabled.Text = "CAM enabled and present for this card.";
+      this.checkBoxCAMenabled.UseVisualStyleBackColor = true;
+      this.checkBoxCAMenabled.CheckedChanged += new System.EventHandler(this.checkBoxCAMenabled_CheckedChanged);
+      // 
       // groupBox2
       // 
       this.groupBox2.Controls.Add(this.checkBoxAllowEpgGrab);
-      this.groupBox2.Location = new System.Drawing.Point(12, 165);
+      this.groupBox2.Location = new System.Drawing.Point(12, 192);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(310, 44);
       this.groupBox2.TabIndex = 8;
@@ -159,24 +175,33 @@ namespace SetupTv.Sections
       // groupBox3
       // 
       this.groupBox3.Controls.Add(this.checkBoxPreloadCard);
-      this.groupBox3.Location = new System.Drawing.Point(12, 215);
+      this.groupBox3.Location = new System.Drawing.Point(12, 242);
       this.groupBox3.Name = "groupBox3";
       this.groupBox3.Size = new System.Drawing.Size(310, 44);
       this.groupBox3.TabIndex = 9;
       this.groupBox3.TabStop = false;
       this.groupBox3.Text = "Preload Card";
       // 
-      // checkBoxCAMenabled
+      // ComboBoxCamType
       // 
-      this.checkBoxCAMenabled.AutoSize = true;
-      this.checkBoxCAMenabled.Location = new System.Drawing.Point(6, 19);
-      this.checkBoxCAMenabled.Name = "checkBoxCAMenabled";
-      this.checkBoxCAMenabled.RightToLeft = System.Windows.Forms.RightToLeft.No;
-      this.checkBoxCAMenabled.Size = new System.Drawing.Size(210, 17);
-      this.checkBoxCAMenabled.TabIndex = 6;
-      this.checkBoxCAMenabled.Text = "CAM enabled and present for this card.";
-      this.checkBoxCAMenabled.UseVisualStyleBackColor = true;
-      this.checkBoxCAMenabled.CheckedChanged += new System.EventHandler(this.checkBoxCAMenabled_CheckedChanged);
+      this.ComboBoxCamType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.ComboBoxCamType.FormattingEnabled = true;
+      this.ComboBoxCamType.Items.AddRange(new object[] {
+            "default",
+            "Astoncrypt 2"});
+      this.ComboBoxCamType.Location = new System.Drawing.Point(120, 140);
+      this.ComboBoxCamType.Name = "ComboBoxCamType";
+      this.ComboBoxCamType.Size = new System.Drawing.Size(103, 21);
+      this.ComboBoxCamType.TabIndex = 7;
+      // 
+      // label5
+      // 
+      this.label5.AutoSize = true;
+      this.label5.Location = new System.Drawing.Point(47, 143);
+      this.label5.Name = "label5";
+      this.label5.Size = new System.Drawing.Size(67, 13);
+      this.label5.TabIndex = 8;
+      this.label5.Text = "CAM model :";
       // 
       // FormEditCard
       // 
@@ -222,5 +247,7 @@ namespace SetupTv.Sections
     private System.Windows.Forms.CheckBox checkBoxPreloadCard;
     private System.Windows.Forms.GroupBox groupBox3;
     private System.Windows.Forms.CheckBox checkBoxCAMenabled;
+    private MediaPortal.UserInterface.Controls.MPLabel label5;
+    private MediaPortal.UserInterface.Controls.MPComboBox ComboBoxCamType;
   }
 }

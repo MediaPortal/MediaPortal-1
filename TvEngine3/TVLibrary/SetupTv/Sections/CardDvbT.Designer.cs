@@ -39,8 +39,6 @@ namespace SetupTv.Sections
       this.progressBarQuality = new System.Windows.Forms.ProgressBar();
       this.listViewStatus = new System.Windows.Forms.ListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-      this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpComboBoxCam = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.checkBoxCreateGroups = new System.Windows.Forms.CheckBox();
       this.SuspendLayout();
       // 
@@ -146,31 +144,6 @@ namespace SetupTv.Sections
       this.columnHeader1.Text = "Status";
       this.columnHeader1.Width = 350;
       // 
-      // mpLabel2
-      // 
-      this.mpLabel2.AutoSize = true;
-      this.mpLabel2.Location = new System.Drawing.Point(280, 31);
-      this.mpLabel2.Name = "mpLabel2";
-      this.mpLabel2.Size = new System.Drawing.Size(33, 13);
-      this.mpLabel2.TabIndex = 72;
-      this.mpLabel2.Text = "CAM:";
-      // 
-      // mpComboBoxCam
-      // 
-      this.mpComboBoxCam.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpComboBoxCam.FormattingEnabled = true;
-      this.mpComboBoxCam.Items.AddRange(new object[] {
-            "default",
-            "viaccess",
-            "aston",
-            "conax",
-            "cryptoworks"});
-      this.mpComboBoxCam.Location = new System.Drawing.Point(319, 24);
-      this.mpComboBoxCam.Name = "mpComboBoxCam";
-      this.mpComboBoxCam.Size = new System.Drawing.Size(103, 21);
-      this.mpComboBoxCam.TabIndex = 1;
-      this.mpComboBoxCam.SelectedIndexChanged += new System.EventHandler(this.mpComboBoxCam_SelectedIndexChanged);
-      // 
       // checkBoxCreateGroups
       // 
       this.checkBoxCreateGroups.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -187,8 +160,6 @@ namespace SetupTv.Sections
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.checkBoxCreateGroups);
-      this.Controls.Add(this.mpLabel2);
-      this.Controls.Add(this.mpComboBoxCam);
       this.Controls.Add(this.listViewStatus);
       this.Controls.Add(this.progressBarQuality);
       this.Controls.Add(this.progressBarLevel);
@@ -220,8 +191,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ProgressBar progressBarQuality;
     private System.Windows.Forms.ListView listViewStatus;
     private System.Windows.Forms.ColumnHeader columnHeader1;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
-    private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxCam;
     private System.Windows.Forms.CheckBox checkBoxCreateGroups;
   }
 }

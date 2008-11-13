@@ -974,7 +974,7 @@ namespace TvLibrary.Implementations.DVB
                     audioPid = _currentAudioStream.Pid;
                   }
 
-                  if (_conditionalAccess.SendPMT(_subChannelId, CamType.Default, (DVBBaseChannel)CurrentChannel, _pmtData, _pmtLength, audioPid))
+                  if (_conditionalAccess.SendPMT(_subChannelId, (DVBBaseChannel)CurrentChannel, _pmtData, _pmtLength, audioPid))
                   {
                     _pmtVersion = version;
                     Log.Log.WriteFile("subch:{0} cam flags:{1}", _subChannelId, _conditionalAccess.IsCamReady());

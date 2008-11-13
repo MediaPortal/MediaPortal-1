@@ -106,7 +106,6 @@ namespace SetupTv.Sections
 
 
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
-      mpComboBoxCam.SelectedIndex = card.CamType;
       checkBoxCreateGroups.Checked = (layer.GetSetting("dvbt" + _cardNumber.ToString() + "creategroups", "false").Value == "true");
 
     }
@@ -389,7 +388,6 @@ namespace SetupTv.Sections
 
       TvBusinessLayer layer = new TvBusinessLayer();
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
-      card.CamType = mpComboBoxCam.SelectedIndex;
       card.Persist();
     }
   }

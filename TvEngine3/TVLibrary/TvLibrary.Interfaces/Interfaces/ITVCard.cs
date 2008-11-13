@@ -37,22 +37,9 @@ namespace TvLibrary.Interfaces
     /// </summary>
     Default = 0,
     /// <summary>
-    /// Viacess cam
+    /// Astoncrypt 2 cam
     /// </summary>
-    Viaccess=1,
-    /// <summary>
-    /// Aston cam
-    /// </summary>
-    Aston=2,
-    /// <summary>
-    /// Conax cam
-    /// </summary>
-    Conax=3,
-    /// <summary>
-    /// Cryptoworks cam
-    /// </summary>
-    CryptoWorks=4
-
+    Astoncrypt2=1
   }
   /// <summary>
   /// interface for a tv card

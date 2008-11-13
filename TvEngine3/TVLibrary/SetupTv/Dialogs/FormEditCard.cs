@@ -69,6 +69,7 @@ namespace SetupTv.Sections
     {
       if (!_cardType.Equals("Analog")) //analog does not have these settings
       {
+        ComboBoxCamType.SelectedIndex = _card.CamType;
         numericUpDownDecryptLimit.Value = _card.DecryptLimit;
         checkBoxAllowEpgGrab.Checked = _card.GrabEPG;
         numericUpDownDecryptLimit.Enabled = true;
@@ -100,6 +101,7 @@ namespace SetupTv.Sections
     {
       if (!_cardType.Equals("Analog")) //analog does not have these settings
       {
+        _card.CamType = ComboBoxCamType.SelectedIndex;
         _card.DecryptLimit = Convert.ToInt32(numericUpDownDecryptLimit.Value);
         _card.GrabEPG = checkBoxAllowEpgGrab.Checked;
       }
@@ -119,7 +121,9 @@ namespace SetupTv.Sections
       label1.Visible = checkBoxCAMenabled.Checked;
       label3.Visible = checkBoxCAMenabled.Checked;
       numericUpDownDecryptLimit.Visible = checkBoxCAMenabled.Checked;
-      label4.Visible = checkBoxCAMenabled.Checked;   
+      label4.Visible = checkBoxCAMenabled.Checked;
+      ComboBoxCamType.Visible = checkBoxCAMenabled.Checked;
+      label5.Visible = checkBoxCAMenabled.Checked;
     }
 
     private void checkBoxCAMenabled_CheckedChanged(object sender, EventArgs e)
