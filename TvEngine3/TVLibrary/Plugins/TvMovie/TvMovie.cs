@@ -195,7 +195,7 @@ namespace TvEngine
 
     public string Version
     {
-      get { return "0.9.2.0"; }
+      get { return "1.0.0.0"; }
     }
 
     public string Author
