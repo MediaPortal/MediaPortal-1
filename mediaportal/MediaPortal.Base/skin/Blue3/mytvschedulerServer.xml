@@ -41,7 +41,7 @@
       <type>label</type>
       <id>12</id>
       <posX>260</posX>
-      <posY>550</posY>
+      <posY>540</posY>
       <label>#itemcount</label>
       <font>font13</font>
       <align>left</align>
@@ -153,7 +153,7 @@
         <PinIconXOff>50</PinIconXOff>
         <PinIconYOff>15</PinIconYOff>
         <spinPosX>606</spinPosX>
-        <spinPosY>418</spinPosY>
+        <spinPosY>535</spinPosY>
         <itemWidth>35</itemWidth>
         <itemHeight>35</itemHeight>
         <textureFocus>album_background_focus.png</textureFocus>

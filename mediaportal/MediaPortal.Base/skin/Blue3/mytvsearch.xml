@@ -116,6 +116,16 @@
         <ondown>19</ondown>
       </control>
       <control>
+        <description>Letter button</description>
+        <type>selectbutton</type>
+        <id>7</id>
+        <label>872</label>
+        <onleft>7</onleft>
+        <onright>10</onright>
+        <onup>6</onup>
+        <ondown>8</ondown>
+      </control>
+      <control>
         <description>sms input</description>
         <type>button</type>
         <id>19</id>
@@ -160,15 +170,15 @@
         <onup>2</onup>
         <ondown>2</ondown>
         <textcolor>FFFFFFFF</textcolor>
-        <height>370</height>
+        <height>350</height>
       </control>
       <control>
         <description>scheduler recordings listcontrol</description>
         <type>listcontrol</type>
         <id>11</id>
-        <height>370</height>
-        <textureHeight>59</textureHeight>
-        <itemHeight>44</itemHeight>
+        <height>350</height>
+        <textureHeight>35</textureHeight>
+        <itemHeight>45</itemHeight>
         <itemWidth>30</itemWidth>
         <keepaspectratio>yes</keepaspectratio>
         <font2>font10</font2>
@@ -192,7 +202,6 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
-
     <control>
       <description>Current channel</description>
       <type>label</type>
@@ -206,7 +215,6 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
-
     <control>
       <description>Current program time</description>
       <type>label</type>
