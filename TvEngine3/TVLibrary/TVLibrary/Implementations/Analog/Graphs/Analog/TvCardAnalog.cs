@@ -306,11 +306,11 @@ namespace TvLibrary.Implementations.Analog
         subChannelId = GetNewSubChannel(channel);
         subChannel = _mapSubChannels[subChannelId];
       }
-      RunGraph(subChannel.SubChannelId);
       subChannel.CurrentChannel = channel;
       subChannel.OnBeforeTune();
       PerformTuning(channel);
       subChannel.OnAfterTune();
+      RunGraph(subChannel.SubChannelId);
       return subChannel;
     }
     #endregion
@@ -3464,6 +3464,8 @@ namespace TvLibrary.Implementations.Analog
         Log.Log.WriteFile("analog: RunGraph returns:0x{0:X}", hr);
         throw new TvException("Unable to start graph");
       }
+      graphRunning = GraphRunning();
+      Log.Log.WriteFile("analog: RunGraph succeeded");
       if (_mapSubChannels.ContainsKey(subChannel))
       {
         if (!LockedInOnSignal())
