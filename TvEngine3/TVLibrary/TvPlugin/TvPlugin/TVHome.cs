@@ -84,7 +84,7 @@ namespace TvPlugin
     };
     //heartbeat related stuff
     private Thread heartBeatTransmitterThread = null;
-
+    private static string _newTimeshiftFileName = "";
     static DateTime _updateProgressTimer = DateTime.MinValue;
     static ChannelNavigator m_navigator;
     static TVUtil _util;
@@ -1066,6 +1066,11 @@ namespace TvPlugin
       if (!TVHome.Connected) return;
       if (TVHome.Card.IsTimeShifting == false) return;
 
+      if (_newTimeshiftFileName.Length > 0 && !_newTimeshiftFileName.Equals(filename))
+      {
+        return;
+      }
+
       //tv off
       Log.Info("TVHome:turn tv off");
       SaveSettings();
@@ -1078,6 +1083,7 @@ namespace TvPlugin
         UpdateGUIonPlaybackStateChange(false);
       }
 
+      _newTimeshiftFileName = "";
       _playbackStopped = true;
     }
 
@@ -2182,13 +2188,13 @@ namespace TvPlugin
 
       if (g_Player.Playing && g_Player.IsTimeShifting)
       {
-        if (TVHome.Card != null)
+        /*if (TVHome.Card != null)
         {
           if (TVHome.Card.IsTimeShifting == false)
           {
             g_Player.Stop();
           }
-        }
+        }*/
         if ((g_Player.currentDescription.Length == 0) && (GUIPropertyManager.GetProperty("#TV.View.description").Length != 0))
         {
           GUIPropertyManager.SetProperty("#TV.View.channel", "");
@@ -3089,18 +3095,11 @@ namespace TvPlugin
         tsFileExists = System.IO.File.Exists(timeshiftFileName);
       }
 
-
-
-
-
-
-
-
-
+      _newTimeshiftFileName = timeshiftFileName;
 
       if (tsFileExists && !forceRtsp)
       {
-        MediaPortal.GUI.Library.Log.Info("tvhome:startplay:{0} - using rtsp mode:{1}", timeshiftFileName, _usertsp);
+        MediaPortal.GUI.Library.Log.Info("tvhome:startplay:{0} - using rtsp mode:{1}", timeshiftFileName, _usertsp);        
         g_Player.Play(timeshiftFileName, mediaType);
         benchClock.Stop();
         Log.Warn("tvhome:startplay.  Phase 2 - {0} ms - Done starting g_Player.Play()", benchClock.ElapsedMilliseconds.ToString());
@@ -3112,7 +3111,7 @@ namespace TvPlugin
       else
       {
         timeshiftFileName = TVHome.Card.RTSPUrl;
-        MediaPortal.GUI.Library.Log.Info("tvhome:startplay:{0}", timeshiftFileName);
+        MediaPortal.GUI.Library.Log.Info("tvhome:startplay:{0}", timeshiftFileName);        
         g_Player.Play(timeshiftFileName, mediaType);
         benchClock.Stop();
         Log.Warn("tvhome:startplay.  Phase 2 - {0} ms - Done starting g_Player.Play()", benchClock.ElapsedMilliseconds.ToString());
