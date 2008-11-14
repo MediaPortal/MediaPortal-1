@@ -41,8 +41,8 @@
       <description>Number of Files Label</description>
       <type>label</type>
       <id>12</id>
-      <posX>462</posX>
-      <posY>687</posY>
+      <posX>470</posX>
+      <posY>650</posY>
       <label>#itemcount</label>
       <font>font13</font>
       <align>left</align>
@@ -147,20 +147,20 @@
         <textXOff>88</textXOff>
         <textYOff>2</textYOff>
         <textXOff2>746</textXOff2>
-        <textYOff2>36</textYOff2>
+        <textYOff2>26</textYOff2>
         <textXOff3>177</textXOff3>
-        <textYOff3>36</textYOff3>
-        <IconXOff>21</IconXOff>
-        <PinIconXOff>50</PinIconXOff>
+        <textYOff3>26</textYOff3>
+        <IconXOff>10</IconXOff>
+        <PinIconXOff>75</PinIconXOff>
         <PinIconYOff>15</PinIconYOff>
-        <spinPosX>1077</spinPosX>
-        <spinPosY>522</spinPosY>
-        <itemWidth>62</itemWidth>
-        <itemHeight>43</itemHeight>
+        <spinPosX>1120</spinPosX>
+        <spinPosY>650</spinPosY>
+        <itemWidth>50</itemWidth>
+        <itemHeight>50</itemHeight>
         <textureFocus>album_background_focus.png</textureFocus>
         <textureNoFocus>album_background_nofocus.png</textureNoFocus>
         <spaceBetweenItems>8</spaceBetweenItems>
-        <textureHeight>62</textureHeight>
+        <textureHeight>55</textureHeight>
         <keepaspectratio>no</keepaspectratio>
         <font2>font10</font2>
         <font3>font10</font3>
@@ -175,7 +175,7 @@
       <type>fadelabel</type>
       <id>13</id>
       <posX>462</posX>
-      <posY>550</posY>
+      <posY>545</posY>
       <width>444</width>
       <label>#TV.Scheduled.Title</label>
       <font>font13</font>
@@ -188,7 +188,7 @@
       <type>label</type>
       <id>14</id>
       <posX>462</posX>
-      <posY>575</posY>
+      <posY>500</posY>
       <label>#TV.Scheduled.Time</label>
       <align>left</align>
       <font>font13</font>
@@ -201,9 +201,9 @@
       <type>textboxscrollup</type>
       <id>15</id>
       <posX>462</posX>
-      <posY>606</posY>
+      <posY>570</posY>
       <width>764</width>
-      <height>81</height>
+      <height>90</height>
       <label>#TV.Scheduled.Description</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
@@ -214,8 +214,8 @@
       <description>channel</description>
       <type>label</type>
       <id>17</id>
-      <posX>1203</posX>
-      <posY>575</posY>
+      <posX>462</posX>
+      <posY>520</posY>
       <label>#TV.Scheduled.Channel</label>
       <align>right</align>
       <font>font13</font>

@@ -37,10 +37,9 @@
       <description>Number of Files Label</description>
       <type>label</type>
       <id>12</id>
-      <posX>782</posX>
+      <posX>470</posX>
       <posY>537</posY>
       <label>#itemcount</label>
-      <font>font13</font>
       <align>left</align>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
@@ -54,7 +53,6 @@
       <posY>87</posY>
       <width>711</width>
       <label>#selecteditem</label>
-      <font>font13</font>
       <align>right</align>
       <textcolor>ffffffff</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
@@ -81,7 +79,6 @@
         <description>Search by Genres</description>
         <type>togglebutton</type>
         <id>4</id>
-        <font>font13</font>
         <textcolor>ffffffff</textcolor>
         <colordiffuse>ffffffff</colordiffuse>
         <label>725</label>
@@ -94,7 +91,6 @@
         <description>Search by Title</description>
         <type>togglebutton</type>
         <id>5</id>
-        <font>font13</font>
         <textcolor>ffffffff</textcolor>
         <colordiffuse>ffffffff</colordiffuse>
         <label>726</label>
@@ -108,13 +104,22 @@
         <type>togglebutton</type>
         <id>6</id>
         <label>922</label>
-        <font>font13</font>
         <textcolor>ffffffff</textcolor>
         <colordiffuse>ffffffff</colordiffuse>
         <onleft>6</onleft>
         <onright>10</onright>
         <onup>5</onup>
         <ondown>19</ondown>
+      </control>
+      <control>
+        <description>Letter button</description>
+        <type>selectbutton</type>
+        <id>7</id>
+        <label>872</label>
+        <onleft>7</onleft>
+        <onright>10</onright>
+        <onup>6</onup>
+        <ondown>8</ondown>
       </control>
       <control>
         <description>sms input</description>
@@ -161,14 +166,14 @@
         <onup>2</onup>
         <ondown>2</ondown>
         <textcolor>FFFFFFFF</textcolor>
-        <height>462</height>
+        <height>562</height>
       </control>
       <control>
         <description>scheduler recordings listcontrol</description>
         <type>listcontrol</type>
         <id>11</id>
         <height>462</height>
-        <textureHeight>73</textureHeight>
+        <textureHeight>55</textureHeight>
         <itemHeight>55</itemHeight>
         <itemWidth>53</itemWidth>
         <keepaspectratio>yes</keepaspectratio>
@@ -198,7 +203,7 @@
       <type>label</type>
       <id>16</id>
       <posX>462</posX>
-      <posY>512</posY>
+      <posY>520</posY>
       <label>#TV.Search.Channel</label>
       <align>left</align>
       <font>font13</font>
@@ -211,7 +216,7 @@
       <type>label</type>
       <id>14</id>
       <posX>462</posX>
-      <posY>537</posY>
+      <posY>545</posY>
       <label>#TV.Search.Time</label>
       <align>left</align>
       <font>font13</font>
@@ -224,9 +229,9 @@
       <type>textboxscrollup</type>
       <id>15</id>
       <posX>462</posX>
-      <posY>562</posY>
+      <posY>570</posY>
       <width>764</width>
-      <height>81</height>
+      <height>90</height>
       <label>#TV.Search.Description</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
@@ -238,7 +243,7 @@
       <type>label</type>
       <id>17</id>
       <posX>1173</posX>
-      <posY>512</posY>
+      <posY>520</posY>
       <label>#TV.Search.Genre</label>
       <align>right</align>
       <font>font13</font>
