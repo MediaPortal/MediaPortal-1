@@ -88,7 +88,7 @@ namespace MediaPortal.GUI.Music
       _useBassEngine = BassMusicPlayer.IsDefaultMusicPlayer;
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        _settingVisEnabled = xmlreader.GetValueAsBool("musicfiles", "doVisualisation", true) && _useBassEngine;
+        _settingVisEnabled = xmlreader.GetValueAsBool("musicfiles", "doVisualisation", false) && _useBassEngine;
         _visualisationEnabled = _settingVisEnabled;
         _useID3 = xmlreader.GetValueAsBool("musicfiles", "showid3", true);
       }

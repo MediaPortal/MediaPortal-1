@@ -142,7 +142,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       if (AudioscrobblerBase.CurrentPlayingSong != null && AudioscrobblerBase.CurrentPlayingSong.Artist != String.Empty)
       {
         // If we leave and reenter the plugin try to set the correct duration
-        GUIPropertyManager.SetProperty("#trackduration", Util.Utils.SecondsToHMSString(AudioscrobblerBase.CurrentPlayingSong.Duration));
+        SetDuration(AudioscrobblerBase.CurrentPlayingSong, false);
         ThumbFileName = Util.Utils.GetCoverArtName(Thumbs.MusicArtists, AudioscrobblerBase.CurrentPlayingSong.Artist);
       }
       // repopulate the facade after maybe exiting the plugin
@@ -241,7 +241,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         btnChooseFriend.Label = GUILocalizeStrings.Get(34031);
       }
 
-      GUIPropertyManager.SetProperty("#trackduration", " ");      
+      SetDuration(null, true);
 
       LoadSettings();
     }
@@ -834,6 +834,24 @@ namespace MediaPortal.GUI.RADIOLASTFM
       return true;
     }
 
+    private Song DetermineNextPlaylistTrack()
+    {
+      Song choosenOne = _radioTrackList[0];
+      try
+      {
+        if (facadeRadioPlaylist != null && facadeRadioPlaylist.SelectedListItemIndex > 0)
+        {
+          choosenOne = _radioTrackList[facadeRadioPlaylist.SelectedListItemIndex];
+          Log.Debug("GUIRadioLastFM: Determine next playlist item {0}", _radioTrackList[facadeRadioPlaylist.SelectedListItemIndex].ToShortString());
+        }
+      }
+      catch (Exception ex) 
+      {
+        Log.Error("GUIRadioLastFM: Error in DetermineNextPlaylistTrack - {0}" + ex.Message);
+      }
+      return choosenOne;
+    }
+
     public void PlayPlayListStreams(Song aStreamSong)
     {
       bool playSuccess = false;      
@@ -1105,9 +1123,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
       SetThumbnails(String.Empty);
       GUIPropertyManager.SetProperty("#Play.Current.Lastfm.TrackTags", String.Empty);
       GUIPropertyManager.SetProperty("#Play.Current.Lastfm.SimilarArtists", String.Empty);
-      GUIPropertyManager.SetProperty("#trackduration", " ");
-      GUIPropertyManager.SetProperty("#currentplaytime", String.Empty);
       GUIPropertyManager.SetProperty("#Play.Current.Lastfm.CurrentStream", String.Empty);
+      SetDuration(null, true);
 
       //reset the TrayIcon
       ShowSongTrayBallon(GUILocalizeStrings.Get(34050), " ", 1, false); // Stream stopped
@@ -1138,7 +1155,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         _radioTrackList.Remove(AudioscrobblerBase.CurrentPlayingSong);
         Log.Debug("GUIRadioLastFM: Playlist fetching failed - removing current track");
         if (aPlayNow)
-          GUIGraphicsContext.form.Invoke(new ThreadStartBass(PlayPlayListStreams), new object[] { _radioTrackList[0] });
+          GUIGraphicsContext.form.Invoke(new ThreadStartBass(PlayPlayListStreams), new object[] { DetermineNextPlaylistTrack() });
       }
       else
         if (aPlayNow)
@@ -1186,7 +1203,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         try
         {
           GUIGraphicsContext.form.Invoke(new ThreadStopPlayer(StopPlaybackIfNeed));
-          GUIGraphicsContext.form.Invoke(new ThreadStartBass(PlayPlayListStreams), new object[] { _radioTrackList[0] });
+          GUIGraphicsContext.form.Invoke(new ThreadStartBass(PlayPlayListStreams), new object[] { DetermineNextPlaylistTrack() });
         }
         catch (Exception ex)
         {
@@ -1261,7 +1278,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
             GUIPropertyManager.SetProperty("#Play.Current.Album", _streamSong.Album);
             GUIPropertyManager.SetProperty("#Play.Current.Genre", _streamSong.Genre);
             // GUIPropertyManager.SetProperty("#Play.Current.Thumb", _streamSong.Comment);
-            GUIPropertyManager.SetProperty("#trackduration", Util.Utils.SecondsToHMSString(_streamSong.Duration));
+            //GUIPropertyManager.SetProperty("#trackduration", Util.Utils.SecondsToHMSString(_streamSong.Duration));
+            SetDuration(_streamSong, false);
 
             OnUpdateNotifyBallon();
           }
@@ -1282,7 +1300,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       if (_radioTrackList.Count > 0)
       {
         if (_configDirectSkip || directSkip)
-          GUIGraphicsContext.form.Invoke(new ThreadStartBass(PlayPlayListStreams), new object[] { _radioTrackList[0] });
+          GUIGraphicsContext.form.Invoke(new ThreadStartBass(PlayPlayListStreams), new object[] { DetermineNextPlaylistTrack() });
         else
         {
           GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
@@ -1331,7 +1349,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       {
         if (_radioTrackList.Count > 0)
         {
-          GUIGraphicsContext.form.Invoke(new ThreadStartBass(PlayPlayListStreams), new object[] { _radioTrackList[0] });
+          GUIGraphicsContext.form.Invoke(new ThreadStartBass(PlayPlayListStreams), new object[] { DetermineNextPlaylistTrack() });
         }
         else
         {
@@ -1480,6 +1498,29 @@ namespace MediaPortal.GUI.RADIOLASTFM
     #endregion
 
     #region Utils
+
+    private void SetDuration(Song aSong, bool aClearAll)
+    {
+      if (aClearAll)
+      {
+        GUIPropertyManager.SetProperty("#trackduration", " ");
+        GUIPropertyManager.SetProperty("#currentplaytime", String.Empty);
+      }
+      else
+      {
+        if (aSong != null && aSong.Duration > 0)
+        {
+          //int currentPercentage = 0;
+          //try
+          //{
+          //  currentPercentage = (int)(g_Player.CurrentPosition / Convert.ToDouble(aSong.Duration) * 100d);
+          //}
+          //catch (Exception) { } // Maybe zero or not playing or..
+          //GUIPropertyManager.SetProperty("#percentage", Convert.ToString(currentPercentage));
+          GUIPropertyManager.SetProperty("#trackduration", Util.Utils.SecondsToHMSString(aSong.Duration));
+        }
+      }
+    }
 
     public string GetRadioPlaylistName(string aUrlEncodedXmlString)
     {
@@ -1668,7 +1709,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       }
       GUIPropertyManager.SetProperty("#Play.Current.ArtistThumb", thumb);
 
-      string albumthumb = Util.Utils.GetCoverArtName(Thumbs.MusicAlbum, AudioscrobblerBase.CurrentPlayingSong.Album);      
+      string albumthumb = Util.Utils.GetCoverArtName(Thumbs.MusicAlbum, AudioscrobblerBase.CurrentPlayingSong.Album);
       if (File.Exists(albumthumb))
       {
         string strLarge = MediaPortal.Util.Utils.ConvertToLargeCoverArt(albumthumb);
