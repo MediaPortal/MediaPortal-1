@@ -109,7 +109,7 @@
         <onleft>6</onleft>
         <onright>10</onright>
         <onup>5</onup>
-        <ondown>19</ondown>
+        <ondown>7</ondown>
       </control>
       <control>
         <description>Letter button</description>
@@ -119,14 +119,14 @@
         <onleft>7</onleft>
         <onright>10</onright>
         <onup>6</onup>
-        <ondown>8</ondown>
+        <ondown>19</ondown>
       </control>
       <control>
         <description>sms input</description>
         <type>button</type>
         <id>19</id>
         <label>137</label>
-        <onup>6</onup>
+        <onup>7</onup>
         <ondown>8</ondown>
         <onleft>19</onleft>
         <onright>10</onright>
@@ -175,7 +175,7 @@
         <height>462</height>
         <textureHeight>55</textureHeight>
         <itemHeight>55</itemHeight>
-        <itemWidth>53</itemWidth>
+        <itemWidth>60</itemWidth>
         <keepaspectratio>yes</keepaspectratio>
         <font2>font10</font2>
         <font3>font10</font3>
