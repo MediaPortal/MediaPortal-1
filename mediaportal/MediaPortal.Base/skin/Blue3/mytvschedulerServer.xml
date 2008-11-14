@@ -150,17 +150,17 @@
         <textXOff3>100</textXOff3>
         <textYOff3>29</textYOff3>
         <IconXOff>12</IconXOff>
-        <PinIconXOff>50</PinIconXOff>
+        <PinIconXOff>55</PinIconXOff>
         <PinIconYOff>15</PinIconYOff>
         <spinPosX>606</spinPosX>
         <spinPosY>535</spinPosY>
-        <itemWidth>35</itemWidth>
-        <itemHeight>35</itemHeight>
+        <itemWidth>45</itemWidth>
+        <itemHeight>45</itemHeight>
         <textureFocus>album_background_focus.png</textureFocus>
         <textureNoFocus>album_background_nofocus.png</textureNoFocus>
         <spaceBetweenItems>5</spaceBetweenItems>
         <textureHeight>50</textureHeight>
-        <keepaspectratio>no</keepaspectratio>
+        <keepaspectratio>yes</keepaspectratio>
         <font2>font10</font2>
         <font3>font10</font3>
         <onleft>2</onleft>
@@ -174,7 +174,7 @@
       <type>fadelabel</type>
       <id>13</id>
       <posX>260</posX>
-      <posY>440</posY>
+      <posY>425</posY>
       <width>250</width>
       <label>#TV.Scheduled.Title</label>
       <font>font13</font>
@@ -187,7 +187,7 @@
       <type>label</type>
       <id>14</id>
       <posX>260</posX>
-      <posY>460</posY>
+      <posY>445</posY>
       <label>#TV.Scheduled.Time</label>
       <align>left</align>
       <font>font13</font>
@@ -200,7 +200,7 @@
       <type>textboxscrollup</type>
       <id>15</id>
       <posX>260</posX>
-      <posY>485</posY>
+      <posY>470</posY>
       <width>430</width>
       <height>65</height>
       <label>#TV.Scheduled.Description</label>
@@ -214,7 +214,7 @@
       <type>label</type>
       <id>17</id>
       <posX>677</posX>
-      <posY>460</posY>
+      <posY>445</posY>
       <label>#TV.Scheduled.Channel</label>
       <align>right</align>
       <font>font13</font>
