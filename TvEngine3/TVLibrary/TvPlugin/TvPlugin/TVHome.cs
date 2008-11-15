@@ -69,8 +69,17 @@ namespace TvPlugin
 
     private const int HEARTBEAT_INTERVAL = 5; //seconds
     private const int WM_POWERBROADCAST = 0x0218;
+    private const int WM_QUERYENDSESSION = 0x0011;
+    private const int PBT_APMQUERYSUSPEND = 0x0000;
+    private const int PBT_APMQUERYSTANDBY = 0x0001;
+    private const int PBT_APMQUERYSUSPENDFAILED = 0x0002;
+    private const int PBT_APMQUERYSTANDBYFAILED = 0x0003;
+    private const int PBT_APMSUSPEND = 0x0004;
+    private const int PBT_APMSTANDBY = 0x0005;
+    private const int PBT_APMRESUMECRITICAL = 0x0006;
     private const int PBT_APMRESUMESUSPEND = 0x0007;
     private const int PBT_APMRESUMESTANDBY = 0x0008;
+    private const int PBT_APMRESUMEAUTOMATIC = 0x0012;
 
     #endregion
 
@@ -792,7 +801,7 @@ namespace TvPlugin
             _doingHandleServerNotConnected = false;
             return true;
           }
-          //_ServerNotConnectedHandled = true;
+//          _ServerNotConnectedHandled = true;
           GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
 
           if (pDlgOK != null)
@@ -1220,6 +1229,26 @@ namespace TvPlugin
       base.OnAction(action);
     }
 
+    private void OnSuspend()
+    {
+      Log.Debug("TVHome.OnSuspend()");
+
+      try
+      {
+        if (TVHome.Card.IsTimeShifting)
+        {
+          TVHome.Card.User.Name = new User().Name;
+          TVHome.Card.StopTimeShifting();
+        }
+        stopHeartBeatThread();
+      }
+      catch (Exception)
+      {
+      }
+
+      _resumed = false;
+    }
+
     private void OnResume()
     {
       Log.Debug("TVHome.OnResume()");
@@ -1242,6 +1271,19 @@ namespace TvPlugin
       {
         switch (msg.WParam.ToInt32())
         {
+          case PBT_APMSTANDBY:
+            Log.Info("TVHome.WndProc(): Windows is going to standby");
+            OnSuspend();            
+            break;
+          case PBT_APMSUSPEND:
+            Log.Info("TVHome.WndProc(): Windows is suspending");
+            OnSuspend();            
+            break;
+          case PBT_APMQUERYSUSPEND:
+          case PBT_APMQUERYSTANDBY:
+            Log.Info("TVHome.WndProc(): Windows is going into powerstate (hibernation/standby)");
+            
+            break;
           case PBT_APMRESUMESUSPEND:
             Log.Info("TVHome.WndProc(): Windows has resumed from hibernate mode");
             OnResume();
