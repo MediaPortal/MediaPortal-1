@@ -189,15 +189,15 @@
       <description>Current program title</description>
       <type>fadelabel</type>
       <id>13</id>
-      <posX>462</posX>
-      <posY>550</posY>
-      <width>444</width>
+      <posX>750</posX>
+      <posY>545</posY>
+      <width>424</width>
       <label>#TV.Search.Title</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
-    </control>
+   </control>
     <control>
       <description>Current channel</description>
       <type>label</type>
@@ -229,9 +229,9 @@
       <type>textboxscrollup</type>
       <id>15</id>
       <posX>462</posX>
-      <posY>570</posY>
+      <posY>575</posY>
       <width>764</width>
-      <height>90</height>
+      <height>85</height>
       <label>#TV.Search.Description</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
