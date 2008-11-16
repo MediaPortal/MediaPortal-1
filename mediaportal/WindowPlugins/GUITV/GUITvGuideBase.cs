@@ -2470,6 +2470,7 @@ namespace MediaPortal.GUI.TV
             dlg.DoModal(GetID);
             if (dlg.SelectedLabel == -1)
               return;
+            GUIPropertyManager.SetProperty("#TV.Guide.Group", dlg.SelectedLabelText);
             GUITVHome.Navigator.SetCurrentGroup(dlg.SelectedLabelText);
             GetChannels();
             Update(false);

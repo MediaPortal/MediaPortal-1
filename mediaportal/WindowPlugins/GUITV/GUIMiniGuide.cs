@@ -144,6 +144,7 @@ namespace MediaPortal.GUI.TV
             else if (message.SenderControlId == 36) // spincontrol
             {
               // switch group
+              GUIPropertyManager.SetProperty("#TV.Guide.Group", spinGroup.GetLabel());
               GUITVHome.Navigator.SetCurrentGroup(spinGroup.GetLabel());
               FillChannelList();
             }
@@ -177,12 +178,14 @@ namespace MediaPortal.GUI.TV
         case Action.ActionType.ACTION_MOVE_LEFT:
           // switch group
           spinGroup.MoveUp();
+          GUIPropertyManager.SetProperty("#TV.Guide.Group", spinGroup.GetLabel());
           GUITVHome.Navigator.SetCurrentGroup(spinGroup.GetLabel());
           FillChannelList();
           return;
         case Action.ActionType.ACTION_MOVE_RIGHT:
           // switch group
           spinGroup.MoveDown();
+          GUIPropertyManager.SetProperty("#TV.Guide.Group", spinGroup.GetLabel());
           GUITVHome.Navigator.SetCurrentGroup(spinGroup.GetLabel());
           FillChannelList();
           return;

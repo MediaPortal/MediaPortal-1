@@ -342,6 +342,7 @@ namespace MediaPortal.GUI.TV
       {
         if (Navigator.CurrentGroup == null && Navigator.Groups.Count > 0)
         {
+          GUIPropertyManager.SetProperty("#TV.Guide.Group", Navigator.Groups[0].GroupName);
           Navigator.SetCurrentGroup(Navigator.Groups[0].GroupName);
         }
         if (Navigator.CurrentGroup != null)
@@ -462,6 +463,7 @@ namespace MediaPortal.GUI.TV
       dlg.DoModal(this.GetID);
       if (dlg.SelectedLabel < 0)
         return;
+      GUIPropertyManager.SetProperty("#TV.Guide.Group", dlg.SelectedLabelText);
       Navigator.SetCurrentGroup(dlg.SelectedLabelText);
       if (Navigator.CurrentGroup != null)
       {
