@@ -401,7 +401,8 @@ namespace MediaPortal.GUI.Video
           if (_mapSettings == null) _mapSettings = new MapSettings();
           CurrentSortAsc = _mapSettings.SortAscending;
           CurrentSortMethod = (VideoSort.SortMethod)_mapSettings.SortBy;
-          currentView = (View)share.DefaultView;
+          currentView = (View) share.DefaultView;
+          CurrentView = (View)share.DefaultView;
         }
       }
 

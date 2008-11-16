@@ -52,8 +52,8 @@ namespace MediaPortal.GUI.Video
       List = 0,
       Icons = 1,
       LargeIcons = 2,
-      FilmStrip = 3,
-      PlayList = 4
+      FilmStrip = 4,
+      PlayList = 5
     }
 
     #endregion
