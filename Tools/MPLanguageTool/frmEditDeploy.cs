@@ -19,18 +19,13 @@
  *
  */
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace MPLanguageTool
 {
-  public partial class frmEdit : Form
+  public partial class frmEditDeploy : Form
   {
-    public frmEdit()
+    public frmEditDeploy()
     {
       InitializeComponent();
     }
@@ -39,19 +34,20 @@ namespace MPLanguageTool
       lID.Text = id;
       edValue.Text = translation;
       edDefault.Text = defaultTranslation;
-      return base.ShowDialog();
+      return ShowDialog();
     }
     public string GetTranslation()
     {
       if (edValue.Text == "")
+      {
         return null;
-      else
-        return edValue.Text;
+      }
+      return edValue.Text;
     }
 
     private void btnOK_Click(object sender, EventArgs e)
     {
-      this.DialogResult = DialogResult.OK;
+      DialogResult = DialogResult.OK;
     }
 
     private void frmEdit_Shown(object sender, EventArgs e)

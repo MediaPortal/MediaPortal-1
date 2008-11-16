@@ -20,41 +20,51 @@
  */
 using System;
 using System.Windows.Forms;
-using System.Globalization;
 
 namespace MPLanguageTool
 {
-  public partial class SelectCulture : Form
+  public partial class frmEditMP : Form
   {
-    public SelectCulture(string Source)
+    public frmEditMP()
     {
       InitializeComponent();
-      CultureInfo[] cinfos = CultureInfo.GetCultures(CultureTypes.AllCultures);
-      foreach (CultureInfo ci in cinfos)
-      {
-        cbCulture.Items.Add(ci);
-      }
-      CultureInfo current = System.Threading.Thread.CurrentThread.CurrentCulture;
-      if ((current.CultureTypes & CultureTypes.SpecificCultures) != 0 && Source == "MediaPortal")
-      {
-        // Select neutral culture like "it"
-        cbCulture.SelectedItem = current.Parent;
-      }
-      else
-      {
-        // Select specific culture like "it-IT"
-        cbCulture.SelectedItem = current;
-      }
-
     }
-    public CultureInfo GetSelectedCulture()
+    public DialogResult ShowDialog(string id, string translation, string defaultTranslation, string prefix, string prefixTranslation)
     {
-      return (CultureInfo)cbCulture.SelectedItem;
+      lID.Text = id;
+      edValue.Text = translation;
+      edDefault.Text = defaultTranslation;
+      textBox1.Text = prefix;
+      textBox2.Text = prefixTranslation;
+
+      return ShowDialog();
+    }
+    public string GetTranslation()
+    {
+      if (edValue.Text == "")
+      {
+        return null;
+      }
+      return edValue.Text;
+    }
+
+    public string GetPrefixTranslation()
+    {
+      if (textBox1.Text == "")
+      {
+        return null;
+      }
+      return textBox1.Text;
     }
 
     private void btnOK_Click(object sender, EventArgs e)
     {
       DialogResult = DialogResult.OK;
+    }
+
+    private void frmEdit_Shown(object sender, EventArgs e)
+    {
+      edValue.Focus();
     }
   }
 }

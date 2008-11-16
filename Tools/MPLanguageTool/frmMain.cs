@@ -19,15 +19,10 @@
  *
  */
 using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using System.Globalization;
-using System.Xml;
 
 namespace MPLanguageTool
 {
@@ -35,9 +30,13 @@ namespace MPLanguageTool
   {
     #region Variables
     NameValueCollection defaultTranslations;
-    CultureInfo culture = null;
-    bool DeployTool = false;
-    bool MediaPortal = false;
+    CultureInfo culture;
+    bool DeployTool;
+    bool MediaPortal;
+
+    // new added
+    DataTable originalTranslations;
+
     #endregion
 
     public frmMain()
@@ -53,29 +52,53 @@ namespace MPLanguageTool
         if ((string)row.Cells[1].Value == null)
           count++;
       }
-      return count++;
+      return count;
     }
 
     private void gv_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
     {
       string key = (string)gv.Rows[e.RowIndex].Cells[0].Value;
       string value = (string)gv.Rows[e.RowIndex].Cells[1].Value;
-      frmEdit dlg = new frmEdit();
+      frmEditDeploy dlg = new frmEditDeploy();
       if (dlg.ShowDialog(key, value, defaultTranslations[key]) == DialogResult.OK)
       {
         string trans = dlg.GetTranslation();
         gv.Rows[e.RowIndex].Cells[1].Value = trans;
-        if (trans == null)
-          gv.Rows[e.RowIndex].Cells[0].Style.ForeColor = System.Drawing.Color.Red;
-        else
-          gv.Rows[e.RowIndex].Cells[0].Style.ForeColor = System.Drawing.Color.Black;
+        gv.Rows[e.RowIndex].Cells[0].Style.ForeColor = trans == null ? System.Drawing.Color.Red : System.Drawing.Color.Black;
         ToolStripText(GetUntranslatedCount());
       }
     }
 
+    private void gv2_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
+    {
+      string key = (string)gv2.Rows[e.RowIndex].Cells[0].Value;
+      string valueOriginal = (string)gv2.Rows[e.RowIndex].Cells[1].Value;
+      string valueTranslated = (string)gv2.Rows[e.RowIndex].Cells[2].Value;
+      string prefixOriginal = (string)gv2.Rows[e.RowIndex].Cells[3].Value;
+      string prefixTranslated = (string)gv2.Rows[e.RowIndex].Cells[4].Value;
+
+      frmEditMP dlg = new frmEditMP();
+
+      if (dlg.ShowDialog(key, valueTranslated, valueOriginal, prefixTranslated, prefixOriginal) == DialogResult.OK)
+      {
+        string trans = dlg.GetTranslation();
+        string prefix = dlg.GetPrefixTranslation();
+
+        gv2.Rows[e.RowIndex].Cells[2].Value = trans;
+        gv2.Rows[e.RowIndex].Cells[4].Value = prefix;
+        gv2.Rows[e.RowIndex].Cells[1].Style.ForeColor = trans == null ? System.Drawing.Color.Red : System.Drawing.Color.Black;
+        ToolStripText(GetUntranslatedCount());
+      }
+    }
+
+
     #region Menu-events
     private void openDeployToolToolStripMenuItem_Click(object sender, EventArgs e)
     {
+      gv.Dock = DockStyle.Fill;
+      gv2.Dock = DockStyle.None;
+      gv2.Visible = false;
+
       defaultTranslations = ResxHandler.Load(null);
       if (defaultTranslations == null)
       {
@@ -90,7 +113,9 @@ namespace MPLanguageTool
       SelectCulture dlg = new SelectCulture("DeployTool");
       if (dlg.ShowDialog() != DialogResult.OK) return;
       culture = dlg.GetSelectedCulture();
-      this.Text = "MPLanguageTool -- Current language: " + culture.NativeName + " -- File: MediaPortal.DeployTool." + culture.Name + ".resx";
+      Text = "MPLanguageTool -- Current language: " + culture.NativeName + " -- File: MediaPortal.DeployTool." + culture.Name + ".resx";
+      ToolStripText("Loading \"MediaPortal.DeployTool." + culture.Name + ".resx\"...");
+
       NameValueCollection translations = ResxHandler.Load(culture.Name);
       int untranslated = 0;
       foreach (string key in defaultTranslations.AllKeys)
@@ -108,58 +133,87 @@ namespace MPLanguageTool
 
     private void openMpToolStripMenuItem_Click(object sender, EventArgs e)
     {
-      defaultTranslations = XmlHandler.Load(null);
-      if (defaultTranslations == null)
+      gv.Dock = DockStyle.None;
+      gv2.Dock = DockStyle.Fill;
+      gv2.Visible = true;
+
+      // Load Original File (english)
+      originalTranslations = XmlHandler.Load(null);
+
+      if (originalTranslations == null)
       {
         MessageBox.Show("The file [strings_en.xml] could not be found.\nThe LanguageTool does not work without it.", "MPLanguageTool -- Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         openMpToolStripMenuItem.Enabled = false;
         saveToolStripMenuItem.Enabled = false;
         Environment.Exit(-2);
       }
+
       MediaPortal = true;
       openMpToolStripMenuItem.Enabled = false;
       openDeployToolToolStripMenuItem.Enabled = false;
       SelectCulture dlg = new SelectCulture("MediaPortal");
       if (dlg.ShowDialog() != DialogResult.OK) return;
       culture = dlg.GetSelectedCulture();
-      this.Text = "MPLanguageTool -- Current language: " + culture.NativeName + " -- File: strings_" + culture.Name + ".xml";
-      NameValueCollection translations = XmlHandler.Load(culture.Name);
+      Text = "MPLanguageTool -- Current language: " + culture.NativeName + " -- File: strings_" + culture.Name + ".xml";
+      ToolStripText("Loading \"strings_" + culture.Name + ".xml\"...");
+
+      // Modified
+      DataTable translations = XmlHandler.Load_Traslation(culture.Name, originalTranslations);
+
       int untranslated = 0;
-      bool first = true;
-      string index = null;
-      foreach (string key in defaultTranslations.AllKeys)
+
+      DataView dv = new DataView(translations);
+      gv2.DataSource = dv;
+
+      // Count Not Traslated
+      for (int z = 0; z < translations.Rows.Count; z++)
       {
-        if (first)
+        if (translations.Rows[z]["Translated"].ToString() == "")
         {
-          index = key;
-          first = false;
-        }
-        else
-        {
-          index = key.Split('(')[0];
-        }
-        gv.Rows.Add(key, translations[index]);
-        if (translations[index] == null)
-        {
-          gv.Rows[gv.RowCount - 1].Cells[0].Style.ForeColor = System.Drawing.Color.Red;
+          gv2.Rows[gv2.RowCount - 1].Cells[0].Style.ForeColor = System.Drawing.Color.Red;
           untranslated++;
         }
       }
+
       ToolStripText(untranslated);
       saveToolStripMenuItem.Enabled = true;
     }
 
     private void saveToolStripMenuItem_Click(object sender, EventArgs e)
     {
-      NameValueCollection translations = new NameValueCollection();
-      foreach (DataGridViewRow row in gv.Rows)
-        translations.Add((string)row.Cells[0].Value, (string)row.Cells[1].Value);
-      if (MediaPortal)
-        XmlHandler.Save(culture.Name, culture.EnglishName, translations);
       if (DeployTool)
+      {
+        NameValueCollection translations = new NameValueCollection();
+
+        foreach (DataGridViewRow row in gv.Rows)
+          translations.Add((string)row.Cells[0].Value, (string)row.Cells[1].Value);
+
+
         ResxHandler.Save(culture.Name, translations);
+      }
+
+      if (MediaPortal)
+      {
+        DataTable translations = new DataTable();
+
+        DataColumn col0 = new DataColumn("id", Type.GetType("System.String"));
+        DataColumn col1 = new DataColumn("Translated", Type.GetType("System.String"));
+        DataColumn col2 = new DataColumn("PrefixTranslated", Type.GetType("System.String"));
+
+        translations.Columns.Add(col0);
+        translations.Columns.Add(col1);
+        translations.Columns.Add(col2);
+
+        foreach (DataGridViewRow row in gv2.Rows)
+          translations.Rows.Add((string)row.Cells["id"].Value, (string)row.Cells["Translated"].Value, (string)row.Cells["PrefixTranslated"].Value);
+
+        XmlHandler.Save(culture.Name, culture.EnglishName, translations);
+      }
+
+
       MessageBox.Show("Your translations have been saved.", "MPLanguageTool -- Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
+
     private void quitToolStripMenuItem_Click(object sender, EventArgs e)
     {
       if (culture != null)
@@ -184,7 +238,13 @@ namespace MPLanguageTool
         toolStripStatusLabel1.ForeColor = System.Drawing.Color.Black;
         AddTxt = null;
       }
-      toolStripStatusLabel1.Text = "Missing translations: " + lines.ToString() + AddTxt;
+      toolStripStatusLabel1.Text = "Missing translations: " + lines + AddTxt;
+    }
+
+    public void ToolStripText(string status)
+    {
+      toolStripStatusLabel1.ForeColor = System.Drawing.Color.Black;
+      toolStripStatusLabel1.Text = status;
     }
   }
 }

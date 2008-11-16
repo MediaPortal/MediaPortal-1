@@ -19,13 +19,10 @@
  *
  */
 using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Text;
 using System.Xml;
 using System.IO;
-using System.Resources;
-using System.Reflection;
 
 namespace MPLanguageTool
 {
@@ -34,26 +31,32 @@ namespace MPLanguageTool
     private static string BuildFileName(string languageID)
     {
       if (languageID == null)
+      {
         return AppDomain.CurrentDomain.BaseDirectory + "MediaPortal.DeployTool.resx";
-      else
-        return AppDomain.CurrentDomain.BaseDirectory + "MediaPortal.DeployTool." + languageID + ".resx";
+      }
+      return AppDomain.CurrentDomain.BaseDirectory + "MediaPortal.DeployTool." + languageID + ".resx";
     }
+
     public static NameValueCollection Load(string languageID)
     {
       string xml = BuildFileName(languageID);
       if (!File.Exists(xml))
       {
         if (languageID == null)
+        {
           return null;
-        else
-          return new NameValueCollection();
+        }
+        return new NameValueCollection();
       }
       NameValueCollection translations = new NameValueCollection();
       XmlDocument doc = new XmlDocument();
       doc.Load(xml);
       XmlNodeList nodes = doc.SelectNodes("/root/data");
-      foreach (XmlNode keyNode in nodes)
-        translations.Add(keyNode.Attributes["name"].Value, keyNode.SelectSingleNode("value").InnerText);
+      if (nodes != null)
+      {
+        foreach (XmlNode keyNode in nodes)
+          translations.Add(keyNode.Attributes["name"].Value, keyNode.SelectSingleNode("value").InnerText);
+      }
       return translations;
     }
 

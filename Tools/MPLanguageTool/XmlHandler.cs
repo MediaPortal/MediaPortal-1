@@ -19,14 +19,11 @@
  *
  */
 using System;
-using System.Collections.Generic;
+using System.Data;
 using System.Collections.Specialized;
 using System.Text;
 using System.Xml;
 using System.IO;
-using System.Resources;
-using System.Reflection;
-using System.Windows.Forms;
 
 namespace MPLanguageTool
 {
@@ -34,8 +31,8 @@ namespace MPLanguageTool
   {
     private static string BuildFileName(string languageID)
     {
-      string LangFileName = "strings_";
-      string LangExtension = ".xml";
+      const string LangFileName = "strings_";
+      const string LangExtension = ".xml";
       string LangDefaultID = "en";
       if (languageID != null)
       {
@@ -44,45 +41,138 @@ namespace MPLanguageTool
       return AppDomain.CurrentDomain.BaseDirectory + LangFileName + LangDefaultID + LangExtension;
     }
 
-    public static NameValueCollection Load(string languageID)
+    // Load Original Label to Translate
+    public static DataTable Load(string languageID)
     {
       string xml = BuildFileName(languageID);
       if (!File.Exists(xml))
       {
         if (languageID == null)
+        {
           return null;
-        else
-          return new NameValueCollection();
+        }
+        return new DataTable();
       }
-      NameValueCollection translations = new NameValueCollection();
+
+      DataTable translations = new DataTable();
+
+      DataColumn col0 = new DataColumn("id", Type.GetType("System.String"));
+      DataColumn col1 = new DataColumn("Original", Type.GetType("System.String"));
+      DataColumn col2 = new DataColumn("Translated", Type.GetType("System.String"));
+      DataColumn col3 = new DataColumn("PrefixOriginal", Type.GetType("System.String"));
+      DataColumn col4 = new DataColumn("PrefixTranslated", Type.GetType("System.String"));
+
+      translations.Columns.Add(col0);
+      translations.Columns.Add(col1);
+      translations.Columns.Add(col2);
+      translations.Columns.Add(col3);
+      translations.Columns.Add(col4);
+
       XmlDocument doc = new XmlDocument();
       doc.Load(xml);
-      XmlNodeList nodes = doc.DocumentElement.SelectNodes("/Language/Section/String");
-      bool first = true;
-      string node_id;
-      foreach (XmlNode keyNode in nodes)
+      if (doc.DocumentElement != null)
       {
-        if (first)
+        XmlNodeList nodes = doc.DocumentElement.SelectNodes("/Language/Section/String");
+
+        if (nodes != null)
         {
-          //
-          // row 0 prefix  = prefix used for all rows with prefix
-          //
-          // Needs a fix ;(
-          //
-          string prefixValue = null;
-          if (keyNode.Attributes.Count == 2)
-            prefixValue = keyNode.Attributes["prefix"].Value;
-          translations.Add("Common string prefix" + PrefixIdentifier(), prefixValue);
-          first = false;
+          foreach (XmlNode keyNode in nodes)
+          {
+            string prefixValue = "";
+            string node_id = keyNode.Attributes["id"].Value;
+
+            if (keyNode.Attributes.Count == 2)
+            {
+              prefixValue = keyNode.Attributes["prefix"].Value;
+            }
+
+            DataRow row = translations.NewRow();
+            row[0] = node_id;
+            row[1] = keyNode.InnerText;
+            row[2] = "";
+            row[3] = prefixValue;
+            row[4] = "";
+
+
+            translations.Rows.Add(row);
+
+          }
         }
-        if (keyNode.Attributes.Count == 2 && languageID == null)
-          node_id = PrefixIdentifier();
-        else
-          node_id = "";
-        translations.Add(keyNode.Attributes["id"].Value + node_id, keyNode.InnerText);
       }
       return translations;
     }
+
+    // Load Translations
+    public static DataTable Load_Traslation(string languageID, DataTable originalTranslation)
+    {
+      string xml = BuildFileName(languageID);
+      if (!File.Exists(xml))
+      {
+        if (languageID == null)
+        {
+          return null;
+        }
+        return new DataTable();
+      }
+
+      DataTable translations = new DataTable();
+
+      DataColumn col0 = new DataColumn("id", Type.GetType("System.String"));
+      DataColumn col1 = new DataColumn("Original", Type.GetType("System.String"));
+      DataColumn col2 = new DataColumn("Translated", Type.GetType("System.String"));
+      DataColumn col3 = new DataColumn("PrefixOriginal", Type.GetType("System.String"));
+      DataColumn col4 = new DataColumn("PrefixTranslated", Type.GetType("System.String"));
+
+      translations.Columns.Add(col0);
+      translations.Columns.Add(col1);
+      translations.Columns.Add(col2);
+      translations.Columns.Add(col3);
+      translations.Columns.Add(col4);
+
+      XmlDocument doc = new XmlDocument();
+      doc.Load(xml);
+      if (doc.DocumentElement != null)
+      {
+        XmlNodeList nodes = doc.DocumentElement.SelectNodes("/Language/Section/String");
+
+        if (nodes != null)
+        {
+          foreach (XmlNode keyNode in nodes)
+          {
+            string prefixValue = "";
+            string node_id = keyNode.Attributes["id"].Value;
+
+            if (keyNode.Attributes.Count == 2)
+            {
+              prefixValue = keyNode.Attributes["prefix"].Value;
+            }
+
+            DataRow row = translations.NewRow();
+            row[0] = node_id;
+            row[1] = keyNode.InnerText;
+            row[2] = "";
+            row[3] = prefixValue;
+            row[4] = "";
+
+            translations.Rows.Add(row);
+          }
+        }
+      }
+
+      // Hope That indexes was syncronized
+      for (int i = 0; i < originalTranslation.Rows.Count; i++)
+      {
+        if (originalTranslation.Rows[i]["id"].ToString().Trim() == translations.Rows[i]["id"].ToString().Trim())
+        {
+          originalTranslation.Rows[i]["PrefixTranslated"] = translations.Rows[i]["PrefixOriginal"].ToString();
+          originalTranslation.Rows[i]["Translated"] = translations.Rows[i]["Original"].ToString();
+        }
+      }
+
+      return originalTranslation;
+    }
+
+
 
     public static void Save(string languageID, string LanguageNAME, NameValueCollection translations)
     {
@@ -129,6 +219,59 @@ namespace MPLanguageTool
       }
       doc.Save(xml);
 
+    }
+
+    public static void Save(string languageID, string LanguageNAME, DataTable translations)
+    {
+      string xml = BuildFileName(languageID);
+      StreamWriter writer = new StreamWriter(xml, false, Encoding.UTF8);
+      writer.Write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+      writer.Write("<Language name=\"" + LanguageNAME + "\" characters=\"255\">\n");
+      writer.Write("  <Section name=\"unmapped\">\n");
+      writer.Write("  </Section>\n");
+      writer.Write("</Language>\n");
+      writer.Close();
+      XmlDocument doc = new XmlDocument();
+      doc.Load(xml);
+      XmlNode nRoot = doc.SelectSingleNode("/Language/Section");
+
+      foreach (DataRow row in translations.Rows)
+      {
+        XmlNode nValue = doc.CreateElement("String");
+
+        // First place id, must be same key as original
+        XmlAttribute attr = nValue.OwnerDocument.CreateAttribute("id");
+        attr.InnerText = row["id"].ToString();
+        nValue.Attributes.Append(attr);
+
+
+        //attr.InnerText = key.Substring(0, key.Length - PrefixIdentifier().Length);
+        //nValue.Attributes.Append(attr);
+
+        if (row["PrefixTranslated"] != null)
+        {
+          attr = nValue.OwnerDocument.CreateAttribute("prefix");
+          attr.InnerText = row["PrefixTranslated"].ToString().Trim();
+        }
+
+        nValue.Attributes.Append(attr);
+
+
+        if (row["Translated"] != null)
+        {
+          //attr = nValue.OwnerDocument.CreateAttribute("prefix");
+          nValue.InnerText = row["Translated"].ToString().Trim();
+
+
+          //attr.InnerText = key;
+          //nValue.Attributes.Append(attr);
+
+          nRoot.AppendChild(nValue);
+        }
+
+
+      }
+      doc.Save(xml);
     }
 
     private static string PrefixIdentifier()

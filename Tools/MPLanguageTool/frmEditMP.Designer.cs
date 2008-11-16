@@ -20,7 +20,7 @@
  */
 namespace MPLanguageTool
 {
-  partial class frmEdit
+  partial class frmEditMP
   {
     /// <summary>
     /// Required designer variable.
@@ -52,9 +52,13 @@ namespace MPLanguageTool
       this.splitContainer2 = new System.Windows.Forms.SplitContainer();
       this.lID = new System.Windows.Forms.Label();
       this.label1 = new System.Windows.Forms.Label();
+      this.splitContainer4 = new System.Windows.Forms.SplitContainer();
       this.edValue = new System.Windows.Forms.TextBox();
+      this.textBox1 = new System.Windows.Forms.TextBox();
       this.splitContainer3 = new System.Windows.Forms.SplitContainer();
+      this.splitContainer5 = new System.Windows.Forms.SplitContainer();
       this.edDefault = new System.Windows.Forms.TextBox();
+      this.textBox2 = new System.Windows.Forms.TextBox();
       this.btnCancel = new System.Windows.Forms.Button();
       this.btnOK = new System.Windows.Forms.Button();
       this.splitContainer1.Panel1.SuspendLayout();
@@ -63,9 +67,15 @@ namespace MPLanguageTool
       this.splitContainer2.Panel1.SuspendLayout();
       this.splitContainer2.Panel2.SuspendLayout();
       this.splitContainer2.SuspendLayout();
+      this.splitContainer4.Panel1.SuspendLayout();
+      this.splitContainer4.Panel2.SuspendLayout();
+      this.splitContainer4.SuspendLayout();
       this.splitContainer3.Panel1.SuspendLayout();
       this.splitContainer3.Panel2.SuspendLayout();
       this.splitContainer3.SuspendLayout();
+      this.splitContainer5.Panel1.SuspendLayout();
+      this.splitContainer5.Panel2.SuspendLayout();
+      this.splitContainer5.SuspendLayout();
       this.SuspendLayout();
       // 
       // splitContainer1
@@ -82,8 +92,8 @@ namespace MPLanguageTool
       // splitContainer1.Panel2
       // 
       this.splitContainer1.Panel2.Controls.Add(this.splitContainer3);
-      this.splitContainer1.Size = new System.Drawing.Size(502, 369);
-      this.splitContainer1.SplitterDistance = 208;
+      this.splitContainer1.Size = new System.Drawing.Size(543, 391);
+      this.splitContainer1.SplitterDistance = 220;
       this.splitContainer1.TabIndex = 0;
       // 
       // splitContainer2
@@ -101,8 +111,8 @@ namespace MPLanguageTool
       // 
       // splitContainer2.Panel2
       // 
-      this.splitContainer2.Panel2.Controls.Add(this.edValue);
-      this.splitContainer2.Size = new System.Drawing.Size(502, 208);
+      this.splitContainer2.Panel2.Controls.Add(this.splitContainer4);
+      this.splitContainer2.Size = new System.Drawing.Size(543, 220);
       this.splitContainer2.SplitterDistance = 31;
       this.splitContainer2.TabIndex = 0;
       // 
@@ -125,16 +135,41 @@ namespace MPLanguageTool
       this.label1.TabIndex = 0;
       this.label1.Text = "ID:";
       // 
+      // splitContainer4
+      // 
+      this.splitContainer4.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.splitContainer4.Location = new System.Drawing.Point(0, 0);
+      this.splitContainer4.Name = "splitContainer4";
+      // 
+      // splitContainer4.Panel1
+      // 
+      this.splitContainer4.Panel1.Controls.Add(this.edValue);
+      // 
+      // splitContainer4.Panel2
+      // 
+      this.splitContainer4.Panel2.Controls.Add(this.textBox1);
+      this.splitContainer4.Size = new System.Drawing.Size(543, 185);
+      this.splitContainer4.SplitterDistance = 292;
+      this.splitContainer4.TabIndex = 1;
+      // 
       // edValue
       // 
       this.edValue.Dock = System.Windows.Forms.DockStyle.Fill;
       this.edValue.Location = new System.Drawing.Point(0, 0);
       this.edValue.Multiline = true;
       this.edValue.Name = "edValue";
-      this.edValue.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-      this.edValue.Size = new System.Drawing.Size(502, 173);
+      this.edValue.Size = new System.Drawing.Size(292, 185);
       this.edValue.TabIndex = 0;
       this.edValue.WordWrap = false;
+      // 
+      // textBox1
+      // 
+      this.textBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.textBox1.Location = new System.Drawing.Point(0, 0);
+      this.textBox1.Multiline = true;
+      this.textBox1.Name = "textBox1";
+      this.textBox1.Size = new System.Drawing.Size(247, 185);
+      this.textBox1.TabIndex = 0;
       // 
       // splitContainer3
       // 
@@ -146,15 +181,32 @@ namespace MPLanguageTool
       // 
       // splitContainer3.Panel1
       // 
-      this.splitContainer3.Panel1.Controls.Add(this.edDefault);
+      this.splitContainer3.Panel1.Controls.Add(this.splitContainer5);
       // 
       // splitContainer3.Panel2
       // 
       this.splitContainer3.Panel2.Controls.Add(this.btnCancel);
       this.splitContainer3.Panel2.Controls.Add(this.btnOK);
-      this.splitContainer3.Size = new System.Drawing.Size(502, 157);
-      this.splitContainer3.SplitterDistance = 109;
+      this.splitContainer3.Size = new System.Drawing.Size(543, 167);
+      this.splitContainer3.SplitterDistance = 119;
       this.splitContainer3.TabIndex = 0;
+      // 
+      // splitContainer5
+      // 
+      this.splitContainer5.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.splitContainer5.Location = new System.Drawing.Point(0, 0);
+      this.splitContainer5.Name = "splitContainer5";
+      // 
+      // splitContainer5.Panel1
+      // 
+      this.splitContainer5.Panel1.Controls.Add(this.edDefault);
+      // 
+      // splitContainer5.Panel2
+      // 
+      this.splitContainer5.Panel2.Controls.Add(this.textBox2);
+      this.splitContainer5.Size = new System.Drawing.Size(543, 119);
+      this.splitContainer5.SplitterDistance = 292;
+      this.splitContainer5.TabIndex = 2;
       // 
       // edDefault
       // 
@@ -164,16 +216,25 @@ namespace MPLanguageTool
       this.edDefault.Multiline = true;
       this.edDefault.Name = "edDefault";
       this.edDefault.ReadOnly = true;
-      this.edDefault.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-      this.edDefault.Size = new System.Drawing.Size(502, 109);
+      this.edDefault.Size = new System.Drawing.Size(292, 119);
       this.edDefault.TabIndex = 1;
       this.edDefault.WordWrap = false;
+      // 
+      // textBox2
+      // 
+      this.textBox2.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.textBox2.Location = new System.Drawing.Point(0, 0);
+      this.textBox2.Multiline = true;
+      this.textBox2.Name = "textBox2";
+      this.textBox2.ReadOnly = true;
+      this.textBox2.Size = new System.Drawing.Size(247, 119);
+      this.textBox2.TabIndex = 0;
       // 
       // btnCancel
       // 
       this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.btnCancel.Location = new System.Drawing.Point(388, 9);
+      this.btnCancel.Location = new System.Drawing.Point(429, 9);
       this.btnCancel.Name = "btnCancel";
       this.btnCancel.Size = new System.Drawing.Size(75, 23);
       this.btnCancel.TabIndex = 1;
@@ -190,16 +251,16 @@ namespace MPLanguageTool
       this.btnOK.UseVisualStyleBackColor = true;
       this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
       // 
-      // frmEdit
+      // frmEditMP
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.CancelButton = this.btnCancel;
-      this.ClientSize = new System.Drawing.Size(502, 369);
+      this.ClientSize = new System.Drawing.Size(543, 391);
       this.Controls.Add(this.splitContainer1);
       this.MaximizeBox = false;
       this.MinimizeBox = false;
-      this.Name = "frmEdit";
+      this.Name = "frmEditMP";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
       this.Text = "Edit translation";
       this.Shown += new System.EventHandler(this.frmEdit_Shown);
@@ -209,12 +270,20 @@ namespace MPLanguageTool
       this.splitContainer2.Panel1.ResumeLayout(false);
       this.splitContainer2.Panel1.PerformLayout();
       this.splitContainer2.Panel2.ResumeLayout(false);
-      this.splitContainer2.Panel2.PerformLayout();
       this.splitContainer2.ResumeLayout(false);
+      this.splitContainer4.Panel1.ResumeLayout(false);
+      this.splitContainer4.Panel1.PerformLayout();
+      this.splitContainer4.Panel2.ResumeLayout(false);
+      this.splitContainer4.Panel2.PerformLayout();
+      this.splitContainer4.ResumeLayout(false);
       this.splitContainer3.Panel1.ResumeLayout(false);
-      this.splitContainer3.Panel1.PerformLayout();
       this.splitContainer3.Panel2.ResumeLayout(false);
       this.splitContainer3.ResumeLayout(false);
+      this.splitContainer5.Panel1.ResumeLayout(false);
+      this.splitContainer5.Panel1.PerformLayout();
+      this.splitContainer5.Panel2.ResumeLayout(false);
+      this.splitContainer5.Panel2.PerformLayout();
+      this.splitContainer5.ResumeLayout(false);
       this.ResumeLayout(false);
 
     }
@@ -230,5 +299,9 @@ namespace MPLanguageTool
     private System.Windows.Forms.TextBox edDefault;
     private System.Windows.Forms.Button btnCancel;
     private System.Windows.Forms.Button btnOK;
+    private System.Windows.Forms.SplitContainer splitContainer4;
+    private System.Windows.Forms.TextBox textBox1;
+    private System.Windows.Forms.SplitContainer splitContainer5;
+    private System.Windows.Forms.TextBox textBox2;
   }
 }

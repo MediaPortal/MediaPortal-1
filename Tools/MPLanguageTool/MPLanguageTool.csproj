@@ -36,12 +36,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="XmlHandler.cs" />
-    <Compile Include="frmEdit.cs">
+    <Compile Include="frmEditMP.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="frmEdit.Designer.cs">
-      <DependentUpon>frmEdit.cs</DependentUpon>
+    <Compile Include="frmEditMP.Designer.cs">
+      <DependentUpon>frmEditMP.cs</DependentUpon>
+    </Compile>
+    <Compile Include="XmlHandler.cs" />
+    <Compile Include="frmEditDeploy.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmEditDeploy.Designer.cs">
+      <DependentUpon>frmEditDeploy.cs</DependentUpon>
     </Compile>
     <Compile Include="frmMain.cs">
       <SubType>Form</SubType>
@@ -51,9 +57,13 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="frmEdit.resx">
+    <EmbeddedResource Include="frmEditMP.resx">
+      <DependentUpon>frmEditMP.cs</DependentUpon>
       <SubType>Designer</SubType>
-      <DependentUpon>frmEdit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmEditDeploy.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>frmEditDeploy.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmMain.resx">
       <SubType>Designer</SubType>

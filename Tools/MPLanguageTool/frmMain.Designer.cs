@@ -48,7 +48,8 @@ namespace MPLanguageTool
     /// </summary>
     private void InitializeComponent()
     {
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
       this.menuStrip1 = new System.Windows.Forms.MenuStrip();
       this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.openDeployToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -57,13 +58,15 @@ namespace MPLanguageTool
       this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
       this.quitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.gv = new System.Windows.Forms.DataGridView();
+      this.gv2 = new System.Windows.Forms.DataGridView();
+      this.ID = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.Translated = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.statusStrip1 = new System.Windows.Forms.StatusStrip();
       this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-      this.ID = new System.Windows.Forms.DataGridViewTextBoxColumn();
-      this.Translation = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.menuStrip1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.gv)).BeginInit();
       this.statusStrip1.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.gv2)).BeginInit();
       this.SuspendLayout();
       // 
       // menuStrip1
@@ -130,17 +133,41 @@ namespace MPLanguageTool
       this.gv.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
       this.gv.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.ID,
-            this.Translation});
+            this.Translated});
+      dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Window;
+      dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.ControlText;
+      dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+      dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+      dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+      this.gv.DefaultCellStyle = dataGridViewCellStyle4;
       this.gv.Dock = System.Windows.Forms.DockStyle.Fill;
       this.gv.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
       this.gv.Location = new System.Drawing.Point(0, 24);
       this.gv.MultiSelect = false;
       this.gv.Name = "gv";
       this.gv.ReadOnly = true;
+      this.gv.RowTemplate.Height = 30;
       this.gv.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
       this.gv.Size = new System.Drawing.Size(583, 345);
       this.gv.TabIndex = 1;
+      this.gv.RowTemplate.DefaultCellStyle.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
       this.gv.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.gv_CellMouseDoubleClick);
+      // 
+      // ID
+      // 
+      this.ID.HeaderText = "ID";
+      this.ID.Name = "ID";
+      this.ID.ReadOnly = true;
+      this.ID.Width = 43;
+      // 
+      // Translated
+      // 
+      this.Translated.HeaderText = "Translated";
+      this.Translated.Name = "Translated";
+      this.Translated.ReadOnly = true;
+      this.Translated.Width = 82;
       // 
       // statusStrip1
       // 
@@ -156,27 +183,38 @@ namespace MPLanguageTool
       this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
       this.toolStripStatusLabel1.Size = new System.Drawing.Size(0, 17);
       // 
-      // ID
+      // gv2
       // 
-      this.ID.HeaderText = "ID";
-      this.ID.Name = "ID";
-      this.ID.ReadOnly = true;
-      this.ID.Width = 43;
-      // 
-      // Translation
-      // 
-      dataGridViewCellStyle1.ForeColor = System.Drawing.Color.Black;
-      this.Translation.DefaultCellStyle = dataGridViewCellStyle1;
-      this.Translation.HeaderText = "Translation";
-      this.Translation.Name = "Translation";
-      this.Translation.ReadOnly = true;
-      this.Translation.Width = 84;
+      this.gv2.AllowUserToAddRows = false;
+      this.gv2.AllowUserToDeleteRows = false;
+      this.gv2.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+      this.gv2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+      dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
+      dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
+      dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+      dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+      dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+      this.gv.DefaultCellStyle = dataGridViewCellStyle5;
+      this.gv2.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.gv2.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
+      this.gv2.Location = new System.Drawing.Point(0, 24);
+      this.gv2.MultiSelect = false;
+      this.gv2.Name = "gv2";
+      this.gv2.ReadOnly = true;
+      this.gv2.RowTemplate.DefaultCellStyle.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+      this.gv2.RowTemplate.Height = 30;
+      this.gv2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+      this.gv2.Size = new System.Drawing.Size(583, 323);
+      this.gv2.TabIndex = 3;
+      this.gv2.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.gv2_CellMouseDoubleClick);
       // 
       // frmMain
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(583, 369);
+      this.Controls.Add(this.gv2);
       this.Controls.Add(this.statusStrip1);
       this.Controls.Add(this.gv);
       this.Controls.Add(this.menuStrip1);
@@ -184,11 +222,13 @@ namespace MPLanguageTool
       this.Name = "frmMain";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
       this.Text = "MPLanguageTool";
+      this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
       this.menuStrip1.ResumeLayout(false);
       this.menuStrip1.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.gv)).EndInit();
       this.statusStrip1.ResumeLayout(false);
       this.statusStrip1.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.gv2)).EndInit();
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -207,7 +247,8 @@ namespace MPLanguageTool
     private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
     private System.Windows.Forms.ToolStripMenuItem openMpToolStripMenuItem;
     private System.Windows.Forms.DataGridViewTextBoxColumn ID;
-    private System.Windows.Forms.DataGridViewTextBoxColumn Translation;
+    private System.Windows.Forms.DataGridViewTextBoxColumn Translated;
+    private System.Windows.Forms.DataGridView gv2;
   }
 }
 
