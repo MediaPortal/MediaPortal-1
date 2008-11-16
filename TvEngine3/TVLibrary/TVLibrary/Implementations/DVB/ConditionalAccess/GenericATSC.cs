@@ -104,7 +104,7 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.Info("GenericATSC: Set returned:{0:X}", hr);
         }
       }
-      //Blow is for debug only...
+      //Below is for debug only...
       /*
       if ((supported & KSPropertySupport.Get) == KSPropertySupport.Get)
       {

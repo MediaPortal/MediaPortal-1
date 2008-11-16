@@ -55,10 +55,29 @@ namespace TvLibrary.Implementations.DVB
 
     #region variables
     bool _isViXSATSC = false;
-    IntPtr _tempValue = Marshal.AllocCoTaskMem(1024);
-    IntPtr _tempInstance = Marshal.AllocCoTaskMem(1024);
+    IntPtr _tempValue = IntPtr.Zero; //Marshal.AllocCoTaskMem(1024);
+    //IntPtr _tempInstance = Marshal.AllocCoTaskMem(1024);
     DirectShowLib.IKsPropertySet _propertySet = null;
     #endregion
+
+    /// <summary>
+    /// Gets a value indicating whether this instance is generic qam.
+    /// </summary>
+    /// <value>
+    /// 	<c>true</c> if this instance is generic qam; otherwise, <c>false</c>.
+    /// </value>
+    public bool IsCamPresent()
+    {
+      return false;
+    }
+
+    public bool IsViXSATSC
+    {
+      get
+      {
+        return _isViXSATSC;
+      }
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ViXSATSC"/> class.
@@ -77,14 +96,21 @@ namespace TvLibrary.Implementations.DVB
           _propertySet.QuerySupported(guidViXSTunerExtention, (int)BdaDigitalModulator.MODULATION_TYPE, out supported);
           if ((supported & KSPropertySupport.Set) != 0)
           {
+            _tempValue = Marshal.AllocCoTaskMem(1024);
             _isViXSATSC = true;
           }
+          else
+            Log.Log.Info("ViXS ATSC: property not supported");
         }
+        else
+          Log.Log.Info("ViXS ATSC: could not find tuner filter!");
       }
+      else
+        Log.Log.Info("ViXS ATSC: could not find MPEG2 Transport pin!");
     }
 
     /// <summary>
-    /// sets the QAM modulation for ViXS ATSC cards under XP
+    /// sets the QAM modulation for ViXS ATSC cards
     /// </summary>
     public void SetViXSQam(ATSCChannel channel)
     {
@@ -94,11 +120,12 @@ namespace TvLibrary.Implementations.DVB
       if ((supported & KSPropertySupport.Set) == KSPropertySupport.Set)
       {
         Marshal.WriteInt32(_tempValue, (Int32)channel.ModulationType);
-        hr = _propertySet.Set(guidViXSTunerExtention, (int)BdaDigitalModulator.MODULATION_TYPE, _tempInstance, 32, _tempValue, 4);
+        hr = _propertySet.Set(guidViXSTunerExtention, (int)BdaDigitalModulator.MODULATION_TYPE, _tempValue, 4, _tempValue, 4);
         if (hr != 0)
         {
           Log.Log.Info("ViXS ATSC: Set returned:{0:X}", hr);
         }
+        Log.Log.Info("ViXS ATSC: Set ModulationType value: {0}", (Int32)channel.ModulationType);
       }
       //below is for info only - uncomment if debugging
       /*
@@ -114,7 +141,7 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// gets the QAM modulation for ViXS ATSC cards under XP
+    /// gets the QAM modulation for ViXS ATSC cards
     /// </summary>
     public void GetViXSQam(ATSCChannel channel)
     {
@@ -125,31 +152,12 @@ namespace TvLibrary.Implementations.DVB
       if ((supported & KSPropertySupport.Get) == KSPropertySupport.Get)
       {
         Marshal.WriteInt32(_tempValue, (Int32)0);
-        hr = _propertySet.Get(guidViXSTunerExtention, (int)BdaDigitalModulator.MODULATION_TYPE, _tempInstance, 32, _tempValue, 4, out length);
+        hr = _propertySet.Get(guidViXSTunerExtention, (int)BdaDigitalModulator.MODULATION_TYPE, _tempValue, 4, _tempValue, 4, out length);
         if (hr != 0)
         {
-          Log.Log.Info("ViXS ATSC: Set returned:{0:X}", hr);
+          Log.Log.Info("ViXS ATSC: Get returned:{0:X}", hr);
         }
         Log.Log.Info("ViXS ATSC: Get ModulationType returned value: {0}", Marshal.ReadInt32(_tempValue));
-      }
-    }
-
-    /// <summary>
-    /// Gets a value indicating whether this instance is generic qam.
-    /// </summary>
-    /// <value>
-    /// 	<c>true</c> if this instance is generic qam; otherwise, <c>false</c>.
-    /// </value>
-    public bool IsCamPresent()
-    {
-      return false;
-    }
-
-    public bool IsViXSATSC
-    {
-      get
-      {
-        return _isViXSATSC;
       }
     }
   }

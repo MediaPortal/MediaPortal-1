@@ -836,6 +836,8 @@ namespace TvLibrary.Implementations.DVB
       {
         if (devices[i].DevicePath.ToLower().IndexOf(guidBdaMPEFilter) >= 0) continue;
         if (devices[i].DevicePath.ToLower().IndexOf(guidBdaSlipDeframerFilter) >= 0) continue;
+        //HDHomeRun workaround
+        if (devices[i].Name.ToString().Contains("Silicondust HDHomeRun Tuner")) continue;
         IBaseFilter tmp;
         string deviceIdDelimter = @"#{";
         Log.Log.WriteFile("dvb:  -{0}", devices[i].Name);
