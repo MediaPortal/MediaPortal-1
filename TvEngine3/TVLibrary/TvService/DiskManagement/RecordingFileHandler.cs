@@ -55,22 +55,25 @@ namespace TvService
 
       try
       {
-        // Find and delete all files with same name(without extension) in the recording dir
-        string[] relatedFiles =
-          Directory.GetFiles(Path.GetDirectoryName(rec.FileName),
-                             Path.GetFileNameWithoutExtension(rec.FileName) + @".*");
-
-        foreach (string fileName in relatedFiles)
+        // Check if directory exists first, otherwise GetFiles throws an error
+        if (Directory.Exists(Path.GetDirectoryName(rec.FileName)))
         {
-          Log.Debug(" - deleting '{0}'", fileName);
-          // File.Delete will _not_ throw on "File does not exist"
-          File.Delete(fileName);
+          // Find and delete all files with same name(without extension) in the recording dir
+          string[] relatedFiles =
+            Directory.GetFiles(Path.GetDirectoryName(rec.FileName),
+                               Path.GetFileNameWithoutExtension(rec.FileName) + @".*");
+
+          foreach (string fileName in relatedFiles)
+          {
+            Log.Debug(" - deleting '{0}'", fileName);
+            // File.Delete will _not_ throw on "File does not exist"
+            File.Delete(fileName);
+          }
+
+          CleanRecordingFolders(rec.FileName);
         }
 
-        CleanRecordingFolders(rec.FileName);
-
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Error("RecordingFileHandler: Error while deleting a recording from disk: {0}", ex.Message);
         return false; // files not deleted, return failure
@@ -137,8 +140,7 @@ namespace TvService
                     Log.Debug("RecordingFileHandler: Found {0} file(s) in recording path - not cleaning {1}", Convert.ToString(files.Length), deleteDir);
                     return;
                   }
-                }
-                catch (Exception ex1)
+                } catch (Exception ex1)
                 {
                   Log.Info("RecordingFileHandler: Could not delete directory {0} - {1}", deleteDir, ex1.Message);
                   // bail out to avoid i-loop
@@ -150,8 +152,7 @@ namespace TvService
           else
             Log.Debug("RecordingFileHandler: Path not valid for removal - {1}", checkPath);
         }
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Error("RecordingFileHandler: Error cleaning the recording folders - {0},{1}", ex.Message, ex.StackTrace);
       }
