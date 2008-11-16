@@ -121,10 +121,9 @@ namespace MediaPortal.GUI.Library
       get { return _focusPosition; }
       set
       {
-        bool oldFocus = _buttonList[_focusPosition].Focus;
         _buttonList[_focusPosition].Focus = false;
         _focusPosition = value;
-        _buttonList[_focusPosition].Focus = oldFocus;
+        _buttonList[_focusPosition].Focus = true;
         if (_focusImage != null)
         {
           if (!_horizontal) _focusImage.SetPosition(_focusImage._positionX, _buttonList[_focusPosition]._positionY);
@@ -497,7 +496,7 @@ namespace MediaPortal.GUI.Library
       int increment = _lastTextValue - tmpValue;
       if ((_currentState == State.ScrollDown) || (_currentState == State.ScrollDownFinal)) increment = -increment;
       if ((_fixedScroll) ||                                                   // we have a fixed scrollbar -> move the text
-          ((FocusedButton == 2) || (FocusedButton == _numberOfButtons - 1))) // or scrollbar reaches top/button
+          ((FocusedButton == 2) || (FocusedButton == _numberOfButtons -1))) // or scrollbar reaches top/button
       {
         foreach (GUIControl control in _buttonList)
         {
