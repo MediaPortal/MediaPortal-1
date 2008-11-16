@@ -106,13 +106,13 @@
             <type>fadelabel</type>
             <description>Title label</description>
             <id>0</id>
-            <posX>77</posX>
-            <posY>429</posY>
+            <posX>79</posX>
+            <posY>430</posY>
             <width>468</width>
             <height>25</height>
             <label>#Play.Current.Title</label>
             <font>font18</font>
-            <textcolor>black</textcolor>
+            <textcolor>80000000</textcolor>
             <animation effect="fade" time="150">WindowOpen</animation>
         </control>
         <control>
@@ -131,13 +131,13 @@
             <type>fadelabel</type>
             <description>Artist label</description>
             <id>0</id>
-            <posX>77</posX>
-            <posY>357</posY>
+            <posX>79</posX>
+            <posY>358</posY>
             <width>468</width>
             <height>25</height>
             <label>#Play.Current.Artist</label>
             <font>font16</font>
-            <textcolor>black</textcolor>
+            <textcolor>80000000</textcolor>
             <animation effect="fade" time="150">WindowOpen</animation>
         </control>
         <control>
@@ -156,13 +156,13 @@
             <type>fadelabel</type>
             <description>track label</description>
             <id>0</id>
-            <posX>77</posX>
-            <posY>393</posY>
+            <posX>79</posX>
+            <posY>394</posY>
             <width>468</width>
             <height>25</height>
             <label>#Play.Current.Track</label>
             <font>font16</font>
-            <textcolor>black</textcolor>
+            <textcolor>80000000</textcolor>
             <animation effect="fade" time="250">WindowOpen</animation>
         </control>
         <control>
@@ -181,13 +181,13 @@
             <type>fadelabel</type>
             <description>year label</description>
             <id>0</id>
-            <posX>1003</posX>
+            <posX>1004</posX>
             <posY>57</posY>
             <width>160</width>
             <label>#Play.Current.Year</label>
             <font>font10</font>
             <align>right</align>
-            <textcolor>black</textcolor>
+            <textcolor>80000000</textcolor>
             <animation effect="fade" time="150">WindowOpen</animation>
         </control>
         <control>
@@ -207,13 +207,13 @@
             <type>fadelabel</type>
             <description>album label</description>
             <id>0</id>
-            <posX>582</posX>
+            <posX>584</posX>
             <posY>52</posY>
             <width>320</width>
             <label>#Play.Current.Album</label>
             <font>font13</font>
             <align>left</align>
-            <textcolor>black</textcolor>
+           <textcolor>80000000</textcolor>
             <animation effect="fade" time="250">WindowOpen</animation>
         </control>
         <control>
@@ -246,7 +246,7 @@
             <description>track progress</description>
             <id>118</id>
             <posX>631</posX>
-            <posY>487</posY>
+            <posY>490</posY>
             <width>350</width>
             <visible>player.hasmedia</visible>
         </control>
