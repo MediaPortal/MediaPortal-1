@@ -682,12 +682,16 @@ namespace TvPlugin
 
       if (!useRtsp)
       {
-        useRtsp = !TVHome.IsSingleSeat();
+        bool isSingleSeat = TVHome.IsSingleSeat();
 
-        if (!useRtsp)
+        if (!isSingleSeat)
         {
           useRtsp = _usertsp;
         }
+        else
+        {
+          useRtsp = true;
+        }                
       }
 
       return useRtsp;
