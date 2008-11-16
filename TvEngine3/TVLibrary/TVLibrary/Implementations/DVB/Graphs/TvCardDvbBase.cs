@@ -770,8 +770,8 @@ namespace TvLibrary.Implementations.DVB
               {
                 skipCaptureFilter = true;
               }
-              //Hauppauge Nova USB2 DVB-T workaround.
-              if (devices[i].Name == "Hauppauge Nova USB2 DVB-T TV Receiver")
+              //Hauppauge Nova USB2 DVB-T & HDHomeRun workaround.
+              if (devices[i].Name == "Hauppauge Nova USB2 DVB-T TV Receiver" || devices[i].Name.Contains("Silicondust HDHomeRun Tuner"))
               {
                 skipCaptureFilter = true;
               }
@@ -836,8 +836,6 @@ namespace TvLibrary.Implementations.DVB
       {
         if (devices[i].DevicePath.ToLower().IndexOf(guidBdaMPEFilter) >= 0) continue;
         if (devices[i].DevicePath.ToLower().IndexOf(guidBdaSlipDeframerFilter) >= 0) continue;
-        //HDHomeRun workaround
-        if (devices[i].Name.ToString().Contains("Silicondust HDHomeRun Tuner")) continue;
         IBaseFilter tmp;
         string deviceIdDelimter = @"#{";
         Log.Log.WriteFile("dvb:  -{0}", devices[i].Name);
