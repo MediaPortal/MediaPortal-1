@@ -436,7 +436,6 @@ namespace MediaPortal.Music.Database
 
         BeginTransaction();
 
-
         // When starting a complete rescan, we cleanup the foreign keys
         if (_lastImport == DateTime.MinValue)
         {
@@ -461,19 +460,23 @@ namespace MediaPortal.Music.Database
         Log.Info("Musicdatabasereorg: Add / Update files: {0} files added / updated", GetFilesResult);
 
         if (_useFolderThumbs)
-          CreateFolderThumbs(70, 79, _shares);
+          CreateFolderThumbs(70, 75, _shares);
 
         if (_createArtistPreviews)
-          CreateArtistThumbs(80, 89);
+          CreateArtistThumbs(76, 85);
 
         if (_createGenrePreviews)
-          CreateGenreThumbs(90, 94);
+          CreateGenreThumbs(86, 90);
 
         if (_createMissingFolderThumbs)
         {
           // implement sth like that:
           // Util.Picture.CreateThumbnail(aThumbLocation, folderThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
         }
+
+        MyArgs.progress = 91;
+        MyArgs.phase = "Cleanup non-existing Artists, AlbumArtists and Genres";
+        CleanupMultipleEntryTables();
       }
 
       catch (Exception ex)
@@ -554,7 +557,7 @@ namespace MediaPortal.Music.Database
         fileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
 
         string strDefault = xmlreader.GetValueAsString("music", "default", string.Empty);
-        for (int i = 0 ; i < 20 ; i++)
+        for (int i = 0; i < 20; i++)
         {
           string strShareName = String.Format("sharename{0}", i);
           string strSharePath = String.Format("sharepath{0}", i);
@@ -597,7 +600,7 @@ namespace MediaPortal.Music.Database
       }
       int removed = 0;
       Log.Info("Musicdatabasereorg: starting song cleanup for {0} songs", (int)results.Rows.Count);
-      for (int i = 0 ; i < results.Rows.Count ; ++i)
+      for (int i = 0; i < results.Rows.Count; ++i)
       {
         string strFileName = DatabaseUtility.Get(results, i, "tracks.strPath");
 
@@ -1340,7 +1343,7 @@ namespace MediaPortal.Music.Database
         {
           string[] checkDirs = Directory.GetDirectories(sharePath, "*", SearchOption.AllDirectories);
 
-          for (int i = 0 ; i < checkDirs.Length ; i++)
+          for (int i = 0; i < checkDirs.Length; i++)
           {
             string coverPath = checkDirs[i];
             try
@@ -1406,7 +1409,7 @@ namespace MediaPortal.Music.Database
 
       if (GetAllArtists(ref allArtists))
       {
-        for (int i = 0 ; i < allArtists.Count ; i++)
+        for (int i = 0; i < allArtists.Count; i++)
         {
           string curArtist = allArtists[i].ToString();
           if (!string.IsNullOrEmpty(curArtist) && curArtist != "unknown")
@@ -1424,7 +1427,7 @@ namespace MediaPortal.Music.Database
             {
               if (GetSongsByArtist(curArtist, ref groupedArtistSongs, true))
               {
-                for (int j = 0 ; j < groupedArtistSongs.Count ; j++)
+                for (int j = 0; j < groupedArtistSongs.Count; j++)
                 {
                   bool foundDup = false;
                   string coverArt = Util.Utils.TryEverythingToGetFolderThumbByFilename(groupedArtistSongs[j].FileName, true);
@@ -1463,7 +1466,7 @@ namespace MediaPortal.Music.Database
 
       if (GetGenres(ref allGenres))
       {
-        for (int i = 0 ; i < allGenres.Count ; i++)
+        for (int i = 0; i < allGenres.Count; i++)
         {
           string curGenre = allGenres[i].ToString();
           if (!string.IsNullOrEmpty(curGenre) && curGenre != "unknown")
@@ -1480,7 +1483,7 @@ namespace MediaPortal.Music.Database
             {
               if (GetSongsByGenre(curGenre, ref groupedGenreSongs, true))
               {
-                for (int j = 0 ; j < groupedGenreSongs.Count ; j++)
+                for (int j = 0; j < groupedGenreSongs.Count; j++)
                 {
                   bool foundDup = false;
                   string coverArt = Util.Utils.TryEverythingToGetFolderThumbByFilename(groupedGenreSongs[j].FileName, true);
@@ -1578,6 +1581,103 @@ namespace MediaPortal.Music.Database
     #endregion
 
     #region Clean Up Foreign Keys
+    /// <summary>
+    /// When tags of a song have been updated, it might happen that we have entries in the Artist, AlbumArtist or Genre Table,
+    /// for which no longer a song exists.
+    /// Do a cleanup to get rid of them.
+    /// </summary>
+    private void CleanupMultipleEntryTables()
+    {
+      // Working with a Temporary table is much faster, than reading single rows
+      if (DatabaseUtility.TableExists(MusicDbClient, "tbltmp"))
+      {
+        MusicDbClient.Execute("drop table tbltmp");
+      }
+
+      Log.Info("Musicdatabasereorg: Cleaning up artists with no songs.");
+      string strSQL = "create table tbltmp (strArtist text)";
+      MusicDbClient.Execute(strSQL);
+
+
+      strSQL = "select distinct rtrim(ltrim(strArtist, '| '), ' |') from tracks";
+      SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
+      for (int i = 0; i < results.Rows.Count; i++)
+      {
+        string[] artists = DatabaseUtility.Get(results, i, 0).Split('|');
+        foreach (string artist in artists)
+        {
+          string strTmp = artist;
+          DatabaseUtility.RemoveInvalidChars(ref strTmp);
+          if (strTmp == "unknown")
+            continue;
+
+          strSQL = String.Format("insert into tbltmp values('{0}')", strTmp.Trim());
+          MusicDbClient.Execute(strSQL);
+        }
+      }
+
+      strSQL = "delete from artist where strArtist not in (select distinct strArtist from tbltmp)";
+      MusicDbClient.Execute(strSQL);
+
+      MusicDbClient.Execute("drop table tbltmp");
+      Log.Info("Musicdatabasereorg: Finished with cleaning up artists with no songs.");
+
+      Log.Info("Musicdatabasereorg: Cleaning up AlbumArtists with no songs.");
+      strSQL = "create table tbltmp (strArtist text)";
+      MusicDbClient.Execute(strSQL);
+
+
+      strSQL = "select distinct rtrim(ltrim(strAlbumArtist, '| '), ' |') from tracks";
+      results = MusicDatabase.DirectExecute(strSQL);
+      for (int i = 0; i < results.Rows.Count; i++)
+      {
+        string[] artists = DatabaseUtility.Get(results, i, 0).Split('|');
+        foreach (string artist in artists)
+        {
+          string strTmp = artist;
+          DatabaseUtility.RemoveInvalidChars(ref strTmp);
+          if (strTmp == "unknown")
+            continue;
+
+          strSQL = String.Format("insert into tbltmp values('{0}')", strTmp.Trim());
+          MusicDbClient.Execute(strSQL);
+        }
+      }
+
+      strSQL = "delete from albumartist where strAlbumArtist not in (select distinct strArtist from tbltmp)";
+      MusicDbClient.Execute(strSQL);
+
+      MusicDbClient.Execute("drop table tbltmp");
+      Log.Info("Musicdatabasereorg: Finished with cleaning up AlbumArtists with no songs.");
+
+      Log.Info("Musicdatabasereorg: Cleaning up Genres with no songs.");
+      strSQL = "create table tbltmp (strGenre text)";
+      MusicDbClient.Execute(strSQL);
+
+
+      strSQL = "select distinct rtrim(ltrim(strGenre, '| '), ' |') from tracks";
+      results = MusicDatabase.DirectExecute(strSQL);
+      for (int i = 0; i < results.Rows.Count; i++)
+      {
+        string[] genres = DatabaseUtility.Get(results, i, 0).Split('|');
+        foreach (string genre in genres)
+        {
+          string strTmp = genre;
+          DatabaseUtility.RemoveInvalidChars(ref strTmp);
+          if (strTmp == "unknown")
+            continue;
+
+          strSQL = String.Format("insert into tbltmp values('{0}')", strTmp.Trim());
+          MusicDbClient.Execute(strSQL);
+        }
+      }
+
+      strSQL = "delete from genre where strGenre not in (select distinct strGenre from tbltmp)";
+      MusicDbClient.Execute(strSQL);
+
+      MusicDbClient.Execute("drop table tbltmp");
+      Log.Info("Musicdatabasereorg: Finished with cleaning up Genres with no songs.");
+    }
 
     /// <summary>
     /// On a complete rescan of the shares, we will delete all the entries in the Artist, AlbumArtist and Genre table,
@@ -1682,7 +1782,7 @@ namespace MediaPortal.Music.Database
               {
                 BeginTransaction();
                 // We might have changed a Top directory, so we get a lot of path entries returned
-                for (int rownum = 0 ; rownum < results.Rows.Count ; rownum++)
+                for (int rownum = 0; rownum < results.Rows.Count; rownum++)
                 {
                   int idTrack = DatabaseUtility.GetAsInt(results, rownum, "tracks.idTrack");
                   string strTmpPath = DatabaseUtility.Get(results, rownum, "tracks.strPath");
@@ -1898,7 +1998,7 @@ namespace MediaPortal.Music.Database
 
       if (results.Rows.Count != 0)
       {
-        for (int i = 0 ; i < results.Rows.Count ; i++)
+        for (int i = 0; i < results.Rows.Count; i++)
           scrobbleUsers.Add(DatabaseUtility.Get(results, i, "strUsername"));
       }
       // what else?
