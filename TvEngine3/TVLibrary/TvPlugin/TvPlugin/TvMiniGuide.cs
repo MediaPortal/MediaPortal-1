@@ -408,6 +408,7 @@ namespace TvPlugin
     {
       GUIWaitCursor.Show();
       TVHome.Navigator.SetCurrentGroup(spinGroup.Value);
+      GUIPropertyManager.SetProperty("#TV.Guide.Group", spinGroup.GetLabel());
       lstChannels.Clear();
       FillChannelList();
       GUIWaitCursor.Hide();
