@@ -273,20 +273,6 @@ namespace TvPlugin
             OnKeyCode((char)action.m_key.KeyChar);
           break;
 
-        case Action.ActionType.ACTION_SELECT_ITEM:
-          if (GetFocusControlId() != -1 && _cursorX >= 0)
-          {
-            if (_cursorY == 0)
-            {
-              OnSwitchMode();
-            }
-            else
-            {
-              OnSelectItem(true);
-            }
-          }
-          break;
-
         case Action.ActionType.ACTION_RECORD:
           if ((GetFocusControlId() != -1) && (_cursorY > 0) && (_cursorX >= 0))
             OnRecord();
