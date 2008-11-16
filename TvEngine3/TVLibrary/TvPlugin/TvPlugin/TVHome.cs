@@ -161,7 +161,7 @@ namespace TvPlugin
 
     #region Events
 
-    private static event ShowDlgSuccessful OnShowDlgCompleted;    
+    private static event ShowDlgSuccessful OnShowDlgCompleted;
 
     #endregion
 
@@ -677,7 +677,20 @@ namespace TvPlugin
 
     public static bool UseRTSP()
     {
-      return _usertsp;
+
+      bool useRtsp = System.IO.File.Exists("usertsp.txt");
+
+      if (!useRtsp)
+      {
+        useRtsp = !TVHome.IsSingleSeat();
+
+        if (!useRtsp)
+        {
+          useRtsp = _usertsp;
+        }
+      }
+
+      return useRtsp;
     }
 
     public static bool ShowChannelStateIcons()
@@ -699,7 +712,7 @@ namespace TvPlugin
     {
       return _doingChannelChange;
     }
-   
+
     private static void ShowDlgCompleted(object Dialogue)
     {
       try
@@ -723,7 +736,7 @@ namespace TvPlugin
         pDlgYESNO = (GUIDialogYesNo)Dialogue;
       }
       else
-      {        
+      {
         return;
       }
 
@@ -740,7 +753,7 @@ namespace TvPlugin
     }
 
     public static void ShowDlgThread(object Dialogue)
-    {      
+    {
       GUIWindow guiWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
 
       int count = 0;
@@ -762,7 +775,7 @@ namespace TvPlugin
       {
         if (OnShowDlgCompleted != null)
           OnShowDlgCompleted(Dialogue);
-      }           
+      }
     }
 
     public static bool HandleServerNotConnected()
@@ -801,7 +814,7 @@ namespace TvPlugin
             _doingHandleServerNotConnected = false;
             return true;
           }
-//          _ServerNotConnectedHandled = true;
+          //          _ServerNotConnectedHandled = true;
           GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
 
           if (pDlgOK != null)
@@ -812,7 +825,7 @@ namespace TvPlugin
             pDlgOK.SetLine(2, GUILocalizeStrings.Get(1510)); //Connection to TV server lost
 
             //pDlgOK.DoModal(GUIWindowManager.ActiveWindowEx);
-            
+
             if (OnShowDlgCompleted == null)
             {
               OnShowDlgCompleted += new ShowDlgSuccessful(ShowDlgCompleted);
@@ -1273,16 +1286,16 @@ namespace TvPlugin
         {
           case PBT_APMSTANDBY:
             Log.Info("TVHome.WndProc(): Windows is going to standby");
-            OnSuspend();            
+            OnSuspend();
             break;
           case PBT_APMSUSPEND:
             Log.Info("TVHome.WndProc(): Windows is suspending");
-            OnSuspend();            
+            OnSuspend();
             break;
           case PBT_APMQUERYSUSPEND:
           case PBT_APMQUERYSTANDBY:
             Log.Info("TVHome.WndProc(): Windows is going into powerstate (hibernation/standby)");
-            
+
             break;
           case PBT_APMRESUMESUSPEND:
             Log.Info("TVHome.WndProc(): Windows has resumed from hibernate mode");
@@ -2681,7 +2694,7 @@ namespace TvPlugin
           pDlgYesNo.SetLine(4, lines[2]);
         else
           pDlgYesNo.SetLine(4, "");
-        
+
         if (GUIWindowManager.ActiveWindow == (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
         {
           pDlgYesNo.DoModal((int)GUIWindowManager.ActiveWindowEx);
@@ -2874,7 +2887,7 @@ namespace TvPlugin
         TvServer server = new TvServer();
         VirtualCard card;
         bool cardChanged = false;
-        int newCardId = -1;
+        int newCardId = -1;        
         if (wasPlaying)
         {
           // we need to stop player HERE if card has changed.        
@@ -2921,7 +2934,8 @@ namespace TvPlugin
               }
               else if (succeeded == TvResult.Succeeded) // no card change occured, so carry on.
               {
-                SeekToEnd(true);
+                cardChanged = false;
+                SeekToEnd(true);                
                 g_Player.ContinueGraph();
               }
             }
@@ -2962,12 +2976,7 @@ namespace TvPlugin
           {
             StartPlay();
           }
-
-          if (!wasPlaying || wasPaused)
-          {
-            SeekToEnd(true);
-          }
-
+         
           _playbackStopped = false;
 
           //GUIWaitCursor.Hide();
@@ -3016,7 +3025,7 @@ namespace TvPlugin
       }
     }
 
-    
+
 
     public static void ViewChannel(Channel channel)
     {
@@ -3141,7 +3150,7 @@ namespace TvPlugin
 
       if (tsFileExists && !forceRtsp)
       {
-        MediaPortal.GUI.Library.Log.Info("tvhome:startplay:{0} - using rtsp mode:{1}", timeshiftFileName, _usertsp);        
+        MediaPortal.GUI.Library.Log.Info("tvhome:startplay:{0} - using rtsp mode:{1}", timeshiftFileName, _usertsp);
         g_Player.Play(timeshiftFileName, mediaType);
         benchClock.Stop();
         Log.Warn("tvhome:startplay.  Phase 2 - {0} ms - Done starting g_Player.Play()", benchClock.ElapsedMilliseconds.ToString());
@@ -3153,7 +3162,7 @@ namespace TvPlugin
       else
       {
         timeshiftFileName = TVHome.Card.RTSPUrl;
-        MediaPortal.GUI.Library.Log.Info("tvhome:startplay:{0}", timeshiftFileName);        
+        MediaPortal.GUI.Library.Log.Info("tvhome:startplay:{0}", timeshiftFileName);
         g_Player.Play(timeshiftFileName, mediaType);
         benchClock.Stop();
         Log.Warn("tvhome:startplay.  Phase 2 - {0} ms - Done starting g_Player.Play()", benchClock.ElapsedMilliseconds.ToString());
@@ -3168,23 +3177,37 @@ namespace TvPlugin
 
     private static void SeekToEnd(bool zapping)
     {
-      Log.Info("tvhome:SeektoEnd({0})", zapping);
+
       double duration = g_Player.Duration;
       double position = g_Player.CurrentPosition;
 
-      string timeshiftFileName = TVHome.Card.TimeShiftFileName;
-      bool useRtsp = System.IO.File.Exists("usertsp.txt");
-      if (System.IO.File.Exists(timeshiftFileName) && !useRtsp)
+      bool useRtsp = TVHome.UseRTSP();
+
+
+      Log.Info("tvhome:SeektoEnd({0}, rtsp={1}", zapping, useRtsp);
+
+      //singleseat
+      if (!useRtsp)
       {
         if (g_Player.IsRadio == false)
         {
           if (duration > 0 || position > 0)
-            g_Player.SeekAbsolute(duration);
+          {
+            try
+            {
+              g_Player.SeekAbsolute(duration);
+            }
+            catch (Exception e)
+            {
+              Log.Error("tvhome:SeektoEnd({0}, rtsp={1} exception: {2}", zapping, useRtsp, e.Message);
+              g_Player.Stop();
+            }
+          }
         }
       }
       else
       {
-        //streaming....
+        //multiseat rtsp streaming....
         if (zapping)
         {
           // avoid seeking on radion in multiseat, b/c of a an unsolved bug in tsreader.ax
@@ -3193,7 +3216,17 @@ namespace TvPlugin
             //System.Threading.Thread.Sleep(100);            
             Log.Info("tvhome:SeektoEnd({0}/{1})", position, duration);
             if (duration > 0 || position > 0)
-              g_Player.SeekAbsolute(duration + 10);
+            {
+              try
+              {
+                g_Player.SeekAbsolute(duration + 10);
+              }
+              catch (Exception e)
+              {
+                Log.Error("tvhome:SeektoEnd({0}, rtsp={1} exception: {2}", zapping, useRtsp, e.Message);
+                g_Player.Stop();
+              }
+            }
           }
         }
       }
