@@ -1066,9 +1066,9 @@ namespace TvPlugin
       */
       string fileName = rec.FileName;
 
-      bool recFileExists = System.IO.File.Exists(fileName);
+      bool useRTSP = TVHome.UseRTSP();
 
-      if (!recFileExists && !TVHome.UseRTSP())
+      if (!useRTSP) //singleseat      
       {
         if (TVHome.RecordingPath().Length > 0)
         {
@@ -1089,13 +1089,12 @@ namespace TvPlugin
           fileName = fileName.Replace(":", "");
           fileName = "\\\\" + RemoteControl.HostName + "\\" + fileName;
         }
-        recFileExists = System.IO.File.Exists(fileName);
       }
 
       //populates recording metadata to g_player;
       g_Player.currentFileName = fileName;
 
-      if (!System.IO.File.Exists(fileName))
+      if (useRTSP)
       {
         fileName = TVHome.TvServer.GetStreamUrlForFileName(rec.IdRecording);
       }
@@ -1103,7 +1102,7 @@ namespace TvPlugin
       g_Player.currentTitle = rec.Title;
       g_Player.currentDescription = rec.Description;
 
-      Log.Info("TvRecorded Play:{0} - using rtsp mode:{1}", fileName, TVHome.UseRTSP());
+      Log.Info("TvRecorded Play:{0} - using rtsp mode:{1}", fileName, useRTSP);
       if (g_Player.Play(fileName, g_Player.MediaType.Recording))
       {
         if (Utils.IsVideo(fileName))

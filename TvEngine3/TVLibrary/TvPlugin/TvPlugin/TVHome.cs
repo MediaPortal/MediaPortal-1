@@ -678,7 +678,7 @@ namespace TvPlugin
     public static bool UseRTSP()
     {
 
-      bool useRtsp = System.IO.File.Exists("usertsp.txt");
+      bool useRtsp = System.IO.File.Exists("c:\\usertsp.txt");
 
       if (!useRtsp)
       {
@@ -3118,15 +3118,14 @@ namespace TvPlugin
       if (channel.IsRadio)
         mediaType = g_Player.MediaType.Radio;
 
-      bool forceRtsp = System.IO.File.Exists("usertsp.txt");
+      bool useRTSP = TVHome.UseRTSP();
+
       benchClock.Stop();
       Log.Warn("tvhome:startplay.  Phase 1 - {0} ms - Done method initialization", benchClock.ElapsedMilliseconds.ToString());
       benchClock.Reset();
       benchClock.Start();
 
-      bool tsFileExists = System.IO.File.Exists(timeshiftFileName);
-
-      if (!tsFileExists && !_usertsp) //should we avoid RTSP mode (only meant for debugging purposes or when RTSP does not work.)
+      if (!useRTSP) //singleseat
       {
         if (_timeshiftingpath.Length > 0)
         {
@@ -3147,14 +3146,13 @@ namespace TvPlugin
           timeshiftFileName = timeshiftFileName.Replace(":", "");
           timeshiftFileName = "\\\\" + RemoteControl.HostName + "\\" + timeshiftFileName;
         }
-        tsFileExists = System.IO.File.Exists(timeshiftFileName);
       }
 
       _newTimeshiftFileName = timeshiftFileName;
 
-      if (tsFileExists && !forceRtsp)
+      if (!useRTSP)
       {
-        MediaPortal.GUI.Library.Log.Info("tvhome:startplay:{0} - using rtsp mode:{1}", timeshiftFileName, _usertsp);
+        MediaPortal.GUI.Library.Log.Info("tvhome:startplay:{0} - using rtsp mode:{1}", timeshiftFileName, useRTSP);
         g_Player.Play(timeshiftFileName, mediaType);
         benchClock.Stop();
         Log.Warn("tvhome:startplay.  Phase 2 - {0} ms - Done starting g_Player.Play()", benchClock.ElapsedMilliseconds.ToString());
@@ -3163,10 +3161,10 @@ namespace TvPlugin
         //SeekToEnd(false);
         //Log.Warn("tvhome:startplay.  Phase 3 - {0} ms - Done seeking.", benchClock.ElapsedMilliseconds.ToString());
       }
-      else
+      else //multiseat
       {
         timeshiftFileName = TVHome.Card.RTSPUrl;
-        MediaPortal.GUI.Library.Log.Info("tvhome:startplay:{0}", timeshiftFileName);
+        MediaPortal.GUI.Library.Log.Info("tvhome:startplay:{0} - using rtsp mode:{1}", timeshiftFileName, useRTSP);
         g_Player.Play(timeshiftFileName, mediaType);
         benchClock.Stop();
         Log.Warn("tvhome:startplay.  Phase 2 - {0} ms - Done starting g_Player.Play()", benchClock.ElapsedMilliseconds.ToString());
