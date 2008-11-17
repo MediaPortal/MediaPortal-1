@@ -128,7 +128,7 @@ namespace MediaPortal.GUI.TV
 
     bool _byIndex = false;
     bool _useNewRecordingButtonColor = false;
-
+    bool _notificationEnabled = false;
     #endregion
 
     #region ctor
@@ -179,7 +179,9 @@ namespace MediaPortal.GUI.TV
         _autoTurnOnTv = xmlreader.GetValueAsBool("mytv", "autoturnontv", false);
         _disableXMLTVImportOption = xmlreader.GetValueAsBool("plugins", "TV Movie Clickfinder", false);
         _byIndex = xmlreader.GetValueAsBool("mytv", "byindex", true);
+        _notificationEnabled = xmlreader.GetValueAsBool("plugins", "TV Notifier", false);
       }
+
       _useNewRecordingButtonColor = File.Exists(Path.Combine(GUIGraphicsContext.Skin, @"media\tvguide_recButton_Focus_middle.png"));
     }
 
@@ -2969,6 +2971,8 @@ namespace MediaPortal.GUI.TV
     /// <returns>true : MP shows a notification when program is about to start</returns>
     private bool ShouldNotifyProgram(TVProgram program)
     {
+      if (!_notificationEnabled)
+        return false;
       for (int i = 0; i < _notifyList.Count; ++i)
       {
         TVNotify notify = (TVNotify)_notifyList[i];

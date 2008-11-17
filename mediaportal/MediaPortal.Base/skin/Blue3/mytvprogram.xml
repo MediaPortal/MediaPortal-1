@@ -53,7 +53,7 @@
         <font>font13</font>
         <textcolor>White</textcolor>
         <colordiffuse>White</colordiffuse>
-        <disabledcolor>#60ffffff</disabledcolor>
+        <disabledcolor>60ffffff</disabledcolor>
         <onup>4</onup>
         <ondown>6</ondown>
         <onright>10</onright>

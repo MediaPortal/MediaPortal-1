@@ -32,6 +32,7 @@ using MediaPortal.Util;
 using MediaPortal.GUI.Library;
 using MediaPortal.TV.Recording;
 using MediaPortal.TV.Database;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.GUI.TV
 {
@@ -55,6 +56,7 @@ namespace MediaPortal.GUI.TV
     [SkinControlAttribute(8)]      protected GUIButtonControl btnPreRecord = null;
     [SkinControlAttribute(9)]      protected GUIButtonControl btnPostRecord = null;
 
+    bool _notificationEnabled = false;
     static TVProgram currentProgram = null;
     public GUITVProgramInfo()
     {
@@ -208,10 +210,19 @@ namespace MediaPortal.GUI.TV
           break;
         }
       }
-      if (showNotify)
-        btnNotify.Selected = true;
+      if (_notificationEnabled)
+      {
+        btnNotify.Disabled = false;
+        if (showNotify)
+          btnNotify.Selected = true;
+        else
+          btnNotify.Selected = false;
+      }
       else
+      {
         btnNotify.Selected = false;
+        btnNotify.Disabled = true;
+      }
 
       lstUpcomingEpsiodes.Clear();
       TVRecording recTmp = new TVRecording();
@@ -921,5 +932,14 @@ namespace MediaPortal.GUI.TV
     {
       UpdateProgramDescription(item.TVTag as TVRecording);
     }
+
+    void LoadSettings()
+    {
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        _notificationEnabled = xmlreader.GetValueAsBool("plugins", "TV Notifier", false);
+      }
+    }
+
   }
 }

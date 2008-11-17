@@ -69,6 +69,9 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPTextBox txtNotifyBefore;
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox8;
     private MediaPortal.UserInterface.Controls.MPCheckBox chkRecnotifications;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxNotifyPlaySound;
+    private MediaPortal.UserInterface.Controls.MPTextBox txtNotifyAfter;
+    private MediaPortal.UserInterface.Controls.MPLabel labelNotifyTimeout;
     private ColumnHeader columnHeader7;
 
     #endregion
@@ -109,8 +112,10 @@ namespace MediaPortal.Configuration.Sections
         chkRecnotifications.Checked = xmlreader.GetValueAsBool("mytv", "enableRecNotifier", false);
         chkTVnotifications.Checked = xmlreader.GetValueAsBool("mytv", "enableTvNotifier", false);
         txtNotifyBefore.Text = xmlreader.GetValueAsString("mytv", "notifyTVBefore", "300");
+        txtNotifyAfter.Text = xmlreader.GetValueAsString("mytv", "notifyTVTimeout", "15");
+        checkBoxNotifyPlaySound.Checked = xmlreader.GetValueAsBool("mytv", "notifybeep", true);
       }
-
+      chkTVnotifications_CheckedChanged(null, null);
       if (System.IO.File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll"))
       {
         // Enable this Panel if the TvPlugin exists in the plug-in Directory
@@ -257,7 +262,9 @@ namespace MediaPortal.Configuration.Sections
 
         xmlwriter.SetValueAsBool("mytv", "enableRecNotifier", chkRecnotifications.Checked);
         xmlwriter.SetValueAsBool("mytv", "enableTvNotifier", chkTVnotifications.Checked);
-        xmlwriter.SetValue("mytv", "notifyTVBefore", txtNotifyBefore.Text);        
+        xmlwriter.SetValue("mytv", "notifyTVBefore", txtNotifyBefore.Text);
+        xmlwriter.SetValue("mytv", "notifyTVTimeout", txtNotifyAfter.Text);
+        xmlwriter.SetValueAsBool("mytv", "notifybeep", checkBoxNotifyPlaySound.Checked);
 
         foreach (ListViewItem item in mpListViewPreferredAudioLang.Items)
         {
@@ -322,12 +329,15 @@ namespace MediaPortal.Configuration.Sections
       this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader7 = new System.Windows.Forms.ColumnHeader();
       this.tabPage1 = new System.Windows.Forms.TabPage();
+      this.mpGroupBox8 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.chkRecnotifications = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpGroupBox7 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.txtNotifyAfter = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelNotifyTimeout = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.checkBoxNotifyPlaySound = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.txtNotifyBefore = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.chkTVnotifications = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.mpGroupBox8 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.chkRecnotifications = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpGroupBox2.SuspendLayout();
       this.mpGroupBox1.SuspendLayout();
       this.tabControlTVGeneral.SuspendLayout();
@@ -340,8 +350,8 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox4.SuspendLayout();
       this.mpGroupBox3.SuspendLayout();
       this.tabPage1.SuspendLayout();
-      this.mpGroupBox7.SuspendLayout();
       this.mpGroupBox8.SuspendLayout();
+      this.mpGroupBox7.SuspendLayout();
       this.SuspendLayout();
       // 
       // mpGroupBox2
@@ -841,53 +851,13 @@ namespace MediaPortal.Configuration.Sections
       this.tabPage1.Text = "Notifier";
       this.tabPage1.UseVisualStyleBackColor = true;
       // 
-      // mpGroupBox7
-      // 
-      this.mpGroupBox7.Controls.Add(this.mpLabel2);
-      this.mpGroupBox7.Controls.Add(this.txtNotifyBefore);
-      this.mpGroupBox7.Controls.Add(this.chkTVnotifications);
-      this.mpGroupBox7.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox7.Location = new System.Drawing.Point(16, 16);
-      this.mpGroupBox7.Name = "mpGroupBox7";
-      this.mpGroupBox7.Size = new System.Drawing.Size(431, 82);
-      this.mpGroupBox7.TabIndex = 12;
-      this.mpGroupBox7.TabStop = false;
-      this.mpGroupBox7.Text = "TV notifications";
-      // 
-      // mpLabel2
-      // 
-      this.mpLabel2.AutoSize = true;
-      this.mpLabel2.Location = new System.Drawing.Point(19, 50);
-      this.mpLabel2.Name = "mpLabel2";
-      this.mpLabel2.Size = new System.Drawing.Size(96, 13);
-      this.mpLabel2.TabIndex = 8;
-      this.mpLabel2.Text = "Notify before (sec):";
-      // 
-      // txtNotifyBefore
-      // 
-      this.txtNotifyBefore.BorderColor = System.Drawing.Color.Empty;
-      this.txtNotifyBefore.Location = new System.Drawing.Point(157, 47);
-      this.txtNotifyBefore.Name = "txtNotifyBefore";
-      this.txtNotifyBefore.Size = new System.Drawing.Size(229, 20);
-      this.txtNotifyBefore.TabIndex = 7;
-      this.txtNotifyBefore.Text = "300";
-      // 
-      // chkTVnotifications
-      // 
-      this.chkTVnotifications.AutoSize = true;
-      this.chkTVnotifications.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.chkTVnotifications.Location = new System.Drawing.Point(22, 19);
-      this.chkTVnotifications.Name = "chkTVnotifications";
-      this.chkTVnotifications.Size = new System.Drawing.Size(336, 17);
-      this.chkTVnotifications.TabIndex = 0;
-      this.chkTVnotifications.Text = "Enabled (shows a notification when a TV program is about to start)";
-      this.chkTVnotifications.UseVisualStyleBackColor = true;
-      // 
       // mpGroupBox8
       // 
+      this.mpGroupBox8.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox8.Controls.Add(this.chkRecnotifications);
       this.mpGroupBox8.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox8.Location = new System.Drawing.Point(16, 118);
+      this.mpGroupBox8.Location = new System.Drawing.Point(16, 166);
       this.mpGroupBox8.Name = "mpGroupBox8";
       this.mpGroupBox8.Size = new System.Drawing.Size(431, 82);
       this.mpGroupBox8.TabIndex = 13;
@@ -904,6 +874,91 @@ namespace MediaPortal.Configuration.Sections
       this.chkRecnotifications.TabIndex = 0;
       this.chkRecnotifications.Text = "Enabled (shows a notification when a recording starts and stops)";
       this.chkRecnotifications.UseVisualStyleBackColor = true;
+      // 
+      // mpGroupBox7
+      // 
+      this.mpGroupBox7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox7.Controls.Add(this.txtNotifyAfter);
+      this.mpGroupBox7.Controls.Add(this.labelNotifyTimeout);
+      this.mpGroupBox7.Controls.Add(this.checkBoxNotifyPlaySound);
+      this.mpGroupBox7.Controls.Add(this.mpLabel2);
+      this.mpGroupBox7.Controls.Add(this.txtNotifyBefore);
+      this.mpGroupBox7.Controls.Add(this.chkTVnotifications);
+      this.mpGroupBox7.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpGroupBox7.Location = new System.Drawing.Point(16, 16);
+      this.mpGroupBox7.Name = "mpGroupBox7";
+      this.mpGroupBox7.Size = new System.Drawing.Size(431, 135);
+      this.mpGroupBox7.TabIndex = 12;
+      this.mpGroupBox7.TabStop = false;
+      this.mpGroupBox7.Text = "TV notifications";
+      // 
+      // txtNotifyAfter
+      // 
+      this.txtNotifyAfter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.txtNotifyAfter.BorderColor = System.Drawing.Color.Empty;
+      this.txtNotifyAfter.Location = new System.Drawing.Point(164, 73);
+      this.txtNotifyAfter.Name = "txtNotifyAfter";
+      this.txtNotifyAfter.Size = new System.Drawing.Size(229, 20);
+      this.txtNotifyAfter.TabIndex = 11;
+      this.txtNotifyAfter.Text = "15";
+      // 
+      // labelNotifyTimeout
+      // 
+      this.labelNotifyTimeout.AutoSize = true;
+      this.labelNotifyTimeout.Location = new System.Drawing.Point(19, 76);
+      this.labelNotifyTimeout.Name = "labelNotifyTimeout";
+      this.labelNotifyTimeout.Size = new System.Drawing.Size(139, 13);
+      this.labelNotifyTimeout.TabIndex = 10;
+      this.labelNotifyTimeout.Text = "Hide notification after (sec.):";
+      // 
+      // checkBoxNotifyPlaySound
+      // 
+      this.checkBoxNotifyPlaySound.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.checkBoxNotifyPlaySound.AutoSize = true;
+      this.checkBoxNotifyPlaySound.Checked = true;
+      this.checkBoxNotifyPlaySound.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxNotifyPlaySound.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxNotifyPlaySound.Location = new System.Drawing.Point(22, 99);
+      this.checkBoxNotifyPlaySound.Name = "checkBoxNotifyPlaySound";
+      this.checkBoxNotifyPlaySound.Size = new System.Drawing.Size(105, 17);
+      this.checkBoxNotifyPlaySound.TabIndex = 9;
+      this.checkBoxNotifyPlaySound.Text = "Play \"notify.wav\"";
+      this.checkBoxNotifyPlaySound.UseVisualStyleBackColor = true;
+      // 
+      // mpLabel2
+      // 
+      this.mpLabel2.AutoSize = true;
+      this.mpLabel2.Location = new System.Drawing.Point(19, 50);
+      this.mpLabel2.Name = "mpLabel2";
+      this.mpLabel2.Size = new System.Drawing.Size(96, 13);
+      this.mpLabel2.TabIndex = 8;
+      this.mpLabel2.Text = "Notify before (sec):";
+      // 
+      // txtNotifyBefore
+      // 
+      this.txtNotifyBefore.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.txtNotifyBefore.BorderColor = System.Drawing.Color.Empty;
+      this.txtNotifyBefore.Location = new System.Drawing.Point(164, 47);
+      this.txtNotifyBefore.Name = "txtNotifyBefore";
+      this.txtNotifyBefore.Size = new System.Drawing.Size(229, 20);
+      this.txtNotifyBefore.TabIndex = 7;
+      this.txtNotifyBefore.Text = "300";
+      // 
+      // chkTVnotifications
+      // 
+      this.chkTVnotifications.AutoSize = true;
+      this.chkTVnotifications.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.chkTVnotifications.Location = new System.Drawing.Point(22, 19);
+      this.chkTVnotifications.Name = "chkTVnotifications";
+      this.chkTVnotifications.Size = new System.Drawing.Size(336, 17);
+      this.chkTVnotifications.TabIndex = 0;
+      this.chkTVnotifications.Text = "Enabled (shows a notification when a TV program is about to start)";
+      this.chkTVnotifications.UseVisualStyleBackColor = true;
+      this.chkTVnotifications.CheckedChanged += new System.EventHandler(this.chkTVnotifications_CheckedChanged);
       // 
       // TVClient
       // 
@@ -929,10 +984,10 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox3.ResumeLayout(false);
       this.mpGroupBox3.PerformLayout();
       this.tabPage1.ResumeLayout(false);
-      this.mpGroupBox7.ResumeLayout(false);
-      this.mpGroupBox7.PerformLayout();
       this.mpGroupBox8.ResumeLayout(false);
       this.mpGroupBox8.PerformLayout();
+      this.mpGroupBox7.ResumeLayout(false);
+      this.mpGroupBox7.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -1043,6 +1098,26 @@ namespace MediaPortal.Configuration.Sections
           mplistView.Items.RemoveAt(index);
           mplistView.Items.Insert(index - 1, item);
         }
+      }
+    }
+
+    private void chkTVnotifications_CheckedChanged(object sender, EventArgs e)
+    {
+      if (chkTVnotifications.Checked)
+      {
+        txtNotifyAfter.Enabled = true;
+        txtNotifyBefore.Enabled = true;
+        checkBoxNotifyPlaySound.Enabled = true;
+        labelNotifyTimeout.Enabled = true;
+        mpLabel2.Enabled = true;
+      }
+      else
+      {
+        txtNotifyAfter.Enabled = false;
+        txtNotifyBefore.Enabled = false;
+        checkBoxNotifyPlaySound.Enabled = false;
+        labelNotifyTimeout.Enabled = false;
+        mpLabel2.Enabled = false;
       }
     }
 
