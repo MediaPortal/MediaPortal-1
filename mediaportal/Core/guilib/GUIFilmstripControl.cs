@@ -1714,7 +1714,18 @@ namespace MediaPortal.GUI.Library
       }
       else if (_upDownControl != null)
       {
-        _upDownControl.OnAction(action);
+        if (_upDownControl.SelectedButton == GUISpinControl.SpinSelect.SPIN_BUTTON_DOWN ||
+          _upDownControl.SelectedButton == GUISpinControl.SpinSelect.SPIN_BUTTON_UP)
+        {
+          _upDownControl.Focus = false;
+          _listType = GUIListControl.ListType.CONTROL_LIST;
+          this.Focus = true;
+        }
+        else
+        {
+
+          _upDownControl.OnAction(action);
+        }
         if (!_upDownControl.Focus)
         {
           _listType = GUIListControl.ListType.CONTROL_LIST;
