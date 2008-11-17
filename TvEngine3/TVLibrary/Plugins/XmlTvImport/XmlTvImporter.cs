@@ -467,6 +467,8 @@ namespace TvEngine
     [MethodImpl(MethodImplOptions.Synchronized)]
     protected void CheckNewTVGuide()
     {
+      FileStream streamIn = null;
+      StreamReader fileIn = null;
       TvBusinessLayer layer = new TvBusinessLayer();
       string folder = layer.GetSetting("xmlTv", System.IO.Directory.GetCurrentDirectory()).Value;
       DateTime lastTime;
@@ -482,37 +484,65 @@ namespace TvEngine
       }
 
 
-      bool importXML = false;
-      bool importLST = false;
+      bool importXML = layer.GetSetting("xmlTvImportXML", "true").Value == "true";
+      bool importLST = layer.GetSetting("xmlTvImportLST", "true").Value == "true";
       DateTime importDate = DateTime.MinValue;  // gets the date of the newest file
 
       string fileName = folder + @"\tvguide.xml";
 
-      if (System.IO.File.Exists(fileName))
+      if (importXML && System.IO.File.Exists(fileName))
       {
-        DateTime fileTime = DateTime.Parse(System.IO.File.GetLastWriteTime(fileName).ToString()); // for rounding errors!!!
-        if (lastTime < fileTime)
-        {
-          importXML = true;
-          importDate = fileTime;
-        }
+        DateTime fileTime = System.IO.File.GetLastWriteTime(fileName);
+        if (importDate < fileTime) { importDate = fileTime; }
       }
 
       fileName = folder + @"\tvguide.lst";
 
-      if (layer.GetSetting("xmlTvImportLST", "true").Value == "true" && System.IO.File.Exists(fileName))
+      if (importLST && System.IO.File.Exists(fileName))  // check if any files contained in tvguide.lst are newer than time of last import
       {
-        DateTime fileTime = DateTime.Parse(System.IO.File.GetLastWriteTime(fileName).ToString()); // for rounding errors!!!
-        if (lastTime < fileTime)
+        try
+        { 
+          DateTime fileTime = System.IO.File.GetLastWriteTime(fileName); 
+          if (importDate < fileTime) { importDate = fileTime; }   // A new tvguide.lst should give an import, to retain compatibility with previous version
+          Encoding fileEncoding = Encoding.Default;
+          streamIn = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
+          fileIn = new StreamReader(streamIn, fileEncoding, true);
+          while (!fileIn.EndOfStream)
+          {
+            string tvguideFileName = fileIn.ReadLine();
+            if (tvguideFileName.Length == 0) continue;
+            if (!System.IO.Path.IsPathRooted(tvguideFileName))
+            {
+              // extend by directory
+              tvguideFileName = System.IO.Path.Combine(folder, tvguideFileName);
+            }
+            if (System.IO.File.Exists(tvguideFileName))
+            {
+              DateTime tvfileTime = System.IO.File.GetLastWriteTime(tvguideFileName);
+              
+              if (tvfileTime > lastTime)
+              {
+                if (importDate < tvfileTime) { importDate = tvfileTime; } 
+              }
+            }
+          }        
+        }                      
+        finally
         {
-          importLST = true;
-          if (fileTime > importDate) importDate = fileTime;
+          if (streamIn != null)
+          {
+            streamIn.Close();
+            streamIn.Dispose();
+          }
+          if (fileIn != null)
+          {
+            fileIn.Close();
+            fileIn.Dispose();
+          }
         }
       }
-
-      if (importXML || importLST)
+      if ((importXML || importLST) && (DateTime.Parse(importDate.ToString()) > lastTime)) // To string and back to avoid rounding errors leading to continous reimports!!!
       {
-
         StartImport(importXML, importLST, importDate);
       }
     }
@@ -520,6 +550,8 @@ namespace TvEngine
     [MethodImpl(MethodImplOptions.Synchronized)]
     protected void StartImport(bool importXML, bool importLST, DateTime importDate)
     {
+      FileStream streamIn = null;
+      StreamReader fileIn = null;
       if (_workerThreadRunning)
         return;
 
@@ -556,6 +588,45 @@ namespace TvEngine
         {
           Log.Error(@"plugin:xmltv StartImport - File [" + fileName + "] doesn't have read access : " + e.Message);
           return;
+        }
+        try  //Check that all listed files can be read before starting import (and deleting programs list)
+        {
+          Encoding fileEncoding = Encoding.Default;
+          streamIn = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
+          fileIn = new StreamReader(streamIn, fileEncoding, true);
+          while (!fileIn.EndOfStream)
+          {
+            string tvguideFileName = fileIn.ReadLine();
+            if (tvguideFileName.Length == 0) continue;
+
+            if (!System.IO.Path.IsPathRooted(tvguideFileName))
+            {
+              // extend by directory
+              tvguideFileName = System.IO.Path.Combine(folder, tvguideFileName);
+            }
+            try
+            {
+              IOUtil.CheckFileAccessRights(tvguideFileName, FileMode.Open, FileAccess.Read, FileShare.Read);
+            }
+            catch (Exception e)
+            {
+              Log.Error(@"plugin:xmltv StartImport - File [" + tvguideFileName + "] doesn't have read access : " + e.Message);
+              return;  
+            }
+          }
+        }
+        finally
+        {
+          if (streamIn != null)
+          {
+            streamIn.Close();
+            streamIn.Dispose();
+          }
+          if (fileIn != null)
+          {
+            fileIn.Close();
+            fileIn.Dispose();
+          }
         }
       }
 
