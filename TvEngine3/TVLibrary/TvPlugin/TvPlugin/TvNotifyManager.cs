@@ -69,8 +69,8 @@ namespace TvPlugin
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        _enableTVNotification = xmlreader.GetValueAsBool("mytv", "enableTvNotifier", true);
-        _enableRecNotification = xmlreader.GetValueAsBool("mytv", "enableRecNotifier", true);
+        _enableTVNotification = xmlreader.GetValueAsBool("mytv", "enableTvNotifier", false);
+        _enableRecNotification = xmlreader.GetValueAsBool("mytv", "enableRecNotifier", false);
         _preNotifyConfig = xmlreader.GetValueAsInt("mytv", "notifyTVBefore", 300);
         //_enableNotifyOnRecFailed = xmlreader.GetValueAsBool("mytv", "enableTvOnRecFailed", true);
       }      

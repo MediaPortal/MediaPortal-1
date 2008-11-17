@@ -35,6 +35,7 @@ using Gentle.Framework;
 using MediaPortal.Dialogs;
 using MediaPortal.Util;
 using MediaPortal.GUI.Library;
+using MediaPortal.Configuration;
 
 using TvDatabase;
 using TvControl;
@@ -77,6 +78,8 @@ namespace TvPlugin
     [SkinControlAttribute(9)]
     protected GUIButtonControl btnPostRecord = null;
 
+    protected bool _notificationEnabled = false;
+
     static Program currentProgram = null;
 
     List<int> RecordingIntervalValues = new List<int>();
@@ -96,6 +99,7 @@ namespace TvPlugin
       RecordingIntervalValues.Add(45);
       RecordingIntervalValues.Add(60);
       RecordingIntervalValues.Add(90);
+      LoadSettings();
     }
 
     public override void OnAdded()
@@ -236,7 +240,17 @@ namespace TvPlugin
         btnPreRecord.Disabled = true;
         btnPostRecord.Disabled = true;
       }
-      btnNotify.Selected = currentProgram.Notify;
+      if (_notificationEnabled)
+      {
+        btnNotify.Disabled = false;
+        btnNotify.Selected = currentProgram.Notify;
+      }
+      else
+      {
+        btnNotify.Selected = false;
+        btnNotify.Disabled = true;
+      }
+
 
       //find upcoming episodes
       lstUpcomingEpsiodes.Clear();
@@ -281,7 +295,7 @@ namespace TvPlugin
         }
         else
         {
-          if (episode.Notify)
+          if (episode.Notify && _notificationEnabled)
           {
             item.PinImage = Thumbs.TvNotifyIcon;
           }
@@ -1038,5 +1052,14 @@ namespace TvPlugin
                 rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
                 rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
     }
+
+    void LoadSettings()
+    {
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        _notificationEnabled = xmlreader.GetValueAsBool("mytv", "enableTvNotifier", false);
+      }
+    }
+
   }
 }

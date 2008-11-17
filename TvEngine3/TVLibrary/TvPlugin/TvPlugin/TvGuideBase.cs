@@ -136,6 +136,7 @@ namespace TvPlugin
     bool _showChannelNumber = false;
     int _channelNumberMaxLength = 3;
     bool _useNewRecordingButtonColor = false;
+    bool _notificationEnabled = false;
 
     #endregion
 
@@ -188,6 +189,7 @@ namespace TvPlugin
         _showChannelNumber = xmlreader.GetValueAsBool("mytv", "showchannelnumber", false);
         _channelNumberMaxLength = xmlreader.GetValueAsInt("mytv", "channelnumbermaxlength", 3);
         _timePerBlock = xmlreader.GetValueAsInt("tvguide", "timeperblock", 30);
+        _notificationEnabled = xmlreader.GetValueAsBool("mytv", "enableTvNotifier", false);
       }
       _useNewRecordingButtonColor = File.Exists(Path.Combine(GUIGraphicsContext.Skin, @"media\tvguide_recButton_Focus_middle.png"));
     }
@@ -3143,7 +3145,7 @@ namespace TvPlugin
     /// <returns>true : MP shows a notification when program is about to start</returns>
     private bool ShouldNotifyProgram(Program program)
     {
-      return program.Notify;
+      return _notificationEnabled && program.Notify;
     }
 
     protected int CalcDays()
