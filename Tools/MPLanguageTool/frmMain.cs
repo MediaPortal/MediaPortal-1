@@ -245,6 +245,7 @@ namespace MPLanguageTool
     {
       toolStripStatusLabel1.ForeColor = System.Drawing.Color.Black;
       toolStripStatusLabel1.Text = status;
+      statusStrip1.Refresh();
     }
   }
 }
