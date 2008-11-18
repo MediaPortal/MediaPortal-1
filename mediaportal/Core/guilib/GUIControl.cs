@@ -212,7 +212,6 @@ namespace MediaPortal.GUI.Library
       if (_hasCamera)
         GUIGraphicsContext.RestoreCameraPosition();
       GUIGraphicsContext.RemoveTransform();
- 
     }
     /// <summary>
     /// The default render method. This needs to be overwritten when inherited to give every control 
@@ -1578,6 +1577,11 @@ namespace MediaPortal.GUI.Library
       {
         for (int i = 0; i < _animations.Count; i++)
         {
+          if (IsVisible && GetID == 15858)
+          {
+            Log.Info("JGERE");
+          }
+
           VisualEffect anim = _animations[i];
           anim.Animate(currentTime, HasRendered);
           // Update the control states (such as visibility)
@@ -1704,6 +1708,18 @@ namespace MediaPortal.GUI.Library
       {
         _hasCamera = value;
       }
+    }
+
+    public void ResetAnimations()
+    {
+      if (false == GUIGraphicsContext.Animations)
+        return ;
+      for (int i = 0; i < _animations.Count; i++)
+      {
+        VisualEffect anim = _animations[i];
+        anim.ResetAnimation();
+      }
+      return ;
     }
   }
 }

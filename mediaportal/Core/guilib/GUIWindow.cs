@@ -842,6 +842,10 @@ namespace MediaPortal.GUI.Library
               GUIWindowManager.Process();
             }
             GUIWindowManager.IsSwitchingToNewWindow = switching;
+            foreach (GUIControl control in controlList)
+            {
+              control.ResetAnimations();
+            }
           }
         }
       }
