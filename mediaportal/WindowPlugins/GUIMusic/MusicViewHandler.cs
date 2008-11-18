@@ -353,7 +353,7 @@ namespace MediaPortal.GUI.Music
           if (whereClause != "")
             whereClause += " and ";
 
-          string selectedArtist = currentSong.Artist;
+          string selectedArtist = currentSong.AlbumArtist;
           Database.DatabaseUtility.RemoveInvalidChars(ref selectedArtist);
 
           whereClause += String.Format("strAlbumArtist like '%| {0} |%'", selectedArtist);
