@@ -455,6 +455,7 @@ namespace MediaPortal.GUI.Library
           }
           else
           {
+            _labelControl.TextAlignment = Alignment.ALIGN_LEFT;
             // left or centered alignment
             _labelControl.Label = szText;
             // 1) reduce maxwidth to ensure faded right edge is drawn
