@@ -93,7 +93,7 @@ namespace TvPlugin
     };
     //heartbeat related stuff
     private Thread heartBeatTransmitterThread = null;
-    private static string _newTimeshiftFileName = "";
+    //private static string _newTimeshiftFileName = "";
     static DateTime _updateProgressTimer = DateTime.MinValue;
     static ChannelNavigator m_navigator;
     static TVUtil _util;
@@ -123,7 +123,7 @@ namespace TvPlugin
     static bool _showChannelStateIcons = true;
     private static bool _doingHandleServerNotConnected = false;
     private static bool _doingChannelChange = false;
-    //private static bool _ServerNotConnectedHandled = false;
+    private static bool _ServerNotConnectedHandled = false;
 
     // this var is used to block the user from hitting "record now" button multiple times
     // the sideeffect is that the user is able to record the same show twice.
@@ -285,7 +285,7 @@ namespace TvPlugin
       {
         if (TVHome.Connected)
         {
-          bool isTS = TVHome.Card.IsTimeShifting;
+          bool isTS = (TVHome.Card != null && TVHome.Card.IsTimeShifting);
           if (TVHome.Connected && isTS)
           {
             // send heartbeat to tv server each 5 sec.
@@ -788,7 +788,7 @@ namespace TvPlugin
       // the result could be that the dialogue is not shown.
       try
       {
-        //if (_ServerNotConnectedHandled) return true; //still not connected
+        if (_ServerNotConnectedHandled) return true; //still not connected
 
         if (_doingHandleServerNotConnected) return !TVHome.Connected;
         _doingHandleServerNotConnected = true;
@@ -818,7 +818,7 @@ namespace TvPlugin
             _doingHandleServerNotConnected = false;
             return true;
           }
-          //          _ServerNotConnectedHandled = true;
+          _ServerNotConnectedHandled = true;
           GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
 
           if (pDlgOK != null)
@@ -1092,10 +1092,11 @@ namespace TvPlugin
       if (!TVHome.Connected) return;
       if (TVHome.Card.IsTimeShifting == false) return;
 
-      if (_newTimeshiftFileName.Length > 0 && !_newTimeshiftFileName.Equals(filename))
+      /*if (_newTimeshiftFileName.Length > 0 && !_newTimeshiftFileName.Equals(filename))
       {
         return;
       }
+      */
 
       //tv off
       Log.Info("TVHome:turn tv off");
@@ -1109,7 +1110,7 @@ namespace TvPlugin
         UpdateGUIonPlaybackStateChange(false);
       }
 
-      _newTimeshiftFileName = "";
+      //_newTimeshiftFileName = "";
       _playbackStopped = true;
     }
 
@@ -2985,7 +2986,7 @@ namespace TvPlugin
 
           //GUIWaitCursor.Hide();
           _doingChannelChange = false;
-          //_ServerNotConnectedHandled = false;
+          _ServerNotConnectedHandled = false;
           //GUIWaitCursor.Hide();
           return true;
         }
@@ -3148,7 +3149,7 @@ namespace TvPlugin
         }
       }
 
-      _newTimeshiftFileName = timeshiftFileName;
+      //_newTimeshiftFileName = timeshiftFileName;
 
       if (!useRTSP)
       {
