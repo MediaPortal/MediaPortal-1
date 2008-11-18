@@ -87,10 +87,16 @@ namespace MediaPortal.Player
     public delegate void EndedHandler(MediaType type, string filename);
     public delegate void StartedHandler(MediaType type, string filename);
     public delegate void AudioTracksReadyHandler();
+    public delegate void ChangedHandler(MediaType type, int stoptime, string filename);
 
+    // when a user is already playing a file without stopping the user selects another file for playback.
+    // in this case we do not receive the onstopped event.
+    // so saving the resume point of a video file is not happening, since this relies on the onstopped event.
+    // instead a plugin now has to listen to ChangedHandler event instead.
+    public static event ChangedHandler PlayBackChanged; 
     public static event StoppedHandler PlayBackStopped;
     public static event EndedHandler PlayBackEnded;
-    public static event StartedHandler PlayBackStarted;
+    public static event StartedHandler PlayBackStarted;    
     public static event AudioTracksReadyHandler AudioTracksReady;
     #endregion
 
@@ -336,6 +342,22 @@ namespace MediaPortal.Player
         {
             AudioTracksReady();
         }
+    }
+
+    //called when current playing file is stopped
+    static void OnChanged(string newFile)
+    {
+      if (newFile == null || newFile.Length == 0)
+      {
+        return;
+      }
+
+      if (!newFile.Equals(g_Player.CurrentFile))
+      {
+        //yes, then raise event 
+        Log.Info("g_Player.OnChanged()");
+        PlayBackChanged(_currentMedia, (int)g_Player.CurrentPosition, g_Player.CurrentFile);
+      }
     }
 
     //called when current playing file is stopped
@@ -640,6 +662,7 @@ namespace MediaPortal.Player
         if (_player != null)
         {
           GUIGraphicsContext.ShowBackground = true;
+          OnChanged(strPath);
           OnStopped();
           if (_player != null)
           {
@@ -730,12 +753,13 @@ namespace MediaPortal.Player
         _currentStep = 0;
         _currentStepIndex = -1;
         _seekTimer = DateTime.MinValue;
-        
+        _isInitalized = true;
         _subs = null;
         Log.Info("g_Player.PlayAudioStream({0})", strURL);
         if (_player != null)
         {
           GUIGraphicsContext.ShowBackground = true;
+          OnChanged(strURL);
           OnStopped();
           if (_player != null)
           {
@@ -745,7 +769,7 @@ namespace MediaPortal.Player
           GUIGraphicsContext.form.Invalidate(true);
           _player = null;
         }
-        _isInitalized = true;
+        
         if (strAudioPlayer == "BASS engine" && !isMusicVideo)
         {
           if (BassMusicPlayer.BassFreed)
@@ -796,12 +820,14 @@ namespace MediaPortal.Player
         _currentStepIndex = -1;
         _seekTimer = DateTime.MinValue;
         if (strURL == null) return false;
-        if (strURL.Length == 0) return false;        
+        if (strURL.Length == 0) return false;
+        _isInitalized = true;
         _subs = null;
         Log.Info("g_Player.PlayVideoStream({0})", strURL);
         if (_player != null)
         {
           GUIGraphicsContext.ShowBackground = true;
+          OnChanged(strURL);
           OnStopped();
           if (_player != null)
           {
@@ -812,7 +838,7 @@ namespace MediaPortal.Player
           _player = null;
           GC.Collect(); GC.Collect(); GC.Collect(); GC.Collect();
         }
-        _isInitalized = true;
+        
         //int iUseVMR9inMYMovies = 0;
         //using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         //{
@@ -914,12 +940,14 @@ namespace MediaPortal.Player
         _currentStepIndex = -1;
         _seekTimer = DateTime.MinValue;
         if (strFile == null) return false;
-        if (strFile.Length == 0) return false;        
+        if (strFile.Length == 0) return false;
+        _isInitalized = true;
         _subs = null;
         Log.Info("g_Player.Play({0} {1})", strFile, type);
         if (_player != null)
         {
           GUIGraphicsContext.ShowBackground = true;
+          OnChanged(strFile);
           OnStopped();
           if (_player != null)
           {
@@ -929,7 +957,7 @@ namespace MediaPortal.Player
           _player = null;
           GC.Collect(); GC.Collect(); GC.Collect(); GC.Collect(); //?? ms-help://MS.VSCC.v80/MS.MSDN.v80/MS.NETDEVFX.v20.de/cpref2/html/M_System_GC_Collect_1_804c5d7d.htm
         }
-        _isInitalized = true;
+        
         if (!MediaPortal.Util.Utils.IsAVStream(strFile) && MediaPortal.Util.Utils.IsVideo(strFile))
         {
           if (MediaPortal.Util.Utils.PlayMovie(strFile))
@@ -1033,18 +1061,20 @@ namespace MediaPortal.Player
           //Log.Info("player: file is not live tv, so stop timeshifting:{0}", strFile);
           //GUIMessage msgTv = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TIMESHIFT, 0, 0, 0, 0, 0, null);
           //GUIWindowManager.SendMessage(msgTv);
-        }				
+        }			
 
         _currentStep = 0;
         _currentStepIndex = -1;
         _seekTimer = DateTime.MinValue;
         if (strFile == null) return false;
-        if (strFile.Length == 0) return false;        
+        if (strFile.Length == 0) return false;
+        _isInitalized = true;
         _subs = null;
         Log.Info("g_Player.Play({0})", strFile);
         if (_player != null)
         {
           GUIGraphicsContext.ShowBackground = true;
+          OnChanged(strFile);
           OnStopped();
           //SV 
           // If we're using the internal music player and cross-fading is enabled
@@ -1070,7 +1100,7 @@ namespace MediaPortal.Player
             GC.Collect(); GC.Collect(); GC.Collect(); GC.Collect();
           }
         }
-        _isInitalized = true;
+        
         if (!MediaPortal.Util.Utils.IsAVStream(strFile) && MediaPortal.Util.Utils.IsVideo(strFile))
         {
           // Free BASS to avoid problems with Digital Audio, when watching movies

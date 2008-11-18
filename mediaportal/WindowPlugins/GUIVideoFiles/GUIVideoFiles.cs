@@ -179,6 +179,7 @@ namespace MediaPortal.GUI.Video
       g_Player.PlayBackStopped += new MediaPortal.Player.g_Player.StoppedHandler(OnPlayBackStopped);
       g_Player.PlayBackEnded += new MediaPortal.Player.g_Player.EndedHandler(OnPlayBackEnded);
       g_Player.PlayBackStarted += new MediaPortal.Player.g_Player.StartedHandler(OnPlayBackStarted);
+      g_Player.PlayBackChanged += new MediaPortal.Player.g_Player.ChangedHandler(OnPlayBackChanged);
       // _currentFolder = null;
 
       LoadSettings();
@@ -1305,7 +1306,8 @@ namespace MediaPortal.GUI.Video
       return DaemonTools.IsMounted(file);
     }
 
-    private void OnPlayBackStopped(MediaPortal.Player.g_Player.MediaType type, int timeMovieStopped, string filename)
+
+    private void doOnPlayBackStoppedOrChanged(MediaPortal.Player.g_Player.MediaType type, int timeMovieStopped, string filename, string caller)
     {
       if (type != g_Player.MediaType.Video || filename.EndsWith("&txe=.wmv"))
         return;
@@ -1326,9 +1328,9 @@ namespace MediaPortal.GUI.Video
         {
           byte[] resumeData = null;
           g_Player.Player.GetResumeState(out resumeData);
-          Log.Info("GUIVideoFiles: OnPlayBackStopped idFile={0} timeMovieStopped={1} resumeData={2}", idFile, timeMovieStopped, resumeData);
+          Log.Info("GUIVideoFiles: {0} idFile={1} timeMovieStopped={2} resumeData={3}", caller, idFile, timeMovieStopped, resumeData);
           VideoDatabase.SetMovieStopTimeAndResumeData(idFile, timeMovieStopped, resumeData);
-          Log.Debug("GUIVideoFiles: OnPlayBackStopped store resume time");
+          Log.Debug("GUIVideoFiles: {0} store resume time", caller);
         }
         else
           VideoDatabase.DeleteMovieStopTime(idFile);
@@ -1342,8 +1344,18 @@ namespace MediaPortal.GUI.Video
           UpdateButtonStates();
         }
         else
-          Log.Debug("GUIVideoFiles: No LoadDirectory needed OnPlaybackStopped");
+          Log.Debug("GUIVideoFiles: No LoadDirectory needed {0}", caller);
       }
+    }
+
+    private void OnPlayBackChanged(MediaPortal.Player.g_Player.MediaType type, int timeMovieStopped, string filename)
+    {
+      doOnPlayBackStoppedOrChanged(type, timeMovieStopped, filename, "OnPlayBackChanged");
+    }
+
+    private void OnPlayBackStopped(MediaPortal.Player.g_Player.MediaType type, int timeMovieStopped, string filename)
+    {
+      doOnPlayBackStoppedOrChanged(type, timeMovieStopped, filename, "OnPlayBackStopped");
     }
 
     private void OnPlayBackEnded(MediaPortal.Player.g_Player.MediaType type, string filename)
