@@ -1577,11 +1577,6 @@ namespace MediaPortal.GUI.Library
       {
         for (int i = 0; i < _animations.Count; i++)
         {
-          if (IsVisible && GetID == 15858)
-          {
-            Log.Info("JGERE");
-          }
-
           VisualEffect anim = _animations[i];
           anim.Animate(currentTime, HasRendered);
           // Update the control states (such as visibility)
