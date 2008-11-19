@@ -683,17 +683,15 @@ namespace TvPlugin
       if (!useRtsp)
       {
         bool isSingleSeat = TVHome.IsSingleSeat();
-
         if (!isSingleSeat)
         {
           useRtsp = _usertsp;
         }
         else
         {
-          useRtsp = true;
+          useRtsp = false;
         }                
       }
-
       return useRtsp;
     }
 
@@ -3120,13 +3118,15 @@ namespace TvPlugin
         mediaType = g_Player.MediaType.Radio;
 
       bool useRTSP = TVHome.UseRTSP();
+      bool tsFileExists = System.IO.File.Exists(timeshiftFileName);
+
 
       benchClock.Stop();
       Log.Warn("tvhome:startplay.  Phase 1 - {0} ms - Done method initialization", benchClock.ElapsedMilliseconds.ToString());
       benchClock.Reset();
       benchClock.Start();
 
-      if (!useRTSP) //singleseat
+      if (!tsFileExists && !useRTSP) //singleseat
       {
         if (_timeshiftingpath.Length > 0)
         {

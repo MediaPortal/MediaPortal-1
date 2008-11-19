@@ -1067,8 +1067,9 @@ namespace TvPlugin
       string fileName = rec.FileName;
 
       bool useRTSP = TVHome.UseRTSP();
+      bool recFileExists = System.IO.File.Exists(fileName);
 
-      if (!useRTSP) //singleseat      
+      if (!recFileExists && !useRTSP) //singleseat      
       {
         if (TVHome.RecordingPath().Length > 0)
         {
