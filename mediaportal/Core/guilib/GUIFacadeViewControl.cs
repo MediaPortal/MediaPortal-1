@@ -203,6 +203,16 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    public override void AddAnimations(List<VisualEffect> animations)
+    {
+      //base.AddAnimations(animations);
+      _viewList.AddAnimations(animations);
+      _viewAlbum.AddAnimations(animations);
+      _viewFilmStrip.AddAnimations(animations);
+      _viewPlayList.AddAnimations(animations);
+      _viewThumbnail.AddAnimations(animations);
+    }
+
 
     /// <summary>
     /// Render. This will render the current selected view 

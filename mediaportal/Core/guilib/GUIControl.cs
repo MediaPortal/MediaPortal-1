@@ -1392,6 +1392,17 @@ namespace MediaPortal.GUI.Library
         _animations.Add((VisualEffect)effect.Clone());
       }
     }
+    public virtual void AddAnimations(List<VisualEffect> animations)
+    {
+      if (animations.Count == 0) return;
+      
+      if (_animations == null) _animations = new List<VisualEffect>();
+      foreach (VisualEffect effect in animations)
+      {
+        _animations.Add((VisualEffect)effect.Clone());
+      }
+    }
+    
     public virtual void SetThumbAnimations(List<VisualEffect> animations)
     {
       _thumbAnimations = new List<VisualEffect>();

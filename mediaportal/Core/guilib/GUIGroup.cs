@@ -62,8 +62,7 @@ namespace MediaPortal.GUI.Library
 
     public void AddControl(GUIControl control)
     {
-      if (base.Animations.Count != 0)
-        control.Animations.AddRange(base.Animations);
+      control.AddAnimations(base.Animations);
       control.DimColor = DimColor;
       Children.Add(control);
     }
@@ -300,8 +299,7 @@ namespace MediaPortal.GUI.Library
       if (value is GUIControl == false)
         return;
       GUIControl cntl = (GUIControl)value;
-      if (base.Animations.Count != 0)
-        cntl.Animations.AddRange(base.Animations);
+      cntl.AddAnimations(base.Animations);
       cntl.DimColor = DimColor;
       Children.Add(cntl);
     }
