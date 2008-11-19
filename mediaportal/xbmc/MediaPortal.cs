@@ -1536,7 +1536,7 @@ public class MediaPortalApp : D3DApp, IRender
         }
         if (GUIGraphicsContext.IsDirectX9ExUsed())
         {
-          SwitchFullScreenOrWindowed(false);
+          SwitchFullScreenOrWindowed(true);
           OnDeviceReset(null, null);
         }
       }
