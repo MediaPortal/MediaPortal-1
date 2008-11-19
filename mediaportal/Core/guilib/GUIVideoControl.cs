@@ -72,7 +72,7 @@ namespace MediaPortal.GUI.Library
 			base.FinalizeConstruction ();
 			_imageFocusRectangle = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _focusedTextureName);
       thumbImage = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, "#Play.Current.Thumb", 1);
-      blackImage = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, "black.bmp", 1);
+      blackImage = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, "black.png", 1);
           
       _imageFocusRectangle.ParentControl = this;
       thumbImage.ParentControl = this;

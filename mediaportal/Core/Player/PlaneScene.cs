@@ -134,7 +134,7 @@ namespace MediaPortal.Player
                                     GUIGraphicsContext.GetTexturePoolType());
 
       _blackImage = new GUIImage(0);
-      _blackImage.SetFileName("black.bmp");
+      _blackImage.SetFileName("black.png");
       _blackImage.AllocResources();
 
       _cropSettings = new CropSettings();

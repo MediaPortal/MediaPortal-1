@@ -505,7 +505,7 @@ namespace MediaPortal.GUI.Library
       {
         Log.Error("TextureManager: LoadGraphic - invalid thumb({0})", fileName);
         Direct3D.Format fmt = Direct3D.Format.A8R8G8B8;
-        string fallback = GUIGraphicsContext.Skin + @"\media\" + "black.bmp";
+        string fallback = GUIGraphicsContext.Skin + @"\media\" + "black.png";
 
         ImageInformation info2 = new ImageInformation();
         texture = TextureLoader.FromFile(GUIGraphicsContext.DX9Device,
