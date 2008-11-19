@@ -148,7 +148,7 @@
           <textureUpfocus>scroll-up-focus.gif</textureUpfocus>
           <textureDownfocus>scroll-down-focus.gif</textureDownfocus>
           <textureFocus>blue-rectangle.png</textureFocus>
-          <textureNofocus>black.png</textureNofocus>
+          <textureNofocus>black2.png</textureNofocus>
           <font2>font10</font2>
           <selectedcolor>FFFFffff</selectedcolor>
           <include>textcolorlightgrey</include>
