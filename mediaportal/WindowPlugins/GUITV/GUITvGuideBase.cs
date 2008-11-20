@@ -442,6 +442,8 @@ namespace MediaPortal.GUI.TV
             _timePerBlock += 15;
             if (_timePerBlock > 60)
               _timePerBlock = 60;
+            GUISpinControl cntlTimeInterval = GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL) as GUISpinControl;
+            cntlTimeInterval.Value = (_timePerBlock / 15) - 1;
             Update(false);
             SetFocus();
           }
@@ -466,6 +468,8 @@ namespace MediaPortal.GUI.TV
           {
             if (_timePerBlock > 15)
               _timePerBlock -= 15;
+            GUISpinControl cntlTimeInterval = GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL) as GUISpinControl;
+            cntlTimeInterval.Value = (_timePerBlock / 15) - 1;
             Update(false);
             SetFocus();
           }
@@ -473,6 +477,8 @@ namespace MediaPortal.GUI.TV
         case Action.ActionType.ACTION_DEFAULT_TIMEBLOCK:
           {
             _timePerBlock = 30;
+            GUISpinControl cntlTimeInterval = GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL) as GUISpinControl;
+            cntlTimeInterval.Value = (_timePerBlock / 15) - 1;
             Update(false);
             SetFocus();
           }
@@ -635,7 +641,7 @@ namespace MediaPortal.GUI.TV
             {
               for (int i = 1; i <= 4; i++)
                 cntlTimeInterval.AddLabel(string.Empty, i);
-              cntlTimeInterval.Value = 1;
+              cntlTimeInterval.Value = (_timePerBlock / 15) - 1;
             }
             if (message.Param1 != (int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO)
               Update(true);
