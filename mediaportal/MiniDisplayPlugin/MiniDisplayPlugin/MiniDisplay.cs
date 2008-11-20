@@ -5,15 +5,12 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
-using Un4seen.Bass;
 using DShowNET.AudioMixer;
 using Microsoft.Win32;
-using MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting;
 using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
-using MediaPortal.Profile;
 using MediaPortal.TV.Recording;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
@@ -46,10 +43,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private Thread t;
     private object ThreadAccessMutex = new object();
     private static bool UseTVServer = false;
-
-    public MiniDisplay()
-    {
-    }
 
     public string Author()
     {
@@ -113,7 +106,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           {
             Log.Info("MiniDisplay.DoStart(): ERROR - backgrund thread NOT STARTED", new object[0]);
           }
-        } catch (Exception exception)
+        }
+        catch (Exception exception)
         {
           Log.Info("MiniDisplay.DoStart: Exception while starting plugin: " + exception.Message, new object[0]);
           if ((this.t != null) && this.t.IsAlive)
@@ -164,7 +158,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           }
           this.t = null;
         }
-      } catch (Exception exception)
+      }
+      catch (Exception exception)
       {
         Log.Error(exception);
       }
@@ -328,7 +323,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             return;
           }
         }
-      } catch (Exception exception)
+      }
+      catch (Exception exception)
       {
         Log.Error(exception);
       }
@@ -731,7 +727,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
               return false;
             }
           }
-        } catch
+        }
+        catch
         {
           EQSETTINGS._EQDisplayTitle = false;
           EQSETTINGS._LastEQTitle = (DateTime.Now.Ticks / 1000);
@@ -741,7 +738,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         try
         {
           handle = g_Player.Player.CurrentAudioStream;
-        } catch (Exception exception)
+        }
+        catch (Exception exception)
         {
           Log.Debug("MiniDisplay.GetEQ(): Caugth exception obtaining audio stream: {0}", new object[] { exception });
           return false;
@@ -765,7 +763,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
               num3 = -2147483646;
             }
             num2 = Un4seen.Bass.Bass.BASS_ChannelGetData(handle, ref EQSETTINGS.EqFftData[0], num3);
-          } catch
+          }
+          catch
           {
             if (extensiveLogging)
             {
@@ -848,7 +847,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           try
           {
             CurrentStatus.SystemVolumeLevel = AudioMixerHelper.GetVolume();
-          } catch
+          }
+          catch
           {
           }
           if (CurrentStatus.SystemVolumeLevel < 0)
@@ -856,7 +856,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             try
             {
               CurrentStatus.SystemVolumeLevel = VolumeHandler.Instance.Volume;
-            } catch
+            }
+            catch
             {
             }
           }
@@ -868,14 +869,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           {
             CurrentStatus.SystemVolumeLevel = g_Player.Volume;
             return;
-          } catch
+          }
+          catch
           {
             CurrentStatus.SystemVolumeLevel = 0;
             return;
           }
         }
         CurrentStatus.SystemVolumeLevel = 0;
-      } catch
+      }
+      catch
       {
         CurrentStatus.SystemVolumeLevel = 0;
         CurrentStatus.IsMuted = false;
@@ -1071,23 +1074,23 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     public static string PluginIconsToAudioFormat(ulong IconMask)
     {
       string str = string.Empty;
-      if ((IconMask & ((ulong)0x8000000000L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_WMA2)) > 0L)
       {
         str = str + " ICON_WMA2";
       }
-      if ((IconMask & ((ulong)0x4000000000L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_WAV)) > 0L)
       {
         str = str + " ICON_WAV";
       }
-      if ((IconMask & ((ulong)0x4000000L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_WMA)) > 0L)
       {
         str = str + " ICON_WMA";
       }
-      if ((IconMask & ((ulong)0x2000000L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_MP3)) > 0L)
       {
         str = str + " ICON_MP3";
       }
-      if ((IconMask & ((ulong)0x1000000L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_OGG)) > 0L)
       {
         str = str + " ICON_OGG";
       }
@@ -1097,183 +1100,183 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     public static string PluginIconsToString(ulong IconMask)
     {
       string str = string.Empty;
-      if ((IconMask & ((ulong)0x100000000000L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_Play)) > 0L)
       {
         str = str + " ICON_Play";
       }
-      if ((IconMask & ((ulong)0x80000000000L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_Pause)) > 0L)
       {
         str = str + " ICON_Pause";
       }
-      if ((IconMask & ((ulong)0x40000000000L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_Stop)) > 0L)
       {
         str = str + " ICON_Stop";
       }
-      if ((IconMask & ((ulong)0x20000000000L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_FFWD)) > 0L)
       {
         str = str + " ICON_FFWD";
       }
-      if ((IconMask & ((ulong)0x10000000000L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_FRWD)) > 0L)
       {
         str = str + " ICON_FRWD";
       }
-      if ((IconMask & ((ulong)0x400000000L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_Rec)) > 0L)
       {
         str = str + " ICON_Rec";
       }
-      if ((IconMask & ((ulong)0x200000000L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_Vol)) > 0L)
       {
         str = str + " ICON_Vol";
       }
-      if ((IconMask & ((ulong)0x100000000L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_Time)) > 0L)
       {
         str = str + " ICON_Time";
       }
-      if ((IconMask & ((ulong)0x80L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_Music)) > 0L)
       {
         str = str + " ICON_Music";
       }
-      if ((IconMask & ((ulong)0x40L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_Movie)) > 0L)
       {
         str = str + " ICON_Movie";
       }
-      if ((IconMask & ((ulong)0x20L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_Photo)) > 0L)
       {
         str = str + " ICON_Photo";
       }
-      if ((IconMask & ((ulong)8L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_TV)) > 0L)
       {
         str = str + " ICON_TV";
       }
-      if ((IconMask & ((ulong)0x10L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_CD_DVD)) > 0L)
       {
         str = str + " ICON_CD_DVD";
       }
-      if ((IconMask & ((ulong)0x200000L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_TV_2)) > 0L)
       {
         str = str + " ICON_TV_2";
       }
-      if ((IconMask & ((ulong)0x100000L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_HDTV)) > 0L)
       {
         str = str + " ICON_HDTV";
       }
-      if ((IconMask & ((ulong)0x8000000000L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_WMA2)) > 0L)
       {
         str = str + " ICON_WMA2";
       }
-      if ((IconMask & ((ulong)0x4000000000L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_WAV)) > 0L)
       {
         str = str + " ICON_WAV";
       }
-      if ((IconMask & ((ulong)0x4000000L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_WMA)) > 0L)
       {
         str = str + " ICON_WMA";
       }
-      if ((IconMask & ((ulong)0x2000000L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_MP3)) > 0L)
       {
         str = str + " ICON_MP3";
       }
-      if ((IconMask & ((ulong)0x1000000L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_OGG)) > 0L)
       {
         str = str + " ICON_OGG";
       }
-      if ((IconMask & 0x80000000L) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_xVid)) > 0L)
       {
         str = str + " ICON_xVid";
       }
-      if ((IconMask & ((ulong)0x40000000L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_WMV)) > 0L)
       {
         str = str + " ICON_WMV";
       }
-      if ((IconMask & ((ulong)0x20000000L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_MPG2)) > 0L)
       {
         str = str + " ICON_MPG2";
       }
-      if ((IconMask & ((ulong)0x20000L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_MPG)) > 0L)
       {
         str = str + " ICON_MPG";
       }
-      if ((IconMask & ((ulong)0x10000L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_DivX)) > 0L)
       {
         str = str + " ICON_DivX";
       }
-      if ((IconMask & ((ulong)1L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.SPKR_FL)) > 0L)
       {
         str = str + " SPKR_FL";
       }
-      if ((IconMask & ((ulong)0x8000L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.SPKR_FC)) > 0L)
       {
         str = str + " SPKR_FC";
       }
-      if ((IconMask & ((ulong)0x4000L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.SPKR_FR)) > 0L)
       {
         str = str + " SPKR_FR";
       }
-      if ((IconMask & ((ulong)0x400L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.SPKR_RL)) > 0L)
       {
         str = str + " SPKR_RL";
       }
-      if ((IconMask & ((ulong)0x100L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.SPKR_RR)) > 0L)
       {
         str = str + " SPKR_RR";
       }
-      if ((IconMask & ((ulong)0x2000L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.SPKR_SL)) > 0L)
       {
         str = str + " SPKR_SL";
       }
-      if ((IconMask & ((ulong)0x800L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.SPKR_SR)) > 0L)
       {
         str = str + " SPKR_SR";
       }
-      if ((IconMask & ((ulong)0x1000L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.SPKR_LFE)) > 0L)
       {
         str = str + " SPKR_LFE";
       }
-      if ((IconMask & ((ulong)0x200L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_SPDIF)) > 0L)
       {
         str = str + " ICON_SPDIF";
       }
-      if ((IconMask & ((ulong)0x10000000L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_AC3)) > 0L)
       {
         str = str + " ICON_AC3";
       }
-      if ((IconMask & ((ulong)0x8000000L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_DTS)) > 0L)
       {
         str = str + " ICON_DTS";
       }
-      if ((IconMask & ((ulong)0x2000000000L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_REP)) > 0L)
       {
-        str = str + " ICON_REF";
+        str = str + " ICON_REP";
       }
-      if ((IconMask & ((ulong)0x1000000000L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_SFL)) > 0L)
       {
         str = str + " ICON_SFL";
       }
-      if ((IconMask & ((ulong)0x800000000L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_Alarm)) > 0L)
       {
         str = str + " ICON_Alarm";
       }
-      if ((IconMask & ((ulong)0x800000L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_SRC)) > 0L)
       {
         str = str + " ICON_SRC";
       }
-      if ((IconMask & ((ulong)0x400000L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_FIT)) > 0L)
       {
         str = str + " ICON_FIT";
       }
-      if ((IconMask & ((ulong)0x80000L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_SCR1)) > 0L)
       {
         str = str + " ICON_SCR1";
       }
-      if ((IconMask & ((ulong)0x40000L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_SCR2)) > 0L)
       {
         str = str + " ICON_SCR2";
       }
-      if ((IconMask & ((ulong)4L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_WebCast)) > 0L)
       {
         str = str + " ICON_WebCast";
       }
-      if ((IconMask & ((ulong)2L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_News)) > 0L)
       {
         str = str + " ICON_News";
       }
@@ -1283,23 +1286,23 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     public static string PluginIconsToVideoFormat(ulong IconMask)
     {
       string str = string.Empty;
-      if ((IconMask & 0x80000000L) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_xVid)) > 0L)
       {
         str = str + " ICON_xVid";
       }
-      if ((IconMask & ((ulong)0x40000000L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_WMV)) > 0L)
       {
         str = str + " ICON_WMV";
       }
-      if ((IconMask & ((ulong)0x20000000L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_MPG2)) > 0L)
       {
         str = str + " ICON_MPG2";
       }
-      if ((IconMask & ((ulong)0x20000L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_MPG)) > 0L)
       {
         str = str + " ICON_MPG";
       }
-      if ((IconMask & ((ulong)0x10000L)) > 0L)
+      if ((IconMask & ((ulong)PluginIcons.ICON_DivX)) > 0L)
       {
         str = str + " ICON_DivX";
       }
@@ -1560,7 +1563,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
               {
                 this.DoWork();
               }
-            } catch (Exception exception)
+            }
+            catch (Exception exception)
             {
               Log.Debug("MiniDisplay.Run(): CAUGHT EXCEPTION in DoWork() - {0}", new object[] { exception });
               if (exception.Message.Contains("ThreadAbortException"))
@@ -1574,7 +1578,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
               {
                 this.handler.DisplayLines();
               }
-            } catch (Exception exception2)
+            }
+            catch (Exception exception2)
             {
               Log.Debug("MiniDisplay.Run(): CAUGHT EXCEPTION in handler.DisplayLines() - {0}", new object[] { exception2 });
               if (exception2.Message.Contains("ThreadAbortException"))
@@ -1603,7 +1608,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         }
         flag2 = true;
         this.handler.Stop();
-      } catch (ThreadAbortException)
+      }
+      catch (ThreadAbortException)
       {
         Log.Error("MiniDisplay.Run(): CAUGHT ThreadAbortException", new object[0]);
         if (!flag2)
@@ -1611,7 +1617,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           this.handler.Stop();
           flag2 = true;
         }
-      } catch (Exception exception3)
+      }
+      catch (Exception exception3)
       {
         Log.Error("MiniDisplay.Run(): CAUGHT EXCEPTION: {0}", new object[] { exception3 });
       }
