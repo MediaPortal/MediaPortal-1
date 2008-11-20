@@ -1663,22 +1663,22 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       MPStatus.Media_IsVideo = false;
       if (IsCaptureCardRecording())
       {
-        num |= (ulong)0x400000000L;
+        num |= (ulong)PluginIcons.ICON_Rec;
         MPStatus.Media_IsRecording = true;
       }
       else if (IsCaptureCardViewing())
       {
-        num |= (ulong)8L;
+        num |= (ulong)PluginIcons.ICON_TV;
         MPStatus.Media_IsTV = true;
       }
       if (g_Player.Player == null)
       {
-        return (num | ((ulong)0x40000000000L));
+        return (num | ((ulong)PluginIcons.ICON_Stop));
       }
       MPStatus.MediaPlayer_Active = true;
       if (!g_Player.Playing)
       {
-        num |= (ulong)0x40000000000L;
+        num |= (ulong)PluginIcons.ICON_Stop;
         MPStatus.MediaPlayer_Active = false;
         MPStatus.MediaPlayer_Paused = false;
         MPStatus.MediaPlayer_Playing = false;
@@ -1689,26 +1689,26 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         MPStatus.MediaPlayer_Playing = true;
         if (g_Player.Speed > 1)
         {
-          num |= (ulong)0x20000000000L;
+          num |= (ulong)PluginIcons.ICON_FFWD;
         }
         else if (g_Player.Speed < 0)
         {
-          num |= (ulong)0x10000000000L;
+          num |= (ulong)PluginIcons.ICON_FRWD;
         }
         else
         {
-          num |= (ulong)0x100000000000L;
+          num |= (ulong)PluginIcons.ICON_Play;
         }
       }
       else
       {
         MPStatus.MediaPlayer_Paused = true;
-        num |= (ulong)0x80000000000L;
+        num |= (ulong)PluginIcons.ICON_Pause;
       }
       if (g_Player.IsMusic)
       {
         MPStatus.Media_IsMusic = true;
-        num |= (ulong)0x80L;
+        num |= (ulong)PluginIcons.ICON_Music;
         property = GUIPropertyManager.GetProperty("#Play.Current.File");
         if (property.Length > 0)
         {
@@ -1720,20 +1720,20 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             {
               if (str2 == "ogg")
               {
-                num |= (ulong)0x1000000L;
+                num |= (ulong)PluginIcons.ICON_OGG;
               }
               else if (str2 == "wma")
               {
-                num |= (ulong)0x4000000L;
+                num |= (ulong)PluginIcons.ICON_WMA;
               }
               else if (str2 == "wav")
               {
-                num |= (ulong)0x4000000000L;
+                num |= (ulong)PluginIcons.ICON_WAV;
               }
             }
             else
             {
-              num |= (ulong)0x2000000L;
+              num |= (ulong)PluginIcons.ICON_MP3;
             }
           }
         }
@@ -1748,7 +1748,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         {
           MPStatus.Media_IsTVRecording = true;
         }
-        num |= (ulong)8L;
+        num |= (ulong)PluginIcons.ICON_TV;
       }
       if (g_Player.IsDVD || g_Player.IsCDA)
       {
@@ -1756,28 +1756,28 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         {
           MPStatus.Media_IsDVD = true;
           MPStatus.Media_IsVideo = true;
-          num |= (ulong)0x40L;
+          num |= (ulong)PluginIcons.ICON_Movie;
         }
         else if (g_Player.IsCDA & !g_Player.IsVideo)
         {
           MPStatus.Media_IsCD = true;
           MPStatus.Media_IsMusic = true;
-          num |= (ulong)0x80L;
+          num |= (ulong)PluginIcons.ICON_Music;
         }
-        num |= (ulong)0x10L;
+        num |= (ulong)PluginIcons.ICON_CD_DVD;
       }
       if (!(g_Player.IsVideo & !g_Player.IsDVD))
       {
         return num;
       }
       MPStatus.Media_IsVideo = true;
-      num |= (ulong)0x40L;
+      num |= (ulong)PluginIcons.ICON_Movie;
       property = GUIPropertyManager.GetProperty("#Play.Current.File");
       if (property.Length <= 0)
       {
         return num;
       }
-      num |= (ulong)0x80L;
+      num |= (ulong)PluginIcons.ICON_Music;
       strArray = property.Split(new char[] { '.' });
       if ((strArray.Length <= 1) || ((str3 = strArray[1].ToLower()) == null))
       {
@@ -1789,20 +1789,20 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         {
           if (str3 == "divx")
           {
-            return (num | ((ulong)0x10000L));
+            return (num | ((ulong)PluginIcons.ICON_DivX));
           }
           if (str3 != "xvid")
           {
             return num;
           }
-          return (num | 0x80000000L);
+          return (num | ((ulong)PluginIcons.ICON_xVid));
         }
       }
       else
       {
-        return (num | ((ulong)0x20000L));
+        return (num | ((ulong)PluginIcons.ICON_MPG));
       }
-      return (num | ((ulong)0x40000000L));
+      return (num | ((ulong)PluginIcons.ICON_WMV));
     }
 
     public void ShowPlugin()
@@ -1969,7 +1969,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     {
       get
       {
-        return "MiniDisplay Plugin v05_07_2008";
+        return "MiniDisplay Plugin v20_11_2008";
       }
     }
 
