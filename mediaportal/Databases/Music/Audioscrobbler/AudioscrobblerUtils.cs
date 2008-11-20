@@ -1657,7 +1657,7 @@ namespace MediaPortal.Music.Database
                   break;
                 default:
                   Log.Warn("AudioscrobblerUtils: Error while downloading on first try: {0} - {1}", imageUrl, wex.Message);
-                  Thread.Sleep(1500);
+                  Thread.Sleep(3000);
                   client.DownloadFile(imageUrl, tmpFile);
                   break;
               }

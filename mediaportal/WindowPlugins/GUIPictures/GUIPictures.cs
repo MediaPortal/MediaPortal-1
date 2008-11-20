@@ -27,6 +27,7 @@ using System;
 using System.IO;
 using System.Drawing;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Threading;
 using System.Xml.Serialization;
@@ -41,146 +42,173 @@ using MediaPortal.Services;
 using MediaPortal.Threading;
 using MediaPortal.Configuration;
 using MediaPortal.Picture.Database;
+using System.Runtime.CompilerServices;
+
 
 
 namespace MediaPortal.GUI.Pictures
 {
-  #region ThumbCacher class
-  public class MissingThumbCacher
-  {
-    VirtualDirectory vDir = new VirtualDirectory();
-
-    string _filepath = string.Empty;
-    bool _createLarge = true;
-    bool _recreateWithoutCheck = false;
-    //bool _hideFileExtensions = true;
-    Work work;
-
-    public MissingThumbCacher(string Filepath, bool CreateLargeThumbs, bool ReCreateThumbs)
-    {
-      _filepath = Filepath;
-      _createLarge = CreateLargeThumbs;
-      _recreateWithoutCheck = ReCreateThumbs;
-      //_hideFileExtensions = HideExtensions;
-
-      work = new Work(new DoWorkHandler(this.PerformRequest));
-      work.ThreadPriority = ThreadPriority.Lowest;
-      GlobalServiceProvider.Get<IThreadPool>().Add(work, QueuePriority.Low);
-    }
-
-    /// <summary>
-    /// creates cached thumbs in MP's thumbs dir
-    /// </summary>
-    void PerformRequest()
-    {
-      string path = _filepath;
-      bool autocreateLargeThumbs = _createLarge;
-      bool recreateThumbs = _recreateWithoutCheck;
-
-      vDir.SetExtensions(Util.Utils.PictureExtensions);
-
-      if (!vDir.IsRemote(path))
-      {
-        using (PictureDatabase dbs = new PictureDatabase())
-        {
-          List<GUIListItem> itemlist = vDir.GetDirectoryUnProtectedExt(path, false);
-
-          foreach (GUIListItem item in itemlist)
-          {
-            //if (GUIWindowManager.ActiveWindow != GetID)
-            //  return;
-            if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
-              return;
-            if (!item.IsFolder)
-            {
-              if (!item.IsRemote && MediaPortal.Util.Utils.IsPicture(item.Path))
-              {
-                string thumbnailImage = String.Format(@"{0}\{1}.jpg", Thumbs.Pictures, MediaPortal.Util.Utils.EncryptLine(item.Path));
-                if (recreateThumbs || !System.IO.File.Exists(thumbnailImage))
-                {
-                  int iRotate = dbs.GetRotation(item.Path);
-                  System.Threading.Thread.Sleep(30);
-                  if (Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, iRotate, Thumbs.SpeedThumbsSmall))
-                  {
-                    System.Threading.Thread.Sleep(75);
-                    Log.Debug("GUIPictures: Creation of missing thumb successful for {0}", item.Path);
-                  }
-                }
-
-                if (autocreateLargeThumbs)
-                {
-                  thumbnailImage = String.Format(@"{0}\{1}L.jpg", Thumbs.Pictures, MediaPortal.Util.Utils.EncryptLine(item.Path));
-                  if (recreateThumbs || !System.IO.File.Exists(thumbnailImage))
-                  {
-                    int iRotate = dbs.GetRotation(item.Path);
-                    System.Threading.Thread.Sleep(30);
-                    if (Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, iRotate, Thumbs.SpeedThumbsLarge))
-                    {
-                      System.Threading.Thread.Sleep(100);
-                      Log.Debug("GUIPictures: Creation of missing large thumb successful for {0}", item.Path);
-                    }
-                  }
-                }
-
-              }
-            }
-            else
-            {
-              int pin;
-              if ((item.Label != "..") && (!vDir.IsProtectedShare(item.Path, out pin)))
-              {
-                string thumbnailImage = item.Path + @"\folder.jpg";
-                if (recreateThumbs || (!item.IsRemote && !System.IO.File.Exists(thumbnailImage)))
-                {
-                  System.Threading.Thread.Sleep(50);                  
-                  if (CreateFolderThumb(item.Path, recreateThumbs))
-                  {
-                    System.Threading.Thread.Sleep(150);
-                    Log.Debug("GUIPictures: Creation of missing folder preview thumb for {0}", item.Path);
-                  }
-                }
-              }
-            }
-          } //foreach (GUIListItem item in itemlist)
-        }
-      }
-    }
-
-    private bool CreateFolderThumb(string path, bool recreateAll)
-    {
-      // find first 4 jpegs in this subfolder
-      List<GUIListItem> itemlist = vDir.GetDirectoryUnProtectedExt(path, true);
-      if (!recreateAll)
-        GUIPictures.Filter(ref itemlist);
-      List<string> pictureList = new List<string>();
-      foreach (GUIListItem subitem in itemlist)
-      {
-        if (!subitem.IsFolder)
-        {
-          if (!subitem.IsRemote && Util.Utils.IsPicture(subitem.Path))
-          {
-            pictureList.Add(subitem.Path);
-            if (pictureList.Count >= 4)
-              break;
-          }
-        }
-      }
-      // combine those 4 image files into one folder.jpg
-      if (Util.Utils.CreateFolderPreviewThumb(pictureList, Path.Combine(path, @"Folder.jpg")))
-        return true;
-      else
-        return false;
-    }
-
-  }
-  #endregion
-
   /// <summary>
   /// Displays pictures and offers methods for exif and rotation
   /// </summary>
   [PluginIcons("WindowPlugins.GUIPictures.Pictures.gif", "WindowPlugins.GUIPictures.PicturesDisabled.gif")]
   public class GUIPictures : GUIWindow, IComparer<GUIListItem>, ISetupForm, IShowPlugin
   {
+    #region ThumbCacher class
+
+    public class MissingThumbCacher
+    {
+      VirtualDirectory vDir = new VirtualDirectory();
+
+      string _filepath = string.Empty;
+      bool _createLarge = true;
+      bool _recreateWithoutCheck = false;
+      Work work;
+
+      public MissingThumbCacher(string Filepath, bool CreateLargeThumbs, bool ReCreateThumbs)
+      {
+        _filepath = Filepath;
+        _createLarge = CreateLargeThumbs;
+        _recreateWithoutCheck = ReCreateThumbs;
+        //_hideFileExtensions = HideExtensions;
+
+        work = new Work(new DoWorkHandler(this.PerformRequest));
+        work.ThreadPriority = ThreadPriority.Normal;
+        GlobalServiceProvider.Get<IThreadPool>().Add(work, QueuePriority.Normal);
+      }
+
+      /// <summary>
+      /// creates cached thumbs in MP's thumbs dir
+      /// </summary>
+      void PerformRequest()
+      {
+        Stopwatch benchclock = new Stopwatch();
+        benchclock.Start();
+        string path = _filepath;
+        bool autocreateLargeThumbs = _createLarge;
+        bool recreateThumbs = _recreateWithoutCheck;
+
+        vDir.SetExtensions(Util.Utils.PictureExtensions);
+
+        if (!vDir.IsRemote(path))
+        {
+          using (PictureDatabase dbs = new PictureDatabase())
+          {
+            List<GUIListItem> itemlist = vDir.GetDirectoryUnProtectedExt(path, true);
+
+            foreach (GUIListItem item in itemlist)
+            {
+              if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
+                return;
+              if (CheckPathForHistory(item.Path))
+              {
+                if (!item.IsFolder)
+                {
+                  int iRotate = dbs.GetRotation(item.Path);
+                  if (!item.IsRemote && Util.Utils.IsPicture(item.Path))
+                  {
+                    string thumbnailImage = String.Format(@"{0}\{1}.jpg", Thumbs.Pictures, Util.Utils.EncryptLine(item.Path));
+                    if (recreateThumbs || !File.Exists(thumbnailImage))
+                    {
+                      Thread.Sleep(0);
+                      if (Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, iRotate, Thumbs.SpeedThumbsSmall))
+                      {
+                        Thread.Sleep(0);
+                        Log.Debug("GUIPictures: Creation of missing thumb successful for {0}", item.Path);
+                      }
+                    }
+
+                    if (autocreateLargeThumbs)
+                    {
+                      thumbnailImage = String.Format(@"{0}\{1}L.jpg", Thumbs.Pictures, Util.Utils.EncryptLine(item.Path));
+                      if (recreateThumbs || !System.IO.File.Exists(thumbnailImage))
+                      {
+                        Thread.Sleep(0);
+                        if (Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, iRotate, Thumbs.SpeedThumbsLarge))
+                        {
+                          Thread.Sleep(0);
+                          Log.Debug("GUIPictures: Creation of missing large thumb successful for {0}", item.Path);
+                        }
+                      }
+                    }
+
+                  }
+                }
+                else
+                {
+                  int pin;
+                  if ((item.Label != "..") && (!vDir.IsProtectedShare(item.Path, out pin)))
+                  {
+                    string thumbnailImage = item.Path + @"\folder.jpg";
+                    if (recreateThumbs || (!item.IsRemote && !File.Exists(thumbnailImage)))
+                    {
+                      Thread.Sleep(0);
+                      if (CreateFolderThumb(item.Path, recreateThumbs))
+                      {
+                        Thread.Sleep(0);
+                        Log.Debug("GUIPictures: Creation of missing folder preview thumb for {0}", item.Path);
+                      }
+                    }
+                  }
+                }
+              } //foreach (GUIListItem item in itemlist)
+            }
+          }
+        }
+        benchclock.Stop();
+        Log.Debug("GUIPictures: Creation of all thumbs for dir '{0}' took {1} seconds", _filepath, benchclock.Elapsed.TotalSeconds);
+      }
+
+      private bool CreateFolderThumb(string path, bool recreateAll)
+      {
+        // find first 4 jpegs in this subfolder
+        List<GUIListItem> itemlist = vDir.GetDirectoryUnProtectedExt(path, true);
+        if (!recreateAll)
+          GUIPictures.Filter(ref itemlist);
+        List<string> pictureList = new List<string>();
+        foreach (GUIListItem subitem in itemlist)
+        {
+          if (!subitem.IsFolder)
+          {
+            if (!subitem.IsRemote && Util.Utils.IsPicture(subitem.Path))
+            {
+              pictureList.Add(subitem.Path);
+              if (pictureList.Count >= 4)
+                break;
+            }
+          }
+        }
+        // combine those 4 image files into one folder.jpg
+        if (Util.Utils.CreateFolderPreviewThumb(pictureList, Path.Combine(path, @"Folder.jpg")))
+          return true;
+        else
+          return false;
+      }
+
+      /// <summary>
+      /// Checks whether thumb creation had already happenend for the given path
+      /// </summary>
+      /// <param name="aPath">A folder with images</param>
+      /// <returns>Whether the thumbnailcacher needs to proceed on this path</returns>
+      [MethodImpl(MethodImplOptions.Synchronized)]
+      private bool CheckPathForHistory(string aPath)
+      {
+        if (!thumbCreationPaths.Contains(aPath))
+        {
+          thumbCreationPaths.Add(aPath);
+          return true;
+        }
+        else
+        {
+          //Log.Debug("GUIPictures: MissingThumbCacher already working on path {0}", aPath);
+          return false;
+        }
+      }
+
+    }
+
+    #endregion
+
     #region MapSettings class
     [Serializable]
     public class MapSettings
@@ -252,6 +280,7 @@ namespace MediaPortal.GUI.Pictures
 
     const int MAX_PICS_PER_DATE = 1000;
 
+    public static List<string> thumbCreationPaths = new List<string>();
     int selectedItemIndex = -1;
     GUIListItem selectedListItem = null;
     DirectoryHistory folderHistory = new DirectoryHistory();
@@ -371,6 +400,7 @@ namespace MediaPortal.GUI.Pictures
     {
       currentFolder = string.Empty;
       destinationFolder = string.Empty;
+      thumbCreationPaths.Clear();
 
       bool result = Load(GUIGraphicsContext.Skin + @"\mypics.xml");
       LoadSettings();
@@ -380,7 +410,6 @@ namespace MediaPortal.GUI.Pictures
 
     public override void OnAction(Action action)
     {
-
       if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
       {
         if (facadeView.Focus)
@@ -1075,12 +1104,17 @@ namespace MediaPortal.GUI.Pictures
         }
         dbs.SetRotation(item.Path, rotate);
       }
-      string thumbnailImage = GetThumbnail(item.Path);
-      Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, rotate, Thumbs.SpeedThumbsSmall);
 
-      thumbnailImage = GetLargeThumbnail(item.Path);
-      Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, rotate, Thumbs.SpeedThumbsLarge);
-      System.Threading.Thread.Sleep(50);
+      try
+      {
+        // Delete thumbs with "old" rotation so they'll be recreated later
+        string thumbnailImage = GetThumbnail(item.Path);
+        File.Delete(thumbnailImage);
+        thumbnailImage = GetLargeThumbnail(item.Path);
+        File.Delete(thumbnailImage);
+      }
+      catch (Exception) { }
+
       GUIControl.RefreshControl(GetID, facadeView.GetID);
     }
 
