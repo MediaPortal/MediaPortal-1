@@ -1006,6 +1006,12 @@ namespace TvEngine.PowerScheduler
         // determine next wakeup time from IWakeupHandlers
         DateTime nextWakeup = NextWakeupTime;
         bool disallow = DisAllowShutdown;
+        if (disallow && System.Environment.OSVersion.Version.Major >= 6)
+        {
+          // fixing mantis 1487: If suspend it's triggered by remote on vista PSClient tells TV Server Power scheduler to wakeup after 1 min 
+          Log.Debug("PowerScheduler: Vista detected => DisAllowShutdown ignored in SetWakeupTimer");
+          disallow = false;
+        }
         if (nextWakeup < DateTime.MaxValue || disallow)
         {
           double delta;
