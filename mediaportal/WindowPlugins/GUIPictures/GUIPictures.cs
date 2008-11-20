@@ -29,6 +29,7 @@ using System.Drawing;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Xml.Serialization;
 
@@ -42,9 +43,6 @@ using MediaPortal.Services;
 using MediaPortal.Threading;
 using MediaPortal.Configuration;
 using MediaPortal.Picture.Database;
-using System.Runtime.CompilerServices;
-
-
 
 namespace MediaPortal.GUI.Pictures
 {
@@ -100,7 +98,7 @@ namespace MediaPortal.GUI.Pictures
             {
               if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
                 return;
-              if (CheckPathForHistory(item.Path))
+              if (CheckPathForHistory(item.Path, false))
               {
                 if (!item.IsFolder)
                 {
@@ -184,27 +182,6 @@ namespace MediaPortal.GUI.Pictures
         else
           return false;
       }
-
-      /// <summary>
-      /// Checks whether thumb creation had already happenend for the given path
-      /// </summary>
-      /// <param name="aPath">A folder with images</param>
-      /// <returns>Whether the thumbnailcacher needs to proceed on this path</returns>
-      [MethodImpl(MethodImplOptions.Synchronized)]
-      private bool CheckPathForHistory(string aPath)
-      {
-        if (!thumbCreationPaths.Contains(aPath))
-        {
-          thumbCreationPaths.Add(aPath);
-          return true;
-        }
-        else
-        {
-          //Log.Debug("GUIPictures: MissingThumbCacher already working on path {0}", aPath);
-          return false;
-        }
-      }
-
     }
 
     #endregion
@@ -249,6 +226,7 @@ namespace MediaPortal.GUI.Pictures
     #endregion
 
     #region Base variables
+
     enum SortMethod
     {
       Name = 0,
@@ -300,6 +278,7 @@ namespace MediaPortal.GUI.Pictures
     #endregion
 
     #region ctor/dtor
+
     public GUIPictures()
     {
       GetID = (int)GUIWindow.Window.WINDOW_PICTURES;
@@ -315,6 +294,7 @@ namespace MediaPortal.GUI.Pictures
     #endregion
 
     #region Serialisation
+
     void LoadSettings()
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
@@ -393,9 +373,11 @@ namespace MediaPortal.GUI.Pictures
     void SaveSettings()
     {
     }
+
     #endregion
 
     #region overrides
+
     public override bool Init()
     {
       currentFolder = string.Empty;
@@ -406,8 +388,7 @@ namespace MediaPortal.GUI.Pictures
       LoadSettings();
       return result;
     }
-
-
+    
     public override void OnAction(Action action)
     {
       if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
@@ -474,37 +455,6 @@ namespace MediaPortal.GUI.Pictures
       }
 
       btnSortBy.SortChanged += new SortEventHandler(SortChanged);
-      SystemEvents.PowerModeChanged += new PowerModeChangedEventHandler(SystemEvents_PowerModeChanged);
-    }
-
-    /// <summary>
-    /// This function gets called when 
-    /// <list>
-    /// windows is about to suspend
-    /// windows is about to hibernate
-    /// windows resumes
-    /// a powermode change is detected (AC -> battery or battery -> AC)
-    /// </list>
-    /// The <see cref="PowerModeChangedEventArgs.Mode"/> property can be used to determine the exact cause.
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void SystemEvents_PowerModeChanged(object sender, PowerModeChangedEventArgs e)
-    {
-      Log.Debug("MyPictures: SystemPowerModeChanged event was raised.");
-
-      switch (e.Mode)
-      {
-        case PowerModes.Suspend:
-          Log.Info("MyPictures: Suspend or Hibernation detected, shutting down plugin");
-          //DoStop();
-          break;
-        case PowerModes.Resume:
-          Log.Info("MyPictures: Resume from Suspend or Hibernation detected, starting plugin");
-          SystemEvents.PowerModeChanged -= new PowerModeChangedEventHandler(SystemEvents_PowerModeChanged);
-          //DoStart();
-          break;
-      }
     }
 
     protected override void OnPageDestroy(int newWindowId)
@@ -861,6 +811,34 @@ namespace MediaPortal.GUI.Pictures
     #endregion
 
     #region folder settings
+
+    /// <summary>
+    /// Checks whether thumb creation had already happenend for the given path
+    /// </summary>
+    /// <param name="aPath">A folder with images</param>
+    /// <returns>Whether the thumbnailcacher needs to proceed on this path</returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    private static bool CheckPathForHistory(string aPath, bool aRemoveIt)
+    {
+      if (!thumbCreationPaths.Contains(aPath))
+      {
+        if (!aRemoveIt)
+          thumbCreationPaths.Add(aPath);
+        return true;
+      }
+      else
+      {
+        if (aRemoveIt)
+          try
+          {
+            thumbCreationPaths.Remove(aPath);
+          }
+          catch (Exception) { }
+        //Log.Debug("GUIPictures: MissingThumbCacher already working on path {0}", aPath);
+        return false;
+      }
+    }
+
     void LoadFolderSettings(string folderName)
     {
       if (folderName == string.Empty)
@@ -894,9 +872,11 @@ namespace MediaPortal.GUI.Pictures
         folder = "root";
       FolderSettings.AddFolderSetting(folder, "Pictures", typeof(GUIPictures.MapSettings), mapSettings);
     }
+
     #endregion
 
     #region Sort Members
+
     void OnSort()
     {
       facadeView.Sort(this);
@@ -984,6 +964,7 @@ namespace MediaPortal.GUI.Pictures
     #endregion
 
     #region onXXX methods
+
     void OnRetrieveCoverArt(GUIListItem item)
     {
       if (item.IsRemote)
@@ -1112,6 +1093,7 @@ namespace MediaPortal.GUI.Pictures
         File.Delete(thumbnailImage);
         thumbnailImage = GetLargeThumbnail(item.Path);
         File.Delete(thumbnailImage);
+        CheckPathForHistory(item.Path, true);
       }
       catch (Exception) { }
 
