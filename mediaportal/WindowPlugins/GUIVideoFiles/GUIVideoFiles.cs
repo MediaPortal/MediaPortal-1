@@ -1666,6 +1666,7 @@ namespace MediaPortal.GUI.Video
         bool bStackedFile = false;
         ArrayList items = _virtualDirectory.GetDirectoryUnProtected(_currentFolder, true);
         int iPart = 1;
+        bool decreaseSelectedItem = true;
         for (int i = 0; i < items.Count; ++i)
         {
           GUIListItem temporaryListItem = (GUIListItem)items[i];
@@ -1690,7 +1691,12 @@ namespace MediaPortal.GUI.Video
             {
               return;
             }
-            DoDeleteItem(temporaryListItem);
+            DoDeleteItem(temporaryListItem,true);
+            if (decreaseSelectedItem)
+            {
+              decreaseSelectedItem = false;
+            }
+
           }
         }
 
@@ -1712,7 +1718,7 @@ namespace MediaPortal.GUI.Video
           {
             return;
           }
-          DoDeleteItem(item);
+          DoDeleteItem(item, decreaseSelectedItem);
         }
       }
       else // stacking off
@@ -1730,6 +1736,7 @@ namespace MediaPortal.GUI.Video
         */
         ArrayList items = _virtualDirectory.GetDirectoryUnProtected(_currentFolder, true);
         int iPart = 1;
+        bool decreaseSelectedItem = true;
         for (int i = 0; i < items.Count; ++i)
         {
           GUIListItem temporaryListItem = (GUIListItem)items[i];
@@ -1753,7 +1760,11 @@ namespace MediaPortal.GUI.Video
             {
               return;
             }
-            DoDeleteItem(temporaryListItem);
+            DoDeleteItem(temporaryListItem, decreaseSelectedItem);
+            if (decreaseSelectedItem)
+            {
+              decreaseSelectedItem = false;
+            }
           }
         }
       }
@@ -1775,7 +1786,7 @@ namespace MediaPortal.GUI.Video
       }
     }
 
-    private void DoDeleteItem(GUIListItem item)
+    private void DoDeleteItem(GUIListItem item, bool decreaseSelectedItem)
     {
       if (item.IsFolder)
       {
@@ -1787,10 +1798,10 @@ namespace MediaPortal.GUI.Video
           items = _virtualDirectory.GetDirectoryUnProtected(item.Path, false);
           foreach (GUIListItem subItem in items)
           {
-            DoDeleteItem(subItem);
+            DoDeleteItem(subItem,false);
           }
           MediaPortal.Util.Utils.DirectoryDelete(item.Path);
-          if (_currentSelectedItem > 0)
+          if (_currentSelectedItem > 0 && decreaseSelectedItem)
             _currentSelectedItem--;
         }
       }
@@ -1802,7 +1813,7 @@ namespace MediaPortal.GUI.Video
         if (item.IsRemote)
           return;
         MediaPortal.Util.Utils.DeleteRecording(item.Path);
-        if (_currentSelectedItem > 0)
+        if (_currentSelectedItem > 0 && decreaseSelectedItem)
           _currentSelectedItem--;
       }
     }
