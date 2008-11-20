@@ -234,8 +234,7 @@ namespace TvPlugin
       try
       {
         System.IO.Directory.CreateDirectory(_tvGuideFileName);
-      }
-      catch (Exception) { }
+      } catch (Exception) { }
       if (_tvGuideFileWatcher == null)
       {
         _tvGuideFileWatcher = new FileSystemWatcher();
@@ -445,6 +444,8 @@ namespace TvPlugin
             _timePerBlock += 15;
             if (_timePerBlock > 60)
               _timePerBlock = 60;
+            GUISpinControl cntlTimeInterval = GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL) as GUISpinControl;
+            cntlTimeInterval.Value = (_timePerBlock / 15) - 1;
             Update(false);
             SetFocus();
           }
@@ -469,6 +470,8 @@ namespace TvPlugin
           {
             if (_timePerBlock > 15)
               _timePerBlock -= 15;
+            GUISpinControl cntlTimeInterval = GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL) as GUISpinControl;
+            cntlTimeInterval.Value = (_timePerBlock / 15) - 1;
             Update(false);
             SetFocus();
           }
@@ -476,6 +479,8 @@ namespace TvPlugin
         case Action.ActionType.ACTION_DEFAULT_TIMEBLOCK:
           {
             _timePerBlock = 30;
+            GUISpinControl cntlTimeInterval = GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL) as GUISpinControl;
+            cntlTimeInterval.Value = (_timePerBlock / 15) - 1;
             Update(false);
             SetFocus();
           }
@@ -647,13 +652,27 @@ namespace TvPlugin
                   string day;
                   switch (dtTemp.DayOfWeek)
                   {
-                    case DayOfWeek.Monday: day = GUILocalizeStrings.Get(657); break;
-                    case DayOfWeek.Tuesday: day = GUILocalizeStrings.Get(658); break;
-                    case DayOfWeek.Wednesday: day = GUILocalizeStrings.Get(659); break;
-                    case DayOfWeek.Thursday: day = GUILocalizeStrings.Get(660); break;
-                    case DayOfWeek.Friday: day = GUILocalizeStrings.Get(661); break;
-                    case DayOfWeek.Saturday: day = GUILocalizeStrings.Get(662); break;
-                    default: day = GUILocalizeStrings.Get(663); break;
+                    case DayOfWeek.Monday:
+                      day = GUILocalizeStrings.Get(657);
+                      break;
+                    case DayOfWeek.Tuesday:
+                      day = GUILocalizeStrings.Get(658);
+                      break;
+                    case DayOfWeek.Wednesday:
+                      day = GUILocalizeStrings.Get(659);
+                      break;
+                    case DayOfWeek.Thursday:
+                      day = GUILocalizeStrings.Get(660);
+                      break;
+                    case DayOfWeek.Friday:
+                      day = GUILocalizeStrings.Get(661);
+                      break;
+                    case DayOfWeek.Saturday:
+                      day = GUILocalizeStrings.Get(662);
+                      break;
+                    default:
+                      day = GUILocalizeStrings.Get(663);
+                      break;
                   }
                   day = String.Format("{0} {1}-{2}", day, dtTemp.Day, dtTemp.Month);
                   cntlDay.AddLabel(day, iDay);
@@ -667,7 +686,7 @@ namespace TvPlugin
               {
                 for (int i = 1; i <= 4; i++)
                   cntlTimeInterval.AddLabel(String.Empty, i);
-                cntlTimeInterval.Value = 1;
+                cntlTimeInterval.Value = (_timePerBlock / 15) - 1;
               }
               else
                 Log.Debug("TvGuideBase: SpinControl cntlTimeInterval is null!");
@@ -736,12 +755,12 @@ namespace TvPlugin
             break;
 
         }
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Debug("TvGuideBase: {0}", ex);
       }
-      return base.OnMessage(message); ;
+      return base.OnMessage(message);
+      ;
     }
 
 
@@ -1028,13 +1047,27 @@ namespace TvPlugin
         string day;
         switch (_viewingTime.DayOfWeek)
         {
-          case DayOfWeek.Monday: day = GUILocalizeStrings.Get(657); break;
-          case DayOfWeek.Tuesday: day = GUILocalizeStrings.Get(658); break;
-          case DayOfWeek.Wednesday: day = GUILocalizeStrings.Get(659); break;
-          case DayOfWeek.Thursday: day = GUILocalizeStrings.Get(660); break;
-          case DayOfWeek.Friday: day = GUILocalizeStrings.Get(661); break;
-          case DayOfWeek.Saturday: day = GUILocalizeStrings.Get(662); break;
-          default: day = GUILocalizeStrings.Get(663); break;
+          case DayOfWeek.Monday:
+            day = GUILocalizeStrings.Get(657);
+            break;
+          case DayOfWeek.Tuesday:
+            day = GUILocalizeStrings.Get(658);
+            break;
+          case DayOfWeek.Wednesday:
+            day = GUILocalizeStrings.Get(659);
+            break;
+          case DayOfWeek.Thursday:
+            day = GUILocalizeStrings.Get(660);
+            break;
+          case DayOfWeek.Friday:
+            day = GUILocalizeStrings.Get(661);
+            break;
+          case DayOfWeek.Saturday:
+            day = GUILocalizeStrings.Get(662);
+            break;
+          default:
+            day = GUILocalizeStrings.Get(663);
+            break;
         }
         day = String.Format("{0} {1}-{2}", day, _viewingTime.Day, _viewingTime.Month);
         GUIPropertyManager.SetProperty("#TV.Guide.Day", day);
@@ -1121,7 +1154,8 @@ namespace TvPlugin
 
           // update selected channel 
           _singleChannelNumber = _cursorX + _channelOffset;
-          if (_singleChannelNumber >= _channelList.Count) _singleChannelNumber -= _channelList.Count;
+          if (_singleChannelNumber >= _channelList.Count)
+            _singleChannelNumber -= _channelList.Count;
           GUIButton3PartControl img = (GUIButton3PartControl)GetControl(_cursorX + (int)Controls.IMG_CHAN1);
           if (null != img)
             _currentChannel = img.Label1;
@@ -1139,11 +1173,14 @@ namespace TvPlugin
       if (_channelList.Count == 0)
         return;
       int channel = _cursorX + _channelOffset;
-      while (channel >= _channelList.Count) channel -= _channelList.Count;
-      if (channel < 0) channel = 0;
+      while (channel >= _channelList.Count)
+        channel -= _channelList.Count;
+      if (channel < 0)
+        channel = 0;
       Channel chan = (Channel)_channelList[channel];
       string strChannel = chan.DisplayName;
-      if (strChannel == null) return;
+      if (strChannel == null)
+        return;
 
       string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, strChannel);
       if (!System.IO.File.Exists(strLogo))
@@ -1241,8 +1278,10 @@ namespace TvPlugin
 
           if (bConflict)
           {
-            if (bSeries) img.SetFileName(Thumbs.TvConflictRecordingSeriesIcon);
-            else img.SetFileName(Thumbs.TvConflictRecordingIcon);
+            if (bSeries)
+              img.SetFileName(Thumbs.TvConflictRecordingSeriesIcon);
+            else
+              img.SetFileName(Thumbs.TvConflictRecordingIcon);
           }
           else if (bSeries)
             img.SetFileName(Thumbs.TvRecordingSeriesIcon);
@@ -1442,8 +1481,10 @@ namespace TvPlugin
         height = height - 10;
         height /= 2;
         int iWidth = iTotalWidth;
-        if (iWidth > 10) iWidth -= 10;
-        else iWidth = 1;
+        if (iWidth > 10)
+          iWidth -= 10;
+        else
+          iWidth = 1;
 
         DateTime dt = DateTime.Now;
 
@@ -1605,9 +1646,12 @@ namespace TvPlugin
           string strTitle = program.Title;
           bool bStartsBefore = false;
           bool bEndsAfter = false;
-          if (Utils.datetolong(program.EndTime) <= iStart) continue;
-          if (Utils.datetolong(program.StartTime) < iStart) bStartsBefore = true;
-          if (Utils.datetolong(program.EndTime) > iEnd) bEndsAfter = true;
+          if (Utils.datetolong(program.EndTime) <= iStart)
+            continue;
+          if (Utils.datetolong(program.StartTime) < iStart)
+            bStartsBefore = true;
+          if (Utils.datetolong(program.EndTime) > iEnd)
+            bEndsAfter = true;
 
           if (iProgram == _cursorY - 1 && iChannel == _cursorX)
           {
@@ -2834,7 +2878,8 @@ namespace TvPlugin
     /// </summary>
     void OnRecord()
     {
-      if (_currentProgram == null) return;
+      if (_currentProgram == null)
+        return;
       if ((_currentProgram.IsRunningAt(DateTime.Now) ||
           (_currentProgram.EndTime <= DateTime.Now)))
       {
@@ -3054,8 +3099,7 @@ namespace TvPlugin
               }
             }
           }
-        }
-        catch
+        } catch
         {
         }
 
@@ -3117,7 +3161,8 @@ namespace TvPlugin
 
     private void UpdateHorizontalScrollbar()
     {
-      if (_channelList == null) return;
+      if (_channelList == null)
+        return;
       GUIHorizontalScrollbar scrollbar = GetControl((int)Controls.HORZ_SCROLLBAR) as GUIHorizontalScrollbar;
       if (scrollbar != null)
       {
@@ -3193,7 +3238,8 @@ namespace TvPlugin
     /// </summary>
     private string GetDuration(Program program)
     {
-      if (program.Title == "No TVGuide data available") return "";
+      if (program.Title == "No TVGuide data available")
+        return "";
       string space = " ";
       DateTime progStart = program.StartTime;
       DateTime progEnd = program.EndTime;
@@ -3205,14 +3251,20 @@ namespace TvPlugin
           duration = progDuration.Minutes + space + GUILocalizeStrings.Get(3004);
           break;
         case 1:
-          if (progDuration.Minutes == 1) duration = progDuration.Hours + space + GUILocalizeStrings.Get(3001) + ", " + progDuration.Minutes + space + GUILocalizeStrings.Get(3003);
-          else if (progDuration.Minutes > 1) duration = progDuration.Hours + space + GUILocalizeStrings.Get(3001) + ", " + progDuration.Minutes + space + GUILocalizeStrings.Get(3004);
-          else duration = progDuration.Hours + space + GUILocalizeStrings.Get(3001);
+          if (progDuration.Minutes == 1)
+            duration = progDuration.Hours + space + GUILocalizeStrings.Get(3001) + ", " + progDuration.Minutes + space + GUILocalizeStrings.Get(3003);
+          else if (progDuration.Minutes > 1)
+            duration = progDuration.Hours + space + GUILocalizeStrings.Get(3001) + ", " + progDuration.Minutes + space + GUILocalizeStrings.Get(3004);
+          else
+            duration = progDuration.Hours + space + GUILocalizeStrings.Get(3001);
           break;
         default:
-          if (progDuration.Minutes == 1) duration = progDuration.Hours + " Hours" + ", " + progDuration.Minutes + space + GUILocalizeStrings.Get(3003);
-          else if (progDuration.Minutes > 0) duration = progDuration.Hours + " Hours" + ", " + progDuration.Minutes + space + GUILocalizeStrings.Get(3004);
-          else duration = progDuration.Hours + space + GUILocalizeStrings.Get(3002);
+          if (progDuration.Minutes == 1)
+            duration = progDuration.Hours + " Hours" + ", " + progDuration.Minutes + space + GUILocalizeStrings.Get(3003);
+          else if (progDuration.Minutes > 0)
+            duration = progDuration.Hours + " Hours" + ", " + progDuration.Minutes + space + GUILocalizeStrings.Get(3004);
+          else
+            duration = progDuration.Hours + space + GUILocalizeStrings.Get(3002);
           break;
       }
       return duration;
@@ -3223,7 +3275,8 @@ namespace TvPlugin
     private string GetStartTimeFromNow(Program program)
     {
       string timeFromNow = String.Empty;
-      if (program.Title == "No TVGuide data available") return timeFromNow;
+      if (program.Title == "No TVGuide data available")
+        return timeFromNow;
       string space = " ";
       string strRemaining = String.Empty;
       DateTime progStart = program.StartTime;
@@ -3235,19 +3288,28 @@ namespace TvPlugin
           switch (timeRelative.Hours)
           {
             case 0:
-              if (timeRelative.Minutes == 1) timeFromNow = GUILocalizeStrings.Get(3009) + " " + timeRelative.Minutes + space + GUILocalizeStrings.Get(3003);// starts in 1 minute
-              else if (timeRelative.Minutes > 1) timeFromNow = GUILocalizeStrings.Get(3009) + " " + timeRelative.Minutes + space + GUILocalizeStrings.Get(3004);//starts in x minutes
-              else timeFromNow = GUILocalizeStrings.Get(3013);
+              if (timeRelative.Minutes == 1)
+                timeFromNow = GUILocalizeStrings.Get(3009) + " " + timeRelative.Minutes + space + GUILocalizeStrings.Get(3003);// starts in 1 minute
+              else if (timeRelative.Minutes > 1)
+                timeFromNow = GUILocalizeStrings.Get(3009) + " " + timeRelative.Minutes + space + GUILocalizeStrings.Get(3004);//starts in x minutes
+              else
+                timeFromNow = GUILocalizeStrings.Get(3013);
               break;
             case 1:
-              if (timeRelative.Minutes == 1) timeFromNow = GUILocalizeStrings.Get(3009) + " " + timeRelative.Hours + space + GUILocalizeStrings.Get(3001) + ", " + timeRelative.Minutes + space + GUILocalizeStrings.Get(3003);//starts in 1 hour, 1 minute
-              else if (timeRelative.Minutes > 1) timeFromNow = GUILocalizeStrings.Get(3009) + " " + timeRelative.Hours + space + GUILocalizeStrings.Get(3001) + ", " + timeRelative.Minutes + space + GUILocalizeStrings.Get(3004);//starts in 1 hour, x minutes
-              else timeFromNow = GUILocalizeStrings.Get(3009) + " " + timeRelative.Hours + GUILocalizeStrings.Get(3001);//starts in 1 hour
+              if (timeRelative.Minutes == 1)
+                timeFromNow = GUILocalizeStrings.Get(3009) + " " + timeRelative.Hours + space + GUILocalizeStrings.Get(3001) + ", " + timeRelative.Minutes + space + GUILocalizeStrings.Get(3003);//starts in 1 hour, 1 minute
+              else if (timeRelative.Minutes > 1)
+                timeFromNow = GUILocalizeStrings.Get(3009) + " " + timeRelative.Hours + space + GUILocalizeStrings.Get(3001) + ", " + timeRelative.Minutes + space + GUILocalizeStrings.Get(3004);//starts in 1 hour, x minutes
+              else
+                timeFromNow = GUILocalizeStrings.Get(3009) + " " + timeRelative.Hours + GUILocalizeStrings.Get(3001);//starts in 1 hour
               break;
             default:
-              if (timeRelative.Minutes == 1) timeFromNow = GUILocalizeStrings.Get(3009) + " " + timeRelative.Hours + space + GUILocalizeStrings.Get(3002) + ", " + timeRelative.Minutes + space + GUILocalizeStrings.Get(3003);//starts in x hours, 1 minute
-              else if (timeRelative.Minutes > 1) timeFromNow = GUILocalizeStrings.Get(3009) + " " + timeRelative.Hours + space + GUILocalizeStrings.Get(3002) + ", " + timeRelative.Minutes + space + GUILocalizeStrings.Get(3004);//starts in x hours, x minutes
-              else timeFromNow = GUILocalizeStrings.Get(3009) + " " + timeRelative.Hours + space + GUILocalizeStrings.Get(3002);//starts in x hours
+              if (timeRelative.Minutes == 1)
+                timeFromNow = GUILocalizeStrings.Get(3009) + " " + timeRelative.Hours + space + GUILocalizeStrings.Get(3002) + ", " + timeRelative.Minutes + space + GUILocalizeStrings.Get(3003);//starts in x hours, 1 minute
+              else if (timeRelative.Minutes > 1)
+                timeFromNow = GUILocalizeStrings.Get(3009) + " " + timeRelative.Hours + space + GUILocalizeStrings.Get(3002) + ", " + timeRelative.Minutes + space + GUILocalizeStrings.Get(3004);//starts in x hours, x minutes
+              else
+                timeFromNow = GUILocalizeStrings.Get(3009) + " " + timeRelative.Hours + space + GUILocalizeStrings.Get(3002);//starts in x hours
               break;
           }
         }
@@ -3263,44 +3325,63 @@ namespace TvPlugin
           switch (tsRemaining.Hours)
           {
             case 0:
-              if (timeRelative.Minutes == 1) strRemaining = "(" + -tsRemaining.Minutes + space + GUILocalizeStrings.Get(3018) + ")";//(1 Minute Remaining)
-              else strRemaining = "(" + -tsRemaining.Minutes + space + GUILocalizeStrings.Get(3010) + ")";//(x Minutes Remaining)
+              if (timeRelative.Minutes == 1)
+                strRemaining = "(" + -tsRemaining.Minutes + space + GUILocalizeStrings.Get(3018) + ")";//(1 Minute Remaining)
+              else
+                strRemaining = "(" + -tsRemaining.Minutes + space + GUILocalizeStrings.Get(3010) + ")";//(x Minutes Remaining)
               break;
             case -1:
-              if (timeRelative.Minutes == 1) strRemaining = "(" + -tsRemaining.Hours + space + GUILocalizeStrings.Get(3001) + ", " + -tsRemaining.Minutes + space + GUILocalizeStrings.Get(3018) + ")";//(1 Hour,1 Minute Remaining)
-              else if (timeRelative.Minutes > 1) strRemaining = "(" + -tsRemaining.Hours + space + GUILocalizeStrings.Get(3001) + ", " + -tsRemaining.Minutes + space + GUILocalizeStrings.Get(3010) + ")";//(1 Hour,x Minutes Remaining)
-              else strRemaining = "(" + -tsRemaining.Hours + space + GUILocalizeStrings.Get(3012) + ")";//(1 Hour Remaining)
+              if (timeRelative.Minutes == 1)
+                strRemaining = "(" + -tsRemaining.Hours + space + GUILocalizeStrings.Get(3001) + ", " + -tsRemaining.Minutes + space + GUILocalizeStrings.Get(3018) + ")";//(1 Hour,1 Minute Remaining)
+              else if (timeRelative.Minutes > 1)
+                strRemaining = "(" + -tsRemaining.Hours + space + GUILocalizeStrings.Get(3001) + ", " + -tsRemaining.Minutes + space + GUILocalizeStrings.Get(3010) + ")";//(1 Hour,x Minutes Remaining)
+              else
+                strRemaining = "(" + -tsRemaining.Hours + space + GUILocalizeStrings.Get(3012) + ")";//(1 Hour Remaining)
               break;
             default:
-              if (timeRelative.Minutes == 1) strRemaining = "(" + -tsRemaining.Hours + space + GUILocalizeStrings.Get(3002) + ", " + -tsRemaining.Minutes + space + GUILocalizeStrings.Get(3018) + ")";//(x Hours,1 Minute Remaining)
-              else if (timeRelative.Minutes > 1) strRemaining = "(" + -tsRemaining.Hours + space + GUILocalizeStrings.Get(3002) + ", " + -tsRemaining.Minutes + space + GUILocalizeStrings.Get(3010) + ")";//(x Hours,x Minutes Remaining)
-              else strRemaining = "(" + -tsRemaining.Hours + space + GUILocalizeStrings.Get(3012) + ")";//(x Hours Remaining)
+              if (timeRelative.Minutes == 1)
+                strRemaining = "(" + -tsRemaining.Hours + space + GUILocalizeStrings.Get(3002) + ", " + -tsRemaining.Minutes + space + GUILocalizeStrings.Get(3018) + ")";//(x Hours,1 Minute Remaining)
+              else if (timeRelative.Minutes > 1)
+                strRemaining = "(" + -tsRemaining.Hours + space + GUILocalizeStrings.Get(3002) + ", " + -tsRemaining.Minutes + space + GUILocalizeStrings.Get(3010) + ")";//(x Hours,x Minutes Remaining)
+              else
+                strRemaining = "(" + -tsRemaining.Hours + space + GUILocalizeStrings.Get(3012) + ")";//(x Hours Remaining)
               break;
           }
           switch (timeRelative.Hours)
           {
             case 0:
-              if (timeRelative.Minutes == -1) timeFromNow = GUILocalizeStrings.Get(3017) + -timeRelative.Minutes + space + GUILocalizeStrings.Get(3007) + space + strRemaining;//Started 1 Minute ago
-              else if (timeRelative.Minutes < -1) timeFromNow = GUILocalizeStrings.Get(3017) + -timeRelative.Minutes + space + GUILocalizeStrings.Get(3008) + space + strRemaining;//Started x Minutes ago
-              else timeFromNow = GUILocalizeStrings.Get(3013);//Starting Now
+              if (timeRelative.Minutes == -1)
+                timeFromNow = GUILocalizeStrings.Get(3017) + -timeRelative.Minutes + space + GUILocalizeStrings.Get(3007) + space + strRemaining;//Started 1 Minute ago
+              else if (timeRelative.Minutes < -1)
+                timeFromNow = GUILocalizeStrings.Get(3017) + -timeRelative.Minutes + space + GUILocalizeStrings.Get(3008) + space + strRemaining;//Started x Minutes ago
+              else
+                timeFromNow = GUILocalizeStrings.Get(3013);//Starting Now
               break;
             case -1:
-              if (timeRelative.Minutes == -1) timeFromNow = GUILocalizeStrings.Get(3017) + -timeRelative.Hours + space + GUILocalizeStrings.Get(3001) + ", " + -timeRelative.Minutes + space + GUILocalizeStrings.Get(3007) + " " + strRemaining;//Started 1 Hour,1 Minute ago
-              else if (timeRelative.Minutes < -1) timeFromNow = GUILocalizeStrings.Get(3017) + -timeRelative.Hours + space + GUILocalizeStrings.Get(3001) + ", " + -timeRelative.Minutes + space + GUILocalizeStrings.Get(3008) + " " + strRemaining;//Started 1 Hour,x Minutes ago
-              else timeFromNow = GUILocalizeStrings.Get(3017) + -timeRelative.Hours + space + GUILocalizeStrings.Get(3005) + space + strRemaining;//Started 1 Hour ago
+              if (timeRelative.Minutes == -1)
+                timeFromNow = GUILocalizeStrings.Get(3017) + -timeRelative.Hours + space + GUILocalizeStrings.Get(3001) + ", " + -timeRelative.Minutes + space + GUILocalizeStrings.Get(3007) + " " + strRemaining;//Started 1 Hour,1 Minute ago
+              else if (timeRelative.Minutes < -1)
+                timeFromNow = GUILocalizeStrings.Get(3017) + -timeRelative.Hours + space + GUILocalizeStrings.Get(3001) + ", " + -timeRelative.Minutes + space + GUILocalizeStrings.Get(3008) + " " + strRemaining;//Started 1 Hour,x Minutes ago
+              else
+                timeFromNow = GUILocalizeStrings.Get(3017) + -timeRelative.Hours + space + GUILocalizeStrings.Get(3005) + space + strRemaining;//Started 1 Hour ago
               break;
             default:
-              if (timeRelative.Minutes == -1) timeFromNow = GUILocalizeStrings.Get(3017) + -timeRelative.Hours + space + GUILocalizeStrings.Get(3006) + ", " + -timeRelative.Minutes + space + GUILocalizeStrings.Get(3008) + " " + strRemaining;//Started x Hours,1 Minute ago
-              else if (timeRelative.Minutes < -1) timeFromNow = GUILocalizeStrings.Get(3017) + -timeRelative.Hours + space + GUILocalizeStrings.Get(3006) + ", " + -timeRelative.Minutes + space + GUILocalizeStrings.Get(3008) + " " + strRemaining;//Started x Hours,x Minutes ago
-              else timeFromNow = GUILocalizeStrings.Get(3017) + -timeRelative.Hours + space + GUILocalizeStrings.Get(3006) + space + strRemaining;//Started x Hours ago
+              if (timeRelative.Minutes == -1)
+                timeFromNow = GUILocalizeStrings.Get(3017) + -timeRelative.Hours + space + GUILocalizeStrings.Get(3006) + ", " + -timeRelative.Minutes + space + GUILocalizeStrings.Get(3008) + " " + strRemaining;//Started x Hours,1 Minute ago
+              else if (timeRelative.Minutes < -1)
+                timeFromNow = GUILocalizeStrings.Get(3017) + -timeRelative.Hours + space + GUILocalizeStrings.Get(3006) + ", " + -timeRelative.Minutes + space + GUILocalizeStrings.Get(3008) + " " + strRemaining;//Started x Hours,x Minutes ago
+              else
+                timeFromNow = GUILocalizeStrings.Get(3017) + -timeRelative.Hours + space + GUILocalizeStrings.Get(3006) + space + strRemaining;//Started x Hours ago
               break;
           }
         }
       }
       else
       {
-        if (timeRelative.Days == 1) timeFromNow = GUILocalizeStrings.Get(3009) + space + timeRelative.Days + space + GUILocalizeStrings.Get(3014);//Starts in 1 Day
-        else timeFromNow = GUILocalizeStrings.Get(3009) + space + timeRelative.Days + space + GUILocalizeStrings.Get(3015);//Starts in x Days
+        if (timeRelative.Days == 1)
+          timeFromNow = GUILocalizeStrings.Get(3009) + space + timeRelative.Days + space + GUILocalizeStrings.Get(3014);//Starts in 1 Day
+        else
+          timeFromNow = GUILocalizeStrings.Get(3009) + space + timeRelative.Days + space + GUILocalizeStrings.Get(3015);//Starts in x Days
       }
       return timeFromNow;
     }
