@@ -26,9 +26,10 @@
 using System;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.IO;
 
-using MediaPortal.Configuration;  // for config provider
-using MediaPortal.GUI.Library; // for logging
+using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Util
 {
@@ -90,14 +91,17 @@ namespace MediaPortal.Util
     public static readonly string News = Config.GetSubFolder(Config.Dir.Thumbs, @"News");
     public static readonly string Trailers = Config.GetSubFolder(Config.Dir.Thumbs, @"Trailers");
 
-    public static ThumbQuality _currentThumbQuality = ThumbQuality.average;
-    public static CompositingQuality _currentCompositingQuality = CompositingQuality.Default;
-    public static InterpolationMode _currentInterpolationMode = InterpolationMode.Default;
-    public static SmoothingMode _currentSmoothingMode = SmoothingMode.Default;
+    private static ThumbQuality _currentThumbQuality = ThumbQuality.average;
+    private static CompositingQuality _currentCompositingQuality = CompositingQuality.Default;
+    private static InterpolationMode _currentInterpolationMode = InterpolationMode.Default;
+    private static SmoothingMode _currentSmoothingMode = SmoothingMode.Default;
 
-    public static LargeThumbSize _currentLargeThumbSize = LargeThumbSize.average;
-    public static ThumbSize _currentThumbSize = ThumbSize.average;
-    public static ImageFormat _currentThumbFormat = ImageFormat.Jpeg;
+    private static LargeThumbSize _currentLargeThumbSize = LargeThumbSize.average;
+    private static ThumbSize _currentThumbSize = ThumbSize.average;
+    private static ImageFormat _currentThumbFormat = ImageFormat.Jpeg;
+
+    private static ImageCodecInfo _currentImageCodecInfo = null;
+    private static EncoderParameters _currentEncoderParams = null;
 
     static Thumbs()
     {
@@ -110,28 +114,32 @@ namespace MediaPortal.Util
       {
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
-          int configQuality = xmlreader.GetValueAsInt("thumbnails", "quality", 1);
-
+          int configQuality = xmlreader.GetValueAsInt("thumbnails", "quality", 2);
           switch (configQuality)
           {
             case 0:
               Quality = ThumbQuality.fastest;
+              SetEncoderParams(25);
               Log.Warn("Thumbs: MediaPortal is using the fastest thumbnail mode");
               break;
             case 1:
               Quality = ThumbQuality.fast;
+              SetEncoderParams(33);
               Log.Info("Thumbs: MediaPortal is using fast thumbnails");
               break;
             case 2:
               Quality = ThumbQuality.average;
+              SetEncoderParams(50);
               Log.Info("Thumbs: MediaPortal is using average thumbnails");
               break;
             case 3:
               Quality = ThumbQuality.higher;
+              SetEncoderParams(77);
               Log.Info("Thumbs: MediaPortal is using high quality thumbnails");
               break;
             case 4:
               Quality = ThumbQuality.highest;
+              SetEncoderParams(97);
               Log.Warn("Thumbs: MediaPortal is using highest quality thumbnail mode");
               break;
           }
@@ -147,30 +155,31 @@ namespace MediaPortal.Util
     {
       try
       {
-        System.IO.Directory.CreateDirectory(Config.GetFolder(Config.Dir.Thumbs));
-        System.IO.Directory.CreateDirectory(Config.GetSubFolder(Config.Dir.Thumbs, "Music"));
-        System.IO.Directory.CreateDirectory(Config.GetSubFolder(Config.Dir.Thumbs, "Videos"));
-        System.IO.Directory.CreateDirectory(Config.GetSubFolder(Config.Dir.Thumbs, "TV"));
-        System.IO.Directory.CreateDirectory(MusicFolder);
-        System.IO.Directory.CreateDirectory(MusicAlbum);
-        System.IO.Directory.CreateDirectory(MusicArtists);
-        System.IO.Directory.CreateDirectory(MusicGenre);
-        System.IO.Directory.CreateDirectory(Pictures);
-        System.IO.Directory.CreateDirectory(Radio);
-        System.IO.Directory.CreateDirectory(TVChannel);
-        System.IO.Directory.CreateDirectory(TVShows);
-        System.IO.Directory.CreateDirectory(TVRecorded);
-        System.IO.Directory.CreateDirectory(MovieGenre);
-        System.IO.Directory.CreateDirectory(MovieTitle);
-        System.IO.Directory.CreateDirectory(MovieActors);
-        System.IO.Directory.CreateDirectory(Yac);
-        System.IO.Directory.CreateDirectory(News);
-        System.IO.Directory.CreateDirectory(Trailers);
+        Directory.CreateDirectory(Config.GetFolder(Config.Dir.Thumbs));
+        Directory.CreateDirectory(Config.GetSubFolder(Config.Dir.Thumbs, "Music"));
+        Directory.CreateDirectory(Config.GetSubFolder(Config.Dir.Thumbs, "Videos"));
+        Directory.CreateDirectory(Config.GetSubFolder(Config.Dir.Thumbs, "TV"));
+        Directory.CreateDirectory(MusicFolder);
+        Directory.CreateDirectory(MusicAlbum);
+        Directory.CreateDirectory(MusicArtists);
+        Directory.CreateDirectory(MusicGenre);
+        Directory.CreateDirectory(Pictures);
+        Directory.CreateDirectory(Radio);
+        Directory.CreateDirectory(TVChannel);
+        Directory.CreateDirectory(TVShows);
+        Directory.CreateDirectory(TVRecorded);
+        Directory.CreateDirectory(MovieGenre);
+        Directory.CreateDirectory(MovieTitle);
+        Directory.CreateDirectory(MovieActors);
+        Directory.CreateDirectory(Yac);
+        Directory.CreateDirectory(News);
+        Directory.CreateDirectory(Trailers);
       }
       catch (Exception) { }
     }
 
     #region Public getters and setters
+
     public static bool SpeedThumbsSmall
     {
       get
@@ -188,7 +197,7 @@ namespace MediaPortal.Util
           case ThumbQuality.highest:
             return false;
           default:
-            return true;            
+            return true;
         }
       }
     }
@@ -204,13 +213,13 @@ namespace MediaPortal.Util
           case ThumbQuality.fast:
             return true;
           case ThumbQuality.average:
-            return false;
+            return true;
           case ThumbQuality.higher:
             return false;
           case ThumbQuality.highest:
             return false;
           default:
-            return true;            
+            return true;
         }
       }
     }
@@ -221,9 +230,7 @@ namespace MediaPortal.Util
     public static ThumbQuality Quality
     {
       get
-      {
-        return _currentThumbQuality;
-      }
+      { return _currentThumbQuality; }
       set
       {
         if (value != _currentThumbQuality)
@@ -237,51 +244,80 @@ namespace MediaPortal.Util
     public static CompositingQuality Compositing
     {
       get
-      {
-        return _currentCompositingQuality;
-      }
+      { return _currentCompositingQuality; }
     }
 
     public static InterpolationMode Interpolation
     {
       get
-      {
-        return _currentInterpolationMode;
-      }
+      { return _currentInterpolationMode; }
     }
 
     public static SmoothingMode Smoothing
     {
       get
-      {
-        return _currentSmoothingMode;
-      }
+      { return _currentSmoothingMode; }
     }
 
     public static ThumbSize ThumbResolution
     {
       get
-      {
-        return _currentThumbSize;
-      }
+      { return _currentThumbSize; }
     }
 
     public static LargeThumbSize ThumbLargeResolution
     {
       get
-      {
-        return _currentLargeThumbSize;        
-      }
+      { return _currentLargeThumbSize; }
     }
 
     public static ImageFormat ThumbFormat
     {
       get
+      { return _currentThumbFormat; }
+    }
+
+    public static ImageCodecInfo ThumbCodecInfo
+    {
+      get { return _currentImageCodecInfo; }
+    }
+
+    public static EncoderParameters ThumbEncoderParams
+    {
+      get { return _currentEncoderParams; }
+    }
+
+    #endregion
+
+    private static void SetEncoderParams(int aQuality)
+    {
+      if (aQuality < 1 || aQuality > 100)
+        return;
+
+      // This will specify the image quality to the encoder
+      EncoderParameter epQuality = new EncoderParameter(Encoder.Quality, aQuality);
+      // Get all image codecs that are available
+      ImageCodecInfo[] ImgEncoders = ImageCodecInfo.GetImageEncoders();
+      // Store the quality parameter in the list of encoder parameters
+      _currentEncoderParams = new EncoderParameters(1);
+      _currentEncoderParams.Param[0] = epQuality;
+
+      // Loop through all the image codecs
+      for (int i = 0; i < ImgEncoders.Length; i++)
       {
-        return _currentThumbFormat;
+        // Until the one that we are interested in is found, which might be "*.JPG;*.JPEG;*.JPE;*.JFIF"
+        string[] possibleExtensions = ImgEncoders[i].FilenameExtension.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+        foreach (string ext in possibleExtensions)
+        {
+          // .jpg in *.JPG ?
+          if (ext.ToUpper().Contains(Utils.GetThumbExtension().ToUpper()))
+          {
+            _currentImageCodecInfo = ImgEncoders[i];
+            break;
+          }
+        }
       }
     }
-    #endregion
 
     private static void SetQualityParams(ThumbQuality quality_)
     {

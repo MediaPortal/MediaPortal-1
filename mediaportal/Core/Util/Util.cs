@@ -2008,28 +2008,45 @@ namespace MediaPortal.Util
 
     private static void AddPicture(Graphics g, string strFileName, int x, int y, int w, int h)
     {
+      Image img = null;
       try
       {
         // Add a thumbnail of the specified picture file to the image referenced by g, draw it at the given location and size.
-        using (Image img = Image.FromFile(strFileName))
+        //try
+        //{
+        //  img = ImageFast.FastFromFile(strFileName);
+        //}
+        //catch (ArgumentException)
+        //{
+        try
         {
+          img = Image.FromFile(strFileName);
+
           if (img != null)
             g.DrawImage(img, x, y, w, h);
         }
+        catch (OutOfMemoryException)
+        {
+          Log.Warn("Utils: Damaged picture file found: {0}. Try to repair or delete this file please!", strFileName);
+        }
+        catch (Exception ex)
+        {
+          Log.Info("Utils: An exception occured adding an image to the folder preview thumb: {0}", ex.Message);
+        }
+        //}
       }
-      catch (OutOfMemoryException)
+      finally
       {
-        Log.Warn("Utils: Damaged picture file found: {0}. Try to repair or delete this file please!", strFileName);
-      }
-      catch (Exception ex)
-      {
-        Log.Info("Utils: An exception occured adding an image to the folder preview thumb: {0}", ex.Message);
+        if (img != null)
+          img.Dispose();
       }
     }
 
     public static bool CreateFolderPreviewThumb(List<string> aPictureList, string aThumbPath)
     {
       bool result = false;
+      Stopwatch benchClock = new Stopwatch();
+      benchClock.Start();
 
       if (aPictureList.Count > 0)
       {
@@ -2087,27 +2104,27 @@ namespace MediaPortal.Util
                   try
                   {
                     AddPicture(g, (string)aPictureList[0], x + 10, y + 10, w, h);
-                    System.Threading.Thread.Sleep(10);
+                    Thread.Sleep(10);
 
                     //If exists load second of 4 images for the folder thumb.
                     if (aPictureList.Count > 1)
                     {
                       AddPicture(g, (string)aPictureList[1], x + thumbnailWidth + 20, y + 10, w, h);
-                      System.Threading.Thread.Sleep(10);
+                      Thread.Sleep(10);
                     }
 
                     //If exists load third of 4 images for the folder thumb.
                     if (aPictureList.Count > 2)
                     {
                       AddPicture(g, (string)aPictureList[2], x + 10, y + thumbnailHeight + 20, w, h);
-                      System.Threading.Thread.Sleep(10);
+                      Thread.Sleep(10);
                     }
 
                     //If exists load fourth of 4 images for the folder thumb.
                     if (aPictureList.Count > 3)
                     {
                       AddPicture(g, (string)aPictureList[3], x + thumbnailWidth + 20, y + thumbnailHeight + 20, w, h);
-                      System.Threading.Thread.Sleep(10);
+                      Thread.Sleep(10);
                     }
                   }
                   catch (Exception ex)
@@ -2118,30 +2135,29 @@ namespace MediaPortal.Util
 
                 try
                 {
-                  if (System.IO.File.Exists(aThumbPath))
+                  if (File.Exists(aThumbPath))
                     FileDelete(aThumbPath);
 
                   string tmpFile = Path.Combine(Path.GetTempPath(), "folderpreview.jpg");
-                  if (System.IO.File.Exists(tmpFile))
+                  if (File.Exists(tmpFile))
                     FileDelete(tmpFile);
 
-                  bmp.Save(tmpFile, System.Drawing.Imaging.ImageFormat.Jpeg);
+                  bmp.Save(tmpFile, Thumbs.ThumbCodecInfo, Thumbs.ThumbEncoderParams);
 
-                  using (Image thumbImage = Image.FromFile(tmpFile))
+                  // we do not want a folderL.jpg
+                  if (aThumbPath.ToLowerInvariant().Contains(@"folder.jpg"))
                   {
-                    if (Picture.CreateThumbnail(thumbImage, aThumbPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, true))
-                    {
-                      // we do not want a folderL.jpg
-                      if (!aThumbPath.ToLowerInvariant().Contains(@"folder.jpg"))
-                      {
-                        aThumbPath = Util.Utils.ConvertToLargeCoverArt(aThumbPath);
-                        Picture.CreateThumbnail(thumbImage, aThumbPath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, false);
-                      }
-                    }
-                    System.Threading.Thread.Sleep(10);
-                    if (System.IO.File.Exists(aThumbPath))
-                      result = true;
+                    Picture.CreateThumbnail(tmpFile, aThumbPath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, false);
                   }
+                  else
+                    if (Picture.CreateThumbnail(tmpFile, aThumbPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
+                    {
+                      aThumbPath = Util.Utils.ConvertToLargeCoverArt(aThumbPath);
+                      Picture.CreateThumbnail(tmpFile, aThumbPath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, false);
+                    }
+                  Thread.Sleep(10);
+                  if (File.Exists(aThumbPath))
+                    result = true;
                 }
                 catch (Exception ex2)
                 {
@@ -2158,6 +2174,9 @@ namespace MediaPortal.Util
         {
           Log.Error("Utils: An error occured creating folder preview thumbs: {0}", exm.Message);
         }
+
+        benchClock.Stop();
+        Log.Debug("Utils: CreateFolderPreviewThumb for {0} took {1} ms", aThumbPath, benchClock.ElapsedMilliseconds);
       }  //if (pictureList.Count>0)
       else
         result = false;

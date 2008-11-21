@@ -25,6 +25,7 @@
 
 using System;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
@@ -35,6 +36,7 @@ using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
 
 using MediaPortal.GUI.Library;
+
 
 namespace MediaPortal.Util
 {
@@ -920,26 +922,37 @@ namespace MediaPortal.Util
     /// </param>
     public static bool CreateThumbnail(string aInputFilename, string aThumbTargetPath, int iMaxWidth, int iMaxHeight, int iRotate, bool aFastMode)
     {
-      if (string.IsNullOrEmpty(aInputFilename) || string.IsNullOrEmpty(aThumbTargetPath) || iMaxHeight <= 0 || iMaxHeight <= 0) return false;      
-      if (!System.IO.File.Exists(aInputFilename)) return false;
+      if (string.IsNullOrEmpty(aInputFilename) || string.IsNullOrEmpty(aThumbTargetPath) || iMaxHeight <= 0 || iMaxHeight <= 0) return false;
+      if (!File.Exists(aInputFilename)) return false;
 
       Image myImage = null;
 
       try
       {
-        myImage = Image.FromFile(aInputFilename, true);
+        myImage = ImageFast.FastFromFile(aInputFilename);
 
         return CreateThumbnail(myImage, aThumbTargetPath, iMaxWidth, iMaxHeight, iRotate, aFastMode);
       }
-      catch (OutOfMemoryException)
+      catch (ArgumentException)
       {
-        Log.Warn("Picture: Creating thumbnail failed - image format is not supported of {0}", aInputFilename);
-        return false;
-      }
-      catch (Exception ex)
-      {
-        Log.Error("Picture: CreateThumbnail exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-        return false;
+        Log.Warn("Picture: Fast loading of thumbnail {0} failed - trying safe fallback now", aInputFilename);
+
+        try
+        {
+          myImage = Image.FromFile(aInputFilename, true);
+
+          return CreateThumbnail(myImage, aThumbTargetPath, iMaxWidth, iMaxHeight, iRotate, aFastMode);
+        }
+        catch (OutOfMemoryException)
+        {
+          Log.Warn("Picture: Creating thumbnail failed - image format is not supported of {0}", aInputFilename);
+          return false;
+        }
+        catch (Exception ex)
+        {
+          Log.Error("Picture: CreateThumbnail exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          return false;
+        }
       }
       finally
       {
@@ -969,15 +982,15 @@ namespace MediaPortal.Util
     public static bool CreateThumbnail(Image aDrawingImage, string aThumbTargetPath, int aThumbWidth, int aThumbHeight, int aRotation, bool aFastMode)
     {
       if (string.IsNullOrEmpty(aThumbTargetPath) || aThumbHeight <= 0 || aThumbHeight <= 0) return false;
-      
+
       Bitmap myBitmap = null;
-      Image myThumbnail = null;
+      Image myTargetThumb = null;
 
       try
       {
         switch (aRotation)
         {
-          case 1: aDrawingImage.RotateFlip(RotateFlipType.Rotate90FlipNone);  break;
+          case 1: aDrawingImage.RotateFlip(RotateFlipType.Rotate90FlipNone); break;
           case 2: aDrawingImage.RotateFlip(RotateFlipType.Rotate180FlipNone); break;
           case 3: aDrawingImage.RotateFlip(RotateFlipType.Rotate270FlipNone); break;
           default: break;
@@ -1005,33 +1018,23 @@ namespace MediaPortal.Util
         {
           Image.GetThumbnailImageAbort myCallback = new Image.GetThumbnailImageAbort(ThumbnailCallback);
           myBitmap = new Bitmap(aDrawingImage, iWidth, iHeight);
-          myThumbnail = myBitmap.GetThumbnailImage(iWidth, iHeight, myCallback, IntPtr.Zero);
+          myTargetThumb = myBitmap.GetThumbnailImage(iWidth, iHeight, myCallback, IntPtr.Zero);
         }
         else
         {
-          myBitmap = new Bitmap(iWidth, iHeight);
+          myBitmap = new Bitmap(iWidth, iHeight, aDrawingImage.PixelFormat);
+          //myBitmap.SetResolution(aDrawingImage.HorizontalResolution, aDrawingImage.VerticalResolution);
           using (Graphics g = Graphics.FromImage(myBitmap))
           {
             g.CompositingQuality = Thumbs.Compositing;
             g.InterpolationMode = Thumbs.Interpolation;
             g.SmoothingMode = Thumbs.Smoothing;
             g.DrawImage(aDrawingImage, new Rectangle(0, 0, iWidth, iHeight));
+            myTargetThumb = myBitmap;
           }
         }
 
-        try
-        {
-          myBitmap.Save(aThumbTargetPath, System.Drawing.Imaging.ImageFormat.Jpeg);
-          File.SetAttributes(aThumbTargetPath, File.GetAttributes(aThumbTargetPath) | FileAttributes.Hidden);          
-          // even if run in background thread wait a little so the main process does not starve on IO
-          System.Threading.Thread.Sleep(10);
-          return true;
-        }
-        catch (Exception ex)
-        {
-          Log.Error("Picture: Error saving new thumbnail {0} - {1}", aThumbTargetPath, ex.Message);
-          return false;
-        }
+        return SaveThumbnail(aThumbTargetPath, myTargetThumb);
 
       }
       catch (Exception)
@@ -1040,10 +1043,27 @@ namespace MediaPortal.Util
       }
       finally
       {
-        if (myThumbnail != null)
-          myThumbnail.Dispose();
+        if (myTargetThumb != null)
+          myTargetThumb.Dispose();
         if (myBitmap != null)
           myBitmap.Dispose();
+      }
+    }
+
+    private static bool SaveThumbnail(string aThumbTargetPath, Image myImage)
+    {
+      try
+      {
+        myImage.Save(aThumbTargetPath, Thumbs.ThumbCodecInfo, Thumbs.ThumbEncoderParams);
+        File.SetAttributes(aThumbTargetPath, File.GetAttributes(aThumbTargetPath) | FileAttributes.Hidden);
+        // even if run in background thread wait a little so the main process does not starve on IO
+        Thread.Sleep(0);
+        return true;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Picture: Error saving new thumbnail {0} - {1}", aThumbTargetPath, ex.Message);
+        return false;
       }
     }
 

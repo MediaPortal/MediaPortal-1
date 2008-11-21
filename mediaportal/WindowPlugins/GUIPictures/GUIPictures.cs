@@ -71,7 +71,7 @@ namespace MediaPortal.GUI.Pictures
         //_hideFileExtensions = HideExtensions;
 
         work = new Work(new DoWorkHandler(this.PerformRequest));
-        work.ThreadPriority = ThreadPriority.Normal;
+        work.ThreadPriority = ThreadPriority.BelowNormal;
         GlobalServiceProvider.Get<IThreadPool>().Add(work, QueuePriority.Normal);
       }
 
@@ -111,7 +111,7 @@ namespace MediaPortal.GUI.Pictures
                       Thread.Sleep(0);
                       if (Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, iRotate, Thumbs.SpeedThumbsSmall))
                       {
-                        Thread.Sleep(0);
+                        Thread.Sleep(10);
                         Log.Debug("GUIPictures: Creation of missing thumb successful for {0}", item.Path);
                       }
                     }
@@ -119,12 +119,12 @@ namespace MediaPortal.GUI.Pictures
                     if (autocreateLargeThumbs)
                     {
                       thumbnailImage = String.Format(@"{0}\{1}L.jpg", Thumbs.Pictures, Util.Utils.EncryptLine(item.Path));
-                      if (recreateThumbs || !System.IO.File.Exists(thumbnailImage))
+                      if (recreateThumbs || !File.Exists(thumbnailImage))
                       {
                         Thread.Sleep(0);
                         if (Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, iRotate, Thumbs.SpeedThumbsLarge))
                         {
-                          Thread.Sleep(0);
+                          Thread.Sleep(10);
                           Log.Debug("GUIPictures: Creation of missing large thumb successful for {0}", item.Path);
                         }
                       }
@@ -143,7 +143,7 @@ namespace MediaPortal.GUI.Pictures
                       Thread.Sleep(0);
                       if (CreateFolderThumb(item.Path, recreateThumbs))
                       {
-                        Thread.Sleep(0);
+                        Thread.Sleep(10);
                         Log.Debug("GUIPictures: Creation of missing folder preview thumb for {0}", item.Path);
                       }
                     }
