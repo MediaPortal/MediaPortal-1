@@ -1972,6 +1972,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         mpUseLargeIcons.Enabled = true;
         mpUseCustomIcons.Enabled = true;
         mpUseInvertedIcons.Enabled = true;
+        mpEditFont.Enabled = true;
+        mpEditIcon.Enabled = true;
       }
       else
       {
