@@ -192,8 +192,16 @@ namespace MPTvClient
         foreach (Card card in cards)
         {
           User user = new User();
+          User[] usersForCard=null;
           user.CardId = card.IdCard;
-          User[] usersForCard = RemoteControl.Instance.GetUsersForCard(card.IdCard);
+          try
+          {
+             usersForCard = RemoteControl.Instance.GetUsersForCard(card.IdCard);
+          }
+          catch (Exception)
+          {
+            continue;
+          }
           if (usersForCard == null)
           {
             StreamingStatus state = new StreamingStatus();

@@ -48,7 +48,7 @@ namespace TsPacketChecker
     {
       Invoke(new MethodSortTreeView(SortTreeView));
     }
-    private void WriteLog(string msg)
+    public void WriteLog(string msg)
     {
       edLog.Text += msg + Environment.NewLine;
     }
@@ -192,6 +192,7 @@ namespace TsPacketChecker
       TreeNode nitNode = new TreeNode("NIT");
       NITParser nitParser = new NITParser(nitNode);
       PacketChecker checker = new PacketChecker(double.Parse(edPcrDiff.Text));
+      EitParser eitParser = new EitParser(this);
 
       int maxPATPidsCount = 0;
        while (reader.GetNextPacket(out tsPacket, out header))
@@ -236,6 +237,7 @@ namespace TsPacketChecker
         nitParser.OnTsPacket(tsPacket);
         linkageParser.OnTsPacket(tsPacket);
         sdtParser.OnTsPacket(tsPacket);
+        eitParser.OnTsPacket(tsPacket);
         PrBar.Value = reader.GetPositionInPercent();
         if (stopThread) break;
       }
