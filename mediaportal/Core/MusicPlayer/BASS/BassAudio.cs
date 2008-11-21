@@ -416,7 +416,7 @@ namespace MediaPortal.Player
       {
         if (_StreamVolume != value)
         {
-          if (value < 100)
+          if (value > 100)
             value = 100;
 
           if (value < 0)
