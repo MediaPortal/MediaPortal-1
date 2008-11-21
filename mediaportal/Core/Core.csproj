@@ -375,6 +375,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Util\EncryptDecrypt.cs" />
+    <Compile Include="Util\FastImage.cs" />
     <Compile Include="Util\FilterChecker.cs" />
     <Compile Include="Util\FolderThumbCacher.cs" />
     <Compile Include="Util\FolderThumbCreator.cs" />
