@@ -418,7 +418,7 @@ namespace MediaPortal.GUI.Library
         {
           string imageFolder = string.Empty;
           // try to use the provided folder as an absolute path
-          if (Directory.Exists(m_currentPath))
+          if (Directory.Exists(m_currentPath) && Path.IsPathRooted(m_currentPath))
             imageFolder = m_currentPath;
 
           // if that didnt work, try to use relative pathing into the skin\media folder
