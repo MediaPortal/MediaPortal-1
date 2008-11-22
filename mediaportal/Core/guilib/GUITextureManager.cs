@@ -266,6 +266,7 @@ namespace MediaPortal.GUI.Library
 
               theImage.Dispose();
               theImage = null;
+              newCache.Disposed +=new EventHandler(cachedTexture_Disposed);
               _cache.Add(newCache);
 
               //Log.Info("  TextureManager:added:" + fileName + " total:" + _cache.Count + " mem left:" + GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
@@ -292,6 +293,7 @@ namespace MediaPortal.GUI.Library
           newCache.Height = height;
           newCache.texture = new CachedTexture.Frame(fileName, dxtexture, 0);
           //Log.Info("  texturemanager:added:" + fileName + " total:" + _cache.Count + " mem left:" + GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
+          newCache.Disposed += new EventHandler(cachedTexture_Disposed);
           _cache.Add(newCache);
           return 1;
         }
@@ -349,6 +351,7 @@ namespace MediaPortal.GUI.Library
         }
         memoryImage.Dispose();
         memoryImage = null;
+        newCache.Disposed += new EventHandler(cachedTexture_Disposed);
         _cache.Add(newCache);
 
         Log.Info("TextureManager: added: memoryImage  " + " total: " + _cache.Count + " mem left: " + GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
@@ -361,6 +364,20 @@ namespace MediaPortal.GUI.Library
       }
       return 0;
     }
+
+      static void cachedTexture_Disposed(object sender, EventArgs e)
+      {
+          // AB a texture in the cache has been disposed of! remove from the cache
+          for (int i = 0; i < _cache.Count; ++i)
+          {
+              if (_cache[i] == sender)
+              {
+                  _cache[i].Disposed -= new EventHandler(cachedTexture_Disposed);
+                  _cache.Remove(_cache[i]);
+              }
+          }
+      }
+
     static Direct3D.Texture LoadGraphic(string fileName, long lColorKey, int iMaxWidth, int iMaxHeight, out int width, out int height)
     {
       width = 0;
@@ -596,6 +613,7 @@ namespace MediaPortal.GUI.Library
         newCache.Height = img.Height;
         newCache.image = img;
         //Log.Info("  texturemanager:added:" + fileName + " total:" + _cache.Count + " mem left:" + GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
+        newCache.Disposed += new EventHandler(cachedTexture_Disposed);
         _cache.Add(newCache);
         return img;
       }
@@ -645,6 +663,7 @@ namespace MediaPortal.GUI.Library
             if (String.Compare(cached.Name, fileName, true) == 0)
             {
               //Log.Info("texturemanager:dispose:{0} frames:{1} total:{2} mem left:{3}", cached.Name, cached.Frames, _cache.Count, GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
+              cached.Disposed -= new EventHandler(cachedTexture_Disposed);
               _cache.Remove(cached);
               cached.Dispose();
               continueRemoving = true;
@@ -676,6 +695,7 @@ namespace MediaPortal.GUI.Library
           if (IsTemporary(cached.Name))
           {
             Log.Debug("TextureManager: dispose: " + cached.Name + " total: " + _cache.Count + " mem left: " + GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
+            cached.Disposed -= new EventHandler(cachedTexture_Disposed);
             cached.Dispose();
           }
           else
