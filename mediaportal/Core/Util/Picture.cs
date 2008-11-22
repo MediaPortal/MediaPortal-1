@@ -29,12 +29,9 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
-
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
-
 using Direct3D = Microsoft.DirectX.Direct3D;
-
 using MediaPortal.GUI.Library;
 
 
@@ -86,12 +83,20 @@ namespace MediaPortal.Util
       if (strPic == string.Empty)
         return null;
 
-      Log.Info("load picture {0}", strPic);
       Direct3D.Texture texture = null;
       Image theImage = null;
       try
       {
-        theImage = Image.FromFile(strPic);
+        try
+        {
+          theImage = ImageFast.FastFromFile(strPic);
+          Log.Debug("Picture: Fast loaded texture {0}", strPic);
+        }
+        catch (ArgumentException)
+        {
+          theImage = Image.FromFile(strPic);
+          Log.Warn("Picture: Fallback loaded texture {0}", strPic);
+        }
         if (theImage == null)
           return null;
         if (iRotate > 0)
@@ -202,14 +207,11 @@ namespace MediaPortal.Util
         {
           texture = Picture.ConvertImageToTexture((Bitmap)theImage, out iWidth, out iHeight);
         }
-
       }
-
       catch (ThreadAbortException ext)
       {
         Log.Debug("Picture: exception loading {0} err:{1}", strPic, ext.Message);
       }
-
       catch (Exception ex)
       {
         Log.Warn("Picture: exception loading {0} err:{1}", strPic, ex.Message);
@@ -596,169 +598,6 @@ namespace MediaPortal.Util
     /// <param name="lColorDiffuse">diffuse color</param>
     //public static void RenderImage(ref Texture texture, float x, float y, float nw, float nh, float iTextureWidth, float iTextureHeight, float iTextureLeft, float iTextureTop, long lColorDiffuse)
     public static void RenderImage(Texture texture, float x, float y, float nw, float nh, float iTextureWidth, float iTextureHeight, float iTextureLeft, float iTextureTop, long lColorDiffuse)
-    {
-      if (texture == null)
-        return;
-      if (texture.Disposed)
-        return;
-      if (GUIGraphicsContext.DX9Device == null)
-        return;
-      if (GUIGraphicsContext.DX9Device.Disposed)
-        return;
-
-      if (x < 0 || y < 0)
-        return;
-      if (nw < 0 || nh < 0)
-        return;
-      if (iTextureWidth < 0 || iTextureHeight < 0)
-        return;
-      if (iTextureLeft < 0 || iTextureTop < 0)
-        return;
-
-      VertexBuffer m_vbBuffer = null;
-      try
-      {
-        m_vbBuffer = new VertexBuffer(typeof(CustomVertex.TransformedColoredTextured),
-          4, GUIGraphicsContext.DX9Device,
-          0, CustomVertex.TransformedColoredTextured.Format,
-          GUIGraphicsContext.GetTexturePoolType());
-
-        Direct3D.SurfaceDescription desc;
-        desc = texture.GetLevelDescription(0);
-
-        float uoffs = ((float)iTextureLeft) / ((float)desc.Width);
-        float voffs = ((float)iTextureTop) / ((float)desc.Height);
-        float umax = ((float)iTextureWidth) / ((float)desc.Width);
-        float vmax = ((float)iTextureHeight) / ((float)desc.Height);
-
-        if (uoffs < 0 || uoffs > 1)
-          return;
-        if (voffs < 0 || voffs > 1)
-          return;
-        if (umax < 0 || umax > 1)
-          return;
-        if (vmax < 0 || vmax > 1)
-          return;
-        if (umax + uoffs < 0 || umax + uoffs > 1)
-          return;
-        if (vmax + voffs < 0 || vmax + voffs > 1)
-          return;
-        if (x < 0)
-          x = 0;
-        if (x > GUIGraphicsContext.Width)
-          x = GUIGraphicsContext.Width;
-        if (y < 0)
-          y = 0;
-        if (y > GUIGraphicsContext.Height)
-          y = GUIGraphicsContext.Height;
-        if (nw < 0)
-          nw = 0;
-        if (nh < 0)
-          nh = 0;
-        if (x + nw > GUIGraphicsContext.Width)
-        {
-          nw = GUIGraphicsContext.Width - x;
-        }
-        if (y + nh > GUIGraphicsContext.Height)
-        {
-          nh = GUIGraphicsContext.Height - y;
-        }
-
-        CustomVertex.TransformedColoredTextured[] verts = (CustomVertex.TransformedColoredTextured[])m_vbBuffer.Lock(0, 0); // Lock the buffer (which will return our structs)
-        verts[0].X = x - 0.5f;
-        verts[0].Y = y + nh - 0.5f;
-        verts[0].Z = 0.0f;
-        verts[0].Rhw = 1.0f;
-        verts[0].Color = (int)lColorDiffuse;
-        verts[0].Tu = uoffs;
-        verts[0].Tv = voffs + vmax;
-
-        verts[1].X = x - 0.5f;
-        verts[1].Y = y - 0.5f;
-        verts[1].Z = 0.0f;
-        verts[1].Rhw = 1.0f;
-        verts[1].Color = (int)lColorDiffuse;
-        verts[1].Tu = uoffs;
-        verts[1].Tv = voffs;
-
-        verts[2].X = x + nw - 0.5f;
-        verts[2].Y = y + nh - 0.5f;
-        verts[2].Z = 0.0f;
-        verts[2].Rhw = 1.0f;
-        verts[2].Color = (int)lColorDiffuse;
-        verts[2].Tu = uoffs + umax;
-        verts[2].Tv = voffs + vmax;
-
-        verts[3].X = x + nw - 0.5f;
-        verts[3].Y = y - 0.5f;
-        verts[3].Z = 0.0f;
-        verts[3].Rhw = 1.0f;
-        verts[3].Color = (int)lColorDiffuse;
-        verts[3].Tu = uoffs + umax;
-        verts[3].Tv = voffs;
-
-
-        m_vbBuffer.Unlock();
-
-        GUIGraphicsContext.DX9Device.SetTexture(0, texture);
-
-        GUIGraphicsContext.DX9Device.TextureState[0].ColorOperation = Direct3D.TextureOperation.Modulate;
-        GUIGraphicsContext.DX9Device.TextureState[0].ColorArgument1 = Direct3D.TextureArgument.TextureColor;
-        GUIGraphicsContext.DX9Device.TextureState[0].ColorArgument2 = Direct3D.TextureArgument.Diffuse;
-
-        GUIGraphicsContext.DX9Device.TextureState[0].AlphaOperation = Direct3D.TextureOperation.Modulate;
-
-        GUIGraphicsContext.DX9Device.TextureState[0].AlphaArgument1 = Direct3D.TextureArgument.TextureColor;
-        GUIGraphicsContext.DX9Device.TextureState[0].AlphaArgument2 = Direct3D.TextureArgument.Diffuse;
-        GUIGraphicsContext.DX9Device.TextureState[1].ColorOperation = Direct3D.TextureOperation.Disable;
-        GUIGraphicsContext.DX9Device.TextureState[1].AlphaOperation = Direct3D.TextureOperation.Disable;
-
-        int g_nAnisotropy = GUIGraphicsContext.DX9Device.DeviceCaps.MaxAnisotropy;
-        float g_fMipMapLodBias = 0.0f;
-        GUIGraphicsContext.DX9Device.SamplerState[0].MinFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[0].MagFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[0].MaxAnisotropy = g_nAnisotropy;
-        GUIGraphicsContext.DX9Device.SamplerState[0].MipMapLevelOfDetailBias = g_fMipMapLodBias;
-
-        GUIGraphicsContext.DX9Device.SamplerState[1].MinFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[1].MagFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[1].MipFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[1].MaxAnisotropy = g_nAnisotropy;
-        GUIGraphicsContext.DX9Device.SamplerState[1].MipMapLevelOfDetailBias = g_fMipMapLodBias;
-
-        // Render the image
-        GUIGraphicsContext.DX9Device.SetStreamSource(0, m_vbBuffer, 0);
-        GUIGraphicsContext.DX9Device.VertexFormat = CustomVertex.TransformedColoredTextured.Format;
-        GUIGraphicsContext.DX9Device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
-
-        // unset the texture and palette or the texture caching crashes because the runtime still has a reference
-        GUIGraphicsContext.DX9Device.SetTexture(0, null);
-      }
-      finally
-      {
-        if (m_vbBuffer != null)
-        {
-          m_vbBuffer.Dispose();
-        }
-      }
-    }
-
-    /// <summary>
-    /// render the image contained in texture onscreen
-    /// </summary>
-    /// <param name="texture">Directx texture containing the image</param>
-    /// <param name="x">x (left) coordinate</param>
-    /// <param name="y">y (top) coordinate</param>
-    /// <param name="nw">width </param>
-    /// <param name="nh">height</param>
-    /// <param name="iTextureWidth">width in texture</param>
-    /// <param name="iTextureHeight">height in texture</param>
-    /// <param name="iTextureLeft">x (left) offset in texture</param>
-    /// <param name="iTextureTop">y (top) offset in texture</param>
-    /// <param name="lColorDiffuse">diffuse color</param>
-    //public static void RenderImage(ref Texture texture, int x, int y, int nw, int nh, int iTextureWidth, int iTextureHeight, int iTextureLeft, int iTextureTop, long lColorDiffuse)
-    public static void RenderImage(Texture texture, int x, int y, int nw, int nh, int iTextureWidth, int iTextureHeight, int iTextureLeft, int iTextureTop, long lColorDiffuse)
     {
       if (texture == null)
         return;

@@ -44,263 +44,6 @@ using MediaPortal.Configuration;
 
 namespace MediaPortal.GUI.Pictures
 {
-  class SlidePicture
-  {
-    const int MAX_PICTURE_WIDTH = 2040;
-    const int MAX_PICTURE_HEIGHT = 2040;
-
-    private Texture _texture;
-    private int _width = 0;
-    private int _height = 0;
-    private int _rotation = 0;
-
-    private string _filePath;
-    private bool _useActualSizeTexture;
-
-    public Texture Texture
-    {
-      get { return _texture; }
-    }
-
-    public string FilePath
-    {
-      get { return _filePath; }
-    }
-
-    public bool TrueSizeTexture
-    {
-      get { return _useActualSizeTexture; }
-    }
-
-    public int Width
-    {
-      get { return _width; }
-    }
-
-    public int Height
-    {
-      get { return _height; }
-    }
-
-    public int Rotation
-    {
-      get { return _rotation; }
-    }
-
-    public SlidePicture(string strFilePath, bool useActualSizeTexture)
-    {
-      _filePath = strFilePath;
-
-      using (PictureDatabase dbs = new PictureDatabase())
-      {
-        _rotation = dbs.GetRotation(_filePath);
-      }
-      int iMaxWidth = GUIGraphicsContext.OverScanWidth;
-      int iMaxHeight = GUIGraphicsContext.OverScanHeight;
-
-      _useActualSizeTexture = useActualSizeTexture;
-      if (_useActualSizeTexture)
-      {
-        iMaxWidth = MAX_PICTURE_WIDTH;
-        iMaxHeight = MAX_PICTURE_HEIGHT;
-      }
-
-      _texture = MediaPortal.Util.Picture.Load(strFilePath, _rotation, iMaxWidth, iMaxHeight, true, false, true, out _width, out _height);
-    }
-
-    ~SlidePicture()
-    {
-      if (_texture != null && !_texture.Disposed)
-      {
-        _texture.Dispose();
-        _texture = null;
-      }
-    }
-  }
-
-  class SlideCache
-  {
-    enum RelativeIndex
-    {
-      Prev = 0,
-      Curr = 1,
-      Next = 2
-    }
-
-    Thread _prefetchingThread;
-    Object _prefetchingThreadLock = new Object();
-
-    SlidePicture[] _slides = new SlidePicture[3];
-    Object _slidesLock = new Object();
-
-    string _neededSlideFilePath;
-    RelativeIndex _neededSlideRelativeIndex;
-
-    private SlidePicture NeededSlide
-    {
-      get { return _slides[(int)_neededSlideRelativeIndex]; }
-      set { _slides[(int)_neededSlideRelativeIndex] = value; }
-    }
-
-    private SlidePicture PrevSlide
-    {
-      get { return _slides[(int)RelativeIndex.Prev]; }
-      set { _slides[(int)RelativeIndex.Prev] = value; }
-    }
-
-    private SlidePicture CurrentSlide
-    {
-      get { return _slides[(int)RelativeIndex.Curr]; }
-      set { _slides[(int)RelativeIndex.Curr] = value; }
-    }
-
-    private SlidePicture NextSlide
-    {
-      get { return _slides[(int)RelativeIndex.Next]; }
-      set { _slides[(int)RelativeIndex.Next] = value; }
-    }
-
-    public SlidePicture GetCurrentSlide(string slideFilePath)
-    {
-      // wait for any (needed) prefetching to complete
-      lock (_prefetchingThreadLock)
-      {
-        if (_prefetchingThread != null)
-        {
-          // only wait for the prefetching if it is for the slide file that we need
-          if (_neededSlideFilePath == slideFilePath)
-          {
-            _prefetchingThread.Priority = ThreadPriority.AboveNormal;
-          }
-          else
-          {
-            // uneeded, abort
-            _prefetchingThread.Abort();
-            _prefetchingThread = null;
-          }
-        }
-      }
-
-      while (_prefetchingThread != null)
-        GUIWindowManager.Process();
-
-      lock (_slidesLock)
-      {
-        // try and use pre-fetched slide if appropriate
-        if (NextSlide != null && NextSlide.FilePath == slideFilePath)
-          return NextSlide;
-        else if (PrevSlide != null && PrevSlide.FilePath == slideFilePath)
-          return PrevSlide;
-        else if (CurrentSlide != null && CurrentSlide.FilePath == slideFilePath)
-          return CurrentSlide;
-        else
-        {
-          // slide is not in cache, so get it now
-          CurrentSlide = new SlidePicture(slideFilePath, false);
-          return CurrentSlide;
-        }
-      }
-    }
-
-    public void PrefetchNextSlide(string prevPath, string currPath, string nextPath)
-    {
-      lock (_prefetchingThreadLock)
-      {
-        // assume that any incomplete prefetching is uneeded, abort
-        if (_prefetchingThread != null)
-        {
-          _prefetchingThread.Abort();
-          _prefetchingThread = null;
-        }
-      }
-
-      lock (_slidesLock)
-      {
-        // shift slides and determine _neededSlideRelativeIndex
-        if (NextSlide != null && NextSlide.FilePath == currPath)
-        {
-          PrevSlide = CurrentSlide;
-          CurrentSlide = NextSlide;
-          _neededSlideFilePath = nextPath;
-          _neededSlideRelativeIndex = RelativeIndex.Next;
-        }
-        else if (PrevSlide != null && PrevSlide.FilePath == currPath)
-        {
-          NextSlide = CurrentSlide;
-          CurrentSlide = PrevSlide;
-          _neededSlideFilePath = prevPath;
-          _neededSlideRelativeIndex = RelativeIndex.Prev;
-        }
-        else
-        {
-          // may need all 3, but just get next
-          _neededSlideFilePath = nextPath;
-          _neededSlideRelativeIndex = RelativeIndex.Next;
-        }
-      }
-
-      lock (_prefetchingThreadLock)
-      {
-        _prefetchingThread = new Thread(new ThreadStart(LoadNextSlideThread));
-        _prefetchingThread.IsBackground = true;
-        _prefetchingThread.Name = "PicPrefetch";
-        //_prefetchingThread.Priority = ThreadPriority.BelowNormal;
-        string cacheString = String.Format("cache:{0}|{1}|{2} ",
-          _slides[0] != null ? "1" : "0",
-          _slides[1] != null ? "1" : "0",
-          _slides[2] != null ? "1" : "0");
-        //Trace.WriteLine(cacheString + String.Format("prefetching {0} slide {1}", _neededSlideRelativeIndex.ToString("G"), System.IO.Path.GetFileNameWithoutExtension(_neededSlideFilePath)));
-        _prefetchingThread.Start();
-      }
-    }
-
-    /// <summary>
-    /// Method to do the work of actually loading the image from file. This method
-    /// should only be used by the prefetching thread.
-    /// </summary>
-    public void LoadNextSlideThread()
-    {
-      try
-      {
-        Debug.Assert(System.Threading.Thread.CurrentThread == _prefetchingThread);
-
-        lock (_slidesLock)
-        {
-          NeededSlide = new SlidePicture(_neededSlideFilePath, false);
-        }
-
-        lock (_prefetchingThreadLock)
-        {
-          _prefetchingThread = null;
-        }
-      }
-      catch (System.Threading.ThreadAbortException)
-      {
-        // abort is expected when slide changes outpace prefetch, ignore
-        Trace.WriteLine(String.Format("  ...aborted {0} slide {1}", _neededSlideRelativeIndex.ToString("G"), System.IO.Path.GetFileNameWithoutExtension(_neededSlideFilePath)));
-      }
-    }
-
-    public void InvalidateSlide(string slideFilePath)
-    {
-      lock (_slidesLock)
-      {
-        for (int i = 0; i < _slides.Length; i++)
-        {
-          SlidePicture slide = _slides[i];
-          if (slide != null && slide.FilePath == slideFilePath)
-          {
-            _slides[i] = null;
-          }
-        }
-      }
-
-      // Note that we could pre-fetch the invalidated slide, but if the new version
-      // of the slide is going to be requested immediately (as with DoRotate) then
-      // pre-fetching won't help.
-    }
-  }
-
   /// <summary>
   /// todo : adding zoom OSD (stripped if for KenBurns)
   /// </summary>
@@ -311,7 +54,7 @@ namespace MediaPortal.GUI.Pictures
       if (_slideList.Count == 0) return null;
       string slideFilePath = _slideList[_currentSlideIndex];
 
-      _currentSlide = _slideCache.GetCurrentSlide(slideFilePath);
+      _currentSlide = _slideCache.GetCurrentSlide(pDB, slideFilePath);
 
       GUIPropertyManager.SetProperty("#selecteditem", Util.Utils.GetFilename(slideFilePath));
 
@@ -330,7 +73,7 @@ namespace MediaPortal.GUI.Pictures
         string curr = _slideList[_currentSlideIndex];
         string next = _slideList[NextSlideIndex(false, _currentSlideIndex)];
 
-        _slideCache.PrefetchNextSlide(prev, curr, next);
+        _slideCache.PrefetchNextSlide(pDB, prev, curr, next);
       }
     }
 
@@ -369,6 +112,7 @@ namespace MediaPortal.GUI.Pictures
     #endregion
 
     #region constants
+
     const float TIME_PER_FRAME = 0.02f;
     const int MAX_RENDER_METHODS = 10;
     const int MAX_ZOOM_FACTOR = 10;
@@ -384,9 +128,11 @@ namespace MediaPortal.GUI.Pictures
 
     const float KENBURNS_MAXZOOM = 1.30f;
     const int KENBURNS_XFADE_FRAMES = 60;
+
     #endregion
 
     #region variables
+
     int _slideShowTransistionFrames = 60;
     int _kenBurnTransistionSpeed = 40;
 
@@ -405,23 +151,7 @@ namespace MediaPortal.GUI.Pictures
     public int _zoomTypeBackground = 0;
 
     SlideCache _slideCache = new SlideCache();
-
-    //Texture _backgroundTexture = null;
-    //float _backgroundSlide.Width = 0;
-    //float _backgroundSlide.Height = 0;
-    //float _zoomFactorBackground = 1.0f;
-    //float _zoomLeft = 0;
-    //float _zoomTop = 0;
-    //int _zoomTypeBackground = 0;
     SlidePicture _backgroundSlide = null;
-
-    //Texture _currentTexture = null;
-    //float _currentSlide.Width = 0;
-    //float _currentSlide.Height = 0;
-    //float _currentZoomFactor = 1.0f;
-    //float _currentZoomLeft = 0;
-    //float _currentZoomTop = 0;
-    //int _currentZoomType = 0;
     SlidePicture _currentSlide = null;
 
     int _frameCounter = 0;
@@ -432,11 +162,8 @@ namespace MediaPortal.GUI.Pictures
     bool _infoVisible = false;
     bool _zoomInfoVisible = false;
     bool _autoHideOsd = true;
-    //string _backgroundSlideFileName = "";
-    //string _currentSlideFileName = "";
     bool _isPaused = false;
     float _zoomWidth = 0, _zoomHeight = 0;
-    //int _rotation = 0;
     int _speed = 3;
     bool _showOverlayFlag;
     bool _update = false;
@@ -487,14 +214,18 @@ namespace MediaPortal.GUI.Pictures
     public static readonly string SegmentIndicator = "#segment";
     PlayListPlayer playlistPlayer;
     MusicDatabase mDB = null;
+    IPictureDatabase pDB = null;
     bool _autoShuffleMusic = false;
+
     #endregion
 
     #region GUIWindow overrides
+
     public GUISlideShow()
     {
       GetID = (int)GUIWindow.Window.WINDOW_SLIDESHOW;
       playlistPlayer = PlayListPlayer.SingletonPlayer;
+      pDB = Database.DatabaseFactory.GetPictureDatabase();
     }
 
     public override bool Init()
@@ -529,6 +260,7 @@ namespace MediaPortal.GUI.Pictures
       }
       return base.OnMessage(message);
     }
+
     public override int GetFocusControlId()
     {
       return 1;
@@ -885,7 +617,7 @@ namespace MediaPortal.GUI.Pictures
         GetOutputRect(_backgroundSlide.Width, _backgroundSlide.Height, _zoomFactorBackground, out x, out y, out width, out height);
         if (_zoomTopBackground + _zoomHeight > _backgroundSlide.Height) _zoomHeight = _backgroundSlide.Height - _zoomTopBackground;
         if (_zoomLeftBackground + _zoomWidth > _backgroundSlide.Width) _zoomWidth = _backgroundSlide.Width - _zoomLeftBackground;
-        MediaPortal.Util.Picture.RenderImage(_backgroundSlide.Texture, x, y, width, height, _zoomWidth, _zoomHeight, _zoomLeftBackground, _zoomTopBackground, true);
+        MediaPortal.Util.Picture.RenderImage(_backgroundSlide.Texture, x, y, width, height, _zoomWidth, _zoomHeight, _zoomLeftBackground, _zoomTopBackground, false);
 
         //MediaPortal.Util.Picture.DrawLine(10,10,300,300,0xffffffff);
         //MediaPortal.Util.Picture.DrawRectangle( new Rectangle(100,100,30,30),0xaaff0000,true);
@@ -1161,46 +893,6 @@ namespace MediaPortal.GUI.Pictures
     #endregion
 
     #region private members
-
-    //Texture GetSlide(bool bTrueSize, out float dwWidth, out float dwHeight, out string strSlide)
-    //{
-    //  dwWidth = 0;
-    //  dwHeight = 0;
-    //  strSlide = "";
-    //  if (_slideList.Count == 0) return null;
-
-    //  _rotation = 0;
-    //  _currentZoomFactor = 1.0f;
-    //  _kenBurnsEffect = 0;
-    //  _currentZoomleftFactor = 0;
-    //  _currentZoomTopFactor = 0;
-    //  _zoomInfoVisible = false;
-
-    //  strSlide = _slideList[_currentSlide];
-    //  Log.Info("Next Slide: {0}/{1} : {2}", _currentSlide + 1, _slideList.Count, strSlide);
-    //  using (PictureDatabase dbs = new PictureDatabase())
-    //  {
-    //    _rotation = dbs.GetRotation(strSlide);
-    //  }
-    //  int iMaxWidth = GUIGraphicsContext.OverScanWidth;
-    //  int iMaxHeight = GUIGraphicsContext.OverScanHeight;
-
-    //  _trueSizeTexture = bTrueSize;
-    //  if (bTrueSize)
-    //  {
-    //    iMaxWidth = MAX_PICTURE_WIDTH;
-    //    iMaxHeight = MAX_PICTURE_HEIGHT;
-    //  }
-
-    //  int X, Y;
-    //  Texture texture = MediaPortal.Util.Picture.Load(strSlide, _rotation, iMaxWidth, iMaxHeight, true, false, true, out X, out Y);
-    //  dwWidth = X;
-    //  dwHeight = Y;
-
-    //  CalculateBestZoom(dwWidth, dwHeight);
-    //  _currentZoomFactor = _defaultZoomFactor;
-    //  return texture;
-    //}
 
     void ShowNext()
     {
@@ -2124,10 +1816,8 @@ namespace MediaPortal.GUI.Pictures
         rotation = 0;
       }
 
-      using (PictureDatabase dbs = new PictureDatabase())
-      {
-        dbs.SetRotation(_backgroundSlide.FilePath, rotation);
-      }
+      if (pDB != null)
+        pDB.SetRotation(_backgroundSlide.FilePath, rotation);
 
       InvalidateSlide(_backgroundSlide.FilePath);
 
@@ -2279,7 +1969,7 @@ namespace MediaPortal.GUI.Pictures
     {
       // load picture
       string slideFilePath = _slideList[_currentSlideIndex];
-      _backgroundSlide = new SlidePicture(slideFilePath, true);
+      _backgroundSlide = new SlidePicture(pDB, slideFilePath, true);
       ResetCurrentZoom(_backgroundSlide);
       _isLoadingRawPicture = false;
     }
@@ -2302,7 +1992,7 @@ namespace MediaPortal.GUI.Pictures
         _isLoadingRawPicture = true;
         using (WaitCursor cursor = new WaitCursor())
         {
-          Thread WorkerThread = new Thread(new ThreadStart(LoadRawPictureThread));
+          Thread WorkerThread = new Thread(LoadRawPictureThread);
           WorkerThread.IsBackground = true;
           WorkerThread.Name = "PicRawLoader";
           WorkerThread.Start();
@@ -2407,7 +2097,7 @@ namespace MediaPortal.GUI.Pictures
     {
       if (g_Player.IsMusic || g_Player.IsRadio || g_Player.IsTV || g_Player.IsVideo)
         return;
-      
+
       // Load Music related settings here, as the Loadsetting for pictures is called too late for the Backgroundmusic task
       using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {

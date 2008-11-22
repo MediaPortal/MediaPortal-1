@@ -308,6 +308,8 @@
     </Compile>
     <Compile Include="GUIDVD\GUIDVDFullscreen.cs" />
     <Compile Include="GUIMusic\GUIMusicMenu.cs" />
+    <Compile Include="GUIPictures\GUISlidePicture.cs" />
+    <Compile Include="GUIPictures\SlideCache.cs" />
     <Compile Include="GUITetris\MyTetrisControl.cs" />
     <Compile Include="GUITV\GUITVTeletextBase.cs" />
     <Compile Include="GUIVideoFiles\MatroskaTagLib.cs" />
