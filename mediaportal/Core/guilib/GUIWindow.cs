@@ -938,6 +938,7 @@ namespace MediaPortal.GUI.Library
         // tell every control to free its resources
         foreach (GUIControl control in Children)
           control.FreeResources();
+        Children.Clear();
       }
       catch (Exception ex)
       {
@@ -1322,8 +1323,11 @@ namespace MediaPortal.GUI.Library
                 GUIPropertyManager.SetProperty("#selecteditem", string.Empty);
                 GUIPropertyManager.SetProperty("#selecteditem2", string.Empty);
                 GUIPropertyManager.SetProperty("#selectedthumb", string.Empty);
-                LoadSkin();
-                AllocResources();
+                if (LoadSkin() == false)
+                {
+                  Log.Error("GUIWindows.OnMessage(Window_Init): LoadSkin FAILED for Window = " + GetID.ToString());
+                }
+                else AllocResources();
               }
 
               InitControls();
