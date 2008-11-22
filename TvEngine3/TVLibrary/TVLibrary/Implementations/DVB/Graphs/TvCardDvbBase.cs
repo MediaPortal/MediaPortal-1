@@ -771,7 +771,7 @@ namespace TvLibrary.Implementations.DVB
                 skipCaptureFilter = true;
               }
               //Hauppauge Nova USB2 DVB-T & HDHomeRun workaround.
-              if (devices[i].Name == "Hauppauge Nova USB2 DVB-T TV Receiver" || devices[i].Name.Contains("Silicondust HDHomeRun Tuner"))
+              if (devices[i].Name != null && (devices[i].Name.Contains("Hauppauge Nova USB2 DVB-T TV Receiver") || devices[i].Name.Contains("Silicondust HDHomeRun Tuner")))
               {
                 skipCaptureFilter = true;
               }
