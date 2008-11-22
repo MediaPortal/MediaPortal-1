@@ -48,13 +48,14 @@ namespace MediaPortal.Database
 
     public static void SetPragmas(SQLiteClient m_db)
     {
+      m_db.Execute("PRAGMA encoding = \"UTF-8\"");
       m_db.Execute("PRAGMA cache_size=4096");
       m_db.Execute("PRAGMA page_size=8192");
       m_db.Execute("PRAGMA synchronous='OFF'");
       m_db.Execute("PRAGMA count_changes=1");
       m_db.Execute("PRAGMA full_column_names=0");
       m_db.Execute("PRAGMA short_column_names=0");
-      m_db.Execute("PRAGMA auto_vacuum=1");
+      m_db.Execute("PRAGMA auto_vacuum=0");
     }
 
     /// <summary>
@@ -319,10 +320,25 @@ namespace MediaPortal.Database
       return string.Empty;
     }
 
+    /// <summary>
+    /// This will remove all chars which are not allowed for the DB and quote / escape when needed
+    /// </summary>
+    /// <param name="aStringToClean">The value to be stored</param>
+    /// <returns>The string to put into an SQL statement</returns>
+    public static string RemoveInvalidChars(string aStringToClean)
+    {
+      string result = aStringToClean;
+      RemoveInvalidChars(ref result);
+      return result;
+    }
+
+    /// <summary>
+    /// This will remove all chars which are not allowed for the DB and quote / escape when needed
+    /// </summary>
+    /// <param name="strTxt">The value to be stored</param>
     public static void RemoveInvalidChars(ref string strTxt)
     {
       strTxt = FilterText(strTxt);
-      return;
       //if (strTxt == null)
       //{
       //  strTxt = Strings.Unknown;
@@ -352,11 +368,10 @@ namespace MediaPortal.Database
       //strTxt = strReturn;
     }
 
-    public static string FilterText(string strTxt)
+    private static string FilterText(string strTxt)
     {
       if (string.IsNullOrEmpty(strTxt))      
         return Strings.Unknown;
-
       strTxt = strTxt.Replace("'", "''").Trim();
 
       return strTxt;

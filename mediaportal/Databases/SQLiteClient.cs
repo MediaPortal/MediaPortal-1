@@ -188,39 +188,40 @@ namespace SQLite.NET
       }
     }
 
-    private static bool WaitForFile(string fileName)
-    {
-      // while waking up from hibernation it can take a while before a network drive is accessible.
-      int count = 0;
-      bool validFile = false;
-      try
-      {
-        string file = System.IO.Path.GetFileName(fileName);
+    //private static bool WaitForFile(string fileName)
+    //{
+    //  // while waking up from hibernation it can take a while before a network drive is accessible.
+    //  int count = 0;
+    //  bool validFile = false;
+    //  try
+    //  {
+    //    string file = System.IO.Path.GetFileName(fileName);
 
-        validFile = file.Length > 0;
-      }
-      catch (Exception)
-      {
-        validFile = false;
-      }
+    //    validFile = file.Length > 0;
+    //  }
+    //  catch (Exception)
+    //  {
+    //    validFile = false;
+    //  }
 
-      if (validFile)
-      {
-        while (!File.Exists(fileName) && count < 10)
-        {
-          System.Threading.Thread.Sleep(250);
-          count++;
-        }
-      }
-      else
-      {
-        return true;
-      }
+    //  if (validFile)
+    //  {
+    //    while (!File.Exists(fileName) && count < 10)
+    //    {
+    //      System.Threading.Thread.Sleep(250);
+    //      count++;
+    //    }
+    //  }
+    //  else
+    //  {
+    //    return true;
+    //  }
 
-      return (validFile && count < 10);
-    }
+    //  return (validFile && count < 10);
+    //}
 
     // Methods
+    
     public SQLiteClient(string dbName)
     {
       // bool res = WaitForFile(dbName);

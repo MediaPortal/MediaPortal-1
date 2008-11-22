@@ -54,17 +54,31 @@ namespace MediaPortal.Picture.Database
 
     [MethodImpl(MethodImplOptions.Synchronized)]
     void Open()
-    {
-      Log.Info("opening picture database");
+    {      
       try
       {
+        // Maybe called by an exception
+        if (m_db != null)
+        {
+          try
+          {
+            m_db.Dispose();
+            Log.Warn("PictureDatabaseSqlLite: Disposing current instance..");
+          }
+          catch (Exception) { }
+        }
+
         // Open database
         try
         {
-          System.IO.Directory.CreateDirectory(Config.GetFolder(Config.Dir.Database));
+          Directory.CreateDirectory(Config.GetFolder(Config.Dir.Database));
         }
         catch (Exception) { }
         m_db = new SQLiteClient(Config.GetFile(Config.Dir.Database, "PictureDatabase.db3"));
+        // Retry 10 times on busy (DB in use or system resources exhausted)
+        m_db.BusyRetries = 10;
+        // Wait 100 ms between each try (default 10)
+        m_db.BusyRetryDelay = 100;
 
         DatabaseUtility.SetPragmas(m_db);
         CreateTables();
@@ -90,25 +104,26 @@ namespace MediaPortal.Picture.Database
     [MethodImpl(MethodImplOptions.Synchronized)]
     public int AddPicture(string strPicture, int iRotation)
     {
-      if (strPicture == null) return -1;
-      if (strPicture.Length == 0) return -1;
+      if (String.IsNullOrEmpty(strPicture))
+        return -1;
 
       if (m_db == null) return -1;
-      string strSQL = "";
       try
       {
         int lPicId = -1;
-        SQLiteResultSet results;
         string strPic = strPicture;
-        string strDateTaken = "";
+        string strDateTaken = String.Empty;
         DatabaseUtility.RemoveInvalidChars(ref strPic);
-        strSQL = String.Format("select * from picture where strFile like '{0}'", strPic);
-        results = m_db.Execute(strSQL);
+        string strSQL = String.Format("select * from picture where strFile like '{0}'", strPic);
+        SQLiteResultSet results = m_db.Execute(strSQL);
         if (results != null && results.Rows.Count > 0)
         {
           lPicId = System.Int32.Parse(DatabaseUtility.Get(results, 0, "idPicture"));
           return lPicId;
         }
+
+        #region Exif handling
+
         //Changed mbuzina
         using (ExifMetadata extractor = new ExifMetadata())
         {
@@ -117,7 +132,7 @@ namespace MediaPortal.Picture.Database
           {
             //Exception here!!! (very bad since the insert doesn't happen then..
             //  DateTimeFormatInfo dateTimeFormat = new DateTimeFormatInfo();
-            //  dateTimeFormat.ShortDatePattern = "yyyy:MM:dd HH:mm:ss";
+            //  dateTimeFormat.ShortDatePattern = "yyyy:MM:dd HH:mm:ss";            
             string picExifDate = metaData.DatePictureTaken.DisplayValue;
             //DateTime dat = DateTime.ParseExact(picExifDate, "d", dateTimeFormat);
 
@@ -143,12 +158,16 @@ namespace MediaPortal.Picture.Database
               }
             }
           }
-          catch (System.FormatException ex)
+          catch (FormatException ex)
           {
             Log.Error("date conversion exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           }
           iRotation = EXIFOrientationToRotation(Convert.ToInt32(metaData.Orientation.Hex));
         }
+
+        #endregion
+
+        #region Picasa handling
 
         if (File.Exists(Path.GetDirectoryName(strPic) + "\\Picasa.ini"))
         {
@@ -188,7 +207,9 @@ namespace MediaPortal.Picture.Database
             }
           }
         }
-        
+
+        #endregion
+
         // Transactions are a special case for SQLite - they speed things up quite a bit
         strSQL = "begin";
         results = m_db.Execute(strSQL);

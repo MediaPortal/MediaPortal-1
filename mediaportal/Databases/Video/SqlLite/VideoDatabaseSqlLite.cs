@@ -1752,20 +1752,20 @@ namespace MediaPortal.Video.Database
         {
           // doesnt exists, add it
           strSQL = String.Format("insert into actorinfo (idActor , dateofbirth , placeofbirth , minibio , biography ) values( {0},'{1}','{2}','{3}','{4}')",
-            idActor, DatabaseUtility.FilterText(actor.DateOfBirth),
-            DatabaseUtility.FilterText(actor.PlaceOfBirth),
-            DatabaseUtility.FilterText(actor.MiniBiography),
-            DatabaseUtility.FilterText(actor.Biography));
+            idActor, DatabaseUtility.RemoveInvalidChars(actor.DateOfBirth),
+            DatabaseUtility.RemoveInvalidChars(actor.PlaceOfBirth),
+            DatabaseUtility.RemoveInvalidChars(actor.MiniBiography),
+            DatabaseUtility.RemoveInvalidChars(actor.Biography));
           m_db.Execute(strSQL);
         }
         else
         {
           // exists, modify it
           strSQL = String.Format("update actorinfo set dateofbirth='{1}', placeofbirth='{2}' , minibio='{3}' , biography='{4}' where idActor={0}",
-            idActor, DatabaseUtility.FilterText(actor.DateOfBirth),
-            DatabaseUtility.FilterText(actor.PlaceOfBirth),
-            DatabaseUtility.FilterText(actor.MiniBiography),
-            DatabaseUtility.FilterText(actor.Biography));
+            idActor, DatabaseUtility.RemoveInvalidChars(actor.DateOfBirth),
+            DatabaseUtility.RemoveInvalidChars(actor.PlaceOfBirth),
+            DatabaseUtility.RemoveInvalidChars(actor.MiniBiography),
+            DatabaseUtility.RemoveInvalidChars(actor.Biography));
           m_db.Execute(strSQL);
           RemoveActorInfoMovie(idActor);
         }
@@ -1786,12 +1786,12 @@ namespace MediaPortal.Video.Database
     public void AddActorInfoMovie(int idActor, IMDBActor.IMDBActorMovie movie)
     {
       //idActor, idDirector , strPlotOutline , strPlot , strTagLine , strVotes , fRating ,strCast ,strCredits , iYear , strGenre , strPictureURL , strTitle , IMDBID , mpaa ,runtime , iswatched , role 
-      string movieTitle = DatabaseUtility.FilterText(movie.MovieTitle);
+      string movieTitle = DatabaseUtility.RemoveInvalidChars(movie.MovieTitle);
       try
       {
         if (null == m_db) return;
         string strSQL = String.Format("insert into actorinfomovies (idActor, idDirector , strPlotOutline , strPlot , strTagLine , strVotes , fRating ,strCast ,strCredits , iYear , strGenre , strPictureURL , strTitle , IMDBID , mpaa ,runtime , iswatched , role  ) values( {0} ,{1} ,'{2}' , '{3}' , '{4}' , '{5}' , '{6}' ,'{7}' ,'{8}' , {9} , '{10}' , '{11}' , '{12}' , '{13}' ,'{14}',{15} , {16} , '{17}' )",
-                                idActor, -1, "-", "-", "-", "-", "-", "-", "-", movie.Year, "-", "-", movieTitle, "-", "-", -1, 0, DatabaseUtility.FilterText(movie.Role));
+                                idActor, -1, "-", "-", "-", "-", "-", "-", "-", movie.Year, "-", "-", movieTitle, "-", "-", -1, 0, DatabaseUtility.RemoveInvalidChars(movie.Role));
         m_db.Execute(strSQL);
         return;
       }
