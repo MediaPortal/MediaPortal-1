@@ -67,10 +67,10 @@ namespace MediaPortal.Picture.Database
       _database.SetRotation(strPicture, iRotation);
     }
 
-    public DateTime GetDateTaken(string strPicture)
-    {
-      return _database.GetDateTaken(strPicture);
-    }
+    //public DateTime GetDateTaken(string strPicture)
+    //{
+    //  return _database.GetDateTaken(strPicture);
+    //}
 
     public int EXIFOrientationToRotation(int orientation)
     {

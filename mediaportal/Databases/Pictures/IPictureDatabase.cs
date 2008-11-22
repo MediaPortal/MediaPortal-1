@@ -40,7 +40,7 @@ namespace MediaPortal.Picture.Database
     void DeletePicture(string strPicture);
     int GetRotation(string strPicture);
     void SetRotation(string strPicture, int iRotation);
-    DateTime GetDateTaken(string strPicture);
+    //DateTime GetDateTaken(string strPicture);
     int EXIFOrientationToRotation(int orientation);
     void Dispose();
 		int ListYears(ref List<string> Years);

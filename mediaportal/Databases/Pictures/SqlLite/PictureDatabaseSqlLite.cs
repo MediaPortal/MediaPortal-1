@@ -54,7 +54,7 @@ namespace MediaPortal.Picture.Database
 
     [MethodImpl(MethodImplOptions.Synchronized)]
     void Open()
-    {      
+    {
       try
       {
         // Maybe called by an exception
@@ -62,6 +62,7 @@ namespace MediaPortal.Picture.Database
         {
           try
           {
+            m_db.Close();
             m_db.Dispose();
             Log.Warn("PictureDatabaseSqlLite: Disposing current instance..");
           }
@@ -122,93 +123,22 @@ namespace MediaPortal.Picture.Database
           return lPicId;
         }
 
-        #region Exif handling
-
-        //Changed mbuzina
-        using (ExifMetadata extractor = new ExifMetadata())
+        if (!GetExifDetails(strPicture, ref iRotation, ref strDateTaken))
         {
-          ExifMetadata.Metadata metaData = extractor.GetExifMetadata(strPic);
           try
           {
-            //Exception here!!! (very bad since the insert doesn't happen then..
-            //  DateTimeFormatInfo dateTimeFormat = new DateTimeFormatInfo();
-            //  dateTimeFormat.ShortDatePattern = "yyyy:MM:dd HH:mm:ss";            
-            string picExifDate = metaData.DatePictureTaken.DisplayValue;
-            //DateTime dat = DateTime.ParseExact(picExifDate, "d", dateTimeFormat);
-
-            DateTime dat;
-            DateTimeStyles mpPicStyle;
-            mpPicStyle = DateTimeStyles.None;
-            if (picExifDate != null) // If the image contains a valid exif date store it in the database, otherwise use the file date
-            {
-              DateTime.TryParseExact(picExifDate, "G", System.Threading.Thread.CurrentThread.CurrentCulture, mpPicStyle, out dat);
-              strDateTaken = dat.ToString("yyyy-MM-dd HH:mm:ss");
-            }
-            else
-            {
-              try
-              {
-                dat = File.GetLastWriteTime(strPicture);
-                if (!TimeZone.CurrentTimeZone.IsDaylightSavingTime(dat)) dat = dat.AddHours(1); // Try to respect the timezone of the file date
-                strDateTaken = dat.ToString("yyyy-MM-dd HH:mm:ss");
-              }
-              catch (Exception ex)
-              {
-                Log.Error("file date conversion exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-              }
-            }
+            DateTime dat = File.GetLastWriteTime(strPicture);
+            if (!TimeZone.CurrentTimeZone.IsDaylightSavingTime(dat)) dat = dat.AddHours(1); // Try to respect the timezone of the file date
+            strDateTaken = dat.ToString("yyyy-MM-dd HH:mm:ss");
           }
-          catch (FormatException ex)
+          catch (Exception ex)
           {
-            Log.Error("date conversion exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-          }
-          iRotation = EXIFOrientationToRotation(Convert.ToInt32(metaData.Orientation.Hex));
-        }
-
-        #endregion
-
-        #region Picasa handling
-
-        if (File.Exists(Path.GetDirectoryName(strPic) + "\\Picasa.ini"))
-        {
-          using (StreamReader sr = File.OpenText(Path.GetDirectoryName(strPic) + "\\Picasa.ini"))
-          {
-            try
-            {
-              string s = "";
-              bool searching = true;
-              while ((s = sr.ReadLine()) != null && searching)
-              {
-                if (s.ToLower() == "[" + Path.GetFileName(strPic).ToLower() + "]")
-                {
-                  do
-                  {
-                    s = sr.ReadLine();
-                    if (s.StartsWith("rotate=rotate("))
-                    {
-                      // Find out Rotate Setting
-                      try
-                      {
-                        iRotation = int.Parse(s.Substring(14, 1));
-                      }
-                      catch (Exception ex)
-                      {
-                        Log.Error("MyPictures: error converting number picasa.ini", ex.Message, ex.StackTrace);
-                      }
-                      searching = false;
-                    }
-                  } while (s != null && !s.StartsWith("[") && searching);
-                }
-              }
-            }
-            catch (Exception ex)
-            {
-              Log.Error("MyPictures: file read problem picasa.ini", ex.Message, ex.StackTrace);
-            }
+            Log.Error("PictureDatabaseSqlLite: Conversion exception getting file date - err:{0} stack:{1}", ex.Message, ex.StackTrace);
           }
         }
 
-        #endregion
+        if (GetPicasaRotation(strPic, ref iRotation))
+          Log.Debug("PictureDatabaseSqlLite: Changed rotation of image {0} based on picasa file to {1}", strPic, iRotation);
 
         // Transactions are a special case for SQLite - they speed things up quite a bit
         strSQL = "begin";
@@ -226,10 +156,80 @@ namespace MediaPortal.Picture.Database
       }
       catch (Exception ex)
       {
-        Log.Error("MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("PictureDatabaseSqlLite: exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
       return -1;
+    }
+
+    private bool GetExifDetails(string strPicture, ref int iRotation, ref string strDateTaken)
+    {
+      using (ExifMetadata extractor = new ExifMetadata())
+      {
+        ExifMetadata.Metadata metaData = extractor.GetExifMetadata(strPicture);
+        try
+        {
+          string picExifDate = metaData.DatePictureTaken.DisplayValue;
+          if (!String.IsNullOrEmpty(picExifDate)) // If the image contains a valid exif date store it in the database, otherwise use the file date
+          {
+            DateTime dat;
+            DateTime.TryParseExact(picExifDate, "G", System.Threading.Thread.CurrentThread.CurrentCulture, DateTimeStyles.None, out dat);
+            strDateTaken = dat.ToString("yyyy-MM-dd HH:mm:ss");
+            iRotation = EXIFOrientationToRotation(Convert.ToInt32(metaData.Orientation.Hex));
+            return true;
+          }
+        }
+        catch (FormatException ex)
+        {
+          Log.Error("PictureDatabaseSqlLite: Exif date conversion exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        }
+      }
+      return false;
+    }
+
+    private bool GetPicasaRotation(string strPic, ref int iRotation)
+    {
+      bool foundValue = false;
+      if (File.Exists(Path.GetDirectoryName(strPic) + "\\Picasa.ini"))
+      {
+        using (StreamReader sr = File.OpenText(Path.GetDirectoryName(strPic) + "\\Picasa.ini"))
+        {
+          try
+          {
+            string s = "";
+            bool searching = true;
+            while ((s = sr.ReadLine()) != null && searching)
+            {
+              if (s.ToLower() == "[" + Path.GetFileName(strPic).ToLower() + "]")
+              {
+                do
+                {
+                  s = sr.ReadLine();
+                  if (s.StartsWith("rotate=rotate("))
+                  {
+                    // Find out Rotate Setting
+                    try
+                    {
+                      iRotation = int.Parse(s.Substring(14, 1));
+                      foundValue = true;
+                    }
+                    catch (Exception ex)
+                    {
+                      Log.Error("MyPictures: error converting number picasa.ini", ex.Message, ex.StackTrace);
+                    }
+                    searching = false;
+                  }
+                } while (s != null && !s.StartsWith("[") && searching);
+              }
+            }
+          }
+          catch (Exception ex)
+          {
+            Log.Error("MyPictures: file read problem picasa.ini", ex.Message, ex.StackTrace);
+          }
+        }
+      }
+      return foundValue;
     }
 
     public void DeletePicture(string strPicture)
@@ -311,56 +311,56 @@ namespace MediaPortal.Picture.Database
       }
     }
 
-    //Changed mbuzina
-    public DateTime GetDateTaken(string strPicture)
-    {
-      lock (typeof(PictureDatabase))
-      {
-        if (m_db == null) return DateTime.MinValue;
-        string strSQL = "";
-        try
-        {
-          SQLiteResultSet results;
-          string strPic = strPicture;
-          string strDateTime;
-          DatabaseUtility.RemoveInvalidChars(ref strPic);
+    ////Changed mbuzina
+    //public DateTime GetDateTaken(string strPicture)
+    //{
+    //  lock (typeof(PictureDatabase))
+    //  {
+    //    if (m_db == null) return DateTime.MinValue;
+    //    string strSQL = "";
+    //    try
+    //    {
+    //      SQLiteResultSet results;
+    //      string strPic = strPicture;
+    //      string strDateTime;
+    //      DatabaseUtility.RemoveInvalidChars(ref strPic);
 
-          strSQL = String.Format("select * from picture where strFile like '{0}'", strPic);
-          results = m_db.Execute(strSQL);
-          if (results != null && results.Rows.Count > 0)
-          {
-            strDateTime = DatabaseUtility.Get(results, 0, "strDateTaken");
-            if (strDateTime != string.Empty && strDateTime != "")
-            {
-              DateTime dtDateTime = DateTime.ParseExact(strDateTime, "yyyy-MM-dd HH:mm:ss", new System.Globalization.CultureInfo(""));
-              return dtDateTime;
-            }
-          }
-          AddPicture(strPicture, -1);
-          using (ExifMetadata extractor = new ExifMetadata())
-          {
-            ExifMetadata.Metadata metaData = extractor.GetExifMetadata(strPic);
-            strDateTime = System.DateTime.Parse(metaData.DatePictureTaken.DisplayValue).ToString("yyyy-MM-dd HH:mm:ss");
-          }
-          if (strDateTime != string.Empty && strDateTime != "")
-          {
-            DateTime dtDateTime = DateTime.ParseExact(strDateTime, "yyyy-MM-dd HH:mm:ss", new System.Globalization.CultureInfo(""));
-            return dtDateTime;
-          }
-          else
-          {
-            return DateTime.MinValue;
-          }
-        }
-        catch (Exception ex)
-        {
-          Log.Error("MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-          Open();
-        }
-        return DateTime.MinValue;
-      }
-    }
-    //End Changed
+    //      strSQL = String.Format("select * from picture where strFile like '{0}'", strPic);
+    //      results = m_db.Execute(strSQL);
+    //      if (results != null && results.Rows.Count > 0)
+    //      {
+    //        strDateTime = DatabaseUtility.Get(results, 0, "strDateTaken");
+    //        if (strDateTime != string.Empty && strDateTime != "")
+    //        {
+    //          DateTime dtDateTime = DateTime.ParseExact(strDateTime, "yyyy-MM-dd HH:mm:ss", new System.Globalization.CultureInfo(""));
+    //          return dtDateTime;
+    //        }
+    //      }
+    //      AddPicture(strPicture, -1);
+    //      using (ExifMetadata extractor = new ExifMetadata())
+    //      {
+    //        ExifMetadata.Metadata metaData = extractor.GetExifMetadata(strPic);
+    //        strDateTime = System.DateTime.Parse(metaData.DatePictureTaken.DisplayValue).ToString("yyyy-MM-dd HH:mm:ss");
+    //      }
+    //      if (strDateTime != string.Empty && strDateTime != "")
+    //      {
+    //        DateTime dtDateTime = DateTime.ParseExact(strDateTime, "yyyy-MM-dd HH:mm:ss", new System.Globalization.CultureInfo(""));
+    //        return dtDateTime;
+    //      }
+    //      else
+    //      {
+    //        return DateTime.MinValue;
+    //      }
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //      Log.Error("MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+    //      Open();
+    //    }
+    //    return DateTime.MinValue;
+    //  }
+    //}
+    ////End Changed
 
     public int EXIFOrientationToRotation(int orientation)
     {
