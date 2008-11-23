@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>9004</id>
+  <defaultcontrol>20</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:109004</define>
+  <define>#background.image:background3.png</define>
+  <define>#header.image:Back_setting.png</define>
+  <controls>
+    <import>common.window.xml</import>
+    <control>
+      <description>button group</description>
+      <type>group</type>
+      <posX>5</posX>
+      <posY>125</posY>
+      <layout>StackLayout</layout>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <control>
+        <description>Use Equalizer</description>
+        <type>togglebutton</type>
+        <id>20</id>
+        <label>9132</label>
+        <onup>17</onup>
+      </control>
+      <control>
+        <description>Equalizer Style</description>
+        <type>selectbutton</type>
+        <id>21</id>
+        <label>9133</label>
+      </control>
+      <control>
+        <description>Use Equalizer Smoothing</description>
+        <type>togglebutton</type>
+        <id>22</id>
+        <label>9134</label>
+      </control>
+      <control>
+        <description>Delay Start</description>
+        <type>togglebutton</type>
+        <id>23</id>
+        <label>9135</label>
+      </control>
+      <control>
+        <description>Delay Time</description>
+        <type>selectbutton</type>
+        <id>24</id>
+        <label>9136</label>
+      </control>
+      <control>
+        <description>Show Title</description>
+        <type>togglebutton</type>
+        <id>25</id>
+        <label>9137</label>
+      </control>
+      <control>
+        <description>Title Time</description>
+        <type>selectbutton</type>
+        <id>26</id>
+        <label>9138</label>
+      </control>
+      <control>
+        <description>Title Frequency</description>
+        <type>selectbutton</type>
+        <id>27</id>
+        <label>9139</label>
+      </control>
+    </control>
+  </controls>
+</window>

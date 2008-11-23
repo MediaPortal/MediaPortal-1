@@ -72,6 +72,13 @@
         <id>10</id>
         <label>605</label>
         <hyperlink>700</hyperlink>
+      </control>
+      <control>
+        <description>MiniDisplay</description>
+        <type>button</type>
+        <id>11</id>
+        <label>9100</label>
+        <hyperlink>9000</hyperlink>
         <ondown>3</ondown>
       </control>
     </control>

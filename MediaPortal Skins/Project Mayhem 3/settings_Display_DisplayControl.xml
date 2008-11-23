@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>9002</id>
+  <defaultcontrol>40</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:109002</define>
+  <define>#background.image:background3.png</define>
+  <define>#header.image:Back_setting.png</define>
+  <controls>
+    <import>common.window.xml</import>
+    <control>
+      <description>button group</description>
+      <type>group</type>
+      <posX>5</posX>
+      <posY>125</posY>
+      <layout>StackLayout</layout>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <control>
+        <description>Blank Display with Video</description>
+        <type>togglebutton</type>
+        <id>40</id>
+        <label>9116</label>
+        <onup>17</onup>
+      </control>
+      <control>
+        <description>Enable Display Actions</description>
+        <type>togglebutton</type>
+        <id>41</id>
+        <label>9117</label>
+      </control>
+      <control>
+        <description>Action Display Time</description>
+        <type>selectbutton</type>
+        <id>42</id>
+        <label>9118</label>
+      </control>
+      <control>
+        <description>Blank Display on Idle</description>
+        <type>togglebutton</type>
+        <id>43</id>
+        <label>9119</label>
+      </control>
+      <control>
+        <description>Idle Delay</description>
+        <type>selectbutton</type>
+        <id>44</id>
+        <label>9120</label>
+        <ondown>99</ondown>
+      </control>
+    </control>
+  </controls>
+</window>
