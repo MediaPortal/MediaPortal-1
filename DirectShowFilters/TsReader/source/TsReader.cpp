@@ -465,6 +465,7 @@ STDMETHODIMP CTsReaderFilter::Pause()
         m_demultiplexer.SetHoldVideo(true);
         m_demultiplexer.SetHoldSubtitle(true);
         double startTime=m_seekTime.Millisecs();
+        startTime/=1000.0f;
 
         //clear buffers
         m_demultiplexer.Flush();

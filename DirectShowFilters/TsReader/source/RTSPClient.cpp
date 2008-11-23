@@ -91,7 +91,7 @@ Boolean CRTSPClient::clientStartPlayingSession(Medium* client,MediaSession* sess
   {
     m_fStart=dur+5;
   }
-	LogDebug("CRTSPClient::clientStartPlayingSession() play from %d / %d",(int)m_fStart,(int)m_duration);
+  LogDebug("CRTSPClient::clientStartPlayingSession() play from %.3f / %.3f",m_fStart,(float)m_duration/1000);
   return rtspClient->playMediaSession(*session,m_fStart);
 
 }
