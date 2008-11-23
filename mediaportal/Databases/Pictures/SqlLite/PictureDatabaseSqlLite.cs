@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Globalization;
 using System.IO;
+using System.Threading;
 using SQLite.NET;
 using MediaPortal.Util;
 using MediaPortal.GUI.Library;
