@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>9006</id>
+  <defaultcontrol>50</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:MiniDisplay - DebugForm
+Remote Control Options</define>
+  <define>#header.image:settings_logo.png</define>
+  <define>#header.hover:hover_settings.png</define>
+  <!-- cheat a little, we don't use two of the items in the imported file to blank their labels -->
+  <define>#itemcount:-</define>
+  <define>#selecteditem:-</define>
+  <controls>
+    <import>common.window.xml</import>
+    <control>
+      <description>buttons</description>
+      <type>group</type>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="slide" time="150" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="250" end="-300,0">WindowClose</animation>
+      <posX>497</posX>
+      <posY>206</posY>
+      <layout>StackLayout</layout>
+      <control>
+        <description>NO REMOTE OPTIONS</description>
+        <type>label</type>
+        <id>40</id>
+        <width>300</width>
+        <label>9144</label>
+        <onup>17</onup>
+      </control>
+	  <control>
+        <description>Disable Remote</description>
+        <type>togglebutton</type>
+        <id>50</id>
+        <width>300</width>
+        <label>9145</label>
+      </control>
+	  <control>
+        <description>Disable Repeat</description>
+        <type>togglebutton</type>
+        <id>51</id>
+        <width>300</width>
+        <label>9146</label>
+      </control>
+      <control>
+        <description>Repeat Delay</description>
+        <type>selectbutton</type>
+        <id>52</id>
+        <width>300</width>
+        <label>9147</label>
+      </control>
+      <control>
+        <description>Remote Mapping</description>
+        <type>button</type>
+        <id>53</id>
+        <width>300</width>
+        <label>9148</label>
+      </control>
+    </control>
+  </controls>
+</window>
