@@ -4,8 +4,7 @@
   <id>9005</id>
   <defaultcontrol>60</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
-  <define>#header.label:MiniDisplay - DebugForm
-KeyPad Options</define>
+  <define>#header.label:109005</define>
   <define>#header.image:settings_logo.png</define>
   <define>#header.hover:hover_settings.png</define>
   <!-- cheat a little, we don't use two of the items in the imported file to blank their labels -->

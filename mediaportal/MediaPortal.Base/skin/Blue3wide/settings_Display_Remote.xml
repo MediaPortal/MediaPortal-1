@@ -4,8 +4,7 @@
   <id>9006</id>
   <defaultcontrol>50</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
-  <define>#header.label:MiniDisplay - DebugForm
-Remote Control Options</define>
+  <define>#header.label:109006</define>
   <define>#header.image:settings_logo.png</define>
   <define>#header.hover:hover_settings.png</define>
   <!-- cheat a little, we don't use two of the items in the imported file to blank their labels -->
