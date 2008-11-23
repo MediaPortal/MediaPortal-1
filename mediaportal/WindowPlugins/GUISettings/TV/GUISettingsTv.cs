@@ -56,6 +56,8 @@ namespace WindowPlugins.GUISettings.TV
     protected GUIButtonControl btnAutoTurnOnTS = null;
     [SkinControlAttribute(31)]
     protected GUIButtonControl btnRecordingOptions = null;
+    [SkinControlAttribute(32)]
+    protected GUIButtonControl btnChannelSorting = null;
     [SkinControlAttribute(33)]
     protected GUIButtonControl btnAudioRenderer = null;
     [SkinControlAttribute(34)]
@@ -87,6 +89,7 @@ namespace WindowPlugins.GUISettings.TV
         btnRecordingOptions.Visible = false;
         btnEpg.Visible = false;
         btnXMLEpg.Visible = false;
+        btnChannelSorting.Visible = false;
       }
     }
 
