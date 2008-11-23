@@ -18,7 +18,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     private bool IDisplayToMCE = false;
     private Thread mainThread;
     private MCESession mediaSession = new HomeSession();
-    private MiniDisplay.SystemStatus MPStatus = new MiniDisplay.SystemStatus();
+    private SystemStatus MPStatus = new SystemStatus();
     private bool playSwitched;
     private static bool stopRequested = false;
     private static object ThreadMutex = new object();
@@ -79,7 +79,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         if (this.playSwitched)
         {
           Thread.Sleep(100);
-          MiniDisplay.GetSystemStatus(ref this.MPStatus);
+          MiniDisplayHelper.GetSystemStatus(ref this.MPStatus);
           if (this.mediaSession != null)
           {
             this.mediaSession.Dispose();
@@ -233,7 +233,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     public class HomeSession : MCEDisplay.MCESession
     {
-      private MiniDisplay.SystemStatus MPStatus = new MiniDisplay.SystemStatus();
+      private SystemStatus MPStatus = new SystemStatus();
       private MediaStatusPropertyTag oldMenu;
       private string oldTitle = string.Empty;
 
@@ -259,7 +259,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       public override void Process()
       {
         MediaStatusPropertyTag tag;
-        MiniDisplay.GetSystemStatus(ref this.MPStatus);
+        MiniDisplayHelper.GetSystemStatus(ref this.MPStatus);
         switch (GUIWindowManager.ActiveWindow)
         {
           case 0:
@@ -508,7 +508,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       private int LastPlayState;
       private string LastPlayTime;
-      private MiniDisplay.SystemStatus MPStatus = new MiniDisplay.SystemStatus();
+      private SystemStatus MPStatus = new SystemStatus();
 
       public MusicSession()
       {
@@ -549,7 +549,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         object[] vals = new object[0];
         string property = GUIPropertyManager.GetProperty("#currentplaytime");
         int num = base.Duration2Int(property);
-        MiniDisplay.GetSystemStatus(ref this.MPStatus);
+        MiniDisplayHelper.GetSystemStatus(ref this.MPStatus);
         int num2 = -1;
         if (this.MPStatus.MediaPlayer_Paused)
         {
@@ -885,7 +885,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     public class VideoSession : MCEDisplay.MCESession
     {
       private int LastPlayState;
-      private MiniDisplay.SystemStatus MPStatus = new MiniDisplay.SystemStatus();
+      private SystemStatus MPStatus = new SystemStatus();
 
       public VideoSession()
       {
@@ -923,7 +923,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         MediaStatusPropertyTag[] tags = null;
         object[] vals = null;
         base.SetStatus(tags, vals);
-        MiniDisplay.GetSystemStatus(ref this.MPStatus);
+        MiniDisplayHelper.GetSystemStatus(ref this.MPStatus);
         int num = -1;
         if (this.MPStatus.MediaPlayer_Paused)
         {

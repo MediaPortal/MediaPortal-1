@@ -836,10 +836,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       private bool _isOpen;
       public static bool _mpIsIdle;
       private MatrixGX.AdvancedSettings AdvSettings;
-      private MiniDisplay.DisplayControl DisplaySettings;
+      private DisplayControl DisplaySettings;
       private bool DoDebug;
       private object DWriteMutex = new object();
-      private MiniDisplay.EQControl EQSettings;
+      private EQControl EQSettings;
       private DCClient GX_Client;
       private DCCClientDeviceList GX_Devices;
       private Graphics GX_Graphics;
@@ -849,7 +849,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       private readonly uint ICON_DVDIn = 0x55;
       private string IdleMessage = ((MediaPortal.ProcessPlugins.MiniDisplayPlugin.Settings.Instance.IdleMessage != string.Empty) ? MediaPortal.ProcessPlugins.MiniDisplayPlugin.Settings.Instance.IdleMessage : "MediaPortal");
       private MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers.MatrixGX.MOGX_Control MOGX_Control = new MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers.MatrixGX.MOGX_Control();
-      private MiniDisplay.SystemStatus MPStatus = new MiniDisplay.SystemStatus();
+      private SystemStatus MPStatus = new SystemStatus();
       private bool stopDisplayUpdateThread;
       private object StopMutex = new object();
 
@@ -998,7 +998,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             }
             this.EQSettings.Render_MaxValue = (this.EQSettings.UseNormalEq | this.EQSettings.UseStereoEq) ? ((int)textBounds.Height) : ((int)textBounds.Width);
             this.EQSettings.Render_BANDS = this.EQSettings.UseNormalEq ? 0x10 : (this.EQSettings.UseStereoEq ? 8 : 1);
-            MiniDisplay.ProcessEqData(ref this.EQSettings);
+            MiniDisplayHelper.ProcessEqData(ref this.EQSettings);
             Monitor.Enter(obj3 = this.DWriteMutex);
             try
             {
@@ -1146,7 +1146,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               return;
             }
           }
-          MiniDisplay.GetSystemStatus(ref this.MPStatus);
+          MiniDisplayHelper.GetSystemStatus(ref this.MPStatus);
           flag = !flag;
           int num3 = num2;
           int num4 = 0;
@@ -1157,7 +1157,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Collecting status...", new object[0]);
           }
-          if (MiniDisplay.IsCaptureCardRecording())
+          if (MiniDisplayHelper.IsCaptureCardRecording())
           {
             num5 |= 0x2000;
             num4 = 5;
@@ -1555,7 +1555,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         if ((!(!MatrixGX._useProgressDisplay & !MatrixGX._useVolumeDisplay) && !this._isClosing) && (!this.DisplaySettings.BlankDisplayWithVideo || !this._IsDisplayOff))
         {
           Log.Debug("MatrixGX.MOGXDisplay.DrawProgressBars() - called", new object[0]);
-          MiniDisplay.GetSystemStatus(ref this.MPStatus);
+          MiniDisplayHelper.GetSystemStatus(ref this.MPStatus);
           int num = ((int)this.GetTextBounds().Width) - 1;
           if ((this.MPStatus.MediaPlayer_Playing & MatrixGX._useVolumeDisplay) && !this.MPStatus.IsMuted)
           {
@@ -1582,7 +1582,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         lock (this.DWriteMutex)
         {
-          this.EQSettings._EqDataAvailable = MiniDisplay.GetEQ(ref this.EQSettings);
+          this.EQSettings._EqDataAvailable = MiniDisplayHelper.GetEQ(ref this.EQSettings);
           if (this.EQSettings._EqDataAvailable)
           {
             this._displayThread.Priority = ThreadPriority.AboveNormal;
@@ -1652,8 +1652,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         Log.Info("MatrixGX.MOGXDisplay.OpenDisplay() - called", new object[0]);
         this.AdvSettings = UseSettings;
-        MiniDisplay.InitEQ(ref this.EQSettings);
-        MiniDisplay.InitDisplayControl(ref this.DisplaySettings);
+        MiniDisplayHelper.InitEQ(ref this.EQSettings);
+        MiniDisplayHelper.InitDisplayControl(ref this.DisplaySettings);
         this.ParseAdvancedSettings();
         try
         {

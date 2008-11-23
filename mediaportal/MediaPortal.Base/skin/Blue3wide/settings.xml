@@ -86,6 +86,14 @@
         <width>350</width>
         <label>2</label>
         <hyperlink>14</hyperlink>
+      </control>
+      <control>
+        <description>MiniDisplay</description>
+        <type>button</type>
+        <id>11</id>
+        <width>350</width>
+        <label>9100</label>
+        <hyperlink>9000</hyperlink>
         <ondown>99</ondown>
       </control>
     </control>

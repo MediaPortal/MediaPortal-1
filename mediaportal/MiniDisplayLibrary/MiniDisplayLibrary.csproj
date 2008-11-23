@@ -6,7 +6,7 @@
     <ProjectGuid>{8635D515-A5D4-4FB7-BD30-71770651E18B}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <AssemblyName>MiniDisplayPlugin</AssemblyName>
+    <AssemblyName>MiniDisplayLibrary</AssemblyName>
     <DefaultClientScript>JScript</DefaultClientScript>
     <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
     <DefaultTargetSchema>IE50</DefaultTargetSchema>
@@ -16,6 +16,7 @@
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
+    <RootNamespace>MediaPortal.ProcessPlugins.MiniDisplayPlugin</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>bin\Debug\</OutputPath>
@@ -97,9 +98,8 @@
     <Compile Include="MiniDisplayPlugin\ByteArray.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MiniDisplayPlugin\MiniDisplay.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="MiniDisplayPlugin\MiniDisplayHelper.cs" />
+    <Compile Include="MiniDisplayPlugin\DynaInvoke.cs" />
     <Compile Include="MiniDisplayPlugin\DisplayHandler.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -187,33 +187,13 @@
     <Compile Include="MiniDisplayPlugin\Drivers\xPL_Connector_AdvancedSetupForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MiniDisplayPlugin\GUI_SettingsBacklight.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="MiniDisplayPlugin\GUI_SettingsDisplayControl.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="MiniDisplayPlugin\GUI_SettingsDisplayOptions.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="MiniDisplayPlugin\GUI_SettingsEqualizer.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="MiniDisplayPlugin\GUI_SettingsKeyPad.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="MiniDisplayPlugin\GUI_SettingsMain.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="MiniDisplayPlugin\GUI_SettingsRemote.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="MiniDisplayPlugin\IDisplay.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="MiniDisplayPlugin\MessageEditForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="MiniDisplayPlugin\Structures.cs" />
     <Compile Include="MiniDisplayPlugin\Properties\Resources.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -271,9 +251,6 @@
     <Compile Include="MiniDisplayPlugin\Setting\Value.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MiniDisplayPlugin\SetupForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="MiniDisplayPlugin\Status.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -322,8 +299,6 @@
     <Compile Include="xPL\XplSource.cs">
       <SubType>Code</SubType>
     </Compile>
-    <EmbeddedResource Include="MiniDisplay.lcd.gif" />
-    <EmbeddedResource Include="MiniDisplay.lcd_deactivated.gif" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj">

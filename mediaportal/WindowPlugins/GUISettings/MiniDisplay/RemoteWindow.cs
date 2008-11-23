@@ -1,70 +1,85 @@
-﻿using System;
+﻿#region Copyright (C) 2005-2008 Team MediaPortal
+
+/* 
+ *	Copyright (C) 2005-2008 Team MediaPortal
+ *	http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+
+#endregion
+
+using System;
 using System.IO;
 using MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.InputDevices;
 
-namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
+namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
 {
-  public class GUI_SettingsRemote : GUIWindow
+  public class RemoteWindow : GUIWindow
   {
-    [SkinControl(50)]
-    protected GUIToggleButtonControl btnDisableRemote = new GUIToggleButtonControl(0x4daa);
-    [SkinControl(0x33)]
-    protected GUIToggleButtonControl btnDisableRepeat = new GUIToggleButtonControl(0x4daa);
-    [SkinControl(0x35)]
-    protected GUIButtonControl btnRemoteMapping = new GUIButtonControl(0x4daa);
-    [SkinControl(0x34)]
-    protected GUISelectButtonControl btnRepeatDelay;
+    [SkinControlAttribute(40)]
+    protected GUILabelControl label1 = null;
+    [SkinControlAttribute(50)]
+    protected GUIToggleButtonControl btnDisableRemote = null;
+    [SkinControlAttribute(51)]
+    protected GUIToggleButtonControl btnDisableRepeat = null;
+    [SkinControlAttribute(52)]
+    protected GUISelectButtonControl btnRepeatDelay = null;
+    [SkinControlAttribute(53)]
+    protected GUIButtonControl btnRemoteMapping =null;
+
     private VLSYS_Mplay.RemoteControl RCSettings = new VLSYS_Mplay.RemoteControl();
-    private bool selectedDisableRemote;
-    private bool selectedDisableRepeat;
-    private int selectedRepeatDelayIndex;
 
-    public GUI_SettingsRemote()
+    public RemoteWindow()
     {
-      this.GetID = 0x4daa;
-    }
-
-    private void BackupButtons()
-    {
-      this.selectedDisableRemote = this.btnDisableRemote.Selected;
-      this.selectedDisableRepeat = this.btnDisableRepeat.Selected;
-      this.selectedRepeatDelayIndex = this.btnRepeatDelay.SelectedItem;
+      this.GetID = 9006;
     }
 
     public override bool Init()
     {
-      this.Restore();
-      return this.Load(XMLUTILS.Create_GUI_Menu(XMLUTILS.GUIMenu.Remote));
+      return Load(GUIGraphicsContext.Skin + @"\settings_Display_Remote.xml");
     }
 
     private void LoadSettings()
     {
       this.RCSettings = XMLUTILS.LoadRemoteSettings();
-    }
-
-    public override void OnAdded()
-    {
-      Log.Info("MiniDisplay.GUI_SettingsRemote.OnAdded(): Window {0} added to window manager", new object[] { this.GetID });
-      base.OnAdded();
+      this.SetDisableRemote();
+      this.SetDisableRepeat();
+      this.SetRepeatDelay();
     }
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       if (control == this.btnDisableRemote)
       {
-        this.OnDisableRemoteChanged();
+        this.SaveSettings();
+        this.SetButtons();
       }
       if (control == this.btnDisableRepeat)
       {
-        this.OnDisableRepeatChanged();
+        this.SaveSettings();
+        this.SetButtons();
       }
       if (control == this.btnRepeatDelay)
       {
-        this.OnRepeatDelayChanged();
-        GUIControl.FocusControl(this.GetID, controlId);
+        this.SaveSettings();
       }
       if (control == this.btnRemoteMapping)
       {
@@ -83,68 +98,34 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       base.OnClicked(controlId, control, actionType);
     }
 
-    private void OnDisableRemoteChanged()
-    {
-      this.BackupButtons();
-      this.SaveSettings();
-      XMLUTILS.Create_GUI_Menu(XMLUTILS.GUIMenu.Remote);
-      this.Restore();
-      GUIControl.FocusControl(this.GetID, this.btnDisableRemote.GetID);
-      this.RestoreButtons();
-    }
-
-    private void OnDisableRepeatChanged()
-    {
-      this.BackupButtons();
-      this.SaveSettings();
-      XMLUTILS.Create_GUI_Menu(XMLUTILS.GUIMenu.Remote);
-      this.Restore();
-      GUIControl.FocusControl(this.GetID, this.btnDisableRepeat.GetID);
-      this.RestoreButtons();
-    }
-
     protected override void OnPageDestroy(int newWindowId)
     {
       this.SaveSettings();
       base.OnPageDestroy(newWindowId);
-      XMLUTILS.Delete_GUI_Menu(XMLUTILS.GUIMenu.Remote);
+    }
+
+    public override bool OnMessage(GUIMessage message)
+    {
+      if (!base.OnMessage(message))
+      {
+        return false;
+      }
+      switch (message.Message)
+      {
+        case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
+          LoadSettings();
+          SetButtons();
+          break;
+      }
+      return true;
     }
 
     protected override void OnPageLoad()
     {
-      this.Load(XMLUTILS.Create_GUI_Menu(XMLUTILS.GUIMenu.Remote));
-      this.Restore();
-      base.LoadSkin();
       base.OnPageLoad();
       this.LoadSettings();
-      this.SetDisableRemote();
-      this.SetDisableRepeat();
-      this.SetRepeatDelay();
       GUIControl.FocusControl(this.GetID, this.btnDisableRemote.GetID);
-      GUIPropertyManager.SetProperty("#currentmodule", "MiniDisplay Remote Control Setup");
-    }
-
-    private void OnRepeatDelayChanged()
-    {
-      this.BackupButtons();
-      this.SaveSettings();
-      this.RestoreButtons();
-    }
-
-    private void RestoreButtons()
-    {
-      if (this.selectedDisableRemote)
-      {
-        GUIControl.SelectControl(this.GetID, this.btnDisableRemote.GetID);
-      }
-      if (this.selectedDisableRepeat)
-      {
-        GUIControl.SelectControl(this.GetID, this.btnDisableRepeat.GetID);
-      }
-      if (this.btnRepeatDelay != null)
-      {
-        this.SetRepeatDelay();
-      }
+      GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(109006));
     }
 
     private void SaveSettings()
@@ -170,7 +151,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
     private void SetRepeatDelay()
     {
-      if (!this.RCSettings.DisableRemote & !this.RCSettings.DisableRepeat)
+      if (btnRepeatDelay !=null)
       {
         GUIControl.ClearControl(this.GetID, this.btnRepeatDelay.GetID);
         GUIControl.AddItemLabelControl(this.GetID, this.btnRepeatDelay.GetID, "0");
@@ -196,6 +177,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         GUIControl.AddItemLabelControl(this.GetID, this.btnRepeatDelay.GetID, "500");
         GUIControl.SelectItemControl(this.GetID, this.btnRepeatDelay.GetID, this.RCSettings.RepeatDelay);
       }
+    }
+
+    private void SetButtons()
+    {
+      RemoteLayout layout = XMLUTILS.GetRemoteLayout(RCSettings);
+      label1.Visible = layout.Label1;
+      btnDisableRemote.Visible = layout.DisableRemote;
+      btnDisableRepeat.Visible = layout.DisableRepeat;
+      btnRepeatDelay.Visible = layout.RepeatDelay;
+      btnRemoteMapping.Visible = layout.RemoteMapping;
     }
   }
 }

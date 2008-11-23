@@ -34,16 +34,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     private int _Tcols;
     private int _Trows;
     private bool _UseKeypad;
-    private MiniDisplay.DisplayControl DisplaySettings;
+    private DisplayControl DisplaySettings;
     private bool DoDebug = Assembly.GetEntryAssembly().FullName.Contains("Configuration");
     private object DWriteMutex = new object();
-    private MiniDisplay.EQControl EQSettings;
+    private EQControl EQSettings;
     private object EqWriteMutex = new object();
     private string IdleMessage = string.Empty;
     private KeyPadControl KPSettings;
     private DateTime LastSettingsCheck = DateTime.Now;
     private readonly MODisplay MOD = new MODisplay();
-    private MiniDisplay.SystemStatus MPStatus = new MiniDisplay.SystemStatus();
+    private SystemStatus MPStatus = new SystemStatus();
     private DateTime SettingsLastModTime;
     private object ThreadMutex = new object();
 
@@ -128,7 +128,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             this.EQSettings.Render_BANDS = 0x10;
           }
         }
-        MiniDisplay.ProcessEqData(ref this.EQSettings);
+        MiniDisplayHelper.ProcessEqData(ref this.EQSettings);
         this.RenderEQ(this.EQSettings.EqArray);
         this.EQSettings._LastEQupdate = DateTime.Now;
       }
@@ -223,7 +223,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             _stopUpdateEqThread = false;
             return;
           }
-          MiniDisplay.GetSystemStatus(ref this.MPStatus);
+          MiniDisplayHelper.GetSystemStatus(ref this.MPStatus);
           if ((!this.MPStatus.MediaPlayer_Active & this.DisplaySettings.BlankDisplayWithVideo) & (this.DisplaySettings.BlankDisplayWhenIdle & !this._mpIsIdle))
           {
             this.DisplayOn();
@@ -265,7 +265,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       lock (this.DWriteMutex)
       {
-        this.EQSettings._EqDataAvailable = MiniDisplay.GetEQ(ref this.EQSettings);
+        this.EQSettings._EqDataAvailable = MiniDisplayHelper.GetEQ(ref this.EQSettings);
         if (this.EQSettings._EqDataAvailable)
         {
           this._EqThread.Priority = ThreadPriority.AboveNormal;
@@ -467,7 +467,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       else
       {
         this.UpdateAdvancedSettings();
-        MiniDisplay.GetSystemStatus(ref this.MPStatus);
+        MiniDisplayHelper.GetSystemStatus(ref this.MPStatus);
         if (this.DoDebug)
         {
           Log.Info("MatrixMX.SetLine() Called", new object[0]);
@@ -538,8 +538,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.DoDebug = Assembly.GetEntryAssembly().FullName.Contains("Configuration") | Settings.Instance.ExtensiveLogging;
       Log.Info("{0}", new object[] { this.Description });
       Log.Info("MatrixMX.Setup(): called", new object[0]);
-      MiniDisplay.InitEQ(ref this.EQSettings);
-      MiniDisplay.InitDisplayControl(ref this.DisplaySettings);
+      MiniDisplayHelper.InitEQ(ref this.EQSettings);
+      MiniDisplayHelper.InitDisplayControl(ref this.DisplaySettings);
       this.InitKeyPadSettings(ref this.KPSettings);
       this._BlankDisplayOnExit = _blankOnExit;
       this._BackLightControl = _useBackLight;

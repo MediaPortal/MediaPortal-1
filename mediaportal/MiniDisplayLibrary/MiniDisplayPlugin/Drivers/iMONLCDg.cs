@@ -138,13 +138,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     private CustomFont CFont;
     private readonly BitmapConverter converter = new BitmapConverter(true);
     private LargeIcon CustomLargeIcon;
-    private MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplay.DisplayOptions DisplayOptions;
-    private MiniDisplay.DisplayControl DisplaySettings;
+    private DisplayOptions DisplayOptions;
+    private DisplayControl DisplaySettings;
     private bool DoDebug;
     private static DeviceVolumeMonitor DVM;
     private bool DVMactive;
     private static object DWriteMutex = new object();
-    private MiniDisplay.EQControl EQSettings;
+    private EQControl EQSettings;
     private string IdleMessage = string.Empty;
     //private char IMON_CHAR_1_BAR;
     //private char IMON_CHAR_2_BARS = '\x0001';
@@ -196,7 +196,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
          };
     private static int[] MCEModifierToKeyModifier = new int[] { 0, 0x20000, 0x10000, 0, 0x40000, 0, 0, 0, 0x5b, 0, 0, 0, 0, 0, 0, 0 };
     private static string[] MCEModifierToModifierString = new string[] { "*", "^{*}", "+{*}", "^{+{*}}", "%{*}", "%{^{*}}", "%{+{*}}", "%{^{+{*}}}", "*", "^{*}", "+{*}", "+{^{*}}", "%{*}", "%{^{*}}", "%{+{*}}", "%{+{^{*}}}" };
-    private MiniDisplay.SystemStatus MPStatus = new MiniDisplay.SystemStatus();
+    private SystemStatus MPStatus = new SystemStatus();
     private DateTime NullTime;
     private int progLevel;
     private static object RemoteMutex = new object();
@@ -905,7 +905,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             this.EQSettings.Render_MaxValue = 6;
             this.EQSettings.EqArray[0] = 0;
           }
-          MiniDisplay.ProcessEqData(ref this.EQSettings);
+          MiniDisplayHelper.ProcessEqData(ref this.EQSettings);
           for (int i = 0; i < this.EQSettings.Render_BANDS; i++)
           {
             switch (this.EQSettings.EqArray[0])
@@ -943,7 +943,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             this.EQSettings.Render_MaxValue = 0x4b;
           }
-          MiniDisplay.ProcessEqData(ref this.EQSettings);
+          MiniDisplayHelper.ProcessEqData(ref this.EQSettings);
         }
       }
       else
@@ -961,7 +961,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           this.EQSettings.Render_MaxValue = 6;
           this.EQSettings.EqArray[0] = 0;
         }
-        MiniDisplay.ProcessEqData(ref this.EQSettings);
+        MiniDisplayHelper.ProcessEqData(ref this.EQSettings);
         for (int k = 0; k < this.EQSettings.Render_BANDS; k++)
         {
           switch (this.EQSettings.EqArray[0])
@@ -1046,7 +1046,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
       try
       {
-        MiniDisplay.GetSystemStatus(ref this.MPStatus);
+        MiniDisplayHelper.GetSystemStatus(ref this.MPStatus);
         this.Check_Idle_State();
         if (this.EQSettings._EqDataAvailable || this._IsDisplayOff)
         {
@@ -1929,7 +1929,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       lock (DWriteMutex)
       {
-        this.EQSettings._EqDataAvailable = MiniDisplay.GetEQ(ref this.EQSettings);
+        this.EQSettings._EqDataAvailable = MiniDisplayHelper.GetEQ(ref this.EQSettings);
         if (this.EQSettings._EqDataAvailable)
         {
           this._iconThread.Priority = ThreadPriority.AboveNormal;
@@ -3432,9 +3432,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     public void Setup(string port, int lines, int cols, int delay, int linesG, int colsG, int timeG, bool backLight, int backlightLevel, bool contrast, int contrastLevel, bool blankOnExit)
     {
       MediaPortal.GUI.Library.Log.Info("(IDisplay) iMONLCDg.Setup(): called", new object[0]);
-      MiniDisplay.InitEQ(ref this.EQSettings);
-      MiniDisplay.InitDisplayControl(ref this.DisplaySettings);
-      MiniDisplay.InitDisplayOptions(ref this.DisplayOptions);
+      MiniDisplayHelper.InitEQ(ref this.EQSettings);
+      MiniDisplayHelper.InitDisplayControl(ref this.DisplaySettings);
+      MiniDisplayHelper.InitDisplayOptions(ref this.DisplayOptions);
       this.InitRemoteSettings(ref this.RemoteSettings);
       this._BlankDisplayOnExit = blankOnExit;
       this._Backlight = false;
@@ -3775,7 +3775,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       this.progLevel = 0;
       this.volLevel = 0;
-      if ((this.MPStatus.MediaPlayer_Playing || MiniDisplay.IsCaptureCardViewing()) & this.DisplayOptions.VolumeDisplay)
+      if ((this.MPStatus.MediaPlayer_Playing || MiniDisplayHelper.IsCaptureCardViewing()) & this.DisplayOptions.VolumeDisplay)
       {
         try
         {
@@ -3985,9 +3985,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             icon.Animate();
             if (this.DoDebug)
             {
-              MediaPortal.GUI.Library.Log.Info("iMONLCDg.UpdateIcons(): Checking TV Card status: IsAnyCardRecording = {0}, IsViewing = {1}", new object[] { MiniDisplay.IsCaptureCardRecording().ToString(), MiniDisplay.IsCaptureCardViewing().ToString() });
+              MediaPortal.GUI.Library.Log.Info("iMONLCDg.UpdateIcons(): Checking TV Card status: IsAnyCardRecording = {0}, IsViewing = {1}", new object[] { MiniDisplayHelper.IsCaptureCardRecording().ToString(), MiniDisplayHelper.IsCaptureCardViewing().ToString() });
             }
-            MiniDisplay.GetSystemStatus(ref this.MPStatus);
+            MiniDisplayHelper.GetSystemStatus(ref this.MPStatus);
             this.Check_Idle_State();
             if (this.DoDebug)
             {
@@ -4002,7 +4002,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             {
               num8 = 1;
             }
-            if (MiniDisplay.IsCaptureCardViewing() && !this.MPStatus.Media_IsTimeshifting)
+            if (MiniDisplayHelper.IsCaptureCardViewing() && !this.MPStatus.Media_IsTimeshifting)
             {
               icon.On();
               icon.InvertOn();
@@ -4075,7 +4075,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 this._iconThread.Priority = ThreadPriority.BelowNormal;
               }
             }
-            if ((!MiniDisplay.Player_Playing() & !MiniDisplay.IsCaptureCardViewing()) || (this.DisplayOptions.DiskIcon & !this.DisplayOptions.DiskMediaStatus))
+            if ((!MiniDisplayHelper.Player_Playing() & !MiniDisplayHelper.IsCaptureCardViewing()) || (this.DisplayOptions.DiskIcon & !this.DisplayOptions.DiskMediaStatus))
             {
               int num9 = 0;
               if (this.DisplayOptions.DiskIcon)
@@ -4161,7 +4161,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             _stopUpdateIconThread = false;
             break;
           }
-          MiniDisplay.GetSystemStatus(ref this.MPStatus);
+          MiniDisplayHelper.GetSystemStatus(ref this.MPStatus);
           if (((!this.MPStatus.MediaPlayer_Active | !this.MPStatus.MediaPlayer_Playing) & this.DisplaySettings.BlankDisplayWithVideo) & (this.DisplaySettings.BlankDisplayWhenIdle & !this._mpIsIdle))
           {
             this.DisplayOn();
@@ -7400,7 +7400,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       private readonly DataColumn CData5 = new DataColumn("CData5");
       private readonly DataColumn CID = new DataColumn("CharID");
       private static byte[,] CstmFont;
-      private MiniDisplay.DisplayOptions CustomOptions = XMLUTILS.LoadDisplayOptionsSettings();
+      private DisplayOptions CustomOptions = XMLUTILS.LoadDisplayOptionsSettings();
       private DataTable FontData = new DataTable("Character");
 
       public void CloseFont()
@@ -7797,7 +7797,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     private class LargeIcon
     {
       private static byte[,] CustomIcons;
-      private MiniDisplay.DisplayOptions CustomOptions = XMLUTILS.LoadDisplayOptionsSettings();
+      private DisplayOptions CustomOptions = XMLUTILS.LoadDisplayOptionsSettings();
       private readonly DataColumn IData0 = new DataColumn("IData0");
       private readonly DataColumn IData1 = new DataColumn("IData1");
       private readonly DataColumn IData10 = new DataColumn("IData10");

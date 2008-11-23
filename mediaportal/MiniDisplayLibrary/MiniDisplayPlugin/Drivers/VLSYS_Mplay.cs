@@ -78,10 +78,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     private SerialPort commPort;
     private object CommReadLock = new object();
     private static byte[][] DefaultCustomCharacters;
-    private MiniDisplay.DisplayControl DisplaySettings;
+    private DisplayControl DisplaySettings;
     private bool DoDebug = Assembly.GetEntryAssembly().FullName.Contains("Configuration");
     private object DWriteMutex = new object();
-    private MiniDisplay.EQControl EQSettings;
+    private EQControl EQSettings;
     private object EqWriteMutex = new object();
     private string errorMessage = "";
     private string IdleMessage = string.Empty;
@@ -89,7 +89,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     private DateTime LastSettingsCheck = DateTime.Now;
     private int lines = 2;
     private string MPlay_Model = string.Empty;
-    private MiniDisplay.SystemStatus MPStatus = new MiniDisplay.SystemStatus();
+    private SystemStatus MPStatus = new SystemStatus();
     private string Port = string.Empty;
     private RemoteControl RemoteSettings;
     private const int SC_CLOSE = 0xf060;
@@ -320,7 +320,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             this.EQSettings.Render_BANDS = 0x10;
           }
         }
-        MiniDisplay.ProcessEqData(ref this.EQSettings);
+        MiniDisplayHelper.ProcessEqData(ref this.EQSettings);
         this.RenderEQ(this.EQSettings.EqArray);
         this.EQSettings._LastEQupdate = DateTime.Now;
       }
@@ -455,7 +455,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             _stopUpdateEqThread = false;
             return;
           }
-          MiniDisplay.GetSystemStatus(ref this.MPStatus);
+          MiniDisplayHelper.GetSystemStatus(ref this.MPStatus);
           if ((!this.MPStatus.MediaPlayer_Active & this.DisplaySettings.BlankDisplayWithVideo) & (this.DisplaySettings.BlankDisplayWhenIdle & !this._mpIsIdle))
           {
             this.DisplayOn();
@@ -652,7 +652,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       lock (this.DWriteMutex)
       {
-        this.EQSettings._EqDataAvailable = MiniDisplay.GetEQ(ref this.EQSettings);
+        this.EQSettings._EqDataAvailable = MiniDisplayHelper.GetEQ(ref this.EQSettings);
         if (this.EQSettings._EqDataAvailable)
         {
           this._EqThread.Priority = ThreadPriority.AboveNormal;
@@ -1842,8 +1842,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.DoDebug = Assembly.GetEntryAssembly().FullName.Contains("Configuration") | Settings.Instance.ExtensiveLogging;
       MediaPortal.GUI.Library.Log.Info("{0}", new object[] { this.Description });
       MediaPortal.GUI.Library.Log.Info("VLSYS_Mplay.Setup(): called", new object[0]);
-      MiniDisplay.InitEQ(ref this.EQSettings);
-      MiniDisplay.InitDisplayControl(ref this.DisplaySettings);
+      MiniDisplayHelper.InitEQ(ref this.EQSettings);
+      MiniDisplayHelper.InitDisplayControl(ref this.DisplaySettings);
       this.InitRemoteSettings(ref this.RemoteSettings);
       this._ShutdownOnExit = _blankOnExit;
       this._UseBrightness = _backLightControl;

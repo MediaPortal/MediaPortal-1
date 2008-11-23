@@ -27,6 +27,7 @@ using System;
 
 using MediaPortal.GUI.Library;
 using MediaPortal.Configuration;
+using MediaPortal.ProcessPlugins.MiniDisplayPlugin;
 
 namespace MediaPortal.GUI.Settings
 {
@@ -36,6 +37,9 @@ namespace MediaPortal.GUI.Settings
   [PluginIcons("WindowPlugins.GUISettings.Settings.gif", "WindowPlugins.GUISettings.SettingsDisabled.gif")]
   public class GUISettings : GUIWindow, ISetupForm, IShowPlugin
   {
+    [SkinControlAttribute(11)]
+    protected GUIButtonControl btnMiniDisplay = null;
+
     public GUISettings()
     {
       GetID = (int)GUIWindow.Window.WINDOW_SETTINGS;
@@ -67,6 +71,8 @@ namespace MediaPortal.GUI.Settings
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
           {
             base.OnMessage(message);
+            btnMiniDisplay.Visible = MiniDisplayHelper.IsSetupAvailable();
+
             return true;
           }
 

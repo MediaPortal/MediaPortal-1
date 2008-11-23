@@ -392,6 +392,7 @@ Section "MediaPortal core files (required)" SecCore
   ; Core
   File "..\core\bin\${BUILD_TYPE}\Core.*"
   File "..\core\bin\${BUILD_TYPE}\DirectShowLib.*"
+  File "..\MiniDisplayLibrary\bin\${BUILD_TYPE}\MiniDisplayLibrary.*"
 
   #those files are moved to MediaPortal.Base
   #File "..\core\directshowhelper\directshowhelper\Release\dshowhelper.dll"
@@ -437,7 +438,6 @@ Section "MediaPortal core files (required)" SecCore
   File "..\ExternalPlayers\bin\${BUILD_TYPE}\ExternalPlayers.*"
   SetOutPath "$MPdir.Plugins\process"
   File "..\ProcessPlugins\bin\${BUILD_TYPE}\ProcessPlugins.*"
-  File "..\MiniDisplayPlugin\bin\${BUILD_TYPE}\MiniDisplayPlugin.*"
   SetOutPath "$MPdir.Plugins\subtitle"
   File "..\SubtitlePlugins\bin\${BUILD_TYPE}\SubtitlePlugins.*"
   SetOutPath "$MPdir.Plugins\Windows"

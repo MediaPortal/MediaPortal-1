@@ -257,6 +257,14 @@
       <Project>{DFAB8CDD-A6BA-4A87-930F-CB09B30C1C9D}</Project>
       <Name>ExternalPlayers</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MiniDisplayLibrary\MiniDisplayLibrary.csproj">
+      <Project>{8635D515-A5D4-4FB7-BD30-71770651E18B}</Project>
+      <Name>MiniDisplayLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RemotePlugins\RemotePlugins.csproj">
+      <Project>{0A234721-1F13-4DF8-9B1E-64D9E3111203}</Project>
+      <Name>RemotePlugins</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TVCapture\TVCapture.csproj">
       <Name>TVCapture</Name>
       <Project>{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}</Project>
@@ -310,6 +318,13 @@
     <Compile Include="GUIMusic\GUIMusicMenu.cs" />
     <Compile Include="GUIPictures\GUISlidePicture.cs" />
     <Compile Include="GUIPictures\SlideCache.cs" />
+    <Compile Include="GUISettings\MiniDisplay\BacklightWindow.cs" />
+    <Compile Include="GUISettings\MiniDisplay\DisplayControlWindow.cs" />
+    <Compile Include="GUISettings\MiniDisplay\DisplayOptionsWindow.cs" />
+    <Compile Include="GUISettings\MiniDisplay\EqualizerWindow.cs" />
+    <Compile Include="GUISettings\MiniDisplay\KeyPadWindow.cs" />
+    <Compile Include="GUISettings\MiniDisplay\MainMenuWindow.cs" />
+    <Compile Include="GUISettings\MiniDisplay\RemoteWindow.cs" />
     <Compile Include="GUITetris\MyTetrisControl.cs" />
     <Compile Include="GUITV\GUITVTeletextBase.cs" />
     <Compile Include="GUIVideoFiles\MatroskaTagLib.cs" />

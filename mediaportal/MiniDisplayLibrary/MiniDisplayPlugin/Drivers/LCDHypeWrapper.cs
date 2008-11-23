@@ -27,11 +27,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     public static bool _stopUpdateEqThread;
     private const BindingFlags BINDING_FLAGS = (BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Static);
     private byte[] bytes = new byte[0x12c00];
-    private MiniDisplay.DisplayControl DisplaySettings;
+    private DisplayControl DisplaySettings;
     private string dllFile;
     private bool DoDebug = Assembly.GetEntryAssembly().FullName.Contains("Configuration");
     private object DWriteMutex = new object();
-    private MiniDisplay.EQControl EQSettings;
+    private EQControl EQSettings;
     private object EqWriteMutex = new object();
     private string errorMessage = "";
     private string IdleMessage = string.Empty;
@@ -44,7 +44,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     private System.Type m_tDllReg;
     private const int MAX_RESPIXELS = 0x12c00;
     private const MethodAttributes METHOD_ATTRIBUTES = (MethodAttributes.PinvokeImpl | MethodAttributes.HideBySig | MethodAttributes.Static | MethodAttributes.Public);
-    private MiniDisplay.SystemStatus MPStatus = new MiniDisplay.SystemStatus();
+    private SystemStatus MPStatus = new SystemStatus();
     private string name;
     private static ModuleBuilder s_mb;
     private DateTime SettingsLastModTime;
@@ -250,7 +250,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             _stopUpdateEqThread = false;
             return;
           }
-          MiniDisplay.GetSystemStatus(ref this.MPStatus);
+          MiniDisplayHelper.GetSystemStatus(ref this.MPStatus);
           if ((!this.MPStatus.MediaPlayer_Active & this.DisplaySettings.BlankDisplayWithVideo) & (this.DisplaySettings.BlankDisplayWhenIdle & !this._mpIsIdle))
           {
             this.DisplayOn();
@@ -348,7 +348,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             this.EQSettings.Render_BANDS = 0x10;
           }
         }
-        MiniDisplay.ProcessEqData(ref this.EQSettings);
+        MiniDisplayHelper.ProcessEqData(ref this.EQSettings);
         this.RenderEQ(this.EQSettings.EqArray);
         this.EQSettings._LastEQupdate = DateTime.Now;
       }
@@ -461,7 +461,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         else
         {
-          this.EQSettings._EqDataAvailable = MiniDisplay.GetEQ(ref this.EQSettings);
+          this.EQSettings._EqDataAvailable = MiniDisplayHelper.GetEQ(ref this.EQSettings);
         }
 
         if (this.EQSettings._EqDataAvailable)
@@ -827,7 +827,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           Log.Info("LCDHypeWrapper.SetLine(): message sent to display", new object[0]);
         }
       }
-      MiniDisplay.GetSystemStatus(ref this.MPStatus);
+      MiniDisplayHelper.GetSystemStatus(ref this.MPStatus);
       if ((line == 0) && this.MPStatus.MP_Is_Idle)
       {
         if (this.DoDebug)
@@ -897,8 +897,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.LCD_CONFIG.OutPortsMask = 0;
       this.LCD_CONFIG.UnderLineMode = false;
       this.LCD_CONFIG.UnderlineOutput = false;
-      MiniDisplay.InitEQ(ref this.EQSettings);
-      MiniDisplay.InitDisplayControl(ref this.DisplaySettings);
+      MiniDisplayHelper.InitEQ(ref this.EQSettings);
+      MiniDisplayHelper.InitDisplayControl(ref this.DisplaySettings);
       this._BlankDisplayOnExit = _blankOnExit;
       Log.Info("LCDHypeWrapper.Setup(): LCDHype driver supports backlight = {0}", new object[] { this.info.SupportLightSlider });
       Log.Info("LCDHypeWrapper.Setup(): BackLight Setting: {0}", new object[] { this.LCD_CONFIG.BacklightLevel });

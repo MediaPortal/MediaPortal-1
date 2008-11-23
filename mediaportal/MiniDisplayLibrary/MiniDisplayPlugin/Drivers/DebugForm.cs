@@ -32,12 +32,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     private AdvancedSettings AdvSettings = AdvancedSettings.Load();
     private byte[] bitmapData;
     private Container components = null;
-    private MiniDisplay.DisplayControl DisplaySettings;
+    private DisplayControl DisplaySettings;
     private bool DoDebug;
     private bool DrawingText;
     private object dWriteMutex = new object();
     private static object DWriteMutex = new object();
-    private MiniDisplay.EQControl EQSettings;
+    private EQControl EQSettings;
     private string errorMessage = "";
     private int gCols;
     private int gLines;
@@ -45,7 +45,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     private bool isDisabled;
     private DateTime LastSettingsCheck = DateTime.Now;
     private string[] LastText;
-    private MiniDisplay.SystemStatus MPStatus = new MiniDisplay.SystemStatus();
+    private SystemStatus MPStatus = new SystemStatus();
     private DateTime SettingsLastModTime;
     private Bitmap tBitmap;
     private int tCols;
@@ -141,7 +141,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           }
           this.EQSettings.Render_MaxValue = (this.EQSettings.UseNormalEq | this.EQSettings.UseStereoEq) ? ((int)bounds.Height) : ((int)bounds.Width);
           this.EQSettings.Render_BANDS = this.EQSettings.UseNormalEq ? 0x10 : (this.EQSettings.UseStereoEq ? 8 : 1);
-          MiniDisplay.ProcessEqData(ref this.EQSettings);
+          MiniDisplayHelper.ProcessEqData(ref this.EQSettings);
           Monitor.Enter(obj3 = DWriteMutex);
           try
           {
@@ -272,7 +272,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             return;
           }
         }
-        MiniDisplay.GetSystemStatus(ref this.MPStatus);
+        MiniDisplayHelper.GetSystemStatus(ref this.MPStatus);
         this.Check_Idle_State();
         if (((!this.MPStatus.MediaPlayer_Active | !this.MPStatus.MediaPlayer_Playing) & this.DisplaySettings.BlankDisplayWithVideo) & (this.DisplaySettings.BlankDisplayWhenIdle & !this._mpIsIdle))
         {
@@ -499,7 +499,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       lock (DWriteMutex)
       {
-        this.EQSettings._EqDataAvailable = MiniDisplay.GetEQ(ref this.EQSettings);
+        this.EQSettings._EqDataAvailable = MiniDisplayHelper.GetEQ(ref this.EQSettings);
         if (this.EQSettings._EqDataAvailable)
         {
           this._displayThread.Priority = ThreadPriority.AboveNormal;
@@ -587,8 +587,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         Log.Info("DebugForm.InitializeDriver(): Platform: {0}", new object[] { Environment.OSVersion.VersionString });
       }
-      MiniDisplay.InitEQ(ref this.EQSettings);
-      MiniDisplay.InitDisplayControl(ref this.DisplaySettings);
+      MiniDisplayHelper.InitEQ(ref this.EQSettings);
+      MiniDisplayHelper.InitDisplayControl(ref this.DisplaySettings);
       this.LoadAdvancedSettings();
       Log.Info("DebugForm.InitializeDriver(): Advanced options - Force Graphic Text: {0}", new object[] { Settings.Instance.ForceGraphicText });
       Log.Info("DebugForm.InitializeDriver(): Advanced options - Equalizer Display: {0}", new object[] { this.EQSettings.UseEqDisplay });

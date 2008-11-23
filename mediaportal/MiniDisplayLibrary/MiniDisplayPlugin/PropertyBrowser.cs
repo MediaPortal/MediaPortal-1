@@ -29,9 +29,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     protected override void Dispose(bool disposing)
     {
       Log.Info("PropertyBrowser.Dispose(): called.", new object[0]);
-      lock (MiniDisplay.PropertyBrowserMutex)
+      lock (MiniDisplayHelper.PropertyBrowserMutex)
       {
-        MiniDisplay.DisablePropertyBrowser();
+        MiniDisplayHelper.DisablePropertyBrowser();
       }
       if (disposing && (this.components != null))
       {

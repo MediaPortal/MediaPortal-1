@@ -182,6 +182,10 @@
       <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
       <Name>DirectShowLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MiniDisplayLibrary\MiniDisplayLibrary.csproj">
+      <Project>{8635D515-A5D4-4FB7-BD30-71770651E18B}</Project>
+      <Name>MiniDisplayLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RemotePlugins\RemotePlugins.csproj">
       <Name>RemotePlugins</Name>
       <Project>{0A234721-1F13-4DF8-9B1E-64D9E3111203}</Project>
@@ -204,6 +208,10 @@
       <Project>{C6564AA7-976B-43EF-9E35-7E607EE1DD12}</Project>
       <Name>MusicShareWatcherHelper</Name>
     </ProjectReference>
+    <Reference Include="Bass.Net, Version=2.3.1.2, Culture=neutral, PublicKeyToken=b7566c273e6ef480, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MediaPortal.Base\Bass.Net.dll</HintPath>
+    </Reference>
     <Reference Include="Interop.GIRDERLib, Version=1.0.0.0, Culture=neutral">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MediaPortal.Base\Interop.GIRDERLib.dll</HintPath>
@@ -309,6 +317,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="MameDevice\MappingForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MiniDisplay\MiniDisplay.cs" />
+    <Compile Include="MiniDisplay\SetupForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="MPExTuneCmd\MPExTuneCmd.cs">
@@ -449,6 +461,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="AutoCropper\Readme.txt" />
+    <EmbeddedResource Include="MiniDisplay\MiniDisplay.lcd.gif" />
+    <EmbeddedResource Include="MiniDisplay\MiniDisplay.lcd_deactivated.gif" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />

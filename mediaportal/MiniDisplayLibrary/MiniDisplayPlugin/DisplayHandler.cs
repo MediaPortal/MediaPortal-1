@@ -28,7 +28,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     protected int widthInChars;
     private int widthInPixels;
 
-    internal DisplayHandler(IDisplay _display)
+    public DisplayHandler(IDisplay _display)
     {
       this.display = _display;
       this.heightInChars = Settings.Instance.TextHeight;
@@ -50,7 +50,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       }
     }
 
-    internal void DisplayLines()
+    public void DisplayLines()
     {
       if (Settings.Instance.ExtensiveLogging)
       {
@@ -72,7 +72,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       }
     }
 
-    internal void Dispose()
+    public void Dispose()
     {
       this.Stop();
     }
@@ -310,7 +310,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       }
     }
 
-    internal void Start()
+    public void Start()
     {
       Log.Info("MiniDisplayPlugin.DisplayHandler.Start(): Called", new object[0]);
       Log.Info("MiniDisplayPlugin.DisplayHandler.Start(): Calling driver Setup() function", new object[0]);
@@ -336,7 +336,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       Log.Info("MiniDisplayPlugin.DisplayHandler.Start(): Completed", new object[0]);
     }
 
-    internal void Stop()
+    public void Stop()
     {
       Log.Info("MiniDisplay.DisplayHandler.Stop(): Called", new object[0]);
       Log.Info("MiniDisplay.DisplayHandler.Stop(): Calling driver CleanUp() function", new object[0]);
@@ -356,7 +356,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       }
     }
 
-    internal List<Line> Lines
+    public List<Line> Lines
     {
       set
       {

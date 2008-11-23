@@ -34,8 +34,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     private XplListener Listener;
     private readonly string mDeviceID = "cdisplay";
     private string mInstanceID = "";
-    private MiniDisplay.SystemStatus MPStatus = new MiniDisplay.SystemStatus();
-    private MiniDisplay.SystemStatus MPStatus_old = new MiniDisplay.SystemStatus();
+    private SystemStatus MPStatus = new SystemStatus();
+    private SystemStatus MPStatus_old = new SystemStatus();
     private readonly string mVendorID = "mportal";
     private InputHandler rHandler;
     private DateTime SettingsLastModTime;
@@ -657,7 +657,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     private void UpdateMPStatus()
     {
       this.MPStatus_old = this.MPStatus;
-      MiniDisplay.GetSystemStatus(ref this.MPStatus);
+      MiniDisplayHelper.GetSystemStatus(ref this.MPStatus);
       if (this.MPStatus.Equals(this.MPStatus_old))
       {
         this._StatusChanged = false;
@@ -724,8 +724,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       object obj2 = string.Empty;
       string strMessage = string.Concat(new object[] { obj2, "duration=", this.MPStatus.Media_Duration.ToString(), '\n' });
-      string str2 = MiniDisplay.PluginIconsToAudioFormat(this.MPStatus.CurrentIconMask).Replace("ICON_", "").Trim().Replace(" ", ", ");
-      string str3 = MiniDisplay.PluginIconsToVideoFormat(this.MPStatus.CurrentIconMask).Replace("ICON_", "").Trim().Replace(" ", ", ");
+      string str2 = MiniDisplayHelper.PluginIconsToAudioFormat(this.MPStatus.CurrentIconMask).Replace("ICON_", "").Trim().Replace(" ", ", ");
+      string str3 = MiniDisplayHelper.PluginIconsToVideoFormat(this.MPStatus.CurrentIconMask).Replace("ICON_", "").Trim().Replace(" ", ", ");
       if (!str2.Equals(string.Empty) && !str3.Equals(string.Empty))
       {
         object obj3 = strMessage;
