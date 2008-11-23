@@ -17,7 +17,7 @@
       <animation effect="slide" time="250" end="800,0">WindowClose</animation>
       <posX>56</posX>
       <posY>151</posY>
-      <layout>GridLayout(2, 6, 52, 8, 1)</layout>
+      <layout>GridLayout(2, 6, 46, 6, 1)</layout>
       <control>
         <description>MPEG-2 Video Codecs</description>
         <type>button</type>

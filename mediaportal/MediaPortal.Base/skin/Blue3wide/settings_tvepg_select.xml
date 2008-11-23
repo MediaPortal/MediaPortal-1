@@ -3,13 +3,12 @@
 <window>
   <id>707</id>
   <defaultcontrol>24</defaultcontrol>
-  <allowoverlay>yes</allowoverlay>
+ <allowoverlay>yes</allowoverlay>
+  <define>#header.label:6103</define>
+  <define>#header.image:settings_logo.png</define>
+  <define>#header.hover:hover_my tv.png</define>
   <controls>
-    <control>
-      <type>image</type>
-      <description>BG</description>
-      <id>1</id>
-    </control>
+    <import>common.settings.xml</import>
     <control>
       <type>button</type>
       <description>Manual</description>
@@ -42,21 +41,6 @@
       <font>font12</font>
     </control>
     <control>
-      <type>image</type>
-      <id>1</id>
-      <posX>85</posX>
-      <posY>487</posY>
-      <texture>hover_my tv.png</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <description>MP Logo</description>
-      <id>1</id>
-      <posX>56</posX>
-      <posY>30</posY>
-      <texture>mplogo.png</texture>
-    </control>
-    <control>
       <type>label</type>
       <description>TV Setup - EPG</description>
       <id>1</id>
@@ -70,7 +54,7 @@
       <description>countryList</description>
       <id>24</id>
       <posX>56</posX>
-      <posY>290</posY>
+      <posY>270</posY>
       <width>1052</width>
       <height>275</height>
       <onleft>27</onleft>
@@ -79,7 +63,7 @@
       <ondown>27</ondown>
       <font>font13</font>
       <spinPosX>977</spinPosX>
-      <spinPosY>500</spinPosY>
+      <spinPosY>490</spinPosY>
     </control>
   </controls>
 </window>

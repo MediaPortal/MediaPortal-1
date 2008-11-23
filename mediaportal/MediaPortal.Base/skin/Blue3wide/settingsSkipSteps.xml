@@ -64,7 +64,7 @@
         <description>Step 1</description>
         <type>checkmark</type>
         <id>2</id>
-        <label>5</label>
+        <label> 5</label>
         <align>right</align>
         <onleft>19</onleft>
         <onright>6</onright>
@@ -75,7 +75,7 @@
         <description>Step 2</description>
         <type>checkmark</type>
         <id>3</id>
-        <label>15</label>
+        <label> 15</label>
         <align>right</align>
         <onleft>20</onleft>
         <onright>7</onright>
@@ -86,7 +86,7 @@
         <description>Step 3</description>
         <type>checkmark</type>
         <id>4</id>
-        <label>30</label>
+        <label> 30</label>
         <align>right</align>
         <onleft>20</onleft>
         <onright>8</onright>
@@ -97,7 +97,7 @@
         <description>Step 4</description>
         <type>checkmark</type>
         <id>5</id>
-        <label>45</label>
+        <label> 45</label>
         <align>right</align>
         <onleft>18</onleft>
         <onright>9</onright>
@@ -125,7 +125,7 @@
         <description>Step 5</description>
         <type>checkmark</type>
         <id>6</id>
-        <label>1</label>
+        <label> 1</label>
         <align>right</align>
         <onleft>2</onleft>
         <onright>14</onright>
@@ -136,7 +136,7 @@
         <description>Step 6</description>
         <type>checkmark</type>
         <id>7</id>
-        <label>3</label>
+        <label> 3</label>
         <align>right</align>
         <onleft>3</onleft>
         <onright>15</onright>
@@ -147,7 +147,7 @@
         <description>Step 7</description>
         <type>checkmark</type>
         <id>8</id>
-        <label>5</label>
+        <label> 5</label>
         <align>right</align>
         <onleft>4</onleft>
         <onright>16</onright>
@@ -158,7 +158,7 @@
         <description>Step 8</description>
         <type>checkmark</type>
         <id>9</id>
-        <label>7</label>
+        <label> 7</label>
         <align>right</align>
         <onleft>5</onleft>
         <onright>17</onright>
@@ -169,7 +169,7 @@
         <description>Step 9</description>
         <type>checkmark</type>
         <id>10</id>
-        <label>10</label>
+        <label> 10</label>
         <align>right</align>
         <onleft>5</onleft>
         <onright>17</onright>
@@ -180,7 +180,7 @@
         <description>Step 10</description>
         <type>checkmark</type>
         <id>11</id>
-        <label>15</label>
+        <label> 15</label>
         <align>right</align>
         <onleft>5</onleft>
         <onright>17</onright>
@@ -191,7 +191,7 @@
         <description>Step 11</description>
         <type>checkmark</type>
         <id>12</id>
-        <label>30</label>
+        <label> 30</label>
         <align>right</align>
         <onleft>5</onleft>
         <onright>17</onright>
@@ -202,7 +202,7 @@
         <description>Step 12</description>
         <type>checkmark</type>
         <id>13</id>
-        <label>45</label>
+        <label> 45</label>
         <align>right</align>
         <onleft>5</onleft>
         <onright>17</onright>
@@ -230,7 +230,7 @@
         <description>Step 13</description>
         <type>checkmark</type>
         <id>14</id>
-        <label>1</label>
+        <label> 1</label>
         <align>right</align>
         <onleft>6</onleft>
         <onright>14</onright>
@@ -252,7 +252,7 @@
         <description>Step 15</description>
         <type>checkmark</type>
         <id>16</id>
-        <label>2</label>
+        <label> 2</label>
         <align>right</align>
         <onleft>8</onleft>
         <onright>16</onright>
@@ -263,7 +263,7 @@
         <description>Step 16</description>
         <type>checkmark</type>
         <id>17</id>
-        <label>3</label>
+        <label> 3</label>
         <align>right</align>
         <onleft>9</onleft>
         <onright>17</onright>

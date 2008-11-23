@@ -91,6 +91,11 @@ namespace WindowPlugins.GUISettings.TV
         btnXMLEpg.Visible = false;
         btnChannelSorting.Visible = false;
       }
+      else
+      {
+        btnAACAudioCodec.Visible = false;
+        btnH264VideoCodec.Visible = false;
+      }
     }
 
     protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)

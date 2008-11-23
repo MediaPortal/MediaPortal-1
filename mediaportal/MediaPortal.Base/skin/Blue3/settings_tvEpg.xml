@@ -2,38 +2,12 @@
 <window>
   <id>706</id>
   <defaultcontrol>10</defaultcontrol>
-  <allowoverlay>yes</allowoverlay>
+ <allowoverlay>yes</allowoverlay>
+  <define>#header.label:6011</define>
+  <define>#header.image:settings_logo.png</define>
+  <define>#header.hover:hover_my tv.png</define>
   <controls>
-    <import>common.time.xml</import>
-    <control>
-      <type>image</type>
-      <description>BG</description>
-      <id>1</id>
-    </control>
-    <control>
-      <type>image</type>
-      <id>1</id>
-      <posX>48</posX>
-      <posY>390</posY>
-      <texture>hover_my tv.png</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <description>MP Logo</description>
-      <id>1</id>
-      <posX>32</posX>
-      <posY>24</posY>
-      <texture>mplogo.png</texture>
-    </control>
-    <control>
-      <type>label</type>
-      <description>Setup TV</description>
-      <id>1</id>
-      <posX>32</posX>
-      <posY>96</posY>
-      <label>6011</label>
-      <font>font18</font>
-    </control>
+    <import>common.settings.xml</import>
     <control>
       <type>label</type>
       <description>Grab EPG from DVB transmission for the following channels</description>

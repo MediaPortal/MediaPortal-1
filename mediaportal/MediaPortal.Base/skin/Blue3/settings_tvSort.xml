@@ -3,36 +3,11 @@
   <id>702</id>
   <defaultcontrol>24</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
+  <define>#header.label:6008</define>
+  <define>#header.image:settings_logo.png</define>
+  <define>#header.hover:hover_my tv.png</define>
   <controls>
-    <control>
-      <type>image</type>
-      <description>BG</description>
-      <id>1</id>
-    </control>
-    <control>
-      <type>image</type>
-      <id>1</id>
-      <posX>48</posX>
-      <posY>390</posY>
-      <texture>hover_my tv.png</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <description>MP Logo</description>
-      <id>1</id>
-      <posX>32</posX>
-      <posY>24</posY>
-      <texture>mplogo.png</texture>
-    </control>
-    <control>
-      <type>label</type>
-      <description>Setup TV</description>
-      <id>1</id>
-      <posX>32</posX>
-      <posY>96</posY>
-      <label>6008</label>
-      <font>font18</font>
-    </control>
+    <import>common.settings.xml</import>
     <control>
       <type>button</type>
       <id>24</id>
@@ -49,33 +24,8 @@
       <!--type>updownlistcontrol</type-->
       <type>playlistcontrol</type>
       <id>10</id>
-      <width>404</width>
-      <height>470</height>
-      <textXOff>10</textXOff>
-      <textYOff>2</textYOff>
-      <textXOff2>420</textXOff2>
-      <textYOff2>29</textYOff2>
-      <textXOff3>100</textXOff3>
-      <textYOff3>29</textYOff3>
-      <IconXOff>12</IconXOff>
-      <PinIconXOff>45</PinIconXOff>
-      <PinIconYOff>19</PinIconYOff>
-      <spinPosX>606</spinPosX>
-      <spinPosY>518</spinPosY>
-      <itemWidth>35</itemWidth>
-      <itemHeight>35</itemHeight>
-      <upBtnWidth>35</upBtnWidth>
-      <downBtnWidth>35</downBtnWidth>
-      <deleteBtnWidth>50</deleteBtnWidth>
-      <upBtnHeight>50</upBtnHeight>
-      <downBtnHeight>50</downBtnHeight>
-      <deleteBtnHeight>50</deleteBtnHeight>
-      <upBtnXOffset>327</upBtnXOffset>
-      <downBtnXOffset>362</downBtnXOffset>
       <textureFocus>recording_background_focus.png</textureFocus>
       <textureNoFocus>recording_background_nofocus.png</textureNoFocus>
-      <spaceBetweenItems>5</spaceBetweenItems>
-      <textureHeight>50</textureHeight>
       <keepaspectratio>no</keepaspectratio>
       <font2>font10</font2>
       <font3>font10</font3>

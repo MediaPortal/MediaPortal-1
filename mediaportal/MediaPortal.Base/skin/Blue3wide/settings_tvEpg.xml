@@ -4,51 +4,25 @@
   <id>706</id>
   <defaultcontrol>10</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
+  <define>#header.label:6011</define>
+  <define>#header.image:settings_logo.png</define>
+  <define>#header.hover:hover_my tv.png</define>
   <controls>
-    <import>common.time.xml</import>
-    <control>
-      <type>image</type>
-      <description>BG</description>
-      <id>1</id>
-    </control>
-    <control>
-      <type>image</type>
-      <id>1</id>
-      <posX>85</posX>
-      <posY>487</posY>
-      <texture>hover_my tv.png</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <description>MP Logo</description>
-      <id>1</id>
-      <posX>56</posX>
-      <posY>30</posY>
-      <texture>mplogo.png</texture>
-    </control>
-    <control>
-      <type>label</type>
-      <description>Setup TV</description>
-      <id>1</id>
-      <posX>56</posX>
-      <posY>120</posY>
-      <label>6011</label>
-      <font>font18</font>
-    </control>
+    <import>common.settings.xml</import>
     <control>
       <type>label</type>
       <description>Grab EPG from DVB transmission for the following channels</description>
       <id>1</id>
       <posX>462</posX>
-      <posY>120</posY>
+      <posY>145</posY>
       <label>6012</label>
     </control>
     <control>
       <type>group</type>
       <layout>StackLayout</layout>
       <description>group element</description>
-      <posX>106</posX>
-      <posY>150</posY>
+      <posX>131</posX>
+      <posY>175</posY>
       <control>
         <description>Select all</description>
         <type>button</type>
@@ -72,7 +46,7 @@
       <description>channel listcontrol</description>
       <type>checklistcontrol</type>
       <id>10</id>
-      <posY>175</posY>
+      <posY>200</posY>
       <height>500</height>
       <textXOff>88</textXOff>
       <textYOff>2</textYOff>
@@ -81,7 +55,7 @@
       <textXOff3>177</textXOff3>
       <textYOff3>36</textYOff3>
       <IconXOff>21</IconXOff>
-      <IconYOff>2</IconYOff>
+      <IconYOff>4</IconYOff>
       <spinPosX>1077</spinPosX>
       <spinPosY>656</spinPosY>
       <itemWidth>26</itemWidth>
@@ -91,7 +65,7 @@
       <spaceBetweenItems>8</spaceBetweenItems>
       <textureHeight>35</textureHeight>
       <keepaspectratio>no</keepaspectratio>
-      <MarkOffsetY>6</MarkOffsetY>
+      <MarkOffsetY>0</MarkOffsetY>
       <font2>font10</font2>
       <font3>font10</font3>
       <onleft>2</onleft>
