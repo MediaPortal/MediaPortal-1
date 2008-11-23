@@ -2039,6 +2039,10 @@ namespace MediaPortal.Util
       {
         if (img != null)
           img.Dispose();
+        if (MediaPortal.Player.g_Player.Playing)
+          Thread.Sleep(50);
+        else
+          Thread.Sleep(10);
       }
     }
 
@@ -2104,27 +2108,23 @@ namespace MediaPortal.Util
                   try
                   {
                     AddPicture(g, (string)aPictureList[0], x + 10, y + 10, w, h);
-                    Thread.Sleep(10);
 
                     //If exists load second of 4 images for the folder thumb.
                     if (aPictureList.Count > 1)
                     {
                       AddPicture(g, (string)aPictureList[1], x + thumbnailWidth + 20, y + 10, w, h);
-                      Thread.Sleep(10);
                     }
 
                     //If exists load third of 4 images for the folder thumb.
                     if (aPictureList.Count > 2)
                     {
                       AddPicture(g, (string)aPictureList[2], x + 10, y + thumbnailHeight + 20, w, h);
-                      Thread.Sleep(10);
                     }
 
                     //If exists load fourth of 4 images for the folder thumb.
                     if (aPictureList.Count > 3)
                     {
                       AddPicture(g, (string)aPictureList[3], x + thumbnailWidth + 20, y + thumbnailHeight + 20, w, h);
-                      Thread.Sleep(10);
                     }
                   }
                   catch (Exception ex)
@@ -2155,7 +2155,12 @@ namespace MediaPortal.Util
                       aThumbPath = Util.Utils.ConvertToLargeCoverArt(aThumbPath);
                       Picture.CreateThumbnail(tmpFile, aThumbPath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, false);
                     }
-                  Thread.Sleep(10);
+
+                  if (MediaPortal.Player.g_Player.Playing)
+                    Thread.Sleep(100);
+                  else
+                    Thread.Sleep(10);
+
                   if (File.Exists(aThumbPath))
                     result = true;
                 }

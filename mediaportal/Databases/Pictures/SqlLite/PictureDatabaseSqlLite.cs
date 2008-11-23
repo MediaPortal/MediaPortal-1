@@ -152,6 +152,12 @@ namespace MediaPortal.Picture.Database
         results = m_db.Execute(strSQL);
 
         lPicId = m_db.LastInsertID();
+
+        if (MediaPortal.Player.g_Player.Playing)
+          Thread.Sleep(50);
+        else
+          Thread.Sleep(0);
+
         return lPicId;
       }
       catch (Exception ex)

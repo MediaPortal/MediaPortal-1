@@ -873,6 +873,9 @@ namespace MediaPortal.Util
           }
         }
 
+        if (MediaPortal.Player.g_Player.Playing)
+          Thread.Sleep(30);
+
         return SaveThumbnail(aThumbTargetPath, myTargetThumb);
 
       }
@@ -896,7 +899,10 @@ namespace MediaPortal.Util
         myImage.Save(aThumbTargetPath, Thumbs.ThumbCodecInfo, Thumbs.ThumbEncoderParams);
         File.SetAttributes(aThumbTargetPath, File.GetAttributes(aThumbTargetPath) | FileAttributes.Hidden);
         // even if run in background thread wait a little so the main process does not starve on IO
-        Thread.Sleep(0);
+        if (MediaPortal.Player.g_Player.Playing)
+          Thread.Sleep(100);
+        else
+          Thread.Sleep(0);
         return true;
       }
       catch (Exception ex)
