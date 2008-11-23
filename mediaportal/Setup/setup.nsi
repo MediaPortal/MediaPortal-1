@@ -565,7 +565,6 @@ SectionEnd
 
   RMDir /r /REBOOTOK "$MPdir.Plugins\process\LCDDrivers"
   Delete /REBOOTOK "$MPdir.Plugins\process\ProcessPlugins.dll"
-  Delete /REBOOTOK "$MPdir.Plugins\process\MiniDisplayPlugin.dll"
   Delete /REBOOTOK "$MPdir.Plugins\process\PowerSchedulerClientPlugin.dll"
   RMDir "$MPdir.Plugins\process"
 
@@ -652,6 +651,7 @@ SectionEnd
   Delete /REBOOTOK "$MPdir.Base\Microsoft.DirectX.DirectDraw.dll"
   Delete /REBOOTOK "$MPdir.Base\Microsoft.DirectX.DirectInput.dll"
   Delete /REBOOTOK "$MPdir.Base\Microsoft.Office.Interop.Outlook.dll"
+  Delete /REBOOTOK "$MPdir.Base\MiniDisplayLibrary.dll"
   Delete /REBOOTOK "$MPdir.Base\MPInstaller.exe"
   Delete /REBOOTOK "$MPdir.Base\MPInstaller.Library.dll"
   Delete /REBOOTOK "$MPdir.Base\mplogo.gif"
@@ -749,11 +749,26 @@ Section -Post
   SetOverwrite on
   SetOutPath "$MPdir.Base"
 
+  ; cleanup, delete obsolete files to prevent issues, which will occure if these files still exists
+  ${If} ${FileExists} "$MPdir.Plugins\process\ExternalDisplayPlugin.dll"
+  ${OrIf} ${FileExists} "$MPdir.Plugins\process\MiniDisplayPlugin.dll"
+  ${OrIf} ${FileExists} "$MPdir.Plugins\process\CybrDisplayPlugin.dll"
+  ${OrIf} ${FileExists} "$MPdir.Plugins\windows\CybrDisplayPlugin.dll"
+    ${LOG_TEXT} "INFO" "!!! WARNING !!! Old installation files found! (-> MiniDisplay)"
+    ${LOG_TEXT} "INFO" "You are an evil guy. Why did you copy back files from an old Installation?"
+    Delete "$MPdir.Plugins\process\ExternalDisplayPlugin.dll"
+    Delete "$MPdir.Plugins\process\MiniDisplayPlugin.dll"
+    Delete "$MPdir.Plugins\process\CybrDisplayPlugin.dll"
+    Delete "$MPdir.Plugins\windows\CybrDisplayPlugin.dll"
+  ${EndIf}
+
+  ; create desktop shortcuts
   ${If} $noDesktopSC != 1
     CreateShortCut "$DESKTOP\MediaPortal.lnk"               "$MPdir.Base\MediaPortal.exe"      "" "$MPdir.Base\MediaPortal.exe"   0 "" "" "MediaPortal"
     CreateShortCut "$DESKTOP\MediaPortal Configuration.lnk" "$MPdir.Base\Configuration.exe"    "" "$MPdir.Base\Configuration.exe" 0 "" "" "MediaPortal Configuration"
   ${EndIf}
 
+  ; create startmenu shortcuts
   ${If} $noStartMenuSC != 1
     !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
       ; We need to create the StartMenu Dir. Otherwise the CreateShortCut fails
