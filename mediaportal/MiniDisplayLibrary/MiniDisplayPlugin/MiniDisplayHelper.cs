@@ -152,9 +152,19 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         CurrentStatus.Media_IsRadio = MPStatus.Media_IsRadio;
         CurrentStatus.Media_IsVideo = MPStatus.Media_IsVideo;
         CurrentStatus.Media_IsMusic = MPStatus.Media_IsMusic;
-        CurrentStatus.Media_CurrentPosition = g_Player.CurrentPosition;
-        CurrentStatus.Media_Duration = g_Player.Duration;
-        CurrentStatus.Media_Speed = g_Player.Speed;
+        //
+        // Race condition during stop of LiveTV or DVD playback      
+        //
+        try
+        {
+          CurrentStatus.Media_CurrentPosition = g_Player.CurrentPosition;
+          CurrentStatus.Media_Duration = g_Player.Duration;
+          CurrentStatus.Media_Speed = g_Player.Speed;
+        }
+        catch(Exception ex)
+        {
+          Log.Debug("GetSystemStatus(): unable to update g_player properties (playback stop in progress?): " + ex.Message);
+        }
       }
     }
 
