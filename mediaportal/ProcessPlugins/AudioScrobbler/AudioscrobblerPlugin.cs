@@ -73,47 +73,61 @@ namespace MediaPortal.Audioscrobbler
 
     private void OnPlayBackStarted(g_Player.MediaType type, string filename)
     {
-      if (type == g_Player.MediaType.Music || Util.Utils.IsLastFMStream(filename))
+      try
       {
-        Thread stateThread = new Thread(new ParameterizedThreadStart(PlaybackStartedThread));
-        stateThread.IsBackground = true;
-        stateThread.Name = "Scrobbler event";
-        stateThread.Start((object)filename);
+        if (type == g_Player.MediaType.Music || Util.Utils.IsLastFMStream(filename))
+        {
+          Thread stateThread = new Thread(new ParameterizedThreadStart(PlaybackStartedThread));
+          stateThread.IsBackground = true;
+          stateThread.Name = "Scrobbler event";
+          stateThread.Start((object)filename);
 
-        Thread LoadThread = new Thread(new ThreadStart(OnSongLoadedThread));
-        LoadThread.IsBackground = true;
-        LoadThread.Name = "Scrobbler loader";
-        LoadThread.Start();
+          Thread LoadThread = new Thread(new ThreadStart(OnSongLoadedThread));
+          LoadThread.IsBackground = true;
+          LoadThread.Name = "Scrobbler loader";
+          LoadThread.Start();
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Audioscrobbler plugin: Error creating threads on playback start - {0}", ex.Message);
       }
     }
 
     private void OnSongLoadedThread()
     {
       int i = 0;
-      for (i = 0; i < 15; i++)
+      try
       {
-        if (AudioscrobblerBase.CurrentSubmitSong.AudioScrobblerStatus == SongStatus.Init)
-          break;
-        Thread.Sleep(1000);
-      }
-      Log.Debug("Audioscrobbler plugin: Waited {0} seconds for reinit of submit track", i);
+        for (i = 0; i < 15; i++)
+        {
+          if (AudioscrobblerBase.CurrentSubmitSong.AudioScrobblerStatus == SongStatus.Init)
+            break;
+          Thread.Sleep(1000);
+        }
+        Log.Debug("Audioscrobbler plugin: Waited {0} seconds for reinit of submit track", i);
 
-      for (i = 0; i < 15; i++)
-      {
-        if (AudioscrobblerBase.CurrentPlayingSong.AudioScrobblerStatus == SongStatus.Loaded)
-          break;
-        Thread.Sleep(1000);
-      }
-      Log.Debug("Audioscrobbler plugin: Waited {0} seconds for lookup of current track", i);
+        for (i = 0; i < 15; i++)
+        {
+          if (AudioscrobblerBase.CurrentPlayingSong.AudioScrobblerStatus == SongStatus.Loaded)
+            break;
+          Thread.Sleep(1000);
+        }
+        Log.Debug("Audioscrobbler plugin: Waited {0} seconds for lookup of current track", i);
 
-      if (AudioscrobblerBase.CurrentPlayingSong.Artist != String.Empty)
-      {
-        // Don't hand over the reference        
-        AudioscrobblerBase.CurrentSubmitSong = AudioscrobblerBase.CurrentPlayingSong.Clone();
-        Log.Info("Audioscrobbler plugin: Song loading thread sets submit song - {0}", AudioscrobblerBase.CurrentSubmitSong.ToLastFMMatchString(true));
+        if (AudioscrobblerBase.CurrentPlayingSong.Artist != String.Empty)
+        {
+          // Don't hand over the reference        
+          AudioscrobblerBase.CurrentSubmitSong = AudioscrobblerBase.CurrentPlayingSong.Clone();
+          Log.Info("Audioscrobbler plugin: Song loading thread sets submit song - {0}", AudioscrobblerBase.CurrentSubmitSong.ToLastFMMatchString(true));
+        }
+        else
+          Log.Debug("Audioscrobbler plugin: Song loading thread could not set the current for submit - {0}", AudioscrobblerBase.CurrentPlayingSong.ToLastFMMatchString(true));
       }
-      else
-        Log.Debug("Audioscrobbler plugin: Song loading thread could not set the current for submit - {0}", AudioscrobblerBase.CurrentPlayingSong.ToLastFMMatchString(true));
+      catch (Exception ex)
+      {
+        Log.Error("Audioscrobbler plugin: Error in song load thread {0}", ex.Message);
+      }
     }
 
     /// <summary>
@@ -175,49 +189,56 @@ namespace MediaPortal.Audioscrobbler
     /// <param name="_currentSong">accepts the current playing Song reference</param>
     private void OnSongChangedEvent()
     {
-      _alertTime = INFINITE_TIME;
-
-      if (Util.Utils.IsLastFMStream(AudioscrobblerBase.CurrentPlayingSong.FileName))
+      try
       {
-        if (!AudioscrobblerBase.IsSubmittingRadioSongs)
+        _alertTime = INFINITE_TIME;
+
+        if (Util.Utils.IsLastFMStream(AudioscrobblerBase.CurrentPlayingSong.FileName))
         {
-          Log.Debug("Audioscrobbler plugin: radio submits disabled - ignore state change");
+          if (!AudioscrobblerBase.IsSubmittingRadioSongs)
+          {
+            Log.Debug("Audioscrobbler plugin: radio submits disabled - ignore state change");
+            return;
+          }
+        }
+        else
+          if (!_doSubmit)
+          {
+            Log.Debug("Audioscrobbler plugin: submits disabled - ignore state change");
+            return;
+          }
+
+        // Only submit if we have reasonable info about the song
+        if (AudioscrobblerBase.CurrentPlayingSong.Artist == String.Empty || AudioscrobblerBase.CurrentPlayingSong.Title == String.Empty)
+        {
+          Log.Info("Audioscrobbler plugin: {0}", "no tags found ignoring song");
           return;
         }
-      }
-      else
-        if (!_doSubmit)
+
+        if (_announceNowPlaying)
         {
-          Log.Debug("Audioscrobbler plugin: submits disabled - ignore state change");
-          return;
+          for (int i = 0; i < 12; i++)
+          {
+            // try to wait for 6 seconds to give an maybe ongoing submit a chance to finish before the announce
+            // as otherwise the now playing track might not show up on the website
+            if (AudioscrobblerBase.CurrentSubmitSong.AudioScrobblerStatus == SongStatus.Init)
+              break;
+            Thread.Sleep(500);
+          }
+          AudioscrobblerBase.DoAnnounceNowPlaying();
         }
 
-      // Only submit if we have reasonable info about the song
-      if (AudioscrobblerBase.CurrentPlayingSong.Artist == String.Empty || AudioscrobblerBase.CurrentPlayingSong.Title == String.Empty)
-      {
-        Log.Info("Audioscrobbler plugin: {0}", "no tags found ignoring song");
-        return;
-      }
+        _alertTime = GetAlertTime();
 
-      if (_announceNowPlaying)
-      {
-        for (int i = 0; i < 12; i++)
+        if (_alertTime != INFINITE_TIME)
         {
-          // try to wait for 6 seconds to give an maybe ongoing submit a chance to finish before the announce
-          // as otherwise the now playing track might not show up on the website
-          if (AudioscrobblerBase.CurrentSubmitSong.AudioScrobblerStatus == SongStatus.Init)
-            break;
-          Thread.Sleep(500);
+          AudioscrobblerBase.CurrentPlayingSong.AudioScrobblerStatus = SongStatus.Loaded;
+          startStopSongLengthTimer(true, _alertTime - _playingSecs.Seconds);
         }
-        AudioscrobblerBase.DoAnnounceNowPlaying();
       }
-
-      _alertTime = GetAlertTime();
-
-      if (_alertTime != INFINITE_TIME)
+      catch (Exception ex)
       {
-        AudioscrobblerBase.CurrentPlayingSong.AudioScrobblerStatus = SongStatus.Loaded;
-        startStopSongLengthTimer(true, _alertTime - _playingSecs.Seconds);
+        Log.Error("Audioscrobbler plugin: Error in song change event - {0}", ex.Message);
       }
     }
 
@@ -288,21 +309,28 @@ namespace MediaPortal.Audioscrobbler
     /// </summary>
     private void OnPause()
     {
-      // avoid false skip detection
-      if (g_Player.Playing && g_Player.CurrentPosition > 0)
+      try
       {
-        _lastPosition = Convert.ToInt32(g_Player.CurrentPosition);
-        if (AudioscrobblerBase.CurrentSubmitSong != null && AudioscrobblerBase.CurrentSubmitSong.AudioScrobblerStatus == SongStatus.Loaded)
-          if (g_Player.Paused)
-          {
-            startStopSongLengthTimer(false, _alertTime - _playingSecs.Seconds);
-            Log.Info("Audioscrobbler plugin: {0}", "Track paused");
-          }
-          else
-          {
-            startStopSongLengthTimer(true, _alertTime - (_lastPosition + _playingSecs.Seconds));
-            Log.Info("Audioscrobbler plugin: {0}", "Continue track - adjust already listened time");
-          }
+        // avoid false skip detection
+        if (g_Player.Playing && g_Player.CurrentPosition > 0)
+        {
+          _lastPosition = Convert.ToInt32(g_Player.CurrentPosition);
+          if (AudioscrobblerBase.CurrentSubmitSong != null && AudioscrobblerBase.CurrentSubmitSong.AudioScrobblerStatus == SongStatus.Loaded)
+            if (g_Player.Paused)
+            {
+              startStopSongLengthTimer(false, _alertTime - _playingSecs.Seconds);
+              Log.Info("Audioscrobbler plugin: {0}", "Track paused");
+            }
+            else
+            {
+              startStopSongLengthTimer(true, _alertTime - (_lastPosition + _playingSecs.Seconds));
+              Log.Info("Audioscrobbler plugin: {0}", "Continue track - adjust already listened time");
+            }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Audioscrobbler plugin: Error pausing submit timer {0}", ex.Message);
       }
     }
 
@@ -383,20 +411,27 @@ namespace MediaPortal.Audioscrobbler
     /// <returns>Whether a song could be found</returns>
     private bool GetCurrentSong()
     {
-      MusicDatabase dbs = MusicDatabase.Instance;
-      string strFile = g_Player.Player.CurrentFile;
-      Song lookupSong = new Song();
-      if (strFile == string.Empty)
-        return false;
-      else
+      try
       {
-        if (dbs.GetSongByFileName(strFile, ref lookupSong))
-        {
-          AudioscrobblerBase.CurrentPlayingSong = lookupSong;
-          return true;
-        }
-        else
+        MusicDatabase dbs = MusicDatabase.Instance;
+        string strFile = g_Player.Player.CurrentFile;
+        Song lookupSong = new Song();
+        if (strFile == string.Empty)
           return false;
+        else
+        {
+          if (dbs.GetSongByFileName(strFile, ref lookupSong))
+          {
+            AudioscrobblerBase.CurrentPlayingSong = lookupSong;
+            return true;
+          }
+          else
+            return false;
+        }
+      }
+      catch (Exception)
+      {
+        return false;
       }
     }
 
@@ -407,18 +442,24 @@ namespace MediaPortal.Audioscrobbler
     private bool GetCurrentCDASong()
     {
       bool found = false;
-      if (g_Player.CurrentFile.IndexOf("Track") > 0 && g_Player.CurrentFile.IndexOf(".cda") > 0)
+      try
       {
+        if (g_Player.CurrentFile.IndexOf("Track") > 0 && g_Player.CurrentFile.IndexOf(".cda") > 0)
+        {
+          AudioscrobblerBase.CurrentPlayingSong.Artist = GUIPropertyManager.GetProperty("#Play.Current.Artist");
+          AudioscrobblerBase.CurrentPlayingSong.Title = GUIPropertyManager.GetProperty("#Play.Current.Title");
+          AudioscrobblerBase.CurrentPlayingSong.Album = GUIPropertyManager.GetProperty("#Play.Current.Album");
+          //AudioscrobblerBase.CurrentPlayingSong.Track = Int32.Parse(GUIPropertyManager.GetProperty("#Play.Current.Track"), System.Globalization.NumberStyles.Integer, new System.Globalization.CultureInfo("en-US"));              
+          AudioscrobblerBase.CurrentPlayingSong.Duration = Convert.ToInt32(g_Player.Duration);
+          AudioscrobblerBase.CurrentPlayingSong.Genre = GUIPropertyManager.GetProperty("#Play.Current.Genre");
+          AudioscrobblerBase.CurrentPlayingSong.FileName = g_Player.CurrentFile;
 
-        AudioscrobblerBase.CurrentPlayingSong.Artist = GUIPropertyManager.GetProperty("#Play.Current.Artist");
-        AudioscrobblerBase.CurrentPlayingSong.Title = GUIPropertyManager.GetProperty("#Play.Current.Title");
-        AudioscrobblerBase.CurrentPlayingSong.Album = GUIPropertyManager.GetProperty("#Play.Current.Album");
-        //AudioscrobblerBase.CurrentPlayingSong.Track = Int32.Parse(GUIPropertyManager.GetProperty("#Play.Current.Track"), System.Globalization.NumberStyles.Integer, new System.Globalization.CultureInfo("en-US"));              
-        AudioscrobblerBase.CurrentPlayingSong.Duration = Convert.ToInt32(g_Player.Duration);
-        AudioscrobblerBase.CurrentPlayingSong.Genre = GUIPropertyManager.GetProperty("#Play.Current.Genre");
-        AudioscrobblerBase.CurrentPlayingSong.FileName = g_Player.CurrentFile;
-
-        found = AudioscrobblerBase.CurrentPlayingSong.Artist != String.Empty ? true : false;
+          found = AudioscrobblerBase.CurrentPlayingSong.Artist != String.Empty ? true : false;
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Audioscrobbler plugin: Error getting CDDA track - {0}", ex.Message);
       }
       return found;
     }
