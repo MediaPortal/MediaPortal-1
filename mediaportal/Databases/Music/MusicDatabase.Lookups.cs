@@ -589,7 +589,11 @@ namespace MediaPortal.Music.Database
         strPath = Utils.RemoveTrailingSlash(strPath);
         DatabaseUtility.RemoveInvalidChars(ref strPath);
 
-        strSQL = String.Format("select * from tracks where strPath like '{0}%'", strPath);
+        // The underscore is treated as special symbol in a like clause, which produces wrong results
+        // we need to escape it and use the sql escape clause
+        strPath = strPath.Replace("_", "\x0001_");
+
+        strSQL = String.Format("select * from tracks where strPath like '{0}%' escape '\x0001'", strPath);
         
         SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
         if (results.Rows.Count == 0)
