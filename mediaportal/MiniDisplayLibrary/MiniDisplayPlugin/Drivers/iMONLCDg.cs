@@ -224,7 +224,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             this.DVMactive = true;
           }
         }
-      } catch (Exception exception)
+      }
+      catch (Exception exception)
       {
         this.DVMactive = true;
         MediaPortal.GUI.Library.Log.Debug("iMONLCDg.ActivateDVM(): caught exception: {0}", new object[] { exception });
@@ -1075,7 +1076,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           this.SendText3R(this._lines[0]);
         }
-      } catch (Exception exception)
+      }
+      catch (Exception exception)
       {
         MediaPortal.GUI.Library.Log.Debug("iMONLCDg.DisplayLines(): CAUGHT EXCEPTION {0}", new object[] { exception });
       }
@@ -1195,15 +1197,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       MediaPortal.GUI.Library.Log.Debug("iMONLCDg.Dispose(): called", new object[0]);
       //
-      // If IRSS (Input Remote Suite Server by and-81) is installed
+      // If IRSS (Input Remote Server Suite by and-81) is installed
       // we need to restart the service to re-register dll handler
       //
       string irss_srv = "InputService";
       foreach (ServiceController ctrl in ServiceController.GetServices())
       {
-        if (ctrl.ServiceName.ToLower() == "inputservice")
+        if (ctrl.ServiceName.ToLower() == irss_srv.ToLower())
         {
-          MediaPortal.GUI.Library.Log.Debug("iMONLCDg.Dispose(): Restarting \"input service\" from IRSS", new object[0]);
+          MediaPortal.GUI.Library.Log.Debug("iMONLCDg.Dispose(): Restarting \"" + irss_srv + "\" from IRSS", new object[0]);
           ctrl.Stop();
           ctrl.WaitForStatus(ServiceControllerStatus.Stopped);
           ctrl.Start();
@@ -2227,7 +2229,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.RemoteSettings.DisableRepeat = this.AdvSettings.DisableRepeat;
       this.RemoteSettings.RepeatDelay = this.AdvSettings.RepeatDelay * 0x19;
       this._ForceDisplay = this.AdvSettings.DisplayType;
-      if (this._ForceDisplay.Equals(string.Empty))
+      if (this._ForceDisplay == null || this._ForceDisplay.Equals(string.Empty))
       {
         this._ForceDisplay = "AutoDetect";
       }
@@ -2863,7 +2865,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               {
                 flag2 = true;
               }
-            } catch (Exception exception)
+            }
+            catch (Exception exception)
             {
               MediaPortal.GUI.Library.Log.Info("iMONLCDg.Remote_Start(): CAUGHT EXCEPTION while loading InputHander - {0}", new object[] { exception });
               flag2 = false;
@@ -3126,7 +3129,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           this.SendData_Error_Count = 0;
           Thread.Sleep(this._delay);
         }
-      } catch (Exception exception)
+      }
+      catch (Exception exception)
       {
         this._isDisabled = true;
         this._errorMessage = exception.Message;
@@ -3386,7 +3390,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             MediaPortal.GUI.Library.Log.Info("(IDisplay) iMONLCDg.SetLine(): completed", new object[0]);
           }
-        } catch (Exception exception)
+        }
+        catch (Exception exception)
         {
           MediaPortal.GUI.Library.Log.Debug("(IDisplay) iMONLCDg.SetLine(): CAUGHT EXCEPTION {0}", new object[] { exception });
         }
@@ -3529,7 +3534,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             MediaPortal.GUI.Library.Log.Info("iMONLCDg.Setup(): Hardware AutoDetect not available", new object[0]);
           }
-        } catch (Exception exception)
+        }
+        catch (Exception exception)
         {
           MediaPortal.GUI.Library.Log.Info("iMONLCDg.Setup(): RC TEST FAILED... SG_RC.dll not found. Exception: {0}", new object[] { exception.ToString() });
         }
@@ -3579,7 +3585,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             }
             Registry.CurrentUser.Close();
           }
-        } catch (Exception exception2)
+        }
+        catch (Exception exception2)
         {
           MediaPortal.GUI.Library.Log.Info("iMONLCDg.Setup(): registry test caught exception {0}", new object[] { exception2.ToString() });
         }
@@ -3642,7 +3649,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             MediaPortal.GUI.Library.Log.Info("(IDisplay) iMONLCDg.Setup(): iMON Display device found", new object[0]);
             this._IMON.iMONVFD_Uninit();
           }
-        } catch (Exception exception3)
+        }
+        catch (Exception exception3)
         {
           this._isDisabled = true;
           this._errorMessage = exception3.Message;
@@ -3783,7 +3791,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             this.volLevel = this.MPStatus.SystemVolumeLevel / 0x800;
           }
-        } catch (Exception exception)
+        }
+        catch (Exception exception)
         {
           if (this.DoDebug)
           {
@@ -4191,7 +4200,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               this._iconThread.Priority = ThreadPriority.BelowNormal;
             }
           }
-        } catch (Exception exception)
+        }
+        catch (Exception exception)
         {
           MediaPortal.GUI.Library.Log.Info("iMONLCDg.VFD_EQ_Update(): CAUGHT EXCEPTION - EXITING! - {0}", new object[] { exception });
           break;
@@ -6637,7 +6647,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           writer.Close();
           flag = true;
           MediaPortal.GUI.Library.Log.Info("iMONLCDg.AdvancedSettings.CreateDefaultRemoteMapping: remote mapping file created", new object[0]);
-        } catch
+        }
+        catch
         {
           MediaPortal.GUI.Library.Log.Info("iMONLCDg.AdvancedSettings.CreateDefaultRemoteMapping: Error saving remote mapping to XML file", new object[0]);
           flag = false;
@@ -7522,8 +7533,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       private bool _diskFlash;
       private bool _diskInverted;
-      private readonly ulong[] _DiskMask = new ulong[] { 0x80fe0000000000L, 0x80fd0000000000L, 0x80fb0000000000L, 0x80f70000000000L, 0x80ef0000000000L, 0x80df0000000000L, 0x80bf0000000000L, 0x807f0000000000L };
-      private readonly ulong[] _DiskMaskInv = new ulong[] { 0x80010000000000L, 0x80020000000000L, 0x80040000000000L, 0x80080000000000L, 0x80100000000000L, 0x80200000000000L, 0x80400000000000L, 0x80800000000000L };
+      private readonly ulong[] _DiskMask = new ulong[ ] { 0x80fe0000000000L, 0x80fd0000000000L, 0x80fb0000000000L, 0x80f70000000000L, 0x80ef0000000000L, 0x80df0000000000L, 0x80bf0000000000L, 0x807f0000000000L };
+      private readonly ulong[] _DiskMaskInv = new ulong[ ] { 0x80010000000000L, 0x80020000000000L, 0x80040000000000L, 0x80080000000000L, 0x80100000000000L, 0x80200000000000L, 0x80400000000000L, 0x80800000000000L };
       private bool _diskOn;
       private bool _diskRotate;
       private bool _diskRotateClockwise = true;
