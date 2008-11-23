@@ -20,6 +20,7 @@
  */
 using System;
 using System.Collections.Specialized;
+using System.Collections.Generic;
 using System.Data;
 using System.Windows.Forms;
 using System.Globalization;
@@ -137,8 +138,9 @@ namespace MPLanguageTool
       gv2.Dock = DockStyle.Fill;
       gv2.Visible = true;
 
+      Dictionary<string, DataRow> originalMapping;
       // Load Original File (english)
-      originalTranslations = XmlHandler.Load(null);
+      originalTranslations = XmlHandler.Load(null, out originalMapping);
 
       if (originalTranslations == null)
       {
@@ -158,7 +160,7 @@ namespace MPLanguageTool
       ToolStripText("Loading \"strings_" + culture.Name + ".xml\"...");
 
       // Modified
-      DataTable translations = XmlHandler.Load_Traslation(culture.Name, originalTranslations);
+      DataTable translations = XmlHandler.Load_Traslation(culture.Name, originalTranslations,originalMapping);
 
       int untranslated = 0;
 

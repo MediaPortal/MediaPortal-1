@@ -21,6 +21,7 @@
 using System;
 using System.Data;
 using System.Collections.Specialized;
+using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using System.IO;
@@ -42,8 +43,9 @@ namespace MPLanguageTool
     }
 
     // Load Original Label to Translate
-    public static DataTable Load(string languageID)
+    public static DataTable Load(string languageID, out Dictionary<string,DataRow> originalMapping)
     {
+      originalMapping = new Dictionary<string, DataRow>();
       string xml = BuildFileName(languageID);
       if (!File.Exists(xml))
       {
@@ -68,6 +70,7 @@ namespace MPLanguageTool
       translations.Columns.Add(col3);
       translations.Columns.Add(col4);
 
+      
       XmlDocument doc = new XmlDocument();
       doc.Load(xml);
       if (doc.DocumentElement != null)
@@ -95,6 +98,7 @@ namespace MPLanguageTool
 
 
             translations.Rows.Add(row);
+            originalMapping.Add(node_id, row);
 
           }
         }
@@ -103,7 +107,7 @@ namespace MPLanguageTool
     }
 
     // Load Translations
-    public static DataTable Load_Traslation(string languageID, DataTable originalTranslation)
+    public static DataTable Load_Traslation(string languageID, DataTable originalTranslation, Dictionary<string,DataRow> originalMapping)
     {
       string xml = BuildFileName(languageID);
       if (!File.Exists(xml))
@@ -129,6 +133,7 @@ namespace MPLanguageTool
       translations.Columns.Add(col3);
       translations.Columns.Add(col4);
 
+      Dictionary<string, DataRow> translationMapping = new Dictionary<string, DataRow>();
       XmlDocument doc = new XmlDocument();
       doc.Load(xml);
       if (doc.DocumentElement != null)
@@ -155,17 +160,18 @@ namespace MPLanguageTool
             row[4] = "";
 
             translations.Rows.Add(row);
+            translationMapping.Add(node_id.Trim(), row);
           }
         }
       }
 
-      // Hope That indexes was syncronized
-      for (int i = 0; i < originalTranslation.Rows.Count; i++)
-      {
-        if (originalTranslation.Rows[i]["id"].ToString().Trim() == translations.Rows[i]["id"].ToString().Trim())
+
+            // Hope That indexes was syncronized
+      foreach(String key in originalMapping.Keys){
+        if (originalMapping.ContainsKey(key) && translationMapping.ContainsKey(key))
         {
-          originalTranslation.Rows[i]["PrefixTranslated"] = translations.Rows[i]["PrefixOriginal"].ToString();
-          originalTranslation.Rows[i]["Translated"] = translations.Rows[i]["Original"].ToString();
+          originalMapping[key]["PrefixTranslated"] = translationMapping[key]["PrefixOriginal"].ToString();
+          originalMapping[key]["Translated"] = translationMapping[key]["Original"].ToString();
         }
       }
 
