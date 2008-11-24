@@ -41,7 +41,7 @@ namespace MPLanguageTool
     }
     public string GetTranslation()
     {
-      if (edValue.Text == "")
+      if (String.IsNullOrEmpty(edValue.Text))
       {
         return null;
       }
@@ -50,7 +50,7 @@ namespace MPLanguageTool
 
     public string GetPrefixTranslation()
     {
-      if (textBox1.Text == "")
+      if (String.IsNullOrEmpty(edValue.Text))
       {
         return null;
       }

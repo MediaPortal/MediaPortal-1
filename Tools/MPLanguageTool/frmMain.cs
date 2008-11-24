@@ -45,12 +45,23 @@ namespace MPLanguageTool
       InitializeComponent();
     }
 
-    private int GetUntranslatedCount()
+    private int GetUntranslatedCountDeployTool()
     {
       int count = 0;
       foreach (DataGridViewRow row in gv.Rows)
       {
-        if ((string)row.Cells[1].Value == null)
+        if (String.IsNullOrEmpty(row.Cells[1].Value.ToString()))
+          count++;
+      }
+      return count;
+    }
+
+    private int GetUntranslatedCountMediaPortal()
+    {
+      int count = 0;
+      foreach (DataGridViewRow row in gv2.Rows)
+      {
+        if (String.IsNullOrEmpty(row.Cells[2].Value.ToString()))
           count++;
       }
       return count;
@@ -65,8 +76,9 @@ namespace MPLanguageTool
       {
         string trans = dlg.GetTranslation();
         gv.Rows[e.RowIndex].Cells[1].Value = trans;
-        gv.Rows[e.RowIndex].Cells[0].Style.ForeColor = trans == null ? System.Drawing.Color.Red : System.Drawing.Color.Black;
-        ToolStripText(GetUntranslatedCount());
+        gv.Rows[e.RowIndex].Cells[0].Style.ForeColor = String.IsNullOrEmpty(trans) ? System.Drawing.Color.Red : System.Drawing.Color.Black;
+        gv.Rows[e.RowIndex].Cells[1].Style.ForeColor = String.IsNullOrEmpty(trans) ? System.Drawing.Color.Red : System.Drawing.Color.Black;
+        ToolStripText(GetUntranslatedCountDeployTool());
       }
     }
 
@@ -77,9 +89,7 @@ namespace MPLanguageTool
       string valueTranslated = (string)gv2.Rows[e.RowIndex].Cells[2].Value;
       string prefixOriginal = (string)gv2.Rows[e.RowIndex].Cells[3].Value;
       string prefixTranslated = (string)gv2.Rows[e.RowIndex].Cells[4].Value;
-
       frmEditMP dlg = new frmEditMP();
-
       if (dlg.ShowDialog(key, valueTranslated, valueOriginal, prefixTranslated, prefixOriginal) == DialogResult.OK)
       {
         string trans = dlg.GetTranslation();
@@ -87,8 +97,9 @@ namespace MPLanguageTool
 
         gv2.Rows[e.RowIndex].Cells[2].Value = trans;
         gv2.Rows[e.RowIndex].Cells[4].Value = prefix;
-        gv2.Rows[e.RowIndex].Cells[1].Style.ForeColor = trans == null ? System.Drawing.Color.Red : System.Drawing.Color.Black;
-        ToolStripText(GetUntranslatedCount());
+        gv2.Rows[e.RowIndex].Cells[0].Style.ForeColor = String.IsNullOrEmpty(trans) ? System.Drawing.Color.Red : System.Drawing.Color.Black;
+        gv2.Rows[e.RowIndex].Cells[1].Style.ForeColor = String.IsNullOrEmpty(trans) ? System.Drawing.Color.Red : System.Drawing.Color.Black;
+        ToolStripText(GetUntranslatedCountMediaPortal());
       }
     }
 
@@ -122,9 +133,10 @@ namespace MPLanguageTool
       foreach (string key in defaultTranslations.AllKeys)
       {
         gv.Rows.Add(key, translations[key]);
-        if (translations[key] == null)
+        if (String.IsNullOrEmpty(translations[key]))
         {
           gv.Rows[gv.RowCount - 1].Cells[0].Style.ForeColor = System.Drawing.Color.Red;
+          gv.Rows[gv.RowCount - 1].Cells[1].Style.ForeColor = System.Drawing.Color.Red;
           untranslated++;
         }
       }
@@ -170,9 +182,10 @@ namespace MPLanguageTool
       // Count Not Traslated
       for (int z = 0; z < translations.Rows.Count; z++)
       {
-        if (translations.Rows[z]["Translated"].ToString() == "")
+        if (String.IsNullOrEmpty((translations.Rows[z]["Translated"].ToString())))
         {
-          gv2.Rows[gv2.RowCount - 1].Cells[0].Style.ForeColor = System.Drawing.Color.Red;
+          gv2.Rows[z].Cells[0].Style.ForeColor = System.Drawing.Color.Red;
+          gv2.Rows[z].Cells[1].Style.ForeColor = System.Drawing.Color.Red;
           untranslated++;
         }
       }
