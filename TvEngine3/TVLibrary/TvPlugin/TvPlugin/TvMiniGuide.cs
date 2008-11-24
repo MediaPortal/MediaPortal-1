@@ -234,7 +234,6 @@ namespace TvPlugin
     /// </summary>
     void Close()
     {
-      Log.Debug("miniguide: close()");
       GUIWindowManager.IsSwitchingToNewWindow = true;
       lock (this)
       {
@@ -247,8 +246,6 @@ namespace TvPlugin
       }
       GUIWindowManager.IsSwitchingToNewWindow = false;
       GUILayerManager.UnRegisterLayer(this);
-
-      Log.Debug("miniguide: closed");
     }
 
     /// <summary>
@@ -351,7 +348,7 @@ namespace TvPlugin
     /// <param name="new_windowId"></param>
     protected override void OnPageDestroy(int new_windowId)
     {
-      Log.Debug("miniguide: OnPageDestroy");
+      //Log.Debug("TvMiniGuide: OnPageDestroy");
       base.OnPageDestroy(new_windowId);
       _running = false;
     }
@@ -362,7 +359,7 @@ namespace TvPlugin
     protected override void OnPageLoad()
     {
       benchClock = Stopwatch.StartNew();
-      Log.Debug("miniguide: onpageload");
+      //Log.Debug("TvMiniGuide: onpageload");
 
 
       // following line should stay. Problems with OSD not
@@ -371,7 +368,7 @@ namespace TvPlugin
       AllocResources();
       ResetAllControls();							// make sure the controls are positioned relevant to the OSD Y offset
       benchClock.Stop();
-      Log.Debug("miniguide: all controls are reset after {0}ms", benchClock.ElapsedMilliseconds.ToString());
+      Log.Debug("TvMiniGuide: All controls are reset after {0}ms", benchClock.ElapsedMilliseconds.ToString());
 
       lstChannels = getChannelList();
 
@@ -442,7 +439,7 @@ namespace TvPlugin
         spinGroup.Visible = false;
 
       benchClock.Stop();
-      Log.Debug("miniguide: FillGroupList finished after {0}ms", benchClock.ElapsedMilliseconds.ToString());
+      Log.Debug("TvMiniGuide: FillGroupList finished after {0} ms", benchClock.ElapsedMilliseconds.ToString());
     }
 
     private List<Channel> GetChannelListByGroup()
@@ -456,7 +453,7 @@ namespace TvPlugin
 
       if (_tvGroupChannelListCache.ContainsKey(idGroup)) //already in cache ? then return it.
       {
-        Log.Debug("miniguide: GetChannelListByGroup returning cached version of channels.");
+        Log.Debug("TvMiniGuide: GetChannelListByGroup returning cached version of channels.");
         return _tvGroupChannelListCache[idGroup];
       }
       else //not in cache, fetch it and update cache, then return.
@@ -466,7 +463,7 @@ namespace TvPlugin
 
         if (tvChannelList != null)
         {
-          Log.Debug("miniguide: GetChannelListByGroup caching channels from db.");
+          Log.Debug("TvMiniGuide: GetChannelListByGroup caching channels from DB.");
           _tvGroupChannelListCache.Add(idGroup, tvChannelList);
           return tvChannelList;
         }
@@ -481,26 +478,13 @@ namespace TvPlugin
     public void FillChannelList()
     {
       TvBusinessLayer layer = new TvBusinessLayer();
-      /*getChannelList().Visible = false;
-      if (lstChannelsWithStateIcons != null)
-      {
-        lstChannelsWithStateIcons.Visible = false;
-      }*/
-
-      benchClock.Reset();
-      benchClock.Start();
-      ///_tvChannelList = (List<Channel>)TVHome.Navigator.CurrentGroup.ReferringTvGuideChannels();      
-      //_tvChannelList = layer.GetTVGuideChannelsForGroup(TVHome.Navigator.CurrentGroup.IdGroup);
-
       List<Channel> tvChannelList = GetChannelListByGroup();
 
-      benchClock.Stop();
-      string BenchGroupChannels = benchClock.ElapsedMilliseconds.ToString();
       benchClock.Reset();
       benchClock.Start();
       Dictionary<int, NowAndNext> listNowNext = layer.GetNowAndNext(tvChannelList);
       benchClock.Stop();
-      string BenchNowNext = benchClock.ElapsedMilliseconds.ToString();
+      Log.Debug("TvMiniGuide: FillChannelList retrieved {0} programs for {1} channels in {2} ms", listNowNext.Count, tvChannelList.Count, benchClock.ElapsedMilliseconds.ToString());
       Channel CurrentChan = null;
       GUIListItem item = null;
       string ChannelLogo = "";
@@ -508,7 +492,7 @@ namespace TvPlugin
       //List<int> TSChannels = null;
       int SelectedID = 0;
       int CurrentChanState = 0;
-      int CurrentId = 0;      
+      int CurrentId = 0;
       bool DisplayStatusInfo = true;
       string PathIconNoTune = GUIGraphicsContext.Skin + @"\Media\remote_blue.png";
       string PathIconTimeshift = GUIGraphicsContext.Skin + @"\Media\remote_yellow.png";
@@ -521,13 +505,8 @@ namespace TvPlugin
       string local1055 = GUILocalizeStrings.Get(1055); // (timeshifting)
       string local1056 = GUILocalizeStrings.Get(1056); // (unavailable)    
 
-      benchClock.Reset();
-      benchClock.Start();
-
       Dictionary<int, ChannelState> tvChannelStatesList = null;
 
-      
-    
       benchClock.Reset();
       benchClock.Start();
 
@@ -552,13 +531,11 @@ namespace TvPlugin
         }
       }
 
-
       benchClock.Stop();
       if (tvChannelStatesList != null)
       {
-        Log.Debug("miniguide: FillChannelList - channel states returned : {0} - {1} ms", Convert.ToString(tvChannelStatesList.Count), benchClock.ElapsedMilliseconds.ToString());
+        Log.Debug("TvMiniGuide: FillChannelList - {0} channel states for group retrieved in {1} ms", Convert.ToString(tvChannelStatesList.Count), benchClock.ElapsedMilliseconds.ToString());
       }
-      
 
       for (int i = 0; i < tvChannelList.Count; i++)
       {
@@ -589,7 +566,7 @@ namespace TvPlugin
           if (TVHome.Navigator.Channel.IdChannel == CurrentId)
           {
             item.IsRemote = true;
-            SelectedID = lstChannels.Count;            
+            SelectedID = lstChannels.Count;
           }
 
           if (System.IO.File.Exists(ChannelLogo))
@@ -698,7 +675,7 @@ namespace TvPlugin
         }
       }
       benchClock.Stop();
-      Log.Debug("miniguide: state check + filling completed after {0}ms", benchClock.ElapsedMilliseconds.ToString());
+      Log.Debug("TvMiniGuide: State check + filling completed after {0} ms", benchClock.ElapsedMilliseconds.ToString());
       lstChannels.SelectedListItemIndex = SelectedID;
 
       if (lstChannels.GetID == 37)
@@ -736,12 +713,12 @@ namespace TvPlugin
     /// <param name="dwParentId"></param>
     public void DoModal(int dwParentId)
     {
-      Log.Debug("miniguide: domodal");
+      //Log.Debug("TvMiniGuide: domodal");
       _parentWindowID = dwParentId;
       _parentWindow = GUIWindowManager.GetWindow(_parentWindowID);
       if (null == _parentWindow)
       {
-        Log.Debug("miniguide: parentwindow=0");
+        //Log.Debug("TvMiniGuide: parentwindow = null");
         _parentWindowID = 0;
         return;
       }
