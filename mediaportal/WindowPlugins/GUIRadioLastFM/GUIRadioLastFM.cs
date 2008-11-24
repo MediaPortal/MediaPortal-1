@@ -59,6 +59,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     protected delegate void ThreadStartBass(Song starttrack);
     protected delegate void ThreadStopPlayer();
     protected delegate void ThreadFacadeAddItem(Song songitem);
+    protected delegate void ThreadUpdateThumb(string thumbpath);
 
     #endregion
 
@@ -987,7 +988,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         // If the download was unsuccessful or disabled in config then do not remove a possibly present placeholder by specifing a not existing file
         if (File.Exists(ThumbFileName))
         {
-          SetThumbnails(ThumbFileName);
+          GUIGraphicsContext.form.Invoke(new ThreadUpdateThumb(SetThumbnails), new object[] { ThumbFileName });
         }
       }
       else
@@ -1120,7 +1121,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
     {
       LastFMStation.CurrentStreamState = StreamPlaybackState.initialized;
 
-      SetThumbnails(String.Empty);
+      GUIGraphicsContext.form.Invoke(new ThreadUpdateThumb(SetThumbnails), new object[] { String.Empty });
+
       GUIPropertyManager.SetProperty("#Play.Current.Lastfm.TrackTags", String.Empty);
       GUIPropertyManager.SetProperty("#Play.Current.Lastfm.SimilarArtists", String.Empty);
       GUIPropertyManager.SetProperty("#Play.Current.Lastfm.CurrentStream", String.Empty);
@@ -1253,8 +1255,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     private void OnPlaybackStarted()
     {
-      SetThumbnails(String.Empty);
-      GUITextureManager.CleanupThumbs();
+      GUIGraphicsContext.form.Invoke(new ThreadUpdateThumb(SetThumbnails), new object[] { String.Empty });
+      
       GUIPropertyManager.SetProperty("#Play.Current.Lastfm.TrackTags", String.Empty);
       GUIPropertyManager.SetProperty("#Play.Current.Lastfm.SimilarArtists", String.Empty);      
 
@@ -1644,7 +1646,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         _trayBallonSongChange = new NotifyIcon();
         _trayBallonSongChange.ContextMenu = contextMenuLastFM;
 
-        if (System.IO.File.Exists(Config.GetFile(Config.Dir.Base, @"BallonRadio.ico")))
+        if (File.Exists(Config.GetFile(Config.Dir.Base, @"BallonRadio.ico")))
           _trayBallonSongChange.Icon = new Icon(Config.GetFile(Config.Dir.Base, @"BallonRadio.ico"));
         else
           _trayBallonSongChange.Icon = SystemIcons.Information;
@@ -1696,6 +1698,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     private void SetThumbnails(string artistThumbPath_)
     {
+      // GUITextureManager.CleanupThumbs();
       string thumb = artistThumbPath_;
 
       if (thumb.Length <= 0)
@@ -1703,8 +1706,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
       else
       {
         // let us test if there is a larger cover art image
-        string strLarge = MediaPortal.Util.Utils.ConvertToLargeCoverArt(thumb);
-        if (System.IO.File.Exists(strLarge))
+        string strLarge = Util.Utils.ConvertToLargeCoverArt(thumb);
+        if (File.Exists(strLarge))
           thumb = strLarge;
       }
       GUIPropertyManager.SetProperty("#Play.Current.ArtistThumb", thumb);
@@ -1713,7 +1716,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       if (File.Exists(albumthumb))
       {
         string strLarge = MediaPortal.Util.Utils.ConvertToLargeCoverArt(albumthumb);
-        if (System.IO.File.Exists(strLarge))
+        if (File.Exists(strLarge))
           albumthumb = strLarge;
 
         GUIPropertyManager.SetProperty("#Play.Current.Thumb", albumthumb);
@@ -1724,8 +1727,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
       if (imgArtistArt != null)
       {
         imgArtistArt.SetFileName(thumb);
-        imgArtistArt.FreeResources();
-        imgArtistArt.AllocResources();
+        //imgArtistArt.FreeResources();
+        //imgArtistArt.AllocResources();
       }
     }
 
