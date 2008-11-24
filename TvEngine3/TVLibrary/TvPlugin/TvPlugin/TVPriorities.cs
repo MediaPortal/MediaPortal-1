@@ -212,7 +212,7 @@ namespace TvPlugin
     {
       GUIControl.ClearControl(GetID, listPriorities.GetID);
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Schedule));
-      sb.AddOrderByField(true, "priority");
+      sb.AddOrderByField(false, "priority");
       SqlStatement stmt = sb.GetStatement(true);
       IList itemlist = ObjectFactory.GetCollection(typeof(Schedule), stmt.Execute());
 
@@ -657,23 +657,37 @@ namespace TvPlugin
       //3 ----
       //4
       //5
-
+      int tempPriority;
       for (int i = 0; i < item; ++i)
       {
         tmpItem = GetItem(i);
         tmprec = tmpItem.TVTag as Schedule;
+        tempPriority =tmprec.Priority;
         tmprec.Priority = Schedule.HighestPriority - i;
+        if (tempPriority != tmprec.Priority)
+        {
+          tmprec.Persist();
+        }
       }
       tmpItem = GetItem(item + 1);
       tmprec = tmpItem.TVTag as Schedule;
+      tempPriority = tmprec.Priority;
       tmprec.Priority = Schedule.HighestPriority - item;
+      if (tempPriority != tmprec.Priority)
+      {
+        tmprec.Persist();
+      }
       
       for (int i = item + 2; i < GetItemCount(); ++i)
       {
         tmpItem = GetItem(i);
         tmprec = tmpItem.TVTag as Schedule;
+        tempPriority = tmprec.Priority;
         tmprec.Priority = Schedule.HighestPriority - i;
-        
+        if (tempPriority != tmprec.Priority)
+        {
+          tmprec.Persist();
+        }
       }
 
       rec.Priority = Schedule.HighestPriority - item - 1;
