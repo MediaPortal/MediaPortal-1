@@ -120,8 +120,10 @@ namespace MediaPortal.GUI.Music
     private ScrobblerUtilsRequest _lastRequest;
     #endregion
 
-    protected ScrobbleMode currentScrobbleMode = ScrobbleMode.Similar;
-    protected offlineMode currentOfflineMode = offlineMode.random;
+    protected delegate void ThreadRefreshList();
+
+    private ScrobbleMode currentScrobbleMode = ScrobbleMode.Similar;
+    private offlineMode currentOfflineMode = offlineMode.random;
 
     [SkinControlAttribute(20)] protected GUIButtonControl btnShuffle = null;
     [SkinControlAttribute(21)] protected GUIButtonControl btnSave = null;
@@ -980,7 +982,6 @@ namespace MediaPortal.GUI.Music
       }
     }
 
-    //added by Sam
     bool AddRandomSongToPlaylist(ref Song song)
     {
       //check duplication
@@ -1014,45 +1015,6 @@ namespace MediaPortal.GUI.Music
       playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Add(playlistItem);
       return true;
     }
-
-    //added by Sam
-    //void UpdatePartyShuffle()
-    //{
-    //  MusicDatabase dbs = new MusicDatabase();
-
-    //  PlayList list = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
-    //  if (list.Count >= MaxNumPShuffleSongPredict)
-    //    return;
-
-    //  int i;
-    //  Song song = new Song();
-    //  //if not enough songs, add all available songs
-    //  if (dbs.GetNumOfSongs() < MaxNumPShuffleSongPredict)
-    //  {
-    //    List<Song> songs = new List<Song>();
-    //    dbs.GetAllSongs(ref songs);
-
-    //    for (i = 0; i < songs.Count; i++)
-    //    {
-    //      song = songs[i];
-    //      AddRandomSongToPlaylist(ref song);
-    //    }
-    //  }
-    //  //otherwise add until number of songs = MaxNumPShuffleSongPredict
-    //  else
-    //  {
-    //    i = list.Count;
-    //    while (i < MaxNumPShuffleSongPredict)
-    //    {
-    //      song.Clear();
-    //      dbs.GetRandomSong(ref song);
-    //      AddRandomSongToPlaylist(ref song);
-    //      i = list.Count;
-    //    }
-    //  }
-    //  //LoadDirectory(string.Empty); - will cause errors when playlist screen is not active
-    //}
-
 
     private void MovePlayListItemUp()
     {
@@ -1413,6 +1375,12 @@ namespace MediaPortal.GUI.Music
         }
         _preferCountForTracks = previouspreferCount;
       }
+
+      GUIGraphicsContext.form.Invoke(new ThreadRefreshList(DoRefreshList));
+    }
+    
+    private void DoRefreshList()
+    {
       if (facadeView != null)
       {
         // only focus the file while playlist is visible
