@@ -311,6 +311,7 @@ namespace TvLibrary.Implementations.Analog
       PerformTuning(channel);
       subChannel.OnAfterTune();
       RunGraph(subChannel.SubChannelId);
+      UpdatePinVideo(channel.IsTv);
       return subChannel;
     }
     #endregion
@@ -3527,7 +3528,6 @@ namespace TvLibrary.Implementations.Analog
 
     private void PerformTuning(IChannel channel)
     {
-      UpdatePinVideo(channel.IsTv);
       AnalogChannel analogChannel = channel as AnalogChannel;
       if (analogChannel.IsTv)
       {
