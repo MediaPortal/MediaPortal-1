@@ -172,6 +172,8 @@ namespace TvPlugin
     protected GUIButtonControl btnView = null;
     [SkinControlAttribute(6)]
     protected GUIButtonControl btnCleanup = null;
+    [SkinControlAttribute(7)]
+    protected GUIButtonControl btnCompress = null;
     [SkinControlAttribute(10)]
     protected GUIListControl listAlbums = null;
     [SkinControlAttribute(11)]
@@ -410,7 +412,10 @@ namespace TvPlugin
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
-
+      if (btnCompress != null)
+      {
+        btnCompress.Visible = false;
+      }
       //DiskManagement.ImportDvrMsFiles();
       LoadSettings();
       LoadDirectory();
