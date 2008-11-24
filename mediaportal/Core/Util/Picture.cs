@@ -89,7 +89,7 @@ namespace MediaPortal.Util
       {
         try
         {
-          theImage = ImageFast.FastFromFile(strPic);
+          theImage = ImageFast.FromFile(strPic);
           Log.Debug("Picture: Fast loaded texture {0}", strPic);
         }
         catch (ArgumentException)
@@ -768,7 +768,7 @@ namespace MediaPortal.Util
 
       try
       {
-        myImage = ImageFast.FastFromFile(aInputFilename);
+        myImage = ImageFast.FromFile(aInputFilename);
 
         return CreateThumbnail(myImage, aThumbTargetPath, iMaxWidth, iMaxHeight, iRotate, aFastMode);
       }

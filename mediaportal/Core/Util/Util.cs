@@ -2014,7 +2014,11 @@ namespace MediaPortal.Util
         // Add a thumbnail of the specified picture file to the image referenced by g, draw it at the given location and size.
         //try
         //{
-        //  img = ImageFast.FastFromFile(strFileName);
+        //  img = ImageFast.FromFile(strFileName);
+        //  using (FileStream fs = new FileStream(strFileName, FileMode.Open, FileAccess.ReadWrite))
+        //  {
+        //    img = Image.FromStream(fs, true, true);
+        //  }
         //}
         //catch (ArgumentException)
         //{
@@ -2071,104 +2075,107 @@ namespace MediaPortal.Util
 
           if (File.Exists(defaultBackground))
           {
-            using (Image imgFolder = Image.FromFile(defaultBackground))
+            using (FileStream fs = new FileStream(defaultBackground, FileMode.Open, FileAccess.ReadWrite))
             {
-              int width = imgFolder.Width;
-              int height = imgFolder.Height;
+              using (Image imgFolder = Image.FromStream(fs, true, false))
+              {
+                int width = imgFolder.Width;
+                int height = imgFolder.Height;
 
-              int thumbnailWidth = 256;
-              int thumbnailHeight = 256;
-              // draw a fullsize thumb if only 1 pic is available
-              if (aPictureList.Count == 1)
-              {
-                thumbnailWidth = (width - 20);
-                thumbnailHeight = (height - 20);
-              }
-              else
-              {
-                thumbnailWidth = (width - 30) / 2;
-                thumbnailHeight = (height - 30) / 2;
-              }
-
-              using (Bitmap bmp = new Bitmap(width, height))
-              {
-                using (Graphics g = Graphics.FromImage(bmp))
+                int thumbnailWidth = 256;
+                int thumbnailHeight = 256;
+                // draw a fullsize thumb if only 1 pic is available
+                if (aPictureList.Count == 1)
                 {
-                  g.CompositingQuality = Thumbs.Compositing;
-                  g.InterpolationMode = Thumbs.Interpolation;
-                  g.SmoothingMode = Thumbs.Smoothing;
+                  thumbnailWidth = (width - 20);
+                  thumbnailHeight = (height - 20);
+                }
+                else
+                {
+                  thumbnailWidth = (width - 30) / 2;
+                  thumbnailHeight = (height - 30) / 2;
+                }
 
-                  g.DrawImage(imgFolder, 0, 0, width, height);
-                  int x, y, w, h;
-                  x = 0;
-                  y = 0;
-                  w = thumbnailWidth;
-                  h = thumbnailHeight;
-                  //Load first of 4 images for the folder thumb.                  
+                using (Bitmap bmp = new Bitmap(width, height))
+                {
+                  using (Graphics g = Graphics.FromImage(bmp))
+                  {
+                    g.CompositingQuality = Thumbs.Compositing;
+                    g.InterpolationMode = Thumbs.Interpolation;
+                    g.SmoothingMode = Thumbs.Smoothing;
+
+                    g.DrawImage(imgFolder, 0, 0, width, height);
+                    int x, y, w, h;
+                    x = 0;
+                    y = 0;
+                    w = thumbnailWidth;
+                    h = thumbnailHeight;
+                    //Load first of 4 images for the folder thumb.                  
+                    try
+                    {
+                      AddPicture(g, (string)aPictureList[0], x + 10, y + 10, w, h);
+
+                      //If exists load second of 4 images for the folder thumb.
+                      if (aPictureList.Count > 1)
+                      {
+                        AddPicture(g, (string)aPictureList[1], x + thumbnailWidth + 20, y + 10, w, h);
+                      }
+
+                      //If exists load third of 4 images for the folder thumb.
+                      if (aPictureList.Count > 2)
+                      {
+                        AddPicture(g, (string)aPictureList[2], x + 10, y + thumbnailHeight + 20, w, h);
+                      }
+
+                      //If exists load fourth of 4 images for the folder thumb.
+                      if (aPictureList.Count > 3)
+                      {
+                        AddPicture(g, (string)aPictureList[3], x + thumbnailWidth + 20, y + thumbnailHeight + 20, w, h);
+                      }
+                    }
+                    catch (Exception ex)
+                    {
+                      Log.Error("Utils: An exception occured creating folder preview thumb: {0}", ex.Message);
+                    }
+                  }//using (Graphics g = Graphics.FromImage(bmp) )
+
                   try
                   {
-                    AddPicture(g, (string)aPictureList[0], x + 10, y + 10, w, h);
+                    if (File.Exists(aThumbPath))
+                      FileDelete(aThumbPath);
 
-                    //If exists load second of 4 images for the folder thumb.
-                    if (aPictureList.Count > 1)
+                    string tmpFile = Path.Combine(Path.GetTempPath(), "folderpreview.jpg");
+                    if (File.Exists(tmpFile))
+                      FileDelete(tmpFile);
+
+                    bmp.Save(tmpFile, Thumbs.ThumbCodecInfo, Thumbs.ThumbEncoderParams);
+
+                    // we do not want a folderL.jpg
+                    if (aThumbPath.ToLowerInvariant().Contains(@"folder.jpg"))
                     {
-                      AddPicture(g, (string)aPictureList[1], x + thumbnailWidth + 20, y + 10, w, h);
-                    }
-
-                    //If exists load third of 4 images for the folder thumb.
-                    if (aPictureList.Count > 2)
-                    {
-                      AddPicture(g, (string)aPictureList[2], x + 10, y + thumbnailHeight + 20, w, h);
-                    }
-
-                    //If exists load fourth of 4 images for the folder thumb.
-                    if (aPictureList.Count > 3)
-                    {
-                      AddPicture(g, (string)aPictureList[3], x + thumbnailWidth + 20, y + thumbnailHeight + 20, w, h);
-                    }
-                  }
-                  catch (Exception ex)
-                  {
-                    Log.Error("Utils: An exception occured creating folder preview thumb: {0}", ex.Message);
-                  }
-                }//using (Graphics g = Graphics.FromImage(bmp) )
-
-                try
-                {
-                  if (File.Exists(aThumbPath))
-                    FileDelete(aThumbPath);
-
-                  string tmpFile = Path.Combine(Path.GetTempPath(), "folderpreview.jpg");
-                  if (File.Exists(tmpFile))
-                    FileDelete(tmpFile);
-
-                  bmp.Save(tmpFile, Thumbs.ThumbCodecInfo, Thumbs.ThumbEncoderParams);
-
-                  // we do not want a folderL.jpg
-                  if (aThumbPath.ToLowerInvariant().Contains(@"folder.jpg"))
-                  {
-                    Picture.CreateThumbnail(tmpFile, aThumbPath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, false);
-                  }
-                  else
-                    if (Picture.CreateThumbnail(tmpFile, aThumbPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
-                    {
-                      aThumbPath = Util.Utils.ConvertToLargeCoverArt(aThumbPath);
                       Picture.CreateThumbnail(tmpFile, aThumbPath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, false);
                     }
+                    else
+                      if (Picture.CreateThumbnail(tmpFile, aThumbPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
+                      {
+                        aThumbPath = Util.Utils.ConvertToLargeCoverArt(aThumbPath);
+                        Picture.CreateThumbnail(tmpFile, aThumbPath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, false);
+                      }
 
-                  if (MediaPortal.Player.g_Player.Playing)
-                    Thread.Sleep(100);
-                  else
-                    Thread.Sleep(10);
+                    if (MediaPortal.Player.g_Player.Playing)
+                      Thread.Sleep(100);
+                    else
+                      Thread.Sleep(10);
 
-                  if (File.Exists(aThumbPath))
-                    result = true;
-                }
-                catch (Exception ex2)
-                {
-                  Log.Error("Utils: An exception occured saving folder preview thumb: {0} - {1}", aThumbPath, ex2.Message);
-                }
-              }//using (Bitmap bmp = new Bitmap(210,210))
+                    if (File.Exists(aThumbPath))
+                      result = true;
+                  }
+                  catch (Exception ex2)
+                  {
+                    Log.Error("Utils: An exception occured saving folder preview thumb: {0} - {1}", aThumbPath, ex2.Message);
+                  }
+                }//using (Bitmap bmp = new Bitmap(210,210))
+              }
             }
           }
           else
