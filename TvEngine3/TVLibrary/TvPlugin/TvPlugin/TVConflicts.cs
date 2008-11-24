@@ -214,6 +214,11 @@ namespace TvPlugin
       GUIPropertyManager.SetProperty("#itemcount", MediaPortal.Util.Utils.GetObjectCountLabel(total));
 
       GUIWaitCursor.Hide();
+      if (listConflicts.Count == 0)
+      {
+        GUIWindowManager.ShowPreviousWindow();
+      }
+
     }
 
     void SetLabels()

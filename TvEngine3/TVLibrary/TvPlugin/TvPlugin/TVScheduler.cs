@@ -59,6 +59,8 @@ namespace TvPlugin
     protected GUIButtonControl btnNew = null;
     [SkinControlAttribute(7)]
     protected GUIButtonControl btnCleanup = null;
+    [SkinControlAttribute(9)]
+    protected GUIButtonControl btnConflicts = null;
     [SkinControlAttribute(10)]
     protected GUIListControl listSchedules = null;
     [SkinControlAttribute(11)]
@@ -402,6 +404,8 @@ namespace TvPlugin
 
     void LoadDirectory()
     {
+      IList conflictsList = Conflict.ListAll();
+      btnConflicts.Visible = conflictsList.Count > 0;
       GUIControl.ClearControl(GetID, listSchedules.GetID);
       IList schedulesList = Schedule.ListAll();
       int total = 0;
