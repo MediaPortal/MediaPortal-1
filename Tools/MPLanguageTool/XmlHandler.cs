@@ -43,7 +43,7 @@ namespace MPLanguageTool
     }
 
     // Load Original Label to Translate
-    public static DataTable Load(string languageID, out Dictionary<string,DataRow> originalMapping)
+    public static DataTable Load(string languageID, out Dictionary<string, DataRow> originalMapping)
     {
       originalMapping = new Dictionary<string, DataRow>();
       string xml = BuildFileName(languageID);
@@ -70,7 +70,7 @@ namespace MPLanguageTool
       translations.Columns.Add(col3);
       translations.Columns.Add(col4);
 
-      
+
       XmlDocument doc = new XmlDocument();
       doc.Load(xml);
       if (doc.DocumentElement != null)
@@ -107,7 +107,7 @@ namespace MPLanguageTool
     }
 
     // Load Translations
-    public static DataTable Load_Traslation(string languageID, DataTable originalTranslation, Dictionary<string,DataRow> originalMapping)
+    public static DataTable Load_Traslation(string languageID, DataTable originalTranslation, Dictionary<string, DataRow> originalMapping)
     {
       string xml = BuildFileName(languageID);
       if (!File.Exists(xml))
@@ -166,8 +166,9 @@ namespace MPLanguageTool
       }
 
 
-            // Hope That indexes was syncronized
-      foreach(String key in originalMapping.Keys){
+      // Hope That indexes was syncronized
+      foreach (String key in originalMapping.Keys)
+      {
         if (originalMapping.ContainsKey(key) && translationMapping.ContainsKey(key))
         {
           originalMapping[key]["PrefixTranslated"] = translationMapping[key]["PrefixOriginal"].ToString();
@@ -176,55 +177,6 @@ namespace MPLanguageTool
       }
 
       return originalTranslation;
-    }
-
-
-
-    public static void Save(string languageID, string LanguageNAME, NameValueCollection translations)
-    {
-      string xml = BuildFileName(languageID);
-      StreamWriter writer = new StreamWriter(xml, false, Encoding.UTF8);
-      writer.Write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-      writer.Write("<Language name=\"" + LanguageNAME + "\" characters=\"255\">\n");
-      writer.Write("  <Section name=\"unmapped\">\n");
-      writer.Write("  </Section>\n");
-      writer.Write("</Language>\n");
-      writer.Close();
-      XmlDocument doc = new XmlDocument();
-      doc.Load(xml);
-      XmlNode nRoot = doc.SelectSingleNode("/Language/Section");
-      bool isfirst = true;
-      string prefix = "";
-      foreach (string key in translations.Keys)
-      {
-        if (isfirst)
-        {
-          prefix = translations[key];
-          isfirst = false;
-          continue;
-        }
-        if (translations[key] == null) continue;
-        XmlNode nValue = doc.CreateElement("String");
-        nValue.InnerText = translations[key];
-        XmlAttribute attr = nValue.OwnerDocument.CreateAttribute("id");
-
-        if (key.EndsWith(PrefixIdentifier()))
-        {
-          attr.InnerText = key.Substring(0, key.Length - PrefixIdentifier().Length);
-          nValue.Attributes.Append(attr);
-          attr = nValue.OwnerDocument.CreateAttribute("prefix");
-          attr.InnerText = prefix;
-          nValue.Attributes.Append(attr);
-        }
-        else
-        {
-          attr.InnerText = key;
-          nValue.Attributes.Append(attr);
-        }
-        nRoot.AppendChild(nValue);
-      }
-      doc.Save(xml);
-
     }
 
     public static void Save(string languageID, string LanguageNAME, DataTable translations)
@@ -250,31 +202,18 @@ namespace MPLanguageTool
         attr.InnerText = row["id"].ToString();
         nValue.Attributes.Append(attr);
 
-
-        //attr.InnerText = key.Substring(0, key.Length - PrefixIdentifier().Length);
-        //nValue.Attributes.Append(attr);
-
-        if (row["PrefixTranslated"] != null)
+        if (!String.IsNullOrEmpty(row["PrefixTranslated"].ToString()))
         {
           attr = nValue.OwnerDocument.CreateAttribute("prefix");
-          attr.InnerText = row["PrefixTranslated"].ToString().Trim();
+          attr.InnerText = row["PrefixTranslated"].ToString();
         }
-
         nValue.Attributes.Append(attr);
 
-
-        if (row["Translated"] != null)
+        if (!String.IsNullOrEmpty(row["Translated"].ToString()))
         {
-          //attr = nValue.OwnerDocument.CreateAttribute("prefix");
-          nValue.InnerText = row["Translated"].ToString().Trim();
-
-
-          //attr.InnerText = key;
-          //nValue.Attributes.Append(attr);
-
+          nValue.InnerText = row["Translated"].ToString();
           nRoot.AppendChild(nValue);
         }
-
 
       }
       doc.Save(xml);
