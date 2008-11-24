@@ -118,6 +118,7 @@ namespace MediaPortal.GUI.Library
           return;
         }
 			}
+      base.Render(timePassed);
 
 			// The GUIButtonControl has the focus
 			if (Focus)
@@ -156,7 +157,7 @@ namespace MediaPortal.GUI.Library
 																_imageNonFocused.YPosition+ (_imageNonFocused.Height-_spinControlHeight)/2 );
 				_spinControl.Render(timePassed);
       }
-      base.Render(timePassed);
+      //base.Render(timePassed);
 		}
 		public override bool HitTest(int x, int y, out int controlID, out bool focused)
 		{
