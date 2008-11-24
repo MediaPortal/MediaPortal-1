@@ -65,10 +65,17 @@ namespace MediaPortal.DeployTool.InstallationChecks
       Utils.UninstallMSI("{7299052b-02a4-4627-81f2-1818da5d550d}");
       return true;
     }
+
     public CheckResult CheckStatus()
     {
       CheckResult result;
-      result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString("VCRedist", "FILE"));
+      result.needsDownload = true;
+      string fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString("VCRedist", "FILE");
+      FileInfo vcRedistFile = new FileInfo(fileName);
+
+      if (vcRedistFile.Exists && vcRedistFile.Length != 0)
+        result.needsDownload = false;
+      
       if (InstallationProperties.Instance["InstallType"] == "download_only")
       {
         result.state = result.needsDownload == false ? CheckState.DOWNLOADED : CheckState.NOT_DOWNLOADED;

@@ -148,8 +148,9 @@ namespace MediaPortal.DeployTool
 
       for (int i = 0; i < 5; i++)
       {
-        if (File.Exists(FileName))
+        if (File.Exists(FileName)) 
         {
+          FileInfo.Refresh();
           if (FileInfo.Length > 10000)
           {
             break;

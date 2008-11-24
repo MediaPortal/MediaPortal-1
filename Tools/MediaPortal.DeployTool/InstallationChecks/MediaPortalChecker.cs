@@ -80,7 +80,13 @@ namespace MediaPortal.DeployTool.InstallationChecks
     public CheckResult CheckStatus()
     {
       CheckResult result;
-      result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString("MediaPortal", "FILE"));
+      result.needsDownload = true;
+      string fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString("MediaPortal", "FILE");
+      FileInfo mpFile = new FileInfo(fileName);
+
+      if (mpFile.Exists && mpFile.Length != 0)
+        result.needsDownload = false;
+
       if (InstallationProperties.Instance["InstallType"] == "download_only")
       {
         result.state = result.needsDownload == false ? CheckState.DOWNLOADED : CheckState.NOT_DOWNLOADED;

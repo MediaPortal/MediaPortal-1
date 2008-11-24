@@ -112,11 +112,15 @@ namespace MediaPortal.DeployTool.InstallationChecks
     public CheckResult CheckStatus()
     {
       CheckResult result;
+      result.needsDownload = true;
       string prg = "MSSQLExpress" + arch;
       string FileName = Application.StartupPath + "\\deploy\\" + Utils.LocalizeDownloadFile(Utils.GetDownloadString(prg, "FILE"), Utils.GetDownloadString(prg, "TYPE"), prg);
       InstallationProperties.Instance.Set("Sql2005FileName", FileName);
+      FileInfo msSqlFile = new FileInfo(FileName);
 
-      result.needsDownload = !File.Exists(FileName);
+      if (msSqlFile.Exists && msSqlFile.Length != 0)
+        result.needsDownload = false;
+
       if (InstallationProperties.Instance["InstallType"] == "download_only")
       {
         result.state = result.needsDownload == false ? CheckState.DOWNLOADED : CheckState.NOT_DOWNLOADED;

@@ -207,7 +207,13 @@ namespace MediaPortal.DeployTool.InstallationChecks
     public CheckResult CheckStatus()
     {
       CheckResult result;
-      result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString("MySQL", "FILE"));
+      result.needsDownload = true;
+      string fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString("MySQL", "FILE");
+      FileInfo mySqlFile = new FileInfo(fileName);
+
+      if (mySqlFile.Exists && mySqlFile.Length != 0)
+        result.needsDownload = false;
+
       if (InstallationProperties.Instance["InstallType"] == "download_only")
       {
         result.state = result.needsDownload == false ? CheckState.DOWNLOADED : CheckState.NOT_DOWNLOADED;

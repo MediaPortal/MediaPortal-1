@@ -74,10 +74,17 @@ namespace MediaPortal.DeployTool.InstallationChecks
     public CheckResult CheckStatus()
     {
       CheckResult result;
+      result.needsDownload = true;
+      string fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString("TvServer", "FILE");
+      FileInfo tvServerFile = new FileInfo(fileName);
+
 #if DEBUG
       MessageBox.Show("TvSever - CheckStatus: " + "start");
 #endif
-      result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString("TvServer", "FILE"));
+
+      if (tvServerFile.Exists && tvServerFile.Length != 0)
+        result.needsDownload = false;
+
       if (InstallationProperties.Instance["InstallType"] == "download_only")
       {
 #if DEBUG

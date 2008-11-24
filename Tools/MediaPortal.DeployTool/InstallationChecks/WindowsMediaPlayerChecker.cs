@@ -69,10 +69,15 @@ namespace MediaPortal.DeployTool.InstallationChecks
     public CheckResult CheckStatus()
     {
       CheckResult result;
+      result.needsDownload = true;
       const string prg = "WindowsMediaPlayer";
       string FileName = Application.StartupPath + "\\deploy\\" + Utils.LocalizeDownloadFile(Utils.GetDownloadString(prg, "FILE"), Utils.GetDownloadString(prg, "TYPE"), prg);
+      FileInfo wmpFile = new FileInfo(FileName);
       InstallationProperties.Instance.Set("Wmp11FileName", FileName);
-      result.needsDownload = !File.Exists(FileName);
+
+      if (wmpFile.Exists && wmpFile.Length != 0)
+        result.needsDownload = false;
+
       if (InstallationProperties.Instance["InstallType"] == "download_only")
       {
         result.state = result.needsDownload == false ? CheckState.DOWNLOADED : CheckState.NOT_DOWNLOADED;
