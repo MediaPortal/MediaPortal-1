@@ -166,13 +166,13 @@
         <onup>2</onup>
         <ondown>2</ondown>
         <textcolor>FFFFFFFF</textcolor>
-        <height>562</height>
+        <height>380</height>
       </control>
       <control>
         <description>scheduler recordings listcontrol</description>
         <type>listcontrol</type>
         <id>11</id>
-        <height>462</height>
+        <height>380</height>
         <textureHeight>55</textureHeight>
         <itemHeight>55</itemHeight>
         <itemWidth>60</itemWidth>
