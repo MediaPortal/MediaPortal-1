@@ -216,7 +216,7 @@ namespace TvPlugin
     {
       m_oActiveRecording = rec;
       m_bIsLiveRecording = IsRecordingActual(rec);
-    }    
+    }
 
     public static bool IsLiveRecording()
     {
@@ -231,24 +231,32 @@ namespace TvPlugin
       {
         string strTmp = xmlreader.GetValueAsString("tvrecorded", "sort", "channel");
 
-        if (strTmp == "channel") currentSortMethod = SortMethod.Channel;
-        else if (strTmp == "date") currentSortMethod = SortMethod.Date;
-        else if (strTmp == "name") currentSortMethod = SortMethod.Name;
-        else if (strTmp == "type") currentSortMethod = SortMethod.Genre;
-        else if (strTmp == "played") currentSortMethod = SortMethod.Played;
-        else if (strTmp == "duration") currentSortMethod = SortMethod.Duration;
+        if (strTmp == "channel")
+          currentSortMethod = SortMethod.Channel;
+        else if (strTmp == "date")
+          currentSortMethod = SortMethod.Date;
+        else if (strTmp == "name")
+          currentSortMethod = SortMethod.Name;
+        else if (strTmp == "type")
+          currentSortMethod = SortMethod.Genre;
+        else if (strTmp == "played")
+          currentSortMethod = SortMethod.Played;
+        else if (strTmp == "duration")
+          currentSortMethod = SortMethod.Duration;
 
         strTmp = xmlreader.GetValueAsString("tvrecorded", "view", "list");
 
         if (strTmp == "album")
         {
           currentViewMethod = ViewAs.Album;
-          if (listViews.Focus) listAlbums.Focus = true;
+          if (listViews.Focus)
+            listAlbums.Focus = true;
         }
         else
         {
           currentViewMethod = ViewAs.List;
-          if (listAlbums.Focus) listViews.Focus = true;
+          if (listAlbums.Focus)
+            listViews.Focus = true;
         }
         //          else if (strTmp == "bigicon")
         //            currentViewMethod = ViewAs.BigIcon;
@@ -428,7 +436,8 @@ namespace TvPlugin
         GUIWindowManager.SendThreadMessage(msg);
       }
       */
-      while (m_iSelectedItem >= GetItemCount() && m_iSelectedItem > 0) m_iSelectedItem--;
+      while (m_iSelectedItem >= GetItemCount() && m_iSelectedItem > 0)
+        m_iSelectedItem--;
       GUIControl.SelectItemControl(GetID, listViews.GetID, m_iSelectedItem);
       GUIControl.SelectItemControl(GetID, listAlbums.GetID, m_iSelectedItem);
 
@@ -533,23 +542,27 @@ namespace TvPlugin
     {
       int iItem = GetSelectedItemNo();
       GUIListItem pItem = GetItem(iItem);
-      if (pItem == null) return;
-      if (pItem.IsFolder) return;
+      if (pItem == null)
+        return;
+      if (pItem.IsFolder)
+        return;
       Recording rec = (Recording)pItem.TVTag;
 
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-      if (dlg == null) return;
+      if (dlg == null)
+        return;
       dlg.Reset();
       dlg.SetHeading(rec.Title);
 
       dlg.AddLocalizedString(655);     //Play recorded tv
       dlg.AddLocalizedString(656);     //Delete recorded tv
-      //if (pItem.IsPlayed)
-      //  dlg.AddLocalizedstring(830); //Reset watched status
+      if (rec.TimesWatched>0)
+        dlg.AddLocalizedString(830); //Reset watched status
       dlg.AddLocalizedString(1048);//Settings
 
       dlg.DoModal(GetID);
-      if (dlg.SelectedLabel == -1) return;
+      if (dlg.SelectedLabel == -1)
+        return;
       switch (dlg.SelectedId)
       {
         case 656: // delete
@@ -566,12 +579,12 @@ namespace TvPlugin
           GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV_RECORDED_INFO);
           break;
 
-        //case 830: // Reset watched status
-        //  {
-        //    ResetWatchedStatus(rec.FileName);
-        //    LoadDirectory();
-        //  }
-        //  break;
+        case 830: // Reset watched status
+          {
+            ResetWatchedStatus(rec);
+            LoadDirectory();
+          }
+          break;
       }
     }
 
@@ -587,14 +600,16 @@ namespace TvPlugin
     private void ShowViews()
     {
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-      if (dlg == null) return;
+      if (dlg == null)
+        return;
       dlg.Reset();
       dlg.SetHeading(652); // my recorded tv
       dlg.AddLocalizedString(914);
       dlg.AddLocalizedString(135);
       dlg.AddLocalizedString(915);
       dlg.DoModal(GetID);
-      if (dlg.SelectedLabel == -1) return;
+      if (dlg.SelectedLabel == -1)
+        return;
       int nNewWindow = GetID;
       switch (dlg.SelectedId)
       {
@@ -691,8 +706,7 @@ namespace TvPlugin
                   }
                 }
               }
-            }
-            catch (Exception recex)
+            } catch (Exception recex)
             {
               Log.Error("TVRecorded: error processing recordings - {0}", recex.Message);
             }
@@ -719,8 +733,7 @@ namespace TvPlugin
             }
           }
         }
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Error("TvRecorded: Error fetching recordings from database {0}", ex.Message);
       }
@@ -809,7 +822,7 @@ namespace TvPlugin
         {
           item = new GUIListItem(aRecording.Title);
           item.TVTag = aRecording;
-          string strLogo = Thumbs.TVRecorded + @"\" + Path.ChangeExtension(Utils.SplitFilename(aRecording.FileName), ".png");   
+          string strLogo = Thumbs.TVRecorded + @"\" + Path.ChangeExtension(Utils.SplitFilename(aRecording.FileName), ".png");
 
           if (!File.Exists(strLogo))
           {
@@ -818,8 +831,8 @@ namespace TvPlugin
             {
               strLogo = Utils.GetCoverArt(Thumbs.TVChannel, aRecording.ReferencedChannel().DisplayName);
             }
-            
-            if (refCh == null  || !File.Exists(strLogo))
+
+            if (refCh == null || !File.Exists(strLogo))
               strLogo = aRecording.TimesWatched > 0 ? strDefaultSeenIcon : strDefaultUnseenIcon;
           }
           else
@@ -842,8 +855,7 @@ namespace TvPlugin
         }
         else
           Log.Warn("TVRecorded: invalid recording title for {0}", aRecording.FileName);
-      }
-      catch (NullReferenceException singleex)
+      } catch (NullReferenceException singleex)
       {
         item = null;
         Log.Warn("TVRecorded: error building item from recording {0} - {1}", aRecording.FileName, singleex.Message + " stack: " + singleex.StackTrace);
@@ -921,7 +933,8 @@ namespace TvPlugin
         {
           GUIListItem item1 = listAlbums[i];
           GUIListItem item2 = listViews[i];
-          if (item1.Label == "..") continue;
+          if (item1.Label == "..")
+            continue;
           Recording rec = (Recording)item1.TVTag;
           item1.Label = item2.Label = rec.Title;
           TimeSpan ts = rec.EndTime - rec.StartTime;
@@ -949,8 +962,7 @@ namespace TvPlugin
             if (!item2.IsFolder)
               item2.IsPlayed = true;
           }
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
           Log.Warn("TVRecorded: error in SetLabels - {0}", ex.Message);
         }
@@ -960,7 +972,8 @@ namespace TvPlugin
     private bool OnPlayRecording(int iItem)
     {
       GUIListItem pItem = GetItem(iItem);
-      if (pItem == null) return false;
+      if (pItem == null)
+        return false;
       if (pItem.IsFolder)
       {
         if (pItem.Label.Equals(".."))
@@ -976,7 +989,7 @@ namespace TvPlugin
 
       m_oActiveRecording = rec;
       m_bIsLiveRecording = false;
-      TvServer server = new TvServer();      
+      TvServer server = new TvServer();
       foreach (Recording recItem in itemlist)
       {
         if (rec.IdRecording == recItem.IdRecording && IsRecordingActual(recItem))
@@ -1002,7 +1015,8 @@ namespace TvPlugin
       if (stoptime > 0)
       {
         GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-        if (null == dlgYesNo) return false;
+        if (null == dlgYesNo)
+          return false;
         dlgYesNo.SetHeading(GUILocalizeStrings.Get(900)); //resume movie?
         string chName = "";
         if (rec.ReferencedChannel() != null)
@@ -1014,7 +1028,8 @@ namespace TvPlugin
         dlgYesNo.SetLine(3, GUILocalizeStrings.Get(936) + " " + Utils.SecondsToHMSString(rec.StopTime));
         dlgYesNo.SetDefaultToYes(true);
         dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
-        if (!dlgYesNo.IsConfirmed) stoptime = 0;
+        if (!dlgYesNo.IsConfirmed)
+          stoptime = 0;
       }
 
       else if (m_bIsLiveRecording)
@@ -1131,12 +1146,15 @@ namespace TvPlugin
     {
       m_iSelectedItem = GetSelectedItemNo();
       GUIListItem pItem = GetItem(iItem);
-      if (pItem == null) return;
-      if (pItem.IsFolder) return;
+      if (pItem == null)
+        return;
+      if (pItem.IsFolder)
+        return;
       Recording rec = (Recording)pItem.TVTag;
-      
+
       GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-      if (null == dlgYesNo) return;
+      if (null == dlgYesNo)
+        return;
 
       bool isRecPlaying = false;
       if (g_Player.currentFileName.Length > 0 && g_Player.IsTVRecording && g_Player.Playing)
@@ -1180,7 +1198,8 @@ namespace TvPlugin
                 {
                   VirtualCard card;
 
-                  if (!server.IsRecording(rec.ReferencedChannel().Name, out card)) return;
+                  if (!server.IsRecording(rec.ReferencedChannel().Name, out card))
+                    return;
                   if (isRecPlaying)
                   {
                     g_Player.Stop();
@@ -1195,8 +1214,10 @@ namespace TvPlugin
       }
       else
       {
-        if (rec.TimesWatched > 0) dlgYesNo.SetHeading(GUILocalizeStrings.Get(653));
-        else dlgYesNo.SetHeading(GUILocalizeStrings.Get(820));
+        if (rec.TimesWatched > 0)
+          dlgYesNo.SetHeading(GUILocalizeStrings.Get(653));
+        else
+          dlgYesNo.SetHeading(GUILocalizeStrings.Get(820));
         string chName = "";
 
         if (rec.ReferencedChannel() != null)
@@ -1251,7 +1272,8 @@ namespace TvPlugin
       Gentle.Common.CacheManager.Clear();
 
       LoadDirectory();
-      while (m_iSelectedItem >= GetItemCount() && m_iSelectedItem > 0) m_iSelectedItem--;
+      while (m_iSelectedItem >= GetItemCount() && m_iSelectedItem > 0)
+        m_iSelectedItem--;
       GUIControl.SelectItemControl(GetID, listViews.GetID, m_iSelectedItem);
       GUIControl.SelectItemControl(GetID, listAlbums.GetID, m_iSelectedItem);
     }
@@ -1260,7 +1282,8 @@ namespace TvPlugin
     {
       m_iSelectedItem = GetSelectedItemNo();
       GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-      if (null == dlgYesNo) return;
+      if (null == dlgYesNo)
+        return;
       dlgYesNo.SetHeading(GUILocalizeStrings.Get(200043));//Cleanup recordings?
       dlgYesNo.SetLine(1, GUILocalizeStrings.Get(200050));//This will delete your recordings from harddisc
       dlgYesNo.SetLine(2, GUILocalizeStrings.Get(506)); // Are you sure?
@@ -1276,11 +1299,14 @@ namespace TvPlugin
       dlg.Add(new GUIListItem(GUILocalizeStrings.Get(676))); // Only watched recordings?
       dlg.Add(new GUIListItem(GUILocalizeStrings.Get(200044))); // Only invalid recordings?
       dlg.Add(new GUIListItem(GUILocalizeStrings.Get(200045))); // Both?
-      if (currentShow != "") dlg.Add(new GUIListItem(GUILocalizeStrings.Get(200049))); // Only watched recordings from this folder.
+      if (currentShow != "")
+        dlg.Add(new GUIListItem(GUILocalizeStrings.Get(200049))); // Only watched recordings from this folder.
       dlg.Add(new GUIListItem(GUILocalizeStrings.Get(222))); // Cancel?
       dlg.DoModal(GetID);
-      if (dlg.SelectedLabel < 0) return;
-      if (dlg.SelectedLabel > 4) return;
+      if (dlg.SelectedLabel < 0)
+        return;
+      if (dlg.SelectedLabel > 4)
+        return;
 
       if ((dlg.SelectedLabel == 0) || (dlg.SelectedLabel == 2))
         DeleteWatchedRecordings(null);
@@ -1291,7 +1317,8 @@ namespace TvPlugin
       Gentle.Common.CacheManager.Clear();
       dlg.Reset();
       LoadDirectory();
-      while (m_iSelectedItem >= GetItemCount() && m_iSelectedItem > 0) m_iSelectedItem--;
+      while (m_iSelectedItem >= GetItemCount() && m_iSelectedItem > 0)
+        m_iSelectedItem--;
       GUIControl.SelectItemControl(GetID, listViews.GetID, m_iSelectedItem);
       GUIControl.SelectItemControl(GetID, listAlbums.GetID, m_iSelectedItem);
     }
@@ -1389,12 +1416,14 @@ namespace TvPlugin
     {
       if (currentViewMethod == ViewAs.List)
       {
-        if (iItem < 0 || iItem >= listViews.Count) return null;
+        if (iItem < 0 || iItem >= listViews.Count)
+          return null;
         return listViews[iItem];
       }
       else
       {
-        if (iItem < 0 || iItem >= listAlbums.Count) return null;
+        if (iItem < 0 || iItem >= listAlbums.Count)
+          return null;
         return listAlbums[iItem];
       }
     }
@@ -1431,13 +1460,20 @@ namespace TvPlugin
 
     public int Compare(GUIListItem item1, GUIListItem item2)
     {
-      if (item1 == item2) return 0;
-      if (item1 == null) return -1;
-      if (item2 == null) return -1;
-      if (item1.IsFolder && item1.Label == "..") return -1;
-      if (item2.IsFolder && item2.Label == "..") return -1;
-      if (item1.IsFolder && !item2.IsFolder) return -1;
-      else if (!item1.IsFolder && item2.IsFolder) return 1;
+      if (item1 == item2)
+        return 0;
+      if (item1 == null)
+        return -1;
+      if (item2 == null)
+        return -1;
+      if (item1.IsFolder && item1.Label == "..")
+        return -1;
+      if (item2.IsFolder && item2.Label == "..")
+        return -1;
+      if (item1.IsFolder && !item2.IsFolder)
+        return -1;
+      else if (!item1.IsFolder && item2.IsFolder)
+        return 1;
 
       int iComp = 0;
       TimeSpan ts;
@@ -1448,25 +1484,32 @@ namespace TvPlugin
         case SortMethod.Played:
           item1.Label2 = string.Format("{0} {1}", rec1.TimesWatched, GUILocalizeStrings.Get(677));//times
           item2.Label2 = string.Format("{0} {1}", rec2.TimesWatched, GUILocalizeStrings.Get(677));//times
-          if (rec1.TimesWatched == rec2.TimesWatched) goto case SortMethod.Name;
+          if (rec1.TimesWatched == rec2.TimesWatched)
+            goto case SortMethod.Name;
           else
           {
-            if (m_bSortAscending) return rec1.TimesWatched - rec2.TimesWatched;
-            else return rec2.TimesWatched - rec1.TimesWatched;
+            if (m_bSortAscending)
+              return rec1.TimesWatched - rec2.TimesWatched;
+            else
+              return rec2.TimesWatched - rec1.TimesWatched;
           }
 
         case SortMethod.Name:
           if (m_bSortAscending)
           {
             iComp = string.Compare(rec1.Title, rec2.Title, true);
-            if (iComp == 0) goto case SortMethod.Channel;
-            else return iComp;
+            if (iComp == 0)
+              goto case SortMethod.Channel;
+            else
+              return iComp;
           }
           else
           {
             iComp = string.Compare(rec2.Title, rec1.Title, true);
-            if (iComp == 0) goto case SortMethod.Channel;
-            else return iComp;
+            if (iComp == 0)
+              goto case SortMethod.Channel;
+            else
+              return iComp;
           }
 
 
@@ -1474,14 +1517,18 @@ namespace TvPlugin
           if (m_bSortAscending)
           {
             iComp = string.Compare(rec1.ReferencedChannel().DisplayName, rec2.ReferencedChannel().DisplayName, true);
-            if (iComp == 0) goto case SortMethod.Date;
-            else return iComp;
+            if (iComp == 0)
+              goto case SortMethod.Date;
+            else
+              return iComp;
           }
           else
           {
             iComp = string.Compare(rec2.ReferencedChannel().DisplayName, rec1.ReferencedChannel().DisplayName, true);
-            if (iComp == 0) goto case SortMethod.Date;
-            else return iComp;
+            if (iComp == 0)
+              goto case SortMethod.Date;
+            else
+              return iComp;
           }
 
         case SortMethod.Duration:
@@ -1490,14 +1537,18 @@ namespace TvPlugin
             TimeSpan duration2 = rec2.EndTime - rec2.StartTime;
             if (m_bSortAscending)
             {
-              if (duration1 == duration2) goto case SortMethod.Date;
-              if (duration1 > duration2) return 1;
+              if (duration1 == duration2)
+                goto case SortMethod.Date;
+              if (duration1 > duration2)
+                return 1;
               return -1;
             }
             else
             {
-              if (duration1 == duration2) goto case SortMethod.Date;
-              if (duration1 < duration2) return 1;
+              if (duration1 == duration2)
+                goto case SortMethod.Date;
+              if (duration1 < duration2)
+                return 1;
               return -1;
             }
           }
@@ -1505,14 +1556,18 @@ namespace TvPlugin
         case SortMethod.Date:
           if (m_bSortAscending)
           {
-            if (rec1.StartTime == rec2.StartTime) return 0;
-            if (rec1.StartTime < rec2.StartTime) return 1;
+            if (rec1.StartTime == rec2.StartTime)
+              return 0;
+            if (rec1.StartTime < rec2.StartTime)
+              return 1;
             return -1;
           }
           else
           {
-            if (rec1.StartTime == rec2.StartTime) return 0;
-            if (rec1.StartTime > rec2.StartTime) return 1;
+            if (rec1.StartTime == rec2.StartTime)
+              return 0;
+            if (rec1.StartTime > rec2.StartTime)
+              return 1;
             return -1;
           }
 
@@ -1565,11 +1620,13 @@ namespace TvPlugin
     private void OnPlayRecordingBackStopped(MediaPortal.Player.g_Player.MediaType type, int stoptime, string filename)
     {
       Log.Info("TvRecorded:OnStopped {0} {1}", type, filename);
-      if (type != g_Player.MediaType.Recording) return;
+      if (type != g_Player.MediaType.Recording)
+        return;
 
       // the m_oActiveRecording object should always reflect the currently played back recording
       // we can not rely on filename from the method parameter, as this can be a RTSP://123455 kind of URL.
-      if (m_oActiveRecording != null) filename = m_oActiveRecording.FileName;
+      if (m_oActiveRecording != null)
+        filename = m_oActiveRecording.FileName;
 
       if (filename.Length > 0)
       {
@@ -1602,7 +1659,8 @@ namespace TvPlugin
 
     private void OnPlayRecordingBackEnded(MediaPortal.Player.g_Player.MediaType type, string filename)
     {
-      if (type != g_Player.MediaType.Recording) return;
+      if (type != g_Player.MediaType.Recording)
+        return;
 
       if (filename.Substring(0, 4) == "rtsp") { filename = g_Player.currentFileName; };
 
@@ -1637,7 +1695,8 @@ namespace TvPlugin
 
     private void OnPlayRecordingBackStarted(MediaPortal.Player.g_Player.MediaType type, string filename)
     {
-      if (type != g_Player.MediaType.Recording) return;
+      if (type != g_Player.MediaType.Recording)
+        return;
 
       // set audio track based on user prefs. 
       int prefLangIdx = TVHome.GetPreferedAudioStreamIndex();
@@ -1649,24 +1708,11 @@ namespace TvPlugin
     }
 
 
-    /// TODO : Update for TVE3 DB
-    //private void ResetWatchedStatus(string filename)
-    //{
-    //  if (VideoDatabase.HasMovieInfo(filename))
-    //  {
-    //    IMDBMovie movieDetails = new IMDBMovie();
-    //    int idMovie = VideoDatabase.GetMovieInfo(filename, ref movieDetails);
-    //    movieDetails.Watched = 0;
-    //    VideoDatabase.SetWatched(movieDetails);
-    //  }
-    //  int fileId = VideoDatabase.GetFileId(filename);
-    //  VideoDatabase.DeleteMovieStopTime(fileId);
-
-    //  TVRecorded rec = new TVRecorded();
-    //  TVDatabase.GetRecordedTVByFilename(filename, ref rec);
-    //  rec.TimesWatched = 0;
-    //  TVDatabase.PlayedRecordedTV(rec);
-    //}
+    private void ResetWatchedStatus(Recording aRecording)
+    {
+      aRecording.TimesWatched = 0;
+      aRecording.Persist();
+    }
     #endregion
   }
 }
