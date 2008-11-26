@@ -230,6 +230,7 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
+    <!--     <control>
     <control>
       <type>label</type>
       <description>track progress label</description>
@@ -241,7 +242,7 @@
       <align>left</align>
       <textcolor>80ffffff</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
-    </control>
+    </control> -->
     <!--     <control>
       <description>rectangle</description>
       <type>image</type>

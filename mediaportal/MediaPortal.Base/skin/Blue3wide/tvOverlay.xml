@@ -9,8 +9,8 @@
       <description>rec logo</description>
       <type>image</type>
       <id>4</id>
-      <posX>35</posX>
-      <posY>12</posY>
+      <posX>38</posX>
+      <posY>22</posY>
       <texture>remote_red.png</texture>
       <animation effect="fade" time="250">WindowClose</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
