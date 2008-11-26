@@ -56,9 +56,21 @@ namespace TvService
     #region private members
 
     private void UpdateChannelStateUsers(ref IList<User> allUsers, ChannelState chState, int channelId)
-    {
-      foreach (User u in allUsers)
+    {            
+        //foreach (User u in allUsers)
+      for (int i = 0; i < allUsers.Count; i++)
       {
+        User u = null;
+        try
+        {
+          u = allUsers[i];
+        }
+        catch
+        {
+        }
+
+        if (u == null) continue;
+        if (u.IsAdmin) continue; //scheduler users do not need to have their channelstates set.
         ChannelState currentChState = ChannelState.tunable;
         bool stateExists = u.ChannelStates.TryGetValue(channelId, out currentChState);
 
