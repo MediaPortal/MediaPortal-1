@@ -1711,6 +1711,7 @@ namespace TvPlugin
     private void ResetWatchedStatus(Recording aRecording)
     {
       aRecording.TimesWatched = 0;
+      aRecording.StopTime = 0;
       aRecording.Persist();
     }
     #endregion
