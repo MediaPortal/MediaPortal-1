@@ -89,9 +89,10 @@
       <width>900</width>
       <height>450</height>
       <textYOff>25</textYOff>
+      <textXOff>1</textXOff>
       <textXOff2>890</textXOff2>
       <textYOff2>25</textYOff2>
-      <textXOff3>88</textXOff3>
+      <textXOff3>73</textXOff3>
       <textYOff3>1</textYOff3>
       <IconXOff>10</IconXOff>
       <IconYOff>5</IconYOff>
