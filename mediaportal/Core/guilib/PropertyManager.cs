@@ -379,7 +379,7 @@ namespace MediaPortal.GUI.Library
     /// <returns>The value of the property.</returns>
     public static string Parse(string line)
     {
-      if (String.IsNullOrEmpty(line == null)) return string.Empty;
+      if (String.IsNullOrEmpty(line)) return string.Empty;
       if (line.IndexOf('#') == -1) return line;
       lock (_properties)
       {
