@@ -499,4 +499,16 @@ Kopieren Sie dieses Verzeichnis auf Ihren HTPC. Starten Sie "MediaPortal.DeployT
   <data name="Exit_Installation" xml:space="preserve">
     <value>Installation wirklich abbrechen?</value>
   </data>
+  <data name="DownloadOnly_CurrentSettings" xml:space="preserve">
+    <value>Aktuelle Download Einstellungen: Sprache={0}, System={1}</value>
+  </data>
+  <data name="DownloadSettings_labelSectionHeader" xml:space="preserve">
+    <value>Bitte wählen sie die Einstellungen für den Download:</value>
+  </data>
+  <data name="Install_stateSkipped" xml:space="preserve">
+    <value>Übersprungen</value>
+  </data>
+  <data name="MainWindow_browseButton" xml:space="preserve">
+    <value>Durchsuchen</value>
+  </data>
 </root>
