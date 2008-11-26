@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <Language name="German" characters="255">
     <Section name="unmapped">
         <String id="0" prefix="Meine ">Anwendungen</String>
@@ -31,7 +31,7 @@
         <String id="30">Oktober</String>
         <String id="31">November</String>
         <String id="32">Dezember</String>
-        <String id="50" prefix="Meine ">DVDs</String>    
+        <String id="50" prefix="Meine ">DVDs</String>
         <String id="100">Ansicht: Symbole klein</String>
         <String id="101">Ansicht: Liste</String>
         <String id="102">Neue Dateien suchen / hinzufügen</String>
@@ -480,12 +480,12 @@
         <String id="557">windstill</String>
         <String id="558">Kein Wind</String>
         <String id="559">in der Nähe</String>
-        <String id="560">aufklarend</String>        
+        <String id="560">aufklarend</String>
         <String id="561">Km/h</String>
         <String id="562">Mph</String>
         <String id="563">Kn</String>
         <String id="564">M/s</String>
-        <String id="565">Bft</String>        
+        <String id="565">Bft</String>
         <String id="590">Übersicht</String>
         <String id="591">Sport</String>
         <String id="592">Programm</String>
@@ -922,7 +922,7 @@
         <String id="1090">Video Standard</String>
         <String id="1091">Film</String>
         <String id="1092">NTSC</String>
-        <String id="1093">PAL</String>        
+        <String id="1093">PAL</String>
         <String id="1100">CD importieren</String>
         <String id="1101">Gewählten Titel importieren</String>
         <String id="1102">CD-Import abbrechen</String>
@@ -941,7 +941,7 @@
         <String id="1195">Maushilfen aktivieren</String>
         <String id="1196">Untertitel einschalten</String>
         <String id="1197">DXVA deaktivieren</String>
-        <String id="1198">DVD Navigator</String>        
+        <String id="1198">DVD Navigator</String>
         <String id="1200">Einrichtungs-Assistent</String>
         <String id="1300" prefix="Meine ">TV Serien</String>
         <String id="1440" prefix="Mein ">Videotext</String>
@@ -1377,6 +1377,59 @@
         <String id="9009">Kamera:</String>
         <String id="9010">Geräte-Typ:</String>
         <String id="9011">Kommentar:</String>
+        <String id="9100" prefix="Mein">MiniDisplay</String>
+        <String id="9101">Das Plugin ist nicht konfiguriert.</String>
+        <String id="9102">Bitte starten sie zuerst die MediaPortal Konfiguration!</String>
+        <String id="9103">Keypad</String>
+        <String id="9104">Displayoptionen</String>
+        <String id="9105">Displayansteuerung</String>
+        <String id="9106">Equalizer</String>
+        <String id="9107">Hintergrundbeleuchtung</String>
+        <String id="9108">Fernbedienung</String>
+        <String id="9109">Monitor-Energie-Optionen</String>
+        <String id="9110">Kontrast</String>
+        <String id="9111">Helligkeit</String>
+        <String id="9112">Rot</String>
+        <String id="9113">Grün</String>
+        <String id="9114">Blau</String>
+        <String id="9115">Display invertieren</String>
+        <String id="9116">Bei Videos das Display ausschalten</String>
+        <String id="9117">Displayaktionen aktivieren</String>
+        <String id="9118">Displayaktionszeit</String>
+        <String id="9119">Im Leerlauf das Display ausschalten</String>
+        <String id="9120">Leerlauf Zeitspanne</String>
+        <String id="9121">Anzeige der Lautstärke</String>
+        <String id="9122">Anzeige des Fortschritts</String>
+        <String id="9123">Laufwerksymbol</String>
+        <String id="9124">Datenträgerstatus</String>
+        <String id="9125">CD/DVD Status</String>
+        <String id="9126">Benutzerdef. Schriftart</String>
+        <String id="9127">Große Symbole verwenden</String>
+        <String id="9128">Große benutzerdef. Symbole</String>
+        <String id="9129">Große Symbole invertieren</String>
+        <String id="9130">Schrifteditor</String>
+        <String id="9131">Symboleditor</String>
+        <String id="9132">Equalizer verwenden</String>
+        <String id="9133">Equalizer Stil</String>
+        <String id="9134">Equalizerausschläge glätten</String>
+        <String id="9135">Start verzögern</String>
+        <String id="9136">Verzögerungszeit</String>
+        <String id="9137">Titel anzeigen</String>
+        <String id="9138">Titel Anzeigedauer</String>
+        <String id="9139">Titel Anzeigeintervall</String>
+        <String id="9140">Keine Keypadoptionen</String>
+        <String id="9141">Keypad aktivieren</String>
+        <String id="9142">Eigenes Mapping</String>
+        <String id="9143">Keypad Mapping</String>
+        <String id="9144">Keine Fernbedienungsoptionen</String>
+        <String id="9145">Fernbedienung deaktiveren</String>
+        <String id="9146">Wiederholung deaktiveren</String>
+        <String id="9147">Wiederholungsverzögerung</String>
+        <String id="9148">Fernbedienung Mapping</String>
+        <String id="9149">Normal</String>
+        <String id="9150">Stereo</String>
+        <String id="9151">VU Meter</String>
+        <String id="9152">VU Meter 2</String>
         <String id="9997">Sekunden:</String>
         <String id="9998">Minuten:</String>
         <String id="9999">Stunden:</String>
@@ -1706,6 +1759,13 @@
         <String id="107777" prefix="Mein ">Su-ji wa doku</String>
         <String id="107890" prefix="Mein ">Last.fm Radio</String>
         <String id="108888">Musik-Menü</String>
+        <String id="109000">Minidisplay Konfiguration</String>
+        <String id="109001">Minidisplay Konfiguration : Hintergrundbeleuchtung</String>
+        <String id="109002">Minidisplay Konfiguration : Displayansteuerung</String>
+        <String id="109003">Minidisplay Konfiguration : Displayoptionen</String>
+        <String id="109004">Minidisplay Konfiguration : Equalizer</String>
+        <String id="109005">Minidisplay Konfiguration : Keypad</String>
+        <String id="109006">Minidisplay Konfiguration : Fernbedienung</String>
         <String id="200000">Bitte einen EPG-Grabber auswählen. Hinweis: Ist ihr Land nicht aufgeführt,</String>
         <String id="200001">dann müssen sie den Programmführer manuell einrichten!</String>
         <String id="200002">Sie können jetzt EPG-Kanäle ihren TV-Kanälen zuordnen</String>
@@ -1753,9 +1813,9 @@
         <String id="200045">Gesehene und ungültige Aufnahmen</String>
         <String id="200046">Vorschaubilder erstellen (dieser Ordner)</String>
         <String id="200047">Vorschaubilder erstellen (incl. Unterordner)</String>
-        <String id="200048">Alle Vorschaubilder neu erstellen</String>     
+        <String id="200048">Alle Vorschaubilder neu erstellen</String>
         <String id="200049">Nur bereits gesehene Aufnahmen</String>
-        <String id="200050">Die Aufnahmen werden auch von Ihrer Festplatte gelöscht</String>				
+        <String id="200050">Die Aufnahmen werden auch von Ihrer Festplatte gelöscht</String>
         <String id="200051">Videodatei ist ungültig</String>
         <String id="200052">Laufende Aufnahmen</String>
         <String id="200053">Keine laufenden Aufnahmen</String>
@@ -1772,6 +1832,6 @@
         <String id="200067">Verbunden mit Datenbank</String>
         <String id="200068">Keine Verbindung zur Datenbank</String>
         <String id="200069">Alle nötigen TCP/IP Ports verfügbar</String>
-        <String id="200070">Bitte die Firewall überprüfen</String>	
+        <String id="200070">Bitte die Firewall überprüfen</String>
     </Section>
 </Language>
