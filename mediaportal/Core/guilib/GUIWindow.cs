@@ -212,7 +212,7 @@ namespace MediaPortal.GUI.Library
       WINDOW_ACTIONMENU = 3010,
       WINDOW_TV_CROP_SETTINGS = 3011,
       WINDOW_TV_TUNING_DETAILS = 3012, // gemx 
-      WINDOW_WEBBROWSER = 5500,
+      WINDOW_WEBBROWSER = 5500,      
       WINDOW_PSCLIENTPLUGIN_UNATTENDED = 6666, // dero
       WINDOW_WIKIPEDIA = 4711,
       WINDOW_TELETEXT = 7700,
@@ -673,7 +673,7 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception e)
       {
-        Log.Info("GUIWIndow.LoadInclude: {0}", e.Message);
+        Log.Error("GUIWIndow.LoadInclude: {0}", e.Message);
       }
 
       return false;
@@ -697,7 +697,7 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception e)
       {
-        Log.Info("GUIWindow.LoadDefines: {0}", e.Message);
+        Log.Error("GUIWindow.LoadDefines: {0}", e.Message);
       }
 
       return table;
@@ -921,7 +921,7 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception ex)
       {
-        Log.Error("AllocResources exception:{0}", ex.ToString());
+        Log.Error("GUIWindow: AllocResources exception - {0}", ex.ToString());
       }
       _windowAllocated = true;
     }
@@ -941,7 +941,7 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception ex)
       {
-        Log.Error("FreeResources exception:{0}", ex.ToString());
+        Log.Error("GUIWindow: FreeResources exception - {0}", ex.ToString());
       }
     }
 

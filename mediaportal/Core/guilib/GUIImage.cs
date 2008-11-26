@@ -632,7 +632,7 @@ namespace MediaPortal.GUI.Library
         if (file != null && file != string.Empty)
         {
           if (logtextures)
-            Log.Info("GUIImage:freeresources:{0}", file);
+            Log.Info("GUIImage: FreeResources - {0}", file);
           if (GUITextureManager.IsTemporary(file))
           {
             GUITextureManager.ReleaseTexture(file);

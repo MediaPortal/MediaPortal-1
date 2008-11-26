@@ -46,7 +46,7 @@ namespace MediaPortal.GUI.Library
     private GUIPropertyManager()
     {
     }
-    static GUIPropertyManager() 
+    static GUIPropertyManager()
     {
       _properties["#highlightedbutton"] = string.Empty;
       _properties["#itemcount"] = string.Empty;
@@ -271,9 +271,8 @@ namespace MediaPortal.GUI.Library
     /// <param name="tagvalue">property value</param>
     public static void SetProperty(string tag, string tagvalue)
     {
-      if (tag == null) return;
+      if (String.IsNullOrEmpty(tag)) return;
       if (tagvalue == null) return;
-      if (tag == string.Empty) return;
       if (tag[0] != '#') return;
 
       if (tag.Equals("#currentmodule"))
@@ -380,8 +379,7 @@ namespace MediaPortal.GUI.Library
     /// <returns>The value of the property.</returns>
     public static string Parse(string line)
     {
-      if (line == null) return string.Empty;
-      if (line == string.Empty) return string.Empty;
+      if (String.IsNullOrEmpty(line == null)) return string.Empty;
       if (line.IndexOf('#') == -1) return line;
       lock (_properties)
       {

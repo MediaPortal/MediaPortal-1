@@ -732,7 +732,7 @@ namespace MediaPortal.GUI.Library
       string fullFileName = fileName;
       if (!File.Exists(fileName))
       {
-        if (fileName[1] != ':')
+        if (!Path.IsPathRooted(fileName))
           fullFileName = GUIGraphicsContext.Skin + @"\media\" + fileName;
       }
 
@@ -741,7 +741,7 @@ namespace MediaPortal.GUI.Library
       {
         if (fullFileName.ToLower().IndexOf(@"media\animations\") >= 0)
           return true;
-        if (fullFileName.ToLower().IndexOf(@"media\tetris\") >= 0)
+        if (fullFileName.ToLower().IndexOf(@"media\Tetris\") >= 0)
           return true;
         return false;
       }
