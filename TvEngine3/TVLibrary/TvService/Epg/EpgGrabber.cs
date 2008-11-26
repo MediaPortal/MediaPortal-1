@@ -179,6 +179,15 @@ namespace TvService
       try
       {
         _reEntrant = true;
+
+        try
+        {
+          string threadname = Thread.CurrentThread.Name;
+          if (string.IsNullOrEmpty(threadname))
+            Thread.CurrentThread.Name = "DVB EPG timer";
+        }
+        catch (InvalidOperationException) { }
+
         if (_tvController.AllCardsIdle == false) return;
         foreach (EpgCard card in _epgCards)
         {

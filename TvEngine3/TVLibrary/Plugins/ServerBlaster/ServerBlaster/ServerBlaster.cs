@@ -83,7 +83,7 @@ namespace TvEngine
       Thread thread = new Thread(new ThreadStart(Sender));
       thread.SetApartmentState(ApartmentState.STA);
       thread.IsBackground = true;
-      thread.Name = "Blaster";
+      thread.Name = "Remote blaster";
       _running = true;
       thread.Start();
 

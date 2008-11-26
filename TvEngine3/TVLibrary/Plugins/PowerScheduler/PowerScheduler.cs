@@ -181,6 +181,17 @@ namespace TvEngine.PowerScheduler
     [MethodImpl(MethodImplOptions.Synchronized)]
     public void Start(IController controller)
     {
+      try
+      {
+        string threadname = Thread.CurrentThread.Name;
+        if (string.IsNullOrEmpty(threadname))
+          Thread.CurrentThread.Name = "Powerscheduler";
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Powerscheduler: Error naming thread - {0}", ex.Message);
+      }
+
       _controller = controller;
 
       Register(_clientStandbyHandler);
@@ -655,6 +666,17 @@ namespace TvEngine.PowerScheduler
     /// <param name="e"></param>
     private void OnTimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
+      try
+      {
+        string threadname = Thread.CurrentThread.Name;
+        if (string.IsNullOrEmpty(threadname))
+          Thread.CurrentThread.Name = "Powerscheduler Timer";
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Powerscheduler: Error naming thread - {0}", ex.Message);
+      }
+
       if (_onTimerElapsedInside) return;
       _onTimerElapsedInside = true;
       try
