@@ -1097,6 +1097,8 @@ namespace MediaPortal.Player
     {
       System.Threading.Thread createVizThread;
       createVizThread = new System.Threading.Thread(new System.Threading.ParameterizedThreadStart(InternalCreateVisualization));
+      createVizThread.IsBackground = true;
+      createVizThread.Name = "BASS Viz starter";
       createVizThread.Start(visPath);
     }
 

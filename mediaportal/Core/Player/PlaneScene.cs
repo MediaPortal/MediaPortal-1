@@ -547,6 +547,13 @@ namespace MediaPortal.Player
     {
       try
       {
+        try
+        {
+          if (String.IsNullOrEmpty(Thread.CurrentThread.Name))
+            Thread.CurrentThread.Name = "VMRenderer";
+        }
+        catch (InvalidOperationException) { }
+
         // if the update crop flag is set (indicating that _cropSettings has changed), call InternalPresentImage to 
         // apply it
         if (updateCrop)
@@ -586,7 +593,10 @@ namespace MediaPortal.Player
           _arVideoWidth = arWidth;
           _arVideoHeight = arHeight;
         }
+
         if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) return 0;
+        
+
         if (!_drawVideoAllowed || !_isEnabled)
         {
           Log.Info("planescene: PresentSurface() frame:{0} enabled:{1} allowed:{2} {3}x{4}",
@@ -594,6 +604,7 @@ namespace MediaPortal.Player
           _vmr9Util.FrameCounter++;
           return 0;
         }
+
         _vmr9Util.FrameCounter++;
         InternalPresentSurface(width, height, arWidth, arHeight, false);
       }
@@ -838,7 +849,7 @@ namespace MediaPortal.Player
         {
           GUIGraphicsContext.DX9Device.EndScene();
         }
-        GUIGraphicsContext.DX9Device.Present(); 
+        GUIGraphicsContext.DX9Device.Present();
         _debugStep = 17;
       }
       catch (DeviceLostException)

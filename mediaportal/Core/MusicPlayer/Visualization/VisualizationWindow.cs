@@ -1662,6 +1662,8 @@ namespace MediaPortal.Visualization
         System.Threading.Thread t;
         System.Threading.ThreadStart firstRenderTs = new System.Threading.ThreadStart(DoFirstRender);
         t = new System.Threading.Thread(firstRenderTs);
+        t.IsBackground = true;
+        t.Name = "Viz Window Starter";
         t.Start();
       }
 
