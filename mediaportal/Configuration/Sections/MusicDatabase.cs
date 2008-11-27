@@ -574,6 +574,8 @@ namespace MediaPortal.Configuration.Sections
       setting.CreateArtistPreviews = checkBoxCreateArtist.Checked;
       setting.CreateGenrePreviews = checkBoxCreateGenre.Checked;
       setting.UseLastImportDate = checkBoxUpdateSinceLastImport.Checked;
+      // ToDo - add GUI setting if wanted
+      setting.ExcludeHiddenFiles = false;
 
       int appel = m_dbs.MusicDatabaseReorg(shares, setting);
       progressBar.Value = 100;

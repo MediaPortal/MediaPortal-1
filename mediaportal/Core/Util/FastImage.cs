@@ -138,13 +138,13 @@ namespace MediaPortal.Util
       // We are not using ICM at all, fudge that, this should be FAAAAAST!
       if (GdipLoadImageFromFile(filename, out loadingImage) != 0)
       {
-        throw new Exception("GDI+ threw a status error code.");
+        throw new ArgumentException("GDI+ threw a status error code.");
       }
 
       GdipImageTypeEnum imageType;
       if (GdipGetImageType(loadingImage, out imageType) != 0)
       {
-        throw new Exception("GDI+ couldn't get the image type");
+        throw new ArgumentException("GDI+ couldn't get the image type");
       }
 
       switch (imageType)
@@ -155,7 +155,7 @@ namespace MediaPortal.Util
           return (Metafile)emfType.InvokeMember("FromGDIplus", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.InvokeMethod, null, null, new object[] { loadingImage });
       }
 
-      throw new Exception("Couldn't convert underlying GDI+ object to managed object");
+      throw new ArgumentException("Couldn't convert underlying GDI+ object to managed object");
     }
   }
 

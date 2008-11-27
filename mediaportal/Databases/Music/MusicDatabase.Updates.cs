@@ -26,19 +26,19 @@
 namespace MediaPortal.Music.Database
 {
   #region Usings
+
   using System;
   using System.Collections;
   using System.Collections.Generic;
+  using System.Drawing;
   using System.IO;
-
   using SQLite.NET;
-
   using MediaPortal.Configuration;
   using MediaPortal.Database;
   using MediaPortal.ServiceImplementations;
   using MediaPortal.TagReader;
   using MediaPortal.Util;
-  using System.Drawing;
+
   #endregion
 
   #region Reorg class
@@ -86,7 +86,7 @@ namespace MediaPortal.Music.Database
     }
 
     private string strSQL;
-    private ArrayList availableFiles;
+    private List<string> availableFiles;
 
     private string _previousDirectory = null;
     private string _previousNegHitDir = null;
@@ -395,10 +395,12 @@ namespace MediaPortal.Music.Database
     public int MusicDatabaseReorg(ArrayList shares, MusicDatabaseSettings setting)
     {
       // Get the values from the Setting Object, which we received from the Config
-      bool updateSinceLastImport = false;
+      bool _updateSinceLastImport = false;
+      bool _excludeHiddenFiles = false;
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        updateSinceLastImport = xmlreader.GetValueAsBool("musicfiles", "updateSinceLastImport", false);
+        _updateSinceLastImport = xmlreader.GetValueAsBool("musicfiles", "updateSinceLastImport", false);
+        _excludeHiddenFiles = xmlreader.GetValueAsBool("musicfiles", "excludeHiddenFiles", false);
       }
       if (setting != null)
       {
@@ -410,10 +412,11 @@ namespace MediaPortal.Music.Database
         _useAllImages = setting.UseAllImages;
         _createArtistPreviews = setting.CreateArtistPreviews;
         _createGenrePreviews = setting.CreateGenrePreviews;
-        updateSinceLastImport = setting.UseLastImportDate;
+        _updateSinceLastImport = setting.UseLastImportDate;
+        //_excludeHiddenFiles = setting.ExcludeHiddenFiles; <-- no GUI setting yet; use xml file to specify this
       }
 
-      if (!updateSinceLastImport)
+      if (!_updateSinceLastImport)
         _lastImport = DateTime.MinValue;
 
       if (shares == null)
@@ -456,7 +459,7 @@ namespace MediaPortal.Music.Database
         MyArgs.phase = "Scanning new files";
         OnDatabaseReorgChanged(MyArgs);
 
-        int GetFilesResult = GetFiles(10, 69, ref fileCount);
+        int GetFilesResult = GetAndAddOrUpdateFiles(_updateSinceLastImport, _excludeHiddenFiles, 10, 69, ref fileCount);
         Log.Info("Musicdatabasereorg: Add / Update files: {0} files added / updated", GetFilesResult);
 
         if (_useFolderThumbs)
@@ -478,13 +481,10 @@ namespace MediaPortal.Music.Database
         MyArgs.phase = "Cleanup non-existing Artists, AlbumArtists and Genres";
         CleanupMultipleEntryTables();
       }
-
       catch (Exception ex)
       {
-        Log.Error("music-scan{0} {1} {2}",
-                            ex.Message, ex.Source, ex.StackTrace);
+        Log.Error("Musicdatabasereorg: Unhandled error {0} - scan aborted!\n{1}\n{2}", ex.Message, ex.Source, ex.StackTrace);
       }
-
       finally
       {
         MyArgs.progress = 96;
@@ -721,9 +721,9 @@ namespace MediaPortal.Music.Database
     /// <param name="EndProgress"></param>
     /// <param name="fileCount"></param>
     /// <returns></returns>
-    private int GetFiles(int StartProgress, int EndProgress, ref int fileCount)
+    private int GetAndAddOrUpdateFiles(bool aCheckForNewFiles, bool aExcludeHiddenFiles, int StartProgress, int EndProgress, ref int fileCount)
     {
-      availableFiles = new ArrayList();
+      availableFiles = new List<string>(100000);
 
       DatabaseReorgEventArgs MyArgs = new DatabaseReorgEventArgs();
       string strSQL;
@@ -739,14 +739,14 @@ namespace MediaPortal.Music.Database
       foreach (string Share in _shares)
       {
         // Get all the files for the given Share / Path
-        CountFilesInPath(Share, ref totalFiles);
+        CountFilesInPath(aCheckForNewFiles, aExcludeHiddenFiles, Share, ref totalFiles);
 
         // Now get the files from the root directory, which we missed in the above search
         try
         {
           foreach (string file in Directory.GetFiles(Share, "*.*"))
           {
-            CheckFileForInclusion(file, ref totalFiles);
+            CheckFileForInclusion(aCheckForNewFiles, aExcludeHiddenFiles, file, ref totalFiles);
           }
         }
         catch (Exception)
@@ -776,7 +776,6 @@ namespace MediaPortal.Music.Database
             return (int)Errors.ERROR_REORG_SONGS;
           }
         }
-
         catch (Exception)
         {
           Log.Error("Musicdatabasereorg: AddMissingFiles finished with error (exception for select)");
@@ -803,8 +802,6 @@ namespace MediaPortal.Music.Database
         }
       } //end for-each
 
-
-
       Log.Info("Musicdatabasereorg: Checked {0} files.", totalFiles);
       Log.Info("Musicdatabasereorg: {0} skipped because of creation before the last import", totalFiles - AddedCounter);
 
@@ -817,7 +814,7 @@ namespace MediaPortal.Music.Database
     /// </summary>
     /// <param name="path"></param>
     /// <param name="totalFiles"></param>
-    private void CountFilesInPath(string path, ref int totalFiles)
+    private void CountFilesInPath(bool aCheckForNewFiles, bool aExcludeHiddenFiles, string path, ref int totalFiles)
     {
       try
       {
@@ -827,7 +824,7 @@ namespace MediaPortal.Music.Database
           {
             foreach (string file in Directory.GetFiles(dir, "*.*"))
             {
-              CheckFileForInclusion(file, ref totalFiles);
+              CheckFileForInclusion(aCheckForNewFiles, aExcludeHiddenFiles, file, ref totalFiles);
               if ((totalFiles % 10) == 0)
               {
                 DatabaseReorgEventArgs MyArgs = new DatabaseReorgEventArgs();
@@ -842,7 +839,7 @@ namespace MediaPortal.Music.Database
             // We might not be able to access a folder. i.e. System Volume Information
             Log.Warn("Musicdatabasereorg: Unable to process files in directory {0}. {1}", dir, ex.Message);
           }
-          CountFilesInPath(dir, ref totalFiles);
+          CountFilesInPath(aCheckForNewFiles, aExcludeHiddenFiles, dir, ref totalFiles);
         }
       }
       catch
@@ -856,11 +853,11 @@ namespace MediaPortal.Music.Database
     /// </summary>
     /// <param name="file"></param>
     /// <param name="totalFiles"></param>
-    private void CheckFileForInclusion(string file, ref int totalFiles)
+    private void CheckFileForInclusion(bool aCheckForNewFiles, bool aExcludeHiddenFiles, string file, ref int totalFiles)
     {
       try
       {
-        string ext = System.IO.Path.GetExtension(file).ToLower();
+        string ext = Path.GetExtension(file).ToLower();
         if (ext == ".m3u")
           return;
         if (ext == ".pls")
@@ -869,20 +866,34 @@ namespace MediaPortal.Music.Database
           return;
         if (ext == ".b4s")
           return;
-        if ((File.GetAttributes(file) & FileAttributes.Hidden) == FileAttributes.Hidden)
-          return;
+
+        // Provide an easy way to exclude problematic or unwanted files from the scan
+        if (aExcludeHiddenFiles)
+        {
+          if ((File.GetAttributes(file) & FileAttributes.Hidden) == FileAttributes.Hidden)
+            return;
+        }
 
         // Only get files with the required extension
         if (_supportedExtensions.IndexOf(ext) == -1)
           return;
 
         // Only Add files to the list, if they have been Created / Updated after the Last Import date
-        if (System.IO.File.GetCreationTime(file) > _lastImport || System.IO.File.GetLastWriteTime(file) > _lastImport)
+        if (aCheckForNewFiles)
+        {
+          if (File.GetCreationTime(file) > _lastImport || File.GetLastWriteTime(file) > _lastImport)
+            availableFiles.Add(file);
+        }
+        else
           availableFiles.Add(file);
       }
-      catch (Exception)
+      catch (UnauthorizedAccessException)
       {
-        // File.GetAttributes may fail if (file) is 0 bytes long
+        Log.Warn("Musicdatabasereorg: Not enough permissions to include file {0}", file);
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Musicdatabasereorg: Cannot include file {0} because of {1}", file, ex.Message);
       }
       totalFiles++;
     }
@@ -1195,15 +1206,22 @@ namespace MediaPortal.Music.Database
           if (tag.CoverArtImageBytes != null)
           {
             bool extractFile = false;
-            if (!System.IO.File.Exists(smallThumbPath))
+            if (!File.Exists(smallThumbPath))
               extractFile = true;
             else
             {
-              // Prevent creation of the thumbnail multiple times, when all songs of an album contain coverart
-              DateTime fileDate = System.IO.File.GetLastWriteTime(smallThumbPath);
-              TimeSpan span = _currentDate - fileDate;
-              if (span.Days > 0)
+              // Prevent creation of the thumbnail multiple times, when all songs of an album contain coverart <-- that's ugly (rtv)
+              try
+              {
+                DateTime fileDate = File.GetLastWriteTime(smallThumbPath);
+                TimeSpan span = _currentDate - fileDate;
+                if (span.Days > 0)
+                  extractFile = true;
+              }
+              catch (Exception)
+              {
                 extractFile = true;
+              }
             }
 
             if (extractFile)
@@ -1212,18 +1230,23 @@ namespace MediaPortal.Music.Database
               try
               {
                 mp3TagImage = tag.CoverArtImage;
+
+                if (mp3TagImage != null)
+                {
+                  if (!Picture.CreateThumbnail(mp3TagImage, smallThumbPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
+                    Log.Info("MusicDatabase: Could not extract thumbnail from {0}", tag.FileName);
+                  if (!Picture.CreateThumbnail(mp3TagImage, largeThumbPath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge))
+                    Log.Info("MusicDatabase: Could not extract thumbnail from {0}", tag.FileName);
+                }
               }
               catch (Exception)
               {
                 Log.Warn("MusicDatabase: Invalid cover art image found in {0}-{1}! {2}", tag.Artist, tag.Title, tag.FileName);
               }
-
-              if (mp3TagImage != null)
+              finally
               {
-                if (!Util.Picture.CreateThumbnail(mp3TagImage, smallThumbPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
-                  Log.Info("MusicDatabase: Could not extract thumbnail from {0}", tag.FileName);
-                if (!Util.Picture.CreateThumbnail(mp3TagImage, largeThumbPath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge))
-                  Log.Info("MusicDatabase: Could not extract thumbnail from {0}", tag.FileName);
+                if (mp3TagImage != null)
+                  mp3TagImage.Dispose();
               }
             }
           }
@@ -1267,9 +1290,9 @@ namespace MediaPortal.Music.Database
 
             if (foundThumb)
             {
-              if (!MediaPortal.Util.Picture.CreateThumbnail(sharefolderThumb, smallThumbPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
+              if (!Picture.CreateThumbnail(sharefolderThumb, smallThumbPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
                 Log.Info("MusicDatabase: Could not create album thumb from folder {0}", tag.FileName);
-              if (!MediaPortal.Util.Picture.CreateThumbnail(sharefolderThumb, largeThumbPath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge))
+              if (!Picture.CreateThumbnail(sharefolderThumb, largeThumbPath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge))
                 Log.Info("MusicDatabase: Could not create large album thumb from folder {0}", tag.FileName);
             }
           }
@@ -1293,7 +1316,7 @@ namespace MediaPortal.Music.Database
               {
                 _previousPosHitDir = Path.GetDirectoryName(tag.FileName);
                 //FolderThumbCreator newThumb = new FolderThumbCreator(tag.FileName, tag);
-                if (!Util.Picture.CreateThumbnail(sourceCover, sharefolderThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge))
+                if (!Picture.CreateThumbnail(sourceCover, sharefolderThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge))
                   Log.Info("MusicDatabase: Could not create missing folder thumb in share path {0}", sharefolderThumb);
                 System.Threading.Thread.Sleep(0);
               }
@@ -1303,36 +1326,6 @@ namespace MediaPortal.Music.Database
       }
 
     }
-
-    //private void CreateAlbumThumbs(string strSongPath, string aThumbLocation)
-    //{
-    //  if (File.Exists(aThumbLocation) && !string.IsNullOrEmpty(strSongPath))
-    //  {
-    //    string folderThumb = Util.Utils.GetFolderThumb(strSongPath);
-    //    string localFolderThumb = Util.Utils.GetLocalFolderThumb(strSongPath);
-    //    string localFolderLThumb = Util.Utils.ConvertToLargeCoverArt(localFolderThumb);
-
-    //    try
-    //    {
-    //      if (!System.IO.File.Exists(folderThumb))
-    //      {
-    //        if (_createMissingFolderThumbs)
-    //          Util.Picture.CreateThumbnail(aThumbLocation, folderThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
-    //      }
-
-    //      if (!File.Exists(localFolderThumb))
-    //        Util.Picture.CreateThumbnail(folderThumb, localFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);
-    //      if (!File.Exists(localFolderLThumb))
-    //      {
-    //        Util.Picture.CreateThumbnail(folderThumb, localFolderLThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
-    //      }
-    //    }
-    //    catch (Exception ex1)
-    //    {
-    //      Log.Warn("MusicDatabase: could not create folder thumb for {0} - {1}", strSongPath, ex1.Message);
-    //    }
-    //  }
-    //}
 
     private void CreateFolderThumbs(int aProgressStart, int aProgressEnd, ArrayList aShareList)
     {

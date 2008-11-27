@@ -556,7 +556,7 @@ namespace MediaPortal.TagReader
     }
 
     /// <summary>
-    /// Extract imgae out of a byte array
+    /// Extract image out of a byte array - please think of disposing the Image in the calling method
     /// </summary>
     /// <param name="imgBytes"></param>
     /// <returns></returns>
@@ -576,16 +576,15 @@ namespace MediaPortal.TagReader
       if (imgBytes == null || imgBytes.Length == 0)
         return null;
 
-      if (fileSavePath != null && fileSavePath.Length > 0)
+      if (!String.IsNullOrEmpty(fileSavePath))
       {
         FileStream fs = null;
 
         try
         {
-          fs = new FileStream(fileSavePath, FileMode.Create, FileAccess.Write);
+          fs = new FileStream(fileSavePath, FileMode.Create, FileAccess.Write, FileShare.None);
           fs.Write(imgBytes, 0, imgBytes.Length);
         }
-
         finally
         {
           if (fs != null)
@@ -602,14 +601,21 @@ namespace MediaPortal.TagReader
       try
       {
         stream = new MemoryStream(imgBytes);
-        img = Image.FromStream(stream, true, true);
-      }
 
+        try
+        {
+          // Try without validation first for more speed
+          img = Image.FromStream(stream, true, false);
+        }
+        catch (ArgumentException)
+        {
+          img = Image.FromStream(stream, true, true);
+        }        
+      }
       catch (Exception ex)
       {
         Log.Debug("Could not extract Image: {0}", ex.Message);
       }
-
       finally
       {
         if (stream != null)
@@ -618,7 +624,6 @@ namespace MediaPortal.TagReader
           stream = null;
         }
       }
-
       return img;
     }
 

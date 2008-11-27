@@ -27,20 +27,21 @@ using System;
 
 namespace MediaPortal.Music.Database
 {
-	/// <summary>
-	/// Contains all Music DB settings
-	/// </summary>
-	public class MusicDatabaseSettings
-	{
+  /// <summary>
+  /// Contains all Music DB settings
+  /// </summary>
+  public class MusicDatabaseSettings
+  {
     bool _treatFolderAsAlbum;
     bool _extractEmbededCoverArt;
     bool _useFolderThumbs;
     bool _useAllImages;
     bool _createArtistThumbs;
     bool _createGenreThumbs;
-    bool _createMissingFolderThumbs;  
+    bool _createMissingFolderThumbs;
     bool _stripArtistPrefixes;
     bool _useLastImportDate;
+    bool _excludeHiddenFiles;
 
 
     public MusicDatabaseSettings()
@@ -100,5 +101,11 @@ namespace MediaPortal.Music.Database
       get { return _useLastImportDate; }
       set { _useLastImportDate = value; }
     }
-	}
+
+    public bool ExcludeHiddenFiles
+    {
+      get { return _excludeHiddenFiles; }
+      set { _excludeHiddenFiles = value; }
+    }
+  }
 }
