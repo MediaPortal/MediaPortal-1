@@ -109,7 +109,7 @@ namespace MPTvClient
       serverHostname = (string)key.GetValue("ServerHostname", "");
       useOverride = ((string)key.GetValue("UseOverride", "0") == "1");
       overrideURL = (string)key.GetValue("OverrideURL", "");
-      alwaysPerformConnectionChecks=((int)key.GetValue("AlwaysPerfomConnectionChecks",1)==1);
+      alwaysPerformConnectionChecks=((int)key.GetValue("AlwaysPerformConnectionChecks",1)==1);
       frmLeft = (int)key.GetValue("Left", 0);
       frmTop = (int)key.GetValue("Top", 0);
       frmWidth = (int)key.GetValue("Width", 0);

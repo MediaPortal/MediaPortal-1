@@ -125,6 +125,8 @@ namespace MPTvClient
       }
       if (result == TvResult.Succeeded)
       {
+        me.IdChannel = idChannel;
+        me.CardId = vcard.Id;
         _isTimeShifting = true;
         rtspURL = vcard.RTSPUrl;
       }
