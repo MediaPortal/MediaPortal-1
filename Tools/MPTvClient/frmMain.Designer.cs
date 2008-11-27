@@ -825,7 +825,7 @@ namespace MPTvClient
           this.MainMenuStrip = this.menuStrip1;
           this.Name = "frmMain";
           this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-          this.Text = "MP TV Client V1.3.1";
+          this.Text = "MP TV Client V1.3.2";
           this.Shown += new System.EventHandler(this.frmMain_Shown);
           this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmMain_FormClosing);
           this.StBar.ResumeLayout(false);
