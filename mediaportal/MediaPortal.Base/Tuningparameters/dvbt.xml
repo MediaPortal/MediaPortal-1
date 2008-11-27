@@ -4510,12 +4510,12 @@
     <carrier frequency="570000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Stockholm Nacka - Sodertalje Ragnhildsborg" offset="125">
-    <carrier frequency="794000" bandwidth="8"></carrier>
+    <carrier frequency="506000" bandwidth="8"></carrier>
+    <carrier frequency="522000" bandwidth="8"></carrier>
     <carrier frequency="538000" bandwidth="8"></carrier>
     <carrier frequency="546000" bandwidth="8"></carrier>
-    <carrier frequency="522000" bandwidth="8"></carrier>
-    <carrier frequency="506000" bandwidth="8"></carrier>
-    <carrier frequency="842000" bandwidth="8"></carrier>
+    <carrier frequency="682000" bandwidth="8"></carrier>
+    <carrier frequency="666000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Stockholm Nacka - Stockholm-Marieberg" offset="125">
     <carrier frequency="490000" bandwidth="8"></carrier>
