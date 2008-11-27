@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <Language name="Norwegian" characters="255">
   <Section name="unmapped">
     <String id="0" prefix="Mine ">Programmer</String>
@@ -895,33 +895,33 @@
     <String id="1064">Bokmerker</String>
     <String id="1065">Gå til</String>
     <String id="1066">MP4</String>
-   	<String id="1067">Veldig høy</String>
-	<String id="1068">HiDef</String>
-	<String id="1069">240x180</String>
-	<String id="1070">288x216</String>
-	<String id="1071">352x240</String>
-	<String id="1072">352x288</String>
-	<String id="1073">640x480</String>
-	<String id="1074">704x480</String>
-	<String id="1075">720x576</String>
-	<String id="1076">1280x720</String>
-	<String id="1077">1920x1080</String>
-	<String id="1078">12.5 FPS</String>
-	<String id="1079">15 FPS</String>
-	<String id="1080">23.97 FPS</String>
-	<String id="1081">25 FPS</String>
-	<String id="1082">29.97 FPS</String>
-	<String id="1083">100 Kbps</String>
-	<String id="1084">256 Kbps</String>
-	<String id="1085">384 Kbps</String>
-	<String id="1086">768 Kbps</String>
-	<String id="1087">1536 Kbps</String>
-	<String id="1088">3072 Kbps</String>
-	<String id="1089">5376 Kbps</String>
-	<String id="1090">Video Standard</String>
-	<String id="1091">Film</String>
-	<String id="1092">NTSC</String>
-	<String id="1093">PAL</String>
+    <String id="1067">Veldig høy</String>
+    <String id="1068">HiDef</String>
+    <String id="1069">240x180</String>
+    <String id="1070">288x216</String>
+    <String id="1071">352x240</String>
+    <String id="1072">352x288</String>
+    <String id="1073">640x480</String>
+    <String id="1074">704x480</String>
+    <String id="1075">720x576</String>
+    <String id="1076">1280x720</String>
+    <String id="1077">1920x1080</String>
+    <String id="1078">12.5 FPS</String>
+    <String id="1079">15 FPS</String>
+    <String id="1080">23.97 FPS</String>
+    <String id="1081">25 FPS</String>
+    <String id="1082">29.97 FPS</String>
+    <String id="1083">100 Kbps</String>
+    <String id="1084">256 Kbps</String>
+    <String id="1085">384 Kbps</String>
+    <String id="1086">768 Kbps</String>
+    <String id="1087">1536 Kbps</String>
+    <String id="1088">3072 Kbps</String>
+    <String id="1089">5376 Kbps</String>
+    <String id="1090">Video Standard</String>
+    <String id="1091">Film</String>
+    <String id="1092">NTSC</String>
+    <String id="1093">PAL</String>
     <String id="1100">Importere CD</String>
     <String id="1101">Importere valgte spor</String>
     <String id="1102">Avbryte CD-Import</String>
@@ -1335,7 +1335,6 @@
     <String id="6037">Stablet film</String>
     <String id="6038">Vennligst velg en disk for avspilling.</String>
     <String id="6039">LATM AAC Audio Codecs</String>
-    <String id="7776" prefix="Min ">Tetris</String>
     <String id="8000" prefix="Min ">Epost</String>
     <String id="8001">Sjekk postboks</String>
     <String id="8002">Autosjekk av</String>
@@ -1377,6 +1376,59 @@
     <String id="9009">Kameramodell:</String>
     <String id="9010">Produksjonsutstyr:</String>
     <String id="9011">Vis kommentarer:</String>
+    <String id="9100">Mini Display</String>
+    <String id="9101">Plugin er ikke konfigurert</String>
+    <String id="9102">Vennligst kjør MediaPortal Configuration først!</String>
+    <String id="9103">Innstilling for pad</String>
+    <String id="9104">Skjerm Innstillinger</String>
+    <String id="9105">Skjerm kontroll innstillinger</String>
+    <String id="9106">Equalizer Innstillinger</String>
+    <String id="9107">Baklys Innstilling</String>
+    <String id="9108">Fjernkontroll Innstillinger</String>
+    <String id="9109">Monitor Strøm Status</String>
+    <String id="9110">Kontrast</String>
+    <String id="9111">Lyshet</String>
+    <String id="9112">Rød</String>
+    <String id="9113">Grønn</String>
+    <String id="9114">Blå</String>
+    <String id="9115">Inverter Skjermen</String>
+    <String id="9116">Tøm Skjerm når Video vises</String>
+    <String id="9117">Bruk Display Innstillinger</String>
+    <String id="9118">Tid For Skjern</String>
+    <String id="9119">Blank Skjerm når Ledig</String>
+    <String id="9120">Forsinking for Ledig tid</String>
+    <String id="9121">Volum Visning</String>
+    <String id="9122">Fremgangs Visning</String>
+    <String id="9123">Disk Ikon</String>
+    <String id="9124">Media Status</String>
+    <String id="9125">CD/DVD Status</String>
+    <String id="9126">Bruk Egen Font</String>
+    <String id="9127">Bruk Store Ikoner</String>
+    <String id="9128">Bruk Store Egne Ikoner</String>
+    <String id="9129">Inverter Store Ikoner</String>
+    <String id="9130">Rediger Font</String>
+    <String id="9131">Rediger Ikon</String>
+    <String id="9132">Bruk Equalizer</String>
+    <String id="9133">Stil for Equalizer</String>
+    <String id="9134">Bruk utgjevning for Equalizer</String>
+    <String id="9135">Forsink Start</String>
+    <String id="9136">Tid Forsinkelse</String>
+    <String id="9137">Vis Tittel</String>
+    <String id="9138">Tid for Tittel</String>
+    <String id="9139">Hyppighet for Tittel</String>
+    <String id="9140">Ingen Taste Innstillinger</String>
+    <String id="9141">Bruk Taster</String>
+    <String id="9142">Egen Tilordning</String>
+    <String id="9143">KeyPad Tilordning</String>
+    <String id="9144">Ingen Innstilling for Fjernkontroll</String>
+    <String id="9145">Ikke bruk Fjernkontroll</String>
+    <String id="9146">Ikke bruk Repeter</String>
+    <String id="9147">Forsinkelse for Repeter</String>
+    <String id="9148">Fjernkontroll Tilordning</String>
+    <String id="9149">Normal</String>
+    <String id="9150">Stereo</String>
+    <String id="9151">VU Meter</String>
+    <String id="9152">VU Meter 2</String>
     <String id="9997">Sekunder:</String>
     <String id="9998">Minutter:</String>
     <String id="9999">Timer:</String>
@@ -1545,7 +1597,7 @@
     <String id="34046">Min radio stasjon</String>
     <String id="34047">Mine favorittspor</String>
     <String id="34048">Mine naboer</String>
-    <String id="34049">Min spilleliste</String>    
+    <String id="34049">Min spilleliste</String>
     <String id="34050">Ingen stream aktiv</String>
     <String id="34051">Stream stoppet!</String>
     <String id="34052">Ingen flere eller dårlig tilkobling</String>
@@ -1559,7 +1611,6 @@
     <String id="40001">Venter på hvilemodus</String>
     <String id="40002">MediaPortal er ikke i bruk, men fortsatt opptatt.</String>
     <String id="40003">Når alle oppgaver er ferdige, vil MediaPortal gå over i hvilemodus.</String>
-    <String id="99845">TV.com sjekk</String>
     <String id="100000">Hjem</String>
     <String id="100001" prefix="Min ">TV</String>
     <String id="100002" prefix="Mine ">Bilder</String>
@@ -1700,18 +1751,20 @@
     <String id="103009" prefix="Min ">TV/Mini EPG</String>
     <String id="103011" prefix="Min ">TV/Beskjær-innstillinger</String>
     <String id="104711" prefix="Min ">Wikipedia</String>
-    <String id="105000" prefix="Min ">Alarm</String>
-    <String id="105001" prefix="Min ">Alarm/Detaljer</String>
-    <String id="105002" prefix="Min ">Alarm/Sove</String>
     <String id="105900" prefix="Mine ">Trailere</String>
     <String id="106666">Power Scheduler Venter</String>
     <String id="107700" prefix="Min ">TV/Tekst-TV</String>
     <String id="107701" prefix="Min ">TV/Tekst-TV</String>
-    <String id="107776" prefix="Min ">Tetris</String>
     <String id="107777" prefix="Min ">Sudoku</String>
     <String id="107890" prefix="Min ">Last.fm radio</String>
     <String id="108888">Musikk meny</String>
-    <String id="109811" prefix="Mine ">TV Serier</String>
+    <String id="109000">Mini Display - Oppsett</String>
+    <String id="109001">Mini Display - Oppsett - Baklys</String>
+    <String id="109002">Mini Display - Oppsett - Skjerm kontroll</String>
+    <String id="109003">Mini Display - Oppsett - Skjerm Innstillinger</String>
+    <String id="109004">Mini Display - Oppsett - Equalizer</String>
+    <String id="109005">Mini Display - Oppsett - KeyPad</String>
+    <String id="109006">Mini Display - Oppsett - Fjernkontroll</String>
     <String id="200000">Vennligst velg din EPG-grabber. Husk at hvis ditt land</String>
     <String id="200001">ikke er på listen må du legge inn EPG manuellt</String>
     <String id="200002">Nå kan du kartlegge EPG-kanalene til dine TV-kanaler</String>
@@ -1767,17 +1820,17 @@
     <String id="200053">Ingen aktive opptak</String>
     <String id="200054">Kunne ikke slette TV-opptaket.</String>
     <String id="200055">Live TV visning kan bli avbrutt.</String>
-	<String id="200059">Audio Dual Mono Modus</String>
-	<String id="200060">Stereo</String>
-	<String id="200061">Venstre kanal til venstre og høyre høytaler</String>
-	<String id="200062">Høyre kanal til venstre og høyre høytaler</String>
-	<String id="200063">Miks begge</String>
-	<String id="200064">Koblet til TV Server</String>
-	<String id="200065">Noen av portene ser ut til å være blokert</String>
-	<String id="200066">Kan ikke koble til TV Server</String>
-	<String id="200067">Koblet til databasen</String>
-	<String id="200068">Kan ikke koble til databasen</String>
-	<String id="200069">Alle IP porter ser ut til å fungere</String>
-	<String id="200070">Vennligst sjekk firewall instillinger</String>
+    <String id="200059">Audio Dual Mono Modus</String>
+    <String id="200060">Stereo</String>
+    <String id="200061">Venstre kanal til venstre og høyre høytaler</String>
+    <String id="200062">Høyre kanal til venstre og høyre høytaler</String>
+    <String id="200063">Miks begge</String>
+    <String id="200064">Koblet til TV Server</String>
+    <String id="200065">Noen av portene ser ut til å være blokert</String>
+    <String id="200066">Kan ikke koble til TV Server</String>
+    <String id="200067">Koblet til databasen</String>
+    <String id="200068">Kan ikke koble til databasen</String>
+    <String id="200069">Alle IP porter ser ut til å fungere</String>
+    <String id="200070">Vennligst sjekk firewall instillinger</String>
   </Section>
 </Language>
