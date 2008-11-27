@@ -51,7 +51,7 @@ namespace MediaPortal.DeployTool
       labelURL.Text = url;
       labelTarget.Text = Path.GetFileName(targetFile);
       client = new WebClient();
-      
+
 #if DEBUG
       Uri fileuri = new Uri(url);
       Uri proxyUri = client.Proxy.GetProxy(fileuri);
@@ -69,26 +69,24 @@ namespace MediaPortal.DeployTool
       client.Headers.Add("user-agent", @"Mozilla/4.0 (compatible; MSIE 7.0;" + userAgentOs);
       client.DownloadProgressChanged += client_DownloadProgressChanged;
       client.DownloadFileCompleted += client_DownloadFileCompleted;
-      try
-      {
-        client.DownloadFileAsync(new Uri(url), targetFile);
-      }
-      catch
-      {
-        Utils.ErrorDlg(Utils.GetBestTranslation("HTTPDownload_errDownloadFailed"));
-        try
-        {
-          File.Delete(targetFile);
-        }
-        catch
-        { }
-        DialogResult = DialogResult.Cancel;
-      }
+      client.DownloadFileAsync(new Uri(url), targetFile);
     }
 
     private void client_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
     {
-      DialogResult = DialogResult.OK;
+      if (e.Error is WebException)
+      {
+        Utils.ErrorDlg(Utils.GetBestTranslation("HTTPDownload_errDownloadFailed"));
+        try
+        {
+          File.Delete(_target);
+        }
+        catch
+        { }
+        DialogResult = DialogResult.Abort;
+      }
+      else
+        DialogResult = DialogResult.OK;
     }
 
     private void client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
@@ -109,9 +107,8 @@ namespace MediaPortal.DeployTool
       DialogResult = DialogResult.Cancel;
     }
 
-      private void HTTPDownload_Load(object sender, EventArgs e)
-      {
-
-      }
+    private void HTTPDownload_Load(object sender, EventArgs e)
+    {
+    }
   }
 }
