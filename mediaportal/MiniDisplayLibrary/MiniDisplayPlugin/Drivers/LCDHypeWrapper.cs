@@ -71,7 +71,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           this.errorMessage = exception.Message;
         }
-        Log.Error("ExternalDisplay:Error while loading driver {0}: {1}", new object[] { dllFile, this.errorMessage });
+        Log.Error("MiniDisplay:Error while loading driver {0}: {1}", new object[] { dllFile, this.errorMessage });
       }
     }
 

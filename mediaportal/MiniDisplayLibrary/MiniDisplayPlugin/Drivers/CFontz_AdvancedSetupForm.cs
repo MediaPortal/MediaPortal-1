@@ -192,7 +192,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       try
       {
-        new MessageEditForm("ExternalDisplay.xml").ShowDialog(this);
+        new MessageEditForm().ShowDialog(this);
       } catch (Exception exception)
       {
         Log.Info("CFontz_AdvancedSetupForm.btnRemoteSetup_Click() CAUGHT EXCEPTION: {0}", new object[] { exception });

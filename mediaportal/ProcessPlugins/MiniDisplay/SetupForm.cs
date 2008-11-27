@@ -181,7 +181,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     {
       try
       {
-        new MessageEditForm("MiniDisplay.xml").ShowDialog(this);
+        new MessageEditForm().ShowDialog(this);
         base.Close();
       } catch
       {

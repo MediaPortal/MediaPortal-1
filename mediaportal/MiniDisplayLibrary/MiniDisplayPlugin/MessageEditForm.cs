@@ -111,7 +111,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private GroupBox groupboxTranslationEdit;
     private MPGroupBox groupBoxWindow;
     private MPGradientLabel headerLabel;
-    private string inputClassName;
     private MPLabel label1;
     private MPLabel labelExpand;
     private MPLabel labelLine;
@@ -150,7 +149,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private ArrayList windowsList = new ArrayList();
     private ArrayList windowsListFiltered = new ArrayList();
 
-    public MessageEditForm(string name)
+    public MessageEditForm()
     {
       this.InitializeComponent();
       foreach (GUIWindow.Window window in this.nativeWindowsList)
@@ -438,9 +437,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.propertyList.Add("#Actor.PlaceOfBirth");
       this.propertyList.Add("#Actor.Biography");
       this.propertyList.Add("#Actor.Movies");
-      this.inputClassName = name;
       this.LoadMessages(false);
-      this.headerLabel.Caption = this.inputClassName;
     }
 
     private void buttonApply_Click(object sender, EventArgs e)
@@ -1396,7 +1393,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       this.headerLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.headerLabel.Caption = "";
+      this.headerLabel.Caption = "MiniDisplay.xml";
       this.headerLabel.FirstColor = System.Drawing.SystemColors.InactiveCaption;
       this.headerLabel.Font = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.headerLabel.LastColor = System.Drawing.Color.WhiteSmoke;
