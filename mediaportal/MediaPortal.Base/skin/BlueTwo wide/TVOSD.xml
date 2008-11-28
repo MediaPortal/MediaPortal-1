@@ -1,0 +1,859 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>3003</id>
+  <defaultcontrol>213</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <define>#percentage:#TV.View.Percentage</define>
+  <define>#currentplaytime:#TV.View.start</define>
+  <define>#currentremaining:#TV.View.stop</define>
+  <controls>
+    <import>common.progressbar.xml</import>
+    <control>
+      <description>Current Time Info</description>
+      <type>label</type>
+      <id>110</id>
+      <posX>1221</posX>
+      <posY>43</posY>
+      <label>#time</label>
+      <align>center</align>
+      <font>font13</font>
+      <textcolor>FF071422</textcolor>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>60</posX>
+      <posY>478</posY>
+      <width>400</width>
+      <height>230</height>
+      <texture>osd_bg_bottom.png</texture>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>TV Logo</description>
+      <type>image</type>
+      <id>10</id>
+      <posX>80</posX>
+      <posY>496</posY>
+      <width>50</width>
+      <height>50</height>
+      <texture>#TV.View.thumb</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>TV Progress Bar</description>
+      <type>tvprogress</type>
+      <id>101</id>
+      <posX>180</posX>
+      <posY>27</posY>
+      <width>862</width>
+      <height>14</height>
+      <toptexture>osd_progress_indicator.png</toptexture>
+      <TextureOffsetY>29</TextureOffsetY>
+      <bottomtexture>-</bottomtexture>
+      <texturetick>-</texturetick>
+      <lefttexture>-</lefttexture>
+      <midtexture>-</midtexture>
+      <righttexture>-</righttexture>
+      <logotexture>-</logotexture>
+      <fillbackgroundtexture>-</fillbackgroundtexture>
+      <fillbgxoff>18</fillbgxoff>
+      <fillbgyoff>13</fillbgyoff>
+      <filltexture1>osd_progress_mid_red.png</filltexture1>
+      <filltexture2>osd_progress_mid.png</filltexture2>
+      <filltexture3>osd_progress_mid_orange.png</filltexture3>
+      <fillheight>26</fillheight>
+      <label>#TV.Record.percent1</label>
+      <label1>#TV.Record.percent2</label1>
+      <label2>#TV.Record.percent3</label2>
+      <startlabel />
+      <endlabel />
+      <toplabel />
+      <font>font13</font>
+      <textcolor>FF000000</textcolor>
+    </control>
+    <control>
+      <description>rec logo</description>
+      <type>image</type>
+      <id>39</id>
+      <posX>415</posX>
+      <posY>500</posY>
+      <texture>rec.png</texture>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>Channel Name</description>
+      <id>0</id>
+      <type>textbox</type>
+      <width>310</width>
+      <height>30</height>
+      <posX>150</posX>
+      <posY>488</posY>
+      <align>left</align>
+      <font>font13</font>
+      <label>#TV.View.channel</label>
+      <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>On tv NOW</description>
+      <id>36</id>
+      <type>textbox</type>
+      <width>290</width>
+      <height>30</height>
+      <posX>150</posX>
+      <posY>516</posY>
+      <align>left</align>
+      <font>font12</font>
+      <textcolor>FFB2D4F5</textcolor>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>Plot</description>
+      <type>textboxscrollup</type>
+      <id>38</id>
+      <posX>150</posX>
+      <posY>548</posY>
+      <width>290</width>
+      <height>99</height>
+      <align>left</align>
+      <label>#TV.View.description</label>
+      <font>font10</font>
+      <textcolor>EFFFFFF0</textcolor>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>On tv NEXT</description>
+      <id>37</id>
+      <type>textbox</type>
+      <width>290</width>
+      <height>30</height>
+      <posX>150</posX>
+      <posY>658</posY>
+      <align>left</align>
+      <font>font12</font>
+      <textcolor>AFB2D4F5</textcolor>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>Play</description>
+      <type>togglebutton</type>
+      <id>213</id>
+      <posX>80</posX>
+      <posY>563</posY>
+      <width>50</width>
+      <height>50</height>
+      <AltTextureFocus>osd_pause_focus.png</AltTextureFocus>
+      <AltTextureNoFocus>osd_pause_nofocus.png</AltTextureNoFocus>
+      <textureFocus>osd_play_focus.png</textureFocus>
+      <textureNoFocus>osd_play_nofocus.png</textureNoFocus>
+      <label>-</label>
+      <font>-</font>
+      <onleft>213</onleft>
+      <onright>213</onright>
+      <onup>213</onup>
+      <ondown>218</ondown>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>Subtitles Menu</description>
+      <type>togglebutton</type>
+      <id>218</id>
+      <posX>90</posX>
+      <posY>618</posY>
+      <width>30</width>
+      <height>30</height>
+      <AltTextureFocus>osd_subtitles_focus.png</AltTextureFocus>
+      <AltTextureNoFocus>osd_subtitles_nofocus.png</AltTextureNoFocus>
+      <textureFocus>osd_subtitles_focus.png</textureFocus>
+      <textureNoFocus>osd_subtitles_nofocus.png</textureNoFocus>
+      <label>-</label>
+      <font>-</font>
+      <onleft>218</onleft>
+      <onright>218</onright>
+      <onup>213</onup>
+      <ondown>218</ondown>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>Sub Menu Background (subtitles)</description>
+      <type>image</type>
+      <id>302</id>
+      <posX>480</posX>
+      <posY>478</posY>
+      <width>260</width>
+      <height>230</height>
+      <texture>osd_bg_settings.png</texture>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>SubTitle Delay label</description>
+      <type>label</type>
+      <id>850</id>
+      <posX>510</posX>
+      <posY>548</posY>
+      <label>303</label>
+      <font>font13</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>SubTitle Delay Slider</description>
+      <type>slider</type>
+      <id>800</id>
+      <posX>510</posX>
+      <posY>578</posY>
+      <spintype>float</spintype>
+      <textureSliderBar>osd_slider_bg.png</textureSliderBar>
+      <textureSliderNib>osd_slider_nibNF.png</textureSliderNib>
+      <textureSliderNibFocus>osd_slider_nibFO.png</textureSliderNibFocus>
+      <onup>801</onup>
+      <ondown>800</ondown>
+      <onleft>218</onleft>
+      <onright>800</onright>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>SubTitles On/Off Checkbox</description>
+      <type>checkmark</type>
+      <id>801</id>
+      <posX>510</posX>
+      <posY>508</posY>
+      <label>305</label>
+      <onup>801</onup>
+      <ondown>800</ondown>
+      <onleft>218</onleft>
+      <onright>801</onright>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>Program Button Up</description>
+      <type>button</type>
+      <id>33</id>
+      <posX>195</posX>
+      <posY>413</posY>
+      <width>20</width>
+      <height>20</height>
+      <textureFocus>arrow_round_left_focus.png</textureFocus>
+      <textureNoFocus>arrow_round_left_nofocus.png</textureNoFocus>
+      <label>-</label>
+      <onleft>214</onleft>
+      <onright>34</onright>
+      <onup>33</onup>
+      <ondown>32</ondown>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>Program Button Down</description>
+      <type>button</type>
+      <id>34</id>
+      <posX>570</posX>
+      <posY>413</posY>
+      <width>20</width>
+      <height>20</height>
+      <textureFocus>arrow_round_right_focus.png</textureFocus>
+      <textureNoFocus>arrow_round_right_nofocus.png</textureNoFocus>
+      <label>-</label>
+      <onleft>33</onleft>
+      <onright>34</onright>
+      <onup>34</onup>
+      <ondown>31</ondown>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>Channel Button Up</description>
+      <type>button</type>
+      <id>31</id>
+      <posX>620</posX>
+      <posY>520</posY>
+      <width>20</width>
+      <height>20</height>
+      <textureFocus>arrow_round_up_focus.png</textureFocus>
+      <textureNoFocus>arrow_round_up_nofocus.png</textureNoFocus>
+      <label>-</label>
+      <onleft>32</onleft>
+      <onright>31</onright>
+      <onup>34</onup>
+      <ondown>31</ondown>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>Channel Button Down</description>
+      <type>button</type>
+      <id>32</id>
+      <posX>570</posX>
+      <posY>520</posY>
+      <width>20</width>
+      <height>20</height>
+      <textureFocus>arrow_round_down_focus.png</textureFocus>
+      <textureNoFocus>arrow_round_down_nofocus.png</textureNoFocus>
+      <label>-</label>
+      <onleft>214</onleft>
+      <onright>31</onright>
+      <onup>33</onup>
+      <ondown>32</ondown>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>Current channel</description>
+      <type>label</type>
+      <id>35</id>
+      <posX>570</posX>
+      <posY>505</posY>
+      <width>90</width>
+      <label>-</label>
+      <align>left</align>
+      <font>font10</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>Skip Bwd</description>
+      <type>togglebutton</type>
+      <id>210</id>
+      <posX>107</posX>
+      <posY>514</posY>
+      <width>35</width>
+      <height>35</height>
+      <AltTextureFocus>osd_back_focus.png</AltTextureFocus>
+      <AltTextureNoFocus>osd_back_nofocus.png</AltTextureNoFocus>
+      <textureFocus>osd_back_focus.png</textureFocus>
+      <textureNoFocus>osd_back_focus.png</textureNoFocus>
+      <label>-</label>
+      <font>-</font>
+      <onleft>212</onleft>
+      <onright>216</onright>
+      <onup>213</onup>
+      <ondown>215</ondown>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>Rewind</description>
+      <type>togglebutton</type>
+      <id>211</id>
+      <posX>55</posX>
+      <posY>463</posY>
+      <width>35</width>
+      <height>35</height>
+      <AltTextureFocus>osd_rewind_focus.png</AltTextureFocus>
+      <AltTextureNoFocus>osd_rewind_nofocus.png</AltTextureNoFocus>
+      <textureFocus>osd_rewind_focus.png</textureFocus>
+      <textureNoFocus>osd_rewind_focus.png</textureNoFocus>
+      <label>-</label>
+      <font>-</font>
+      <onleft>214</onleft>
+      <onright>213</onright>
+      <onup>218</onup>
+      <ondown>212</ondown>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>Stop</description>
+      <type>button</type>
+      <id>212</id>
+      <posX>72</posX>
+      <posY>498</posY>
+      <width>35</width>
+      <height>35</height>
+      <textureFocus>osd_stop_focus.png</textureFocus>
+      <textureNoFocus>osd_stop_nofocus.png</textureNoFocus>
+      <label>-</label>
+      <font>-</font>
+      <onleft>216</onleft>
+      <onright>213</onright>
+      <onup>211</onup>
+      <ondown>210</ondown>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>Fast Forward</description>
+      <type>togglebutton</type>
+      <id>214</id>
+      <posX>160</posX>
+      <posY>463</posY>
+      <width>35</width>
+      <height>35</height>
+      <AltTextureFocus>osd_fastforward_focus.png</AltTextureFocus>
+      <AltTextureNoFocus>osd_fastforward_nofocus.png</AltTextureNoFocus>
+      <textureFocus>osd_fastforward_focus.png</textureFocus>
+      <textureNoFocus>osd_fastforward_focus.png</textureNoFocus>
+      <label>-</label>
+      <font>-</font>
+      <onleft>213</onleft>
+      <onright>33</onright>
+      <onup>219</onup>
+      <ondown>216</ondown>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>Skip Fwd</description>
+      <type>togglebutton</type>
+      <id>215</id>
+      <posX>107</posX>
+      <posY>411</posY>
+      <width>35</width>
+      <height>35</height>
+      <AltTextureFocus>osd_next_focus.png</AltTextureFocus>
+      <AltTextureNoFocus>osd_next_nofocus.png</AltTextureNoFocus>
+      <textureFocus>osd_next_focus.png</textureFocus>
+      <textureNoFocus>osd_next_focus.png</textureNoFocus>
+      <label>-</label>
+      <font>-</font>
+      <onleft>218</onleft>
+      <onright>219</onright>
+      <onup>210</onup>
+      <ondown>213</ondown>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>Mute</description>
+      <type>togglebutton</type>
+      <id>216</id>
+      <posX>143</posX>
+      <posY>498</posY>
+      <width>35</width>
+      <height>35</height>
+      <AltTextureFocus>osd_mute_focus.png</AltTextureFocus>
+      <AltTextureNoFocus>osd_mute_nofocus.png</AltTextureNoFocus>
+      <textureFocus>osd_mute_focus.png</textureFocus>
+      <textureNoFocus>osd_mute_focus.png</textureNoFocus>
+      <label>-</label>
+      <font>-</font>
+      <onleft>213</onleft>
+      <onright>33</onright>
+      <onup>214</onup>
+      <ondown>210</ondown>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>Bookmarks Menu</description>
+      <type>togglebutton</type>
+      <id>219</id>
+      <posX>144</posX>
+      <posY>430</posY>
+      <width>35</width>
+      <height>35</height>
+      <AltTextureFocus>osd_settings_bookmark_focus.png</AltTextureFocus>
+      <AltTextureNoFocus>osd_settings_bookmark_nofocus.png</AltTextureNoFocus>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>osd_settings_bookmark_focus.png</textureNoFocus>
+      <label>-</label>
+      <font>-</font>
+      <onleft>213</onleft>
+      <onright>33</onright>
+      <onup>215</onup>
+      <ondown>214</ondown>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>Sub Menu Background (volume)</description>
+      <type>image</type>
+      <id>300</id>
+      <posX>145</posX>
+      <posY>315</posY>
+      <texture>osd_bg_settings.png</texture>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>Sub Menu Background (bookmarks)</description>
+      <type>image</type>
+      <id>303</id>
+      <posX>145</posX>
+      <posY>315</posY>
+      <texture>osd_dialog.png</texture>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>Sub Menu Background (video)</description>
+      <type>image</type>
+      <id>304</id>
+      <posX>145</posX>
+      <posY>290</posY>
+      <texture>osd_dialog_big.png</texture>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>Sub Menu Background (audio)</description>
+      <type>image</type>
+      <id>305</id>
+      <posX>145</posX>
+      <posY>315</posY>
+      <texture>osd_dialog.png</texture>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>Sub Menu Nib</description>
+      <type>image</type>
+      <id>350</id>
+      <texture>-</texture>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>Volume Slider</description>
+      <type>slider</type>
+      <id>400</id>
+      <posX>185</posX>
+      <posY>370</posY>
+      <textureSliderBar>osd_slider_bg.png</textureSliderBar>
+      <textureSliderNib>osd_slider_nibNF.png</textureSliderNib>
+      <textureSliderNibFocus>osd_slider_nibFO.png</textureSliderNibFocus>
+      <onup>216</onup>
+      <ondown>216</ondown>
+      <onleft>400</onleft>
+      <onright>400</onright>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>Sub Titles List Control</description>
+      <type>listcontrol</type>
+      <id>802</id>
+      <posX>185</posX>
+      <posY>425</posY>
+      <width>300</width>
+      <height>100</height>
+      <onleft>801</onleft>
+      <onright>800</onright>
+      <onup>802</onup>
+      <ondown>802</ondown>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>A/v Delay label</description>
+      <type>label</type>
+      <id>550</id>
+      <posX>185</posX>
+      <posY>370</posY>
+      <label>297</label>
+      <font>font13</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>A/V Delay Slider</description>
+      <type>slider</type>
+      <id>500</id>
+      <posX>300</posX>
+      <posY>370</posY>
+      <spintype>float</spintype>
+      <textureSliderBar>osd_slider_bg.png</textureSliderBar>
+      <textureSliderNib>osd_slider_nibNF.png</textureSliderNib>
+      <textureSliderNibFocus>osd_slider_nibFO.png</textureSliderNibFocus>
+      <onup>500</onup>
+      <ondown>501</ondown>
+      <onleft>501</onleft>
+      <onright>501</onright>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>Audio Stream List Control</description>
+      <type>listcontrol</type>
+      <id>501</id>
+      <posX>185</posX>
+      <posY>400</posY>
+      <width>355</width>
+      <height>150</height>
+      <onleft>500</onleft>
+      <onright>500</onright>
+      <onup>501</onup>
+      <ondown>501</ondown>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>Video Position label</description>
+      <type>label</type>
+      <id>750</id>
+      <posX>185</posX>
+      <posY>340</posY>
+      <label>298</label>
+      <font>font13</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>Video Position Slider</description>
+      <type>slider</type>
+      <id>700</id>
+      <posX>300</posX>
+      <posY>340</posY>
+      <spintype>int</spintype>
+      <textureSliderBar>osd_slider_bg.png</textureSliderBar>
+      <textureSliderNib>osd_slider_nibNF.png</textureSliderNib>
+      <textureSliderNibFocus>osd_slider_nibFO.png</textureSliderNibFocus>
+      <onup>700</onup>
+      <ondown>701</ondown>
+      <onleft>700</onleft>
+      <onright>702</onright>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>Non-Interleaved Checkbox</description>
+      <type>checkmark</type>
+      <id>701</id>
+      <posX>185</posX>
+      <posY>370</posY>
+      <label>306</label>
+      <onup>700</onup>
+      <ondown>703</ondown>
+      <onleft>701</onleft>
+      <onright>701</onright>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>No Cache Checkbox</description>
+      <type>checkmark</type>
+      <id>702</id>
+      <posX>359</posX>
+      <posY>370</posY>
+      <label>431</label>
+      <onup>700</onup>
+      <ondown>703</ondown>
+      <onleft>701</onleft>
+      <onright>702</onright>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>Adjust Framerate Checkbox</description>
+      <type>checkmark</type>
+      <id>703</id>
+      <posX>185</posX>
+      <posY>395</posY>
+      <label>343</label>
+      <onup>701</onup>
+      <ondown>704</ondown>
+      <onleft>703</onleft>
+      <onright>702</onright>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>brightness label</description>
+      <type>label</type>
+      <id>752</id>
+      <posX>185</posX>
+      <posY>425</posY>
+      <label>464</label>
+      <font>font13</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>brightness</description>
+      <type>slider</type>
+      <id>704</id>
+      <posX>300</posX>
+      <posY>425</posY>
+      <spintype>int</spintype>
+      <textureSliderBar>osd_slider_bg.png</textureSliderBar>
+      <textureSliderNib>osd_slider_nibNF.png</textureSliderNib>
+      <textureSliderNibFocus>osd_slider_nibFO.png</textureSliderNibFocus>
+      <onup>703</onup>
+      <ondown>705</ondown>
+      <onleft>704</onleft>
+      <onright>704</onright>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>contrast label</description>
+      <type>label</type>
+      <id>753</id>
+      <posX>185</posX>
+      <posY>455</posY>
+      <label>465</label>
+      <font>font13</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>contrast</description>
+      <type>slider</type>
+      <id>705</id>
+      <posX>300</posX>
+      <posY>455</posY>
+      <spintype>int</spintype>
+      <textureSliderBar>osd_slider_bg.png</textureSliderBar>
+      <textureSliderNib>osd_slider_nibNF.png</textureSliderNib>
+      <textureSliderNibFocus>osd_slider_nibFO.png</textureSliderNibFocus>
+      <onup>704</onup>
+      <ondown>706</ondown>
+      <onleft>705</onleft>
+      <onright>705</onright>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>gamma label</description>
+      <type>label</type>
+      <id>754</id>
+      <posX>185</posX>
+      <posY>485</posY>
+      <label>466</label>
+      <font>font13</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>gamma</description>
+      <type>slider</type>
+      <id>706</id>
+      <posX>300</posX>
+      <posY>485</posY>
+      <spintype>int</spintype>
+      <textureSliderBar>osd_slider_bg.png</textureSliderBar>
+      <textureSliderNib>osd_slider_nibNF.png</textureSliderNib>
+      <textureSliderNibFocus>osd_slider_nibFO.png</textureSliderNibFocus>
+      <onup>705</onup>
+      <ondown>706</ondown>
+      <onleft>706</onleft>
+      <onright>706</onright>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>Create Bookmark</description>
+      <type>button</type>
+      <id>600</id>
+      <posX>185</posX>
+      <posY>370</posY>
+      <width>165</width>
+      <height>32</height>
+      <textureFocus>button_green_focus_165x32.png</textureFocus>
+      <textureNoFocus>button_green_nofocus_165x32.png</textureNoFocus>
+      <label>294</label>
+      <font>font13</font>
+      <textcolor>ffffffff</textcolor>
+      <colordiffuse>ffffffff</colordiffuse>
+      <onleft>600</onleft>
+      <onright>602</onright>
+      <onup>600</onup>
+      <ondown>601</ondown>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>Clear Bookmarks</description>
+      <type>button</type>
+      <id>602</id>
+      <posX>375</posX>
+      <posY>370</posY>
+      <width>165</width>
+      <height>32</height>
+      <textureFocus>button_green_focus_165x32.png</textureFocus>
+      <textureNoFocus>button_green_nofocus_165x32.png</textureNoFocus>
+      <label>296</label>
+      <font>font13</font>
+      <textcolor>ffffffff</textcolor>
+      <colordiffuse>ffffffff</colordiffuse>
+      <onleft>600</onleft>
+      <onright>601</onright>
+      <onup>600</onup>
+      <ondown>601</ondown>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>Bookmarks List Control</description>
+      <type>listcontrol</type>
+      <id>601</id>
+      <posX>185</posX>
+      <posY>410</posY>
+      <width>355</width>
+      <height>120</height>
+      <onleft>602</onleft>
+      <onright>600</onright>
+      <onup>600</onup>
+      <ondown>601</ondown>
+      <spinPosX>465</spinPosX>
+      <spinPosY>480</spinPosY>
+      <visible>no</visible>
+      <animation effect="fade" time="250">windowopen</animation>
+      <animation effect="fade" time="250">visiblechange</animation>
+    </control>
+  </controls>
+</window>

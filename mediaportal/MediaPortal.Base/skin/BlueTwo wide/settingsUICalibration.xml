@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>10</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <controls>
+    <control>
+      <description>background image</description>
+      <type>image</type>
+      <id>1</id>
+      <width>1366</width>
+      <height>768</height>
+    </control>
+    <control>
+      <description>calibration image</description>
+      <type>image</type>
+      <id>1</id>
+      <width>1366</width>
+      <height>768</height>
+      <texture>settingsUICalibration.png</texture>
+    </control>
+    <control>
+      <type>image</type>
+      <id>1</id>
+      <posX>113</posX>
+      <posY>26</posY>
+      <texture>settings_logo.png</texture>
+    </control>
+    <control>
+      <description>Settings text label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>474</posX>
+      <posY>93</posY>
+      <label>213</label>
+      <font>font16</font>
+      <align>right</align>
+      <textcolor>ffffffff</textcolor>
+    </control>
+    <control>
+      <description>rectangle image</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>34</posX>
+      <posY>360</posY>
+      <texture>calibration_bar.png</texture>
+    </control>
+    <control>
+      <description>coordinates label</description>
+      <type>label</type>
+      <id>2</id>
+      <posX>683</posX>
+      <posY>393</posY>
+      <label>5</label>
+      <font>font13</font>
+      <textcolor>FFFFFFFF</textcolor>
+    </control>
+  </controls>
+</window>

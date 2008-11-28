@@ -1,0 +1,136 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>611</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <define>#header.label:895</define>
+  <define>#header.image:television_logo.png</define>
+  <define>#header.hover:hover_my tv.png</define>
+  <controls>
+    <import>common.window.xml</import>
+    <control>
+      <description>Date</description>
+      <type>label</type>
+      <id>200</id>
+      <posX>690</posX>
+      <posY>30</posY>
+      <label>#date</label>
+      <align>right</align>
+      <font>font13</font>
+      <textcolor>ffa9d0f7</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Time</description>
+      <type>label</type>
+      <id>201</id>
+      <posX>690</posX>
+      <posY>50</posY>
+      <label>#time</label>
+      <align>right</align>
+      <font>font13</font>
+      <textcolor>ffa9d0f7</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Enable auto compress</description>
+      <type>checkmark</type>
+      <id>2</id>
+      <posX>288</posX>
+      <posY>97</posY>
+      <label>994</label>
+      <textcolor>FFFFFFFF</textcolor>
+      <onleft>2</onleft>
+      <onright>2</onright>
+      <onup>17</onup>
+      <ondown>5</ondown>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Auto compress label</description>
+      <type>label</type>
+      <id>4</id>
+      <posX>288</posX>
+      <posY>135</posY>
+      <label>895</label>
+      <font>font13</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Auto compress select</description>
+      <type>spincontrol</type>
+      <id>5</id>
+      <posX>550</posX>
+      <posY>139</posY>
+      <onup>2</onup>
+      <ondown>7</ondown>
+      <onleft>5</onleft>
+      <onright>5</onright>
+      <align>right</align>
+      <textcolor>FFFFFFFF</textcolor>
+      <showrange>no</showrange>
+      <subitems>
+        <subitem>1 Hour</subitem>
+        <subitem>2 Hour</subitem>
+        <subitem>3 Hour</subitem>
+        <subitem>4 Hour</subitem>
+        <subitem>5 Hour</subitem>
+        <subitem>6 Hour</subitem>
+        <subitem>7 Hour</subitem>
+        <subitem>8 Hour</subitem>
+      </subitems>
+      <textureUp>arrow_round_right_nofocus.png</textureUp>
+      <textureDown>arrow_round_left_nofocus.png</textureDown>
+      <textureUpFocus>arrow_round_right_focus.png</textureUpFocus>
+      <textureDownFocus>arrow_round_left_focus.png</textureDownFocus>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Delete original file</description>
+      <type>checkmark</type>
+      <id>7</id>
+      <posX>288</posX>
+      <posY>169</posY>
+      <label>992</label>
+      <textcolor>FFFFFFFF</textcolor>
+      <onleft>15</onleft>
+      <onright>15</onright>
+      <onup>5</onup>
+      <ondown>99</ondown>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Current program background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>75</posX>
+      <posY>419</posY>
+      <width>161</width>
+      <height>134</height>
+      <texture>playback_background.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>TV preview window</description>
+      <type>videowindow</type>
+      <id>99</id>
+      <posX>86</posX>
+      <posY>431</posY>
+      <width>135</width>
+      <height>108</height>
+      <onup>5</onup>
+      <action>18</action>
+      <textureFocus>tv_green_border.png</textureFocus>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+  </controls>
+</window>

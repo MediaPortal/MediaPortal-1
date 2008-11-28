@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <width>1366</width>
+      <height>768</height>
+    </control>
+    <control>
+      <type>image</type>
+      <id>1</id>
+      <posX>113</posX>
+      <posY>26</posY>
+      <texture>#header.image</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <type>label</type>
+      <id>1</id>
+      <posX>398</posX>
+      <posY>93</posY>
+      <label>#header.label</label>
+      <font>font16</font>
+      <align>right</align>
+      <textcolor>White</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Number of Files Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>493</posX>
+      <posY>706</posY>
+      <label>#itemcount</label>
+      <align>left</align>
+      <textcolor>White</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Selected item Label</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>1252</posX>
+      <posY>93</posY>
+      <width>533</width>
+      <label>#selecteditem</label>
+      <font>font14</font>
+      <align>right</align>
+      <textcolor>White</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <type>image</type>
+      <id>1</id>
+      <posX>155</posX>
+      <posY>522</posY>
+      <width>217</width>
+      <height>213</height>
+      <texture>#header.hover</texture>
+      <visible>!videoplayer.usingoverlays</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+  </controls>
+</window>

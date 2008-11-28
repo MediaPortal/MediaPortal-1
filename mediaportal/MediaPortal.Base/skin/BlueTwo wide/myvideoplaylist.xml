@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>28</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:136</define>
+  <define>#header.image:videos_logo.png</define>
+  <define>#header.hover:hover_my videos.png</define>
+  <controls>
+    <import>common.window.xml</import>
+    <control>
+      <description>group element</description>
+      <type>group</type>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="slide" time="150" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="250" end="0,-300">WindowClose</animation>
+      <posX>113</posX>
+      <posY>129</posY>
+      <layout>StackLayout</layout>
+      <control>
+        <description>View-As button</description>
+        <type>button</type>
+        <id>2</id>
+        <label>100</label>
+        <onright>50</onright>
+        <onup>17</onup>
+      </control>
+      <control>
+        <description>Shuffle button</description>
+        <type>button</type>
+        <id>20</id>
+        <label>191</label>
+        <onright>50</onright>
+      </control>
+	   <control>
+        <description>Repeat on/off button</description>
+        <type>togglebutton</type>
+        <id>30</id>
+        <label>486</label>
+        <onright>50</onright>
+      </control>
+      <control>
+        <description>Save button</description>
+        <type>button</type>
+        <id>21</id>
+        <label>190</label>
+        <onright>50</onright>
+      </control>
+      <control>
+        <description>Clear button</description>
+        <type>button</type>
+        <id>22</id>
+        <label>192</label>
+        <onright>50</onright>
+      </control>
+      <control>
+        <description>Play button</description>
+        <type>button</type>
+        <id>23</id>
+        <label>208</label>
+        <onright>50</onright>
+      </control>
+      <control>
+        <description>Next button</description>
+        <type>button</type>
+        <id>24</id>
+        <label>209</label>
+        <onright>50</onright>
+      </control>
+      <control>
+        <description>Previous button</description>
+        <type>button</type>
+        <id>25</id>
+        <label>210</label>
+        <onright>50</onright>
+      </control>
+      <control>
+        <description>My Playlists</description>
+        <type>button</type>
+        <id>9</id>
+        <label>983</label>
+        <onright>50</onright>
+        <ondown>99</ondown>
+      </control>
+    </control>
+    <import>common.facade.video.xml</import>
+  </controls>
+</window>

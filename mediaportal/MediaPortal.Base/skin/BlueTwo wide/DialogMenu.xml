@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>2012</id>
+  <defaultcontrol>3</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <controls>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <width>1366</width>
+      <height>768</height>
+      <texture>black.bmp</texture>
+      <colordiffuse>60ffffff</colordiffuse>
+    </control>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>300</posX>
+      <posY>125</posY>
+      <width>766</width>
+      <height>568</height>
+      <texture>context_background.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>GFX-Heading "menu" text label</description>
+      <type>label</type>
+      <id>5</id>
+      <posX>350</posX>
+      <posY>166</posY>
+      <width>240</width>
+      <label>924</label>
+      <font>font14</font>
+      <textcolor>Black</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>      
+    </control>
+    <control>
+      <description>Heading text label</description>
+      <type>label</type>
+      <id>4</id>
+      <posX>520</posX>
+      <posY>166</posY>
+      <label>181</label>
+      <font>font13</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Exit button</description>
+      <type>button</type>
+      <id>2</id>
+      <posX>966</posX>
+      <posY>160</posY>
+      <width>58</width>
+      <height>58</height>
+      <textureFocus>dialogue_shutdown_focus.png</textureFocus>
+      <textureNoFocus>dialogue_shutdown_nofocus.png</textureNoFocus>
+      <label>-</label>
+      <onleft>3</onleft>
+      <onright>3</onright>
+      <onup>3</onup>
+      <ondown>3</ondown>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>options listcontrol</description>
+      <type>listcontrol</type>
+      <id>3</id>
+      <posX>377</posX>
+      <posY>260</posY>
+      <width>600</width>
+      <height>346</height>
+      <onleft>2</onleft>
+      <onright>2</onright>
+      <textXOff2>576</textXOff2>
+      <spinPosX>857</spinPosX>
+      <spinPosY>570</spinPosY>
+      <textXOff>50</textXOff>
+      <PinIconXOff>45</PinIconXOff>
+      <PinIconYOff>7</PinIconYOff>
+      <PinIconWidth>20</PinIconWidth>
+      <PinIconHeight>20</PinIconHeight>
+      <itemHeight>40</itemHeight>
+    	<itemWidth>40</itemWidth>
+    	<IconXOff>10</IconXOff>
+      <IconYOff>0</IconYOff>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      
+    </control>
+  </controls>
+</window>
