@@ -107,8 +107,8 @@ namespace SetupTv.Sections
       this.labelInfo1.Name = "labelInfo1";
       this.labelInfo1.Size = new System.Drawing.Size(440, 32);
       this.labelInfo1.TabIndex = 0;
-      this.labelInfo1.Text = "The TV-Server is an application which allows you to setup a central ser" +
-          "ver with multiple TV cards.";
+      this.labelInfo1.Text = "The TV-Server is an application which allows you to setup a central server with m" +
+          "ultiple TV cards.";
       // 
       // groupBoxContact
       // 
@@ -248,7 +248,7 @@ namespace SetupTv.Sections
       // labelMePo
       // 
       this.labelMePo.Image = global::SetupTv.Properties.Resources.logo_MePo;
-      this.labelMePo.Location = new System.Drawing.Point(3, 142);
+      this.labelMePo.Location = new System.Drawing.Point(-3, 123);
       this.labelMePo.Name = "labelMePo";
       this.labelMePo.Size = new System.Drawing.Size(258, 202);
       this.labelMePo.TabIndex = 9;
