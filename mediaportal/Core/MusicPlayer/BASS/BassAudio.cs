@@ -310,6 +310,17 @@ namespace MediaPortal.Player
 
     #region Properties
     /// <summary>
+    /// Returns, if the player is in initialising stage
+    /// </summary>
+    public override bool Initializing
+    {
+      get
+      {
+        return (_State == PlayState.Init);
+      }
+    }
+
+    /// <summary>
     /// Returns the Duration of an Audio Stream
     /// </summary>
     public override double Duration
