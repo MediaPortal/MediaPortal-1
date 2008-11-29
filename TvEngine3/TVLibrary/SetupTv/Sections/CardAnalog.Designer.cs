@@ -34,13 +34,8 @@ namespace SetupTv.Sections
       this.mpComboBoxSource = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpButtonScanTv = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonScanRadio = new MediaPortal.UserInterface.Controls.MPButton();
-      this.label12 = new System.Windows.Forms.Label();
-      this.mpLabelTunerLocked = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpLabelChannel = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpListView1 = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
       this.progressBar1 = new System.Windows.Forms.ProgressBar();
       this.mpLabel4 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpComboBoxSensitivity = new MediaPortal.UserInterface.Controls.MPComboBox();
@@ -93,6 +88,10 @@ namespace SetupTv.Sections
       this.lowPlayback = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.portablePlayback = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.defaultPlayback = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this.progressBarQuality = new System.Windows.Forms.ProgressBar();
+      this.progressBarLevel = new System.Windows.Forms.ProgressBar();
+      this.label2 = new System.Windows.Forms.Label();
+      this.label1 = new System.Windows.Forms.Label();
       this.mpTabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.tabPage2.SuspendLayout();
@@ -163,41 +162,6 @@ namespace SetupTv.Sections
       this.mpButtonScanRadio.UseVisualStyleBackColor = true;
       this.mpButtonScanRadio.Click += new System.EventHandler(this.mpButtonScanRadio_Click);
       // 
-      // label12
-      // 
-      this.label12.AutoSize = true;
-      this.label12.Location = new System.Drawing.Point(5, 84);
-      this.label12.Name = "label12";
-      this.label12.Size = new System.Drawing.Size(73, 13);
-      this.label12.TabIndex = 7;
-      this.label12.Text = "Tuner locked:";
-      // 
-      // mpLabelTunerLocked
-      // 
-      this.mpLabelTunerLocked.AutoSize = true;
-      this.mpLabelTunerLocked.Location = new System.Drawing.Point(93, 84);
-      this.mpLabelTunerLocked.Name = "mpLabelTunerLocked";
-      this.mpLabelTunerLocked.Size = new System.Drawing.Size(19, 13);
-      this.mpLabelTunerLocked.TabIndex = 8;
-      this.mpLabelTunerLocked.Text = "no";
-      // 
-      // mpLabel3
-      // 
-      this.mpLabel3.AutoSize = true;
-      this.mpLabel3.Location = new System.Drawing.Point(147, 84);
-      this.mpLabel3.Name = "mpLabel3";
-      this.mpLabel3.Size = new System.Drawing.Size(86, 13);
-      this.mpLabel3.TabIndex = 9;
-      this.mpLabel3.Text = "Current Channel:";
-      // 
-      // mpLabelChannel
-      // 
-      this.mpLabelChannel.AutoSize = true;
-      this.mpLabelChannel.Location = new System.Drawing.Point(239, 84);
-      this.mpLabelChannel.Name = "mpLabelChannel";
-      this.mpLabelChannel.Size = new System.Drawing.Size(0, 13);
-      this.mpLabelChannel.TabIndex = 10;
-      // 
       // mpListView1
       // 
       this.mpListView1.AllowDrop = true;
@@ -206,31 +170,26 @@ namespace SetupTv.Sections
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.mpListView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader2});
-      this.mpListView1.Location = new System.Drawing.Point(9, 135);
+            this.columnHeader1});
+      this.mpListView1.Location = new System.Drawing.Point(23, 179);
       this.mpListView1.Name = "mpListView1";
-      this.mpListView1.Size = new System.Drawing.Size(442, 179);
+      this.mpListView1.Size = new System.Drawing.Size(427, 122);
       this.mpListView1.TabIndex = 11;
       this.mpListView1.UseCompatibleStateImageBehavior = false;
       this.mpListView1.View = System.Windows.Forms.View.Details;
       // 
       // columnHeader1
       // 
-      this.columnHeader1.Text = "Channel";
-      // 
-      // columnHeader2
-      // 
-      this.columnHeader2.Text = "Name";
-      this.columnHeader2.Width = 200;
+      this.columnHeader1.Text = "Status";
+      this.columnHeader1.Width = 350;
       // 
       // progressBar1
       // 
       this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.progressBar1.Location = new System.Drawing.Point(9, 110);
+      this.progressBar1.Location = new System.Drawing.Point(24, 149);
       this.progressBar1.Name = "progressBar1";
-      this.progressBar1.Size = new System.Drawing.Size(442, 10);
+      this.progressBar1.Size = new System.Drawing.Size(424, 10);
       this.progressBar1.TabIndex = 12;
       // 
       // mpLabel4
@@ -292,6 +251,10 @@ namespace SetupTv.Sections
       // 
       // tabPage1
       // 
+      this.tabPage1.Controls.Add(this.progressBarQuality);
+      this.tabPage1.Controls.Add(this.progressBarLevel);
+      this.tabPage1.Controls.Add(this.label2);
+      this.tabPage1.Controls.Add(this.label1);
       this.tabPage1.Controls.Add(this.mpLabel1);
       this.tabPage1.Controls.Add(this.checkBoxNoMerge);
       this.tabPage1.Controls.Add(this.mpButton1);
@@ -304,10 +267,6 @@ namespace SetupTv.Sections
       this.tabPage1.Controls.Add(this.mpButtonScanTv);
       this.tabPage1.Controls.Add(this.mpListView1);
       this.tabPage1.Controls.Add(this.mpButtonScanRadio);
-      this.tabPage1.Controls.Add(this.mpLabelChannel);
-      this.tabPage1.Controls.Add(this.label12);
-      this.tabPage1.Controls.Add(this.mpLabel3);
-      this.tabPage1.Controls.Add(this.mpLabelTunerLocked);
       this.tabPage1.Location = new System.Drawing.Point(4, 22);
       this.tabPage1.Name = "tabPage1";
       this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
@@ -851,6 +810,42 @@ namespace SetupTv.Sections
       this.defaultPlayback.TabStop = true;
       this.defaultPlayback.UseVisualStyleBackColor = true;
       // 
+      // progressBarQuality
+      // 
+      this.progressBarQuality.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.progressBarQuality.Location = new System.Drawing.Point(111, 123);
+      this.progressBarQuality.Name = "progressBarQuality";
+      this.progressBarQuality.Size = new System.Drawing.Size(328, 10);
+      this.progressBarQuality.TabIndex = 33;
+      // 
+      // progressBarLevel
+      // 
+      this.progressBarLevel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.progressBarLevel.Location = new System.Drawing.Point(111, 100);
+      this.progressBarLevel.Name = "progressBarLevel";
+      this.progressBarLevel.Size = new System.Drawing.Size(328, 10);
+      this.progressBarLevel.TabIndex = 32;
+      // 
+      // label2
+      // 
+      this.label2.AutoSize = true;
+      this.label2.Location = new System.Drawing.Point(21, 120);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(74, 13);
+      this.label2.TabIndex = 31;
+      this.label2.Text = "Signal Quality:";
+      // 
+      // label1
+      // 
+      this.label1.AutoSize = true;
+      this.label1.Location = new System.Drawing.Point(21, 97);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(64, 13);
+      this.label1.TabIndex = 30;
+      this.label1.Text = "Signal level:";
+      // 
       // CardAnalog
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -887,13 +882,8 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxSource;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonScanTv;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonScanRadio;
-    private System.Windows.Forms.Label label12;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabelTunerLocked;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel3;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabelChannel;
     private MediaPortal.UserInterface.Controls.MPListView mpListView1;
     private System.Windows.Forms.ColumnHeader columnHeader1;
-    private System.Windows.Forms.ColumnHeader columnHeader2;
     private System.Windows.Forms.ProgressBar progressBar1;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel4;
     private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxSensitivity;
@@ -946,5 +936,9 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel19;
     private System.Windows.Forms.Panel panel2;
     private System.Windows.Forms.Panel panel1;
+    private System.Windows.Forms.ProgressBar progressBarQuality;
+    private System.Windows.Forms.ProgressBar progressBarLevel;
+    private System.Windows.Forms.Label label2;
+    private System.Windows.Forms.Label label1;
   }
 }

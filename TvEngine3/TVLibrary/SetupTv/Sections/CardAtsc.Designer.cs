@@ -33,10 +33,6 @@ namespace SetupTv.Sections
       this.label2 = new System.Windows.Forms.Label();
       this.label1 = new System.Windows.Forms.Label();
       this.progressBar1 = new System.Windows.Forms.ProgressBar();
-      this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpLabelTunerLocked = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpLabelChannel = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label12 = new System.Windows.Forms.Label();
       this.mpButtonScanTv = new MediaPortal.UserInterface.Controls.MPButton();
       this.listViewStatus = new System.Windows.Forms.ListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
@@ -89,41 +85,6 @@ namespace SetupTv.Sections
       this.progressBar1.Name = "progressBar1";
       this.progressBar1.Size = new System.Drawing.Size(417, 10);
       this.progressBar1.TabIndex = 55;
-      // 
-      // mpLabel3
-      // 
-      this.mpLabel3.AutoSize = true;
-      this.mpLabel3.Location = new System.Drawing.Point(163, 77);
-      this.mpLabel3.Name = "mpLabel3";
-      this.mpLabel3.Size = new System.Drawing.Size(86, 13);
-      this.mpLabel3.TabIndex = 53;
-      this.mpLabel3.Text = "Current Channel:";
-      // 
-      // mpLabelTunerLocked
-      // 
-      this.mpLabelTunerLocked.AutoSize = true;
-      this.mpLabelTunerLocked.Location = new System.Drawing.Point(109, 77);
-      this.mpLabelTunerLocked.Name = "mpLabelTunerLocked";
-      this.mpLabelTunerLocked.Size = new System.Drawing.Size(19, 13);
-      this.mpLabelTunerLocked.TabIndex = 52;
-      this.mpLabelTunerLocked.Text = "no";
-      // 
-      // mpLabelChannel
-      // 
-      this.mpLabelChannel.AutoSize = true;
-      this.mpLabelChannel.Location = new System.Drawing.Point(255, 77);
-      this.mpLabelChannel.Name = "mpLabelChannel";
-      this.mpLabelChannel.Size = new System.Drawing.Size(0, 13);
-      this.mpLabelChannel.TabIndex = 54;
-      // 
-      // label12
-      // 
-      this.label12.AutoSize = true;
-      this.label12.Location = new System.Drawing.Point(21, 77);
-      this.label12.Name = "label12";
-      this.label12.Size = new System.Drawing.Size(73, 13);
-      this.label12.TabIndex = 51;
-      this.label12.Text = "Tuner locked:";
       // 
       // mpButtonScanTv
       // 
@@ -197,10 +158,6 @@ namespace SetupTv.Sections
       this.Controls.Add(this.label2);
       this.Controls.Add(this.label1);
       this.Controls.Add(this.progressBar1);
-      this.Controls.Add(this.mpLabel3);
-      this.Controls.Add(this.mpLabelTunerLocked);
-      this.Controls.Add(this.mpLabelChannel);
-      this.Controls.Add(this.label12);
       this.Controls.Add(this.mpButtonScanTv);
       this.Name = "CardAtsc";
       this.Size = new System.Drawing.Size(468, 397);
@@ -216,10 +173,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label2;
     private System.Windows.Forms.Label label1;
     private System.Windows.Forms.ProgressBar progressBar1;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel3;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabelTunerLocked;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabelChannel;
-    private System.Windows.Forms.Label label12;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonScanTv;
     private System.Windows.Forms.ListView listViewStatus;
     private System.Windows.Forms.ColumnHeader columnHeader1;

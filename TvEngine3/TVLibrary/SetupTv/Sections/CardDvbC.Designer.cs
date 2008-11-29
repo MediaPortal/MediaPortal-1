@@ -34,7 +34,6 @@ namespace SetupTv.Sections
       this.label1 = new System.Windows.Forms.Label();
       this.progressBar1 = new System.Windows.Forms.ProgressBar();
       this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpLabelChannel = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpButtonScanTv = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpBeveledLine1 = new MediaPortal.UserInterface.Controls.MPBeveledLine();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -105,14 +104,6 @@ namespace SetupTv.Sections
       this.mpLabel3.Size = new System.Drawing.Size(86, 13);
       this.mpLabel3.TabIndex = 38;
       this.mpLabel3.Text = "Current Channel:";
-      // 
-      // mpLabelChannel
-      // 
-      this.mpLabelChannel.AutoSize = true;
-      this.mpLabelChannel.Location = new System.Drawing.Point(113, 160);
-      this.mpLabelChannel.Name = "mpLabelChannel";
-      this.mpLabelChannel.Size = new System.Drawing.Size(0, 13);
-      this.mpLabelChannel.TabIndex = 39;
       // 
       // mpButtonScanTv
       // 
@@ -309,7 +300,6 @@ namespace SetupTv.Sections
       this.Controls.Add(this.label1);
       this.Controls.Add(this.progressBar1);
       this.Controls.Add(this.mpLabel3);
-      this.Controls.Add(this.mpLabelChannel);
       this.Controls.Add(this.mpButtonScanTv);
       this.Controls.Add(this.mpLabel1);
       this.Controls.Add(this.mpComboBoxCountry);
@@ -330,7 +320,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label1;
     private System.Windows.Forms.ProgressBar progressBar1;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel3;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabelChannel;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonScanTv;
     private MediaPortal.UserInterface.Controls.MPBeveledLine mpBeveledLine1;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;

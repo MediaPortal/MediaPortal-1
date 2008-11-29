@@ -155,18 +155,8 @@ namespace SetupTv.Sections
 
     void UpdateStatus()
     {
-      mpLabelTunerLocked.Text = "No";
-      if (RemoteControl.Instance.TunerLocked(_cardNumber))
-        mpLabelTunerLocked.Text = "Yes";
       progressBarLevel.Value = Math.Min(100, RemoteControl.Instance.SignalLevel(_cardNumber));
       progressBarQuality.Value = Math.Min(100, RemoteControl.Instance.SignalQuality(_cardNumber));
-      User user = new User();
-      user.CardId = _cardNumber;
-      ATSCChannel channel = RemoteControl.Instance.CurrentChannel(ref user) as ATSCChannel;
-      if (channel == null)
-        mpLabelChannel.Text = "none";
-      else
-        mpLabelChannel.Text = String.Format("{0}  Frequency {1}", channel.PhysicalChannel, channel.Frequency);
     }
 
     private void mpButtonScanTv_Click(object sender, EventArgs e)
