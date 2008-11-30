@@ -216,7 +216,7 @@ namespace MediaPortal
           frmFull.SetInformation(info);
           oldInfo = info;
         }
-        Thread.Sleep(100);
+        Thread.Sleep(25);
       }
 
       Cursor.Show();

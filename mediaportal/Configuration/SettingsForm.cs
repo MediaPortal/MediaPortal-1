@@ -1114,6 +1114,7 @@ namespace MediaPortal.Configuration
     private bool ShowConfigModeHint()
     {
       DlgConfigModeHint hintForm = new DlgConfigModeHint();
+      splashScreen.AllowWindowOverlay(hintForm);
       return (hintForm.ShowDialog(this) == DialogResult.OK);
     }
 

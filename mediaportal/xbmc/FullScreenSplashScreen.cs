@@ -11,7 +11,7 @@ using MediaPortal.Configuration;
 
 namespace MediaPortal
 {
-  public partial class FullScreenSplashScreen : Form
+  public partial class FullScreenSplashScreen : UserInterface.Controls.MPForm
   {
     public FullScreenSplashScreen()
     {

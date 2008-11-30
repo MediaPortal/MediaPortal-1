@@ -361,6 +361,7 @@ public class MediaPortalApp : D3DApp, IRender
             Thread.Sleep(1000);
           }
         }
+        Application.DoEvents();
         Log.Debug("Main: Verifying DirectX 9");
         try
         {
@@ -1321,12 +1322,15 @@ public class MediaPortalApp : D3DApp, IRender
       splashScreen.SetInformation("Starting recorder...");
     }
     Recorder.Start();
+    Application.DoEvents();
+
     if (splashScreen != null)
     {
       splashScreen.SetInformation("Starting plugins...");
     }
     PluginManager.Load();
     PluginManager.Start();
+    Application.DoEvents();
     tMouseClickTimer = new Timer(SystemInformation.DoubleClickTime);
     tMouseClickTimer.AutoReset = false;
     tMouseClickTimer.Enabled = false;
@@ -1490,27 +1494,34 @@ public class MediaPortalApp : D3DApp, IRender
     if (splashScreen != null)
       splashScreen.SetInformation("Loading keymap.xml...");
     ActionTranslator.Load();
+    Application.DoEvents();
     if (splashScreen != null)
       splashScreen.SetInformation("Loading strings...");
     GUIGraphicsContext.Skin = m_strSkin;
     GUIGraphicsContext.ActiveForm = Handle;
     GUILocalizeStrings.Load(m_strLanguage); //Config.GetFile(Config.Dir.Language, m_strLanguage, "strings.xml"));
+    Application.DoEvents();
     if (splashScreen != null)
       splashScreen.SetInformation("Initialize texture manager...");
     GUITextureManager.Init();
+    Application.DoEvents();
     if (splashScreen != null)
       splashScreen.SetInformation("Loading fonts...");
     GUIFontManager.LoadFonts(Config.GetFile(Config.Dir.Skin, m_strSkin, "fonts.xml"));
+    Application.DoEvents();
     if (splashScreen != null)
       splashScreen.SetInformation("Initializing fonts...");
     GUIFontManager.InitializeDeviceObjects();
+    Application.DoEvents();
     if (splashScreen != null)
       splashScreen.SetInformation("Loading skin...");
     Log.Info("Main: Loading {0} skin", m_strSkin);
     GUIWindowManager.Initialize();
+    Application.DoEvents();
     if (splashScreen != null)
       splashScreen.SetInformation("Loading window plugins...");
     PluginManager.LoadWindowPlugins();
+    Application.DoEvents();
     Log.Info("Main: Loading windowmanager");
     if (splashScreen != null)
       splashScreen.SetInformation("Initializing skin...");
@@ -1546,6 +1557,7 @@ public class MediaPortalApp : D3DApp, IRender
         GUIWindowManager.OnResize();
       }
     }
+    Application.DoEvents();
     Log.Info("Main: Initializing windowmanager");
     GUIWindowManager.PreInit();
     GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;

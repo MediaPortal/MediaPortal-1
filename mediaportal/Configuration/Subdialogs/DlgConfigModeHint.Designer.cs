@@ -132,7 +132,9 @@
       this.Controls.Add(this.btnContinue);
       this.DoubleBuffered = true;
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+      this.Location = new System.Drawing.Point(100, 70);
       this.Name = "DlgConfigModeHint";
+      this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
       this.Text = "MediaPortal Configuration";
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLogo)).EndInit();
       this.ResumeLayout(false);

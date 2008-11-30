@@ -45,6 +45,8 @@ namespace MediaPortal.Configuration
     private bool stopRequested = false;
     private SplashForm frm;
     private string info;
+    private bool _allowOverlay;
+    private Form _hintForm;
 
     public ConfigSplashScreen()
     {
@@ -107,8 +109,26 @@ namespace MediaPortal.Configuration
       frm.Show();
       frm.Update();
       frm.FadeIn();
-      while (!stopRequested && frm.Focused) //run until stop of splashscreen is requested
+      while (!stopRequested && (frm.Focused || _allowOverlay)) //run until stop of splashscreen is requested
       {
+        if (_allowOverlay == true && _hintForm != null) // Allow other Windows to Overlay the splashscreen
+        {
+          if (_hintForm.Visible)  // prepare everything to let the Outdated skin message appear
+          {
+            if (frm.Focused)
+            {
+              frm.TopMost = false;
+              _hintForm.TopMost = true;
+              _hintForm.BringToFront();
+            }
+          }
+          else
+          {
+            _allowOverlay = false;
+            frm.TopMost = true;
+            frm.BringToFront();
+          }
+        }
         if (oldInfo != info)
         {
           frm.SetInformation(info);
@@ -119,6 +139,15 @@ namespace MediaPortal.Configuration
       frm.FadeOut();
       frm.Close();  //closes, and disposes the form
       frm = null;
+    }
+
+    /// <summary>
+    /// Allows other windows to overlay the splashscreen
+    /// </summary>
+    public void AllowWindowOverlay(Form hintForm)
+    {
+      _allowOverlay = true;
+      _hintForm = hintForm;
     }
 
     /// <summary>
