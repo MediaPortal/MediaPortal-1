@@ -231,7 +231,7 @@ namespace MediaPortal.DeployTool
       string FileName = Path.GetFileName(RegistryFullPathName);
       string Directory = Path.GetDirectoryName(RegistryFullPathName);
       string TempFullPathName = Environment.GetEnvironmentVariable("TEMP") + "\\" + FileName;
-      File.Copy(RegistryFullPathName, TempFullPathName);
+      File.Copy(RegistryFullPathName, TempFullPathName, True);
       Process setup = Process.Start(TempFullPathName, " /S _?=" + Directory);
       if (setup != null)
       {
