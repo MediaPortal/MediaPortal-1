@@ -108,6 +108,7 @@ namespace MPLanguageTool
     private void openDeployToolToolStripMenuItem_Click(object sender, EventArgs e)
     {
       folderBrowserDialog1.Description = "Please select a path where [MediaPortal.DeployTool.resx] can be found:";
+      folderBrowserDialog1.SelectedPath = Application.StartupPath;
       folderBrowserDialog1.ShowDialog();
       languagePath = folderBrowserDialog1.SelectedPath;
 
@@ -151,6 +152,7 @@ namespace MPLanguageTool
     private void openMpToolStripMenuItem_Click(object sender, EventArgs e)
     {
       folderBrowserDialog1.Description = "Please select a path where [strings_en.xml] can be found:";
+      folderBrowserDialog1.SelectedPath = Application.StartupPath;
       folderBrowserDialog1.ShowDialog();
       languagePath = folderBrowserDialog1.SelectedPath;
 

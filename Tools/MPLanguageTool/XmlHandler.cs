@@ -158,6 +158,11 @@ namespace MPLanguageTool
             row[3] = prefixValue;
             row[4] = "";
 
+            //
+            // If strings_XX.xml trow an expcetion, uncomment this line to find the offending line
+            //
+            //MessageBox.Show("Loading xml strings (node_id = " + node_id + ")");
+            //
             translations.Rows.Add(row);
             translationMapping.Add(node_id.Trim(), row);
           }
