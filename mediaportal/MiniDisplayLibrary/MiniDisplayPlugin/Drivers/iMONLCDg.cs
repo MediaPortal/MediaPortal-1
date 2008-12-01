@@ -2199,7 +2199,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     private static uint LengthToPixels(int Length)
     {
       uint[] numArray = new uint[] { 
-                0, 0x80, 0xc0, 0xe0, 240, 0xf8, 0xfc, 0xfe, 0xff, 0x80ff, 0xc0ff, 0xe0ff, 0xf0ff, 0xf8ff, 0xfcff, 0xfeff, 
+                0, 0x80, 0xc0, 0xe0, 0xf0, 0xf8, 0xfc, 0xfe, 0xff, 0x80ff, 0xc0ff, 0xe0ff, 0xf0ff, 0xf8ff, 0xfcff, 0xfeff, 
                 0xffff, 0x80ffff, 0xc0ffff, 0xe0ffff, 0xf0ffff, 0xf8ffff, 0xfcffff, 0xfeffff, 0xffffff, 0x80ffffff, 0xc0ffffff, 0xe0ffffff, 0xf0ffffff, 0xf8ffffff, 0xfcffffff, 0xfeffffff, 
                 uint.MaxValue
              };
@@ -3403,7 +3403,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.SetLinePixels(LengthToPixels(TopLine), LengthToPixels(BotLine), LengthToPixels(TopProgress), LengthToPixels(BotProgress));
     }
 
-    private void SetLinePixels(uint TopLine, uint BotLine, uint TopProgress, uint BotProgress)
+    private void SetLinePixels(ulong TopLine, ulong BotLine, ulong TopProgress, ulong BotProgress)
     {
       lock (DWriteMutex)
       {
@@ -3789,7 +3789,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           if (!this.MPStatus.IsMuted)
           {
-            this.volLevel = this.MPStatus.SystemVolumeLevel / 0x800;
+            this.volLevel = this.MPStatus.SystemVolumeLevel / 2048;
           }
         }
         catch (Exception exception)
@@ -4280,7 +4280,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       get
       {
-        return "SoundGraph iMON USB VFD/LCD Plugin V23_11_2008";
+        return "SoundGraph iMON USB VFD/LCD Plugin V12_01_2008";
       }
     }
 
