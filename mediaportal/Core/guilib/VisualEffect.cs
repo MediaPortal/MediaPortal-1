@@ -158,12 +158,10 @@ namespace MediaPortal.GUI.Library
     public bool Create(XmlNode node)
     {
       string animType = node.InnerText.ToLower();
-      if (String.Compare(animType, "visible", true) == 0)
+      if (String.Compare(animType, "visible", true) == 0 || String.Compare(animType, "visiblechange", true) == 0)
         _type = AnimationType.Visible;
       else if (String.Compare(animType, "hidden", true) == 0)
         _type = AnimationType.Hidden;
-      else if (String.Compare(animType, "visiblechange", true) == 0)
-        _type = AnimationType.Visible;
       else if (String.Compare(animType, "focus", true) == 0)
         _type = AnimationType.Focus;
       else if (String.Compare(animType, "unfocus", true) == 0)
@@ -176,7 +174,7 @@ namespace MediaPortal.GUI.Library
         _type = AnimationType.Conditional;
       if (_type == AnimationType.None)
       {
-        Log.Error("Control has invalid animation type");
+        Log.Error(String.Format("Control has invalid animation type [{0} on {1}]", animType, node.Name));
         return false;
       }
       XmlNode nodeAttribute = node.Attributes.GetNamedItem("condition");
@@ -189,18 +187,23 @@ namespace MediaPortal.GUI.Library
       if (nodeAttribute == null) return false;
       string effectType = nodeAttribute.Value;
       // effect type
-      if (String.Compare(effectType, "fade") == 0)
+      if (String.Compare(effectType, "fade", true) == 0)
         _effect = EffectType.Fade;
-      else if (String.Compare(effectType, "slide") == 0)
+      else if (String.Compare(effectType, "slide", true) == 0)
         _effect = EffectType.Slide;
-      else if (String.Compare(effectType, "rotate") == 0)
+      else if (String.Compare(effectType, "rotate", true) == 0)
         _effect = EffectType.RotateZ;
-      else if (String.Compare(effectType, "rotatey") == 0)
+      else if (String.Compare(effectType, "rotatey", true) == 0)
         _effect = EffectType.RotateY;
-      else if (String.Compare(effectType, "rotatex") == 0)
+      else if (String.Compare(effectType, "rotatex", true) == 0)
         _effect = EffectType.RotateX;
-      else if (String.Compare(effectType, "zoom") == 0)
+      else if (String.Compare(effectType, "zoom", true) == 0)
         _effect = EffectType.Zoom;
+      if (_effect == EffectType.None)
+      {
+        Log.Error(String.Format("Control has invalid effect type [{0} on {1}]", effectType, node.Name));
+        return false;
+      }
       // time and delay
       nodeAttribute = node.Attributes.GetNamedItem("time");
       UInt32.TryParse(nodeAttribute.Value.ToString(), out _length);
