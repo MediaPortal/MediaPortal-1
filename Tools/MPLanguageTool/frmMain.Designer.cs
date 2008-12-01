@@ -18,28 +18,12 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+using System.ComponentModel;
+
 namespace MPLanguageTool
 {
   partial class frmMain
   {
-    /// <summary>
-    /// Required designer variable.
-    /// </summary>
-    private System.ComponentModel.IContainer components = null;
-
-    /// <summary>
-    /// Clean up any resources being used.
-    /// </summary>
-    /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-    protected override void Dispose(bool disposing)
-    {
-      if (disposing && (components != null))
-      {
-        components.Dispose();
-      }
-      base.Dispose(disposing);
-    }
-
     #region Windows Form Designer generated code
 
     /// <summary>
@@ -48,8 +32,7 @@ namespace MPLanguageTool
     /// </summary>
     private void InitializeComponent()
     {
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
       this.menuStrip1 = new System.Windows.Forms.MenuStrip();
       this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.openDeployToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -58,15 +41,16 @@ namespace MPLanguageTool
       this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
       this.quitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.gv = new System.Windows.Forms.DataGridView();
-      this.gv2 = new System.Windows.Forms.DataGridView();
       this.ID = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.Translated = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.gv2 = new System.Windows.Forms.DataGridView();
       this.statusStrip1 = new System.Windows.Forms.StatusStrip();
       this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+      this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
       this.menuStrip1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.gv)).BeginInit();
-      this.statusStrip1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.gv2)).BeginInit();
+      this.statusStrip1.SuspendLayout();
       this.SuspendLayout();
       // 
       // menuStrip1
@@ -134,25 +118,25 @@ namespace MPLanguageTool
       this.gv.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.ID,
             this.Translated});
-      dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Window;
-      dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.ControlText;
-      dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-      dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-      dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-      this.gv.DefaultCellStyle = dataGridViewCellStyle4;
+      dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
+      dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
+      dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+      dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+      dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+      this.gv.DefaultCellStyle = dataGridViewCellStyle1;
       this.gv.Dock = System.Windows.Forms.DockStyle.Fill;
       this.gv.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
       this.gv.Location = new System.Drawing.Point(0, 24);
       this.gv.MultiSelect = false;
       this.gv.Name = "gv";
       this.gv.ReadOnly = true;
+      this.gv.RowTemplate.DefaultCellStyle.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
       this.gv.RowTemplate.Height = 30;
       this.gv.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
       this.gv.Size = new System.Drawing.Size(583, 345);
       this.gv.TabIndex = 1;
-      this.gv.RowTemplate.DefaultCellStyle.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
       this.gv.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.gv_CellMouseDoubleClick);
       // 
       // ID
@@ -169,6 +153,25 @@ namespace MPLanguageTool
       this.Translated.ReadOnly = true;
       this.Translated.Width = 82;
       // 
+      // gv2
+      // 
+      this.gv2.AllowUserToAddRows = false;
+      this.gv2.AllowUserToDeleteRows = false;
+      this.gv2.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+      this.gv2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+      this.gv2.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.gv2.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
+      this.gv2.Location = new System.Drawing.Point(0, 24);
+      this.gv2.MultiSelect = false;
+      this.gv2.Name = "gv2";
+      this.gv2.ReadOnly = true;
+      this.gv2.RowTemplate.DefaultCellStyle.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+      this.gv2.RowTemplate.Height = 30;
+      this.gv2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+      this.gv2.Size = new System.Drawing.Size(583, 323);
+      this.gv2.TabIndex = 3;
+      this.gv2.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.gv2_CellMouseDoubleClick);
+      // 
       // statusStrip1
       // 
       this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -183,31 +186,10 @@ namespace MPLanguageTool
       this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
       this.toolStripStatusLabel1.Size = new System.Drawing.Size(0, 17);
       // 
-      // gv2
+      // folderBrowserDialog1
       // 
-      this.gv2.AllowUserToAddRows = false;
-      this.gv2.AllowUserToDeleteRows = false;
-      this.gv2.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
-      this.gv2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-      dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
-      dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
-      dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-      dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-      dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-      this.gv.DefaultCellStyle = dataGridViewCellStyle5;
-      this.gv2.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.gv2.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
-      this.gv2.Location = new System.Drawing.Point(0, 24);
-      this.gv2.MultiSelect = false;
-      this.gv2.Name = "gv2";
-      this.gv2.ReadOnly = true;
-      this.gv2.RowTemplate.DefaultCellStyle.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-      this.gv2.RowTemplate.Height = 30;
-      this.gv2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-      this.gv2.Size = new System.Drawing.Size(583, 323);
-      this.gv2.TabIndex = 3;
-      this.gv2.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.gv2_CellMouseDoubleClick);
+      this.folderBrowserDialog1.RootFolder = System.Environment.SpecialFolder.MyComputer;
+      this.folderBrowserDialog1.ShowNewFolderButton = false;
       // 
       // frmMain
       // 
@@ -226,9 +208,9 @@ namespace MPLanguageTool
       this.menuStrip1.ResumeLayout(false);
       this.menuStrip1.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.gv)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.gv2)).EndInit();
       this.statusStrip1.ResumeLayout(false);
       this.statusStrip1.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.gv2)).EndInit();
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -249,6 +231,7 @@ namespace MPLanguageTool
     private System.Windows.Forms.DataGridViewTextBoxColumn ID;
     private System.Windows.Forms.DataGridViewTextBoxColumn Translated;
     private System.Windows.Forms.DataGridView gv2;
+    private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
   }
 }
 

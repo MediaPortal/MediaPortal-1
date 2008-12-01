@@ -20,7 +20,6 @@
  */
 using System;
 using System.Data;
-using System.Collections.Specialized;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
@@ -39,7 +38,7 @@ namespace MPLanguageTool
       {
         LangDefaultID = languageID;
       }
-      return AppDomain.CurrentDomain.BaseDirectory + LangFileName + LangDefaultID + LangExtension;
+      return frmMain.languagePath + "\\" + LangFileName + LangDefaultID + LangExtension;
     }
 
     // Load Original Label to Translate
@@ -217,11 +216,6 @@ namespace MPLanguageTool
 
       }
       doc.Save(xml);
-    }
-
-    private static string PrefixIdentifier()
-    {
-      return "(*)";
     }
   }
 }

@@ -18,7 +18,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-using System;
+
 using System.Collections.Specialized;
 using System.Text;
 using System.Xml;
@@ -32,9 +32,9 @@ namespace MPLanguageTool
     {
       if (languageID == null)
       {
-        return AppDomain.CurrentDomain.BaseDirectory + "MediaPortal.DeployTool.resx";
+        return frmMain.languagePath + "\\MediaPortal.DeployTool.resx";
       }
-      return AppDomain.CurrentDomain.BaseDirectory + "MediaPortal.DeployTool." + languageID + ".resx";
+      return frmMain.languagePath + "\\MediaPortal.DeployTool." + languageID + ".resx";
     }
 
     public static NameValueCollection Load(string languageID)

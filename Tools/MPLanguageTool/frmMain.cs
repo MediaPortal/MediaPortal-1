@@ -34,9 +34,9 @@ namespace MPLanguageTool
     CultureInfo culture;
     bool DeployTool;
     bool MediaPortal;
-
-    // new added
     DataTable originalTranslations;
+
+    public static string languagePath;
 
     #endregion
 
@@ -107,6 +107,10 @@ namespace MPLanguageTool
     #region Menu-events
     private void openDeployToolToolStripMenuItem_Click(object sender, EventArgs e)
     {
+      folderBrowserDialog1.Description = "Please select a path where [MediaPortal.DeployTool.resx] can be found:";
+      folderBrowserDialog1.ShowDialog();
+      languagePath = folderBrowserDialog1.SelectedPath;
+
       gv.Dock = DockStyle.Fill;
       gv2.Dock = DockStyle.None;
       gv2.Visible = false;
@@ -146,6 +150,10 @@ namespace MPLanguageTool
 
     private void openMpToolStripMenuItem_Click(object sender, EventArgs e)
     {
+      folderBrowserDialog1.Description = "Please select a path where [strings_en.xml] can be found:";
+      folderBrowserDialog1.ShowDialog();
+      languagePath = folderBrowserDialog1.SelectedPath;
+
       gv.Dock = DockStyle.None;
       gv2.Dock = DockStyle.Fill;
       gv2.Visible = true;
@@ -172,7 +180,7 @@ namespace MPLanguageTool
       ToolStripText("Loading \"strings_" + culture.Name + ".xml\"...");
 
       // Modified
-      DataTable translations = XmlHandler.Load_Traslation(culture.Name, originalTranslations,originalMapping);
+      DataTable translations = XmlHandler.Load_Traslation(culture.Name, originalTranslations, originalMapping);
 
       int untranslated = 0;
 
