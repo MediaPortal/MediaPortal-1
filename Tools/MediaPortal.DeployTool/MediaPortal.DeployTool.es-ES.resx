@@ -324,7 +324,7 @@ El PC actuará como servidor dedicado de TV-Server y proveerá de TV otros PC 's
     <value>Instalando...</value>
   </data>
   <data name="Install_msgUninstalling" xml:space="preserve">
-    <value>Desisntalando...</value>
+    <value>Desinstalando...</value>
   </data>
   <data name="Install_stateInstalled" xml:space="preserve">
     <value>Instalado</value>
