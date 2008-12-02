@@ -254,7 +254,6 @@ namespace MediaPortal.GUI.Music
 
     public override void OnAction(Action action)
     {
-      Log.Debug("DEBUG - {0}", action.wID.ToString());
       if (action.wID == Action.ActionType.ACTION_SHOW_PLAYLIST)
       {
         GUIWindowManager.ShowPreviousWindow();
