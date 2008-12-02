@@ -416,8 +416,11 @@ namespace MediaPortal.GUI.TV
 
         case 830: // Reset watched status
           {
+            m_iSelectedItem = GetSelectedItemNo();
             ResetWatchedStatus(rec.FileName);
             LoadDirectory();
+            GUIControl.SelectItemControl(GetID, listViews.GetID, m_iSelectedItem);
+            GUIControl.SelectItemControl(GetID, listAlbums.GetID, m_iSelectedItem);
           }
           break;
       }
