@@ -105,7 +105,8 @@ namespace MediaPortal.TagReader
           musictag.Lyrics = "";
         else
           musictag.Lyrics = lyrics.Trim(trimChars);
-        musictag.Title = tag.Tag.Title.Trim(trimChars);
+
+        musictag.Title = (tag.Tag.Title == null ? "" : tag.Tag.Title.Trim(trimChars)); // Prevent Null Ref execption, when Title is not set
         musictag.Track = (int)tag.Tag.Track;
         musictag.TrackTotal = (int)tag.Tag.TrackCount;
         musictag.DiscID = (int)tag.Tag.Disc;
@@ -113,7 +114,7 @@ namespace MediaPortal.TagReader
 
         // To display Multiple Disc Albums correctly, we add the discid mupltplied by 100
         // But, only if track exists and is less than 100, to avoid having wrong track numbers 
-        // if the user specified the discid as part of the track tag.
+        // if the user specified the discid is part of the track tag.
         if (musictag.DiscID > 0 && (musictag.Track > 0 && musictag.Track < 100))
           musictag.Track += (musictag.DiscID * 100);
 
@@ -147,7 +148,10 @@ namespace MediaPortal.TagReader
 
         // if we didn't get a title, use the Filename without extension to prevent the file to appear as "unknown"
         if (musictag.Title == "")
+        {
+          Log.Warn("TagReader: Empty Title found in file: {0}. Please retag.", strFile);
           musictag.Title = System.IO.Path.GetFileNameWithoutExtension(strFile);
+        }
 
         return musictag;
       }
