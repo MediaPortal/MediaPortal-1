@@ -83,6 +83,8 @@ namespace TvPlugin
     static Program currentProgram = null;
 
     List<int> RecordingIntervalValues = new List<int>();
+    private int _preRec;
+    private int _postRec;
 
     public TVProgramInfo()
     {
@@ -99,6 +101,20 @@ namespace TvPlugin
       RecordingIntervalValues.Add(45);
       RecordingIntervalValues.Add(60);
       RecordingIntervalValues.Add(90);
+
+      TvBusinessLayer layer = new TvBusinessLayer();
+      int.TryParse(layer.GetSetting("preRecordInterval", "5").Value, out _preRec);
+      int.TryParse(layer.GetSetting("postRecordInterval", "5").Value, out _postRec);
+
+      if (!RecordingIntervalValues.Contains(_preRec))
+        RecordingIntervalValues.Add(_preRec);
+
+      if (!RecordingIntervalValues.Contains(_postRec))
+        RecordingIntervalValues.Add(_postRec);
+
+      // sort the list to get the values in correct order if _preRec and/or _postRec were added
+      RecordingIntervalValues.Sort();
+
       LoadSettings();
     }
 
@@ -178,7 +194,8 @@ namespace TvPlugin
       GUIListItem lastSelectedItem = lstUpcomingEpsiodes.SelectedListItem;
       int itemToSelect = -1;
       lstUpcomingEpsiodes.Clear();
-      if (currentProgram == null) return;
+      if (currentProgram == null)
+        return;
 
       //set program description
       string strTime = String.Format("{0} {1} - {2}",
@@ -197,10 +214,10 @@ namespace TvPlugin
       bool isRecording = false;
       bool isSeries = false;
       foreach (Schedule schedule in schedules)
-      {                        
+      {
         Schedule recSched;
         isRecording = IsRecordingProgram(currentProgram, out recSched, true);
-        
+
         if (isRecording)
         {
           if ((ScheduleRecordingType)schedule.ScheduleType != ScheduleRecordingType.Once)
@@ -308,7 +325,8 @@ namespace TvPlugin
         item.Label2 = String.Format("{0} {1} - {2}",
                                   Utils.GetShortDayString(episode.StartTime),
                                   episode.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                  episode.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat)); ;
+                                  episode.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+        ;
         if (lastSelectedItem != null)
         {
           if ((item.Label == lastSelectedItem.Label) && (item.Label2 == lastSelectedItem.Label2))
@@ -329,7 +347,8 @@ namespace TvPlugin
       IList schedules = Schedule.ListAll();
       foreach (Schedule schedule in schedules)
       {
-        if (schedule.Canceled != Schedule.MinSchedule) continue;
+        if (schedule.Canceled != Schedule.MinSchedule)
+          continue;
         if (schedule.IsManual && schedule.IdChannel == program.IdChannel && schedule.EndTime >= program.EndTime)
         {
           Schedule manual = schedule.Clone();
@@ -388,35 +407,55 @@ namespace TvPlugin
     void OnPreRecordInterval()
     {
       Schedule rec;
-      if (false == IsRecordingProgram(currentProgram, out  rec, false)) return;
+      if (false == IsRecordingProgram(currentProgram, out  rec, false))
+        return;
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       if (dlg != null)
       {
         dlg.Reset();
         dlg.ShowQuickNumbers = false;
         dlg.SetHeading(GUILocalizeStrings.Get(1444));//pre-record
-        dlg.Add(GUILocalizeStrings.Get(886));//default
 
         foreach (int interval in RecordingIntervalValues)
         {
           if (interval == 1)
           {
-            dlg.Add(String.Format("{0} {1}", interval, GUILocalizeStrings.Get(3003))); // minute
+            if (interval == _preRec)
+            {
+              dlg.Add(String.Format("{0} {1}", interval, GUILocalizeStrings.Get(3003) + " (" + GUILocalizeStrings.Get(886) + ")")); // minute (default)
+            }
+            else
+            {
+              dlg.Add(String.Format("{0} {1}", interval, GUILocalizeStrings.Get(3003))); // minute
+            }
           }
           else
           {
-            dlg.Add(String.Format("{0} {1}", interval, GUILocalizeStrings.Get(3004))); // minutes
+            if (interval == _preRec)
+            {
+              dlg.Add(String.Format("{0} {1}", interval, GUILocalizeStrings.Get(3004) + " (" + GUILocalizeStrings.Get(886) + ")")); // minutes (default)
+            }
+            else
+            {
+              dlg.Add(String.Format("{0} {1}", interval, GUILocalizeStrings.Get(3004))); // minutes
+            }
           }
+
         }
-        if (rec.PreRecordInterval < 0) dlg.SelectedLabel = 0;
-        else if (RecordingIntervalValues.IndexOf(rec.PreRecordInterval) == -1) dlg.SelectedLabel = 4; // select 5 minutes if the value is not part of the list
-        else dlg.SelectedLabel = RecordingIntervalValues.IndexOf(rec.PreRecordInterval) + 1;
+
+        if (rec.PreRecordInterval < 0)
+          dlg.SelectedLabel = 0;
+        else if (RecordingIntervalValues.IndexOf(rec.PreRecordInterval) == -1)
+          RecordingIntervalValues.IndexOf(_preRec); // select default if the value is not part of the list
+        else
+          dlg.SelectedLabel = RecordingIntervalValues.IndexOf(rec.PreRecordInterval);
 
         dlg.DoModal(GetID);
 
-        if (dlg.SelectedLabel < 0) return;
+        if (dlg.SelectedLabel < 0)
+          return;
 
-        rec.PreRecordInterval = RecordingIntervalValues[dlg.SelectedLabel - 1];
+        rec.PreRecordInterval = RecordingIntervalValues[dlg.SelectedLabel];
         rec.Persist();
 
         Schedule assocSchedule = Schedule.RetrieveOnce(rec.IdChannel, currentProgram.Title, currentProgram.StartTime, currentProgram.EndTime);
@@ -435,35 +474,53 @@ namespace TvPlugin
     void OnPostRecordInterval()
     {
       Schedule rec;
-      if (false == IsRecordingProgram(currentProgram, out  rec, false)) return;
+      if (false == IsRecordingProgram(currentProgram, out  rec, false))
+        return;
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       if (dlg != null)
       {
         dlg.Reset();
         dlg.ShowQuickNumbers = false;
         dlg.SetHeading(GUILocalizeStrings.Get(1445));//pre-record
-        dlg.Add(GUILocalizeStrings.Get(886));//default
 
         foreach (int interval in RecordingIntervalValues)
         {
           if (interval == 1)
           {
-            dlg.Add(String.Format("{0} {1}", interval, GUILocalizeStrings.Get(3003))); // minute
+            if (interval == _postRec)
+            {
+              dlg.Add(String.Format("{0} {1}", interval, GUILocalizeStrings.Get(3003) + " (" + GUILocalizeStrings.Get(886) + ")")); // minute (default)
+            }
+            else
+            {
+              dlg.Add(String.Format("{0} {1}", interval, GUILocalizeStrings.Get(3003))); // minute
+            }
           }
           else
           {
-            dlg.Add(String.Format("{0} {1}", interval, GUILocalizeStrings.Get(3004))); // minutes
+            if (interval == _postRec)
+            {
+              dlg.Add(String.Format("{0} {1}", interval, GUILocalizeStrings.Get(3004) + " (" + GUILocalizeStrings.Get(886) + ")")); // minutes (default)
+            }
+            else
+            {
+              dlg.Add(String.Format("{0} {1}", interval, GUILocalizeStrings.Get(3004))); // minutes
+            }
           }
         }
 
-        if (rec.PostRecordInterval < 0) dlg.SelectedLabel = 0;
-        else if (RecordingIntervalValues.IndexOf(rec.PostRecordInterval) == -1) dlg.SelectedLabel = 4; // select 5 minutes if the value is not part of the list
-        else dlg.SelectedLabel = RecordingIntervalValues.IndexOf(rec.PostRecordInterval) + 1;
+        if (rec.PostRecordInterval < 0)
+          dlg.SelectedLabel = 0;
+        else if (RecordingIntervalValues.IndexOf(rec.PostRecordInterval) == -1)
+          RecordingIntervalValues.IndexOf(_postRec); // select default if the value is not part of the list
+        else
+          dlg.SelectedLabel = RecordingIntervalValues.IndexOf(rec.PostRecordInterval);
 
         dlg.DoModal(GetID);
-        if (dlg.SelectedLabel < 0) return;
+        if (dlg.SelectedLabel < 0)
+          return;
 
-        rec.PostRecordInterval = RecordingIntervalValues[dlg.SelectedLabel - 1];
+        rec.PostRecordInterval = RecordingIntervalValues[dlg.SelectedLabel];
         rec.Persist();
 
         Schedule assocSchedule = Schedule.RetrieveOnce(rec.IdChannel, currentProgram.Title, currentProgram.StartTime, currentProgram.EndTime);
@@ -479,7 +536,8 @@ namespace TvPlugin
     void OnSetQuality()
     {
       Schedule rec;
-      if (false == IsRecordingProgram(currentProgram, out  rec, false)) return;
+      if (false == IsRecordingProgram(currentProgram, out  rec, false))
+        return;
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       if (dlg != null)
       {
@@ -511,7 +569,8 @@ namespace TvPlugin
 
         dlg.DoModal(GetID);
 
-        if (dlg.SelectedLabel == -1) return;
+        if (dlg.SelectedLabel == -1)
+          return;
         switch (dlg.SelectedLabel)
         {
           case 0: // Not Set
@@ -574,7 +633,8 @@ namespace TvPlugin
 
         dlg.DoModal(GetID);
 
-        if (dlg.SelectedLabel == -1) return;
+        if (dlg.SelectedLabel == -1)
+          return;
         switch (dlg.SelectedLabel)
         {
           case 0: // Default
@@ -612,7 +672,8 @@ namespace TvPlugin
     void OnSetEpisodes()
     {
       Schedule rec;
-      if (false == IsRecordingProgram(currentProgram, out  rec, false)) return;
+      if (false == IsRecordingProgram(currentProgram, out  rec, false))
+        return;
 
       TvPriorities.OnSetEpisodesToKeep(rec);
       Update();
@@ -625,7 +686,7 @@ namespace TvPlugin
       if (IsRecordingProgram(program, out recordingSchedule, true)) // check if schedule is already existing
       {
         CancelProgram(program, recordingSchedule);
-      } 
+      }
       else
       {
         TvServer server = new TvServer();
@@ -641,7 +702,7 @@ namespace TvPlugin
           {
             CreateProgram(program, (int)ScheduleRecordingType.Once);
           }
-        } 
+        }
         else
         {
           CreateProgram(program, (int)ScheduleRecordingType.Once);
@@ -712,7 +773,8 @@ namespace TvPlugin
         dlg.AddLocalizedString(981); //Cancel this show
         dlg.AddLocalizedString(982); //Delete this entire schedule
         dlg.DoModal(GetID);
-        if (dlg.SelectedLabel == -1) return;
+        if (dlg.SelectedLabel == -1)
+          return;
 
         switch (dlg.SelectedId)
         {
@@ -840,8 +902,10 @@ namespace TvPlugin
         List<Schedule> episodes = layer.GetRecordingTimes(schedule);
         foreach (Schedule episode in episodes)
         {
-          if (DateTime.Now > episode.EndTime) continue;
-          if (episode.IsSerieIsCanceled(episode.StartTime)) continue;
+          if (DateTime.Now > episode.EndTime)
+            continue;
+          if (episode.IsSerieIsCanceled(episode.StartTime))
+            continue;
           foreach (Schedule conflict in conflicts)
           {
             if (episode.IsOverlapping(conflict))
@@ -880,7 +944,8 @@ namespace TvPlugin
         dlg.AddLocalizedString(1051);// 1051=Record Sat-Sun
 
         dlg.DoModal(GetID);
-        if (dlg.SelectedLabel == -1) return;
+        if (dlg.SelectedLabel == -1)
+          return;
 
         int scheduleType = (int)ScheduleRecordingType.Once;
         switch (dlg.SelectedId)
@@ -961,10 +1026,12 @@ namespace TvPlugin
     void OnKeep()
     {
       Schedule rec;
-      if (false == IsRecordingProgram(currentProgram, out  rec, false)) return;
+      if (false == IsRecordingProgram(currentProgram, out  rec, false))
+        return;
 
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-      if (dlg == null) return;
+      if (dlg == null)
+        return;
       dlg.Reset();
       dlg.SetHeading(1042);
       dlg.AddLocalizedString(1043);//Until watched
@@ -987,7 +1054,8 @@ namespace TvPlugin
           break;
       }
       dlg.DoModal(GetID);
-      if (dlg.SelectedLabel == -1) return;
+      if (dlg.SelectedLabel == -1)
+        return;
       switch (dlg.SelectedId)
       {
         case 1043:
@@ -1009,10 +1077,12 @@ namespace TvPlugin
           }
           TimeSpan ts = (rec.KeepDate - currentProgram.StartTime);
           int days = (int)ts.TotalDays;
-          if (days >= 100) days = 30;
+          if (days >= 100)
+            days = 30;
           dlg.SelectedLabel = days - 1;
           dlg.DoModal(GetID);
-          if (dlg.SelectedLabel < 0) return;
+          if (dlg.SelectedLabel < 0)
+            return;
           rec.KeepDate = currentProgram.StartTime.AddDays(dlg.SelectedLabel + 1);
           break;
         case 1046:
