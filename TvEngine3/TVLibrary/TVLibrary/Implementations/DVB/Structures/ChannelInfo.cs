@@ -317,9 +317,9 @@ namespace TvLibrary.Implementations.DVB.Structures
       int current_next_indicator = buf[5] & 1;
       int section_number = buf[6];
       int last_section_number = buf[7];
-      int pcr_pid = ((buf[8] & 0x1F) << 8) + buf[9];
+      pcr_pid = ((buf[8] & 0x1F) << 8) + buf[9];   // ! really set pcr_pid ! ( ambass )
       int program_info_length = ((buf[10] & 0xF) << 8) + buf[11];
-
+      
 
       caPMT = new CaPMT();
       caPMT.ProgramNumber = program_number;
