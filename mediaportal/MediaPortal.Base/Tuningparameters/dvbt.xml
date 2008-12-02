@@ -1716,12 +1716,12 @@
     <carrier frequency="778000" bandwidth="8"></carrier>
   </country>
   <country name="Germany - Nürnberg" offset="125">
-    <carrier frequency="184500" bandwidth="10"></carrier>
-    <carrier frequency="578000" bandwidth="10"></carrier>
-    <carrier frequency="626000" bandwidth="10"></carrier>
-    <carrier frequency="778000" bandwidth="10"></carrier>
-    <carrier frequency="786000" bandwidth="10"></carrier>
-    <carrier frequency="834000" bandwidth="10"></carrier>
+	<carrier frequency="184500" bandwidth="10"></carrier>
+	<carrier frequency="578000" bandwidth="10"></carrier>
+	<carrier frequency="682000" bandwidth="10"></carrier>
+	<carrier frequency="722000" bandwidth="10"></carrier>
+	<carrier frequency="786000" bandwidth="10"></carrier>
+	<carrier frequency="834000" bandwidth="10"></carrier>
   </country>
   <country name="Germany - Osnabrück/Lingen" offset="125">
     <carrier frequency="602000" bandwidth="8"></carrier>
