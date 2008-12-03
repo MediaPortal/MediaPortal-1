@@ -9,7 +9,7 @@ namespace DeployVersionSVN
 {
   public class VersionSVN
   {
-     // bool _tortoise = true;
+    // bool _tortoise = true;
 
     public VersionSVN()
     {
@@ -22,7 +22,7 @@ namespace DeployVersionSVN
       ProcessStartInfo procInfo = new ProcessStartInfo();
       procInfo.RedirectStandardOutput = true;
       procInfo.UseShellExecute = false;
-      procInfo.Arguments = directory;
+      procInfo.Arguments = "\"" + directory + "\"";
       procInfo.FileName = file.FullName;
 
       Console.WriteLine("Running : {0}", file.FullName);
@@ -39,7 +39,13 @@ namespace DeployVersionSVN
 
         Regex tortoiseRegex = new Regex("Update.+ (?<version>[0-9]+)");
 
-        return tortoiseRegex.Match(svn).Groups["version"].Value;
+        string ver = tortoiseRegex.Match(svn).Groups["version"].Value;
+        if (String.IsNullOrEmpty(ver))
+        {
+          Console.WriteLine("Unable to determine SVN version. Try with a SVN cleanup!");
+          return string.Empty;
+        }
+        return ver;
       }
 
       Console.WriteLine("Not found!");
