@@ -2407,7 +2407,7 @@ namespace TvPlugin
           displayName = rec.ReferencedChannel().DisplayName;
         }
 
-        GUIPropertyManager.SetProperty("#TV.View.channel", displayName + " (" + GUILocalizeStrings.Get(949) + ")");
+        GUIPropertyManager.SetProperty("#TV.View.channel", displayName + " (" + GUILocalizeStrings.Get(604) + ")");
         GUIPropertyManager.SetProperty("#TV.View.title", g_Player.currentTitle);
         GUIPropertyManager.SetProperty("#TV.View.description", g_Player.currentDescription);
 
