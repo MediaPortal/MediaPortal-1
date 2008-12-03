@@ -1018,7 +1018,7 @@ namespace TvPlugin
       if (pDlgOK != null)
       {
         pDlgOK.SetHeading(624);
-        pDlgOK.SetLine(1, String.Format("{0}{1}", GUILocalizeStrings.Get(625), iCleaned));
+        pDlgOK.SetLine(1, String.Format("{0} {1}", GUILocalizeStrings.Get(625), iCleaned));
         pDlgOK.SetLine(2, String.Empty);
         pDlgOK.DoModal(GetID);
       }
