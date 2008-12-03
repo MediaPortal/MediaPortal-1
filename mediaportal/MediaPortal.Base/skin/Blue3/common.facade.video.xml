@@ -86,7 +86,7 @@
           <visible>facadeview.filmstrip</visible>
           <thumbAnimation effect="zoom" start="100,100" end="130,130" time="200">focus</thumbAnimation>
           <thumbAnimation effect="zoom" start="130,130" end="100,100" time="200">unfocus</thumbAnimation>
-           <animation effect="rotatey" start="20" end="0" center="525,0" tween="back" ease="easeout"  time="500" reversible="false">nofocus</animation>
+           <animation effect="rotatey" start="20" end="0" center="525,0" tween="back" ease="easeout"  time="500" reversible="false">unfocus</animation>
       	  <animation effect="rotatey" start="0" end="20" center="525,0"  tween="back" ease="easeout"   time="500" reversible="false">focus</animation>
         </control>
         <control>
