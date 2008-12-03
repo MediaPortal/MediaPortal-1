@@ -588,9 +588,10 @@
     <carrier frequency="674000" bandwidth="8"></carrier>
   </country>
   <country name="Finland - Eurajoki" offset="125">
-    <carrier frequency="610000" bandwidth="8"></carrier>
-    <carrier frequency="666000" bandwidth="8"></carrier>
-    <carrier frequency="722000" bandwidth="8"></carrier>
+	<carrier frequency="610000" bandwidth="8"></carrier>
+	<carrier frequency="666000" bandwidth="8"></carrier>
+	<carrier frequency="722000" bandwidth="8"></carrier>
+	<carrier frequency="746000" bandwidth="8"></carrier>
   </country>
   <country name="Finland - Fiskars" offset="125">
     <carrier frequency="562000" bandwidth="8"></carrier>
