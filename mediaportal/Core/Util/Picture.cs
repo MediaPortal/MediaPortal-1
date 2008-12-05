@@ -747,18 +747,20 @@ namespace MediaPortal.Util
     }
 
     /// <summary>
-    /// Creates a thumbnail of the specified image
+    /// Creates a thumbnail of the specified image filename
     /// </summary>
-    /// <param name="strFile">filename of the image</param>
-    /// <param name="strThumb">filename of the thumbnail to create</param>
-    /// <param name="iMaxWidth">maximum width of the thumbnail</param>
-    /// <param name="iMaxHeight">maximum height of the thumbnail</param>
-    /// <param name="iRotate">
+    /// <param name="aInputFilename">The source filename to load a System.Drawing.Image from</param>
+    /// <param name="aThumbTargetPath">Filename of the thumbnail to create</param>
+    /// <param name="aThumbWidth">Maximum width of the thumbnail</param>
+    /// <param name="aThumbHeight">Maximum height of the thumbnail</param>
+    /// <param name="aRotation">
     /// 0 = no rotate
     /// 1 = rotate 90 degrees
     /// 2 = rotate 180 degrees
     /// 3 = rotate 270 degrees
     /// </param>
+    /// <param name="aFastMode">Use low quality resizing without interpolation suitable for small thumbnails</param>
+    /// <returns>Whether the thumb has been successfully created</returns>
     public static bool CreateThumbnail(string aInputFilename, string aThumbTargetPath, int iMaxWidth, int iMaxHeight, int iRotate, bool aFastMode)
     {
       if (string.IsNullOrEmpty(aInputFilename) || string.IsNullOrEmpty(aThumbTargetPath) || iMaxHeight <= 0 || iMaxHeight <= 0) return false;
@@ -804,20 +806,22 @@ namespace MediaPortal.Util
     {
       return false;
     }
-
+    
     /// <summary>
     /// Creates a thumbnail of the specified image
     /// </summary>
-    /// <param name="strFile">filename of the image</param>
-    /// <param name="strThumb">filename of the thumbnail to create</param>
-    /// <param name="iMaxWidth">maximum width of the thumbnail</param>
-    /// <param name="iMaxHeight">maximum height of the thumbnail</param>
-    /// <param name="iRotate">
+    /// <param name="aDrawingImage">The source System.Drawing.Image</param>
+    /// <param name="aThumbTargetPath">Filename of the thumbnail to create</param>
+    /// <param name="aThumbWidth">Maximum width of the thumbnail</param>
+    /// <param name="aThumbHeight">Maximum height of the thumbnail</param>
+    /// <param name="aRotation">
     /// 0 = no rotate
     /// 1 = rotate 90 degrees
     /// 2 = rotate 180 degrees
     /// 3 = rotate 270 degrees
     /// </param>
+    /// <param name="aFastMode">Use low quality resizing without interpolation suitable for small thumbnails</param>
+    /// <returns>Whether the thumb has been successfully created</returns>
     public static bool CreateThumbnail(Image aDrawingImage, string aThumbTargetPath, int aThumbWidth, int aThumbHeight, int aRotation, bool aFastMode)
     {
       if (string.IsNullOrEmpty(aThumbTargetPath) || aThumbHeight <= 0 || aThumbHeight <= 0) return false;
@@ -892,11 +896,17 @@ namespace MediaPortal.Util
       }
     }
 
-    private static bool SaveThumbnail(string aThumbTargetPath, Image myImage)
+    public static bool SaveThumbnail(string aThumbTargetPath, Image myImage)
     {
       try
       {
-        myImage.Save(aThumbTargetPath, Thumbs.ThumbCodecInfo, Thumbs.ThumbEncoderParams);
+        using (FileStream fs = new FileStream(aThumbTargetPath, FileMode.Create, FileAccess.ReadWrite, FileShare.None))
+        { 
+          Bitmap bmp = new Bitmap(myImage);
+          bmp.Save(fs, Thumbs.ThumbCodecInfo, Thumbs.ThumbEncoderParams);
+          fs.Flush();
+        }
+
         File.SetAttributes(aThumbTargetPath, File.GetAttributes(aThumbTargetPath) | FileAttributes.Hidden);
         // even if run in background thread wait a little so the main process does not starve on IO
         if (MediaPortal.Player.g_Player.Playing)

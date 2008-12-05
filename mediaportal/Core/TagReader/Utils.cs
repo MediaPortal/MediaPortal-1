@@ -555,76 +555,79 @@ namespace MediaPortal.TagReader
       return yearValue;
     }
 
-    /// <summary>
-    /// Extract image out of a byte array - please think of disposing the Image in the calling method
-    /// </summary>
-    /// <param name="imgBytes"></param>
-    /// <returns></returns>
-    public static Image GetImage(byte[] imgBytes)
-    {
-      return GetImage(imgBytes, string.Empty);
-    }
+    ///// <summary>
+    ///// Extract image out of a byte array - please think of disposing the Image in the calling method
+    ///// </summary>
+    ///// <param name="imgBytes"></param>
+    ///// <returns></returns>
+    //public static Image GetImage(byte[] imgBytes)
+    //{
+    //  return GetImage(imgBytes, string.Empty);
+    //}
 
     /// <summary>
-    /// Extract image out of a byte array
+    /// Extracts an image out of a byte array. Due to GDI+ deferred loading it will 
+    /// at least use a temporary file in case you want to process this image further
     /// </summary>
-    /// <param name="imgBytes"></param>
-    /// <param name="fileSavePath"></param>
-    /// <returns></returns>
-    public static Image GetImage(byte[] imgBytes, string fileSavePath)
+    /// <param name="imgBytes">The raw image</param>
+    /// <param name="fileSavePath">The destination file path</param>
+    /// <returns>The path to the created file or empty if unsuccessful</returns>
+    public static string GetImageFile(byte[] imgBytes, string fileSavePath)
     {
-      if (imgBytes == null || imgBytes.Length == 0)
-        return null;
-
-      if (!String.IsNullOrEmpty(fileSavePath))
-      {
-        FileStream fs = null;
-
-        try
-        {
-          fs = new FileStream(fileSavePath, FileMode.Create, FileAccess.Write, FileShare.None);
-          fs.Write(imgBytes, 0, imgBytes.Length);
-        }
-        finally
-        {
-          if (fs != null)
-          {
-            fs.Close();
-            fs = null;
-          }
-        }
-      }
+      if (imgBytes == null || imgBytes.Length == 0) return null;
 
       Image img = null;
-      MemoryStream stream = null;
-
       try
       {
-        stream = new MemoryStream(imgBytes);
+        if (String.IsNullOrEmpty(fileSavePath))
+          fileSavePath = Util.PathUtility.GetSecureTempFileName(false);
+        try
+        {
+          using (MemoryStream stream = new MemoryStream(imgBytes))
+          {
+            stream.Flush();
+
+            bool retry = false;
+            try
+            {
+              // Try without validation first for more speed
+              img = Image.FromStream(stream, true, false);
+              if (!Util.Picture.SaveThumbnail(fileSavePath, img))
+                retry = true;
+            }
+            catch (ArgumentException)
+            {
+              retry = true;
+            }
+
+            if (retry)
+            {
+              img = Image.FromStream(stream, true, true);
+              Util.Picture.SaveThumbnail(fileSavePath, img);
+            }
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Warn("Utils: Could not extract image from byte[] stream: {0}", ex.Message);
+        }
 
         try
         {
-          // Try without validation first for more speed
-          img = Image.FromStream(stream, true, false);
+          // If a valid image has been writen return the path to it.
+          FileInfo fi = new FileInfo(fileSavePath);
+          return (fi.Length > 0) ? fileSavePath : String.Empty;
         }
-        catch (ArgumentException)
+        catch (Exception)
         {
-          img = Image.FromStream(stream, true, true);
-        }        
-      }
-      catch (Exception ex)
-      {
-        Log.Debug("Could not extract Image: {0}", ex.Message);
+          return String.Empty;
+        }
       }
       finally
       {
-        if (stream != null)
-        {
-          stream.Close();
-          stream = null;
-        }
+        if (img != null)
+          img.Dispose();
       }
-      return img;
     }
 
     public static bool UTF16HasBigEndianBOM(byte[] bom)

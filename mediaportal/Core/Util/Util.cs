@@ -1390,32 +1390,27 @@ namespace MediaPortal.Util
 
     public static bool FileDelete(string strFile)
     {
-      if (strFile == null) return true;
-      if (strFile.Length == 0) return true;
+      if (String.IsNullOrEmpty(strFile)) return true;
       try
       {
-        if (!System.IO.File.Exists(strFile)) return true;
-        System.IO.File.Delete(strFile);
+        if (!File.Exists(strFile))
+          return true;
+        File.Delete(strFile);
         return true;
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) { }
       return false;
     }
 
     public static bool DirectoryDelete(string strDir)
     {
-      if (strDir == null) return false;
-      if (strDir.Length == 0) return false;
+      if (String.IsNullOrEmpty(strDir)) return false;
       try
       {
-        System.IO.Directory.Delete(strDir);
+        Directory.Delete(strDir);
         return true;
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) { }
       return false;
     }
 

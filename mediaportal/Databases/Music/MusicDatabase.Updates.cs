@@ -1226,27 +1226,23 @@ namespace MediaPortal.Music.Database
 
             if (extractFile)
             {
-              Image mp3TagImage = null;
               try
               {
-                mp3TagImage = tag.CoverArtImage;
+                string mp3TagImage = tag.CoverArtFile;
 
-                if (mp3TagImage != null)
+                if (!String.IsNullOrEmpty(mp3TagImage))
                 {
                   if (!Picture.CreateThumbnail(mp3TagImage, smallThumbPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
                     Log.Info("MusicDatabase: Could not extract thumbnail from {0}", tag.FileName);
                   if (!Picture.CreateThumbnail(mp3TagImage, largeThumbPath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge))
                     Log.Info("MusicDatabase: Could not extract thumbnail from {0}", tag.FileName);
+
+                  Util.Utils.FileDelete(mp3TagImage); // clean up the temp file directly
                 }
               }
               catch (Exception)
               {
                 Log.Warn("MusicDatabase: Invalid cover art image found in {0}-{1}! {2}", tag.Artist, tag.Title, tag.FileName);
-              }
-              finally
-              {
-                if (mp3TagImage != null)
-                  mp3TagImage.Dispose();
               }
             }
           }

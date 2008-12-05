@@ -25,10 +25,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
-
+using System.Text;
 using MediaPortal.GUI.Library;
+
 
 namespace MediaPortal.TagReader
 {
@@ -339,9 +339,9 @@ namespace MediaPortal.TagReader
       set { m_dateTimePlayed = value; }
     }
 
-    public Image CoverArtImage
+    public string CoverArtFile
     {
-      get { return Utils.GetImage(m_CoverArtImageBytes); }
+      get { return Utils.GetImageFile(m_CoverArtImageBytes, String.Empty); }
     }
     #endregion
   }
