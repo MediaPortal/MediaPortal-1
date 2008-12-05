@@ -773,6 +773,13 @@ namespace TvLibrary.Implementations.DVB
                 hwPids.Add((ushort)info.pcr_pid);
               }
             }
+
+            if (pidInfo.isDVBSubtitle)
+            {
+              Log.Log.WriteFile("subch:{0}    map {1}", _subChannelId, pidInfo);
+              hwPids.Add((ushort)pidInfo.pid);
+            }
+
           }
         }
         if (info.network_pmt_PID >= 0 && ((DVBBaseChannel)_currentChannel).ServiceId >= 0)
