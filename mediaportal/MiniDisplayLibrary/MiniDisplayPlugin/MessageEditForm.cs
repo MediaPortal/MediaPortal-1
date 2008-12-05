@@ -3322,7 +3322,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       writer.WriteStartElement("CustomCharacters");
       foreach (TreeNode node12 in this.treeMapping.Nodes[2].Nodes)
       {
-        writer.WriteStartElement("CustomCharacters");
+        writer.WriteStartElement("CustomCharacter");
         foreach (TreeNode node13 in node12.Nodes)
         {
           Data data13 = (Data)node13.Tag;
