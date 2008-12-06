@@ -901,8 +901,9 @@
     <carrier frequency="722000" bandwidth="8"></carrier>
   </country>
   <country name="Finland - Rovaniemi" offset="125">
-    <carrier frequency="650000" bandwidth="8"></carrier>
-    <carrier frequency="674000" bandwidth="8"></carrier>
+	<carrier frequency="650000" bandwidth="8"></carrier>
+	<carrier frequency="674000" bandwidth="8"></carrier>
+	<carrier frequency="730000" bandwidth="8"></carrier>
   </country>
   <country name="Finland - Ruka" offset="125">
     <carrier frequency="570000" bandwidth="8"></carrier>
