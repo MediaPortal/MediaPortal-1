@@ -51,6 +51,22 @@ namespace TvPlugin
   [PluginIcons("TvPlugin.Radio.gif", "TvPlugin.Radio_disabled.gif")]
   public class Radio : GUIWindow, IComparer<GUIListItem>, ISetupForm, IShowPlugin
   {
+    #region constants
+    
+    private const int WM_POWERBROADCAST = 0x0218;
+    private const int WM_QUERYENDSESSION = 0x0011;
+    private const int PBT_APMQUERYSUSPEND = 0x0000;
+    private const int PBT_APMQUERYSTANDBY = 0x0001;
+    private const int PBT_APMQUERYSUSPENDFAILED = 0x0002;
+    private const int PBT_APMQUERYSTANDBYFAILED = 0x0003;
+    private const int PBT_APMSUSPEND = 0x0004;
+    private const int PBT_APMSTANDBY = 0x0005;
+    private const int PBT_APMRESUMECRITICAL = 0x0006;
+    private const int PBT_APMRESUMESUSPEND = 0x0007;
+    private const int PBT_APMRESUMESTANDBY = 0x0008;
+    private const int PBT_APMRESUMEAUTOMATIC = 0x0012;
+
+    #endregion
     #region enums
 
     enum SortMethod
@@ -106,11 +122,68 @@ namespace TvPlugin
       LoadSettings();
       startHeartBeatThread();
 
-      Application.ApplicationExit += new EventHandler(Application_ApplicationExit);
+      //Application.ApplicationExit += new EventHandler(Application_ApplicationExit);
       g_Player.PlayBackStopped += new g_Player.StoppedHandler(g_Player_PlayBackStopped);
     }
 
-    void Application_ApplicationExit(object sender, EventArgs e)
+    private void OnSuspend()
+    {
+      Log.Debug("Radio.OnSuspend()");
+
+      try
+      {
+        if (TVHome.Card.IsTimeShifting)
+        {
+          TVHome.Card.User.Name = new User().Name;
+          TVHome.Card.StopTimeShifting();
+        }
+        stopHeartBeatThread();
+      }
+      catch (Exception)
+      {
+      }
+
+      //_resumed = false;
+    }
+    private void OnResume()
+    {
+      Log.Debug("Radio.OnResume()");
+     // _resumed = true;
+    }
+
+    public bool WndProc(ref System.Windows.Forms.Message msg)
+    {
+      if (msg.Msg == WM_POWERBROADCAST)
+      {
+        switch (msg.WParam.ToInt32())
+        {
+          case PBT_APMSTANDBY:
+            Log.Info("Radio.WndProc(): Windows is going to standby");
+            OnSuspend();
+            break;
+          case PBT_APMSUSPEND:
+            Log.Info("Radio.WndProc(): Windows is suspending");
+            OnSuspend();
+            break;
+          case PBT_APMQUERYSUSPEND:
+          case PBT_APMQUERYSTANDBY:
+            Log.Info("Radio.WndProc(): Windows is going into powerstate (hibernation/standby)");
+            break;
+          case PBT_APMRESUMESUSPEND:
+            Log.Info("Radio.WndProc(): Windows has resumed from hibernate mode");
+            OnResume();
+            break;
+          case PBT_APMRESUMESTANDBY:
+            Log.Info("Radio.WndProc(): Windows has resumed from standby mode");
+            OnResume();
+            break;
+        }
+        return true;
+      }
+      return false;
+    }
+
+    /*void Application_ApplicationExit(object sender, EventArgs e)
     {
       try
       {
@@ -127,7 +200,8 @@ namespace TvPlugin
       catch (Exception)
       {
       }
-    }
+    }*/
+
 
     private void HeartBeatTransmitter()
     {
