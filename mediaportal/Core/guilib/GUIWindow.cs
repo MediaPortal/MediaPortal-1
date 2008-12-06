@@ -1312,16 +1312,16 @@ namespace MediaPortal.GUI.Library
                 GUIPropertyManager.SetProperty("#currentmoduleid", Convert.ToString(GUIWindowManager.ActiveWindow));
               }
 
+              GUIPropertyManager.SetProperty("#itemcount", string.Empty);
+              GUIPropertyManager.SetProperty("#selecteditem", string.Empty);
+              GUIPropertyManager.SetProperty("#selecteditem2", string.Empty);
+              GUIPropertyManager.SetProperty("#selectedthumb", string.Empty);
               if (_shouldRestore)
               {
                 DoRestoreSkin();
               }
               else
               {
-                GUIPropertyManager.SetProperty("#itemcount", string.Empty);
-                GUIPropertyManager.SetProperty("#selecteditem", string.Empty);
-                GUIPropertyManager.SetProperty("#selecteditem2", string.Empty);
-                GUIPropertyManager.SetProperty("#selectedthumb", string.Empty);
                 LoadSkin();
                 AllocResources();
               }
