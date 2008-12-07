@@ -212,7 +212,7 @@ namespace MediaPortal.GUI.Library
       WINDOW_ACTIONMENU = 3010,
       WINDOW_TV_CROP_SETTINGS = 3011,
       WINDOW_TV_TUNING_DETAILS = 3012, // gemx 
-      WINDOW_WEBBROWSER = 5500,      
+      WINDOW_WEBBROWSER = 5500,
       WINDOW_PSCLIENTPLUGIN_UNATTENDED = 6666, // dero
       WINDOW_WIKIPEDIA = 4711,
       WINDOW_TELETEXT = 7700,
@@ -1412,8 +1412,7 @@ namespace MediaPortal.GUI.Library
                     // recalculate visibility, so a invisible item that is becoming visible 
                     // becouse the previous component is no longer focused can be focused
                     // mantis issue #1755
-					UpdateVisibility();
-
+                    //UpdateVisibility();   //Bav: reverting change, because it is creating a nonfocused status, when a focus is switching from one control to the other
                     cntTarget.OnMessage(message);
                   }
                   cntTarget = null;
