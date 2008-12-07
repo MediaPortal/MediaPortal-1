@@ -30,6 +30,8 @@ using System.IO;
 using System.Threading;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Configuration;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
@@ -242,6 +244,9 @@ namespace TvPlugin
     {
       try
       {
+        NameValueCollection appSettings = ConfigurationManager.AppSettings;
+        appSettings.Set("GentleConfigFile", Config.GetFile(Config.Dir.Config, "gentle.config"));
+
         m_navigator = new ChannelNavigator();
         LoadSettings();
       }
@@ -3334,13 +3339,13 @@ namespace TvPlugin
         try
         {
           XmlDocument doc = new XmlDocument();
-          doc.Load("gentle.config");
+          doc.Load(Config.GetFile(Config.Dir.Config, "gentle.config"));
           XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
           XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString");
           XmlNode nodeProvider = nodeKey.Attributes.GetNamedItem("name");
           node.InnerText = connectionString;
           nodeProvider.InnerText = provider;
-          doc.Save("gentle.config");
+          doc.Save(Config.GetFile(Config.Dir.Config, "gentle.config"));
         }
         catch (Exception ex)
         {

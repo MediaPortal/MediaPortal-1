@@ -21,9 +21,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Configuration;
 using System.ServiceProcess;
 using System.Text;
 using System.Configuration.Install;
+using TvLibrary.Log;
 
 namespace TvService
 {
@@ -34,6 +37,10 @@ namespace TvService
     /// </summary>
     static void Main(string[] args)
     {
+      NameValueCollection appSettings = ConfigurationManager.AppSettings;
+      appSettings.Set("GentleConfigFile", String.Format(@"{0}\gentle.config", Log.GetPathName()));
+
+
       string opt = null;
       if (args.Length >= 1)
       {

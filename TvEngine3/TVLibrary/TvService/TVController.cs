@@ -2474,15 +2474,6 @@ namespace TvService
       provider = "";
       try
       {
-        string fname = String.Format(@"{0}\gentle.config", Log.GetPathName());
-        try
-        {
-          System.IO.File.Copy(fname, "gentle.config", true);
-        }
-        catch (Exception ex1)
-        {
-          Log.Write(ex1);
-        }
         XmlDocument doc = new XmlDocument();
         doc.Load(String.Format(@"{0}\gentle.config", Log.GetPathName()));
         XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
@@ -2510,15 +2501,6 @@ namespace TvService
         nodeConnection.InnerText = provider;
         doc.Save(String.Format(@"{0}\gentle.config", Log.GetPathName()));
 
-        string fname = String.Format(@"{0}\gentle.config", Log.GetPathName());
-        try
-        {
-          File.Copy(fname, "gentle.config", true);
-        }
-        catch (Exception ex1)
-        {
-          Log.Write(ex1);
-        }
         Gentle.Framework.ProviderFactory.ResetGentle(true);
         Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(connectionString);
         DeInit();

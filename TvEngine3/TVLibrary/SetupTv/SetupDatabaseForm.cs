@@ -106,20 +106,7 @@ namespace SetupTv
       try
       {
         XmlDocument doc = new XmlDocument();
-        string fname = String.Format(@"{0}\gentle.config", Log.GetPathName());
-        if (!File.Exists(fname))
-        {
-          try
-          {
-            File.Copy(Application.StartupPath + @"\gentle.config", fname, true);
-          }
-          catch (Exception exc)
-          {
-            MessageBox.Show(string.Format("Could not copy generic db config to {0} - {1}", fname, exc.Message));
-            return;
-          }
-        }
-        doc.Load(fname);
+        doc.Load(String.Format(@"{0}\gentle.config", Log.GetPathName()));
         XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
         XmlNode serverName = nodeKey.Attributes.GetNamedItem("name");
         XmlNode attributeConnectionString = nodeKey.Attributes.GetNamedItem("connectionString");
@@ -572,23 +559,10 @@ namespace SetupTv
     private void SaveGentleConfig()
     {
       string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, tbDatabaseName.Text, true, 300);
-      string fname = String.Format(@"{0}\gentle.config", Log.GetPathName());
-      if (!File.Exists(fname))
-      {
-        try
-        {
-          File.Copy(Application.StartupPath + @"\gentle.config", fname, true);
-        }
-        catch (Exception exc)
-        {
-          MessageBox.Show(string.Format("Could not copy generic db config to {0} - {1}", fname, exc.Message));
-          return;
-        }
-      }
       XmlDocument doc = new XmlDocument();
       try
       {
-        doc.Load(fname);
+        doc.Load(String.Format(@"{0}\gentle.config", Log.GetPathName()));
       }
       catch (Exception ex)
       {
@@ -609,7 +583,7 @@ namespace SetupTv
       bool LocalServer = IsDatabaseOnLocalMachine(ServerName);
       Log.Info("---- SetupDatabaseForm: server = {0}, local = {1}", ServerName, Convert.ToString(LocalServer));
 
-      doc.Save(fname);
+      doc.Save(String.Format(@"{0}\gentle.config", Log.GetPathName()));
     }
 
     private void mpButtonSave_Click(object sender, EventArgs e)

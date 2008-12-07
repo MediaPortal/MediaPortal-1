@@ -304,7 +304,6 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File ..\TVDatabase\TvBusinessLayer\bin\Release\TvBusinessLayer.dll
   File ..\TvLibrary.Interfaces\bin\Release\TvLibrary.Interfaces.dll
   File ..\TVLibrary\bin\Release\TVLibrary.dll
-  File ..\TvService\Gentle.config
   File ..\TvService\bin\Release\TvService.exe
   File ..\TvService\bin\Release\TvService.exe.config
   File ..\SetupControls\bin\Release\SetupControls.dll
@@ -441,7 +440,6 @@ ${MementoSectionEnd}
   Delete /REBOOTOK $INSTDIR\TvLibrary.Interfaces.dll
   Delete /REBOOTOK $INSTDIR\TVLibrary.dll
   Delete /REBOOTOK $INSTDIR\Germany_Unitymedia_NRW.dvbc
-  Delete /REBOOTOK $INSTDIR\Gentle.config
   Delete /REBOOTOK $INSTDIR\TvService.exe
   Delete /REBOOTOK $INSTDIR\TvService.exe.config
   Delete /REBOOTOK $INSTDIR\SetupControls.dll
@@ -491,6 +489,9 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
   File ..\TVDatabase\references\MySql.Data.dll
   File ..\TVDatabase\TvBusinessLayer\bin\Release\TvBusinessLayer.dll
   File ..\TvLibrary.Interfaces\bin\Release\TvLibrary.Interfaces.dll
+  
+  ;Gentle.Config
+  SetOuPath "$MPdir.Config"
   File ..\TvPlugin\TvPlugin\Gentle.config
 
   ; The Plugins
@@ -538,7 +539,6 @@ ${MementoSectionEnd}
   Delete /REBOOTOK "$MPdir.Base\MySql.Data.dll"
   Delete /REBOOTOK "$MPdir.Base\TvBusinessLayer.dll"
   Delete /REBOOTOK "$MPdir.Base\TvLibrary.Interfaces.dll"
-  Delete /REBOOTOK "$MPdir.Base\Gentle.config"
 !macroend
 
 ${MementoSectionDone}

@@ -26,6 +26,8 @@
 using System;
 using System.Windows.Forms;
 using System.Collections;
+using System.Collections.Specialized;
+using System.Configuration;
 using System.Reflection;
 using System.IO;
 using System.Threading;
@@ -110,6 +112,9 @@ namespace SetupTv
       if (!String.IsNullOrEmpty(os.OSCSDVersion))
         ServicePack = " (" + os.OSCSDVersion + ")";
       Log.Info("---- SetupTv v" + versionInfo.FileVersion + " is starting up on " + os.OSVersionString + ServicePack + " ----");
+
+      NameValueCollection appSettings = ConfigurationManager.AppSettings;
+      appSettings.Set("GentleConfigFile", String.Format(@"{0}\gentle.config", Log.GetPathName()));
 
       Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
 

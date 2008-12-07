@@ -64,19 +64,10 @@ namespace SetupTv
         //
         // Build options tree
         //
-        string fname = String.Format(@"{0}\gentle.config", Log.GetPathName());
-        try
-        {
-          System.IO.File.Copy(fname, "gentle.config", true);
-        }
-        catch (Exception ex1)
-        {
-          Log.Write(ex1);
-        }
         try
         {
           XmlDocument doc = new XmlDocument();
-          doc.Load(fname);
+          doc.Load(String.Format(@"{0}\gentle.config", Log.GetPathName()));
           XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
           XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString");
           XmlNode nodeProvider = nodeKey.Attributes.GetNamedItem("name");
@@ -88,7 +79,7 @@ namespace SetupTv
         }
         catch (Exception ex)
         {
-          MessageBox.Show("Unable to open:" + fname);
+          MessageBox.Show("Unable to open:" + String.Format(@"{0}\gentle.config", Log.GetPathName()));
           Log.Write(ex);
         }
         IList dbsServers = null;
