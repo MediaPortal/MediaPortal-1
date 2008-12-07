@@ -489,6 +489,7 @@ namespace MediaPortal.Configuration.Sections
       this.keyTextBox.Size = new System.Drawing.Size(288, 20);
       this.keyTextBox.TabIndex = 9;
       this.keyTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.keyTextBox_KeyDown);
+      this.keyTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.keyTextBox_KeyPress);
       // 
       // label3
       // 
@@ -688,6 +689,27 @@ namespace MediaPortal.Configuration.Sections
 
             currentlySelectedNode.Nodes[1].Text = String.Format("Key = " + keyTextBox.Text);
           }
+        }
+      }
+      else
+      {
+        e.SuppressKeyPress = true;
+      }
+    }
+
+    private void keyTextBox_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
+    {
+      keyTextBox.Text = e.KeyChar.ToString().ToUpper(); // keyMappings.GetName(e.KeyValue);
+
+      if (currentlySelectedNode != null)
+      {
+        if (currentlySelectedNode.Tag is KeyAction)
+        {
+          KeyAction action = currentlySelectedNode.Tag as KeyAction;
+
+          action.Key = keyTextBox.Text;
+
+          currentlySelectedNode.Nodes[1].Text = String.Format("Key = " + keyTextBox.Text);
         }
       }
     }
@@ -954,7 +976,9 @@ namespace MediaPortal.Configuration.Sections
       Add(System.Windows.Forms.Keys.ShiftKey, "Shift", false);
       Add(System.Windows.Forms.Keys.CapsLock, "CapsLock", false);
       Add(System.Windows.Forms.Keys.Alt, "Alt", false);
+      Add(System.Windows.Forms.Keys.Menu, "AltKey", false);
       Add(System.Windows.Forms.Keys.NumLock, "NumLock", false);
+      Add(System.Windows.Forms.Keys.ControlKey, "Control", false);
     }
 
     public bool IsValid(int code)
@@ -966,7 +990,6 @@ namespace MediaPortal.Configuration.Sections
         KeyMap key = this[code] as KeyMap;
         result = key.Valid;
       }
-
       return result;
     }
 
