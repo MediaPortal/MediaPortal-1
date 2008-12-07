@@ -1133,6 +1133,7 @@ public class MediaPortalApp : D3DApp, IRender
 
   private void OnResume()
   {
+    GUIGraphicsContext.ResetLastActivity();  // avoid ScreenSaver after standby
     ignoreContextMenuAction = true;
     if (_onResumeRunning == true)
     {
