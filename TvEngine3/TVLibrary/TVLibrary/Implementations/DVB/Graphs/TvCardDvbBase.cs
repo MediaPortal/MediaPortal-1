@@ -527,7 +527,7 @@ namespace TvLibrary.Implementations.DVB
       //wintv ci usb module found
       Log.Log.Info("dvb:  WinTv CI module detected");
       //add logic to check if WinTV device should be built with this DVB graph.
-      string configfile = "WinTV-CI.xml";
+      string configfile = String.Format(@"{0}\WinTV-CI.xml", Log.Log.GetPathName());
       string cardname = "";
       string cardmoniker = "";
       XmlDocument doc = new XmlDocument();

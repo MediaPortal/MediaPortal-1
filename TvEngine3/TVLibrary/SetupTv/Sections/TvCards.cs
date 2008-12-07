@@ -31,6 +31,7 @@ using Gentle.Common;
 using Gentle.Framework;
 using TvDatabase;
 using TvLibrary.Interfaces;
+using TvLibrary.Log;
 using Microsoft.Win32;
 using DirectShowLib;
 namespace SetupTv.Sections
@@ -149,7 +150,7 @@ namespace SetupTv.Sections
 
     void SaveWinTVSettings(int cardId, string name, string moniker)
     {
-      String fileName = "WinTV-CI.xml";
+      String fileName = String.Format(@"{0}\WinTV-CI.xml", Log.GetPathName());
       XmlTextWriter writer = new XmlTextWriter(fileName, System.Text.Encoding.UTF8);
       writer.Formatting = Formatting.Indented;
       writer.Indentation = 1;
@@ -171,7 +172,7 @@ namespace SetupTv.Sections
 
     void LoadWinTVSettings()
     {
-      string configfile = "WinTV-CI.xml";
+      string configfile = String.Format(@"{0}\WinTV-CI.xml", Log.GetPathName());
       XmlDocument doc = new XmlDocument();
       doc.Load(configfile);
       XmlNode cardNode = doc.DocumentElement.SelectSingleNode("/configuration/card");
