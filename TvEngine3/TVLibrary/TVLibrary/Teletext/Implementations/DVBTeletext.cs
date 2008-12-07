@@ -161,6 +161,14 @@ namespace TvLibrary.Teletext
     #endregion
 
     #region properties
+    public int PercentageOfMaximumHeight {
+      get {
+        return _renderer.PercentageOfMaximumHeight;
+      }
+      set {
+        _renderer.PercentageOfMaximumHeight = value;
+      }
+    }
 
     public bool HiddenMode
     {

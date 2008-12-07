@@ -24,8 +24,7 @@ using System.Text;
 using System.Drawing;
 using TvLibrary.Interfaces;
 
-namespace TvLibrary.Teletext
-{
+namespace TvLibrary.Teletext {
   /// <summary>
   /// delegate which is called when a teletext page has been received,modified or deleted
   /// </summary>
@@ -36,8 +35,7 @@ namespace TvLibrary.Teletext
   /// <summary>
   /// teletext decoder interface
   /// </summary>
-  public interface ITeletext
-  {
+  public interface ITeletext {
     #region events
     /// <summary>
     /// event which gets fired when the current selected pagenumber is updated
@@ -126,6 +124,11 @@ namespace TvLibrary.Teletext
     /// </summary>
     /// <value>The page select text.</value>
     string PageSelectText { get;}
+    /// <summary>
+    /// Gets/Sets  the percentage of the maximum height for the font size
+    /// </summary>
+    /// <value>Percentage of the maximum height of font size.</value>
+    int PercentageOfMaximumHeight { get;set;}
     /// <summary>
     /// turns on/off the conceal (hidden) mode
     /// </summary>
