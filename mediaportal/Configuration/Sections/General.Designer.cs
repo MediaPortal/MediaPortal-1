@@ -184,7 +184,6 @@ namespace MediaPortal.Configuration.Sections
             "Enable skin sound effects",
             "Enable animations / transitions",
             "Disable tray area\'s balloon tips (for all applications)",
-            "Blank screen in fullscreen mode when MediaPortal is idle",
             "Turn off monitor when blanking screen",
             "Turn monitor / tv on when resuming from standby",
             "Allow S3 standby although wake up devices are present",

@@ -259,6 +259,12 @@
     <Compile Include="Sections\GeneralWatchdog.Designer.cs">
       <DependentUpon>GeneralWatchdog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Sections\GeneralScreensaver.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\GeneralScreensaver.Designer.cs">
+      <DependentUpon>GeneralScreensaver.cs</DependentUpon>
+    </Compile>
     <Compile Include="Sections\MovieDatabase.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -638,6 +644,10 @@
     <EmbeddedResource Include="Sections\GeneralWatchdog.resx">
       <SubType>Designer</SubType>
       <DependentUpon>GeneralWatchdog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\GeneralScreensaver.resx">
+      <DependentUpon>GeneralScreensaver.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\MovieDatabase.resx">
       <DependentUpon>MovieDatabase.cs</DependentUpon>

@@ -101,7 +101,7 @@ namespace MediaPortal.Configuration.Sections
       new string[] { "general", "enableguisounds", "true" },            // 11 Enable GUI sound effects
       new string[] { "general", "animations", "true" },                 // 12 Enable animations / transitions	  
 	    new string[] { "general", "baloontips", "false" },                // 13 Disable Windows tray area's balloon tips (for all apps)
-	    new string[] { "general", "screensaver", "false" },               // 14 Blank screen in fullscreen mode when MediaPortal is idle
+	    //new string[] { "general", "screensaver", "false" },               // 14 Blank screen in fullscreen mode when MediaPortal is idle
       new string[] { "general", "turnoffmonitor", "false" },            // 15 Turn off monitor when blanking screen	    
       new string[] { "general", "turnmonitoronafterresume", "true" },   // 16 Turn monitor/tv on when resuming from standby
       new string[] { "general", "enables3trick", "true" },              // 17 Allow S3 standby although wake up devices are present
