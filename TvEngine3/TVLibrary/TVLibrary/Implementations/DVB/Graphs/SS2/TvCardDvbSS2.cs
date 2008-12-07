@@ -524,13 +524,31 @@ namespace TvLibrary.Implementations.DVB
           }
           break;
       }
-      hr = _interfaceB2C2TunerCtrl.SetTunerStatus();
-      _interfaceB2C2TunerCtrl.CheckLock();
+      hr = -1;
+      int lockRetries = 0;
+      while 
+          (  ((uint)hr == (uint)0x90010115 || hr == -1) && lockRetries < 5 )
+      {
+        hr = _interfaceB2C2TunerCtrl.SetTunerStatus();
+        _interfaceB2C2TunerCtrl.CheckLock();
+        if (((uint)hr) == (uint)0x90010115)
+        {
+          Log.Log.Info("ss2:could not lock tuner...sleep 20ms");
+          System.Threading.Thread.Sleep(20);
+          lockRetries++;
+        }        
+      }
+
       if (((uint)hr) == (uint)0x90010115)
       {
-        Log.Log.Info("ss2:could not lock tuner");
+        Log.Log.Info("ss2:could not lock tuner after {0} attempts", lockRetries);
         return null;
       }
+      else if (lockRetries > 0)
+      {
+        Log.Log.Info("ss2:locked tuner after {0} attempts", lockRetries);
+      }
+
       if (hr != 0)
       {
         hr = _interfaceB2C2TunerCtrl.SetTunerStatus();
