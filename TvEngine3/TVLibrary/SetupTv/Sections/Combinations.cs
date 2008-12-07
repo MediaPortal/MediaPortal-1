@@ -185,6 +185,9 @@ namespace SetupTv.Sections
       Channel selectedChannel = (Channel)selectedItem.Tag;
       IList allChannels = Channel.ListAll();
       List<ListViewItem> items = new List<ListViewItem>();
+      NotifyForm dlg = new NotifyForm("Searching for Similar Channels...", "This can take some time\n\nPlease be patient...");
+      dlg.Show();
+      dlg.WaitForDisplay();
       foreach (Channel channel in allChannels)
       {
         if (channel.IsTv == false) continue;
@@ -223,6 +226,7 @@ namespace SetupTv.Sections
       }
       mpListViewMapped.Items.AddRange(items.ToArray());
       mpListViewMapped.Sort();
+      dlg.Close();
     }
 
     private void btnCombine_Click(object sender, EventArgs e)
@@ -242,38 +246,60 @@ namespace SetupTv.Sections
       Channel selectedChannel2 = (Channel)selectedItem2.Tag;
 
       TvBusinessLayer layer = new TvBusinessLayer();
+      NotifyForm dlg = new NotifyForm("Combining Channels...", "Updating TuningDetail Table\n\nPlease be patient...");
+      dlg.Show();
+      dlg.WaitForDisplay();
       foreach (TuningDetail detail in selectedChannel2.ReferringTuningDetail())
       {
         detail.IdChannel = selectedChannel.IdChannel;
         detail.Persist();
       }
+      dlg.Close();
+      dlg = new NotifyForm("Combining Channels...", "Updating ChannelMap Table\n\nPlease be patient...");
+      dlg.Show();
+      dlg.WaitForDisplay();
       foreach (ChannelMap map in selectedChannel2.ReferringChannelMap())
       {
         map.IdChannel = selectedChannel.IdChannel;
         map.Persist();
       }
+      dlg.Close();
+      dlg = new NotifyForm("Combining Channels...", "Updating GroupMap Table\n\nPlease be patient...");
+      dlg.Show();
+      dlg.WaitForDisplay();
       foreach (GroupMap groupMap in selectedChannel2.ReferringGroupMap())
       {
         groupMap.IdChannel = selectedChannel.IdChannel;
         groupMap.Persist();
       }
+      dlg.Close();
+      dlg = new NotifyForm("Combining Channels...", "Updating Program Table\n\nPlease be patient...");
+      dlg.Show();
+      dlg.WaitForDisplay();
       foreach (Program program in selectedChannel2.ReferringProgram())
       {
         program.IdChannel = selectedChannel.IdChannel;
         program.Persist();
       }
-
+      dlg.Close();
+      dlg = new NotifyForm("Combining Channels...", "Updating Recording Table\n\nPlease be patient...");
+      dlg.Show();
+      dlg.WaitForDisplay();
       foreach (Recording recording in selectedChannel2.ReferringRecording())
       {
         recording.IdChannel = selectedChannel.IdChannel;
         recording.Persist();
       }
-
+      dlg.Close();
+      dlg = new NotifyForm("Combining Channels...", "Updating Schedule Table\n\nPlease be patient...");
+      dlg.Show();
+      dlg.WaitForDisplay();
       foreach (Schedule schedule in selectedChannel2.ReferringSchedule())
       {
         schedule.IdChannel = selectedChannel.IdChannel;
         schedule.Persist();
       }
+      dlg.Close();
       selectedChannel2.Remove();
 
       mpListViewChannels_SelectedIndexChanged(null, null);
@@ -347,3 +373,5 @@ namespace SetupTv.Sections
     }
   }
 }
+
+ 	  	 
