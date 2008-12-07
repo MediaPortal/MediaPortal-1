@@ -22,8 +22,6 @@
       <width>320</width>
       <height>720</height>
       <dimColor>00ffffff</dimColor>
-      <animation effect="slide" time="900" start="-300,0" reversible="false">visible</animation>
-      <visible>!Control.HasFocus(50)</visible>
       <control>
         <type>image</type>
         <posX>15</posX>
@@ -32,10 +30,16 @@
         <height>473</height>
         <texture>Backslide.png</texture>
         <colorDiffuse>fffffffff</colorDiffuse>
+        <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="450" end="-300,0" reversible="false">hidden</animation>
+        <visible>!Control.HasFocus(50)</visible>
       </control>
       <control>
         <description>group element</description>
         <type>group</type>
+        <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="450" end="-300,0" reversible="false">hidden</animation>
+        <visible>!Control.HasFocus(50)</visible>
         <control>
           <description>caption of the selected item</description>
           <type>label</type>
@@ -47,7 +51,7 @@
           <height>75</height>
           <font>font14</font>
           <label>#Play.Current.Title</label>
-          <visible>player.hasmedia</visible>
+          <visible>!Control.HasFocus(50)+player.hasmedia</visible>
         </control>
         <control>
           <description>caption of the selected item</description>
@@ -60,7 +64,7 @@
           <height>75</height>
           <font>font14</font>
           <label>#Play.Current.Artist</label>
-          <visible>player.hasmedia</visible>
+          <visible>!Control.HasFocus(50)+player.hasmedia</visible>
         </control>
         <control>
           <description>caption of the selected item</description>
@@ -73,7 +77,7 @@
           <height>75</height>
           <font>font14</font>
           <label>#Play.Current.Album</label>
-          <visible>player.hasmedia</visible>
+          <visible>!Control.HasFocus(50)+player.hasmedia</visible>
         </control>
         <control>
           <description>caption of the selected item2</description>
@@ -89,7 +93,7 @@
           <align>left</align>
           <textcolor>20ffffff</textcolor>
           <label>#currentplaytime</label>
-          <visible>player.hasmedia</visible>
+          <visible>!Control.HasFocus(50)+player.hasmedia</visible>
         </control>
         <control>
           <description>music logo</description>
@@ -103,7 +107,7 @@
           <keepaspectratio>yes</keepaspectratio>
           <centered>yes</centered>
           <texture flipY="true" diffuse="Thumb_Mask.png">#Play.Current.Thumb</texture>
-          <visible>player.hasmedia</visible>
+          <visible>!Control.HasFocus(50)+player.hasmedia</visible>
         </control>
         <control>
           <description>music logo</description>
@@ -115,7 +119,7 @@
           <width>80</width>
           <height>80</height>
           <texture flipY="true" diffuse="Thumb_Mask.png">Picture_cover.png</texture>
-          <visible>player.hasmedia+control.hasthumb(600)</visible>
+          <visible>!Control.HasFocus(50)+player.hasmedia+control.hasthumb(600)</visible>
         </control>
         <control>
           <description>Progress background</description>
@@ -126,7 +130,7 @@
           <width>180</width>
           <height>22</height>
           <texture>osd_progress_background.png</texture>
-          <visible>player.hasmedia</visible>
+          <visible>!Control.HasFocus(50)+player.hasmedia</visible>
         </control>
         <control>
           <description>progress bar</description>
@@ -137,13 +141,16 @@
           <width>189</width>
           <height>15</height>
           <label>#percentage</label>
-          <visible>player.hasmedia</visible>
+          <visible>!Control.HasFocus(50)+player.hasmedia</visible>
         </control>
         <control>
           <description>group element</description>
           <type>group</type>
+          <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
+          <animation effect="slide" time="450" end="-300,0" reversible="false">hidden</animation>
           <posX>40</posX>
           <posY>97</posY>
+          <visible>!Control.HasFocus(50)</visible>
           <layout>StackLayout</layout>
           <control>
             <description>View-As button</description>
