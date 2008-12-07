@@ -578,7 +578,6 @@ namespace MediaPortal.Configuration
 
       AddSection(new ConfigPage(general, new GeneralThumbs(), false));
       AddSection(new ConfigPage(general, new GeneralVolume(), false));
-      AddSection(new ConfigPage(general, new GeneralBlankScreen(), false));
 
       AddSection(new ConfigPage(general, new GeneralKeyboardControl(), true));
       AddSection(new ConfigPage(general, new Keys(), true));
