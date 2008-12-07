@@ -491,7 +491,7 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
   File ..\TvLibrary.Interfaces\bin\Release\TvLibrary.Interfaces.dll
   
   ;Gentle.Config
-  SetOuPath "$MPdir.Config"
+  SetOutPath "$MPdir.Config"
   File ..\TvPlugin\TvPlugin\Gentle.config
 
   ; The Plugins
