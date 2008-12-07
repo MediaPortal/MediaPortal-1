@@ -616,7 +616,9 @@ namespace MediaPortal.Player
               if (count > 20)
               {
                 Log.Debug("TSReaderPlayer: no vmr9 connection. Maybe we have a radio recording but expect video too so we suppose it's ok.");
-                if (g_Player.IsRadio)
+                //gemx: we have to return TRUE here because otherwise we won't be able to play recoded radio from the RecordedTV screen
+                return true;
+                /*if (g_Player.IsRadio)
                 {
                   return true;
                 }
@@ -624,7 +626,7 @@ namespace MediaPortal.Player
                 {
                   g_Player.Stop();
                   return false;
-                }
+                }*/
                 //Cleanup();
                 //return false;
               }
