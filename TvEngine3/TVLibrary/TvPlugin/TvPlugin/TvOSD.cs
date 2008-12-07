@@ -32,7 +32,7 @@ using System.Collections.Generic;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Util;
-
+using MediaPortal.Dialogs;
 using TvDatabase;
 using TvControl;
 using Gentle.Common;
@@ -257,9 +257,24 @@ namespace TvPlugin
 
         case Action.ActionType.ACTION_STOP:
           {
-            // push a message through to this window to handle the remote control button
-            GUIMessage msgSet = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, GetID, (int)Controls.OSD_STOP, (int)Controls.OSD_STOP, 0, 0, null);
-            OnMessage(msgSet);
+            if (g_Player.IsTimeShifting)
+            {
+              Log.Debug("TvOSD: user request to stop");
+              GUIDialogPlayStop dlgPlayStop = (GUIDialogPlayStop)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PLAY_STOP);
+              if (dlgPlayStop != null)
+              {
+                dlgPlayStop.SetHeading(GUILocalizeStrings.Get(605));
+                dlgPlayStop.SetLine(1, GUILocalizeStrings.Get(2550));
+                dlgPlayStop.SetLine(2, GUILocalizeStrings.Get(2551));
+                dlgPlayStop.SetDefaultToStop(false);
+                dlgPlayStop.DoModal(GetID);
+                if (dlgPlayStop.IsStopConfirmed)
+                {
+                  Log.Debug("TvOSD: stop confirmed");
+                  g_Player.Stop();
+                }
+              }
+            }
             return;
           }
 
