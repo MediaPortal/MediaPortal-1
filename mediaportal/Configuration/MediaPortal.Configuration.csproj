@@ -253,6 +253,12 @@
     <Compile Include="Sections\FiltersPowerDVD8Decoder.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Sections\GeneralBlankScreen.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\GeneralBlankScreen.Designer.cs">
+      <DependentUpon>GeneralBlankScreen.cs</DependentUpon>
+    </Compile>
     <Compile Include="Sections\GeneralWatchdog.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -640,6 +646,10 @@
     <EmbeddedResource Include="Sections\BaseViews.resx">
       <SubType>Designer</SubType>
       <DependentUpon>BaseViews.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\GeneralBlankScreen.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>GeneralBlankScreen.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\GeneralWatchdog.resx">
       <SubType>Designer</SubType>
