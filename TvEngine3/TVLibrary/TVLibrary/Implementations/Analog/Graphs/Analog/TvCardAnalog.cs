@@ -2748,7 +2748,7 @@ namespace TvLibrary.Implementations.Analog
       devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSVBICodec);
       foreach (DsDevice device in devices)
       {
-        if (device.Name.IndexOf("WST") >= 0)
+        if (device.Name != null && device.Name.IndexOf("WST") >= 0)
         {
           //found it, add it to the graph
           Log.Log.Info("analog:SinkGraphEx.SetupTeletext(): Found WST Codec filter");
@@ -2772,7 +2772,7 @@ namespace TvLibrary.Implementations.Analog
       {
         devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSMULTIVBICodec);
         foreach (DsDevice device in devices)
-          if (device.Name.IndexOf("VBI") >= 0)
+          if (device.Name != null && device.Name.IndexOf("VBI") >= 0)
           {
             //found it, add it to the graph
             Log.Log.Info("analog:SinkGraphEx.SetupTeletext(): Found VBI Codec filter");
