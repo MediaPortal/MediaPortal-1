@@ -2361,12 +2361,10 @@ namespace TvPlugin
 
           //calculate when timeshifting was started
           double timeShiftStartPoint = livePoint - g_Player.Duration;
+          double playingPoint = timeShiftStartPoint + g_Player.CurrentPosition;
           if (timeShiftStartPoint < 0) timeShiftStartPoint = 0;
 
-          //calculate where we the current playing point is
-          double playingPoint = g_Player.Duration - g_Player.CurrentPosition;
-          playingPoint = (livePoint - playingPoint);
-
+           
           double timeShiftStartPointPercent = ((double)timeShiftStartPoint) / ((double)programDuration);
           timeShiftStartPointPercent *= 100.0d;
           GUIPropertyManager.SetProperty("#TV.Record.percent1", ((int)timeShiftStartPointPercent).ToString());
