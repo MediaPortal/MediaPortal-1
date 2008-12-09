@@ -640,7 +640,6 @@ SectionEnd
   Delete /REBOOTOK "$MPdir.Base\MediaPortal.exe"
   Delete /REBOOTOK "$MPdir.Base\MediaPortal.exe.config"
   Delete /REBOOTOK "$MPdir.Base\MediaPortal.Support.dll"
-  Delete /REBOOTOK "$MPdir.Base\menu.bin"
   Delete /REBOOTOK "$MPdir.Base\Microsoft.ApplicationBlocks.ApplicationUpdater.dll"
   Delete /REBOOTOK "$MPdir.Base\Microsoft.ApplicationBlocks.ApplicationUpdater.Interfaces.dll"
   Delete /REBOOTOK "$MPdir.Base\Microsoft.ApplicationBlocks.ExceptionManagement.dll"
