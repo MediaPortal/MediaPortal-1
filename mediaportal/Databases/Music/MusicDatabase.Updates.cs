@@ -548,6 +548,7 @@ namespace MediaPortal.Music.Database
     /// <returns></returns>
     private int LoadShares()
     {
+      _shares.Clear();  // Clear the list of Shares to avoid duplicates on a rerun
       string currentFolder = string.Empty;
       bool fileMenuEnabled = false;
       string fileMenuPinCode = string.Empty;
