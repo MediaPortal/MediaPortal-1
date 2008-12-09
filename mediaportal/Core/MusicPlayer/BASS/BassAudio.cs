@@ -1051,6 +1051,13 @@ namespace MediaPortal.Player
     /// </summary>
     private void SetVisualizationWindow()
     {
+      if (GUIGraphicsContext.form.InvokeRequired)
+      {
+        InitializeControlsDelegate d = new InitializeControlsDelegate(SetVisualizationWindow);
+        GUIGraphicsContext.form.Invoke(d);
+        return;
+      }
+
       GUIGraphicsContext.form.SuspendLayout();
 
       bool foundWindow = false;
