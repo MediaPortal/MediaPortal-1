@@ -48,6 +48,7 @@ namespace MediaPortal.GUI.Library
     const int MAX_THUMB_WIDTH = 512;
     const int MAX_THUMB_HEIGHT = 512;
     static List<CachedTexture> _cache = new List<CachedTexture>();
+    static Dictionary<string, bool> _persistentTextures = new Dictionary<string, bool>();
     static List<DownloadedImage> _cacheDownload = new List<DownloadedImage>();
     static TexturePacker _packer = new TexturePacker();
 
@@ -179,14 +180,19 @@ namespace MediaPortal.GUI.Library
 
       if (!File.Exists(fileName))
       {
-        if (fileName[1] != ':')
+        if (!Path.IsPathRooted(fileName))
           return GUIGraphicsContext.Skin + @"\media\" + fileName;
       }
       return fileName;
     }
 
 
-    public static int Load(string fileNameOrg, long lColorKey, int iMaxWidth, int iMaxHeight)
+    public static int Load(string fileNameOrg, long lColorKey, int iMaxWidth, int iMaxHeight) 
+    {
+      return Load(fileNameOrg, lColorKey, iMaxWidth, iMaxHeight, false);  
+    }
+
+    public static int Load(string fileNameOrg, long lColorKey, int iMaxWidth, int iMaxHeight, bool persistent)
     {
       string fileName = GetFileName(fileNameOrg);
       if (fileName == "") return 0;
@@ -267,6 +273,8 @@ namespace MediaPortal.GUI.Library
               theImage.Dispose();
               theImage = null;
               newCache.Disposed +=new EventHandler(cachedTexture_Disposed);
+              if (persistent && !_persistentTextures.ContainsKey(newCache.Name)) 
+                _persistentTextures.Add(newCache.Name, true);
               _cache.Add(newCache);
 
               //Log.Info("  TextureManager:added:" + fileName + " total:" + _cache.Count + " mem left:" + GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
@@ -294,6 +302,8 @@ namespace MediaPortal.GUI.Library
           newCache.texture = new CachedTexture.Frame(fileName, dxtexture, 0);
           //Log.Info("  texturemanager:added:" + fileName + " total:" + _cache.Count + " mem left:" + GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
           newCache.Disposed += new EventHandler(cachedTexture_Disposed);
+          if (persistent && !_persistentTextures.ContainsKey(newCache.Name))
+            _persistentTextures.Add(newCache.Name, true);
           _cache.Add(newCache);
           return 1;
         }
@@ -373,6 +383,8 @@ namespace MediaPortal.GUI.Library
               if (_cache[i] == sender)
               {
                   _cache[i].Disposed -= new EventHandler(cachedTexture_Disposed);
+                  if (_persistentTextures.ContainsKey(_cache[i].Name))
+                    _persistentTextures.Remove(_cache[i].Name);
                   _cache.Remove(_cache[i]);
               }
           }
@@ -719,6 +731,9 @@ namespace MediaPortal.GUI.Library
 
       if (fileName.ToLower().IndexOf(Config.GetSubFolder(Config.Dir.Thumbs, @"tv\logos")) >= 0) return false;
       if (fileName.ToLower().IndexOf(Config.GetSubFolder(Config.Dir.Thumbs, "radio")) >= 0) return false;
+
+      // check if this texture was loaded to be persistent
+      if (_persistentTextures.ContainsKey(fileName)) return false;
 
       /* Temporary: (textures that are disposed)
        * - all not skin images

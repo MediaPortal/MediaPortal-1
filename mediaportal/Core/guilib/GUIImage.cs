@@ -623,19 +623,15 @@ namespace MediaPortal.GUI.Library
           GUIPropertyManager.OnPropertyChanged -= new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
           _registeredForEvent = false;
         }
-        string file = _textureFileNameTag;
-        _packedTexture = null;
-        if (_containsProperty)
-        {
-          file = GUIPropertyManager.Parse(_textureFileNameTag);
-        }
+        string file = _cachedTextureFileName;
         if (file != null && file != string.Empty)
         {
           if (logtextures)
             Log.Info("GUIImage: FreeResources - {0}", file);
           if (GUITextureManager.IsTemporary(file))
           {
-            GUITextureManager.ReleaseTexture(file);
+              _packedTexture = null;
+              GUITextureManager.ReleaseTexture(file);
           }
         }
         _diffuseTexture = null;
