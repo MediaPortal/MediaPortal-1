@@ -290,7 +290,6 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File ..\Plugins\PluginBase\bin\Release\PluginBase.dll
   File ..\Plugins\PowerScheduler\PowerScheduler.Interfaces\bin\Release\PowerScheduler.Interfaces.dll
   File "..\Plugins\ServerBlaster\ServerBlaster (Learn)\bin\Release\Blaster.exe"
-  File ..\Setup\mp.ico
   File ..\SetupTv\bin\Release\SetupTv.exe
   File ..\SetupTv\bin\Release\SetupTv.exe.config
   File ..\TvControl\bin\Release\TvControl.dll
@@ -425,7 +424,6 @@ ${MementoSectionEnd}
   Delete /REBOOTOK $INSTDIR\PluginBase.dll
   Delete /REBOOTOK $INSTDIR\PowerScheduler.Interfaces.DLL
   Delete /REBOOTOK $INSTDIR\Blaster.exe
-  Delete /REBOOTOK $INSTDIR\mp.ico
   Delete /REBOOTOK $INSTDIR\SetupTv.exe
   Delete /REBOOTOK $INSTDIR\SetupTv.exe.config
   Delete /REBOOTOK $INSTDIR\TvControl.dll
@@ -600,7 +598,7 @@ Section -Post
   WriteRegStr HKLM "${REG_UNINSTALL}" DisplayVersion     "${VERSION}"
   WriteRegStr HKLM "${REG_UNINSTALL}" Publisher          "${COMPANY}"
   WriteRegStr HKLM "${REG_UNINSTALL}" URLInfoAbout       "${URL}"
-  WriteRegStr HKLM "${REG_UNINSTALL}" DisplayIcon        "$INSTDIR\mp.ico,0"
+  WriteRegStr HKLM "${REG_UNINSTALL}" DisplayIcon        "$INSTDIR\SetupTv.exe,0"
   WriteRegStr HKLM "${REG_UNINSTALL}" UninstallString    "$INSTDIR\uninstall-tve3.exe"
   WriteRegDWORD HKLM "${REG_UNINSTALL}" NoModify 1
   WriteRegDWORD HKLM "${REG_UNINSTALL}" NoRepair 1
