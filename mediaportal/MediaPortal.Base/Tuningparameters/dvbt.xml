@@ -2827,12 +2827,13 @@
     <carrier frequency="858000" bandwidth="8"></carrier>
   </country>
   <country name="Spain - Extremadura - Badajoz">
-    <carrier frequency="802000" bandwidth="8"></carrier>
-    <carrier frequency="810000" bandwidth="8"></carrier>
-    <carrier frequency="834000" bandwidth="8"></carrier>
-    <carrier frequency="842000" bandwidth="8"></carrier>
-    <carrier frequency="850000" bandwidth="8"></carrier>
-    <carrier frequency="858000" bandwidth="8"></carrier>
+    <carrier frequency="642000" bandwidth="8"></carrier>
+	<carrier frequency="666000" bandwidth="8"></carrier>
+	<carrier frequency="706000" bandwidth="8"></carrier>
+	<carrier frequency="810000" bandwidth="8"></carrier>
+	<carrier frequency="834000" bandwidth="8"></carrier>
+	<carrier frequency="850000" bandwidth="8"></carrier>
+	<carrier frequency="858000" bandwidth="8"></carrier>
   </country>
   <country name="Spain - Extremadura - Caceres">
     <carrier frequency="794000" bandwidth="8"></carrier>
