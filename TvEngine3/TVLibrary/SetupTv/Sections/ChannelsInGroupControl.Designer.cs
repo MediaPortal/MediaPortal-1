@@ -42,6 +42,7 @@ namespace SetupTv.Sections
       this.buttonUtp = new System.Windows.Forms.Button();
       this.mpButtonDel = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonPreview = new MediaPortal.UserInterface.Controls.MPButton();
+      this.removeChannelFromGroup = new System.Windows.Forms.ToolStripMenuItem();
       this.contextMenuStrip1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -82,17 +83,18 @@ namespace SetupTv.Sections
       // 
       this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.addToFavoritesToolStripMenuItem,
+            this.removeChannelFromGroup,
             this.deleteThisChannelToolStripMenuItem,
             this.removeEntireGroupToolStripMenuItem,
             this.editChannelToolStripMenuItem});
       this.contextMenuStrip1.Name = "contextMenuStrip1";
-      this.contextMenuStrip1.Size = new System.Drawing.Size(187, 92);
+      this.contextMenuStrip1.Size = new System.Drawing.Size(187, 136);
       // 
       // addToFavoritesToolStripMenuItem
       // 
       this.addToFavoritesToolStripMenuItem.Name = "addToFavoritesToolStripMenuItem";
       this.addToFavoritesToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
-      this.addToFavoritesToolStripMenuItem.Text = "Remove from Group";
+      this.addToFavoritesToolStripMenuItem.Text = "Add to favorites";
       this.addToFavoritesToolStripMenuItem.Click += new System.EventHandler(this.addToFavoritesToolStripMenuItem_Click);
       // 
       // deleteThisChannelToolStripMenuItem
@@ -169,6 +171,13 @@ namespace SetupTv.Sections
       this.mpButtonPreview.UseVisualStyleBackColor = true;
       this.mpButtonPreview.Click += new System.EventHandler(this.mpButtonPreview_Click);
       // 
+      // removeChannelFromGroup
+      // 
+      this.removeChannelFromGroup.Name = "removeChannelFromGroup";
+      this.removeChannelFromGroup.Size = new System.Drawing.Size(186, 22);
+      this.removeChannelFromGroup.Text = "Remove from Group";
+      this.removeChannelFromGroup.Click += new System.EventHandler(this.removeChannelFromGroup_Click);
+      // 
       // ChannelsInGroupControl
       // 
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
@@ -200,5 +209,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ToolStripMenuItem editChannelToolStripMenuItem;
     private System.Windows.Forms.ImageList imageList1;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonPreview;
+    private System.Windows.Forms.ToolStripMenuItem removeChannelFromGroup;
   }
 }

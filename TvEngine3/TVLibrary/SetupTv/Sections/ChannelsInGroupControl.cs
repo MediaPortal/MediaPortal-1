@@ -41,6 +41,8 @@ namespace SetupTv.Sections
 
     public void OnActivated()
     {
+      UpdateMenu();
+
       listView1.Items.Clear();
       if (Group != null)
       {
@@ -156,9 +158,77 @@ namespace SetupTv.Sections
       ReOrder();
     }
 
+    private void OnAddToFavoritesMenuItem_Click(object sender, EventArgs e)
+    {
+      ChannelGroup group;
+      ToolStripMenuItem menuItem = (ToolStripMenuItem)sender;
+      if (menuItem.Tag == null)
+      {
+        GroupNameForm dlg = new GroupNameForm();
+        if (dlg.ShowDialog(this) != DialogResult.OK)
+        {
+          return;
+        }
+        group = new ChannelGroup(dlg.GroupName, 9999);
+        group.Persist();
+        UpdateMenu();
+      }
+      else
+      {
+        group = (ChannelGroup)menuItem.Tag;
+      }
+
+      ListView.SelectedIndexCollection indexes = listView1.SelectedIndices;
+      if (indexes.Count == 0) return;
+      TvBusinessLayer layer = new TvBusinessLayer();
+      for (int i = 0; i < indexes.Count; ++i)
+      {
+        ListViewItem item = listView1.Items[indexes[i]];
+        GroupMap map = (GroupMap)item.Tag;
+        Channel channel = map.ReferencedChannel();        
+        layer.AddChannelToGroup(channel, group.GroupName);
+      }
+    }
+
+    private void UpdateMenu()
+    {   
+      addToFavoritesToolStripMenuItem.DropDownItems.Clear();
+      IList groups = ChannelGroup.ListAll();
+      foreach (ChannelGroup group in groups)
+      {
+        if (_channelGroup.GroupName == group.GroupName) continue;
+
+        ToolStripMenuItem item = new ToolStripMenuItem(group.GroupName);
+        item.Tag = group;
+        item.Click += new EventHandler(OnAddToFavoritesMenuItem_Click);
+        addToFavoritesToolStripMenuItem.DropDownItems.Add(item);
+
+        /*TabPage page = new TabPage(group.GroupName);
+        page.SuspendLayout();
+        ChannelsInGroupControl channelsInGroupControl = new ChannelsInGroupControl();
+        channelsInGroupControl.Location = new System.Drawing.Point(9, 9);
+        channelsInGroupControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+        page.Controls.Add(channelsInGroupControl);
+        page.Tag = group;
+        page.Location = new System.Drawing.Point(4, 22);
+        page.Padding = new System.Windows.Forms.Padding(3);
+        page.Size = new System.Drawing.Size(457, 374);
+        page.UseVisualStyleBackColor = true;
+        page.PerformLayout();
+        page.ResumeLayout(false);
+        tabControl1.TabPages.Add(page);
+        */
+      }
+      ToolStripMenuItem itemNew = new ToolStripMenuItem("New...");
+      itemNew.Click += new EventHandler(OnAddToFavoritesMenuItem_Click);
+      addToFavoritesToolStripMenuItem.DropDownItems.Add(itemNew);
+    }
+
     private void addToFavoritesToolStripMenuItem_Click(object sender, EventArgs e)
     {
-      mpButtonDel_Click(null, null);
+      
     }
 
     private void deleteThisChannelToolStripMenuItem_Click(object sender, EventArgs e)
@@ -267,6 +337,11 @@ namespace SetupTv.Sections
       FormPreview previewWindow = new FormPreview();
       previewWindow.Channel = map.ReferencedChannel();
       previewWindow.ShowDialog(this);
+    }
+
+    private void removeChannelFromGroup_Click(object sender, EventArgs e)
+    {
+      mpButtonDel_Click(null, null);
     }
 
   }
