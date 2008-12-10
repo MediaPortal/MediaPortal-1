@@ -81,6 +81,13 @@ namespace MediaPortal.Configuration.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap mplogo {
+            get {
+                object obj = ResourceManager.GetObject("mplogo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap remote_Centarea {
             get {
                 object obj = ResourceManager.GetObject("remote_Centarea", resourceCulture);

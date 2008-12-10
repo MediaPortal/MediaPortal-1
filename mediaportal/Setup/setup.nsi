@@ -653,7 +653,6 @@ SectionEnd
   Delete /REBOOTOK "$MPdir.Base\MiniDisplayLibrary.dll"
   Delete /REBOOTOK "$MPdir.Base\MPInstaller.exe"
   Delete /REBOOTOK "$MPdir.Base\MPInstaller.Library.dll"
-  Delete /REBOOTOK "$MPdir.Base\mplogo.gif"
   Delete /REBOOTOK "$MPdir.Base\WatchDog.exe"
   Delete /REBOOTOK "$MPdir.Base\mpviz.dll"
   Delete /REBOOTOK "$MPdir.Base\MusicShareWatcher.exe"

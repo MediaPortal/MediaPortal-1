@@ -27,6 +27,7 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
+using System.Reflection;
 using System.Windows.Forms;
 using System.Xml;
 
@@ -152,30 +153,21 @@ namespace MediaPortal.Configuration.Sections
       // Clear image
       //
       previewPictureBox.Image = null;
-      Image img;
+
+      Stream s = GetType().Assembly.GetManifestResourceStream("MediaPortal.Configuration.Resources.mplogo.gif");
+      Image img = Image.FromStream(s);
 
       if (File.Exists(previewFile))
       {
-        using (Stream s = new FileStream(previewFile, FileMode.Open, FileAccess.Read))
-        { img = Image.FromStream(s); }
-        previewPictureBox.Width = img.Width;
-        previewPictureBox.Height = img.Height;
-        previewPictureBox.Image = img;
-        previewPictureBox.Visible = true;
-      }
-      else
-      {
-        string logoFile = "mplogo.gif";
-
-        if (File.Exists(logoFile))
+        using (s = new FileStream(previewFile, FileMode.Open, FileAccess.Read))
         {
-          img = Image.FromFile(logoFile);
-          previewPictureBox.Width = img.Width;
-          previewPictureBox.Height = img.Height;
-          previewPictureBox.Image = img;
-          previewPictureBox.Visible = true;
+          img = Image.FromStream(s);
         }
       }
+      previewPictureBox.Width = img.Width;
+      previewPictureBox.Height = img.Height;
+      previewPictureBox.Image = img;
+      previewPictureBox.Visible = true;
     }
 
     /// <summary>
@@ -414,6 +406,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.previewPictureBox.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
       this.previewPictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.previewPictureBox.Image = global::MediaPortal.Configuration.Properties.Resources.mplogo;
       this.previewPictureBox.Location = new System.Drawing.Point(0, 0);
       this.previewPictureBox.Name = "previewPictureBox";
       this.previewPictureBox.Size = new System.Drawing.Size(222, 179);

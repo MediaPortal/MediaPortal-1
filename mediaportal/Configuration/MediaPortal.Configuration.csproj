@@ -962,6 +962,7 @@
     <None Include="Resources\remote.MceVista.png" />
     <None Include="Resources\remote.Mce2004.png" />
     <None Include="Resources\remote.Mce2005TT.png" />
+    <EmbeddedResource Include="Resources\mplogo.gif" />
     <Content Include="Wizards\DVD.xml" />
     <Content Include="Wizards\FirstTimeSetup.xml" />
     <Content Include="Wizards\Movies.xml" />
