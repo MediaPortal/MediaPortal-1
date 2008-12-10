@@ -631,9 +631,14 @@ namespace TvLibrary.Implementations
           return;
         }
 
-
-        _mapSubChannels[id].Decompose();
-        _mapSubChannels.Remove(id);
+        try
+        {
+          _mapSubChannels[id].Decompose();
+        }
+        finally
+        {
+          _mapSubChannels.Remove(id);
+        }
 
 
         /*if (_conditionalAccess != null)

@@ -162,9 +162,9 @@ namespace TvService
             user.IdChannel = idChannel;
             context.Add(user);
           }
-          else if (result == null)
+          else
           {
-            _cardHandler.Card.FreeSubChannel(result.SubChannelId);
+            //_cardHandler.Card.FreeSubChannel(result.SubChannelId);
             return TvResult.AllCardsBusy;
           }
           

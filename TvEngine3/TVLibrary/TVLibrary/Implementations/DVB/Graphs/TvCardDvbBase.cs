@@ -208,28 +208,45 @@ namespace TvLibrary.Implementations.DVB
       }
       Log.Log.Info("dvb:Submit tunerequest size:{0} new:{1}", _mapSubChannels.Count, subChannelId);
       _mapSubChannels[subChannelId].CurrentChannel = channel;
-      _mapSubChannels[subChannelId].OnBeforeTune();
-      if (_interfaceEpgGrabber != null)
+
+      try
       {
-        _interfaceEpgGrabber.Reset();
+        _mapSubChannels[subChannelId].OnBeforeTune();
+        if (_interfaceEpgGrabber != null)
+        {
+          _interfaceEpgGrabber.Reset();
+        }
+        Log.Log.WriteFile("dvb:Submit tunerequest calling put_TuneRequest");
+        int hr = 0;
+        hr = (_filterNetworkProvider as ITuner).put_TuneRequest(tuneRequest);
+        Log.Log.WriteFile("dvb:Submit tunerequest done calling put_TuneRequest");
+        if (hr != 0)
+        {
+          Log.Log.WriteFile("dvb:SubmitTuneRequest  returns:0x{0:X}", hr);
+          //remove subchannel.
+          /*if (newSubChannel)
+          {
+          _mapSubChannels.Remove(subChannelId);
+          }*/
+          throw new TvException("Unable to tune to channel");
+        }
+
+        _lastSignalUpdate = DateTime.MinValue;
+        _mapSubChannels[subChannelId].OnAfterTune();
       }
-      Log.Log.WriteFile("dvb:Submit tunerequest calling put_TuneRequest");
-      int hr = 0;
-      hr = (_filterNetworkProvider as ITuner).put_TuneRequest(tuneRequest);
-      Log.Log.WriteFile("dvb:Submit tunerequest done calling put_TuneRequest");
-      if (hr != 0)
+      catch (Exception e)
       {
-        Log.Log.WriteFile("dvb:SubmitTuneRequest  returns:0x{0:X}", hr);
-        //remove subchannel.
         if (newSubChannel)
         {
-          _mapSubChannels.Remove(subChannelId);
+          Log.Log.WriteFile("dvb:SubmitTuneRequest  failed - removing subchannel: {0}", subChannelId);
+          if (_mapSubChannels.ContainsKey(subChannelId))
+          {
+            _mapSubChannels.Remove(subChannelId);
+          }
         }
-        throw new TvException("Unable to tune to channel");
-      }      
-
-      _lastSignalUpdate = DateTime.MinValue;
-      _mapSubChannels[subChannelId].OnAfterTune();
+        throw e;
+      }
+        
       return _mapSubChannels[subChannelId];
     }
 

@@ -397,7 +397,7 @@ namespace TvService
         _eventAudio.Close();
         _eventsReady = false;
 
-        Log.Write("card: StopTimeShifting user:{0} sub:{1}", user.Name, user.SubChannel);
+        Log.Write("card {2}: StopTimeShifting user:{0} sub:{1}", user.Name, user.SubChannel, _cardHandler.Card.Name);
          
         lock (this)
         {
