@@ -90,31 +90,6 @@ namespace TvPlugin
     {
       GetID = (int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO;//748
 
-      //Fill the list with all available pre & post intervals
-      RecordingIntervalValues.Add(0);
-      RecordingIntervalValues.Add(1);
-      RecordingIntervalValues.Add(3);
-      RecordingIntervalValues.Add(5);
-      RecordingIntervalValues.Add(10);
-      RecordingIntervalValues.Add(15);
-      RecordingIntervalValues.Add(30);
-      RecordingIntervalValues.Add(45);
-      RecordingIntervalValues.Add(60);
-      RecordingIntervalValues.Add(90);
-
-      TvBusinessLayer layer = new TvBusinessLayer();
-      int.TryParse(layer.GetSetting("preRecordInterval", "5").Value, out _preRec);
-      int.TryParse(layer.GetSetting("postRecordInterval", "5").Value, out _postRec);
-
-      if (!RecordingIntervalValues.Contains(_preRec))
-        RecordingIntervalValues.Add(_preRec);
-
-      if (!RecordingIntervalValues.Contains(_postRec))
-        RecordingIntervalValues.Add(_postRec);
-
-      // sort the list to get the values in correct order if _preRec and/or _postRec were added
-      RecordingIntervalValues.Sort();
-
       LoadSettings();
     }
 
@@ -139,6 +114,43 @@ namespace TvPlugin
     {
       bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvprogram.xml");
       return bResult;
+    }
+
+    public override bool OnMessage(GUIMessage message)
+    {
+      if (message.Message == GUIMessage.MessageType.GUI_MSG_WINDOW_INIT)
+      {
+        RecordingIntervalValues.Clear();
+        //Fill the list with all available pre & post intervals
+        RecordingIntervalValues.Add(0);
+        RecordingIntervalValues.Add(1);
+        RecordingIntervalValues.Add(3);
+        RecordingIntervalValues.Add(5);
+        RecordingIntervalValues.Add(10);
+        RecordingIntervalValues.Add(15);
+        RecordingIntervalValues.Add(30);
+        RecordingIntervalValues.Add(45);
+        RecordingIntervalValues.Add(60);
+        RecordingIntervalValues.Add(90);
+
+        TvBusinessLayer layer = new TvBusinessLayer();
+        _preRec = 0;
+        _postRec = 0;
+
+        int.TryParse(layer.GetSetting("preRecordInterval", "5").Value, out _preRec);
+        int.TryParse(layer.GetSetting("postRecordInterval", "5").Value, out _postRec);
+
+        if (!RecordingIntervalValues.Contains(_preRec))
+          RecordingIntervalValues.Add(_preRec);
+
+        if (!RecordingIntervalValues.Contains(_postRec))
+          RecordingIntervalValues.Add(_postRec);
+
+        // sort the list to get the values in correct order if _preRec and/or _postRec were added
+        RecordingIntervalValues.Sort();
+
+      }
+      return base.OnMessage(message);
     }
 
     protected override void OnPageLoad()
