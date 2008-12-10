@@ -91,7 +91,7 @@ namespace MediaPortal.TV.Recording
     #region globals
     DateTime m_timeDisplayed = DateTime.Now;
     bool m_muteState = false;
-    string m_mediaPath = System.Windows.Forms.Application.StartupPath + @"\osdskin-media\";
+    string skinPath = GUIGraphicsContext.Skin + @"\media\";
     TVChannel m_actualChannel = null;
     int m_channelSNR = 0;
     int m_channelLevel = 0;
@@ -134,7 +134,7 @@ namespace MediaPortal.TV.Recording
       m_timeout = 10000;// ten seconds
       m_osdRendered = OSD.CurrentTVShowInfo;
       // render list
-      Bitmap bm = new Bitmap(gWidth, gHeight);//m_mediaPath+@"bgimage.png");
+      Bitmap bm = new Bitmap(gWidth, gHeight);
       Graphics gr = Graphics.FromImage(bm);
       if (bm == null || gr == null || m_osdChannels.baseRect == null)
         return;
@@ -208,7 +208,7 @@ namespace MediaPortal.TV.Recording
       m_timeout = 10000;// ten seconds
       m_osdRendered = OSD.CurrentTVShowInfo;
       // render list
-      Bitmap bm = new Bitmap(gWidth, gHeight);//m_mediaPath+@"bgimage.png");
+      Bitmap bm = new Bitmap(gWidth, gHeight);
       Graphics gr = Graphics.FromImage(bm);
       int x = 60;
       int y = 20;
@@ -283,7 +283,7 @@ namespace MediaPortal.TV.Recording
       }
 
       // render list
-      Bitmap bm = new Bitmap(gWidth, gHeight);//m_mediaPath+@"bgimage.png");
+      Bitmap bm = new Bitmap(gWidth, gHeight);
       Graphics gr = Graphics.FromImage(bm);
       int x = 60;
       int y = 20;
@@ -415,50 +415,42 @@ namespace MediaPortal.TV.Recording
       }
 
       int[] drawWidth = new int[] { 0, 25, 43, 62, 82, 99, 117, 137, 155, 173, 200 };
-
-      if (System.IO.File.Exists(m_mediaPath + String.Format("volume_level_10.png", volume)) == true)
+      string mute = "icon:m270:60:mute.png";
+      string[] seg = mute.Split(new char[] { ':' });
+      if (seg != null)
       {
-        string mute = "icon:m270:60:mute.png";
-        string[] seg = mute.Split(new char[] { ':' });
-        if (seg != null)
+        if (seg[0] == "icon" && seg.Length == 4)
         {
-          if (seg[0] == "icon" && seg.Length == 4)
+          Bitmap osd = new Bitmap(gWidth, gHeight);
+          Graphics gr = Graphics.FromImage(osd);
+
+          int xPos = 0;
+          int yPos = 0;
+
+          if (seg[1].StartsWith("m"))
+            xPos = GetPosition(gWidth, seg[1]);
+          else
+            xPos = Convert.ToInt16(seg[1]);
+
+          if (seg[2].StartsWith("m"))
+            yPos = GetPosition(gHeight, seg[2]);
+          else
+            yPos = Convert.ToInt16(seg[2]);
+
+          if (VolumeHandler.Instance.IsMuted)
           {
-            Bitmap osd = new Bitmap(gWidth, gHeight);
-            Graphics gr = Graphics.FromImage(osd);
-
-            //Bitmap gfx=new Bitmap(m_mediaPath+String.Format("volume_level_{0}.png",volume));
-            //gfx.MakeTransparent(Color.White);
-            int xPos = 0;
-            int yPos = 0;
-
-            if (seg[1].StartsWith("m"))
-              xPos = GetPosition(gWidth, seg[1]);
-            else
-              xPos = Convert.ToInt16(seg[1]);
-
-            if (seg[2].StartsWith("m"))
-              yPos = GetPosition(gHeight, seg[2]);
-            else
-              yPos = Convert.ToInt16(seg[2]);
-
-            if (VolumeHandler.Instance.IsMuted)
-            {
-              if (m_muteBitmap != null)
-                gr.DrawImage(m_muteBitmap, xPos, yPos, new RectangleF(0f, 0f, drawWidth[volume], m_muteBitmap.Height), System.Drawing.GraphicsUnit.Pixel);
-            }
-            else
-              if (m_volumeBitmap != null)
-                gr.DrawImage(m_volumeBitmap, xPos, yPos, new RectangleF(0f, 0f, drawWidth[volume], m_volumeBitmap.Height), System.Drawing.GraphicsUnit.Pixel);
-
-            SaveBitmap(osd, true, true, m_renderOSDAlpha);
-            gr.Dispose();
-            osd.Dispose();
-            m_timeDisplayed = DateTime.Now;
+            if (m_muteBitmap != null)
+              gr.DrawImage(m_muteBitmap, xPos, yPos, new RectangleF(0f, 0f, drawWidth[volume], m_muteBitmap.Height), System.Drawing.GraphicsUnit.Pixel);
           }
+          else
+            if (m_volumeBitmap != null)
+              gr.DrawImage(m_volumeBitmap, xPos, yPos, new RectangleF(0f, 0f, drawWidth[volume], m_volumeBitmap.Height), System.Drawing.GraphicsUnit.Pixel);
+
+          SaveBitmap(osd, true, true, m_renderOSDAlpha);
+          gr.Dispose();
+          osd.Dispose();
+          m_timeDisplayed = DateTime.Now;
         }
-
-
       }
     }
 
@@ -517,7 +509,7 @@ namespace MediaPortal.TV.Recording
       {
         int gWidth = GUIGraphicsContext.Width;
         int gHeight = GUIGraphicsContext.Height;
-        Bitmap bm = new Bitmap(gWidth, gHeight);//m_mediaPath+@"bgimage.png");
+        Bitmap bm = new Bitmap(gWidth, gHeight);
         Graphics gr = Graphics.FromImage(bm);
         int x = 140;
         int y = 0;
@@ -567,7 +559,6 @@ namespace MediaPortal.TV.Recording
 
         // first graphic elements and pictures
         // rects
-        string skinPath = GUIGraphicsContext.Skin + @"\media\";
         // bg 2 draw?
 
         int width = gWidth;
@@ -716,7 +707,7 @@ namespace MediaPortal.TV.Recording
       {
         int gWidth = GUIGraphicsContext.Width;
         int gHeight = GUIGraphicsContext.Height;
-        Bitmap bm = new Bitmap(gWidth, gHeight);//m_mediaPath+@"bgimage.png");
+        Bitmap bm = new Bitmap(gWidth, gHeight);
         Graphics gr = Graphics.FromImage(bm);
         int x = 140;
         int y = 0;
@@ -1037,15 +1028,15 @@ namespace MediaPortal.TV.Recording
       {
         if (_legacyVolumeOsd)
         {
-          m_volumeBitmap = new Bitmap(m_mediaPath + "volume_level_10.png");
+          m_volumeBitmap = new Bitmap(skinPath + "legacyosd_volume_level_10.png");
           m_volumeBitmap.MakeTransparent(Color.White);
-          m_muteBitmap = new Bitmap(m_mediaPath + "volume_level_0.png");
+          m_muteBitmap = new Bitmap(skinPath + "legacyosd_volume_level_0.png");
           m_muteBitmap.MakeTransparent(Color.White);
         }
         else
         {
-          _volumeStatesBitmap = new Bitmap(m_mediaPath + "volume.states.png");
-          _volumeMuteBitmap = new Bitmap(m_mediaPath + "volume.states.mute.png");
+          _volumeStatesBitmap = new Bitmap(skinPath + "volume.states.png");
+          _volumeMuteBitmap = new Bitmap(skinPath + "volume.states.mute.png");
         }
       }
       catch (Exception ex)
