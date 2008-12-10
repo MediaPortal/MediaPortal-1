@@ -322,8 +322,6 @@ Section "MediaPortal core files (required)" SecCore
   File /nonfatal /x .svn ${EXCLUDED_CONFIG_FILES}  "${MEDIAPORTAL.BASE}\*"
   SetOutPath "$MPdir.Base\MusicPlayer"
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\MusicPlayer\*"
-  SetOutPath "$MPdir.Base\osdskin-media"
-  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\osdskin-media\*"
   SetOutPath "$MPdir.Base\Profiles"
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\Profiles\*"
   SetOutPath "$MPdir.Base\Tuningparameters"
@@ -523,7 +521,6 @@ SectionEnd
 
   ; Remove the Folders
   RMDir /r /REBOOTOK "$MPdir.Base\MusicPlayer"
-  RMDir /r /REBOOTOK "$MPdir.Base\osdskin-media"
   RMDir /r /REBOOTOK "$MPdir.Base\Profiles"
   RMDir /r /REBOOTOK "$MPdir.Base\Tuningparameters"
   RMDir /r /REBOOTOK "$MPdir.Base\WebEPG"
