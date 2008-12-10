@@ -74,15 +74,20 @@ namespace TvService
         if (stateExists && currentChState == chState) continue;
         if (currentChState != ChannelState.nottunable && chState == ChannelState.nottunable) continue;
 
-        if (stateExists && currentChState != chState) //&& replace
+        try
         {
-          u.ChannelStates.Remove(channelId);
-          stateExists = false;
+          if (stateExists && currentChState != chState) //&& replace
+          {
+            u.ChannelStates.Remove(channelId);
+            stateExists = false;
+          }
+          if (!stateExists)
+          {
+            u.ChannelStates.Add(channelId, chState);
+          }
         }
-        if (!stateExists)
-        {
-          u.ChannelStates.Add(channelId, chState);
-        }
+        catch (NullReferenceException) { }
+
       }
     }
 
@@ -155,7 +160,7 @@ namespace TvService
 
         // find all users      
         //IList<User> allUsers = GetActiveUsers(cards);
-        if (allUsers.Count == 0) return; // no users, no point in continuing.
+        if (allUsers == null || allUsers.Count == 0) return; // no users, no point in continuing.
 
         Dictionary<int, ChannelState> TSandRecStates = tvController.GetAllTimeshiftingAndRecordingChannels();
 
