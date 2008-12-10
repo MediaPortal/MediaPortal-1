@@ -1751,6 +1751,9 @@
     <String id="103009" prefix="Min ">TV/Mini EPG</String>
     <String id="103011" prefix="Min ">TV/Beskjær-innstillinger</String>
     <String id="104711" prefix="Min ">Wikipedia</String>
+    <String id="105000">Alarm</String>
+    <String id="105001">Alarm - Alarm Detaljer</String>
+    <String id="105002">Alarm - Sovetid</String>
     <String id="105900" prefix="Mine ">Trailere</String>
     <String id="106666">Power Scheduler Venter</String>
     <String id="107700" prefix="Min ">TV/Tekst-TV</String>

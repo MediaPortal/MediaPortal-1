@@ -1751,6 +1751,9 @@
     <String id="103009" prefix="My ">TV/Mini EPG</String>
     <String id="103011" prefix="My ">TV/Crop settings</String>
     <String id="104711" prefix="My ">Wikipedia</String>
+    <String id="105000">Alarm</String>
+    <String id="105001">Alarm - Alarm Details</String>
+    <String id="105002">Alarm - Sleeptime</String>
     <String id="105900" prefix="My ">Trailers</String>
     <String id="106666">Power Scheduler Waiting</String>
     <String id="107700" prefix="My ">TV/Teletext</String>
