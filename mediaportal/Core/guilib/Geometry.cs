@@ -183,7 +183,7 @@ namespace MediaPortal.GUI.Library
                         // assume that the movie is widescreen first, so use full height
                         float fVertBorder = 0;
                         float fNewHeight = (float)(ScreenHeight);
-                        float fNewWidth = fNewHeight * fOutputFrameRatio;
+                        float fNewWidth = fNewHeight * fCroppedOutputFrameRatio;
                         float fHorzBorder = (fNewWidth - (float)ScreenWidth) / 2.0f;
                         float fFactor = fNewWidth / ((float)ImageWidth);
                         fFactor *= PixelRatio;
@@ -193,7 +193,7 @@ namespace MediaPortal.GUI.Library
                         {
                             fHorzBorder = 0;
                             fNewWidth = (float)(ScreenWidth);
-                            fNewHeight = fNewWidth / fOutputFrameRatio;
+                            fNewHeight = fNewWidth / fCroppedOutputFrameRatio;
                             fVertBorder = (fNewHeight - (float)ScreenHeight) / 2.0f;
                             fFactor = fNewWidth / ((float)ImageWidth);
                             fFactor *= PixelRatio;
