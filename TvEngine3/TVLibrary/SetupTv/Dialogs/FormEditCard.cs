@@ -67,20 +67,21 @@ namespace SetupTv.Sections
 
     private void FormEditCard_Load(object sender, EventArgs e)
     {
-      if (!_cardType.Equals("Analog")) //analog does not have these settings
+      if (_cardType.Equals("Analog")) //analog does not have these settings
       {
-        ComboBoxCamType.SelectedIndex = _card.CamType;
-        numericUpDownDecryptLimit.Value = _card.DecryptLimit;
-        checkBoxAllowEpgGrab.Checked = _card.GrabEPG;
-        numericUpDownDecryptLimit.Enabled = true;
-        checkBoxAllowEpgGrab.Enabled = true;
+        checkBoxCAMenabled.Enabled = false;
+        numericUpDownDecryptLimit.Value = 0;
+        numericUpDownDecryptLimit.Enabled = false;
+        checkBoxAllowEpgGrab.Checked = false;
+        checkBoxAllowEpgGrab.Enabled = false;
       }
       else
       {
-        numericUpDownDecryptLimit.Value = 0;
-        checkBoxAllowEpgGrab.Checked = false;
-        numericUpDownDecryptLimit.Enabled = false;
-        checkBoxAllowEpgGrab.Enabled = false;
+        ComboBoxCamType.SelectedIndex = _card.CamType;
+        numericUpDownDecryptLimit.Value = _card.DecryptLimit;
+        numericUpDownDecryptLimit.Enabled = true;
+        checkBoxAllowEpgGrab.Checked = _card.GrabEPG;
+        checkBoxAllowEpgGrab.Enabled = true;
       }
 
       IList GrpList = _card.ReferringCardGroupMap();
@@ -116,7 +117,7 @@ namespace SetupTv.Sections
       this.Close();
     }
 
-    private void setCAMLimitVisibility ()
+    private void setCAMLimitVisibility()
     {
       label1.Visible = checkBoxCAMenabled.Checked;
       label3.Visible = checkBoxCAMenabled.Checked;
