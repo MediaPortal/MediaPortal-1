@@ -42,11 +42,21 @@ namespace MediaPortal.Support
     {
       destinationFolder = Path.GetFullPath(destinationFolder) + "\\";
       string[] logFiles = Directory.GetFiles(mplogdir, "*.log");
+      
       foreach (string logFile in logFiles)
       {
         string dstFile = logFile.Substring(logFile.LastIndexOf("\\") + 1);
         bool overwrite = true;
         File.Copy(logFile, destinationFolder + dstFile, overwrite);
+      }
+
+      string[] bakFiles = Directory.GetFiles(mplogdir, "*.bak");
+
+      foreach (string bakFile in bakFiles)
+      {
+        string dstFile = bakFile.Substring(bakFile.LastIndexOf("\\") + 1);
+        bool overwrite = true;
+        File.Copy(bakFile, destinationFolder + dstFile, overwrite);
       }
     }
 

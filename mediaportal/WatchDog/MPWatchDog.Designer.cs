@@ -61,6 +61,7 @@ namespace WatchDog
       this.tmrUnAttended = new System.Windows.Forms.Timer(this.components);
       this.tmrMPWatcher = new System.Windows.Forms.Timer(this.components);
       this.tmrWatchdog = new System.Windows.Forms.Timer(this.components);
+      this.label3 = new System.Windows.Forms.Label();
       this.settingsGroup.SuspendLayout();
       this.step2Group.SuspendLayout();
       this.step1Group.SuspendLayout();
@@ -112,7 +113,7 @@ namespace WatchDog
       this.step2Group.Controls.Add(this.step2Label2);
       this.step2Group.Controls.Add(this.step2Label1);
       this.step2Group.Controls.Add(this.postTestButton);
-      this.step2Group.Location = new System.Drawing.Point(12, 246);
+      this.step2Group.Location = new System.Drawing.Point(12, 257);
       this.step2Group.Name = "step2Group";
       this.step2Group.Size = new System.Drawing.Size(408, 120);
       this.step2Group.TabIndex = 5;
@@ -277,7 +278,7 @@ namespace WatchDog
       // 
       // statusBar
       // 
-      this.statusBar.Location = new System.Drawing.Point(0, 378);
+      this.statusBar.Location = new System.Drawing.Point(0, 391);
       this.statusBar.Name = "statusBar";
       this.statusBar.Size = new System.Drawing.Size(427, 20);
       this.statusBar.TabIndex = 6;
@@ -288,11 +289,12 @@ namespace WatchDog
       this.groupBox1.AccessibleDescription = "";
       this.groupBox1.AccessibleName = "Step 1 (before testing)";
       this.groupBox1.BackColor = System.Drawing.SystemColors.Control;
+      this.groupBox1.Controls.Add(this.label3);
       this.groupBox1.Controls.Add(this.label4);
       this.groupBox1.Controls.Add(this.LaunchMPButton);
       this.groupBox1.Location = new System.Drawing.Point(12, 192);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(408, 48);
+      this.groupBox1.Size = new System.Drawing.Size(408, 59);
       this.groupBox1.TabIndex = 7;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Step 2 (do tests)";
@@ -329,11 +331,20 @@ namespace WatchDog
       this.tmrWatchdog.Interval = 1000;
       this.tmrWatchdog.Tick += new System.EventHandler(this.tmrWatchdog_Tick);
       // 
+      // label3
+      // 
+      this.label3.AutoSize = true;
+      this.label3.Location = new System.Drawing.Point(8, 37);
+      this.label3.Name = "label3";
+      this.label3.Size = new System.Drawing.Size(217, 13);
+      this.label3.TabIndex = 6;
+      this.label3.Text = "- execute Step 3 when MediaPortal is closed";
+      // 
       // MPWatchDog
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(427, 398);
+      this.ClientSize = new System.Drawing.Size(427, 411);
       this.Controls.Add(this.groupBox1);
       this.Controls.Add(this.statusBar);
       this.Controls.Add(this.step2Group);
@@ -348,6 +359,7 @@ namespace WatchDog
       this.step2Group.ResumeLayout(false);
       this.step1Group.ResumeLayout(false);
       this.groupBox1.ResumeLayout(false);
+      this.groupBox1.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -386,5 +398,6 @@ namespace WatchDog
     private System.Windows.Forms.Timer tmrUnAttended;
     private System.Windows.Forms.Timer tmrMPWatcher;
     private System.Windows.Forms.Timer tmrWatchdog;
+    private System.Windows.Forms.Label label3;
   }
 }

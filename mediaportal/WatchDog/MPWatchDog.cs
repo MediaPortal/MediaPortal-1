@@ -185,6 +185,7 @@ namespace WatchDog
     private void LaunchMPButton_Click(object sender, EventArgs e)
     {
       LaunchMediaPortalAction();
+      postTestButton.Enabled = false;
     }
     private void postTestButton_Click(object sender, EventArgs e)
     {

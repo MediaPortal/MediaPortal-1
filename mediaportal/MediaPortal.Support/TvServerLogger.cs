@@ -43,9 +43,13 @@ namespace MediaPortal.Support
       if (!Directory.Exists(logPath))
         return;
       DirectoryInfo dir=new DirectoryInfo(logPath);
-      FileInfo[] fis=dir.GetFiles("*.log");
-      foreach (FileInfo fi in fis)
-        fi.CopyTo(destinationFolder+"\\tvserver_"+fi.Name,true);
+      FileInfo[] logFiles = dir.GetFiles("*.log");
+      foreach (FileInfo logFile in logFiles)
+        logFile.CopyTo(destinationFolder+"\\tvserver_"+logFile.Name,true);
+      
+      FileInfo[] bakfiles = dir.GetFiles("*.bak");
+      foreach (FileInfo bakFile in bakfiles)
+        bakFile.CopyTo(destinationFolder + "\\tvserver_" + bakFile.Name, true);      
     }
 
     public string ActionMessage
