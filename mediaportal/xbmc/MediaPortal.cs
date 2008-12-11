@@ -847,6 +847,18 @@ public class MediaPortalApp : D3DApp, IRender
           case PBT_APMRESUMEAUTOMATIC:
             Log.Info("Main: Windows has resumed from standby or hibernate mode to handle a requested event");
             OnResumeAutomatic();
+
+            bool useS3Hack;
+            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+            {
+              useS3Hack = xmlreader.GetValueAsBool("debug", "useS3Hack", false);
+              if (useS3Hack)
+              {
+                Log.Info("Main: useS3Hack enabled, calling OnResume() on automatic resume");
+                OnResume();
+              }
+            }
+
             break;
         }
       }
