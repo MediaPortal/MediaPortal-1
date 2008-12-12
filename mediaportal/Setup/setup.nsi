@@ -585,7 +585,6 @@ SectionEnd
   Delete /REBOOTOK "$MPdir.Base\AppStart.exe"
   Delete /REBOOTOK "$MPdir.Base\AppStart.exe.config"
   Delete /REBOOTOK "$MPdir.Base\AxInterop.WMPLib.dll"
-  Delete /REBOOTOK "$MPdir.Base\BallonRadio.ico"
   Delete /REBOOTOK "$MPdir.Base\bass.dll"
   Delete /REBOOTOK "$MPdir.Base\Bass.Net.dll"
   Delete /REBOOTOK "$MPdir.Base\bass_fx.dll"
