@@ -110,7 +110,7 @@ namespace TvPlugin
       }
 
       TvServer server = new TvServer();
-      if (TVHome.Connected)
+      if (!TVHome.HandleServerNotConnected())
       {
         _lastStatus = server.IsAnyCardRecording();
       }

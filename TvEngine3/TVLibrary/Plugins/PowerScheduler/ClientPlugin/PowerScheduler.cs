@@ -123,9 +123,9 @@ namespace MediaPortal.Plugins.Process
       if (!LoadSettings())
         return;
 
-      if( GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_PSCLIENTPLUGIN_UNATTENDED)==null)
+      if (GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_PSCLIENTPLUGIN_UNATTENDED) == null)
       {
-        GUIWindow win= new UnattendedWindow();
+        GUIWindow win = new UnattendedWindow();
         try
         {
           win.Init();
@@ -158,8 +158,8 @@ namespace MediaPortal.Plugins.Process
     {
       Log.Info("Stopping PowerScheduler client plugin...");
 
-      WindowsController.HookExitWindows( _defaultExitWindows );
-      
+      WindowsController.HookExitWindows(_defaultExitWindows);
+
       OnStandBy();
 
       if (GlobalServiceProvider.Instance.IsRegistered<IPowerScheduler>())
@@ -168,7 +168,7 @@ namespace MediaPortal.Plugins.Process
       _wakeupTimer.SecondsToWait = -1;
       _wakeupTimer.Close();
       GUIWindowManager.OnNewAction -= new OnActionHandler(this.OnAction);
-      
+
       _powerManager.AllowStandby();
       _powerManager = null;
       SendPowerSchedulerEvent(PowerSchedulerEventType.Stopped);
@@ -235,13 +235,13 @@ namespace MediaPortal.Plugins.Process
     }
     public void SuspendSystem(string source, int how, bool force)
     {
-      SafeExitWindows( (RestartOptions) how, force, null );
+      SafeExitWindows((RestartOptions)how, force, null);
     }
 
     /// <summary>
     /// Used to avoid concurrent suspend requests which could result in a suspend - user resumes - immediately suspends.
     /// </summary>
-    private DateTime _ignoreSuspendUntil= DateTime.MinValue;
+    private DateTime _ignoreSuspendUntil = DateTime.MinValue;
 
     private Util.WindowsController.ExitWindowsHandler _defaultExitWindows;
 
@@ -254,7 +254,7 @@ namespace MediaPortal.Plugins.Process
     }
 
     private void SafeExitWindows(RestartOptions how, bool force, MediaPortal.Util.WindowsController.AfterExitWindowsHandler after)
-    {    
+    {
       if (_settings.GetSetting("SingleSeat").Get<bool>())
       {
         // shutdown method and force mode are ignored by delegated suspend/hibernate requests
@@ -266,12 +266,12 @@ namespace MediaPortal.Plugins.Process
         }
 
         try
-        {          
+        {
           // persist the next wakeup datetime, this way 'resume last active module' feature is able to tell the difference between a wakeup done by 
           // a user or by the PS plugin
           using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-          {                        
-            DateTime nextWakeUp = GetNextWakeupTime(DateTime.Now);            
+          {
+            DateTime nextWakeUp = GetNextWakeupTime(DateTime.Now);
             xmlwriter.SetValue("psclientplugin", "nextwakeup", nextWakeUp.ToString());
             string res = xmlwriter.GetValueAsString("psclientplugin", "nextwakeup", DateTime.MaxValue.ToString());
           }
@@ -279,7 +279,10 @@ namespace MediaPortal.Plugins.Process
           Log.Debug("PSClientPlugin: Informing handlers about UserShutdownNow");
           UserShutdownNow();
 
-					RemotePowerControl.Instance.SuspendSystem("PowerSchedulerClientPlugin", (int)how, force);
+          if (RemotePowerControl.Isconnected)
+          {
+            RemotePowerControl.Instance.SuspendSystem("PowerSchedulerClientPlugin", (int)how, force);
+          }
         }
         catch (Exception e)
         {
@@ -344,7 +347,7 @@ namespace MediaPortal.Plugins.Process
       bool disallow = DisAllowShutdown;
 
       Log.Info("PSClientPlugin: Shutdown is allowed {0} ; forced: {1}", !disallow, force);
-      
+
       if (disallow && !force)
       {
         lock (this)
@@ -367,7 +370,7 @@ namespace MediaPortal.Plugins.Process
       env.that = this;
       env.after = after;
       _defaultExitWindows((RestartOptions)how, force, env.SafeExitWindowsThreadAfter);
-   }
+    }
 
     protected void SafeExitWindowsThreadAfter(RestartOptions how, bool force, bool result, MediaPortal.Util.WindowsController.AfterExitWindowsHandler after)
     {
@@ -401,7 +404,7 @@ namespace MediaPortal.Plugins.Process
             }
         }
       }
-      if( after != null )
+      if (after != null)
         after(how, force, result);
     }
 
@@ -442,14 +445,17 @@ namespace MediaPortal.Plugins.Process
       // check for singleseat or multiseat setup
       if (_settings.GetSetting("SingleSeat").Get<bool>())
       {
-        RemotePowerControl.Instance.GetCurrentState(refresh, out unattended, out disAllowShutdown, out disAllowShutdownHandler, out nextWakeupTime, out nextWakeupHandler);
-        return;
+        if (RemotePowerControl.Isconnected)
+        {
+          RemotePowerControl.Instance.GetCurrentState(refresh, out unattended, out disAllowShutdown, out disAllowShutdownHandler, out nextWakeupTime, out nextWakeupHandler);
+          return;
+        }
       }
 
       if (refresh)
       {
-        bool dummy= DisAllowShutdown;
-        _currentNextWakeupTime= GetNextWakeupTime(DateTime.Now);
+        bool dummy = DisAllowShutdown;
+        _currentNextWakeupTime = GetNextWakeupTime(DateTime.Now);
         dummy = Unattended;
       }
 
@@ -483,10 +489,10 @@ namespace MediaPortal.Plugins.Process
           _lastUserTime = DateTime.Now;
         }
 
-        bool val= _lastUserTime <= DateTime.Now.AddMinutes(-_settings.IdleTimeout);
-        if( val != _currentUnattended )
+        bool val = _lastUserTime <= DateTime.Now.AddMinutes(-_settings.IdleTimeout);
+        if (val != _currentUnattended)
         {
-          _currentUnattended= val;
+          _currentUnattended = val;
           LogVerbose("PowerScheduler: System is now unattended: {0}", val);
         }
         return val;
@@ -497,10 +503,11 @@ namespace MediaPortal.Plugins.Process
     public bool DisAllowShutdown
     {
       [MethodImpl(MethodImplOptions.Synchronized)]
-      get {
+      get
+      {
         if (!UserInterfaceIdle)
         {
-          LogVerbose("System declared busy by the user (not idle)" );
+          LogVerbose("System declared busy by the user (not idle)");
           _currentDisAllowShutdownHandler = "USER";
           _currentDisAllowShutdown = true;
           return true;
@@ -519,7 +526,7 @@ namespace MediaPortal.Plugins.Process
         // Check all registered ISTandbyHandlers
         foreach (IStandbyHandler handler in _standbyHandlers)
         {
-          if( handler != this )
+          if (handler != this)
           {
             if (handler.DisAllowShutdown)
             {
@@ -628,7 +635,7 @@ namespace MediaPortal.Plugins.Process
       GUIWindowManager.SendThreadCallbackAndWait(UserShutdownNowCB, 0, 0, null);
 
       // trigger the handlers
-      lock( this )
+      lock (this)
       {
         foreach (IStandbyHandler handler in _standbyHandlers)
         {
@@ -641,7 +648,7 @@ namespace MediaPortal.Plugins.Process
       get { return "PowerSchedulerClientPlugin"; }
     }
     #endregion
-    
+
     #endregion
 
     #region Private methods
@@ -725,7 +732,7 @@ namespace MediaPortal.Plugins.Process
           LogVerbose("shutdown enabled locally set to: {0}", boolSetting);
           changed = true;
         }
-       
+
         // Check configured PowerScheduler idle timeout
         intSetting = reader.GetValueAsInt("psclientplugin", "idletimeout", 5);
         if (_settings.IdleTimeout != intSetting)
@@ -827,6 +834,7 @@ namespace MediaPortal.Plugins.Process
     {
       if (_onTimerElapsedInside) return;
       _onTimerElapsedInside = true;
+      _timer.Enabled = false;
       try
       {
         LoadSettings();
@@ -836,7 +844,10 @@ namespace MediaPortal.Plugins.Process
         {
           // tell the tvserver when we detected the real user the last time
           bool dummy = Unattended;    // this will update _lastUserTime in case a player was running
-          RemotePowerControl.Instance.UserActivityDetected(_lastUserTime);
+          if (RemotePowerControl.Isconnected)
+          {
+            RemotePowerControl.Instance.UserActivityDetected(_lastUserTime);
+          }
         }
         else
         {
@@ -849,7 +860,9 @@ namespace MediaPortal.Plugins.Process
       catch (Exception ex)
       {
         Log.Error(ex);
+        RemotePowerControl.Clear();
       }
+      if (!_standby) _timer.Enabled = true;
       _onTimerElapsedInside = false;
     }
 
@@ -861,7 +874,7 @@ namespace MediaPortal.Plugins.Process
     public bool UserInterfaceIdle
     {
       get
-      {                
+      {
         if (!g_Player.Playing)
         {
           // No media is playing, see if user is still active then
@@ -869,7 +882,7 @@ namespace MediaPortal.Plugins.Process
           {
             int activeWindow = GUIWindowManager.ActiveWindow;
             if (activeWindow == (int)GUIWindow.Window.WINDOW_HOME || activeWindow == (int)GUIWindow.Window.WINDOW_SECOND_HOME ||
-              activeWindow == (int)GUIWindow.Window.WINDOW_PSCLIENTPLUGIN_UNATTENDED )
+              activeWindow == (int)GUIWindow.Window.WINDOW_PSCLIENTPLUGIN_UNATTENDED)
             {
               return true;
             }
@@ -1049,18 +1062,18 @@ namespace MediaPortal.Plugins.Process
       {
         // determine next wakeup time from IWakeupHandlers
         DateTime nextWakeup = GetNextWakeupTime(DateTime.Now);
-        if (nextWakeup < DateTime.MaxValue )
+        if (nextWakeup < DateTime.MaxValue)
         {
           nextWakeup = nextWakeup.AddSeconds(-_settings.PreWakeupTime);
           double delta = nextWakeup.Subtract(DateTime.Now).TotalSeconds;
-          
-          if( delta < 60 )
+
+          if (delta < 60)
           {
             // the wake up event is too near, when we set the timer and the suspend process takes to long, i.e. the timer gets fired
             // while suspending, the system will NOT wake up!
 
             // so, we will in any case set the wait time to 60 seconds
-            delta= 60;
+            delta = 60;
           }
           _wakeupTimer.SecondsToWait = delta;
           Log.Debug("PSClientPlugin: Set wakeup timer to wakeup system in {0} minutes", delta / 60);
@@ -1109,8 +1122,8 @@ namespace MediaPortal.Plugins.Process
       }
     }
 
-    private String _remotingURI= null;
-    private int _remotingTag= 0;
+    private String _remotingURI = null;
+    private int _remotingTag = 0;
 
     #region MarshalByRefObject overrides
     /// <summary>
@@ -1180,7 +1193,10 @@ namespace MediaPortal.Plugins.Process
         if (_remotingTag != 0)
         {
           LogVerbose("PSClientPlugin: unregister handlers with tvservice with tag {0}", _remotingTag);
-          RemotePowerControl.Instance.UnregisterRemote(_remotingTag);
+          if (RemotePowerControl.Isconnected)
+          {
+            RemotePowerControl.Instance.UnregisterRemote(_remotingTag);
+          }
           _remotingTag = 0;
         }
         // unreference remoting singletons as they'll be reinitialized after suspend
@@ -1211,7 +1227,7 @@ namespace MediaPortal.Plugins.Process
 
     private void SendPowerSchedulerEvent(PowerSchedulerEventType eventType, bool sendAsync)
     {
-     PowerSchedulerEventArgs args = new PowerSchedulerEventArgs(eventType);
+      PowerSchedulerEventArgs args = new PowerSchedulerEventArgs(eventType);
       SendPowerSchedulerEvent(args, sendAsync);
     }
 
@@ -1258,7 +1274,7 @@ namespace MediaPortal.Plugins.Process
     #region WndProc messagehandler
     public bool WndProc(ref System.Windows.Forms.Message msg)
     {
-      bool singleSeat=_settings.GetSetting("SingleSeat").Get<bool>();
+      bool singleSeat = _settings.GetSetting("SingleSeat").Get<bool>();
       if (msg.Msg == WM_POWERBROADCAST)
       {
         switch (msg.WParam.ToInt32())
@@ -1291,7 +1307,7 @@ namespace MediaPortal.Plugins.Process
           case PBT_APMSTANDBY:
             OnStandBy();
 
-            if( !singleSeat )
+            if (!singleSeat)
               SetWakeupTimer();
 
             SendPowerSchedulerEvent(PowerSchedulerEventType.EnteringStandby, false);
@@ -1318,6 +1334,6 @@ namespace MediaPortal.Plugins.Process
     }
     #endregion
 
-    
+
   }
 }

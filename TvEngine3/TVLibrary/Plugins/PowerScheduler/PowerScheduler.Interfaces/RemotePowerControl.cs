@@ -75,6 +75,7 @@ namespace TvEngine.PowerScheduler.Interfaces
       {
         try
         {
+          if (_powerController == null) return false;
           return _powerController.IsConnected;
         }
         catch (Exception)
