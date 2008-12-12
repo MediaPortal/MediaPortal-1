@@ -248,9 +248,9 @@ namespace SetupTv.Sections
       // labelMePo
       // 
       this.labelMePo.Image = global::SetupTv.Properties.Resources.logo_MePo;
-      this.labelMePo.Location = new System.Drawing.Point(-3, 123);
+      this.labelMePo.Location = new System.Drawing.Point(16, 112);
       this.labelMePo.Name = "labelMePo";
-      this.labelMePo.Size = new System.Drawing.Size(258, 202);
+      this.labelMePo.Size = new System.Drawing.Size(164, 239);
       this.labelMePo.TabIndex = 9;
       // 
       // Project
