@@ -171,7 +171,7 @@ namespace MediaPortal.GUI.Library
         Assembly assem = Assembly.LoadFrom(strFile);
         if (assem != null)
         {
-          Log.Info("  Assembly Version : {0}", assem.GetName().Version.ToString());
+          Log.Info("  File Version : {0}", System.Diagnostics.FileVersionInfo.GetVersionInfo(strFile).ProductVersion);
           Type[] types = assem.GetExportedTypes();
 
           foreach (Type t in types)
@@ -277,7 +277,7 @@ namespace MediaPortal.GUI.Library
         Assembly assem = Assembly.LoadFrom(strFile);
         if (assem != null)
         {
-          Log.Info("  Assembly Version : {0}", assem.GetName().Version.ToString());
+          Log.Info("  File Version : {0}", System.Diagnostics.FileVersionInfo.GetVersionInfo(strFile).ProductVersion);
           Type[] types = assem.GetExportedTypes();
           Type[] foundInterfaces = null;
 
@@ -418,14 +418,14 @@ namespace MediaPortal.GUI.Library
     {
       bool res = false;
       foreach (IPlugin plugin in _nonGuiPlugins)
-      {        
+      {
         if (plugin is IPluginReceiver)
         {
           IPluginReceiver pluginRev = plugin as IPluginReceiver;
           res = pluginRev.WndProc(ref msg);
           if (res)
             break;
-        }        
+        }
       }
       if (!res)
       {
