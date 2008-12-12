@@ -32,11 +32,13 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
 using MediaPortal.Util;
 using MediaPortal.Configuration;
+
 
 namespace MediaPortal.GUI.Library
 {
@@ -92,7 +94,7 @@ namespace MediaPortal.GUI.Library
         files = System.IO.Directory.GetFiles(Config.GetFolder(Config.Dir.Thumbs), "MPTemp*.*");
       }
       catch
-      { 
+      {
         //ignore
       }
 
@@ -187,39 +189,45 @@ namespace MediaPortal.GUI.Library
     }
 
 
-    public static int Load(string fileNameOrg, long lColorKey, int iMaxWidth, int iMaxHeight) 
+    public static int Load(string fileNameOrg, long lColorKey, int iMaxWidth, int iMaxHeight)
     {
-      return Load(fileNameOrg, lColorKey, iMaxWidth, iMaxHeight, false);  
+      return Load(fileNameOrg, lColorKey, iMaxWidth, iMaxHeight, false);
     }
 
-    public static int Load(string fileNameOrg, long lColorKey, int iMaxWidth, int iMaxHeight, bool persistent)
+    private static int Load(string fileNameOrg, long lColorKey, int iMaxWidth, int iMaxHeight, bool persistent)
     {
       string fileName = GetFileName(fileNameOrg);
-      if (fileName == "") return 0;
+      if (String.IsNullOrEmpty(fileName)) return 0;
 
       for (int i = 0; i < _cache.Count; ++i)
       {
         CachedTexture cached = (CachedTexture)_cache[i];
-
         if (String.Compare(cached.Name, fileName, true) == 0)
         {
           return cached.Frames;
         }
       }
 
-      string extensionension = System.IO.Path.GetExtension(fileName).ToLower();
-      if (extensionension == ".gif")
+      string extension = Path.GetExtension(fileName).ToLower();
+      if (extension == ".gif")
       {
-        if (!System.IO.File.Exists(fileName))
+        if (!File.Exists(fileName))
         {
-          Log.Info("texture:{0} does not exists", fileName);
+          Log.Info("texture:{0} does not exist", fileName);
           return 0;
         }
 
         Image theImage = null;
         try
         {
-          theImage = Image.FromFile(fileName);
+          try
+          {
+            theImage = ImageFast.FromFile(fileName);
+          }
+          catch (ArgumentException)
+          {
+            Log.Warn("TextureManager: Fast loading texture {0} failed using safer fallback", fileName);
+            theImage = Image.FromFile(fileName);
             if (theImage != null)
             {
               CachedTexture newCache = new CachedTexture();
@@ -244,14 +252,13 @@ namespace MediaPortal.GUI.Library
               {
                 theImage.SelectActiveFrame(oDimension, i);
 
-
                 //load gif into texture
-                using (System.IO.MemoryStream stream = new System.IO.MemoryStream())
+                using (MemoryStream stream = new MemoryStream())
                 {
-                  theImage.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+                  theImage.Save(stream, ImageFormat.Png);
                   ImageInformation info2 = new ImageInformation();
                   stream.Flush();
-                  stream.Seek(0, System.IO.SeekOrigin.Begin);
+                  stream.Seek(0, SeekOrigin.Begin);
                   Direct3D.Texture texture = TextureLoader.FromStream(
                                                                     GUIGraphicsContext.DX9Device,
                                                                     stream,
@@ -272,7 +279,7 @@ namespace MediaPortal.GUI.Library
 
               theImage.Dispose();
               theImage = null;
-              if (persistent && !_persistentTextures.ContainsKey(newCache.Name)) 
+              if (persistent && !_persistentTextures.ContainsKey(newCache.Name))
                 _persistentTextures.Add(newCache.Name, true);
               _cache.Add(newCache);
 
@@ -280,6 +287,7 @@ namespace MediaPortal.GUI.Library
               return newCache.Frames;
             }
           }
+        }
         catch (Exception ex)
         {
           Log.Error("TextureManager: exception loading texture {0} - {1}", fileName, ex.Message);
@@ -335,9 +343,9 @@ namespace MediaPortal.GUI.Library
         newCache.Frames = memoryImage.GetFrameCount(oDimension);
         if (newCache.Frames != 1) return 0;
         //load gif into texture
-        using (System.IO.MemoryStream stream = new System.IO.MemoryStream())
+        using (MemoryStream stream = new MemoryStream())
         {
-          memoryImage.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+          memoryImage.Save(stream, ImageFormat.Png);
           ImageInformation info2 = new ImageInformation();
           stream.Flush();
           stream.Seek(0, System.IO.SeekOrigin.Begin);
@@ -371,7 +379,8 @@ namespace MediaPortal.GUI.Library
       }
       return 0;
     }
-    static Direct3D.Texture LoadGraphic(string fileName, long lColorKey, int iMaxWidth, int iMaxHeight, out int width, out int height)
+
+    private static Direct3D.Texture LoadGraphic(string fileName, long lColorKey, int iMaxWidth, int iMaxHeight, out int width, out int height)
     {
       width = 0;
       height = 0;
@@ -542,75 +551,75 @@ namespace MediaPortal.GUI.Library
       return texture;
     }
 
-    public static Image GetImage(string fileNameOrg)
-    {
-      string fileName = GetFileName(fileNameOrg);
-      if (fileNameOrg.StartsWith("["))
-        fileName = fileNameOrg;
-      if (fileName == "") return null;
+    //public static Image GetImage(string fileNameOrg)
+    //{
+    //  string fileName = GetFileName(fileNameOrg);
+    //  if (fileNameOrg.StartsWith("["))
+    //    fileName = fileNameOrg;
+    //  if (fileName == "") return null;
 
-      for (int i = 0; i < _cache.Count; ++i)
-      {
-        CachedTexture cached = (CachedTexture)_cache[i];
-        if (String.Compare(cached.Name, fileName, true) == 0)
-        {
-          if (cached.image != null)
-            return cached.image;
-          else
-          {
+    //  for (int i = 0; i < _cache.Count; ++i)
+    //  {
+    //    CachedTexture cached = (CachedTexture)_cache[i];
+    //    if (String.Compare(cached.Name, fileName, true) == 0)
+    //    {
+    //      if (cached.image != null)
+    //        return cached.image;
+    //      else
+    //      {
 
-            try
-            {
-              cached.image = Image.FromFile(fileName);             
-              
-                using (Graphics g = Graphics.FromImage(cached.image))
-                {
-                  g.DrawImage(cached.image, 0, 0);
-                }
-              
-            }
-            catch (Exception ex)
-            {
-              Log.Error("TextureManage: GetImage({0}) ", fileName);
-              Log.Error(ex);
-              return null;
-            }
-            return cached.image;
-          }
-        }
-      }
+    //        try
+    //        {
+    //          cached.image = Image.FromFile(fileName);
 
-      if (!System.IO.File.Exists(fileName)) return null;
-      Image img = null;
-      try
-      {
-          img = Image.FromFile(fileName);
-          using (Graphics g = Graphics.FromImage(img))
-          {
-            g.DrawImage(img, 0, 0);
-          }        
-      }
-      catch (Exception ex)
-      {
-        Log.Error("TextureManage: GetImage({0})", fileName);
-        Log.Error(ex);
-        return null;
-      }
+    //          using (Graphics g = Graphics.FromImage(cached.image))
+    //          {
+    //            g.DrawImage(cached.image, 0, 0);
+    //          }
 
-      if (img != null)
-      {
-        CachedTexture newCache = new CachedTexture();
-        newCache.Frames = 1;
-        newCache.Name = fileName;
-        newCache.Width = img.Width;
-        newCache.Height = img.Height;
-        newCache.image = img;
-        //Log.Info("  texturemanager:added:" + fileName + " total:" + _cache.Count + " mem left:" + GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
-        _cache.Add(newCache);
-        return img;
-      }
-      return null;
-    }
+    //        }
+    //        catch (Exception ex)
+    //        {
+    //          Log.Error("TextureManage: GetImage({0}) ", fileName);
+    //          Log.Error(ex);
+    //          return null;
+    //        }
+    //        return cached.image;
+    //      }
+    //    }
+    //  }
+
+    //  if (!System.IO.File.Exists(fileName)) return null;
+    //  Image img = null;
+    //  try
+    //  {
+    //    img = Image.FromFile(fileName);
+    //    using (Graphics g = Graphics.FromImage(img))
+    //    {
+    //      g.DrawImage(img, 0, 0);
+    //    }
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    Log.Error("TextureManage: GetImage({0})", fileName);
+    //    Log.Error(ex);
+    //    return null;
+    //  }
+
+    //  if (img != null)
+    //  {
+    //    CachedTexture newCache = new CachedTexture();
+    //    newCache.Frames = 1;
+    //    newCache.Name = fileName;
+    //    newCache.Width = img.Width;
+    //    newCache.Height = img.Height;
+    //    newCache.image = img;
+    //    //Log.Info("  texturemanager:added:" + fileName + " total:" + _cache.Count + " mem left:" + GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
+    //    _cache.Add(newCache);
+    //    return img;
+    //  }
+    //  return null;
+    //}
 
     public static CachedTexture.Frame GetTexture(string fileNameOrg, int iImage, out int iTextureWidth, out int iTextureHeight)
     {
@@ -637,36 +646,35 @@ namespace MediaPortal.GUI.Library
       return null;
     }
 
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public static void ReleaseTexture(string fileName)
     {
-      if (fileName == string.Empty) return;
+      if (string.IsNullOrEmpty(fileName)) return;
 
       //dont dispose radio/tv logo's since they are used by the overlay windows
       if (fileName.ToLower().IndexOf(Config.GetSubFolder(Config.Dir.Thumbs, @"tv\logos")) >= 0) return;
       if (fileName.ToLower().IndexOf(Config.GetSubFolder(Config.Dir.Thumbs, "radio")) >= 0) return;
-      try
+
+      for (int i = 0; i < _cache.Count; i++)
       {
-        bool continueRemoving = false;
-        do
+        try
         {
-          continueRemoving = false;
-          foreach (CachedTexture cached in _cache)
+          CachedTexture oldImage = _cache[i];
+          if (!string.IsNullOrEmpty(oldImage.Name))
           {
-            if (String.Compare(cached.Name, fileName, true) == 0)
+            if (String.Compare(oldImage.Name, fileName, true) == 0)
             {
-              //Log.Info("texturemanager:dispose:{0} frames:{1} total:{2} mem left:{3}", cached.Name, cached.Frames, _cache.Count, GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
-              _cache.Remove(cached);
-              cached.Dispose();
-              continueRemoving = true;
-              //Log.Info("free:{0}", fileName);
+              Log.Info("TextureManager: Dispose:{0} Frames:{1} Total:{2} Mem left:{3}", oldImage.Name, oldImage.Frames, _cache.Count, Convert.ToString(GUIGraphicsContext.DX9Device.AvailableTextureMemory / 1000));
+              _cache.Remove(oldImage);
+              oldImage.Dispose();
               break;
             }
           }
-        } while (continueRemoving);
-      }
-      catch (Exception ex)
-      {
-        Log.Error("TextureManage: Error in ReleaseTexture({0}) - {1}", fileName, ex.Message);
+        }
+        catch (Exception ex)
+        {
+          Log.Error("TextureManager: Error in ReleaseTexture({0}) - {1}", fileName, ex.Message);
+        }
       }
     }
 
@@ -675,6 +683,7 @@ namespace MediaPortal.GUI.Library
       //TODO
     }
 
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public static void CleanupThumbs()
     {
       Log.Debug("TextureManager: CleanupThumbs()");
@@ -685,7 +694,7 @@ namespace MediaPortal.GUI.Library
         {
           if (IsTemporary(cached.Name))
           {
-            Log.Debug("TextureManager: dispose: " + cached.Name + " total: " + _cache.Count + " mem left: " + GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
+            // Log.Debug("TextureManager: dispose: " + cached.Name + " total: " + _cache.Count + " mem left: " + Convert.ToString(GUIGraphicsContext.DX9Device.AvailableTextureMemory / 1000));
             cached.Dispose();
           }
           else
@@ -698,13 +707,13 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception ex)
       {
-        Log.Error("TextureManage: Error cleaning up Textures - {0}", ex.Message);
+        Log.Error("TextureManage: Error cleaning up thumbs - {0}", ex.Message);
       }
     }
 
     public static bool IsTemporary(string fileName)
     {
-      if (fileName.Length == 0) return false;
+      if (String.IsNullOrEmpty(fileName)) return false;
       if (fileName == "-") return false;
 
       if (fileName.ToLower().IndexOf(Config.GetSubFolder(Config.Dir.Thumbs, @"tv\logos")) >= 0) return false;

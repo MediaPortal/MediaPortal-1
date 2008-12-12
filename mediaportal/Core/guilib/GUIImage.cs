@@ -24,11 +24,12 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
-using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Windows.Media.Animation;
 using System.Xml;
 using Microsoft.DirectX;
@@ -549,7 +550,7 @@ namespace MediaPortal.GUI.Library
             if (_listTextures[i + iStartCopy] != null) _listTextures[i + iStartCopy].Disposed += new EventHandler(OnImageDisposedEvent);
             else
             {
-              Log.Debug("GUIImage.AllocResources -> Filename = (" + fileName + ") i="+i.ToString()+" FrameCount=" +frameCount.ToString());
+              Log.Debug("GUIImage.AllocResources -> Filename = (" + fileName + ") i=" + i.ToString() + " FrameCount=" + frameCount.ToString());
               if (_saveList != null)
               {
                 _listTextures = new CachedTexture.Frame[_saveList.Length];
@@ -567,7 +568,7 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception e)
       {
-        Log.Error(e);    
+        Log.Error(e);
       }
       finally
       {
@@ -601,6 +602,7 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    [MethodImpl(MethodImplOptions.Synchronized)]
     void FreeResourcesAndRegEvent()
     {
       FreeResources();
@@ -613,31 +615,29 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Free the DirectX resources needed for rendering this GUIImage.
     /// </summary>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public override void FreeResources()
     {
       _allocated = false;
-      lock (this)
+      if (_registeredForEvent)
       {
-        if (_registeredForEvent)
-        {
-          GUIPropertyManager.OnPropertyChanged -= new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
-          _registeredForEvent = false;
-        }
-        string file = _cachedTextureFileName;
-        if (file != null && file != string.Empty)
-        {
-          if (logtextures)
-            Log.Info("GUIImage: FreeResources - {0}", file);
-          if (GUITextureManager.IsTemporary(file))
-          {
-              _packedTexture = null;
-              GUITextureManager.ReleaseTexture(file);
-          }
-        }
-        _diffuseTexture = null;
-        Cleanup();
-        //base.FreeResources();
+        GUIPropertyManager.OnPropertyChanged -= new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
+        _registeredForEvent = false;
       }
+      string file = _cachedTextureFileName;
+      if (!string.IsNullOrEmpty(file))
+      {
+        if (logtextures)
+          Log.Debug("GUIImage: FreeResources - {0}", file);
+        if (GUITextureManager.IsTemporary(file))
+        {
+          _packedTexture = null;
+          GUITextureManager.ReleaseTexture(file);
+        }
+      }
+      _diffuseTexture = null;
+      Cleanup();
+      //base.FreeResources();
     }
 
     void Cleanup()
