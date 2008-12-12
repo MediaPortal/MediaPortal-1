@@ -58,10 +58,6 @@ namespace MediaPortal.GUI.Library
     unsafe private static extern void FontEnginePresentTextures();
     #endregion
 
-    #region events
-    public event EventHandler Disposed;
-    #endregion
-
     #region Frame class
     /// <summary>
     /// Class which contains a single frame
@@ -93,8 +89,7 @@ namespace MediaPortal.GUI.Library
         {
           unsafe
           {
-              _image.Disposing += new EventHandler(D3DTexture_Disposing);
-              IntPtr ptr = DShowNET.Helper.DirectShowUtil.GetUnmanagedTexture(_image);
+            IntPtr ptr = DShowNET.Helper.DirectShowUtil.GetUnmanagedTexture(_image);
             _textureNumber = FontEngineAddTexture(ptr.ToInt32(), true, (void*)ptr.ToPointer());
             if (logTextures) Log.Info("Frame:ctor() fontengine: added texture:{0} {1}", _textureNumber.ToString(), _imageName);
           }
@@ -122,9 +117,7 @@ namespace MediaPortal.GUI.Library
               if (logTextures) Log.Info("Frame:Image fontengine: remove texture:{0} {1}", _textureNumber.ToString(), _imageName);
               FontEngineRemoveTexture(_textureNumber);
               if (!_image.Disposed)
-              {
-                  _image.Dispose();
-              }
+                _image.Dispose();
               _textureNumber = -1;
             }
             catch (Exception)
@@ -137,7 +130,6 @@ namespace MediaPortal.GUI.Library
 
           if (_image != null)
           {
-              _image.Disposing += new EventHandler(D3DTexture_Disposing);
             unsafe
             {
               IntPtr ptr = DShowNET.Helper.DirectShowUtil.GetUnmanagedTexture(_image);
@@ -147,12 +139,6 @@ namespace MediaPortal.GUI.Library
           }
         }
       }
-
-        void D3DTexture_Disposing(object sender, EventArgs e)
-        {
-            // D3D has disposed of this texture! notify so that things are kept up to date
-            Dispose();
-        }
 
       /// <summary>
       /// property to get/set the duration for this frame
@@ -175,8 +161,7 @@ namespace MediaPortal.GUI.Library
           {
             if (!_image.Disposed)
             {
-                _image.Disposing -= new EventHandler(D3DTexture_Disposing);
-                _image.Dispose();
+              _image.Dispose();
             }
           }
           catch (Exception)
@@ -261,16 +246,10 @@ namespace MediaPortal.GUI.Library
       set
       {
         Dispose();      // cleanup..
+        _listFrames.Clear();
         _listFrames.Add(value);
-        value.Disposed += new EventHandler(frame_Disposed);
       }
     }
-
-      void frame_Disposed(object sender, EventArgs e)
-      {
-          // AB - if for some reason we get this event, it means D3D has released the texture in one Frame. In that case, just dispose the whole CachedTexture
-          Dispose();
-      }
 
     /// <summary>
     /// Get/set the GDI Image 
@@ -314,7 +293,7 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
-    /// Get/set the number of frames out of which the texture exists.
+    /// Get/set the number of frames out of which the texture exsists.
     /// </summary>
     public int Frames
     {
@@ -337,20 +316,15 @@ namespace MediaPortal.GUI.Library
         if (index < 0) return;
 
         if (_listFrames.Count <= index)
-        {
-            _listFrames.Add(value);
-            value.Disposed += new EventHandler(frame_Disposed);
-        }
+          _listFrames.Add(value);
         else
         {
-            Frame frame = _listFrames[index];
-            if (frame != value)
-            {
-                frame.Disposed -= new EventHandler(frame_Disposed);
-                frame.Dispose();
-                _listFrames[index] = value;
-                value.Disposed += new EventHandler(frame_Disposed);
-            }
+          Frame frame = _listFrames[index];
+          if (frame != value)
+          {
+            frame.Dispose();
+            _listFrames[index] = value;
+          }
         }
       }
     }
@@ -367,7 +341,6 @@ namespace MediaPortal.GUI.Library
       {
         if (tex != null)
         {
-          tex.Disposed -= new EventHandler(frame_Disposed);
           tex.Dispose();
         }
       }
@@ -384,7 +357,6 @@ namespace MediaPortal.GUI.Library
         }
         _gdiBitmap = null;
       }
-      if (Disposed != null) Disposed(this, new EventArgs());
     }
     #endregion
   }
