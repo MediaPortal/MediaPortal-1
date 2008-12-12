@@ -8,12 +8,19 @@
     <Channel id="film@tv2.no" siteId="93" />
     <Channel id="viasat4@viasat.no" siteId="100" />
     <Channel id="action@tv1000.no" siteId="78" />
-    <Channel id="dr1@dr.dk" siteId="101" />
+    <Channel id="aljazint.int" siteId="114" />
+    <Channel id="bbcenter@bbc.co.uk" siteId="115" />
+    <Channel id="bbchd@bbc.co.uk" siteId="119" />
+    <Channel id="bbcknow@bbc.co.uk" siteId="118" />
+    <Channel id="bbclife@bbc.co.uk" siteId="117" />
     <Channel id="classic@tv1000.no" siteId="79" />
+    <Channel id="dr1@dr.dk" siteId="101" />
     <Channel id="explorer@viasat.no" siteId="66" />
+    <Channel id="eurosport2@eurosport.com" siteId="86" />
     <Channel id="family@tv1000.no" siteId="80" />
     <Channel id="drama@canalplus.no" siteId="103" />
     <Channel id="first@canalplus.no" siteId="104" />
+    <Channel id="thehistorychannel.co.uk" siteId="97" />
     <Channel id="hits@canalplus.no" siteId="110" />
     <Channel id="comedy@canalplus.no" siteId="105" />
     <Channel id="action@canalplus.no" siteId="109" />
@@ -23,11 +30,18 @@
     <Channel id="nordic@tv1000.no" siteId="76" />
     <Channel id="nyhetskanalen@tv2.no" siteId="94" />
     <Channel id="playhouse@disney.no" siteId="89" />
+    <Channel id="showtime" siteId="83" />
+    <Channel id="silver@no" siteId="96" />
     <Channel id="sport@tv2.no" siteId="95" />
     <Channel id="sport1@canalplus.no" siteId="106" />
     <Channel id="sport2@canalplus.no" siteId="88" />
     <Channel id="sporthd@canalplus.no" siteId="111" />
+    <Channel id="thevoice.no" siteId="84" />
     <Channel id="toon@disney.no" siteId="85" />
+    <Channel id="vianatcrime@viasat.no" siteId="102" />
+    <Channel id="viagolf@viasat.no" siteId="113" />
+    <Channel id="viaspohd@viasat.no" siteId="116" />
+    <Channel id="viatv6@viasat.no" siteId="90" />
   </Channels>
 
   <Listing type="Html">
