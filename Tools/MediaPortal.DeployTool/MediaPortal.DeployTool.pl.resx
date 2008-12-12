@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="WatchTV_labelSectionHeader" xml:space="preserve">
-    <value>Czy chcesz ogladać telewizję przy pomocy MediaPortal ?</value>
+    <value>Czy chcesz oglądać telewizję przy pomocy MediaPortal ?</value>
   </data>
   <data name="WatchTV_on" xml:space="preserve">
     <value>Tak - chcę używać MediaPortal do oglądania telewizji.</value>
@@ -127,19 +127,19 @@
     <value>Nie - nie chcę używać MediaPortal do oglądania telewizji.</value>
   </data>
   <data name="WatchHDTv_labelSectionHeader" xml:space="preserve">
-    <value>Czy chcesz oglądac telewizję HDTV używajac MediaPortal ?</value>
+    <value>Czy chcesz oglądać telewizję HDTV używając MediaPortal?</value>
   </data>
   <data name="WatchHDTv_yes" xml:space="preserve">
-    <value>Tak - bedę używal MediaPortal do oglądania programow HD.</value>
+    <value>Tak - będę używał MediaPortal do oglądania programów HD.</value>
   </data>
   <data name="WatchHDTv_no" xml:space="preserve">
-    <value>Nie - nie bedę używal MediaPortal do oglądania programów HD.</value>
+    <value>Nie - nie będę używał MediaPortal do oglądania programów HD.</value>
   </data>
   <data name="WatchHDTv_maybe" xml:space="preserve">
-    <value>Nie wiem co to są programy HD.</value>
+    <value>Nie wiem, czym są programy HD.</value>
   </data>
   <data name="TvEngineType_labelSectionHeader" xml:space="preserve">
-    <value>Którą TV-Engine chcesz używać ?</value>
+    <value>Którą TV-Engine chcesz używać?</value>
   </data>
   <data name="TvEngineType_rbTvBuildIn" xml:space="preserve">
     <value>Wbudowany TV-Plugin dla MediaPortal 1.0.</value>
@@ -148,86 +148,96 @@
     <value>MediaPortal TV-Server 1.0</value>
   </data>
   <data name="TvEngineType_labelTvEngine" xml:space="preserve">
-    <value>Różnice miedzy TV-Server 1.0 oraz zainstalownym TV-Plugin razem z MediaPortal 1.0:
-+ pełny DVB-subtitle support
-+ support  HD-TV (dvb-s2 / h.264) and AAC audio (Norwegia, Nowa  Zelandia, Australia)
-+ hybrid tuner support (karty z funkcją DVB oraz analogową)
+    <value>Różnice między TV-Server 1.0 oraz zainstalowanym TV-Plugin razem z MediaPortal 1.0:
++ pełne wsparcie DVB-subtitle
++ wsparcie HD-TV (dvb-s2 / h.264) oraz AAC audio (Norwegia, Nowa  Zelandia, Australia)
++ wsparcie hybrid tuner (karty z funkcją DVB oraz analogową)
 + automatyczne rozpoznawanie kart telewizyjnych  (analogowe, DVB-C, -S, -S2, -T, ATSC)
-+ ATSC QAM (telewizja kablowa) support
-+ pozwala na zapis plikow .mpg lub .ts
-+ ATSC/DVB pozwala na oglądanie/zapisywanie wielu kanalów znajdujących się na tym samym transponderze/mux.
-+ pozwala na przeslanie telewizji do wielu clientów
++ wsparcie ATSC QAM (telewizja kablowa)
++ pozwala na zapis plików .mpg lub .ts
++ ATSC/DVB pozwala na oglądanie/zapisywanie wielu kanałów znajdujących się na tym samym transponderze/mux.
++ pozwala na przesłanie telewizji do wielu klientów
 - wymaga zainstalowania MySQL albo MS-SQL (zostaje zainstalowany automatycznie jeśli nie został zainstalowany wcześniej)
 
 TV-Server zastępuje całkowicie TV-Plugin i integruje się całkowicie w MediaPortal. </value>
   </data>
   <data name="BaseInstallationNoTvEngine_labelOneClickDesc" xml:space="preserve">
-    <value>Wszystkie konieczne podprogramy będą zainstalowane w standardowych folderach ze standartowymi nastawieniami.</value>
+    <value>Wszystkie konieczne podprogramy będą zainstalowane w standardowych folderach ze standardowymi nastawieniami.</value>
   </data>
   <data name="BaseInstallationNoTvEngine_labelAdvancedDesc" xml:space="preserve">
-    <value>Instalacja zaawansowana pozwoli na zmianę miejsca instalacji oraz nastawień</value>
+    <value>Instalacja zaawansowana pozwoli na zmianę miejsca instalacji oraz ustawień</value>
   </data>
   <data name="BaseInstallation_labelAdvancedCaption" xml:space="preserve">
     <value>Instalacja zaawansowana</value>
   </data>
   <data name="BaseInstallation_labelAdvancedDesc" xml:space="preserve">
-    <value>Instalacja zaawansowana pozwala na instalację Server/Client setupu oraz wyboru miejsca instalacji oraz innych ustawień</value>
+    <value>Instalacja zaawansowana pozwala na instalację konfiguracji Serwer/Klient oraz wyboru miejsca instalacji i innych ustawień</value>
   </data>
   <data name="BaseInstallation_labelOneClickCaption" xml:space="preserve">
-    <value>Instalacja expresowa</value>
+    <value>Instalacja ekspresowa</value>
   </data>
   <data name="BaseInstallation_labelOneClickDesc" xml:space="preserve">
-    <value>Wszystkie potrzebne podprogramy będą zainstalowane w standartowych folderach ze standartowymi nastawieniami. Hasło bazy danych jest "MediaPortal". </value>
+    <value>Wszystkie potrzebne podprogramy będą zainstalowane w standardowych folderach ze standardowymi nastawieniami. Hasło bazy danych jest "MediaPortal". </value>
   </data>
   <data name="BaseInstallation_rbAdvanced" xml:space="preserve">
     <value>Wykonanie instalacji zaawansowanej</value>
   </data>
   <data name="BaseInstallation_rbOneClick" xml:space="preserve">
-    <value>Wykonanie Instalacji expresowej</value>
+    <value>Wykonanie instalacji ekspresowej</value>
   </data>
   <data name="CustomInstallation_labelSectionHeader" xml:space="preserve">
     <value>Proszę wybrać rodzaj instalacji:</value>
   </data>
   <data name="CustomInstallation_rbClient" xml:space="preserve">
-    <value>Client MediaPortal</value>
+    <value>Klient MediaPortal</value>
   </data>
   <data name="CustomInstallation_labelClient" xml:space="preserve">
     <value>Ta opcja zainstaluje tylko MediaPortal 1.0. Aby oglądać telewizję nastąpi połączenie z TV-Server poprzez LAN.</value>
   </data>
   <data name="CustomInstallation_rbSingleSeat" xml:space="preserve">
-    <value>Instalacja singleseat</value>
+    <value>Instalacja jednostanowiskowa</value>
   </data>
   <data name="CustomInstallation_labelSingleSeat" xml:space="preserve">
-    <value>To jest własciwa instalacja jeśli masz zamontowane karty telewizyjne na tym komputerze na którym chcesz
-rownierz ogladać programy telewizyjne.</value>
+    <value>To jest właściwa instalacja jeśli masz zamontowane karty telewizyjne na tym komputerze i chcesz na nim oglądać
+również programy telewizyjne.</value>
   </data>
   <data name="CustomInstallation_rbTvServerMaster" xml:space="preserve">
     <value>Obecny TV-Server (master)</value>
   </data>
   <data name="CustomInstallation_labelMaster" xml:space="preserve">
     <value>Ta opcja zainstaluje tylko MediaPortal TV-Server na Twoim komputerze.
-Ten komputerem będzie pełnił tylko rolę servera oraz będzie dostarczał programów telewizyjnych innym komputerom w Twojej sieci komputerowej (baza danych musi być zainstalowana na tym komputerze)</value>
+Ten komputerem będzie pełnił tylko rolę serwera oraz będzie dostarczał programy telewizyjne innym komputerom w Twojej sieci komputerowej (baza danych musi być zainstalowana na tym komputerze)</value>
+  </data>
+  <data name="CustomInstallation_rbTvServerSlave" xml:space="preserve">
+    <value>Obecny TV-Server w trybie slave - obecnie potrzebny TV-Server w trybie master</value>
+  </data>
+  <data name="CustomInstallation_labelSlave" xml:space="preserve">
+    <value>Ta opcja zainstaluje na Twoim komputerze MediaPortal TV-Server.
+Ten komputer będzie pełnił tylko rolę serwera oraz będzie dostarczał programy telewizyjne innym komputerom w Twojej sieci komputerowej (baza danych nie musi być zainstalowana na tym komputerze)</value>
   </data>
   <data name="DBMSSettings_buttonBrowse" xml:space="preserve">
     <value>Szukaj</value>
   </data>
   <data name="DBMSSettings_checkBoxFirewall" xml:space="preserve">
-    <value>Konfigurowanie Windows Firewall w celu umożliwienia dostępu do database server.</value>
+    <value>Konfigurowanie Windows Firewall w celu umożliwienia dostępu do serwera bazy danych.</value>
   </data>
   <data name="DBMSSettings_errInvalidInstallationPath" xml:space="preserve">
     <value>Wybierz miejsce instalacji SQL-Server.</value>
   </data>
   <data name="DBMSSettings_errPasswordMissing" xml:space="preserve">
-    <value>Wpisz hasło dla użytkownika bazy SQL-Server </value>
+    <value>Wpisz hasło dla użytkownika "sa" bazy SQL-Server </value>
   </data>
   <data name="DBMSSettings_labelHeading" xml:space="preserve">
     <value>Wybierz opcje instalacji SQL-Server</value>
   </data>
   <data name="DBMSSettings_labelInstDir" xml:space="preserve">
-    <value>Miejsce Instalacji</value>
+    <value>Miejsce instalacji</value>
   </data>
   <data name="DBMSSettings_labelPassword" xml:space="preserve">
-    <value>Haslo dla użytkownika bazy SQL Server</value>
+    <value>Hasło dla użytkownika "sa" bazy SQL Server</value>
+  </data>
+  <data name="DBMSSettings_labelPasswordDesc" xml:space="preserve">
+    <value>( Hasło dla użytkownika admin-user bazy SQL-Server. Standardowo jest "MediaPortal")</value>
   </data>
   <data name="DBMSSettings_msgSelectDir" xml:space="preserve">
     <value>Proszę wybierz miejsce instalacji dla SQL-Server</value>
@@ -242,19 +252,19 @@ Ten komputerem będzie pełnił tylko rolę servera oraz będzie dostarczał pro
     <value>MySQL 5</value>
   </data>
   <data name="DBMSType_rbDBAlreadyInstalled" xml:space="preserve">
-    <value>SQL jest zainstalowany na Twoim systemie i bedzie używany razem z TV-Server</value>
+    <value>SQL jest zainstalowany w Twoim systemie i będzie używany razem z TV-Server</value>
   </data>
   <data name="Finished_labelHeading1" xml:space="preserve">
-    <value>Gratulacje !</value>
+    <value>Gratulacje!</value>
   </data>
   <data name="Finished_labelHeading2_install" xml:space="preserve">
     <value>Zakończyłeś z sukcesem instalację MediaPortal</value>
   </data>
-  <data name="Finished_labelHeading3_install" xml:space="preserve">
-    <value>Poniżej znajduje sie parę linków ktore mogą być pomocne przy uruchamianiu MediaPortal</value>
+  <data name="Finished_labelHeading3" xml:space="preserve">
+    <value>Poniżej znajduje się kilka linków, które mogą być pomocne przy uruchamianiu MediaPortal</value>
   </data>
   <data name="Finished_linkForum" xml:space="preserve">
-    <value>Forum MediaPortal </value>
+    <value>Forum MediaPortal</value>
   </data>
   <data name="Finished_linkHomepage" xml:space="preserve">
     <value>Strona internetowa MediaPortal.</value>
@@ -266,7 +276,7 @@ Ten komputerem będzie pełnił tylko rolę servera oraz będzie dostarczał pro
     <value>Skasuj</value>
   </data>
   <data name="HTTPDownload_errDownloadFailed" xml:space="preserve">
-    <value>Natąpiło zakłócenie ściągania wybranego pliku.</value>
+    <value>Nastąpiło zakłócenie ściągania wybranego pliku.</value>
   </data>
   <data name="HTTPDownload_labelSourceURL" xml:space="preserve">
     <value>Link:</value>
@@ -275,7 +285,7 @@ Ten komputerem będzie pełnił tylko rolę servera oraz będzie dostarczał pro
     <value>Cel:</value>
   </data>
   <data name="HTTPDownload_msgCanceledByUser" xml:space="preserve">
-    <value>ściaganie zakończone przez użytkownika</value>
+    <value>Ściąganie zakończone przez użytkownika</value>
   </data>
   <data name="HTTPDownload_Title" xml:space="preserve">
     <value>Ściąganie pliku...</value>
@@ -290,7 +300,7 @@ Ten komputerem będzie pełnił tylko rolę servera oraz będzie dostarczał pro
     <value>&lt;bez akcji&gt;</value>
   </data>
   <data name="Install_actionUninstallDownloadInstall" xml:space="preserve">
-    <value>Najpierw deinstalacja -&gt;sciąganie-&gt;instalacja</value>
+    <value>Najpierw deinstalacja -&gt;ściąganie-&gt;instalacja</value>
   </data>
   <data name="Install_actionUninstallInstall" xml:space="preserve">
     <value>Najpierw deinstalacja -&gt;Instalacja</value>
@@ -317,7 +327,7 @@ Ten komputerem będzie pełnił tylko rolę servera oraz będzie dostarczał pro
     <value>Programu nie zainstalowano [{0}]</value>
   </data>
   <data name="Install_labelHeadingInstall" xml:space="preserve">
-    <value>Naciśnij "instaluj" aby zainicjalizować instalację</value>
+    <value>Naciśnij "instaluj" aby rozpocząć instalację</value>
   </data>
   <data name="Install_msgDownloading" xml:space="preserve">
     <value>Ściąganie...</value>
@@ -344,7 +354,7 @@ Ten komputerem będzie pełnił tylko rolę servera oraz będzie dostarczał pro
     <value>Wróć</value>
   </data>
   <data name="MainWindow_buttonClose" xml:space="preserve">
-    <value>Wyjdż</value>
+    <value>Wyjdź</value>
   </data>
   <data name="MainWindow_labelAppHeading" xml:space="preserve">
     <value>Ten program będzie Cię prowadził przez instalację MediaPortal i wszystkich potrzebnych podprogramów.</value>
@@ -362,7 +372,7 @@ Ten komputerem będzie pełnił tylko rolę servera oraz będzie dostarczał pro
     <value>Naciśnij "dalej" po ściągnięciu potrzebnych plików</value>
   </data>
   <data name="ManualDownload_labelHeading" xml:space="preserve">
-    <value>Ściagnij ręcznie następujacy plik</value>
+    <value>Ściągnij ręcznie następujący plik</value>
   </data>
   <data name="ManualDownload_linkDir" xml:space="preserve">
     <value>Otwórz folder</value>
@@ -380,7 +390,7 @@ Ten komputerem będzie pełnił tylko rolę servera oraz będzie dostarczał pro
     <value>Wybierz właściwy folder instalacji MediaPortal.</value>
   </data>
   <data name="MPSettings_labelHeading" xml:space="preserve">
-    <value>Proszę wybrac wszystkie potrzebne opcje instalacji MediaPortal:</value>
+    <value>Proszę wybrać wszystkie potrzebne opcje instalacji MediaPortal:</value>
   </data>
   <data name="MPSettings_labelInstDir" xml:space="preserve">
     <value>Folder instalacji MediaPortal:</value>
@@ -392,13 +402,13 @@ Ten komputerem będzie pełnił tylko rolę servera oraz będzie dostarczał pro
     <value>Szukaj</value>
   </data>
   <data name="TvServerSettings_checkBoxFirewall" xml:space="preserve">
-    <value>Skonfiguruj Windows Firewall tak aby TV-Server mial kontakt z internetem</value>
+    <value>Skonfiguruj Windows Firewall tak, aby TV-Server miał dostęp do Internetu</value>
   </data>
   <data name="TvServerSettings_errInvalidPath" xml:space="preserve">
-    <value>Wybierz wlaściwy folder instalacji TV-Server.</value>
+    <value>Wybierz właściwy folder instalacji TV-Server.</value>
   </data>
   <data name="TvServerSettings_labelHeading" xml:space="preserve">
-    <value>Prosze wybrać potrzebne opcje instalacji TV-Server </value>
+    <value>Proszę wybrać potrzebne opcje instalacji TV-Server </value>
   </data>
   <data name="TvServerSettings_labelInstDir" xml:space="preserve">
     <value>Folder instalacji TV-Server:</value>
@@ -407,16 +417,16 @@ Ten komputerem będzie pełnił tylko rolę servera oraz będzie dostarczał pro
     <value>Wybierz folder gdzie zainstalujesz TV-Server</value>
   </data>
   <data name="Welcome_labelHeading1" xml:space="preserve">
-    <value>Dziękujemy za zdecydowanie sie na MediaPortal...... DARMOWY OpenSource MediaCenter!</value>
+    <value>Dziękujemy za wybranie MediaPortal...... DARMOWY OpenSource MediaCenter!</value>
   </data>
   <data name="Welcome_labelHeading2" xml:space="preserve">
-    <value>Ten program poprowadzi Ciebie przez wszystkie procedury instalacyjne</value>
+    <value>Ten program poprowadzi Cię przez wszystkie procedury instalacyjne</value>
   </data>
   <data name="Welcome_labelHeading3" xml:space="preserve">
     <value>Proszę wybierz język zanim rozpoczniesz instalację</value>
   </data>
   <data name="Finished_labelEbay" xml:space="preserve">
-    <value>MediaPortal jest oprogramowaniem darmowym ! Jeśli go kupileś zostałeś oszukany!</value>
+    <value>MediaPortal jest oprogramowaniem darmowym! Jeśli go kupiłeś zostałeś oszukany!</value>
   </data>
   <data name="Install_actionConfigure" xml:space="preserve">
     <value>Skonfiguruj</value>
@@ -425,10 +435,10 @@ Ten komputerem będzie pełnił tylko rolę servera oraz będzie dostarczał pro
     <value>Skasuj</value>
   </data>
   <data name="Install_errConfigureFailed" xml:space="preserve">
-    <value>Konfiguracja nie została dokonana</value>
+    <value>Konfiguracja nie została zakończona</value>
   </data>
   <data name="Install_errRemoveFailed" xml:space="preserve">
-    <value>Deinstalacja nie została dokonana</value>
+    <value>Deinstalacja nie została zakończona</value>
   </data>
   <data name="Install_msgConfiguring" xml:space="preserve">
     <value>Konfiguracja</value>
@@ -446,10 +456,10 @@ Ten komputerem będzie pełnił tylko rolę servera oraz będzie dostarczał pro
     <value>Deinstalacja</value>
   </data>
   <data name="DownloadOnly_labelSectionHeader" xml:space="preserve">
-    <value>Potrzebny jest dostęp do internetu aby przeprowadzić instalację.
+    <value>Potrzebny jest dostęp do Internetu, aby przeprowadzić instalację.
 
-Czy chcesz rozpocząc instalację czy chcesz tylko ściągnąc potrzebne podprogramy aby zainstalować póżniej ?
-(np. na komputerze bez złącza internetowego)</value>
+Czy chcesz rozpocząć instalację czy chcesz tylko ściągnąć potrzebne podprogramy aby zainstalować później?
+(np. na komputerze bez łącza internetowego)</value>
   </data>
   <data name="DownloadOnly_no" xml:space="preserve">
     <value>Tylko ściąganie potrzebnych podprogramów</value>
@@ -470,25 +480,22 @@ Czy chcesz rozpocząc instalację czy chcesz tylko ściągnąc potrzebne podprog
     <value>Nie ściągnięto</value>
   </data>
   <data name="Finished_labelHeading2_download" xml:space="preserve">
-    <value>Sciągnąłeś wszystkie potrzebne podprogramy do MediaPortal </value>
+    <value>Ściągnąłeś wszystkie potrzebne podprogramy do MediaPortal </value>
   </data>
   <data name="Install_labelHeadingDownload" xml:space="preserve">
     <value>Naciśnij przycisk "download" aby rozpocząć ściąganie wszystkich potrzebnych plików</value>
   </data>
   <data name="OS_Support" xml:space="preserve">
-    <value>Niestety Twój system operacyjny nie działa obecnie z MediaPortal !</value>
+    <value>Niestety Twój system operacyjny nie działa obecnie z MediaPortal!</value>
   </data>
   <data name="OS_Warning" xml:space="preserve">
-    <value>Twój system operacyjny nie będzie działal prawidlowo ponieważ Microsoft nie wydał szereg potrzebnych plików hotfix.
-Możesz kontynuowac na własne ryzyko.</value>
+    <value>Twój system operacyjny nie będzie działał prawidłowo ponieważ Microsoft nie wydał szeregu potrzebnych plików poprawek (hotfix).
+Możesz kontynuować na własne ryzyko.</value>
   </data>
   <data name="DownloadSettings_failed" xml:space="preserve">
-    <value>Ściaganie plikow nie zostało zakończone.
-Proszę przejrzyj nastawienia Internet Explorer.
-Błędny plik konfiguracyjny, jeśli zostal znaleziony, nie będzie usunięty.
+    <value>Ściąganie plików nie zostało zakończone.
+Proszę przejrzyj ustawienia Internet Explorer.
+Błędny plik konfiguracyjny, jeśli został znaleziony, nie będzie usunięty.
 </value>
-  </data>
-  <data name="MPSettings_checkBoxFirewall" xml:space="preserve">
-    <value>Skonfiguruj Windows Firewall tak aby MediaPortal mial kontakt z internetem</value>
   </data>
 </root>
