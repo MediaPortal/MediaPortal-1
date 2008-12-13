@@ -188,13 +188,12 @@ namespace MediaPortal.GUI.Library
       return fileName;
     }
 
-
     public static int Load(string fileNameOrg, long lColorKey, int iMaxWidth, int iMaxHeight)
     {
       return Load(fileNameOrg, lColorKey, iMaxWidth, iMaxHeight, false);
     }
 
-    private static int Load(string fileNameOrg, long lColorKey, int iMaxWidth, int iMaxHeight, bool persistent)
+    public static int Load(string fileNameOrg, long lColorKey, int iMaxWidth, int iMaxHeight, bool persistent)
     {
       string fileName = GetFileName(fileNameOrg);
       if (String.IsNullOrEmpty(fileName)) return 0;
