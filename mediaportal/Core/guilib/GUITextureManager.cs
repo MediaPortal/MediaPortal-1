@@ -228,64 +228,64 @@ namespace MediaPortal.GUI.Library
           {
             Log.Warn("TextureManager: Fast loading texture {0} failed using safer fallback", fileName);
             theImage = Image.FromFile(fileName);
-            if (theImage != null)
+          }
+          if (theImage != null)
+          {
+            CachedTexture newCache = new CachedTexture();
+
+            newCache.Name = fileName;
+            FrameDimension oDimension = new FrameDimension(theImage.FrameDimensionsList[0]);
+            newCache.Frames = theImage.GetFrameCount(oDimension);
+            int[] frameDelay = new int[newCache.Frames];
+            for (int num2 = 0; (num2 < newCache.Frames); ++num2) frameDelay[num2] = 0;
+
+            int num1 = 20736;
+            PropertyItem item1 = theImage.GetPropertyItem(num1);
+            if (item1 != null)
             {
-              CachedTexture newCache = new CachedTexture();
-
-              newCache.Name = fileName;
-              FrameDimension oDimension = new FrameDimension(theImage.FrameDimensionsList[0]);
-              newCache.Frames = theImage.GetFrameCount(oDimension);
-              int[] frameDelay = new int[newCache.Frames];
-              for (int num2 = 0; (num2 < newCache.Frames); ++num2) frameDelay[num2] = 0;
-
-              int num1 = 20736;
-              PropertyItem item1 = theImage.GetPropertyItem(num1);
-              if (item1 != null)
+              byte[] buffer1 = item1.Value;
+              for (int num2 = 0; (num2 < newCache.Frames); ++num2)
               {
-                byte[] buffer1 = item1.Value;
-                for (int num2 = 0; (num2 < newCache.Frames); ++num2)
-                {
-                  frameDelay[num2] = (((buffer1[(num2 * 4)] + (256 * buffer1[((num2 * 4) + 1)])) + (65536 * buffer1[((num2 * 4) + 2)])) + (16777216 * buffer1[((num2 * 4) + 3)]));
-                }
+                frameDelay[num2] = (((buffer1[(num2 * 4)] + (256 * buffer1[((num2 * 4) + 1)])) + (65536 * buffer1[((num2 * 4) + 2)])) + (16777216 * buffer1[((num2 * 4) + 3)]));
               }
-              for (int i = 0; i < newCache.Frames; ++i)
-              {
-                theImage.SelectActiveFrame(oDimension, i);
-
-                //load gif into texture
-                using (MemoryStream stream = new MemoryStream())
-                {
-                  theImage.Save(stream, ImageFormat.Png);
-                  ImageInformation info2 = new ImageInformation();
-                  stream.Flush();
-                  stream.Seek(0, SeekOrigin.Begin);
-                  Direct3D.Texture texture = TextureLoader.FromStream(
-                                                                    GUIGraphicsContext.DX9Device,
-                                                                    stream,
-                                                                    0, 0,//width/height
-                                                                    1,//mipslevels
-                                                                    0,//Usage.Dynamic,
-                                                                    Direct3D.Format.A8R8G8B8,
-                                                                    GUIGraphicsContext.GetTexturePoolType(),
-                                                                    Filter.None,
-                                                                    Filter.None,
-                                                                    (int)lColorKey,
-                                                                    ref info2);
-                  newCache.Width = info2.Width;
-                  newCache.Height = info2.Height;
-                  newCache[i] = new CachedTexture.Frame(fileName, texture, (frameDelay[i] / 5) * 50);
-                }
-              }
-
-              theImage.Dispose();
-              theImage = null;
-              if (persistent && !_persistentTextures.ContainsKey(newCache.Name))
-                _persistentTextures.Add(newCache.Name, true);
-              _cache.Add(newCache);
-
-              //Log.Info("  TextureManager:added:" + fileName + " total:" + _cache.Count + " mem left:" + GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
-              return newCache.Frames;
             }
+            for (int i = 0; i < newCache.Frames; ++i)
+            {
+              theImage.SelectActiveFrame(oDimension, i);
+
+              //load gif into texture
+              using (MemoryStream stream = new MemoryStream())
+              {
+                theImage.Save(stream, ImageFormat.Png);
+                ImageInformation info2 = new ImageInformation();
+                stream.Flush();
+                stream.Seek(0, SeekOrigin.Begin);
+                Direct3D.Texture texture = TextureLoader.FromStream(
+                                                                  GUIGraphicsContext.DX9Device,
+                                                                  stream,
+                                                                  0, 0,//width/height
+                                                                  1,//mipslevels
+                                                                  0,//Usage.Dynamic,
+                                                                  Direct3D.Format.A8R8G8B8,
+                                                                  GUIGraphicsContext.GetTexturePoolType(),
+                                                                  Filter.None,
+                                                                  Filter.None,
+                                                                  (int)lColorKey,
+                                                                  ref info2);
+                newCache.Width = info2.Width;
+                newCache.Height = info2.Height;
+                newCache[i] = new CachedTexture.Frame(fileName, texture, (frameDelay[i] / 5) * 50);
+              }
+            }
+
+            theImage.Dispose();
+            theImage = null;
+            if (persistent && !_persistentTextures.ContainsKey(newCache.Name))
+              _persistentTextures.Add(newCache.Name, true);
+            _cache.Add(newCache);
+
+            //Log.Info("  TextureManager:added:" + fileName + " total:" + _cache.Count + " mem left:" + GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
+            return newCache.Frames;
           }
         }
         catch (Exception ex)
