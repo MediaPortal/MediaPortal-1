@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <profile>
   <section name="ChannelInfo">
-    <entry name="TotalChannels">1370</entry>
+    <entry name="TotalChannels">1379</entry>
   </section>
   <section name="0">
     <entry name="ChannelID">1@betv.be</entry>
@@ -5483,6 +5483,42 @@
     <entry name="ChannelID">sport2@canalplus.no</entry>
     <entry name="FullName">Canal+ Sport 2</entry>
   </section>
+    <section name="1370">
+    <entry name="ChannelID">aljazint.int</entry>
+    <entry name="FullName">Aljazint</entry>
+  </section>
+    <section name="1371">
+    <entry name="ChannelID">bbcenter@bbc.co.uk</entry>
+    <entry name="FullName">BBC Enter</entry>
+  </section>
+    <section name="1372">
+    <entry name="ChannelID">bbcknow@bbc.co.uk</entry>
+    <entry name="FullName">BBC Know</entry>
+  </section>
+    <section name="1373">
+    <entry name="ChannelID">bbclife@bbc.co.uk</entry>
+    <entry name="FullName">BBC Life</entry>
+  </section>
+    <section name="1374">
+    <entry name="ChannelID">silver@no</entry>
+    <entry name="FullName">Silver</entry>
+  </section>
+    <section name="1375">
+    <entry name="ChannelID">viagolf@viasat.no</entry>
+    <entry name="FullName">Viasat Golf</entry>
+  </section>
+    <section name="1376">
+    <entry name="ChannelID">vianatcrime@viasat.no</entry>
+    <entry name="FullName">Viasat Nature</entry>
+  </section>
+    <section name="1377">
+    <entry name="ChannelID">viaspohd@viasat.no</entry>
+    <entry name="FullName">Viasat Sport HD</entry>
+  </section>
+    <section name="1378">
+    <entry name="ChannelID">viatv6@viasat.no</entry>
+    <entry name="FullName">Viasat TV6</entry>
+  </section>
   <section name=".svn">
     <entry name="TotalChannels">0</entry>
   </section>
@@ -6695,7 +6731,7 @@
     <entry name="66">1251</entry>
   </section>
   <section name="NO">
-    <entry name="TotalChannels">91</entry>
+    <entry name="TotalChannels">100</entry>
     <entry name="0">24</entry>
     <entry name="1">25</entry>
     <entry name="2">60</entry>
@@ -6787,6 +6823,15 @@
     <entry name="88">1367</entry>
     <entry name="89">1368</entry>
     <entry name="90">1369</entry>
+    <entry name="91">1370</entry>
+    <entry name="92">1371</entry>
+    <entry name="93">1372</entry>
+    <entry name="94">1373</entry>
+    <entry name="95">1374</entry>
+    <entry name="96">1375</entry>
+    <entry name="97">1376</entry>
+    <entry name="98">1377</entry>
+    <entry name="99">1378</entry>
   </section>
   <section name="NZ">
     <entry name="TotalChannels">6</entry>
