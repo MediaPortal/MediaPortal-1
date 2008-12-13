@@ -2849,6 +2849,7 @@ namespace TvPlugin
               else
               {
                 // zap to selected show's channel
+                TVHome.UserChannelChanged = true; // fixing mantis 1874: TV doesn't start when from other playing media to TVGuide & select program 
                 TVHome.ViewChannelAndCheck(_currentProgram.ReferencedChannel());
                 if (g_Player.Playing)
                 {
