@@ -809,6 +809,9 @@ namespace MediaPortal.Player
     /// </summary>
     public void FreeBass()
     {
+      // Remove the Vis Window, as it might interfere with the overlay of other plugins
+      RemoveVisualizationWindow();
+
       if (!_BassFreed)
       {
         Log.Info("BASS: Freeing BASS. Non-audio media playback requested.");
