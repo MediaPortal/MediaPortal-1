@@ -2651,6 +2651,7 @@ namespace TvPlugin
 
     void OnSelectItem(bool isItemSelected)
     {
+      TVHome.Navigator.UpdateCurrentChannel();
       if (_currentProgram == null)
         return;
       if (isItemSelected)
@@ -2814,7 +2815,7 @@ namespace TvPlugin
             else
             {
               // clicked the show we're currently watching
-              if (TVHome.Navigator.CurrentChannel == _currentChannel)
+              if (TVHome.Navigator.CurrentChannel == _currentChannel && g_Player.Playing)
               {
                 Log.Debug("TVGuide: clicked on a currently running show");
                 GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
