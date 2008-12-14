@@ -587,7 +587,7 @@ namespace SetupTv.Sections
       this.groupBox9.Size = new System.Drawing.Size(464, 234);
       this.groupBox9.TabIndex = 38;
       this.groupBox9.TabStop = false;
-      this.groupBox9.Text = "Disyplay options";
+      this.groupBox9.Text = "Display options";
       // 
       // textBox1
       // 
