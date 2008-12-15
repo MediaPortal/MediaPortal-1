@@ -82,9 +82,9 @@ namespace SetupTv.Sections
       this.mpLabel3.AutoSize = true;
       this.mpLabel3.Location = new System.Drawing.Point(245, 42);
       this.mpLabel3.Name = "mpLabel3";
-      this.mpLabel3.Size = new System.Drawing.Size(156, 13);
+      this.mpLabel3.Size = new System.Drawing.Size(154, 13);
       this.mpLabel3.TabIndex = 13;
-      this.mpLabel3.Text = "Radio Stations mapped to card:";
+      this.mpLabel3.Text = "Radio stations mapped to card:";
       // 
       // mpListViewMapped
       // 
@@ -124,9 +124,9 @@ namespace SetupTv.Sections
       this.mpLabel2.AutoSize = true;
       this.mpLabel2.Location = new System.Drawing.Point(3, 42);
       this.mpLabel2.Name = "mpLabel2";
-      this.mpLabel2.Size = new System.Drawing.Size(79, 13);
+      this.mpLabel2.Size = new System.Drawing.Size(118, 13);
       this.mpLabel2.TabIndex = 11;
-      this.mpLabel2.Text = "Radio Stations:";
+      this.mpLabel2.Text = "Available radio stations:";
       // 
       // mpListViewChannels
       // 
