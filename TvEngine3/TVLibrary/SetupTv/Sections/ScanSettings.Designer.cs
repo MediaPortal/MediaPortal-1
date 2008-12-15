@@ -181,9 +181,9 @@ namespace SetupTv.Sections
       this.lblPriority.AutoSize = true;
       this.lblPriority.Location = new System.Drawing.Point(6, 22);
       this.lblPriority.Name = "lblPriority";
-      this.lblPriority.Size = new System.Drawing.Size(94, 13);
+      this.lblPriority.Size = new System.Drawing.Size(93, 13);
       this.lblPriority.TabIndex = 76;
-      this.lblPriority.Text = "TVService Priority:";
+      this.lblPriority.Text = "TVService priority:";
       // 
       // mpComboBoxPrio
       // 
@@ -242,15 +242,15 @@ namespace SetupTv.Sections
       this.groupBox6.Size = new System.Drawing.Size(464, 107);
       this.groupBox6.TabIndex = 80;
       this.groupBox6.TabStop = false;
-      this.groupBox6.Text = "Delay for TVcard detection";
+      this.groupBox6.Text = "Delay for TV card detection";
       // 
       // label45
       // 
       this.label45.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.label45.Location = new System.Drawing.Point(6, 16);
+      this.label45.Location = new System.Drawing.Point(6, 27);
       this.label45.Name = "label45";
-      this.label45.Size = new System.Drawing.Size(452, 46);
+      this.label45.Size = new System.Drawing.Size(452, 35);
       this.label45.TabIndex = 80;
       this.label45.Text = "Some cards (i.e. Hauppauge Nova-T 500) take a long time to initialize after stand" +
           "by. Therefore use this option below to force a delay should it be required.";
