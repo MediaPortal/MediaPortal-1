@@ -631,7 +631,7 @@
     <String id="740">Поглед: Ветрови</String>
     <String id="741">Поглед: Влажност</String>
     <String id="742">Поглед: Падежи</String>
-    <String id="743">4-дневна прогноза</String>
+    <String id="743">5 дневна прогноза</String>
     <String id="744">Изгрејсонце</String>
     <String id="745">Зајдисонце</String>
     <String id="746">макс.</String>
@@ -662,7 +662,7 @@
     <String id="772">Сакате да се обидете уште еднаш?</String>
     <String id="773">СТАРТ</String>
     <String id="774">КРАЈ</String>
-    <String id="775">Автоматски пушти го ТВ во отсеците на МојаТВ</String>
+    <String id="775">Автоматски пушти го ТВ (пр. за гледање EPG)?</String>
     <String id="776">Не започнувај / автоматски префрли на ТВ</String>
     <String id="777">Режим на врем. поместување</String>
     <String id="778">Овозможено автоматско почнување со врем. поместување</String>
@@ -799,6 +799,10 @@
     <String id="959">се придружи на разговорот</String>
     <String id="960">го напушти разговорот</String>
     <String id="961">MSN Статус</String>
+    <String id="965">Константен bit rate</String>
+    <String id="966">Променлив среден bit rate</String>
+    <String id="967">Променлив врв на bit rate</String>
+    <String id="968">Недефиниран</String>
     <String id="970">Претходен прозор</String>
     <String id="971">Група</String>
     <String id="972">Сите канали</String>
@@ -950,6 +954,7 @@
     <String id="1448">Одбери ниедно</String>
     <String id="1449">Запри снимање</String>
     <String id="1450">Дали сте сигурни дека сакате да запре снимањето?</String>
+    <String id="1499">Нема сигнал</String>
     <String id="1500">Не е можно стартување на врем.поместување</String>
     <String id="1501">Картата е онеспособена</String>
     <String id="1502">Нема слободна карта на располагање</String>
@@ -967,6 +972,7 @@
     <String id="1514">Времепоместување е запрено од некој\rадминистратор</String>
     <String id="1515">Времепоместување е запрено од \rTV-server</String>
     <String id="1516">Времепоместување е запрено поради некоја\rнепозната причина</String>
+    <String id="1517">Времепоместување е запрено од\rдруг корисник</String>
     <String id="1950" prefix="Мој ">Статус</String>
     <String id="1951">Хард диск</String>
     <String id="1952">Вентилатор</String>
@@ -1065,7 +1071,7 @@
     <String id="2071">Dvr-ms во mpeg</String>
     <String id="2072">Почни конвертирање</String>
     <String id="2073">Ве молам одберете ја dvr-ms датотеката што сакате да ја конвертирате: </String>
-    <String id="2074">Ве молам одберете ги датотеките што сакате да ги конвертирате во divx: </String>
+    <String id="2074">Ве молам одберете ги датотеките што сакате да ги споите: </String>
     <String id="2075">Дефинирај нови точки за отсекување</String>
     <String id="2076">Уредување</String>
     <String id="2077">Отсекување</String>
@@ -1181,6 +1187,10 @@
     <String id="2514">Назад до текстот</String>
     <String id="2515">Слики</String>
     <String id="2516" prefix="Моја ">Википедија</String>
+    <String id="2550">Дали сигурно сакате да заприте ТВ во живо?</String>
+    <String id="2551">(времепоместувњето ќе биде изгубено)</String>
+    <String id="2552">Стоп</String>
+    <String id="2553">Пушти</String>
     <String id="2599">Неодредено</String>
     <String id="2600">Англиски</String>
     <String id="2601">Германски</String>
@@ -1366,6 +1376,59 @@
     <String id="9009">Модел на камера: </String>
     <String id="9010">Производител: </String>
     <String id="9011">Види коментари: </String>
+	<String id="9100" prefix="My ">MiniDisplay</String>
+	<String id="9101">Приклучокот не е конфигуриран.</String>
+	<String id="9102">Ве молам прво стартувајте го MediaPortal Configuration!</String>
+	<String id="9103">Опции за Keypad</String>
+	<String id="9104">Опции за монитор</String>
+	<String id="9105">Опции за контрола на монитор</String>
+	<String id="9106">Опции за Equalizer</String>
+	<String id="9107">Опции за позадинско светло</String>
+	<String id="9108">Опции за далечинско</String>
+	<String id="9109">Состојби на напојување на монитор</String>
+	<String id="9110">Контраст</String>
+	<String id="9111">Осветленост</String>
+	<String id="9112">Црвена</String>
+	<String id="9113">Зелена</String>
+	<String id="9114">Сина</String>
+	<String id="9115">Инвертирај монитор</String>
+	<String id="9116">Црн монитор со видео</String>
+	<String id="9117">Овозможи акции на монитор</String>
+	<String id="9118">Времетраење на приказ на акции</String>
+	<String id="9119">Црн монитор во празен од</String>
+	<String id="9120">Одложи празен од</String>
+	<String id="9121">Приказ на јачина на звук</String>
+	<String id="9122">Приказ на прогрес</String>
+	<String id="9123">Икона за диск</String>
+	<String id="9124">Статус на медиј</String>
+	<String id="9125">Статус на CD/DVD</String>
+	<String id="9126">Користи одбран фонт</String>
+	<String id="9127">Користи големи икони</String>
+	<String id="9128">Користи избрани големи икони</String>
+	<String id="9129">Инвертирај големи икони</String>
+	<String id="9130">Уредувач на фонт</String>
+	<String id="9131">Уредувач на икони</String>
+	<String id="9132">Користи Equalizer</String>
+	<String id="9133">Стил на Equalizer</String>
+	<String id="9134">Користи мазнење од Equalizer</String>
+	<String id="9135">Почеток на одлагање</String>
+	<String id="9136">Одложено</String>
+	<String id="9137">Прикажи наслов</String>
+	<String id="9138">Време за наслов</String>
+	<String id="9139">Фреквенција за наслов</String>
+	<String id="9140">НЕМА ОПЦИИ ЗА KEYPAD</String>
+	<String id="9141">Овозможи Keypad</String>
+	<String id="9142">Custom Mapping</String>
+	<String id="9143">KeyPad Mapping</String>
+	<String id="9144">НЕМА ОПЦИИ ЗА ДАЛЕЧИНСКО</String>
+	<String id="9145">Оневозможи далечинско</String>
+	<String id="9146">Оневозможи повторување</String>
+	<String id="9147">Одложено повторување</String>
+	<String id="9148">Мапирање на далечинско</String>
+	<String id="9149">Нормално</String>
+	<String id="9150">Стерео</String>
+	<String id="9151">VU Метар</String>
+	<String id="9152">VU Метар 2</String>
     <String id="9997">Секунди: </String>
     <String id="9998">Минути: </String>
     <String id="9999">Часови: </String>         
@@ -1493,14 +1556,14 @@
     <String id="33008">Нема активна плејлиста</String>
     <String id="33009">за вметнување или додавање на нумера!</String>
     <String id="33010">Автоматски наполни плејлиста со</String>
-    <String id="33011">слични нумери</String>
-    <String id="33012">нумери што ги сака твоето соседство</String>
-    <String id="33013">tracks suiting configured tag</String>
-    <String id="33014">скоро пуштани нумери</String>
-    <String id="33016">нумери што ги сакаат твоите пријатели</String>
-    <String id="33017">случајни нумери</String>
-    <String id="33018">случајни неслушани нумери</String>
-    <String id="33019">случајни омилени нумери</String>
+    <String id="33011">Слични нумери</String>
+    <String id="33012">Нумери што ги сака твоето соседство</String>
+    <String id="33013">Нумери кои се совпаѓаат со кофигурираната етикета</String>
+    <String id="33014">Скоро пуштани нумери</String>
+    <String id="33016">Нумери што ги сакаат твоите пријатели</String>
+    <String id="33017">Случајни нумери</String>
+    <String id="33018">Случајни неслушани нумери</String>
+    <String id="33019">Случајни омилени нумери</String>
     <String id="33030">Нумери од врвен албум</String>
     <String id="33031">Други нумери етикетирани со: </String>
 	<String id="33032">Врвната нумера од овој албум не е</String>
@@ -1516,20 +1579,24 @@
     <String id="34011">Банирај</String>
     <String id="34012">Прескокни</String>
     <String id="34013">Истражувачки режим</String>
-    <String id="34014">Приложи во профил</String>
-    <String id="34015">Превчитај етикети/пријатели</String>
+    <String id="34014">Активирај scrobbling</String>
+    <String id="34015">Превчитај подесувања</String>
+	<String id="34016">Пушти сличен изведувач</String>
+    <String id="34017">Пушти слична етикета</String>
     <String id="34020">Тековен поток: </String>
     <String id="34030">Нема етикети</String>
     <String id="34031">Нема пријатели</String>
-    <String id="34040">Препорачано радио</String>
-    <String id="34041">Намести во избрана етикета: </String>
+	<String id="34032">Нема изведувач</String>
+	<String id="34039">Сличен на изведувачот: </String>
+    <String id="34040">Мои препораки</String>
+    <String id="34041">Слично на етикета: </String>
     <String id="34042">Сеуште не е избрана етикета</String>
-    <String id="34043">Лично радио од: </String>
+    <String id="34043">Радиостаница од: </String>
     <String id="34044">Сакани нумери од: </String>
     <String id="34045">Сеуште не е избран пријател</String>
-    <String id="34046">Мое лично радио</String>
+    <String id="34046">Моја радиостаница</String>
     <String id="34047">Мои сакани нумери</String>
-    <String id="34048">Радио од мои соседи</String>
+    <String id="34048">Мое соседство</String>
     <String id="34049">Моја веб плејлиста</String>
     <String id="34050">Нема активен поток</String>
     <String id="34051">Потокот запре!</String>
@@ -1537,7 +1604,11 @@
     <String id="34053">Одигрувањето на селектираниот поток не успеа</String>
     <String id="34054">Radio handshake failed!</String>
     <String id="34055">Потокот може привремено да не е на располагање</String>
-    <String id="40001">Чека за Standby</String>
+    <String id="34060">Внеси етикета...</String>
+    <String id="34061">Внеси корисник...</String>
+    <String id="34062">Внеси изведувач...</String>
+    <String id="34063">Ниеден изведувач не е избран</String>
+	<String id="40001">Чека за Standby</String>
     <String id="40002">MediaPortal е напуштен, но сеуште зафатен.</String>
     <String id="40003">Кога сите тековни задачи завршат, MediaPortal ќе оди во состојба на standby.</String>
     <String id="100000">Дома</String>
@@ -1576,6 +1647,7 @@
     <String id="100035">Основно дома</String>
     <String id="100100">Да/Не дијалог </String>
     <String id="100101">Дијалог на напредок</String>
+	<String id="100102">Пушти/Запри дијалог</String>
     <String id="100500">Музика/плејлиста</String>
     <String id="100501">Музика/споделени</String>
     <String id="100502">Музика/албуми</String>
@@ -1649,6 +1721,7 @@
     <String id="100762">Радио водич</String>
     <String id="100770">Истражувач</String>
     <String id="101000">тастатура</String>
+	<String id="101002">Виртуелна тастатура</String>
     <String id="102000">Дијалог за избор</String>
     <String id="102001" prefix="Моја ">Музика/инфо</String>
     <String id="102002">Дијалог Завршено</String>
@@ -1685,6 +1758,13 @@
     <String id="107777" prefix="Моја ">Судоку</String>
     <String id="107890" prefix="Мое ">радио Last.fm</String>
     <String id="108888">Музичко мени</String>
+    <String id="109000">MiniDisplay - Setup</String>
+	<String id="109001">MiniDisplay - Setup - Позадинско светло</String>
+	<String id="109002">MiniDisplay - Setup - Контрола на монитор</String>
+	<String id="109003">MiniDisplay - Setup - Опции на монитор</String>
+	<String id="109004">MiniDisplay - Setup - Equalizer</String>
+	<String id="109005">MiniDisplay - Setup - KeyPad</String>
+	<String id="109006">MiniDisplay - Setup - Далечинси управувач</String>
     <String id="200000">Молам изберете грабнувач на EPG. Ако Вашата земја</String>
     <String id="200001">не е на списокот, ќе треба рачно да обезбедите EPG</String>
     <String id="200002">Сега можете да ги мапирате EPG каналите во Вашите ТВ канали</String>
@@ -1736,6 +1816,21 @@
     <String id="200049">Само гледани снимки за ова прикажување</String>
     <String id="200050">Ова ќе ги избриши сите снимки од хард диск</String>		
     <String id="200051">Да ја избришам оваа епизода?</String>
-
+	<String id="200052">Активни снимања</String>
+    <String id="200053">Нема активни снимања</String>    
+    <String id="200054">Не можам да избришам ТВ снимање.</String>
+    <String id="200055">Гледањето ТВ во живо може да е прекинато.</String>
+	<String id="200059">Аудио мод двојно моно</String>
+	<String id="200060">Стерео</String>
+	<String id="200061">Лев канал на левите и десните звучници</String>
+	<String id="200062">Десен канал на левите и десните звучници</String>
+	<String id="200063">Мешани двата</String>	
+	<String id="200064">Поврзан на TvServer</String>
+	<String id="200065">Изгледа некои порти се блокирани</String>
+	<String id="200066">Не можам да се поврзам на tvserver</String>
+	<String id="200067">Поврзан на база на податоци</String>
+	<String id="200068">Не можам да се поврзам на база на податоци</String>
+	<String id="200069">Сите ip порти изгледаат во ред</String>
+	<String id="200070">Ве молам проверете го firewall</String>
   </Section>
 </Language>
