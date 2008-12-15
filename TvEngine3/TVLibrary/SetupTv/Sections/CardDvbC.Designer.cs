@@ -74,9 +74,9 @@ namespace SetupTv.Sections
       this.label2.AutoSize = true;
       this.label2.Location = new System.Drawing.Point(21, 207);
       this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(74, 13);
+      this.label2.Size = new System.Drawing.Size(72, 13);
       this.label2.TabIndex = 42;
-      this.label2.Text = "Signal Quality:";
+      this.label2.Text = "Signal quality:";
       // 
       // label1
       // 
@@ -101,15 +101,15 @@ namespace SetupTv.Sections
       this.mpLabel3.AutoSize = true;
       this.mpLabel3.Location = new System.Drawing.Point(21, 160);
       this.mpLabel3.Name = "mpLabel3";
-      this.mpLabel3.Size = new System.Drawing.Size(86, 13);
+      this.mpLabel3.Size = new System.Drawing.Size(85, 13);
       this.mpLabel3.TabIndex = 38;
-      this.mpLabel3.Text = "Current Channel:";
+      this.mpLabel3.Text = "Current channel:";
       // 
       // mpButtonScanTv
       // 
-      this.mpButtonScanTv.Location = new System.Drawing.Point(260, 14);
+      this.mpButtonScanTv.Location = new System.Drawing.Point(287, 16);
       this.mpButtonScanTv.Name = "mpButtonScanTv";
-      this.mpButtonScanTv.Size = new System.Drawing.Size(168, 23);
+      this.mpButtonScanTv.Size = new System.Drawing.Size(152, 23);
       this.mpButtonScanTv.TabIndex = 2;
       this.mpButtonScanTv.Text = "Scan predefined provider";
       this.mpButtonScanTv.UseVisualStyleBackColor = true;
@@ -138,9 +138,9 @@ namespace SetupTv.Sections
       // 
       this.mpComboBoxCountry.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboBoxCountry.FormattingEnabled = true;
-      this.mpComboBoxCountry.Location = new System.Drawing.Point(70, 14);
+      this.mpComboBoxCountry.Location = new System.Drawing.Point(87, 18);
       this.mpComboBoxCountry.Name = "mpComboBoxCountry";
-      this.mpComboBoxCountry.Size = new System.Drawing.Size(175, 21);
+      this.mpComboBoxCountry.Size = new System.Drawing.Size(182, 21);
       this.mpComboBoxCountry.TabIndex = 0;
       this.mpComboBoxCountry.SelectedIndexChanged += new System.EventHandler(this.mpComboBoxCountry_SelectedIndexChanged);
       // 
@@ -185,7 +185,7 @@ namespace SetupTv.Sections
       // 
       // textBoxFreq
       // 
-      this.textBoxFreq.Location = new System.Drawing.Point(87, 68);
+      this.textBoxFreq.Location = new System.Drawing.Point(111, 68);
       this.textBoxFreq.Name = "textBoxFreq";
       this.textBoxFreq.Size = new System.Drawing.Size(158, 20);
       this.textBoxFreq.TabIndex = 73;
@@ -239,14 +239,14 @@ namespace SetupTv.Sections
             "Qpsk2 ",
             "8psk2 ",
             "DirectTV  "});
-      this.mpComboBoxMod.Location = new System.Drawing.Point(87, 91);
+      this.mpComboBoxMod.Location = new System.Drawing.Point(111, 96);
       this.mpComboBoxMod.Name = "mpComboBoxMod";
       this.mpComboBoxMod.Size = new System.Drawing.Size(158, 21);
       this.mpComboBoxMod.TabIndex = 75;
       // 
       // mpButton1
       // 
-      this.mpButton1.Location = new System.Drawing.Point(260, 116);
+      this.mpButton1.Location = new System.Drawing.Point(287, 121);
       this.mpButton1.Name = "mpButton1";
       this.mpButton1.Size = new System.Drawing.Size(100, 23);
       this.mpButton1.TabIndex = 76;
@@ -259,13 +259,13 @@ namespace SetupTv.Sections
       this.mpLabel4.AutoSize = true;
       this.mpLabel4.Location = new System.Drawing.Point(21, 126);
       this.mpLabel4.Name = "mpLabel4";
-      this.mpLabel4.Size = new System.Drawing.Size(67, 13);
+      this.mpLabel4.Size = new System.Drawing.Size(65, 13);
       this.mpLabel4.TabIndex = 77;
-      this.mpLabel4.Text = "SymbolRate:";
+      this.mpLabel4.Text = "Symbol rate:";
       // 
       // textBoxSymbolRate
       // 
-      this.textBoxSymbolRate.Location = new System.Drawing.Point(87, 119);
+      this.textBoxSymbolRate.Location = new System.Drawing.Point(111, 123);
       this.textBoxSymbolRate.Name = "textBoxSymbolRate";
       this.textBoxSymbolRate.Size = new System.Drawing.Size(158, 20);
       this.textBoxSymbolRate.TabIndex = 78;
@@ -274,11 +274,11 @@ namespace SetupTv.Sections
       // mpLabel5
       // 
       this.mpLabel5.AutoSize = true;
-      this.mpLabel5.Location = new System.Drawing.Point(257, 75);
+      this.mpLabel5.Location = new System.Drawing.Point(284, 71);
       this.mpLabel5.Name = "mpLabel5";
-      this.mpLabel5.Size = new System.Drawing.Size(30, 13);
+      this.mpLabel5.Size = new System.Drawing.Size(27, 13);
       this.mpLabel5.TabIndex = 79;
-      this.mpLabel5.Text = "KHz.";
+      this.mpLabel5.Text = "KHz";
       // 
       // CardDvbC
       // 
