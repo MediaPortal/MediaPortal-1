@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <profile>
   <section name="ChannelInfo">
-    <entry name="TotalChannels">1386</entry>
+    <entry name="TotalChannels">1398</entry>
   </section>
   <section name="0">
     <entry name="ChannelID">1@betv.be</entry>
@@ -1736,7 +1736,7 @@
     <entry name="FullName">expressen.se</entry>
   </section>
   <section name="433">
-    <entry name="ChannelID">exrta@ard-digital.de</entry>
+    <entry name="ChannelID">extra@ard-digital.de</entry>
     <entry name="FullName">EinsExtra</entry>
   </section>
   <section name="434">
@@ -5547,9 +5547,55 @@
     <entry name="ChannelID">watchp1@uktv.co.uk</entry>
     <entry name="FullName">Watch Plus 1</entry>
   </section>
-  
-  
-  <section name=".svn">
+	<section name="1386">
+    <entry name="ChannelID">deluxe music</entry>
+    <entry name="FullName">deluxe music</entry>
+  </section>
+	<section name="1387">
+    <entry name="ChannelID">rtl crime</entry>
+    <entry name="FullName">RTL Crime</entry>
+  </section>
+	<section name="1388">
+    <entry name="ChannelID">rtl living</entry>
+    <entry name="FullName">RTL Living</entry>
+  </section>
+	<section name="1389">
+    <entry name="ChannelID">rtl passion</entry>
+    <entry name="FullName">RTL Passion</entry>
+  </section>
+	<section name="1390">
+    <entry name="ChannelID">fox de</entry>
+    <entry name="FullName">FOX</entry>
+  </section>
+	<section name="1391">
+    <entry name="ChannelID">eclips</entry>
+    <entry name="FullName">E.Clips</entry>
+  </section>
+	<section name="1392">
+    <entry name="ChannelID">kabel 1 classics</entry>
+    <entry name="FullName">Kabel 1 Classics</entry>
+  </section>
+	<section name="1393">
+    <entry name="ChannelID">cartoon network</entry>
+    <entry name="FullName">Cartoon Network</entry>
+  </section>
+	<section name="1394">
+    <entry name="ChannelID">filmfest@premiere.de</entry>
+    <entry name="FullName">Premiere Filmfest</entry>
+  </section>
+	<section name="1395">
+    <entry name="ChannelID">romance tv</entry>
+    <entry name="FullName">Romance TV</entry>
+  </section>
+	<section name="1396">
+    <entry name="ChannelID">axntv.de</entry>
+    <entry name="FullName">AXN</entry>
+  </section>
+	<section name="1397">
+    <entry name="ChannelID">kinowelt.de</entry>
+    <entry name="FullName">KINOWELT TV</entry>
+  </section>
+	<section name=".svn">
     <entry name="TotalChannels">0</entry>
   </section>
   <section name="AT">
@@ -5810,7 +5856,7 @@
     <entry name="78">1251</entry>
   </section>
   <section name="DE">
-    <entry name="TotalChannels">139</entry>
+    <entry name="TotalChannels">151</entry>
     <entry name="0">0</entry>
     <entry name="1">2</entry>
     <entry name="2">13</entry>
@@ -5950,6 +5996,18 @@
     <entry name="136">1253</entry>
     <entry name="137">1254</entry>
 	<entry name="138">1360</entry>
+	<entry name="139">1386</entry>
+	<entry name="140">1387</entry>
+	<entry name="141">1388</entry>
+	<entry name="142">1389</entry>
+	<entry name="143">1390</entry>
+	<entry name="144">1391</entry>
+	<entry name="145">1392</entry>
+	<entry name="146">1393</entry>
+	<entry name="147">1394</entry>
+	<entry name="148">1395</entry>
+	<entry name="149">1396</entry>
+	<entry name="150">1397</entry>	
   </section>
   <section name="DK">
     <entry name="TotalChannels">48</entry>
