@@ -64,9 +64,9 @@ namespace SetupTv.Sections
       this.label2.AutoSize = true;
       this.label2.Location = new System.Drawing.Point(21, 124);
       this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(74, 13);
+      this.label2.Size = new System.Drawing.Size(72, 13);
       this.label2.TabIndex = 57;
-      this.label2.Text = "Signal Quality:";
+      this.label2.Text = "Signal quality:";
       // 
       // label1
       // 
