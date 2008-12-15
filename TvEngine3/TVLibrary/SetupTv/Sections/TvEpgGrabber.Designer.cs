@@ -202,9 +202,9 @@ namespace SetupTv.Sections
       this.mpLabel1.AutoSize = true;
       this.mpLabel1.Location = new System.Drawing.Point(7, 33);
       this.mpLabel1.Name = "mpLabel1";
-      this.mpLabel1.Size = new System.Drawing.Size(119, 13);
+      this.mpLabel1.Size = new System.Drawing.Size(148, 13);
       this.mpLabel1.TabIndex = 10;
-      this.mpLabel1.Text = "Grab EPG for channels:";
+      this.mpLabel1.Text = "Grab EPG for these channels:";
       // 
       // mpListView1
       // 
