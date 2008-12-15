@@ -211,9 +211,9 @@ namespace SetupTv.Sections
       this.checkBoxAutoDelete.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxAutoDelete.Location = new System.Drawing.Point(30, 152);
       this.checkBoxAutoDelete.Name = "checkBoxAutoDelete";
-      this.checkBoxAutoDelete.Size = new System.Drawing.Size(248, 17);
+      this.checkBoxAutoDelete.Size = new System.Drawing.Size(252, 17);
       this.checkBoxAutoDelete.TabIndex = 6;
-      this.checkBoxAutoDelete.Text = "Automatically delete recordings after watching it";
+      this.checkBoxAutoDelete.Text = "Automatically delete a recording after watching it";
       this.checkBoxAutoDelete.UseVisualStyleBackColor = true;
       this.checkBoxAutoDelete.Visible = false;
       // 
@@ -565,7 +565,7 @@ namespace SetupTv.Sections
       // pictureBox1
       // 
       this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-      this.pictureBox1.Location = new System.Drawing.Point(23, 19);
+      this.pictureBox1.Location = new System.Drawing.Point(23, 33);
       this.pictureBox1.Name = "pictureBox1";
       this.pictureBox1.Size = new System.Drawing.Size(33, 23);
       this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -577,12 +577,12 @@ namespace SetupTv.Sections
       this.labelTSFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.labelTSFolder.AutoSize = true;
-      this.labelTSFolder.Location = new System.Drawing.Point(27, 261);
+      this.labelTSFolder.Location = new System.Drawing.Point(32, 272);
       this.labelTSFolder.Name = "labelTSFolder";
-      this.labelTSFolder.Size = new System.Drawing.Size(358, 26);
+      this.labelTSFolder.Size = new System.Drawing.Size(362, 26);
       this.labelTSFolder.TabIndex = 25;
-      this.labelTSFolder.Text = "Using a Timeshift folder on a dedicated disk will improve your performance \r\n(e.g" +
-          ". with many simultaneous clients / recordings)";
+      this.labelTSFolder.Text = "Placing a timeshift folder on a dedicated disk will improve your performance \r\n(e" +
+          ".g. with many simultaneous clients / recordings)";
       // 
       // comboBoxCards
       // 
@@ -601,7 +601,7 @@ namespace SetupTv.Sections
       this.labelRecFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.labelRecFormat.AutoSize = true;
-      this.labelRecFormat.Location = new System.Drawing.Point(20, 97);
+      this.labelRecFormat.Location = new System.Drawing.Point(32, 117);
       this.labelRecFormat.Name = "labelRecFormat";
       this.labelRecFormat.Size = new System.Drawing.Size(355, 26);
       this.labelRecFormat.TabIndex = 24;
@@ -611,7 +611,7 @@ namespace SetupTv.Sections
       // label23
       // 
       this.label23.AutoSize = true;
-      this.label23.Location = new System.Drawing.Point(20, 52);
+      this.label23.Location = new System.Drawing.Point(20, 66);
       this.label23.Name = "label23";
       this.label23.Size = new System.Drawing.Size(91, 13);
       this.label23.TabIndex = 23;
@@ -636,7 +636,7 @@ namespace SetupTv.Sections
       this.comboBoxRecordingFormat.Items.AddRange(new object[] {
             "Transport Stream (.ts)",
             "MPEG (.mpg)"});
-      this.comboBoxRecordingFormat.Location = new System.Drawing.Point(23, 70);
+      this.comboBoxRecordingFormat.Location = new System.Drawing.Point(23, 84);
       this.comboBoxRecordingFormat.Name = "comboBoxRecordingFormat";
       this.comboBoxRecordingFormat.Size = new System.Drawing.Size(355, 21);
       this.comboBoxRecordingFormat.TabIndex = 22;
