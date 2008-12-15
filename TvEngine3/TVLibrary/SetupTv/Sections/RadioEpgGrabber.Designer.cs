@@ -96,11 +96,11 @@ namespace SetupTv.Sections
       // mpLabel1
       // 
       this.mpLabel1.AutoSize = true;
-      this.mpLabel1.Location = new System.Drawing.Point(3, 3);
+      this.mpLabel1.Location = new System.Drawing.Point(6, 13);
       this.mpLabel1.Name = "mpLabel1";
-      this.mpLabel1.Size = new System.Drawing.Size(119, 13);
+      this.mpLabel1.Size = new System.Drawing.Size(148, 13);
       this.mpLabel1.TabIndex = 2;
-      this.mpLabel1.Text = "Grab EPG for channels:";
+      this.mpLabel1.Text = "Grab EPG for these channels:";
       // 
       // mpListView2
       // 
@@ -134,11 +134,11 @@ namespace SetupTv.Sections
       // mpLabel2
       // 
       this.mpLabel2.AutoSize = true;
-      this.mpLabel2.Location = new System.Drawing.Point(236, 3);
+      this.mpLabel2.Location = new System.Drawing.Point(233, 13);
       this.mpLabel2.Name = "mpLabel2";
-      this.mpLabel2.Size = new System.Drawing.Size(183, 13);
+      this.mpLabel2.Size = new System.Drawing.Size(187, 13);
       this.mpLabel2.TabIndex = 4;
-      this.mpLabel2.Text = "Grab epg for the following languages:";
+      this.mpLabel2.Text = "Grab EPG for the following languages:";
       this.mpLabel2.Click += new System.EventHandler(this.mpLabel2_Click);
       // 
       // mpButtonAll
@@ -214,7 +214,7 @@ namespace SetupTv.Sections
       this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
       this.tabPage1.Size = new System.Drawing.Size(452, 372);
       this.tabPage1.TabIndex = 0;
-      this.tabPage1.Text = "Radio Epg grabber";
+      this.tabPage1.Text = "Radio EPG grabber";
       this.tabPage1.UseVisualStyleBackColor = true;
       // 
       // mpButtonAllGrouped
@@ -224,7 +224,7 @@ namespace SetupTv.Sections
       this.mpButtonAllGrouped.Name = "mpButtonAllGrouped";
       this.mpButtonAllGrouped.Size = new System.Drawing.Size(75, 23);
       this.mpButtonAllGrouped.TabIndex = 19;
-      this.mpButtonAllGrouped.Text = "All Grouped";
+      this.mpButtonAllGrouped.Text = "All grouped";
       this.mpButtonAllGrouped.UseVisualStyleBackColor = true;
       this.mpButtonAllGrouped.Click += new System.EventHandler(this.mpButtonAllGrouped_Click);
       // 
