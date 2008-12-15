@@ -2787,6 +2787,7 @@
     <carrier frequency="858000" bandwidth="8"></carrier>
   </country>
   <country name="Spain - Cataluna - Barcelona">
+	<carrier frequency="570000" bandwidth="8"></carrier>
     <carrier frequency="818000" bandwidth="8"></carrier>
     <carrier frequency="794000" bandwidth="8"></carrier>
     <carrier frequency="834000" bandwidth="8"></carrier>
