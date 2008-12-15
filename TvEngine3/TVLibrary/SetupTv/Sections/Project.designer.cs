@@ -107,8 +107,8 @@ namespace SetupTv.Sections
       this.labelInfo1.Name = "labelInfo1";
       this.labelInfo1.Size = new System.Drawing.Size(440, 32);
       this.labelInfo1.TabIndex = 0;
-      this.labelInfo1.Text = "The TV-Server is an application which allows you to setup a central server with m" +
-          "ultiple TV cards.";
+      this.labelInfo1.Text = "The TV-Server is an application which allows you to set up a central server with " +
+          "multiple TV cards.";
       // 
       // groupBoxContact
       // 
