@@ -100,9 +100,9 @@ namespace SetupTv.Sections
       this.mpCheckBoxMapForEpgOnly.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpCheckBoxMapForEpgOnly.Location = new System.Drawing.Point(6, 343);
       this.mpCheckBoxMapForEpgOnly.Name = "mpCheckBoxMapForEpgOnly";
-      this.mpCheckBoxMapForEpgOnly.Size = new System.Drawing.Size(360, 17);
+      this.mpCheckBoxMapForEpgOnly.Size = new System.Drawing.Size(355, 17);
       this.mpCheckBoxMapForEpgOnly.TabIndex = 27;
-      this.mpCheckBoxMapForEpgOnly.Text = "Perform Mapping for EPG Grabbing Only (you can also use doubleclick)";
+      this.mpCheckBoxMapForEpgOnly.Text = "Perform mapping for EPG grabbing only (you can also use doubleclick)";
       this.mpCheckBoxMapForEpgOnly.UseVisualStyleBackColor = true;
       // 
       // pictureBox1
