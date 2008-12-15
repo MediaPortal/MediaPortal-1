@@ -510,7 +510,7 @@ namespace MediaPortal.Music.Database
     /// Static constructor
     /// </summary>
     static AudioscrobblerUtils()
-    {      
+    {
     }
 
     /// <summary>
@@ -730,7 +730,7 @@ namespace MediaPortal.Music.Database
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        _defaultUser = xmlreader.GetValueAsString("audioscrobbler", "user", "");        
+        _defaultUser = xmlreader.GetValueAsString("audioscrobbler", "user", "");
         _decodeUtf8 = xmlreader.GetValueAsBool("audioscrobbler", "decodeutf8", false);
       }
 
@@ -1296,7 +1296,10 @@ namespace MediaPortal.Music.Database
         {
           string coverURL = tmpSong.WebImage;
           // last.fm has higher resolution artist art.
-          coverURL = coverURL.Replace(@"/sidebar/", @"/original/");
+
+          coverURL = GetLargeLastFmCover(coverURL);
+
+          //coverURL = coverURL.Replace(@"/sidebar/", @"/original/");
 
           if (artistToSearch_.ToLowerInvariant() != tmpSong.Artist.ToLowerInvariant())
           {
@@ -2645,6 +2648,22 @@ namespace MediaPortal.Music.Database
     #endregion
 
     #region Utils
+
+    public string GetLargeLastFmCover(string aOriginalURL)
+    {
+      if (String.IsNullOrEmpty(aOriginalURL))
+        return String.Empty;
+
+      string highResPic = aOriginalURL;
+      int resPos = aOriginalURL.LastIndexOf('/');
+      if (resPos > 0)
+      {
+        // transform http://userserve-ak.last.fm/serve/126/15402945.jpg into http://userserve-ak.last.fm/serve/_/15402945.jpg
+        highResPic = String.Format("{0}{1}", "http://userserve-ak.last.fm/serve/_/", highResPic.Substring(resPos + 1));
+      }
+
+      return highResPic;
+    }
 
     public string DecodeUtf8String(string aUtf8String)
     {
