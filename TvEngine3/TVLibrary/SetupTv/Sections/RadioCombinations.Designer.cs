@@ -58,12 +58,12 @@ namespace SetupTv.Sections
       this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.addToFavoritesToolStripMenuItem});
       this.contextMenuStrip1.Name = "contextMenuStrip1";
-      this.contextMenuStrip1.Size = new System.Drawing.Size(164, 26);
+      this.contextMenuStrip1.Size = new System.Drawing.Size(159, 26);
       // 
       // addToFavoritesToolStripMenuItem
       // 
       this.addToFavoritesToolStripMenuItem.Name = "addToFavoritesToolStripMenuItem";
-      this.addToFavoritesToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
+      this.addToFavoritesToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
       this.addToFavoritesToolStripMenuItem.Text = "Add to favorites";
       // 
       // openFileDialog1
@@ -125,7 +125,7 @@ namespace SetupTv.Sections
       // mpLabel3
       // 
       this.mpLabel3.AutoSize = true;
-      this.mpLabel3.Location = new System.Drawing.Point(251, 48);
+      this.mpLabel3.Location = new System.Drawing.Point(240, 48);
       this.mpLabel3.Name = "mpLabel3";
       this.mpLabel3.Size = new System.Drawing.Size(154, 13);
       this.mpLabel3.TabIndex = 13;
