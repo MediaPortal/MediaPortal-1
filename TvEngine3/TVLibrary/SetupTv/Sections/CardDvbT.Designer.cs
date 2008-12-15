@@ -65,7 +65,7 @@ namespace SetupTv.Sections
       // mpLabel1
       // 
       this.mpLabel1.AutoSize = true;
-      this.mpLabel1.Location = new System.Drawing.Point(28, 32);
+      this.mpLabel1.Location = new System.Drawing.Point(21, 33);
       this.mpLabel1.Name = "mpLabel1";
       this.mpLabel1.Size = new System.Drawing.Size(46, 13);
       this.mpLabel1.TabIndex = 15;
@@ -75,7 +75,7 @@ namespace SetupTv.Sections
       // 
       this.mpComboBoxCountry.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboBoxCountry.FormattingEnabled = true;
-      this.mpComboBoxCountry.Location = new System.Drawing.Point(80, 25);
+      this.mpComboBoxCountry.Location = new System.Drawing.Point(111, 30);
       this.mpComboBoxCountry.Name = "mpComboBoxCountry";
       this.mpComboBoxCountry.Size = new System.Drawing.Size(175, 21);
       this.mpComboBoxCountry.TabIndex = 0;
@@ -103,9 +103,9 @@ namespace SetupTv.Sections
       this.label2.AutoSize = true;
       this.label2.Location = new System.Drawing.Point(21, 109);
       this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(74, 13);
+      this.label2.Size = new System.Drawing.Size(72, 13);
       this.label2.TabIndex = 27;
-      this.label2.Text = "Signal Quality:";
+      this.label2.Text = "Signal quality:";
       // 
       // progressBarLevel
       // 
