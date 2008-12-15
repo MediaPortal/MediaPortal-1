@@ -43,6 +43,10 @@ namespace SetupTv.Sections
       this.checkBoxNoMerge = new System.Windows.Forms.CheckBox();
       this.mpTabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
+      this.progressBarQuality = new System.Windows.Forms.ProgressBar();
+      this.progressBarLevel = new System.Windows.Forms.ProgressBar();
+      this.label2 = new System.Windows.Forms.Label();
+      this.label1 = new System.Windows.Forms.Label();
       this.tabPage2 = new System.Windows.Forms.TabPage();
       this.customSettingsGroup = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.customValuePeak = new System.Windows.Forms.NumericUpDown();
@@ -88,10 +92,6 @@ namespace SetupTv.Sections
       this.lowPlayback = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.portablePlayback = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.defaultPlayback = new MediaPortal.UserInterface.Controls.MPRadioButton();
-      this.progressBarQuality = new System.Windows.Forms.ProgressBar();
-      this.progressBarLevel = new System.Windows.Forms.ProgressBar();
-      this.label2 = new System.Windows.Forms.Label();
-      this.label1 = new System.Windows.Forms.Label();
       this.mpTabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.tabPage2.SuspendLayout();
@@ -147,7 +147,7 @@ namespace SetupTv.Sections
       this.mpButtonScanTv.Name = "mpButtonScanTv";
       this.mpButtonScanTv.Size = new System.Drawing.Size(131, 23);
       this.mpButtonScanTv.TabIndex = 4;
-      this.mpButtonScanTv.Text = "Scan for Tv Channels";
+      this.mpButtonScanTv.Text = "Scan for TV channels";
       this.mpButtonScanTv.UseVisualStyleBackColor = true;
       this.mpButtonScanTv.Click += new System.EventHandler(this.mpButtonScan_Click);
       // 
@@ -158,7 +158,7 @@ namespace SetupTv.Sections
       this.mpButtonScanRadio.Name = "mpButtonScanRadio";
       this.mpButtonScanRadio.Size = new System.Drawing.Size(132, 23);
       this.mpButtonScanRadio.TabIndex = 5;
-      this.mpButtonScanRadio.Text = "Scan for Radio channels";
+      this.mpButtonScanRadio.Text = "Scan for radio channels";
       this.mpButtonScanRadio.UseVisualStyleBackColor = true;
       this.mpButtonScanRadio.Click += new System.EventHandler(this.mpButtonScanRadio_Click);
       // 
@@ -197,9 +197,9 @@ namespace SetupTv.Sections
       this.mpLabel4.AutoSize = true;
       this.mpLabel4.Location = new System.Drawing.Point(236, 52);
       this.mpLabel4.Name = "mpLabel4";
-      this.mpLabel4.Size = new System.Drawing.Size(88, 13);
+      this.mpLabel4.Size = new System.Drawing.Size(86, 13);
       this.mpLabel4.TabIndex = 14;
-      this.mpLabel4.Text = "Radio Sensitivity:";
+      this.mpLabel4.Text = "Radio sensitivity:";
       // 
       // mpComboBoxSensitivity
       // 
@@ -229,7 +229,7 @@ namespace SetupTv.Sections
       // 
       this.checkBoxNoMerge.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.checkBoxNoMerge.AutoSize = true;
-      this.checkBoxNoMerge.Location = new System.Drawing.Point(9, 353);
+      this.checkBoxNoMerge.Location = new System.Drawing.Point(25, 353);
       this.checkBoxNoMerge.Name = "checkBoxNoMerge";
       this.checkBoxNoMerge.Size = new System.Drawing.Size(208, 17);
       this.checkBoxNoMerge.TabIndex = 15;
@@ -274,6 +274,42 @@ namespace SetupTv.Sections
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "Scanning";
       this.tabPage1.UseVisualStyleBackColor = true;
+      // 
+      // progressBarQuality
+      // 
+      this.progressBarQuality.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.progressBarQuality.Location = new System.Drawing.Point(111, 123);
+      this.progressBarQuality.Name = "progressBarQuality";
+      this.progressBarQuality.Size = new System.Drawing.Size(328, 10);
+      this.progressBarQuality.TabIndex = 33;
+      // 
+      // progressBarLevel
+      // 
+      this.progressBarLevel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.progressBarLevel.Location = new System.Drawing.Point(111, 100);
+      this.progressBarLevel.Name = "progressBarLevel";
+      this.progressBarLevel.Size = new System.Drawing.Size(328, 10);
+      this.progressBarLevel.TabIndex = 32;
+      // 
+      // label2
+      // 
+      this.label2.AutoSize = true;
+      this.label2.Location = new System.Drawing.Point(21, 120);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(72, 13);
+      this.label2.TabIndex = 31;
+      this.label2.Text = "Signal quality:";
+      // 
+      // label1
+      // 
+      this.label1.AutoSize = true;
+      this.label1.Location = new System.Drawing.Point(21, 97);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(64, 13);
+      this.label1.TabIndex = 30;
+      this.label1.Text = "Signal level:";
       // 
       // tabPage2
       // 
@@ -809,42 +845,6 @@ namespace SetupTv.Sections
       this.defaultPlayback.TabIndex = 0;
       this.defaultPlayback.TabStop = true;
       this.defaultPlayback.UseVisualStyleBackColor = true;
-      // 
-      // progressBarQuality
-      // 
-      this.progressBarQuality.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.progressBarQuality.Location = new System.Drawing.Point(111, 123);
-      this.progressBarQuality.Name = "progressBarQuality";
-      this.progressBarQuality.Size = new System.Drawing.Size(328, 10);
-      this.progressBarQuality.TabIndex = 33;
-      // 
-      // progressBarLevel
-      // 
-      this.progressBarLevel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.progressBarLevel.Location = new System.Drawing.Point(111, 100);
-      this.progressBarLevel.Name = "progressBarLevel";
-      this.progressBarLevel.Size = new System.Drawing.Size(328, 10);
-      this.progressBarLevel.TabIndex = 32;
-      // 
-      // label2
-      // 
-      this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(21, 120);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(74, 13);
-      this.label2.TabIndex = 31;
-      this.label2.Text = "Signal Quality:";
-      // 
-      // label1
-      // 
-      this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(21, 97);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(64, 13);
-      this.label1.TabIndex = 30;
-      this.label1.Text = "Signal level:";
       // 
       // CardAnalog
       // 
