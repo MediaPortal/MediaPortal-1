@@ -639,7 +639,7 @@ namespace SetupTv.Sections
       this.label38.Name = "label38";
       this.label38.Size = new System.Drawing.Size(125, 61);
       this.label38.TabIndex = 35;
-      this.label38.Text = "You can use a combination of any of the below placeholders";
+      this.label38.Text = "You can use a any combination of the placeholders shown below";
       // 
       // edDescriptionTemplate
       // 
