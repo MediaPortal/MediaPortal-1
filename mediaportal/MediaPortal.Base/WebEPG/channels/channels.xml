@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <profile>
   <section name="ChannelInfo">
-    <entry name="TotalChannels">1379</entry>
+    <entry name="TotalChannels">1386</entry>
   </section>
   <section name="0">
     <entry name="ChannelID">1@betv.be</entry>
@@ -1128,7 +1128,7 @@
     <entry name="FullName">CityInfo</entry>
   </section>
   <section name="281">
-    <entry name="ChannelID">civil@discoverychannel.co.uk</entry>
+    <entry name="ChannelID">knowledge@discoverychannel.co.uk</entry>
     <entry name="FullName">Discovery Civilisations</entry>
   </section>
   <section name="282">
@@ -1824,8 +1824,8 @@
     <entry name="FullName">five</entry>
   </section>
   <section name="455">
-    <entry name="ChannelID">life@five.tv</entry>
-    <entry name="FullName">five Life</entry>
+    <entry name="ChannelID">4music@channel4.com</entry>
+    <entry name="FullName">4 Music</entry>
   </section>
   <section name="456">
     <entry name="ChannelID">flaunt.tv</entry>
@@ -2044,8 +2044,8 @@
     <entry name="FullName">Hit24</entry>
   </section>
   <section name="510">
-    <entry name="ChannelID">hits@kerrang.com</entry>
-    <entry name="FullName">The Hits!</entry>
+    <entry name="ChannelID">english.aljazeera.net</entry>
+    <entry name="FullName">Al Jazeera</entry>
   </section>
   <section name="511">
     <entry name="ChannelID">hits@mtv.co.uk</entry>
@@ -2092,8 +2092,8 @@
     <entry name="FullName">MTV Ireland</entry>
   </section>
   <section name="522">
-    <entry name="ChannelID">ie@setanta.com</entry>
-    <entry name="FullName">Setanta Sports Ireland</entry>
+    <entry name="ChannelID">bbcalba@bbc.co.uk</entry>
+    <entry name="FullName">BBC alba</entry>
   </section>
   <section name="523">
     <entry name="ChannelID">infosport.tm.fr</entry>
@@ -3936,12 +3936,12 @@
     <entry name="FullName">Sky Three</entry>
   </section>
   <section name="983">
-    <entry name="ChannelID">skytravel@sky.com</entry>
-    <entry name="FullName">Sky Travel</entry>
+    <entry name="ChannelID">C4HD@channel4.com</entry>
+    <entry name="FullName">Channel 4 HD</entry>
   </section>
   <section name="984">
-    <entry name="ChannelID">skytravelex@sky.com</entry>
-    <entry name="FullName">Sky Travel Extra</entry>
+    <entry name="ChannelID">realextra@discoverychannel.co.uk</entry>
+    <entry name="FullName">Dicovery Real Time Extra</entry>
   </section>
   <section name="985">
     <entry name="ChannelID">skytravelp1@sky.com</entry>
@@ -4368,8 +4368,8 @@
     <entry name="FullName">Trouble Analogue</entry>
   </section>
   <section name="1091">
-    <entry name="ChannelID">troublep1@uktv.co.uk</entry>
-    <entry name="FullName">Trouble Plus 1</entry>
+    <entry name="ChannelID">p1@disneychannel.co.uk</entry>
+    <entry name="FullName">Disney Channel Plus 1</entry>
   </section>
   <section name="1092">
     <entry name="ChannelID">trt.int@trt.net.tr</entry>
@@ -4716,8 +4716,8 @@
     <entry name="FullName">UTV</entry>
   </section>
   <section name="1178">
-    <entry name="ChannelID">uk@setanta.com</entry>
-    <entry name="FullName">Setanta Sports UK</entry>
+    <entry name="ChannelID">movies4men.co.uk</entry>
+    <entry name="FullName">Movies4Men</entry>
   </section>
   <section name="1179">
     <entry name="ChannelID">uktv.co.nz</entry>
@@ -4744,8 +4744,8 @@
     <entry name="FullName">UKTV Documentary Plus 1</entry>
   </section>
   <section name="1185">
-    <entry name="ChannelID">uktvdrama@uktv.co.uk</entry>
-    <entry name="FullName">UKTV Drama</entry>
+    <entry name="ChannelID">fiver@five.tv</entry>
+    <entry name="FullName">Fiver</entry>
   </section>
   <section name="1186">
     <entry name="ChannelID">uktvfood@uktv.co.uk</entry>
@@ -4756,8 +4756,8 @@
     <entry name="FullName">UKTV Food Plus 1</entry>
   </section>
   <section name="1188">
-    <entry name="ChannelID">uktvdramap1@uktv.co.uk</entry>
-    <entry name="FullName">UKTV Drama Plus 1</entry>
+    <entry name="ChannelID">itvhd@itv.com</entry>
+    <entry name="FullName">ITV HD</entry>
   </section>
   <section name="1189">
     <entry name="ChannelID">dave@uktv.co.uk</entry>
@@ -5276,7 +5276,7 @@
     <entry name="FullName">Setanta Golf</entry>
   </section>
   <section name="1318">
-    <entry name="ChannelID">sports1@setanta.com</entry>
+    <entry name="ChannelID">1@setanta.com</entry>
     <entry name="FullName">Setanta Sports 1</entry>
   </section>
   <section name="1319">
@@ -5284,7 +5284,7 @@
     <entry name="FullName">Setanta Sports 1 (TopUpTV)</entry>
   </section>
   <section name="1320">
-    <entry name="ChannelID">sports2@setanta.com</entry>
+    <entry name="ChannelID">2@setanta.com</entry>
     <entry name="FullName">Setanta Sports 2</entry>
   </section>
   <section name="1321">
@@ -5519,6 +5519,36 @@
     <entry name="ChannelID">viatv6@viasat.no</entry>
     <entry name="FullName">Viasat TV6</entry>
   </section>
+	<section name="1379">
+    <entry name="ChannelID">reallives@sky.com</entry>
+    <entry name="FullName">Sky Real Lives</entry>
+	</section>
+    <section name="1380">
+    <entry name="ChannelID">reallives2@sky.com</entry>
+    <entry name="FullName">Sky Real Lives Plus 1</entry>
+  </section>
+	<section name="1381">
+    <entry name="ChannelID">troublereload@uktv.co.uk</entry>
+    <entry name="FullName">Trouble Reload</entry>
+  </section>
+	<section name="1382">
+    <entry name="ChannelID">uktvalibi@uktv.co.uk</entry>
+    <entry name="FullName">UKTV Alibi</entry>
+  </section>
+	<section name="1383">
+    <entry name="ChannelID">uktvalibip1@uktv.co.uk</entry>
+    <entry name="FullName">UKTV Alibi Plus 1</entry>
+  </section>
+	<section name="1384">
+    <entry name="ChannelID">watch@uktv.co.uk</entry>
+    <entry name="FullName">Watch</entry>
+  </section>
+	<section name="1385">
+    <entry name="ChannelID">watchp1@uktv.co.uk</entry>
+    <entry name="FullName">Watch Plus 1</entry>
+  </section>
+  
+  
   <section name=".svn">
     <entry name="TotalChannels">0</entry>
   </section>
@@ -6184,7 +6214,7 @@
     <entry name="166">1251</entry>
   </section>
   <section name="GB">
-    <entry name="TotalChannels">446</entry>
+    <entry name="TotalChannels">454</entry>
     <entry name="0">1</entry>
     <entry name="1">14</entry>
     <entry name="2">15</entry>
@@ -6632,6 +6662,14 @@
     <entry name="444">1357</entry>
     <entry name="445">1358</entry>
     <entry name="446">1359</entry>
+	<entry name="447">1379</entry>
+    <entry name="448">1380</entry>
+    <entry name="449">1381</entry>
+    <entry name="450">1382</entry>
+    <entry name="451">1383</entry>
+    <entry name="452">1384</entry>
+    <entry name="453">1385</entry>
+	
   </section>
   <section name="GR">
     <entry name="TotalChannels">11</entry>
