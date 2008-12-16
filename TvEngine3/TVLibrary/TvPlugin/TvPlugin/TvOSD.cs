@@ -1441,6 +1441,16 @@ namespace TvPlugin
         {
           description = rec.Description;
           title = rec.Title;
+          Channel ch = Channel.Retrieve(rec.IdChannel);
+          if (ch != null)
+          {
+            string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, ch.DisplayName);
+            if (!System.IO.File.Exists(strLogo))
+            {
+              strLogo = "defaultVideoBig.png";
+            }
+            GUIPropertyManager.SetProperty("#TV.View.thumb", strLogo);
+          }
 
           long currentPosition = (long)(g_Player.CurrentPosition);          
           startTime = Utils.SecondsToHMSString((int)currentPosition);                              
