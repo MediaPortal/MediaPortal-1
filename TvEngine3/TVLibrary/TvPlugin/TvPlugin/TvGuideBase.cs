@@ -1678,7 +1678,7 @@ namespace TvPlugin
           foreach (Schedule record in _recordingList)
           {
             bool isRecPrg = false;
-            if (channel.IdChannel == record.ReferencedChannel().IdChannel)
+            if ((channel.IdChannel == record.ReferencedChannel().IdChannel) || (record.ScheduleType == (int)ScheduleRecordingType.EveryTimeOnEveryChannel))
             {
               if (noEPG)
               {
