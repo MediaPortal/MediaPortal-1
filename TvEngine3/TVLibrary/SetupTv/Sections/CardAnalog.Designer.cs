@@ -108,7 +108,7 @@ namespace SetupTv.Sections
       // 
       this.mpComboBoxCountry.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboBoxCountry.FormattingEnabled = true;
-      this.mpComboBoxCountry.Location = new System.Drawing.Point(58, 22);
+      this.mpComboBoxCountry.Location = new System.Drawing.Point(74, 22);
       this.mpComboBoxCountry.Name = "mpComboBoxCountry";
       this.mpComboBoxCountry.Size = new System.Drawing.Size(175, 21);
       this.mpComboBoxCountry.TabIndex = 0;
@@ -116,7 +116,7 @@ namespace SetupTv.Sections
       // mpLabel1
       // 
       this.mpLabel1.AutoSize = true;
-      this.mpLabel1.Location = new System.Drawing.Point(5, 25);
+      this.mpLabel1.Location = new System.Drawing.Point(22, 25);
       this.mpLabel1.Name = "mpLabel1";
       this.mpLabel1.Size = new System.Drawing.Size(46, 13);
       this.mpLabel1.TabIndex = 2;
@@ -143,7 +143,7 @@ namespace SetupTv.Sections
       // mpButtonScanTv
       // 
       this.mpButtonScanTv.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpButtonScanTv.Location = new System.Drawing.Point(320, 320);
+      this.mpButtonScanTv.Location = new System.Drawing.Point(319, 320);
       this.mpButtonScanTv.Name = "mpButtonScanTv";
       this.mpButtonScanTv.Size = new System.Drawing.Size(131, 23);
       this.mpButtonScanTv.TabIndex = 4;
@@ -156,7 +156,7 @@ namespace SetupTv.Sections
       this.mpButtonScanRadio.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.mpButtonScanRadio.Location = new System.Drawing.Point(319, 349);
       this.mpButtonScanRadio.Name = "mpButtonScanRadio";
-      this.mpButtonScanRadio.Size = new System.Drawing.Size(132, 23);
+      this.mpButtonScanRadio.Size = new System.Drawing.Size(131, 23);
       this.mpButtonScanRadio.TabIndex = 5;
       this.mpButtonScanRadio.Text = "Scan for radio channels";
       this.mpButtonScanRadio.UseVisualStyleBackColor = true;
@@ -217,11 +217,11 @@ namespace SetupTv.Sections
       // mpButton1
       // 
       this.mpButton1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpButton1.Location = new System.Drawing.Point(132, 320);
+      this.mpButton1.Location = new System.Drawing.Point(102, 320);
       this.mpButton1.Name = "mpButton1";
-      this.mpButton1.Size = new System.Drawing.Size(148, 23);
+      this.mpButton1.Size = new System.Drawing.Size(131, 23);
       this.mpButton1.TabIndex = 3;
-      this.mpButton1.Text = "Add SVHS/VHS channels";
+      this.mpButton1.Text = "Add S-Video channels";
       this.mpButton1.UseVisualStyleBackColor = true;
       this.mpButton1.Click += new System.EventHandler(this.mpButton1_Click);
       // 
