@@ -1,5 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Language name="French" characters="512">
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Language name="French" characters="255">
   <Section name="unmapped">
     <String id="0" prefix="Mes ">Programmes</String>
     <String id="1" prefix="Mes ">Photos</String>
@@ -44,7 +44,7 @@
     <String id="109">Créer les jaquettes</String>
     <String id="110">Créer les vignettes</String>
     <String id="111">Raccourcis</String>
-    <String id="112">PAUSE</String>
+    <String id="112">EN PAUSE</String>
     <String id="113" prefix="Mes ">Fichiers : Source</String>
     <String id="114" prefix="Mes ">Fichiers : Destination</String>
     <String id="115">Copier</String>
@@ -72,9 +72,9 @@
     <String id="137">Rechercher</String>
     <String id="138">INFORMATIONS SYSTEME</String>
     <String id="139">Températures :</String>
-    <String id="140">CPU :</String>
-    <String id="141">GPU :</String>
-    <String id="142">Heure :</String>
+    <String id="140">Processeur :</String>
+    <String id="141">Carte graphique :</String>
+    <String id="142">Heure de début :</String>
     <String id="143">Actuellement :</String>
     <String id="144">Build :</String>
     <String id="145">Réseau :</String>
@@ -84,8 +84,8 @@
     <String id="149">MAC</String>
     <String id="150">IP :</String>
     <String id="151">Connexion :</String>
-    <String id="152">Half duplex</String>
-    <String id="153">Full duplex</String>
+    <String id="152">Semi duplex</String>
+    <String id="153">Duplex intégral</String>
     <String id="154">Stockage</String>
     <String id="155">Lecteur</String>
     <String id="156">Libre</String>
@@ -120,7 +120,7 @@
     <String id="185">Recherche des albums</String>
     <String id="186">OK</String>
     <String id="187">Aucun album trouvé!</String>
-    <String id="188">Sélectionner tout</String>
+    <String id="188">Tout sélectionner</String>
     <String id="189">Analyse des infos du média</String>
     <String id="190">Enregistrer</String>
     <String id="191">Lecture aléatoire</String>
@@ -155,7 +155,7 @@
     <String id="220">Partage réseau</String>
     <String id="221">Déconnecté du réseau</String>
     <String id="222">Annuler</String>
-    <String id="223">Bascule auto. panorama</String>
+    <String id="223">Bascule auto. au format panoramique</String>
     <String id="224">Vitesse</String>
     <String id="225">Durée de Transition</String>
     <String id="226">Activer PAL60</String>
@@ -171,13 +171,13 @@
     <String id="236">Cubique Gaussien</String>
     <String id="237">Réduction :</String>
     <String id="238">Agrandissement :</String>
-    <String id="240">Lanceur automatique pour DVD-Video</String>
-    <String id="241">Lanceur automatique pour VCD/SVCD</String>
-    <String id="242">Lanceur automatique pour Audio-CD</String>
-    <String id="243">Lanceur automatique pour jeux XBOX</String>
-    <String id="244">Lanceur automatique pour les Vidéos</String>
-    <String id="245">Lanceur automatique pour la Musique</String>
-    <String id="246">Lanceur automatique pour les Photos</String>
+    <String id="240">Lire automatiquement les DVD-Video</String>
+    <String id="241">Lire automatiquement les VCD/SVCD</String>
+    <String id="242">Lire automatiquement les Audio-CD</String>
+    <String id="243">Lire automatiquement les jeux XBOX</String>
+    <String id="244">Lire automatiquement les Vidéos</String>
+    <String id="245">Lire automatiquement la Musique</String>
+    <String id="246">Lire automatiquement les Photos</String>
     <String id="247">Scripts</String>
     <String id="248">Langue</String>
     <String id="249">Musique</String>
@@ -334,9 +334,9 @@
     <String id="400">Météo</String>
     <String id="401">Temp.</String>
     <String id="402">Impression</String>
-    <String id="403">Index UV</String>
+    <String id="403">Indice UV</String>
     <String id="404">Vent</String>
-    <String id="405">Point rosée</String>
+    <String id="405">Point de rosée</String>
     <String id="406">Humidité</String>
     <String id="407">Lourd</String>
     <String id="410">Interrogation de Weather.com</String>
@@ -359,7 +359,7 @@
     <String id="427">Disque :</String>
     <String id="428">Insérez le CD/DVD attendu</String>
     <String id="429">Insérez ce CD/DVD</String>
-    <String id="430">Tri par DVD#</String>
+    <String id="430">Tri par n° de DVD</String>
     <String id="431">Pas de cache</String>
     <String id="432">Supprimer le film de la BD</String>
     <String id="433">Supprimer réellement</String>
@@ -580,7 +580,7 @@
     <String id="683">Terminé</String>
     <String id="684">Annulé</String>
     <String id="685">Tri par : Statut</String>
-    <String id="686">Né le</String>
+    <String id="686">Né(e) le</String>
     <String id="687">Années d'activité</String>
     <String id="688">Instruments</String>
     <String id="689">Bio.</String>
@@ -691,7 +691,7 @@
     <String id="851">Liste</String>
     <String id="852">Alarme active</String>
     <String id="853">Nom :</String>
-    <String id="854">Activer sur ces jours</String>
+    <String id="854">Activé ces jours</String>
     <String id="855">Heure de réveil</String>
     <String id="856">Réveil On</String>
     <String id="857">Sieste</String>
@@ -799,6 +799,10 @@
     <String id="959">a rejoint la conversation</String>
     <String id="960">a quitté la conversation</String>
     <String id="961">Statut MSN</String>
+    <String id="965">Taux d'échantillonnage constant</String>
+    <String id="966">Taux d'échantillonnage variable sur la moyenne</String>
+    <String id="967">Taux d'échantillonnage variable sur les pics</String>
+    <String id="968">Non défini</String>
     <String id="970">Fenêtre précédente</String>
     <String id="971">Groupe</String>
     <String id="972">Toutes les chaînes</String>
@@ -902,11 +906,11 @@
     <String id="1075">720x576</String>
     <String id="1076">1280x720</String>
     <String id="1077">1920x1080</String>
-    <String id="1078">12.5 FPS</String>
-    <String id="1079">15 FPS</String>
-    <String id="1080">23.97 FPS</String>
-    <String id="1081">25 FPS</String>
-    <String id="1082">29.97 FPS</String>
+    <String id="1078">12.5 IPS</String>
+    <String id="1079">15 IPS</String>
+    <String id="1080">23.97 IPS</String>
+    <String id="1081">25 IPS</String>
+    <String id="1082">29.97 IPS</String>
     <String id="1083">100 Kbps</String>
     <String id="1084">256 Kbps</String>
     <String id="1085">384 Kbps</String>
@@ -927,6 +931,7 @@
     <String id="1110">Garder ancien rec.</String>
     <String id="1111">Utiliser nouveau</String>
     <String id="1112">Laisser conflit</String>
+    <String id="1113">Passer le conflit</String>
     <String id="1190">Zoom 14:9</String>
     <String id="1191">Répète Listes</String>
     <String id="1192">Utiliser VMR9 pour flux Web</String>
@@ -949,6 +954,7 @@
     <String id="1448">Ne rien sélectionner</String>
     <String id="1449">Arrêter l'enregistrement</String>
     <String id="1450">Etes-vous sûr de vouloir arrêter l'enregistrement ?</String>
+    <String id="1499">Pas de signal</String>
     <String id="1500">Pas de timeshifting</String>
     <String id="1501">Carte désactivée</String>
     <String id="1502">Pas de carte disponible</String>
@@ -961,11 +967,12 @@
     <String id="1509">Pas de fréquence pour cette chaîne</String>
     <String id="1510">Connexion au service TV perdue</String>
     <String id="1511">Pas de flux actif</String>
-    <String id="1512">Tune precedent canal ?</String>        
-    <String id="1513">Timeshifting arrété suite à enreg. programmé</String>
-    <String id="1514">Timeshifting arrété par un administrateur</String>
-    <String id="1515">Timeshifting arrété par le serveur télé</String>
-    <String id="1516">Timeshifting arrété pour une raison inconnue</String>
+    <String id="1512">Tune precedent canal ?</String>
+    <String id="1513">Timeshifting arrêté suite à enreg. programmé</String>
+    <String id="1514">Timeshifting arrêté par un administrateur</String>
+    <String id="1515">Timeshifting arrêté par le serveur télé</String>
+    <String id="1516">Timeshifting arrêté pour une raison inconnue</String>
+    <String id="1517">Timeshifting arrêté\rpar une autre personne</String>
     <String id="1950" prefix="Mon ">Etat</String>
     <String id="1951">Disque dur</String>
     <String id="1952">Ventilateur</String>
@@ -1180,6 +1187,10 @@
     <String id="2514">Retour au texte</String>
     <String id="2515">Images</String>
     <String id="2516" prefix="Mon ">Wikipedia</String>
+    <String id="2550">Voulez-vous réellement arrêter la TV live ?</String>
+    <String id="2551">(l'enregistrement instantané sera perdu)</String>
+    <String id="2552">Arrêt</String>
+    <String id="2553">Lecture</String>
     <String id="2599">Indeterminé</String>
     <String id="2600">Anglais</String>
     <String id="2601">Allemand</String>
@@ -1365,6 +1376,56 @@
     <String id="9009">Modèle de l'appareil :</String>
     <String id="9010">Fabriquant :</String>
     <String id="9011">Voir commentaires :</String>
+    <String id="9100" prefix="Mon">Mini affichage</String>
+    <String id="9101">Plugin non configuré</String>
+    <String id="9102">Veuillez lancer la configuraton de MediaPortal au préalable !</String>
+    <String id="9103">Options du clavier</String>
+    <String id="9104">Options d'affichage</String>
+    <String id="9105">Afficher les options de contrôle</String>
+    <String id="9106">Options de l'égaliseur</String>
+    <String id="9107">Options de la lumière d'ambiance</String>
+    <String id="9108">Options de la télécommande</String>
+    <String id="9109">Etat du moniteur</String>
+    <String id="9110">Contraste</String>
+    <String id="9111">Luminosité</String>
+    <String id="9112">Rouge</String>
+    <String id="9113">Vert</String>
+    <String id="9114">Bleu</String>
+    <String id="9115">Inverser l'affichage</String>
+    <String id="9116">Eteindre l'écran avec une vidéo</String>
+    <String id="9119">Eteindre l'écran pendant la veille</String>
+    <String id="9120">Délai de mise en veille</String>
+    <String id="9121">Affichage du volume</String>
+    <String id="9122">Affichage de la progression</String>
+    <String id="9123">Icône disque</String>
+    <String id="9124">Etat du média</String>
+    <String id="9125">Etat du lecteur CD/DVD</String>
+    <String id="9126">Utiliser une police personnalisée</String>
+    <String id="9127">Afficher de grandes icônes</String>
+    <String id="9128">Utiliser de grandes icônes personnalisées</String>
+    <String id="9129">Inverser les grandes icônes</String>
+    <String id="9130">Editeur de police</String>
+    <String id="9131">Editeur d'icône</String>
+    <String id="9132">Activer l'égaliseur</String>
+    <String id="9133">Apparence de l'égaliseur</String>
+    <String id="9135">Démarrage différé</String>
+    <String id="9136">Durée du différé</String>
+    <String id="9137">Afficher le titre</String>
+    <String id="9138">Délai du titre</String>
+    <String id="9139">Fréquence du titre</String>
+    <String id="9140">PAS D'OPTION POUR LE PAVE NUMERIQUE</String>
+    <String id="9141">Activer le pavé numérique</String>
+    <String id="9142">Affectation personnalisée</String>
+    <String id="9143">Affectation des touches du pavé numérique</String>
+    <String id="9144">PAS D'OPTION POUR LA TELECOMMANDE</String>
+    <String id="9145">Désactiver la télécommande</String>
+    <String id="9146">Désactiver la répétition</String>
+    <String id="9147">Délai de répétition</String>
+    <String id="9148">Affectation des touches de la télécommande</String>
+    <String id="9149">Normal</String>
+    <String id="9150">Stéréo</String>
+    <String id="9151">VU mètre</String>
+    <String id="9152">VU mètre 2</String>
     <String id="9997">Secondes:</String>
     <String id="9998">Minutes:</String>
     <String id="9999">Heures:</String>
@@ -1517,9 +1578,13 @@
     <String id="34013">Mode découverte</String>
     <String id="34014">Soumettre profil</String>
     <String id="34015">Recharger</String>
+    <String id="34016">Lire le morceau d'un artiste similaire</String>
+    <String id="34017">Lire un morceau avec les mêmes caractéristiques</String>
     <String id="34020">Flux courant :</String>
     <String id="34030">Pas de tag</String>
     <String id="34031">Pas d'ami</String>
+    <String id="34032">Aucun artiste</String>
+    <String id="34039">Artiste similaire :</String>
     <String id="34040">Radio recommandée</String>
     <String id="34041">Balayer dans Tag : </String>
     <String id="34042">Pas de Tag encore choisi</String>
@@ -1536,6 +1601,10 @@
     <String id="34053">Erreur visu du flux sélectionné </String>
     <String id="34054">Poignée de main échouée</String>
     <String id="34055">Les flux peuvent être indisponibles</String>
+    <String id="34060">Entrez une caractéristique...</String>
+    <String id="34061">Entrez un nom d'utilisateur...</String>
+    <String id="34062">Entrez un artiste...</String>
+    <String id="34063">Aucun artiste sélectionné</String>
     <String id="40001">Attente de mise en veille</String>
     <String id="40002">MediaPortal ne répond pas car il est encore occupé</String>
     <String id="40003">Quand toutes les taches seront terminées, MediaPortal passera en veille.</String>
@@ -1575,11 +1644,12 @@
     <String id="100035">Basic home</String>
     <String id="100100">Boîte Oui/Non</String>
     <String id="100101">Boîte de progression</String>
-    <String id="100500">Musique/playlist</String>
-    <String id="100501">Musique/partages</String>
-    <String id="100502">Musique/albums</String>
-    <String id="100503">Musique/artistes</String>
-    <String id="100504">Musique/genres</String>
+    <String id="100102">Boîte de Lecture/Arrêt</String>
+    <String id="100500">Musique/Liste de lecture</String>
+    <String id="100501">Musique/Partages</String>
+    <String id="100502">Musique/Albums</String>
+    <String id="100503">Musique/Artistes</String>
+    <String id="100504">Musique/Genres</String>
     <String id="100505">Musique/top100</String>
     <String id="100506">Musique/Favoris</String>
     <String id="100507">Musique/Années</String>
@@ -1648,6 +1718,7 @@
     <String id="100762">Guide radio</String>
     <String id="100770">Explorateur</String>
     <String id="101000">Clavier</String>
+    <String id="101002">Clavier virtuel</String>
     <String id="102000">Boîte de sélection</String>
     <String id="102001" prefix="Ma ">Musique/info</String>
     <String id="102002">Boîte OK</String>
@@ -1684,6 +1755,13 @@
     <String id="107777" prefix="Mon ">Sudoku</String>
     <String id="107890" prefix="Ma ">Last.fm radio</String>
     <String id="108888">Menu Musique</String>
+    <String id="109000">Mini écran - Configuration</String>
+    <String id="109001">Mini écran - Configuration - Eclairage d'ambiance</String>
+    <String id="109002">Mini écran - Configuration - Afficher les contrôles</String>
+    <String id="109003">Mini écran - Configuration - Afficher les options</String>
+    <String id="109004">Mini écran - Configuration - Egaliseur</String>
+    <String id="109005">Mini écran - Configuration - Pavé numérique</String>
+    <String id="109006">Mini écran - Configuration - Télécommande</String>
     <String id="200000">Sélectionnez le logiciel de récupération des programmes TV. Note : Si votre pays n'est</String>
     <String id="200001">pas dans la liste, il vous faudra remplir manuellement le fichier tvguide.xml.</String>
     <String id="200002">Vous pouvez maintenant relier vos programmes TV à vos chaînes TV.</String>
@@ -1733,9 +1811,23 @@
     <String id="200047">Créer vignettes (avec sous-dossiers)</String>
     <String id="200048">Re-créer toutes les vignettes</String>
     <String id="200049">Seulement les enregs déjà vus</String>
-    <String id="200050">Cela supprimera les enregs du disque dur</String>		
+    <String id="200050">Cela supprimera les enregs du disque dur</String>
     <String id="200051">Supprimer cet épisode ?</String>
     <String id="200052">Enregistrements en cours</String>
     <String id="200053">Pas d'enregistrements en cours</String>
+    <String id="200054">Impossible de supprimer l'enregistrement TV.</String>
+    <String id="200055">La TV Live pourrait être interrompue</String>
+    <String id="200059">Mode audio bi-phonique</String>
+    <String id="200060">Stéréo</String>
+    <String id="200061">Piste audio gauche sur les haut-parleurs droit et gauche</String>
+    <String id="200062">Piste audio droite sur les haut-parleurs droit et gauche</String>
+    <String id="200063">Mélanger les deux</String>
+    <String id="200064">Connecté à TvServer</String>
+    <String id="200065">Certains ports semblent être inaccessibles</String>
+    <String id="200066">Impossible de se connecter au TvServer</String>
+    <String id="200067">Connecté à la base de données</String>
+    <String id="200068">Impossible de se connecter à la base de données</String>
+    <String id="200069">Tous les ports IP semblent être corrects</String>
+    <String id="200070">Veuillez vérifier la configuration du pare-feu</String>
   </Section>
 </Language>
