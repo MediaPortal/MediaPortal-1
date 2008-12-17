@@ -55,7 +55,7 @@ namespace SetupTv
 
     StartupMode _dialogMode = StartupMode.Normal;
     ProviderType _provider = ProviderType.MySql;
-    string _schemaName = "MpTvDbRC4";
+    string _schemaName = "MpTvDb";
 
     public SetupDatabaseForm(StartupMode aStartMode)
     {
