@@ -150,11 +150,11 @@ namespace MediaPortal.Configuration.Sections
     
     #region ctor
     public MovieDatabase()
-      : this("Movie Database")
+      : this("Video Database")
     {
     }
     public MovieDatabase(string name)
-      : base("Movie Database")
+      : base("Video Database")
     {
       InitializeComponent();
 
@@ -179,7 +179,7 @@ namespace MediaPortal.Configuration.Sections
       //
       // Load selected shares
       //
-      SectionSettings section = SectionSettings.GetSection("Movie Folders");
+      SectionSettings section = SectionSettings.GetSection("Video Folders");
 
       if (section != null)
       {
@@ -194,10 +194,10 @@ namespace MediaPortal.Configuration.Sections
         }
       }
 
-      //
+      // Movie Folders
       // Fetch extensions
       //
-      section = SectionSettings.GetSection("Movie Extensions");
+      section = SectionSettings.GetSection("Video Extensions");
 
       if (section != null)
       {

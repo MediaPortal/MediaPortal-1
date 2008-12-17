@@ -37,7 +37,7 @@ namespace MediaPortal.Configuration.Sections
   public class MovieShares : MediaPortal.Configuration.Sections.BaseShares
   {
     public MovieShares()
-      : this("Movie Folders") { }
+      : this("Video Folders") { }
 
     public MovieShares(string name)
       : base(name) { }

@@ -514,29 +514,30 @@ namespace MediaPortal.Configuration
       AddSection(new ConfigPage(music, new MusicASIO(), true));
     }
 
+    
     private void AddTabMovies()
     {
-      //add movie section
-      Log.Info("add movie section");
+      //add video section
+      Log.Info("add video section");
       if (splashScreen != null)
-        splashScreen.SetInformation("Adding movie section...");
+        splashScreen.SetInformation("Adding video section...");
 
       SectionSettings movie = new Movies();
       AddSection(new ConfigPage(null, movie, false));
 
-      Log.Info("  add movie shares section");
+      Log.Info("  add video shares section");
       AddSection(new ConfigPage(movie, new MovieShares(), false));
-      Log.Info("  add movie database section");
+      Log.Info("  add video database section");
       MovieDatabase movieDbConfig = new MovieDatabase();
       AddSection(new ConfigPage(movie, movieDbConfig, false));
-      Log.Info("  add movie player section");
+      Log.Info("  add video player section");
       AddSection(new ConfigPage(movie, new MoviePlayer(), false));
 
-      Log.Info("  add movie extensions section");
+      Log.Info("  add video extensions section");
       AddSection(new ConfigPage(movie, new MovieExtensions(), true));
-      Log.Info("  add movie views section");
+      Log.Info("  add video views section");
       AddSection(new ConfigPage(movie, new MovieViews(), true));
-      Log.Info("  add movie postprocessing section");
+      Log.Info("  add video postprocessing section");
       AddSection(new ConfigPage(movie, new MoviePostProcessing(), true));
     }
 

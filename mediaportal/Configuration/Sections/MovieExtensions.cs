@@ -36,7 +36,7 @@ namespace MediaPortal.Configuration.Sections
   public class MovieExtensions : MediaPortal.Configuration.Sections.BaseFileExtensions
   {
     public MovieExtensions()
-      : this("Movie Extensions") { }
+      : this("Video Extensions") { }
 
     public MovieExtensions(string name)
       : base(name) { }

@@ -66,7 +66,7 @@ namespace MediaPortal.Configuration.Sections
     bool _init = false;
 
     public MoviePlayer()
-      : this("Movie Player")
+      : this("Video Player")
     {
     }
 

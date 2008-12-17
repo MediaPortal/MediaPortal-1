@@ -85,7 +85,7 @@ namespace MediaPortal.Configuration.Sections
       };
 
     public MovieViews()
-      : this("Movie Views") { }
+      : this("Video Views") { }
 
     public MovieViews(string name)
       : base(name) { }

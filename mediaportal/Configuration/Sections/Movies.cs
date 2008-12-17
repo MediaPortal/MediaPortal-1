@@ -81,7 +81,7 @@ namespace MediaPortal.Configuration.Sections
     string[] aspectRatio = { "normal", "original", "stretch", "zoom", "zoom149", "letterbox", "panscan" };
 
     public Movies()
-      : this("Movies")
+      : this("Videos")
     {
     }
 
@@ -609,7 +609,7 @@ namespace MediaPortal.Configuration.Sections
       // Movies
       // 
       this.Controls.Add(this.tabControl1);
-      this.Name = "Movies";
+      this.Name = "Videos";
       this.Size = new System.Drawing.Size(472, 408);
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();

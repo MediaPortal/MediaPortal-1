@@ -39,7 +39,7 @@ namespace MediaPortal.Configuration.Sections
   public class MoviePostProcessing : MediaPortal.Configuration.Sections.BasePostProcessing
   {
     public MoviePostProcessing()
-      : this("Movie Post Processing") { }
+      : this("Video Post Processing") { }
 
     public MoviePostProcessing(string name)
       : base(name) { }
