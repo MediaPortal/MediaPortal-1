@@ -83,7 +83,7 @@ namespace MediaPortal.Configuration.Sections
       InitializeComponent();
     }
 
-    string loglevel = "3";  // 2 = info is default, changed to 3 = debug until final 1.0 is out
+    string loglevel = "2";  // 1= error, 2 = info, 3 = debug
     int screennumber = 0;   // 0 is the primary screen
 
     string[][] sectionEntries = new string[][] { 
@@ -153,7 +153,7 @@ namespace MediaPortal.Configuration.Sections
           settingsCheckedListBox.SetItemChecked(index, xmlreader.GetValueAsBool(currentSection[0], currentSection[1], bool.Parse(currentSection[2])));
         }
 
-        loglevel = xmlreader.GetValueAsString("general", "loglevel", "3");  // set loglevel to Debug
+        loglevel = xmlreader.GetValueAsString("general", "loglevel", "2");  // set loglevel to info
         cbDebug.SelectedIndex = Convert.ToInt16(loglevel);
         screennumber = xmlreader.GetValueAsInt("screenselector", "screennumber", 0);
 
