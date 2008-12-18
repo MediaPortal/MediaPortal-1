@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Grabber>
-  <Info language="en" availableDays="14" timezone="GMT Standard Time" version="2.0.4" />
+  <Info language="en" availableDays="0" timezone="GMT Standard Time" version="2.0.3" />
   <Channels>
-    <Channel id="english.aljazeera.net" siteId="2055" />    
     <Channel id="animal@discovery.com" siteId="39" />
     <Channel id="animalp1@discovery.com" siteId="1761" />   
     <Channel id="arydigital.tv" siteId="223" />
@@ -44,7 +43,6 @@
     <Channel id="bbc3@bbc.co.uk" siteId="45" />
     <Channel id="bbc4d@bbc.co.uk" siteId="47" />
     <Channel id="bbc4@bbc.co.uk" siteId="47" />
-    <Channel id="bbcalba@bbc.co.uk" siteId="2098" />
     <Channel id="bbcn@bbc.co.uk" siteId="48" />
     <Channel id="bbcpar@bbc.co.uk" siteId="49" />
     <Channel id="bbcp@bbc.co.uk" siteId="50" />
@@ -73,10 +71,6 @@
     <Channel id="p1@challengetv.co.uk" siteId="1872" />
     <Channel id="channeltv.co.uk" siteId="28" />
     <Channel id="channel4.com" siteId="132" />
-    <Channel id="4music@channel4.com" siteId="1544" />
-    <Channel id="C4HD@channel4.com" siteId="2056" />
-    <Channel id="film4@channel4.com" siteId="160" />
-    <Channel id="film4p1@channel4.com" siteId="2021" />
     <Channel id="p1@channel4.com" siteId="2047" />
     <Channel id="channelm.co.uk" siteId="1944" />
     <Channel id="tv@chealseafc.com" siteId="1741" />
@@ -89,19 +83,17 @@
     <Channel id="discoverychannel.co.uk" siteId="147" />
     <Channel id="an@discoverychannel.co.uk" siteId="147" />
     <Channel id="15@discoverychannel.co.uk" siteId="2043" />
-    <Channel id="knowledge@discoverychannel.co.uk" siteId="148" />
+    <Channel id="civil@discoverychannel.co.uk" siteId="148" />
     <Channel id="home@discoverychannel.co.uk" siteId="149" />
     <Channel id="homep1@discoverychannel.co.uk" siteId="1953" />
     <Channel id="p1@discoverychannel.co.uk" siteId="152" />
     <Channel id="real@discoverychannel.co.uk" siteId="150" />
     <Channel id="realan@discoverychannel.co.uk" siteId="150" />
-    <Channel id="realextra@discoverychannel.co.uk" siteId="2057" />
     <Channel id="realp1@discoverychannel.co.uk" siteId="1764" />
     <Channel id="science@discoverychannel.co.uk" siteId="153" />
     <Channel id="travel@discoverychannel.co.uk" siteId="154" />
     <Channel id="turbo@discoverychannel.co.uk" siteId="155" />
     <Channel id="disneychannel.co.uk" siteId="156" />
-    <Channel id="p1@disneychannel.co.uk" siteId="157" />
     <Channel id="cinemagic@disneychannel.co.uk" siteId="1984" />
     <Channel id="cinemagicp1@disneychannel.co.uk" siteId="1985" />
     <Channel id="eonline.com" siteId="1421" />
@@ -113,9 +105,11 @@
     <Channel id="eurosport@eurosport.com" siteId="124" />
     <Channel id="sports@extreme.com" siteId="582" />
     <Channel id="ftn.tv" siteId="921" />
+    <Channel id="film4@channel4.com" siteId="160" />
+    <Channel id="film4p1@channel4.com" siteId="2021" />
     <Channel id="five.tv" siteId="134" />
     <Channel id="us@five.tv" siteId="2008"/>
-    <Channel id="fiver@five.tv" siteId="2062"/>
+    <Channel id="life@five.tv" siteId="2007"/>
     <Channel id="flaunt.tv" siteId="1141" />
     <Channel id="fxuk.tv" siteId="1461" />
     <Channel id="p@fxuk.tv" siteId="1971" />
@@ -142,7 +136,6 @@
     <Channel id="p1itv2@itv.com" siteId="1990" />
     <Channel id="itv3@itv.com" siteId="1859" />
     <Channel id="itv4@itv.com" siteId="1961" />
-    <Channel id="itvhd@itv.com" siteId="2118" />
     <Channel id="jetix.co.uk" siteId="165" />
     <Channel id="an@jetix.co.uk" siteId="165" />
     <Channel id="p1@jetix.co.uk" siteId="166" />
@@ -156,7 +149,6 @@
     <Channel id="menmot@itv.com" siteId="176" />
     <Channel id="menmoa@itv.com" siteId="176" />
     <Channel id="motorstv.com" siteId="1958" />
-    <Channel id="movies4men.co.uk" siteId="2058" />
     <Channel id="tvmovies24.com" siteId="2012" />
     <Channel id="base@mtv.co.uk" siteId="203" />
     <Channel id="dance@mtv.co.uk" siteId="610" />
@@ -186,7 +178,6 @@
     <Channel id="tvpolonia.com" siteId="1442" />
     <Channel id="premplus@sky.com" siteId="587" />
     <Channel id="price-drop.tv" siteId="1541" />
-    <Channel id="propellertv.co.uk" siteId="2014" />
     <Channel id="tv@q4music.com" siteId="613" />
     <Channel id="qvcuk.com" siteId="228" />
     <Channel id="racinguk.tv" siteId="1949" />
@@ -201,8 +192,8 @@
     <Channel id="stv.co.uk" siteId="37" />
     <Channel id="screenshop.co.uk" siteId="246" />
     <Channel id="scuzz.tv" siteId="1143" />
-    <Channel id="1@setanta.com" siteId="2096" />
-    <Channel id="2@setanta.com" siteId="2097" />
+    <Channel id="ie@setanta.com" siteId="1781" />
+    <Channel id="uk@setanta.com" siteId="1783" />
     <Channel id="skyarts@sky.com" siteId="40" />
     <Channel id="skyboxoff01@sky.com" siteId="1261" />
     <Channel id="skyboxoff02@sky.com" siteId="1261" />
@@ -275,8 +266,8 @@
     <Channel id="skymoviesindie@sky.com" siteId="253" />
     <Channel id="skymoviesmoderngreats@sky.com" siteId="260" />
     <Channel id="skymoviesdrama@sky.com" siteId="255" />
-    <Channel id="skymovieshd1@sky.com" siteId="2063" />
-    <Channel id="skymovieshd2@sky.com" siteId="2064" />
+    <Channel id="skymovieshd1@sky.com" siteId="254" />
+    <Channel id="skymovieshd2@sky.com" siteId="1973" />
     <Channel id="skynews@sky.com" siteId="256" />
     <Channel id="skyone@sky.com" siteId="248" />
     <Channel id="skysports1@sky.com" siteId="262" />
@@ -284,8 +275,8 @@
     <Channel id="skysports3@sky.com" siteId="265" />
     <Channel id="skysportsne@sky.com" siteId="300" />
     <Channel id="skysportsx@sky.com" siteId="263" />
-    <Channel id="reallives@sky.com" siteId="266" />
-    <Channel id="reallives2@sky.com" siteId="1662" />
+    <Channel id="skytravel@sky.com" siteId="266" />
+    <Channel id="skytravelex@sky.com" siteId="1662" />
     <Channel id="skythree@sky.com" siteId="1963" />
     <Channel id="skytwo@sky.com" siteId="922" />
     <Channel id="stopshop@thanedirect.co.uk" siteId="1950" />
@@ -306,15 +297,14 @@
     <Channel id="theadultchannel.co.uk" siteId="280" />
     <Channel id="thebox.co.uk" siteId="281" />
     <Channel id="thedatingchannel.com" siteId="981" />
+    <Channel id="hits@kerrang.com" siteId="1544" />
     <Channel id="tmf@mtv.co.uk" siteId="1501" />
     <Channel id="thomascook.com" siteId="1767" />
     <Channel id="travelchannel.co.uk" siteId="1462" />
     <Channel id="p1@travelchannel.co.uk" siteId="1855" />
     <Channel id="trouble@uktv.co.uk" siteId="287" />
     <Channel id="troublean@uktv.co.uk" siteId="287" />
-    <Channel id="troublereload@uktv.co.uk" siteId="1202" />
-
-    <Channel id="truemovies.tv" siteId="2059" />
+    <Channel id="troublep1@uktv.co.uk" siteId="1202" />
     <Channel id="tv3.ie" siteId="941" />
     <Channel id="tv5.org" siteId="276" />
     <Channel id="tvtravelshop.com" siteId="274" />
@@ -323,12 +313,12 @@
     <Channel id="uktvbrighti@uktv.co.uk" siteId="923" />
     <Channel id="uktvdoc@uktv.co.uk" siteId="1601" />
     <Channel id="uktvdocp1@uktv.co.uk" siteId="625" />
-    <Channel id="uktvalibi@uktv.co.uk" siteId="292" />
-    <Channel id="uktvalibip1@uktv.co.uk" siteId="1993" />
+    <Channel id="uktvdrama@uktv.co.uk" siteId="292" />
+    <Channel id="uktvdramap1@uktv.co.uk" siteId="1993" />
     <Channel id="uktvfood@uktv.co.uk" siteId="423" />
     <Channel id="uktvfoodp1@uktv.co.uk" siteId="1621" />
     <Channel id="dave@uktv.co.uk" siteId="2050" />
-    <Channel id="davep1@uktv.co.uk" siteId="2052" />
+    <Channel id="davep1@uktv.co.uk" siteId="2051" />
     <Channel id="uktvgoldtt@uktv.co.uk" siteId="288" />
     <Channel id="uktvgold@uktv.co.uk" siteId="288" />
     <Channel id="uktvgoldp1@uktv.co.uk" siteId="665" />
@@ -339,8 +329,6 @@
     <Channel id="uktvstyle@uktv.co.uk" siteId="291" />
     <Channel id="uktvstylega@uktv.co.uk" siteId="1882" />
     <Channel id="uktvstylep1@uktv.co.uk" siteId="666" />
-    <Channel id="watch@uktv.co.uk" siteId="2115" />
-    <Channel id="watchp1@uktv.co.uk" siteId="2116" />
     <Channel id="classic@vh1.co.uk" siteId="294" />
     <Channel id="vh1.co.uk" siteId="293" />
     <Channel id="2@vh1.co.uk" siteId="1482" />

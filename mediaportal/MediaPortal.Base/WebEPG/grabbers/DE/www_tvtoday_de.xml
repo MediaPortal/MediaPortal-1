@@ -38,7 +38,7 @@
     <Channel id="premiere.de" siteId="PRS" />
     <!-- Digital -->
     <Channel id="dw-world.de" siteId="DWTV" />
-    <Channel id="extra@ard-digital.de" siteId="EXTRA" />
+    <Channel id="exrta@ard-digital.de" siteId="EXTRA" />
     <Channel id="fest@ard-digital.de" siteId="FES" />
     <Channel id="plus@ard-digital.de" siteId="MUX" />
     <Channel id="zdftheater@zdf.de" siteId="ZTK" />
@@ -50,7 +50,6 @@
     <!-- Musik -->
     <Channel id="mtv.de" siteId="MTV" />
     <Channel id="viva.tv" siteId="VIVA" />
-    <Channel id="deluxe music" siteId="DMC" />
     <!-- Sparten -->
     <Channel id="nick.de" siteId="NICK" />
     <Channel id="kika.de" siteId="KIKA" />
@@ -87,7 +86,7 @@
     <Channel id="mgm.com" siteId="MGM" />
     <Channel id="planet@premiere.de" siteId="PLANE" />
     <Channel id="scifi@premiere.de" siteId="SCIFI" />
-    <Channel id="13thstreet.de" siteId="13TH" />
+    <Channel id="13thstreet.de" siteId="113TH" />
     <Channel id="hit24.tv" siteId="HIT24" />
     <Channel id="history@discovery.de" siteId="DISGE" />
     <Channel id="focusgesundheit.tv" siteId="FOGE" />
@@ -104,13 +103,6 @@
     <Channel id="thehistorychannel.co.uk" siteId="HISTO" />
     <Channel id="nasn.com" siteId="NASN" />
     <Channel id="toon@disney.de" siteId="TOON" />
-    <Channel id="rtl crime" siteId="RTL-C" />
-    <Channel id="rtl living" siteId="RTL-L" />
-    <Channel id="rtl passion" siteId="PASS" />
-    <Channel id="fox de" siteId="FOX" />
-    <Channel id="eclips" siteId="ECLIP" />
-    <Channel id="kabel 1 classics" siteId="K1CLA" />
-    <Channel id="cartoon network" siteId="C-NET" />
     <!-- Premiere Blockbuster -->
     <Channel id="prem1@premiere.de" siteId="PR1" />
     <Channel id="prem2@premiere.de" siteId="PR2" />
@@ -119,14 +111,13 @@
     <Channel id="disney.de" siteId="DISNE" />
     <!-- Premiere Entertainment -->
     <Channel id="class@premiere.de" siteId="PRFC" />
-    <Channel id="filmfest@premiere.de" siteId="PRFF" />
+    <Channel id="fest@premiere.de" siteId="PRFF" />
     <Channel id="nost@premiere.de" siteId="PRN" />
     <Channel id="serie@premiere.de" siteId="PRSER" />
     <Channel id="krimi@premiere.de" siteId="KRIMI" />
-    <Channel id="romance tv" siteId="ROM" />
   </Channels>
   <Listing type="Html">
-    <Site url="http://www.tvtoday.de/programm?format=list&amp;offset=[PAGE_OFFSET]&amp;date=[DD].[MM].[YYYY]&amp;slotIndex=all&amp;channel=[ID]&amp;tips=&amp;oder=time" post="" external="false" encoding="" />
+    <Site url="http://www.tvtoday.de/program2007?format=list&amp;offset=[PAGE_OFFSET]&amp;date=[DD].[MM].[YYYY]&amp;slotIndex=all&amp;genre=&amp;channel=[ID]" post="" external="false" encoding="" />
     <Search maxlistings="30" />
     <Html>
       <Template name="default">
@@ -174,7 +165,7 @@
       </DataPreference>
       <Sublinks>
         <Sublink search="detailPopup" template="Details">
-          <Link url="http://www.tvtoday.de/programm?format=detail&amp;sid=[1]" post="" external="false" encoding="" />
+          <Link url="http://www.tvtoday.de/program2007?format=detail&amp;sid=[1]" post="" external="false" encoding="" />
         </Sublink>
       </Sublinks>
     </Html>

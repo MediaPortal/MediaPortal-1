@@ -118,13 +118,13 @@
 	<Channel id="filmclassics@premiere.de" siteId="220" />
   </Channels>
   <Listing type="Html">
-    <Site url="http://www.tvinfo.de/exe.php3?target=senderlist.inc&amp;newD=[_D]&amp;newM=[_M]&amp;newY=[YYYY]&amp;showSenderID=[ID]" post="" external="false" encoding="" />
+    <Site url="http://217.79.220.15/exe.php3?target=senderlist.inc&amp;newD=[_D]&amp;newM=[_M]&amp;newY=[YYYY]&amp;showSenderID=[ID]" post="" external="false" encoding="" />
     <Html>
       <Template name="default">
         <SectionTemplate tags="TA">
           <TemplateText>
 	&lt;td&gt;&lt;#START&gt; &lt;/td&gt;
-	&lt;td&gt;&lt;a href&gt;&lt;#TITLE&gt;&lt;/a&gt;&lt;i&gt;&lt;#SUBTITLE&gt;&lt;/i&gt;&lt;/td&gt;
+	&lt;td&gt;&lt;a href&gt;&lt;#TITLE&gt;&lt;/a&gt;&lt;#DESCRIPTION&gt;&lt;/td&gt;
 	&lt;td&gt;&lt;#GENRE&gt;  &lt;/td&gt;&lt;/tr &gt;
     </TemplateText>
         </SectionTemplate>
