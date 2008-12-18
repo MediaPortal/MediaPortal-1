@@ -71,7 +71,6 @@ namespace SetupTv.Sections
       this.mpLabel5 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLabel6 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLNB1 = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.groupBox2 = new System.Windows.Forms.GroupBox();
       this.checkEnableDVBS2 = new System.Windows.Forms.CheckBox();
       this.tabPage2 = new System.Windows.Forms.TabPage();
       this.labelTunerLock = new System.Windows.Forms.Label();
@@ -117,7 +116,6 @@ namespace SetupTv.Sections
       this.tabControl1.SuspendLayout();
       this.tabPage3.SuspendLayout();
       this.groupBox1.SuspendLayout();
-      this.groupBox2.SuspendLayout();
       this.tabPage2.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
       this.tabPage1.SuspendLayout();
@@ -251,6 +249,7 @@ namespace SetupTv.Sections
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.checkEnableDVBS2);
       this.groupBox1.Controls.Add(this.mpTransponder4);
       this.groupBox1.Controls.Add(this.mpTransponder3);
       this.groupBox1.Controls.Add(this.mpTransponder2);
@@ -280,7 +279,6 @@ namespace SetupTv.Sections
       this.groupBox1.Controls.Add(this.mpLabel5);
       this.groupBox1.Controls.Add(this.mpLabel6);
       this.groupBox1.Controls.Add(this.mpLNB1);
-      this.groupBox1.Controls.Add(this.groupBox2);
       this.groupBox1.Location = new System.Drawing.Point(3, 11);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(479, 367);
@@ -363,7 +361,7 @@ namespace SetupTv.Sections
       // label17
       // 
       this.label17.AutoSize = true;
-      this.label17.Location = new System.Drawing.Point(323, 244);
+      this.label17.Location = new System.Drawing.Point(323, 256);
       this.label17.Name = "label17";
       this.label17.Size = new System.Drawing.Size(32, 13);
       this.label17.TabIndex = 86;
@@ -372,7 +370,7 @@ namespace SetupTv.Sections
       // label16
       // 
       this.label16.AutoSize = true;
-      this.label16.Location = new System.Drawing.Point(323, 217);
+      this.label16.Location = new System.Drawing.Point(323, 229);
       this.label16.Name = "label16";
       this.label16.Size = new System.Drawing.Size(32, 13);
       this.label16.TabIndex = 85;
@@ -381,7 +379,7 @@ namespace SetupTv.Sections
       // label15
       // 
       this.label15.AutoSize = true;
-      this.label15.Location = new System.Drawing.Point(323, 191);
+      this.label15.Location = new System.Drawing.Point(323, 203);
       this.label15.Name = "label15";
       this.label15.Size = new System.Drawing.Size(32, 13);
       this.label15.TabIndex = 84;
@@ -389,21 +387,21 @@ namespace SetupTv.Sections
       // 
       // textBoxLNBSwitch
       // 
-      this.textBoxLNBSwitch.Location = new System.Drawing.Point(201, 241);
+      this.textBoxLNBSwitch.Location = new System.Drawing.Point(201, 253);
       this.textBoxLNBSwitch.Name = "textBoxLNBSwitch";
       this.textBoxLNBSwitch.Size = new System.Drawing.Size(116, 20);
       this.textBoxLNBSwitch.TabIndex = 83;
       // 
       // textBoxLNBHi
       // 
-      this.textBoxLNBHi.Location = new System.Drawing.Point(201, 214);
+      this.textBoxLNBHi.Location = new System.Drawing.Point(201, 226);
       this.textBoxLNBHi.Name = "textBoxLNBHi";
       this.textBoxLNBHi.Size = new System.Drawing.Size(116, 20);
       this.textBoxLNBHi.TabIndex = 82;
       // 
       // textBoxLNBLo
       // 
-      this.textBoxLNBLo.Location = new System.Drawing.Point(201, 188);
+      this.textBoxLNBLo.Location = new System.Drawing.Point(201, 200);
       this.textBoxLNBLo.Name = "textBoxLNBLo";
       this.textBoxLNBLo.Size = new System.Drawing.Size(116, 20);
       this.textBoxLNBLo.TabIndex = 81;
@@ -411,7 +409,7 @@ namespace SetupTv.Sections
       // checkBox2
       // 
       this.checkBox2.AutoSize = true;
-      this.checkBox2.Location = new System.Drawing.Point(10, 162);
+      this.checkBox2.Location = new System.Drawing.Point(10, 174);
       this.checkBox2.Name = "checkBox2";
       this.checkBox2.Size = new System.Drawing.Size(186, 17);
       this.checkBox2.TabIndex = 80;
@@ -422,7 +420,7 @@ namespace SetupTv.Sections
       // label14
       // 
       this.label14.AutoSize = true;
-      this.label14.Location = new System.Drawing.Point(26, 244);
+      this.label14.Location = new System.Drawing.Point(26, 256);
       this.label14.Name = "label14";
       this.label14.Size = new System.Drawing.Size(164, 13);
       this.label14.TabIndex = 79;
@@ -431,7 +429,7 @@ namespace SetupTv.Sections
       // label13
       // 
       this.label13.AutoSize = true;
-      this.label13.Location = new System.Drawing.Point(26, 217);
+      this.label13.Location = new System.Drawing.Point(26, 229);
       this.label13.Name = "label13";
       this.label13.Size = new System.Drawing.Size(141, 13);
       this.label13.TabIndex = 78;
@@ -440,7 +438,7 @@ namespace SetupTv.Sections
       // label10
       // 
       this.label10.AutoSize = true;
-      this.label10.Location = new System.Drawing.Point(26, 191);
+      this.label10.Location = new System.Drawing.Point(26, 203);
       this.label10.Name = "label10";
       this.label10.Size = new System.Drawing.Size(139, 13);
       this.label10.TabIndex = 77;
@@ -609,22 +607,10 @@ namespace SetupTv.Sections
       this.mpLNB1.UseVisualStyleBackColor = true;
       this.mpLNB1.CheckedChanged += new System.EventHandler(this.mpLNB1_CheckedChanged);
       // 
-      // groupBox2
-      // 
-      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox2.Controls.Add(this.checkEnableDVBS2);
-      this.groupBox2.Location = new System.Drawing.Point(6, 290);
-      this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(467, 59);
-      this.groupBox2.TabIndex = 92;
-      this.groupBox2.TabStop = false;
-      this.groupBox2.Text = "Pilot and Roll-off settings for DVB-S2 tuning (FireDTV and Hauppauge only)";
-      // 
       // checkEnableDVBS2
       // 
       this.checkEnableDVBS2.AutoSize = true;
-      this.checkEnableDVBS2.Location = new System.Drawing.Point(15, 27);
+      this.checkEnableDVBS2.Location = new System.Drawing.Point(10, 292);
       this.checkEnableDVBS2.Name = "checkEnableDVBS2";
       this.checkEnableDVBS2.Size = new System.Drawing.Size(399, 17);
       this.checkEnableDVBS2.TabIndex = 91;
@@ -1073,8 +1059,6 @@ namespace SetupTv.Sections
       this.tabPage3.ResumeLayout(false);
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
-      this.groupBox2.ResumeLayout(false);
-      this.groupBox2.PerformLayout();
       this.tabPage2.ResumeLayout(false);
       this.tabPage2.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
@@ -1169,7 +1153,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ToolTip toolTip1;
     private System.Windows.Forms.CheckBox checkBoxCreateGroupsSat;
     private System.Windows.Forms.CheckBox checkEnableDVBS2;
-    private System.Windows.Forms.GroupBox groupBox2;
     private System.Windows.Forms.Label labelTunerLock;
     private System.Windows.Forms.Label label18;
   }
