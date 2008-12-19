@@ -27,7 +27,7 @@ namespace MediaPortal.Configuration.Sections
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        checkBoxEnableScreensaver.Checked = xmlreader.GetValueAsBool("general", "screensaver", true);
+        checkBoxEnableScreensaver.Checked = xmlreader.GetValueAsBool("general", "screensaver", false);
         numericUpDownDelay.Value = xmlreader.GetValueAsInt("general", "screensavertime", 60);
       }
     }
