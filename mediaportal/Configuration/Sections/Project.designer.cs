@@ -248,10 +248,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // labelMePo
       // 
-      this.labelMePo.Image = ((System.Drawing.Image)(resources.GetObject("labelMePo.Image")));
-      this.labelMePo.Location = new System.Drawing.Point(3, 142);
+      this.labelMePo.Image = global::MediaPortal.Configuration.Properties.Resources.mepo_donation;
+      this.labelMePo.Location = new System.Drawing.Point(-3, 112);
       this.labelMePo.Name = "labelMePo";
-      this.labelMePo.Size = new System.Drawing.Size(258, 202);
+      this.labelMePo.Size = new System.Drawing.Size(215, 256);
       this.labelMePo.TabIndex = 9;
       // 
       // Project
