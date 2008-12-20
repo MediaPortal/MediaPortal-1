@@ -276,14 +276,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         }
         foreach (FileInfo info2 in info.GetFiles("*.dll"))
         {
-          if (!info2.FullName.Contains("iMonVfd"))
+          if (this.ExtensiveLogging)
           {
-            if (this.ExtensiveLogging)
-            {
-              Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading LCDHype Driver {0}...", new object[] { info2.FullName });
-            }
-            list.Add(new LCDHypeWrapper(info2.FullName));
+            Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading LCDHype Driver {0}...", new object[] { info2.FullName });
           }
+          list.Add(new LCDHypeWrapper(info2.FullName));
         }
       }
       this.m_Drivers = list;
