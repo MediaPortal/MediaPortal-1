@@ -578,6 +578,10 @@ namespace MediaPortal.Configuration.Sections
       setting.ExcludeHiddenFiles = false;
 
       int appel = m_dbs.MusicDatabaseReorg(shares, setting);
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        checkBoxUpdateSinceLastImport.Text = String.Format("Only update new / changed files after {0}", xmlreader.GetValueAsString("musicfiles", "lastImport", "1900-01-01 00:00:00"));
+      }
       progressBar.Value = 100;
 
       groupBox1.Enabled = true;
