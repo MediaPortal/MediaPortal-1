@@ -610,7 +610,8 @@ namespace MediaPortal.Dialogs
     public void SelectActiveButton(float x, float y)
     {
       // Draw each row
-      int y1 = 250, x1 = 64;
+      int y1 = 250;
+      int x1 = (int)(64 * SkinRatio);
       GUIGraphicsContext.ScalePosToScreenResolution(ref x1, ref y1);
       float fY = y1;
       ArrayList keyBoard = (ArrayList)_keyboardList[(int)_currentKeyboard];
