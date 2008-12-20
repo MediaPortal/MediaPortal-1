@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>102</id>
+  <defaultcontrol>10</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <controls>
+    <import>common.dialog.xml</import>
+    <control>
+      <description>Play button</description>
+      <type>button</type>
+      <id>10</id>
+      <posX>723</posX>
+      <posY>490</posY>
+      <textXOff>44</textXOff>
+      <textYOff>9</textYOff>
+      <width>180</width>
+      <height>50</height>
+      <textureFocus>small_button_focus.png</textureFocus>
+      <textureNoFocus>small_button_nofocus.png</textureNoFocus>
+      <label>2553</label>
+      <onleft>11</onleft>
+      <onright>11</onright>
+      <onup>10</onup>
+      <ondown>10</ondown>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
+    </control>
+    <control>
+      <description>Stop button</description>
+      <type>button</type>
+      <id>11</id>
+      <posX>483</posX>
+      <posY>490</posY>
+      <textXOff>50</textXOff>
+      <textYOff>9</textYOff>
+      <width>180</width>
+      <height>50</height>
+      <textureFocus>small_button_focus.png</textureFocus>
+      <textureNoFocus>small_button_nofocus.png</textureNoFocus>
+      <label>2552</label>
+      <onleft>10</onleft>
+      <onright>10</onright>
+      <onup>11</onup>
+      <ondown>11</ondown>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
+    </control>
+  </controls>
+</window>

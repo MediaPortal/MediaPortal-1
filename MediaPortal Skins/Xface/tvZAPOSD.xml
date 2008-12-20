@@ -10,7 +10,7 @@
       <id>0</id>
       <posX>10</posX>
       <posY>610</posY>
-      <width>700</width>
+      <width>850</width>
       <height>140</height>
       <texture>zaposd_background_wide.png</texture>
     </control>
@@ -18,10 +18,10 @@
       <description>TV Logo</description>
       <type>image</type>
       <id>10</id>
-      <posX>56</posX>
-      <posY>641</posY>
-      <width>50</width>
-      <height>50</height>
+      <posX>35</posX>
+      <posY>625</posY>
+      <width>100</width>
+      <height>100</height>
       <texture>#TV.View.thumb</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
@@ -30,7 +30,7 @@
       <description>Progress Bar</description>
       <type>progress</type>
       <id>1</id>
-      <posX>380</posX>
+      <posX>480</posX>
       <posY>647</posY>
       <width>220</width>
       <height>5</height>
@@ -42,7 +42,7 @@
       <description>Start Time Info</description>
       <type>label</type>
       <id>101</id>
-      <posX>320</posX>
+      <posX>415</posX>
       <posY>636</posY>
       <label>#TV.View.start</label>
       <align>left</align>
@@ -53,7 +53,7 @@
       <description>End Time Info</description>
       <type>label</type>
       <id>102</id>
-      <posX>610</posX>
+      <posX>710</posX>
       <posY>636</posY>
       <label>#TV.View.stop</label>
       <align>left</align>
@@ -64,8 +64,8 @@
       <description>rec logo</description>
       <type>image</type>
       <id>39</id>
-      <posX>610</posX>
-      <posY>494</posY>
+      <posX>710</posX>
+      <posY>694</posY>
       <texture>rec.png</texture>
       <colordiffuse>50ffffff</colordiffuse>
     </control>
@@ -73,9 +73,9 @@
       <description>On tv NOW</description>
       <id>36</id>
       <type>textbox</type>
-      <width>300</width>
+      <width>400</width>
       <height>30</height>
-      <posX>160</posX>
+      <posX>170</posX>
       <posY>668</posY>
       <align>left</align>
       <font>font14</font>
@@ -85,9 +85,9 @@
       <description>On tv NEXT</description>
       <id>37</id>
       <type>textbox</type>
-      <width>300</width>
+      <width>400</width>
       <height>30</height>
-      <posX>160</posX>
+      <posX>170</posX>
       <posY>694</posY>
       <align>left</align>
       <font>font12</font>
@@ -97,7 +97,7 @@
       <description>Current channel</description>
       <type>label</type>
       <id>35</id>
-      <posX>146</posX>
+      <posX>160</posX>
       <posY>632</posY>
       <label>-</label>
       <align>left</align>

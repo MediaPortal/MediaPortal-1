@@ -5,7 +5,7 @@
   <allowoverlay>yes</allowoverlay>
   <define>#header.label:#burner_title</define>
   <define>#header.image:burn_logo.png</define>
-  <define>#header.hover:hover_my burner.png</define>
+  <define>#header.hover:-</define>
   <controls>
     <import>common.window.xml</import>
     <control>
@@ -13,7 +13,7 @@
       <type>label</type>
       <id>1</id>
       <posX>113</posX>
-      <posY>680</posY>
+      <posY>580</posY>
       <label>#burner_size</label>
       <font>font16</font>
       <align>left</align>
@@ -45,7 +45,7 @@
       <description>Status Bar</description>
       <type>statusbar</type>
       <id>1</id>
-      <posX>613</posX>
+      <posX>413</posX>
       <posY>704</posY>
       <width>560</width>
       <height>29</height>
@@ -75,8 +75,8 @@
     <control>
       <type>group</type>
       <description>group element</description>
-      <posX>113</posX>
-      <posY>129</posY>
+      <posX>69</posX>
+      <posY>89</posY>
       <layout>StackLayout</layout>
       <control>
         <description>Video</description>
@@ -147,10 +147,10 @@
 			<posY>129</posY>
 			<spinPosY>413</spinPosY>
 			<height>333</height>
-			<onright>2</onright> 
+			<onright>2</onright>
 			<onleft>2</onleft>
-			<onup>4</onup> 
-			<ondown>2</ondown> 
+			<onup>4</onup>
+			<ondown>2</ondown>
 		</control>
 		<control>
 			<description>copy listcontrol</description>
@@ -159,10 +159,10 @@
 			<posX>512</posX>
 			<posY>460</posY>
 			<height>266</height>
-			<onright>2</onright> 
-			<onleft>2</onleft> 
-			<onup>4</onup> 
-			<ondown>2</ondown> 
+			<onright>2</onright>
+			<onleft>2</onleft>
+			<onup>4</onup>
+			<ondown>2</ondown>
 		</control> -->
     <control>
       <description>file listcontrol</description>
@@ -170,9 +170,9 @@
       <id>20</id>
       <posX>488</posX>
       <width>388</width>
-      <height>555</height>
+      <height>445</height>
       <spinPosX>777</spinPosX>
-      <spinPosY>660</spinPosY>
+      <spinPosY>520</spinPosY>
       <textXOff>16</textXOff>
       <IconXOff>12</IconXOff>
       <onright>30</onright>
@@ -186,9 +186,9 @@
       <id>30</id>
       <posX>909</posX>
       <width>388</width>
-      <height>555</height>
+      <height>445</height>
       <!-- 			<spinPosX>1109</spinPosX> -->
-      <spinPosY>660</spinPosY>
+      <spinPosY>520</spinPosY>
       <textXOff>16</textXOff>
       <IconXOff>12</IconXOff>
       <onright>2</onright>

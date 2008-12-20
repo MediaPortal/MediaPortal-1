@@ -5,7 +5,7 @@
   <allowoverlay>yes</allowoverlay>
   <define>#header.label:850</define>
   <define>#header.image:alarm_logo.png</define>
-  <define>#header.hover:hover_my alarm.png</define>
+  <define>#header.hover:-</define>
   <controls>
     <import>common.window.xml</import>
     <control>

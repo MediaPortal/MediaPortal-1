@@ -2,7 +2,7 @@
 <window>
   <id>510</id>
   <defaultcontrol>33</defaultcontrol>
-  <allowoverlay>no</allowoverlay>
+   <allowoverlay>no</allowoverlay>
   <controls>
     <control>
       <type>image</type>

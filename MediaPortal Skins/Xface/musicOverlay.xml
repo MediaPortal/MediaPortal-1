@@ -20,10 +20,10 @@
       <description>music logo</description>
       <type>image</type>
       <id>1</id>
-      <posX>160</posX>
-      <posY>588</posY>
-      <width>160</width>
-      <height>124</height>
+      <posX>153</posX>
+      <posY>562</posY>
+      <width>147</width>
+      <height>148</height>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
       <texture>-</texture>
@@ -163,7 +163,7 @@
       <type>progress</type>
       <id>20</id>
       <posX>113</posX>
-      <posY>720</posY>
+      <posY>718</posY>
       <width>200</width>
       <label>#percentage</label>
       <visible>yes</visible>

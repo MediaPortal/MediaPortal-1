@@ -19,6 +19,8 @@
           <id>50</id>
           <posX>375</posX>
           <width>950</width>
+           <onleft>2</onleft>
+          <onright>2</onright>
           <textureHeight>45</textureHeight>
           <font>font16</font>
           <textXOff>82</textXOff>
@@ -30,22 +32,51 @@
           <scrollOffset>2</scrollOffset>
           <folderPrefix></folderPrefix>
           <folderSuffix></folderSuffix>
+
         </control>
         <control>
           <description>Thumbnail Panel</description>
           <type>thumbnailpanel</type>
+          <dimColor>90ffffff</dimColor>
+          <imageFolder>icon_empty_nofocus1.png</imageFolder>
+		  <imageFolderFocus>icon_empty_nofocus1.png</imageFolderFocus>
           <id>50</id>
-          <posX>90</posX>
-          <width>1250</width>
-          <font>font12</font>
-          <thumbs flipY="true" diffuse="Thumb_Mask.png"></thumbs>
-          <enableFocusZoom>yes</enableFocusZoom>
-          <folderPrefix></folderPrefix>
-          <folderSuffix></folderSuffix>
+          <posX>128</posX>
+          <posY>101</posY>
+          <width>1173</width>
+          <height>588</height>
+          <scrollOffset>1</scrollOffset>
+          <onleft>2</onleft>
+          <onright>2</onright>
+          <itemWidth>187</itemWidth>
+          <itemHeight>165</itemHeight>
+          <textureWidth>157</textureWidth>
+          <textureHeight>120</textureHeight>
+          <thumbWidth>145</thumbWidth>
+          <thumbHeight>107</thumbHeight>
+          <thumbPosX>5</thumbPosX>
+          <thumbPosY>5</thumbPosY>
+          <itemWidthBig>224</itemWidthBig>
+          <itemHeightBig>217</itemHeightBig>
+          <thumbWidthBig>207</thumbWidthBig>
+          <thumbHeightBig>157</thumbHeightBig>
+          <textureWidthBig>219</textureWidthBig>
+          <textureHeightBig>167</textureHeightBig>
+          <thumbPosXBig>5</thumbPosXBig>
+          <thumbPosYBig>5</thumbPosYBig>
+          <zoomXPixels>40</zoomXPixels>
+          <zoomYPixels>40</zoomYPixels>
+          <hideUnfocusTexture>no</hideUnfocusTexture>
+          <renderFocusText>no</renderFocusText>
+          <renderUnfocusText>yes</renderUnfocusText>
+          <textXOff>0</textXOff>
+		  <textYOff>0</textYOff>
+		  <font>font10</font>
         </control>
         <control>
           <description>Filmstrip view</description>
           <type>filmstrip</type>
+           <scrollOffset>3</scrollOffset>
           <id>50</id>
           <posX>80</posX>
           <posY>260</posY>
@@ -64,7 +95,7 @@
           <textureHeight>289</textureHeight>
           <font>font11</font>
           <textXOff>8</textXOff>
-		      <textYOff>-25</textYOff>
+		  <textYOff>-25</textYOff>
           <selectedColor>00ffffff</selectedColor>
           <textcolor>00ffffff</textcolor>
           <colordiffuse>00ffffff</colordiffuse>
@@ -79,8 +110,8 @@
           <showInfoImage>no</showInfoImage>
           <folderPrefix></folderPrefix>
           <folderSuffix></folderSuffix>
-          <thumbAnimation effect="zoom" start="100,100" end="140,140" time="300">focus</thumbAnimation>
-          <thumbAnimation effect="zoom" start="140,140" end="100,100" time="300">unfocus</thumbAnimation>
+          <thumbAnimation effect="zoom" start="100,100" end="140,140" time="300" reversible="false">focus</thumbAnimation>
+          <thumbAnimation effect="zoom" start="140,140" end="100,100" time="300" reversible="false">unfocus</thumbAnimation>
         </control>
         <control>
           <description>playlist listcontrol</description>

@@ -93,7 +93,7 @@
     </control>
     <control>
       <type>image</type>
-      <posX>637</posX>
+      <posX>657</posX>
       <posY>585</posY>
       <width>68</width>
       <height>102</height>
@@ -102,7 +102,7 @@
     </control>
     <control>
       <type>image</type>
-      <posX>633</posX>
+      <posX>653</posX>
       <posY>582</posY>
       <width>79</width>
       <height>112</height>

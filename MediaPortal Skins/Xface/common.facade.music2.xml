@@ -3,10 +3,8 @@
   <controls>
     <control>
       <type>group</type>
-      <animation effect="slide" time="350" end="150,0">WindowClose</animation>
-      <animation effect="slide" time="450" start="150,0">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
-      <animation effect="fade" time="500">WindowOpen</animation>
       <description>group element</description>
       <control>
         <description>composite control consisting of a list control and a thumbnail panel</description>
@@ -18,6 +16,8 @@
           <id>50</id>
           <posX>375</posX>
           <width>950</width>
+           <onleft>2</onleft>
+          <onright>2</onright>
           <textureHeight>45</textureHeight>
           <font>font16</font>
           <textXOff>82</textXOff>
@@ -30,60 +30,88 @@
           <folderPrefix></folderPrefix>
           <folderSuffix></folderSuffix>
         </control>
-        <control>
+         <control>
           <description>Thumbnail Panel</description>
           <type>thumbnailpanel</type>
           <id>50</id>
-          <posX>90</posX>
-          <width>1250</width>
-          <font>font12</font>
-          <thumbHeight>120</thumbHeight>
-          <thumbPosX>28</thumbPosX>
-          <thumbPosY>6</thumbPosY>
+          <imageFolder>icon_empty_nofocus1.png</imageFolder>
+		  <imageFolderFocus>icon_empty_nofocus1.png</imageFolderFocus>
+          <posX>118</posX>
+          <posY>101</posY>
+          <width>1173</width>
+          <height>508</height>
+          <scrollOffset>0</scrollOffset>
+          <onleft>2</onleft>
+          <itemWidth>155</itemWidth>
+    <itemHeight>160</itemHeight>
+    <textureWidth>132</textureWidth>
+    <textureHeight>132</textureHeight>
+    <thumbWidth>123</thumbWidth>
+    <thumbHeight>125</thumbHeight>
+    <thumbPosX>4</thumbPosX>
+    <thumbPosY>2</thumbPosY>
+          <textureWidthBig>165</textureWidthBig>
+          <textureHeightBig>160</textureHeightBig>
+          <itemWidthBig>191</itemWidthBig>
+          <itemHeightBig>217</itemHeightBig>
+          <thumbWidthBig>154</thumbWidthBig>
+          <thumbHeightBig>154</thumbHeightBig>
+          <thumbPosXBig>5</thumbPosXBig>
+          <thumbPosYBig>3</thumbPosYBig>
           <thumbZoom>no</thumbZoom>
-          <folderPrefix></folderPrefix>
-          <folderSuffix></folderSuffix>
+          <enableFocusZoom>no</enableFocusZoom>
+          <zoomXPixels>50</zoomXPixels>
+          <zoomYPixels>50</zoomYPixels>
+          <hideUnfocusTexture>no</hideUnfocusTexture>
+          <renderFocusText>no</renderFocusText>
+          <renderUnfocusText>yes</renderUnfocusText>
+          <textXOff>0</textXOff>
+		  <textYOff>0</textYOff>
+		  <font>font10</font>
         </control>
-        <control>
-          <description>Filmstrip view</description>
-          <type>filmstrip</type>
-          <id>50</id>
-          <posX>80</posX>
-          <width>1250</width>
-          <onup>2</onup>
-          <thumbWidth>179</thumbWidth>
-          <thumbHeight>179</thumbHeight>
-          <thumbPosY>12</thumbPosY>
-          <imageFolderFocus>Framefocus.png</imageFolderFocus>
-          <frame>Frame.png</frame>
-          <frameFocus>Covertop.png</frameFocus>
-          <itemWidth>203</itemWidth>
-          <itemHeight>310</itemHeight>
-          <textureHeight>310</textureHeight>
-          <font>font12</font>
-          <textXOff>8</textXOff>
-          <textYOff>-50</textYOff>
-          <selectedColor>00ffffff</selectedColor>
-          <textcolor>ffffffff</textcolor>
-          <colordiffuse>00ffffff</colordiffuse>
-          <remoteColor>00ffffff</remoteColor>
-          <downloadColor>00ffffff</downloadColor>
-          <background>Coverbig.png</background>
-          <thumbs flipY="true" diffuse="Thumb_Mask.png"/>
-          <InfoImage flipY="true" diffuse="Thumb_Mask.png"/>
-          <showFrame>yes</showFrame>
-          <showFolder>no</showFolder>
-          <showBackGround>no</showBackGround>
-          <showInfoImage>no</showInfoImage>
-          <folderPrefix></folderPrefix>
-          <folderSuffix></folderSuffix>
-          <thumbAnimation effect="zoom" start="100,100" end="140,140" time="300" reversible="false" >focus</thumbAnimation>
-          <thumbAnimation effect="zoom" start="140,140" end="100,100" time="300" reversible="false" >unfocus</thumbAnimation>
-        </control>
+       <control>
+  <description>Filmstrip view</description> 
+  <type>filmstrip</type> 
+  <id>50</id> 
+  <posX>80</posX> 
+  <width>1250</width> 
+  <onup>2</onup> 
+  <thumbWidth>179</thumbWidth> 
+  <thumbHeight>179</thumbHeight> 
+  <thumbPosY>12</thumbPosY> 
+  <imageFolderFocus>Framefocus.png</imageFolderFocus> 
+  <frame>Frame.png</frame> 
+  <frameFocus>Covertop.png</frameFocus> 
+  <itemWidth>203</itemWidth> 
+  <itemHeight>310</itemHeight> 
+  <textureHeight>310</textureHeight> 
+  <font>font12</font> 
+  <textXOff>8</textXOff> 
+  <textYOff>-50</textYOff> 
+  <selectedColor>00ffffff</selectedColor> 
+  <textcolor>ffffffff</textcolor> 
+  <colordiffuse>00ffffff</colordiffuse> 
+  <remoteColor>00ffffff</remoteColor> 
+  <downloadColor>00ffffff</downloadColor> 
+  <background>Coverbig.png</background> 
+  <thumbs flipY="true" diffuse="Thumb_Mask.png" /> 
+  <InfoImage flipY="true" diffuse="Thumb_Mask.png" /> 
+  <showFrame>yes</showFrame> 
+  <showFolder>no</showFolder> 
+  <showBackGround>no</showBackGround> 
+  <showInfoImage>no</showInfoImage> 
+  <folderPrefix /> 
+  <folderSuffix /> 
+  <thumbAnimation effect="zoom" start="100,100" end="140,140" time="300" reversible="false">focus</thumbAnimation> 
+  <thumbAnimation effect="zoom" start="140,140" end="100,100" time="300" reversible="false">unfocus</thumbAnimation> 
+  </control>
+
         <control>
           <description>playlist listcontrol</description>
           <type>playlistcontrol</type>
           <id>50</id>
+           <onleft>2</onleft>
+          <onright>2</onright>
           <posX>375</posX>
           <width>950</width>
           <textureHeight>45</textureHeight>

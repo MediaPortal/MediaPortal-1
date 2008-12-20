@@ -5,7 +5,7 @@
   <allowoverlay>yes</allowoverlay>
   <define>#header.label:861</define>
   <define>#header.image:alarm_logo.png</define>
-  <define>#header.hover:hover_my alarm.png</define>
+  <define>#header.hover:-</define>
   <controls>
     <import>common.window.xml</import>
     <control>
@@ -110,16 +110,16 @@
       </subitems>
     </control>
     <!-- <control>
-			<description>Message Button</description> 
-			<type>button</type> 
-			<id>30</id> 
-			<posX>60</posX> 
-			<posY>199</posY> 
-			<label>8019</label> 
+			<description>Message Button</description>
+			<type>button</type>
+			<id>30</id>
+			<posX>60</posX>
+			<posY>199</posY>
+			<label>8019</label>
 			<onright>7</onright>
-			<onleft>7</onleft> 
-			<onup>4</onup> 
-			<ondown>5</ondown> 
+			<onleft>7</onleft>
+			<onup>4</onup>
+			<ondown>5</ondown>
 		</control>-->
     <control>
       <description>Rename Button</description>

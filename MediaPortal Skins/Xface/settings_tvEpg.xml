@@ -1,61 +1,28 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>706</id>
   <defaultcontrol>10</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
+  <define>#header.label:6011</define>
+  <define>#header.image:settings_logo.png</define>
+  <define>#header.hover:hover_my tv.png</define>
   <controls>
-    <import>common.time.xml</import>
-    <control>
-      <type>image</type>
-      <description>BG</description>
-      <id>1</id>
-    </control>
-    <control>
-      <type>image</type>
-      <id>1</id>
-      <posX>155</posX>
-      <posY>532</posY>
-      <width>192</width>
-      <height>138</height>
-      <texture>hover_my tv1.png</texture>
-      <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>
-    </control>
-    <control>
-      <type>image</type>
-      <description>MP Logo</description>
-      <id>1</id>
-      <posX>89</posX>
-      <posY>4</posY>
-      <width>320</width>
-      <height>55</height>
-      <texture>mplogo.png</texture>
-    </control>
-    <control>
-      <type>label</type>
-      <description>Setup TV</description>
-      <id>1</id>
-      <posX>374</posX>
-      <posY>39</posY>
-      <label>6011</label>
-      <font>font14</font>
-      <align>right</align>
-      <textcolor>White</textcolor>
-    </control>
+    <import>common.settings.xml</import>
     <control>
       <type>label</type>
       <description>Grab EPG from DVB transmission for the following channels</description>
       <id>1</id>
-      <posX>493</posX>
-      <posY>128</posY>
+      <posX>462</posX>
+      <posY>145</posY>
       <label>6012</label>
     </control>
     <control>
       <type>group</type>
       <layout>StackLayout</layout>
       <description>group element</description>
-      <posX>113</posX>
-      <posY>160</posY>
+      <posX>131</posX>
+      <posY>175</posY>
       <control>
         <description>Select all</description>
         <type>button</type>
@@ -79,28 +46,26 @@
       <description>channel listcontrol</description>
       <type>checklistcontrol</type>
       <id>10</id>
-      <posX>493</posX>
-      <posY>186</posY>
-      <width>566</width>
-      <height>533</height>
-      <textXOff>94</textXOff>
+      <posY>200</posY>
+      <height>500</height>
+      <textXOff>88</textXOff>
       <textYOff>2</textYOff>
-      <textXOff2>796</textXOff2>
-      <textYOff2>38</textYOff2>
-      <textXOff3>189</textXOff3>
-      <textYOff3>38</textYOff3>
-      <IconXOff>22</IconXOff>
-      <IconYOff>2</IconYOff>
-      <spinPosX>1149</spinPosX>
-      <spinPosY>700</spinPosY>
-      <itemWidth>20</itemWidth>
-      <itemHeight>20</itemHeight>
+      <textXOff2>746</textXOff2>
+      <textYOff2>36</textYOff2>
+      <textXOff3>177</textXOff3>
+      <textYOff3>36</textYOff3>
+      <IconXOff>21</IconXOff>
+      <IconYOff>4</IconYOff>
+      <spinPosX>1077</spinPosX>
+      <spinPosY>656</spinPosY>
+      <itemWidth>26</itemWidth>
+      <itemHeight>18</itemHeight>
       <textureFocus>recording_background_focus.png</textureFocus>
       <textureNoFocus>recording_background_nofocus.png</textureNoFocus>
-      <spaceBetweenItems>6</spaceBetweenItems>
-      <textureHeight>37</textureHeight>
+      <spaceBetweenItems>8</spaceBetweenItems>
+      <textureHeight>35</textureHeight>
       <keepaspectratio>no</keepaspectratio>
-      <MarkOffsetY>6</MarkOffsetY>
+      <MarkOffsetY>0</MarkOffsetY>
       <font2>font10</font2>
       <font3>font10</font3>
       <onleft>2</onleft>

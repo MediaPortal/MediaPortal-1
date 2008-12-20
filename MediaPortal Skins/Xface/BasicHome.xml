@@ -53,9 +53,9 @@
 			<animation effect="fade" time="250">WindowOpen</animation>
 			<animation effect="fade" time="500">WindowClose</animation>
 		</control>
-		
-		
-<!-- ***** Plugins *************************** -->		
+
+
+<!-- ***** Plugins *************************** -->
 		<control>
 			<description>home BM Plugins</description>
 			<type>button</type>
@@ -223,9 +223,9 @@
 			<animation effect="slide" start="0,0" end="-262,100" time="400" reversible="false">visiblechange</animation>
 			<animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500" reversible="false">visiblechange</animation>
 		</control>
-    		
-				
-<!-- ***** Video *************************** -->		
+
+
+<!-- ***** Video *************************** -->
 		<control>
 			<description>home BM Video</description>
 			<type>button</type>
@@ -301,7 +301,7 @@
 			<ondown>606</ondown>
 			<visible>Control.IsVisible(333)</visible>
 		</control>
-		
+
 		<control>
 			<description>home BM Video</description>
 			<type>button</type>
@@ -433,8 +433,8 @@
 			<visible>Control.HasFocus(2)</visible>
 			<animation effect="slide" start="-215,0" end="0,0" time="400" reversible="false">visiblechange</animation>
 		</control>
-		
-<!-- ***** Pictures *************************** -->		
+
+<!-- ***** Pictures *************************** -->
 		<control>
 			<description>home BM Pictures</description>
 			<type>button</type>
@@ -645,8 +645,8 @@
 			<visible>Control.HasFocus(2)</visible>
 			<animation effect="slide" start="-135,65" end="0,0" time="400" reversible="false">visiblechange</animation>
 		</control>
-		
-<!-- ***** Music *************************** -->		
+
+<!-- ***** Music *************************** -->
 		<control>
 			<description>home BM Music</description>
 			<type>button</type>
@@ -722,7 +722,7 @@
 			<ondown>601</ondown>
 			<visible>Control.IsVisible(555)</visible>
 		</control>
-						
+
 		<control>
 			<description>home BM Music</description>
 			<type>button</type>
@@ -854,8 +854,8 @@
 			<visible>Control.HasFocus(2)</visible>
 			<animation effect="slide" start="242,85" end="0,0" time="400" reversible="false">visiblechange</animation>
 		</control>
-		
-<!-- ***** TV *************************** -->			
+
+<!-- ***** TV *************************** -->
 		<control>
 			<description>home BM TV</description>
 			<type>button</type>
@@ -880,7 +880,7 @@
 			<onup>210</onup>
 			<ondown>608</ondown>
 			<visible>Control.IsVisible(6)</visible>
-		</control>		
+		</control>
 		<control>
 			<description>home BM TV</description>
 			<type>button</type>
@@ -931,7 +931,7 @@
 			<ondown>608</ondown>
 			<visible>Control.IsVisible(666)</visible>
 		</control>
-		
+
 		<control>
 			<description>home BM TV</description>
 			<type>button</type>
@@ -1063,8 +1063,8 @@
 			<animation effect="slide" start="262,-100" end="0,0" time="400" reversible="false">visiblechange</animation>
 			<animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500" reversible="false">visiblechange</animation>
 		</control>
-		
-<!-- ***** Pictures Anti-clockwise*************************** -->			
+
+<!-- ***** Pictures Anti-clockwise*************************** -->
 		<control>
 			<description>home BM Pictures</description>
 			<type>button</type>
@@ -1171,8 +1171,8 @@
 			<visible>Control.HasFocus(66)</visible>
 			<animation effect="slide" start="0,0" end="-145,-50" time="400" reversible="false">visiblechange</animation>
 		</control>
-		
-<!-- ***** Music Anti-clockwise*************************** -->		
+
+<!-- ***** Music Anti-clockwise*************************** -->
 		<control>
 			<description>home BM Music</description>
 			<type>button</type>
@@ -1304,8 +1304,8 @@
 			<visible>Control.HasFocus(55)</visible>
 			<animation effect="slide" start="154,50" end="0,0" time="400" reversible="false">visiblechange</animation>
 		</control>
-		
-<!-- ***** TV Anti-clockwise*************************** -->		
+
+<!-- ***** TV Anti-clockwise*************************** -->
 		<control>
 			<description>home BM TV</description>
 			<type>button</type>
@@ -1437,8 +1437,8 @@
 			<visible>Control.HasFocus(55)</visible>
 			<animation effect="slide" start="215,0" end="0,0" time="400" reversible="false">visiblechange</animation>
 		</control>
-		
-<!-- ***** Plugins Anti-clockwise*************************** -->		
+
+<!-- ***** Plugins Anti-clockwise*************************** -->
 		<control>
 			<description>home BM Plugins</description>
 			<type>button</type>
@@ -1570,8 +1570,8 @@
 			<visible>Control.HasFocus(55)</visible>
 			<animation effect="slide" start="135,-65" end="0,0" time="400" reversible="false">visiblechange</animation>
 		</control>
-		
-<!-- ***** Videos Anti-clockwise*************************** -->		
+
+<!-- ***** Videos Anti-clockwise*************************** -->
 		<control>
 			<description>home BM Videos</description>
 			<type>button</type>
@@ -1703,7 +1703,7 @@
 			<animation effect="slide" start="-242,-85" end="0,0" time="400" reversible="false">visiblechange</animation>
 			<animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500" reversible="false">visiblechange</animation>
 		</control>
-		
+
 <!-- ***** Plugins, from submenu ***** -->
 <control>
 			<description>home BM Plugins</description>
@@ -1810,7 +1810,7 @@
 			<visible>Control.HasFocus(666)</visible>
 			<animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500" reversible="false">visiblechange</animation>
 		</control>
-		
+
 <!-- ***** Videos, from submenu ***** -->
 		<control>
 			<description>home BM Video</description>
@@ -1942,7 +1942,7 @@
 			<visible>Control.HasFocus(222)</visible>
 			<animation effect="zoom" start="80,80" end="100,100" center="0,0" time="500" reversible="false">visiblechange</animation>
 		</control>
-		
+
 <!-- ***** Pictures, from submenu ***** -->
 		<control>
 			<description>home BM Pictures</description>
@@ -2074,7 +2074,7 @@
 			<visible>Control.HasFocus(222)</visible>
 			<animation effect="zoom" start="80,80" end="100,100" center="0,0" time="500" reversible="false">visiblechange</animation>
 		</control>
-		
+
 <!-- ***** Music, from submenu ***** -->
     <control>
 			<description>home BM Music</description>
@@ -2203,8 +2203,8 @@
 			<visible>Control.HasFocus(222)</visible>
 			<animation effect="zoom" start="80,80" end="100,100" center="0,0" time="500" reversible="false">visiblechange</animation>
 		</control>
-		
-<!-- ***** TV, from submenu ***** -->		
+
+<!-- ***** TV, from submenu ***** -->
 		<control>
 			<description>home BM TV</description>
 			<type>button</type>
@@ -2335,8 +2335,8 @@
 			<visible>Control.HasFocus(222)</visible>
 			<animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500" reversible="false">visiblechange</animation>
 		</control>
-		
-<!-- ***** Others controls ***** -->		
+
+<!-- ***** Others controls ***** -->
 		<control>
 			<type>image</type>
 			<posX>423</posX>
