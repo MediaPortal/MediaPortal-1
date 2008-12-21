@@ -174,6 +174,8 @@ namespace TvPlugin
     protected GUIButtonControl btnCleanup = null;
     [SkinControlAttribute(7)]
     protected GUIButtonControl btnCompress = null;
+    [SkinControlAttribute(8)]
+    protected GUIButtonControl btnPriorities = null;
     [SkinControlAttribute(10)]
     protected GUIListControl listAlbums = null;
     [SkinControlAttribute(11)]
@@ -423,6 +425,10 @@ namespace TvPlugin
       if (btnCompress != null)
       {
         btnCompress.Visible = false;
+      }
+      if (btnPriorities != null)
+      {
+        btnPriorities.Visible = false;
       }
       //DiskManagement.ImportDvrMsFiles();
       LoadSettings();
