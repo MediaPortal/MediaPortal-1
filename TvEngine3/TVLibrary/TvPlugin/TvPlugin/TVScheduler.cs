@@ -59,6 +59,8 @@ namespace TvPlugin
     protected GUIButtonControl btnNew = null;
     [SkinControlAttribute(7)]
     protected GUIButtonControl btnCleanup = null;
+    [SkinControlAttribute(8)]
+    protected GUIButtonControl btnPriorities = null;
     [SkinControlAttribute(9)]
     protected GUIButtonControl btnConflicts = null;
     [SkinControlAttribute(10)]
@@ -158,6 +160,10 @@ namespace TvPlugin
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
+      if (btnPriorities != null)
+      {
+        btnPriorities.Visible = false;
+      }
       //@      ConflictManager.OnConflictsUpdated += new MediaPortal.TV.Recording.ConflictManager.OnConflictsUpdatedHandler(ConflictManager_OnConflictsUpdated);
 
       LoadSettings();
