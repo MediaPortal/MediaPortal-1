@@ -816,6 +816,7 @@ Section Uninstall
   DeleteRegValue HKLM "${REG_UNINSTALL}" "UninstallString"
 
   ; remove Start Menu shortcuts
+  ; $StartMenuGroup (default): "Team MediaPortal\MediaPortal"
   Delete "$SMPROGRAMS\$StartMenuGroup\MediaPortal.lnk"
   Delete "$SMPROGRAMS\$StartMenuGroup\MediaPortal Configuration.lnk"
   Delete "$SMPROGRAMS\$StartMenuGroup\MediaPortal Debug-Mode.lnk"
@@ -828,6 +829,7 @@ Section Uninstall
   Delete "$SMPROGRAMS\$StartMenuGroup\Help.url"
   Delete "$SMPROGRAMS\$StartMenuGroup\web site.url"
   RMDir "$SMPROGRAMS\$StartMenuGroup"
+  RMDir "$SMPROGRAMS\Team MediaPortal"
 
   ; remove Desktop shortcuts
   Delete "$DESKTOP\MediaPortal.lnk"

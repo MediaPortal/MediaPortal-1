@@ -617,10 +617,12 @@ Section Uninstall
   DeleteRegKey HKLM "${REG_UNINSTALL}"
 
   ; remove Start Menu shortcuts
+  ; $StartMenuGroup (default): "Team MediaPortal\TV Server"
   Delete "$SMPROGRAMS\$StartMenuGroup\uninstall TV-Server.lnk"
   Delete "$SMPROGRAMS\$StartMenuGroup\Help.url"
   Delete "$SMPROGRAMS\$StartMenuGroup\web site.url"
   RMDir "$SMPROGRAMS\$StartMenuGroup"
+  RMDir "$SMPROGRAMS\Team MediaPortal"
 
   ; remove last files and instdir
   RMDir /REBOOTOK "$INSTDIR\pmt"
