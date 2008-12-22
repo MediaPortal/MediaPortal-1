@@ -42,6 +42,7 @@ namespace MediaPortal.Visualization
     void ShutDown();
     int TargetFPS { get; set;}
     List<VisualizationInfo> VisualizationPluginsInfo { get;}
+    VisualizationInfo.PluginType CurrentVisualizationType { get; }
     void ConfigWinampViz();
     void InitWinampVis();
   }

@@ -2241,6 +2241,19 @@ namespace MediaPortal.Player
       {
         if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_FULLSCREEN_MUSIC)
           return true;
+
+        // When we don't have any Visualisation, switch to Now Playing, instead of showing a black screen
+        if (BassMusicPlayer.Player.IVizManager.CurrentVisualizationType == MediaPortal.Visualization.VisualizationInfo.PluginType.None)
+        {
+          if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW)
+            return true;
+
+          Log.Info("g_Player: ShowFullScreenWindow: No Visualisation defined. Switching to Now Playing");
+          GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW);
+          BassMusicPlayer.Player.VisualizationWindow.Size = new Size(1, 1); // Hide the Vis Window
+          return true;
+        }
+
         Log.Info("g_Player: ShowFullScreenWindow switching to fullscreen music");
         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_MUSIC);
       }
