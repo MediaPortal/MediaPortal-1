@@ -24,6 +24,8 @@
 #endregion
 
 using System;
+using System.Collections.Specialized;
+using System.Configuration;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
@@ -122,6 +124,9 @@ namespace WebEPG_conf
     [STAThread]
     static void Main()
     {
+      NameValueCollection appSettings = ConfigurationManager.AppSettings;
+      appSettings.Set("GentleConfigFile", Config.GetFile(Config.Dir.Config, "gentle.config"));
+
       Application.Run(new fChannels());
     }
     #endregion
