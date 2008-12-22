@@ -35,7 +35,6 @@ using Microsoft.Win32;
 using DShowNET;
 using DShowNET.Helper;
 using DShowNET.MPSA;
-using DShowNET.MPTSWriter;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using DirectShowLib.SBE;

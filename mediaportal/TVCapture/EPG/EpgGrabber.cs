@@ -32,7 +32,6 @@ using DirectShowLib;
 using DShowNET;
 using DShowNET.Helper;
 using DShowNET.MPSA;
-using DShowNET.MPTSWriter;
 using MediaPortal.GUI.Library;
 using MediaPortal.Radio.Database;
 using MediaPortal.Services;
