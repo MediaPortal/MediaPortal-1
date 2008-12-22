@@ -1189,8 +1189,8 @@
     <String id="2516" prefix="Mi ">Wikipedia</String>
     <String id="2550">¿Quiere realmente DETENER la TV en directo?</String>
     <String id="2551">(buffer de timeshift será perdido)</String>
-    <String id="2552">Detener</String>
-    <String id="2553">Reproducir</String>
+    <String id="2552">Parar</String>
+    <String id="2553">Seguir</String>
     <String id="2599">Indeterminado</String>
     <String id="2600">Inglés</String>
     <String id="2601">Alemán</String>
