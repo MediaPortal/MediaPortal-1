@@ -11,7 +11,7 @@
       <posX>445</posX>
       <posY>437</posY>
       <width>488</width>
-      <texture>osd_progress_background2.png</texture>
+      <texture>-</texture>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
