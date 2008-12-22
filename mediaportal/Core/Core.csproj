@@ -278,8 +278,6 @@
     </Compile>
     <Compile Include="DShowNET\Helper\cards\TechnoTrend.cs" />
     <Compile Include="DShowNET\Helper\IksPropertyUtils2.cs" />
-    <Compile Include="DShowNET\TsFileSource\ITSFileSink.cs" />
-    <Compile Include="DShowNET\TsFileSource\ITSFileSource.cs" />
     <Compile Include="guilib\Tween.cs" />
     <Compile Include="MusicPlayer\BASS\StreamCopy.cs" />
     <Compile Include="MusicPlayer\DSP\DSPPluginInfo.cs" />
@@ -722,8 +720,6 @@
     <Compile Include="DShowNET\MPSA\IEPGGrabber.cs" />
     <Compile Include="DShowNET\MPSA\IMHWGrabber.cs" />
     <Compile Include="DShowNET\MPSA\IStreamAnalyzer.cs" />
-    <Compile Include="DShowNET\MPTSWriter\IMPTSRecord.cs" />
-    <Compile Include="DShowNET\MPTSWriter\IPMTSWriter.cs" />
     <Compile Include="FreeDB\CDInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1090,9 +1086,6 @@
     <Compile Include="Player\BaseStreamBufferPlayer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Player\BaseTStreamBufferPlayer.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Player\DVDPlayer.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1122,9 +1115,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Player\StreamBufferPlayerVMR9wl.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Player\TSStreamBufferPlayer9.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Player\VideoPlayerVMR7.cs">

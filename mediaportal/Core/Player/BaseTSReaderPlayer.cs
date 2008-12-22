@@ -35,7 +35,6 @@ using MediaPortal.Util;
 using MediaPortal.GUI.Library;
 using DirectShowLib;
 using DShowNET.Helper;
-using DShowNET.TsFileSink;
 using MediaPortal.Configuration;
 using MediaPortal.Player.Subtitles;
 
