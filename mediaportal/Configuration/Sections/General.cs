@@ -105,10 +105,12 @@ namespace MediaPortal.Configuration.Sections
       new string[] { "general", "turnoffmonitor", "false" },            // 15 Turn off monitor when blanking screen	    
       new string[] { "general", "turnmonitoronafterresume", "true" },   // 16 Turn monitor/tv on when resuming from standby
       new string[] { "general", "enables3trick", "true" },              // 17 Allow S3 standby although wake up devices are present
-      new string[] { "general", "restartonresume", "false" },           // 18 Restart MediaPortal on resume (avoids stuttering playback with nvidia)
-      new string[] { "general", "showlastactivemodule", "false" },      // 19 Show last active module when starting / resuming from standby
-      new string[] { "comskip", "automaticskip", "false" },             // 20 Automatically skip commercials for videos with ComSkip data available
+      new string[] { "debug", "UseS3Hack", "false" },                   // 18 Apply workaround to fix MP freezing on resume on some systems
+      new string[] { "general", "restartonresume", "false" },           // 19 Restart MediaPortal on resume (avoids stuttering playback with nvidia)
+      new string[] { "general", "showlastactivemodule", "false" },      // 20 Show last active module when starting / resuming from standby
+      new string[] { "comskip", "automaticskip", "false" },             // 21 Automatically skip commercials for videos with ComSkip data available
       new string[] { "screenselector", "usescreenselector", "false" },
+      
       
       //new string[] { "general", "autohidemouse", "true" }, 
       //new string[] { "general", "dblclickasrightclick", "false" },

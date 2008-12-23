@@ -187,6 +187,7 @@ namespace MediaPortal.Configuration.Sections
             "Turn off monitor when blanking screen",
             "Turn monitor / tv on when resuming from standby",
             "Allow S3 standby although wake up devices are present",
+            "Apply workaround to fix MediaPortal freezing on resume on some systems",
             "Restart MediaPortal on resume (avoids stuttering playback with nvidia)",
             "Show last active module when starting / resuming from standby",
             "Automatically skip commercials for videos with ComSkip data available",
