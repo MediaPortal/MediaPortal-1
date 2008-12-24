@@ -179,8 +179,12 @@ namespace SetupTv.Sections
       IList maps = card.ReferringChannelMap();
 
 			// get cardtype, dvb, analogue etc.		
-			CardType cardType = RemoteControl.Instance.Type(card.IdCard);						
-
+			CardType cardType = RemoteControl.Instance.Type(card.IdCard);
+      //Card card = Card.Retrieve(card.IdCard);
+      TvBusinessLayer layer = new TvBusinessLayer();
+      bool enableDVBS2 = (layer.GetSetting("dvbs" + card.IdCard.ToString() + "enabledvbs2", "false").Value == "true");
+      
+      
       List<ListViewItem> items = new List<ListViewItem>();
       foreach (ChannelMap map in maps)
       {
@@ -244,6 +248,12 @@ namespace SetupTv.Sections
 							break;
 
 						case CardType.DvbS:
+
+              if (!enableDVBS2 && (tDetail.Pilot > -1 || tDetail.RollOff > -1))
+              {
+                continue;
+              }
+
 							foundValidTuningDetail = (tDetail.ChannelType == 3);
 							break;
 
