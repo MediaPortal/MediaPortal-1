@@ -199,6 +199,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.audioCodecComboBox);
       this.groupBox1.Controls.Add(this.labelAACDecoder);
       this.groupBox1.Controls.Add(this.aacAudioCodecComboBox);
       this.groupBox1.Controls.Add(this.h264videoCodecComboBox);
@@ -210,7 +211,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.videoCodecComboBox);
       this.groupBox1.Controls.Add(this.labelMPEG2Decoder);
       this.groupBox1.Controls.Add(this.labelAudioDecoder);
-      this.groupBox1.Controls.Add(this.audioCodecComboBox);
       this.groupBox1.Controls.Add(this.labelAudioRenderer);
       this.groupBox1.Controls.Add(this.audioRendererComboBox);
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -227,7 +227,7 @@ namespace MediaPortal.Configuration.Sections
       this.labelAACDecoder.Name = "labelAACDecoder";
       this.labelAACDecoder.Size = new System.Drawing.Size(146, 17);
       this.labelAACDecoder.TabIndex = 12;
-      this.labelAACDecoder.Text = "LATM AAC audio decoder";
+      this.labelAACDecoder.Text = "AAC audio decoder:";
       // 
       // aacAudioCodecComboBox
       // 
@@ -257,7 +257,7 @@ namespace MediaPortal.Configuration.Sections
       this.labelH264Decoder.Name = "labelH264Decoder";
       this.labelH264Decoder.Size = new System.Drawing.Size(132, 17);
       this.labelH264Decoder.TabIndex = 2;
-      this.labelH264Decoder.Text = "H.264 Video decoder";
+      this.labelH264Decoder.Text = "H.264 Video decoder:";
       // 
       // cbDeinterlace
       // 
@@ -279,9 +279,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.label8.Location = new System.Drawing.Point(16, 137);
       this.label8.Name = "label8";
-      this.label8.Size = new System.Drawing.Size(96, 16);
+      this.label8.Size = new System.Drawing.Size(146, 17);
       this.label8.TabIndex = 8;
-      this.label8.Text = "Deinterlace mode:";
+      this.label8.Text = "Fallback de-interlace mode:";
       // 
       // defaultZoomModeComboBox
       // 
@@ -327,15 +327,15 @@ namespace MediaPortal.Configuration.Sections
       this.labelMPEG2Decoder.Name = "labelMPEG2Decoder";
       this.labelMPEG2Decoder.Size = new System.Drawing.Size(132, 17);
       this.labelMPEG2Decoder.TabIndex = 0;
-      this.labelMPEG2Decoder.Text = "MPEG-2 Video decoder";
+      this.labelMPEG2Decoder.Text = "MPEG-2 Video decoder:";
       // 
       // labelAudioDecoder
       // 
       this.labelAudioDecoder.Location = new System.Drawing.Point(16, 66);
       this.labelAudioDecoder.Name = "labelAudioDecoder";
-      this.labelAudioDecoder.Size = new System.Drawing.Size(88, 17);
+      this.labelAudioDecoder.Size = new System.Drawing.Size(157, 18);
       this.labelAudioDecoder.TabIndex = 4;
-      this.labelAudioDecoder.Text = "Audio decoder";
+      this.labelAudioDecoder.Text = "MPEG / AC3 audio decoder:";
       // 
       // audioCodecComboBox
       // 

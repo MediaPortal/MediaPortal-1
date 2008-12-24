@@ -51,6 +51,8 @@ namespace WindowPlugins.GUISettings.TV
     protected GUIButtonControl btnAspectRatio = null;
     [SkinControlAttribute(29)]
     protected GUIButtonControl btnH264VideoCodec = null;
+    [SkinControlAttribute(30)]
+    protected GUIButtonControl btnAACAudioCodec = null;
     
     public GUISettingsMovies()
     {
@@ -69,6 +71,7 @@ namespace WindowPlugins.GUISettings.TV
       if (control == btnAspectRatio) OnAspectRatio();
       if (control == btnAudioRenderer) OnAudioRenderer();
       if (control == btnH264VideoCodec) OnH264VideoCodec();
+      if (control == btnAACAudioCodec) OnAACAudioCodec();
       base.OnClicked(controlId, control, actionType);
     }
 
@@ -245,6 +248,39 @@ namespace WindowPlugins.GUISettings.TV
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("movieplayer", "audiorenderer", (string)availableAudioFilters[dlg.SelectedLabel]);
+      }
+    }
+
+    void OnAACAudioCodec()
+    {
+      string strAACAudioCodec = "";
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        strAACAudioCodec = xmlreader.GetValueAsString("movieplayer", "aacaudiocodec", "");
+      }
+      ArrayList availableAACAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.AAC);
+      availableAACAudioFilters.Sort();
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      if (dlg != null)
+      {
+        dlg.Reset();
+        dlg.SetHeading(GUILocalizeStrings.Get(496));//Menu
+        int selected = 0;
+        int count = 0;
+        foreach (string codec in availableAACAudioFilters)
+        {
+          dlg.Add(codec);//delete
+          if (codec == strAACAudioCodec)
+            selected = count;
+          count++;
+        }
+        dlg.SelectedLabel = selected;
+      }
+      dlg.DoModal(GetID);
+      if (dlg.SelectedLabel < 0) return;
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        xmlwriter.SetValue("movieplayer", "aacaudiocodec", (string)availableAACAudioFilters[dlg.SelectedLabel]);
       }
     }
   }

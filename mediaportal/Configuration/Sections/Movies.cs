@@ -76,6 +76,7 @@ namespace MediaPortal.Configuration.Sections
 
     string m_strDefaultRegionLanguage = "English";
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxEachFolderIsMovie;
+    private MediaPortal.UserInterface.Controls.MPLabel labelsubsinfo;
 
     //string[] aspectRatio = { "normal", "original", "stretch", "zoom", "letterbox", "panscan" };
     string[] aspectRatio = { "normal", "original", "stretch", "zoom", "zoom149", "letterbox", "panscan" };
@@ -229,7 +230,9 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Movies));
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.checkBoxEachFolderIsMovie = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxShowWatched = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.defaultZoomModeComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -259,7 +262,7 @@ namespace MediaPortal.Configuration.Sections
       this.cbAllowStretch = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.cbAllowPanScan = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tabPage3 = new MediaPortal.UserInterface.Controls.MPTabPage();
-      this.checkBoxEachFolderIsMovie = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.labelsubsinfo = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBox1.SuspendLayout();
       this.mpGroupBox1.SuspendLayout();
       this.tabControl1.SuspendLayout();
@@ -287,6 +290,17 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Settings";
+      // 
+      // checkBoxEachFolderIsMovie
+      // 
+      this.checkBoxEachFolderIsMovie.AutoSize = true;
+      this.checkBoxEachFolderIsMovie.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxEachFolderIsMovie.Location = new System.Drawing.Point(19, 139);
+      this.checkBoxEachFolderIsMovie.Name = "checkBoxEachFolderIsMovie";
+      this.checkBoxEachFolderIsMovie.Size = new System.Drawing.Size(181, 17);
+      this.checkBoxEachFolderIsMovie.TabIndex = 7;
+      this.checkBoxEachFolderIsMovie.Text = "Every movie has its own directory";
+      this.checkBoxEachFolderIsMovie.UseVisualStyleBackColor = true;
       // 
       // checkBoxShowWatched
       // 
@@ -432,9 +446,9 @@ namespace MediaPortal.Configuration.Sections
       this.showSubtitlesCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.showSubtitlesCheckBox.Location = new System.Drawing.Point(16, 24);
       this.showSubtitlesCheckBox.Name = "showSubtitlesCheckBox";
-      this.showSubtitlesCheckBox.Size = new System.Drawing.Size(92, 17);
+      this.showSubtitlesCheckBox.Size = new System.Drawing.Size(150, 17);
       this.showSubtitlesCheckBox.TabIndex = 0;
-      this.showSubtitlesCheckBox.Text = "Show subtitles";
+      this.showSubtitlesCheckBox.Text = "Show subtitles (.srt or .sub)";
       this.showSubtitlesCheckBox.UseVisualStyleBackColor = true;
       // 
       // subtitlesButton
@@ -587,6 +601,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabPage3
       // 
+      this.tabPage3.Controls.Add(this.labelsubsinfo);
       this.tabPage3.Controls.Add(this.mpGroupBox1);
       this.tabPage3.Location = new System.Drawing.Point(4, 22);
       this.tabPage3.Name = "tabPage3";
@@ -595,16 +610,13 @@ namespace MediaPortal.Configuration.Sections
       this.tabPage3.Text = "Subtitles";
       this.tabPage3.UseVisualStyleBackColor = true;
       // 
-      // checkBoxEachFolderIsMovie
+      // labelsubsinfo
       // 
-      this.checkBoxEachFolderIsMovie.AutoSize = true;
-      this.checkBoxEachFolderIsMovie.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxEachFolderIsMovie.Location = new System.Drawing.Point(19, 139);
-      this.checkBoxEachFolderIsMovie.Name = "checkBoxEachFolderIsMovie";
-      this.checkBoxEachFolderIsMovie.Size = new System.Drawing.Size(181, 17);
-      this.checkBoxEachFolderIsMovie.TabIndex = 7;
-      this.checkBoxEachFolderIsMovie.Text = "Every movie has its own directory";
-      this.checkBoxEachFolderIsMovie.UseVisualStyleBackColor = true;
+      this.labelsubsinfo.Location = new System.Drawing.Point(13, 175);
+      this.labelsubsinfo.Name = "labelsubsinfo";
+      this.labelsubsinfo.Size = new System.Drawing.Size(435, 52);
+      this.labelsubsinfo.TabIndex = 10;
+      this.labelsubsinfo.Text = resources.GetString("labelsubsinfo.Text");
       // 
       // Movies
       // 

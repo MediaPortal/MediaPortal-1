@@ -63,6 +63,8 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPCheckBox wmvCheckBox;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
     private MediaPortal.UserInterface.Controls.MPCheckBox enableAudioDualMonoModes;
+    private MediaPortal.UserInterface.Controls.MPLabel labelAACDecoder;
+    private MediaPortal.UserInterface.Controls.MPComboBox aacAudioCodecComboBox;
     bool _init = false;
 
     public MoviePlayer()
@@ -88,6 +90,7 @@ namespace MediaPortal.Configuration.Sections
         ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
         ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
         ArrayList availableH264VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.H264);
+        ArrayList availableAACAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.AAC);
         //Remove Cyberlink Muxer from the list to avoid newbie user confusion.
         while (availableVideoFilters.Contains("CyberLink MPEG Muxer")) availableVideoFilters.Remove("CyberLink MPEG Muxer");
         while (availableVideoFilters.Contains("Ulead MPEG Muxer")) availableVideoFilters.Remove("Ulead MPEG Muxer");
@@ -103,6 +106,7 @@ namespace MediaPortal.Configuration.Sections
         audioCodecComboBox.Items.AddRange(availableAudioFilters.ToArray());
         h264videoCodecComboBox.Items.AddRange(availableH264VideoFilters.ToArray());
         audioRendererComboBox.Items.AddRange(availableAudioRenderers.ToArray());
+        aacAudioCodecComboBox.Items.AddRange(availableAACAudioFilters.ToArray());
         _init = true;
         LoadSettings();
       }
@@ -122,6 +126,7 @@ namespace MediaPortal.Configuration.Sections
       videoCodecComboBox.Enabled = !autoDecoderSettings.Checked;
       h264videoCodecComboBox.Enabled = !autoDecoderSettings.Checked;
       audioCodecComboBox.Enabled = !autoDecoderSettings.Checked;
+      aacAudioCodecComboBox.Enabled = !autoDecoderSettings.Checked;
       wmvCheckBox.Enabled = !autoDecoderSettings.Checked;
     }
 
@@ -146,6 +151,7 @@ namespace MediaPortal.Configuration.Sections
         string videoCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2videocodec", "");
         string h264videoCodec = xmlreader.GetValueAsString("movieplayer", "h264videocodec", "");
         string audioCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2audiocodec", "");
+        string aacaudioCodec = xmlreader.GetValueAsString("movieplayer", "aacaudiocodec", "");
         if (audioCodec == string.Empty)
         {
           ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
@@ -213,9 +219,27 @@ namespace MediaPortal.Configuration.Sections
             if (H264DecFilterFound) h264videoCodec = "CoreAVC Video Decoder";
           }
         }
+        if (aacaudioCodec == string.Empty)
+        {
+          ArrayList availableAACAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.AAC);
+          bool AACDecFilterFound = false;
+          if (availableAACAudioFilters.Count > 0)
+          {
+            aacaudioCodec = (string)availableAACAudioFilters[0];
+            foreach (string filter in availableAACAudioFilters)
+            {
+              if (filter.Equals("MONOGRAM ACC Decoder"))
+              {
+                AACDecFilterFound = true;
+              }
+            }
+            if (AACDecFilterFound) aacaudioCodec = "MONOGRAM ACC Decoder";
+          }
+        }
         audioCodecComboBox.Text = audioCodec;
         videoCodecComboBox.Text = videoCodec;
         h264videoCodecComboBox.Text = h264videoCodec;
+        aacAudioCodecComboBox.Text = aacaudioCodec;
       }
     }
 
@@ -238,6 +262,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("movieplayer", "mpeg2audiocodec", audioCodecComboBox.Text);
         xmlwriter.SetValue("movieplayer", "mpeg2videocodec", videoCodecComboBox.Text);
         xmlwriter.SetValue("movieplayer", "h264videocodec", h264videoCodecComboBox.Text);
+        xmlwriter.SetValue("movieplayer", "aacaudiocodec", aacAudioCodecComboBox.Text);
       }
     }
 
@@ -272,6 +297,8 @@ namespace MediaPortal.Configuration.Sections
       this.fileNameTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.labelAACDecoder = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.aacAudioCodecComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.enableAudioDualMonoModes = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.autoDecoderSettings = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -303,7 +330,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxExternalPlayer.Controls.Add(this.fileNameTextBox);
       this.groupBoxExternalPlayer.Controls.Add(this.label1);
       this.groupBoxExternalPlayer.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxExternalPlayer.Location = new System.Drawing.Point(0, 273);
+      this.groupBoxExternalPlayer.Location = new System.Drawing.Point(0, 292);
       this.groupBoxExternalPlayer.Name = "groupBoxExternalPlayer";
       this.groupBoxExternalPlayer.Size = new System.Drawing.Size(472, 112);
       this.groupBoxExternalPlayer.TabIndex = 1;
@@ -384,6 +411,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Controls.Add(this.labelAACDecoder);
+      this.mpGroupBox1.Controls.Add(this.aacAudioCodecComboBox);
       this.mpGroupBox1.Controls.Add(this.enableAudioDualMonoModes);
       this.mpGroupBox1.Controls.Add(this.autoDecoderSettings);
       this.mpGroupBox1.Controls.Add(this.mpLabel1);
@@ -397,17 +426,36 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox1.Location = new System.Drawing.Point(0, 0);
       this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(472, 203);
+      this.mpGroupBox1.Size = new System.Drawing.Size(472, 221);
       this.mpGroupBox1.TabIndex = 0;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Codec Settings (internal player)";
+      // 
+      // labelAACDecoder
+      // 
+      this.labelAACDecoder.Location = new System.Drawing.Point(16, 99);
+      this.labelAACDecoder.Name = "labelAACDecoder";
+      this.labelAACDecoder.Size = new System.Drawing.Size(146, 17);
+      this.labelAACDecoder.TabIndex = 14;
+      this.labelAACDecoder.Text = "AAC audio decoder:";
+      // 
+      // aacAudioCodecComboBox
+      // 
+      this.aacAudioCodecComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.aacAudioCodecComboBox.BorderColor = System.Drawing.Color.Empty;
+      this.aacAudioCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.aacAudioCodecComboBox.Location = new System.Drawing.Point(168, 96);
+      this.aacAudioCodecComboBox.Name = "aacAudioCodecComboBox";
+      this.aacAudioCodecComboBox.Size = new System.Drawing.Size(288, 21);
+      this.aacAudioCodecComboBox.TabIndex = 15;
       // 
       // enableAudioDualMonoModes
       // 
       this.enableAudioDualMonoModes.AutoSize = true;
       this.enableAudioDualMonoModes.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
       this.enableAudioDualMonoModes.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.enableAudioDualMonoModes.Location = new System.Drawing.Point(19, 162);
+      this.enableAudioDualMonoModes.Location = new System.Drawing.Point(19, 182);
       this.enableAudioDualMonoModes.Name = "enableAudioDualMonoModes";
       this.enableAudioDualMonoModes.Size = new System.Drawing.Size(386, 30);
       this.enableAudioDualMonoModes.TabIndex = 10;
@@ -420,7 +468,7 @@ namespace MediaPortal.Configuration.Sections
       this.autoDecoderSettings.AutoSize = true;
       this.autoDecoderSettings.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
       this.autoDecoderSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.autoDecoderSettings.Location = new System.Drawing.Point(19, 127);
+      this.autoDecoderSettings.Location = new System.Drawing.Point(19, 149);
       this.autoDecoderSettings.Name = "autoDecoderSettings";
       this.autoDecoderSettings.Size = new System.Drawing.Size(309, 30);
       this.autoDecoderSettings.TabIndex = 0;
@@ -453,14 +501,14 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.audioRendererComboBox.BorderColor = System.Drawing.Color.Empty;
       this.audioRendererComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.audioRendererComboBox.Location = new System.Drawing.Point(168, 96);
+      this.audioRendererComboBox.Location = new System.Drawing.Point(168, 120);
       this.audioRendererComboBox.Name = "audioRendererComboBox";
       this.audioRendererComboBox.Size = new System.Drawing.Size(288, 21);
       this.audioRendererComboBox.TabIndex = 7;
       // 
       // label3
       // 
-      this.label3.Location = new System.Drawing.Point(16, 100);
+      this.label3.Location = new System.Drawing.Point(16, 124);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(88, 17);
       this.label3.TabIndex = 6;
@@ -500,9 +548,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.label5.Location = new System.Drawing.Point(16, 76);
       this.label5.Name = "label5";
-      this.label5.Size = new System.Drawing.Size(80, 16);
+      this.label5.Size = new System.Drawing.Size(158, 17);
       this.label5.TabIndex = 2;
-      this.label5.Text = "Audio decoder:";
+      this.label5.Text = "MPEG / AC3 audio decoder:";
       // 
       // wmvGroupBox
       // 
@@ -511,7 +559,7 @@ namespace MediaPortal.Configuration.Sections
       this.wmvGroupBox.Controls.Add(this.mpLabel2);
       this.wmvGroupBox.Controls.Add(this.wmvCheckBox);
       this.wmvGroupBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.wmvGroupBox.Location = new System.Drawing.Point(0, 209);
+      this.wmvGroupBox.Location = new System.Drawing.Point(0, 227);
       this.wmvGroupBox.Name = "wmvGroupBox";
       this.wmvGroupBox.Size = new System.Drawing.Size(472, 62);
       this.wmvGroupBox.TabIndex = 7;
