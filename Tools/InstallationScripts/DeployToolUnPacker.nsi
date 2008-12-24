@@ -62,8 +62,8 @@
 
 !ifdef BUILD_TVServer
 !system '"${svn_DeployVersionSVN}\DeployVersionSVN\bin\Release\DeployVersionSVN.exe" /svn="${svn_TVServer}"' = 0
-!system '"$%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.e xe" /target:Rebuild /property:Configuration=Release;Platform=x86 "${svn_TVServer}\TvLibrary.sln"' = 0
-!system '"$%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.e xe" /target:Rebuild /property:Configuration=Release;Platform=x86 "${svn_TVServer}\TvPlugin\TvPlugin.sln"' = 0
+!system '"$%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /target:Rebuild /property:Configuration=Release;Platform=x86 "${svn_TVServer}\TvLibrary.sln"' = 0
+!system '"$%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /target:Rebuild /property:Configuration=Release;Platform=x86 "${svn_TVServer}\TvPlugin\TvPlugin.sln"' = 0
 !system '"${svn_DeployVersionSVN}\DeployVersionSVN\bin\Release\DeployVersionSVN.exe" /svn="${svn_TVServer}"  /revert' = 0
 !endif
 
