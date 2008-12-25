@@ -669,7 +669,7 @@ public class MediaPortalApp : D3DApp, IRender
     // check if MediaPortal is already running...
     Log.Info("Main: Checking for running MediaPortal instance");
     Log.Info(@"Main: Deleting old log\capture.log");
-    Utils.FileDelete(Config.GetFile(Config.Dir.Log, "capture.log"));
+    Utils.FileDelete(Config.GetFile(Config.Dir.Log, "capture.log"));    
     if (GUIGraphicsContext.currentScreen.Bounds.Width > clientSizeX)
     {
       MinimumSize = new Size(clientSizeX + 8, clientSizeY + 27);
@@ -1708,7 +1708,7 @@ public class MediaPortalApp : D3DApp, IRender
       catch (DeviceLostException ex)
       {
         Log.Error("Main: Device lost - {0}", ex.ToString());
-        g_Player.Stop();
+        if (!RefreshRateChanger.RefreshRateChangePending) g_Player.Stop();
         GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
       }
     }

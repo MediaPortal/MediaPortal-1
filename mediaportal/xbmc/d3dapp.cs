@@ -1437,7 +1437,10 @@ namespace MediaPortal
       {
         if (g_Player.Playing || Recorder.IsViewing())
         {
-          g_Player.Stop();
+          if (!RefreshRateChanger.RefreshRateChangePending)
+          {
+            g_Player.Stop();
+          }
         }
 
         //Debugger.Launch();
@@ -1473,7 +1476,7 @@ namespace MediaPortal
           //  graphicsSettings.WindowedDisplayMode = Manager.Adapters[adapterInfo.AdapterOrdinal].CurrentDisplayMode;
           //  presentParams.BackBufferFormat = graphicsSettings.WindowedDisplayMode.Format;
           //}
-
+          //g_Player.RefreshRateChangePending = false;
           BuildPresentParamsFromSettings(windowed);
 
           // Reset the device and resize it
@@ -1503,6 +1506,28 @@ namespace MediaPortal
           //InitializeDeviceObjects();
         }
         GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+
+        if (RefreshRateChanger.RefreshRateChangePending)
+        {
+          if (RefreshRateChanger.RefreshRateChangeStrFile.Length > 0)
+          {
+            RefreshRateChanger.RefreshRateChangePending = false;
+            if (RefreshRateChanger.RefreshRateChangeMediaType != RefreshRateChanger.MediaType.Unknown)
+            {
+              int t1 = (int)RefreshRateChanger.RefreshRateChangeMediaType;
+              g_Player.MediaType t2 = (g_Player.MediaType)t1;
+              g_Player.Play(RefreshRateChanger.RefreshRateChangeStrFile, t2);
+            }
+            else
+            {
+              g_Player.Play(RefreshRateChanger.RefreshRateChangeStrFile);
+            }
+            if (g_Player.HasVideo && RefreshRateChanger.RefreshRateChangeFullscreenVideo)
+            {
+              g_Player.ShowFullScreenWindow();
+            }
+          }
+        }
       }
     }
 

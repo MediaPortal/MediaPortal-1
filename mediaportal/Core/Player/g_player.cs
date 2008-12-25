@@ -41,13 +41,14 @@ using System.Runtime.CompilerServices;
 namespace MediaPortal.Player
 {
   public class g_Player
-  {
+  {    
+
     #region enums
-    public enum MediaType { Video, TV, Radio, Music, Recording };
+    public enum MediaType { Video, TV, Radio, Music, Recording, Unknown };
     public enum DriveType { CD, DVD };
     #endregion
 
-    #region variables
+    #region variables            
 
     static int _currentStep = 0;
     static int _currentStepIndex = -1;
@@ -93,12 +94,16 @@ namespace MediaPortal.Player
     // in this case we do not receive the onstopped event.
     // so saving the resume point of a video file is not happening, since this relies on the onstopped event.
     // instead a plugin now has to listen to ChangedHandler event instead.
-    public static event ChangedHandler PlayBackChanged;
+    public static event ChangedHandler PlayBackChanged; 
     public static event StoppedHandler PlayBackStopped;
     public static event EndedHandler PlayBackEnded;
-    public static event StartedHandler PlayBackStarted;
-    public static event AudioTracksReadyHandler AudioTracksReady;
+    public static event StartedHandler PlayBackStarted;    
+    public static event AudioTracksReadyHandler AudioTracksReady;    
     #endregion
+
+    #region Delegates    
+
+    #endregion    
 
     #region ctor/dtor
     // singleton. Dont allow any instance of this class
@@ -338,10 +343,10 @@ namespace MediaPortal.Player
 
     internal static void OnAudioTracksReady()
     {
-      if (AudioTracksReady != null) // FIXME: the event handler might not be set if TV plugin is not installed! 
-      {
-        AudioTracksReady();
-      }
+        if (AudioTracksReady != null) // FIXME: the event handler might not be set if TV plugin is not installed! 
+        {
+            AudioTracksReady();
+        }
     }
 
     //called when current playing file is stopped
@@ -357,7 +362,7 @@ namespace MediaPortal.Player
         //yes, then raise event 
         Log.Info("g_Player.OnChanged()");
         if (PlayBackChanged != null)
-          PlayBackChanged(_currentMedia, (int)g_Player.CurrentPosition, g_Player.CurrentFile);
+        PlayBackChanged(_currentMedia, (int)g_Player.CurrentPosition, g_Player.CurrentFile);
       }
     }
 
@@ -370,7 +375,7 @@ namespace MediaPortal.Player
         //yes, then raise event 
         Log.Info("g_Player.OnStopped()");
         if (PlayBackStopped != null)
-          PlayBackStopped(_currentMedia, (int)g_Player.CurrentPosition, g_Player.CurrentFile);
+        PlayBackStopped(_currentMedia, (int)g_Player.CurrentPosition, g_Player.CurrentFile);
       }
     }
     //called when current playing file is stopped
@@ -381,6 +386,7 @@ namespace MediaPortal.Player
       {
         //yes, then raise event 
         Log.Info("g_Player.OnEnded()");
+        RefreshRateChanger.AdaptRefreshRate();
         PlayBackEnded(_currentMedia, _currentFilePlaying);
       }
     }
@@ -410,7 +416,7 @@ namespace MediaPortal.Player
         }
         Log.Info("g_Player.OnStarted() {0} media:{1}", _currentFilePlaying, _currentMedia.ToString());
         if (PlayBackStarted != null)
-          PlayBackStarted(_currentMedia, _currentFilePlaying);
+          PlayBackStarted(_currentMedia, _currentFilePlaying);        
       }
     }
 
@@ -432,7 +438,9 @@ namespace MediaPortal.Player
 
     [MethodImpl(MethodImplOptions.Synchronized)]
     private static void doStop(bool keepTimeShifting, bool keepExclusiveModeOn)
-    {
+    {      
+      RefreshRateChanger.ResetRefreshRateState();     
+      
       if (driveSpeedReduced)
       {
         // Set the CD/DVD Speed back to Max Speed
@@ -450,7 +458,10 @@ namespace MediaPortal.Player
         OnStopped();
 
         //since plugins could stop playback, we need to make sure that _player is not null.
-        if (_player == null) return;
+        if (_player == null)
+        {
+          return;
+        }
 
         GUIGraphicsContext.ShowBackground = true;
         if (!keepTimeShifting && !keepExclusiveModeOn)
@@ -480,6 +491,8 @@ namespace MediaPortal.Player
         CachePlayer();
         _chapters = null;
         _jumpPoints = null;
+
+        RefreshRateChanger.AdaptRefreshRate();
       }
     }
 
@@ -489,8 +502,8 @@ namespace MediaPortal.Player
     }
 
     public static void Stop(bool keepExclusiveModeOn)
-    {
-      Log.Info("g_Player.Stop() - keepExclusiveModeOn = {0}", keepExclusiveModeOn);
+    {      
+      Log.Info("g_Player.Stop() - keepExclusiveModeOn = {0}" ,keepExclusiveModeOn);
       if (keepExclusiveModeOn)
       {
         doStop(false, true);
@@ -500,7 +513,7 @@ namespace MediaPortal.Player
         Stop();
       }
     }
-
+    
     public static void Stop()
     {
       // we have to save the fullscreen status of the tv3 plugin for later use for the lastactivemodulefullscreen feature.
@@ -531,9 +544,9 @@ namespace MediaPortal.Player
       {
         _currentStep = 0;
         _currentStepIndex = -1;
-        _seekTimer = DateTime.MinValue;
+        _seekTimer = DateTime.MinValue;        
         _player.Speed = 1; //default back to 1x speed.
-
+        
 
         _player.Pause();
         if (VMR9Util.g_vmr9 != null)
@@ -605,6 +618,7 @@ namespace MediaPortal.Player
     {
       get
       {
+        if (RefreshRateChanger.RefreshRateChangePending && RefreshRateChanger.RefreshRateChangeMediaType == RefreshRateChanger.MediaType.TV) return true;
         if (_player == null) return false;
         return _player.IsTV;
       }
@@ -614,6 +628,7 @@ namespace MediaPortal.Player
     {
       get
       {
+        if (RefreshRateChanger.RefreshRateChangePending && RefreshRateChanger.RefreshRateChangeMediaType == RefreshRateChanger.MediaType.Recording) return true;
         if (_player == null) return false;
         return (_currentMedia == MediaType.Recording);
       }
@@ -647,6 +662,22 @@ namespace MediaPortal.Player
       try
       {
         Starting = true;
+
+        RefreshRateChanger.AdaptRefreshRate(strPath, RefreshRateChanger.MediaType.Video);
+        if (RefreshRateChanger.RefreshRateChangePending)
+        {
+          TimeSpan ts = DateTime.Now - RefreshRateChanger.RefreshRateChangeExecutionTime;//_refreshrateChangeExecutionTime;
+          if (ts.TotalSeconds > RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX)
+          {
+            Log.Info("g_Player.PlayDVD - waited {0}s for refreshrate change, but it never took place (check your config). Proceeding with playback.", RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX);
+            RefreshRateChanger.ResetRefreshRateState();
+          }
+          else
+          {
+            return true;
+          }
+        }
+
         // Stop the BASS engine to avoid problems with Digital Audio
         BassMusicPlayer.Player.FreeBass();
         ChangeDriveSpeed(strPath, DriveType.DVD);
@@ -771,7 +802,7 @@ namespace MediaPortal.Player
           GUIGraphicsContext.form.Invalidate(true);
           _player = null;
         }
-
+        
         if (strAudioPlayer == "BASS engine" && !isMusicVideo)
         {
           if (BassMusicPlayer.BassFreed)
@@ -840,7 +871,7 @@ namespace MediaPortal.Player
           _player = null;
           GC.Collect(); GC.Collect(); GC.Collect(); GC.Collect();
         }
-
+        
         //int iUseVMR9inMYMovies = 0;
         //using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         //{
@@ -936,6 +967,25 @@ namespace MediaPortal.Player
           //Log.Info("player: file is not live tv, so stop timeshifting:{0}", strFile);
           //GUIMessage msgTv = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TIMESHIFT, 0, 0, 0, 0, 0, null);
           //GUIWindowManager.SendMessage(msgTv);
+          
+        }
+
+        int t1 = (int)type;
+        RefreshRateChanger.MediaType t2 = (RefreshRateChanger.MediaType)t1;
+
+        RefreshRateChanger.AdaptRefreshRate(strFile, t2);
+        if (RefreshRateChanger.RefreshRateChangePending)
+        {
+          TimeSpan ts = DateTime.Now - RefreshRateChanger.RefreshRateChangeExecutionTime;
+          if (ts.TotalSeconds > RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX)
+          {
+            Log.Info("g_Player.Play - waited {0}s for refreshrate change, but it never took place (check your config). Proceeding with playback.", RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX);
+            RefreshRateChanger.ResetRefreshRateState();
+          }
+          else
+          {
+            return true;
+          }
         }
 
         _currentStep = 0;
@@ -959,7 +1009,7 @@ namespace MediaPortal.Player
           _player = null;
           GC.Collect(); GC.Collect(); GC.Collect(); GC.Collect(); //?? ms-help://MS.VSCC.v80/MS.MSDN.v80/MS.NETDEVFX.v20.de/cpref2/html/M_System_GC_Collect_1_804c5d7d.htm
         }
-
+        
         if (!MediaPortal.Util.Utils.IsAVStream(strFile) && MediaPortal.Util.Utils.IsVideo(strFile))
         {
           if (MediaPortal.Util.Utils.PlayMovie(strFile))
@@ -1028,7 +1078,7 @@ namespace MediaPortal.Player
           return bResult;
         }
         _isInitalized = false;
-      }
+      }     
       finally
       {
         Starting = false;
@@ -1063,7 +1113,7 @@ namespace MediaPortal.Player
           //Log.Info("player: file is not live tv, so stop timeshifting:{0}", strFile);
           //GUIMessage msgTv = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TIMESHIFT, 0, 0, 0, 0, 0, null);
           //GUIWindowManager.SendMessage(msgTv);
-        }
+        }			
 
         _currentStep = 0;
         _currentStepIndex = -1;
@@ -1078,6 +1128,7 @@ namespace MediaPortal.Player
           GUIGraphicsContext.ShowBackground = true;
           OnChanged(strFile);
           OnStopped();
+          
           //SV 
           // If we're using the internal music player and cross-fading is enabled
           // we don't want a hard stop here as it will break cross-fading
@@ -1097,12 +1148,13 @@ namespace MediaPortal.Player
             {
               _player.Stop();
             }
+            
             CachePlayer();
             _player = null;
             GC.Collect(); GC.Collect(); GC.Collect(); GC.Collect();
           }
         }
-
+        
         if (!MediaPortal.Util.Utils.IsAVStream(strFile) && MediaPortal.Util.Utils.IsVideo(strFile))
         {
           // Free BASS to avoid problems with Digital Audio, when watching movies
@@ -1110,6 +1162,22 @@ namespace MediaPortal.Player
           {
             BassMusicPlayer.Player.FreeBass();
           }
+
+          RefreshRateChanger.AdaptRefreshRate(strFile, RefreshRateChanger.MediaType.Unknown);
+          if (RefreshRateChanger.RefreshRateChangePending)
+          {
+            TimeSpan ts = DateTime.Now - RefreshRateChanger.RefreshRateChangeExecutionTime;
+            if (ts.TotalSeconds > RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX)
+            {
+              Log.Info("g_Player.Play - waited {0}s for refreshrate change, but it never took place (check your config). Proceeding with playback.", RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX);
+              RefreshRateChanger.ResetRefreshRateState();
+            }
+            else
+            {
+              return true;
+            }
+          }
+
           if (MediaPortal.Util.Utils.PlayMovie(strFile))
           {
             _isInitalized = false;
@@ -1145,7 +1213,8 @@ namespace MediaPortal.Player
             _isInitalized = false;
             return _isPlaybackPossible;
           }
-        }
+        }        
+       
         _player = _factory.Create(strFile);
         if (_player != null)
         {
@@ -1636,7 +1705,8 @@ namespace MediaPortal.Player
     {
       get
       {
-        if (_player == null) return false;
+        if (RefreshRateChanger.RefreshRateChangePending) return true;
+        if (_player == null) return false;        
         return _player.HasVideo;
       }
     }
@@ -1645,6 +1715,7 @@ namespace MediaPortal.Player
     {
       get
       {
+        if (RefreshRateChanger.RefreshRateChangePending && RefreshRateChanger.RefreshRateChangeMediaType == RefreshRateChanger.MediaType.Video) return true;
         if (_player == null) return false;
         if (_currentMedia == MediaType.Video)
         {
@@ -1870,7 +1941,7 @@ namespace MediaPortal.Player
     public static void Init()
     {
       GUIGraphicsContext.OnVideoWindowChanged += new VideoWindowChangedHandler(g_Player.OnVideoWindowChanged);
-      GUIGraphicsContext.OnGammaContrastBrightnessChanged += new VideoGammaContrastBrightnessHandler(g_Player.OnGammaContrastBrightnessChanged);
+      GUIGraphicsContext.OnGammaContrastBrightnessChanged += new VideoGammaContrastBrightnessHandler(g_Player.OnGammaContrastBrightnessChanged);      
     }
 
     static void OnGammaContrastBrightnessChanged()
@@ -1952,7 +2023,7 @@ namespace MediaPortal.Player
         if (_player == null) return false;
         return (_player.CanSeek() && !_player.IsDVDMenu);
       }
-    }
+    }    
 
     /// <summary>
     /// Switches to the next audio stream.
@@ -2024,7 +2095,7 @@ namespace MediaPortal.Player
         string chapterFile = Path.ChangeExtension(videoFile, ".txt");
         if (!File.Exists(chapterFile))
           return false;
-
+        
         Log.Debug("g_Player.LoadChapters() - Chapter file found for video \"{0}\"", videoFile);
 
         if (_loadAutoComSkipSetting)
@@ -2043,7 +2114,7 @@ namespace MediaPortal.Player
         using (StreamReader file = new StreamReader(chapterFile))
         {
           string line = file.ReadLine();
-
+          
           int fps;
           if (!int.TryParse(line.Substring(line.LastIndexOf(' ') + 1), out fps))
           {
@@ -2128,20 +2199,20 @@ namespace MediaPortal.Player
 
       double nextChapter = NextChapterTime(_player.CurrentPosition);
       Log.Debug("g_Player.JumpNextChapter() - Current Position: {0}, Next Chapter: {1}", _player.CurrentPosition, nextChapter);
-
+      
       if (nextChapter > 0 && nextChapter < _player.Duration)
       {
         SeekAbsolute(nextChapter);
         return true;
       }
-
+      
       return false;
     }
     public static bool JumpToPrevChapter()
     {
       if (!Playing)
         return false;
-
+      
       double prevChapter = PreviousChapterTime(_player.CurrentPosition);
       Log.Debug("g_Player.JumpPrevChapter() - Current Position: {0}, Previous Chapter: {1}", _player.CurrentPosition, prevChapter);
 
@@ -2168,7 +2239,10 @@ namespace MediaPortal.Player
     /// </summary>
     public static ShowFullScreenWindowHandler ShowFullScreenWindowTV
     {
-      get { return _showFullScreenWindowTV; }
+      get 
+      {                
+        return _showFullScreenWindowTV; 
+      }
       set
       {
         _showFullScreenWindowTV = value;
@@ -2183,7 +2257,10 @@ namespace MediaPortal.Player
     /// </summary>
     public static ShowFullScreenWindowHandler ShowFullScreenWindowVideo
     {
-      get { return _showFullScreenWindowVideo; }
+      get 
+      {       
+        return _showFullScreenWindowVideo; 
+      }
       set
       {
         _showFullScreenWindowVideo = value;
@@ -2198,7 +2275,10 @@ namespace MediaPortal.Player
     /// </summary>
     public static ShowFullScreenWindowHandler ShowFullScreenWindowOther
     {
-      get { return _showFullScreenWindowOther; }
+      get 
+      {                     
+        return _showFullScreenWindowOther; 
+      }
       set
       {
         _showFullScreenWindowOther = value;
@@ -2216,7 +2296,7 @@ namespace MediaPortal.Player
     public static bool ShowFullScreenWindowTVDefault()
     {
       if (Playing && IsTV && !IsTVRecording)
-      {
+      {        
         // close e.g. the tv guide dialog (opened from context menu)
         Action actionCloseDialog = new Action(Action.ActionType.ACTION_CLOSE_DIALOG, 0, 0);
         GUIGraphicsContext.OnAction(actionCloseDialog);
@@ -2227,7 +2307,7 @@ namespace MediaPortal.Player
         Log.Info("g_Player: ShowFullScreenWindow switching to fullscreen tv");
         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
         GUIGraphicsContext.IsFullScreenVideo = true;
-        return true;
+        return true;                
       }
       return false;
     }
@@ -2264,12 +2344,12 @@ namespace MediaPortal.Player
         Log.Info("g_Player: ShowFullScreenWindow switching to fullscreen video");
         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
       }
-      GUIGraphicsContext.IsFullScreenVideo = true;
+      GUIGraphicsContext.IsFullScreenVideo = true;                  
       return true;
     }
 
     public static bool ShowFullScreenWindowOtherDefault()
-    {
+    {            
       return false;
     }
 
@@ -2289,7 +2369,15 @@ namespace MediaPortal.Player
     /// <returns></returns>
     public static bool ShowFullScreenWindow()
     {
+      bool result = false;
+            
       Log.Debug("g_Player: ShowFullScreenWindow");
+
+      if (RefreshRateChanger.RefreshRateChangePending)
+      {
+        RefreshRateChanger.RefreshRateChangeFullscreenVideo = true;          
+        return true;
+      }
       // does window allow switch to fullscreen?
       GUIWindow win = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
       if (!win.FullScreenVideoAllowed)
@@ -2299,16 +2387,28 @@ namespace MediaPortal.Player
       }
       // try TV
       if (_showFullScreenWindowTV != null && _showFullScreenWindowTV())
+      {          
         return true;
+      }
       // try Video
       if (_showFullScreenWindowVideo != null && _showFullScreenWindowVideo())
+      {
         return true;
+      }
       // try Other
       if (_showFullScreenWindowOther != null && _showFullScreenWindowOther())
+      {
         return true;
+      }
+
       Log.Debug("g_Player: ShowFullScreenWindow cannot switch to fullscreen");
-      return false;
+      return false;            
     }
     #endregion
+
+    #region private members
+    
+    #endregion
+
   }
 }
