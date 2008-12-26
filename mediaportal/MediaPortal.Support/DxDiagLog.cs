@@ -48,7 +48,7 @@ namespace MediaPortal.Support
     private void CreateDxDiagFile(string tmpFile)
     {
       string executable = Environment.GetEnvironmentVariable("windir") + @"\system32\dxdiag.exe";
-      string arguments = "/whql:off /t \"" + tmpFile+"\"";
+      string arguments = "/whql:off /t " + tmpFile;
       runner.Arguments = arguments;
       runner.Executable = executable;
       runner.Run();
