@@ -26,6 +26,8 @@ using TvControl;
 using Gentle.Framework;
 using TvDatabase;
 using MediaPortal.UserInterface.Controls;
+using TvLibrary.Interfaces;
+
 namespace SetupTv.Sections
 {
   public partial class RadioChannelMapping : SectionSettings
@@ -173,15 +175,18 @@ namespace SetupTv.Sections
       Card card = ((CardInfo)mpComboBoxCard.SelectedItem).Card;
       IList maps = card.ReferringChannelMap();
 
+      // get cardtype, dvb, analogue etc.		
+      CardType cardType = RemoteControl.Instance.Type(card.IdCard);
+      TvBusinessLayer layer = new TvBusinessLayer();
+      bool enableDVBS2 = (layer.GetSetting("dvbs" + card.IdCard + "enabledvbs2", "false").Value == "true");
+     
       List<ListViewItem> items = new List<ListViewItem>();
       foreach (ChannelMap map in maps)
       {
         Channel channel = map.ReferencedChannel();
-        if (channel.IsRadio == false)
+        if (!channel.IsRadio)
           continue;
-        int imageIndex = 3;
-        if (channel.FreeToAir == false)
-          imageIndex = 0;
+        int imageIndex = channel.FreeToAir ? 3 : 0;
         ListViewItem item = new ListViewItem(channel.DisplayName, imageIndex);
         item.Tag = map;
         items.Add(item);
@@ -204,11 +209,61 @@ namespace SetupTv.Sections
       items = new List<ListViewItem>();
       foreach (Channel channel in channels)
       {
-        if (channel.IsRadio == false)
+        if (!channel.IsRadio)
           continue;
-        int imageIndex = 0;
-        if (channel.FreeToAir)
-          imageIndex = 3;
+
+        // only add channels that is tuneable on the device selected.
+        bool foundValidTuningDetail = false;
+        foreach (TuningDetail tDetail in channel.ReferringTuningDetail())
+        {
+          switch (cardType)
+          {
+            case CardType.Analog:
+              foundValidTuningDetail = (tDetail.ChannelType == 0);
+              break;
+
+            case CardType.Atsc:
+              foundValidTuningDetail = (tDetail.ChannelType == 1);
+              break;
+
+            case CardType.DvbC:
+              foundValidTuningDetail = (tDetail.ChannelType == 2);
+              break;
+
+            case CardType.DvbS:
+
+              if (!enableDVBS2 && (tDetail.Pilot > -1 || tDetail.RollOff > -1))
+              {
+                continue;
+              }
+
+              foundValidTuningDetail = (tDetail.ChannelType == 3);
+              break;
+
+            case CardType.DvbT:
+              foundValidTuningDetail = (tDetail.ChannelType == 4);
+              break;
+
+            case CardType.RadioWebStream:
+              foundValidTuningDetail = (tDetail.ChannelType == 5);
+              break;
+
+            default:
+              foundValidTuningDetail = true;
+              break;
+          }
+
+          if (foundValidTuningDetail)
+          {
+            break;
+          }
+        }
+        if (!foundValidTuningDetail)
+        {
+          continue;
+        }
+
+        int imageIndex = channel.FreeToAir ? 3 : 0;
         ListViewItem item = new ListViewItem(channel.DisplayName, imageIndex);
         item.Tag = channel;
         items.Add(item);
