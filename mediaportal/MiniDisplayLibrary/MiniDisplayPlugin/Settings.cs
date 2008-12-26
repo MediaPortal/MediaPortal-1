@@ -264,6 +264,26 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       list.Add(new VLSYS_Mplay());
       if (this.ExtensiveLogging)
       {
+        Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading DM140GINK...", new object[0]);
+      }
+      list.Add(new DM140GINK());
+      if (this.ExtensiveLogging)
+      {
+        Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading FICSpectra...", new object[0]);
+      }
+      list.Add(new FICSpectra());
+      if (this.ExtensiveLogging)
+      {
+        Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading MediaPad...", new object[0]);
+      }
+      list.Add(new MediaPad());
+      if (this.ExtensiveLogging)
+      {
+        Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading ScaleoEV...", new object[0]);
+      }
+      list.Add(new ScaleoEV());
+      if (this.ExtensiveLogging)
+      {
         Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading Debug Display...", new object[0]);
       }
       list.Add(new DebugForm());
