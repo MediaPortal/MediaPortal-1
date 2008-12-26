@@ -1,12 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
 using System.Reflection;
-using System.Text;
 using System.Windows.Forms;
-using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Configuration.Sections
@@ -73,6 +68,7 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPTextBox txtNotifyAfter;
     private MediaPortal.UserInterface.Controls.MPLabel labelNotifyTimeout;
     private ColumnHeader columnHeader7;
+    private ListViewColumnSorter _columnSorter;
 
     #endregion
 
@@ -85,11 +81,6 @@ namespace MediaPortal.Configuration.Sections
       : base(name)
     {
       InitializeComponent();
-    }
-
-    bool MyInterfaceFilter(Type typeObj, Object criteriaObj)
-    {
-      return (typeObj.ToString().Equals(criteriaObj.ToString()));
     }
 
     public override void LoadSettings()
@@ -120,9 +111,6 @@ namespace MediaPortal.Configuration.Sections
       {
         // Enable this Panel if the TvPlugin exists in the plug-in Directory
         this.Enabled = true;
-
-        // Load the TVLibraryInterfaces so we can lookup available languages. 
-        Type[] foundInterfaces = null;
 
         try
         {
@@ -162,6 +150,10 @@ namespace MediaPortal.Configuration.Sections
                         mpListViewAvailAudioLang.Items.Add(item);
                       }
                     }
+                    mpListViewAvailAudioLang.ListViewItemSorter = _columnSorter = new ListViewColumnSorter();
+                    _columnSorter.SortColumn = 0;
+                    _columnSorter.Order = SortOrder.Ascending;
+                    mpListViewAvailAudioLang.Sort();
 
                     if (_preferredAudioLanguages.Length > 0)
                     {
@@ -197,6 +189,10 @@ namespace MediaPortal.Configuration.Sections
                         mpListViewAvailSubLang.Items.Add(item);
                       }
                     }
+                    mpListViewAvailSubLang.ListViewItemSorter = _columnSorter = new ListViewColumnSorter();
+                    _columnSorter.SortColumn = 0;
+                    _columnSorter.Order = SortOrder.Ascending;
+                    mpListViewAvailSubLang.Sort();
 
                     if (_preferredSubLanguages.Length > 0)
                     {
@@ -633,7 +629,7 @@ namespace MediaPortal.Configuration.Sections
       // mpListViewAvailAudioLang
       // 
       this.mpListViewAvailAudioLang.AllowDrop = true;
-      this.mpListViewAvailAudioLang.AllowRowReorder = false;
+      this.mpListViewAvailAudioLang.AllowRowReorder = true;
       this.mpListViewAvailAudioLang.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));

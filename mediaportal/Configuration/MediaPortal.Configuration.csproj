@@ -250,6 +250,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="HelpSystem.cs" />
+    <Compile Include="ListViewSort.cs" />
     <Compile Include="Sections\FiltersPowerDVD8Decoder.cs">
       <SubType>UserControl</SubType>
     </Compile>
