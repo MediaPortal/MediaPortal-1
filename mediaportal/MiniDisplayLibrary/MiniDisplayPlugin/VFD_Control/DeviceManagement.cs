@@ -28,7 +28,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
 
-namespace ProcessPlugins.MiniDisplay.VFD_Control
+namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.VFD_Control
 {
   /// <summary>
   /// For detecting devices and receiving device notifications.

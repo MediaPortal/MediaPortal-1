@@ -24,7 +24,7 @@
 #endregion
 using System.Runtime.InteropServices;
 
-namespace ProcessPlugins.MiniDisplay.VFD_Control
+namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.VFD_Control
 {
   internal sealed class DebuggingDeclarations
   {

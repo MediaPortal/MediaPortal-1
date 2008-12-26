@@ -27,7 +27,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
-using ProcessPlugins.MiniDisplay.VFD_Control;
+using MediaPortal.ProcessPlugins.MiniDisplayPlugin.VFD_Control;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Control
 {
