@@ -16,14 +16,16 @@ using DirectShowLib;
 using System.Runtime.InteropServices.ComTypes;
 #endif
 
-namespace TvLibrary.Implementations.DVB {
+namespace TvLibrary.Implementations.DVB
+{
   /// <summary>
   /// A collection of methods to do common DirectShow tasks.
   /// </summary>
 
-  public sealed class FilterGraphTools {
+  public static class FilterGraphTools
+  {
     #region structs
-    static byte[] Mpeg2ProgramVideo = 
+    static readonly byte[] Mpeg2ProgramVideo = 
     {
           0x00, 0x00, 0x00, 0x00,							//  .hdr.rcSource.left
           0x00, 0x00, 0x00, 0x00,							//  .hdr.rcSource.top
@@ -99,6 +101,7 @@ namespace TvLibrary.Implementations.DVB {
           0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
     };
 
+#pragma warning disable 169
     static byte[] H264VideoFormat = {
 	    0x00, 0x00, 0x00, 0x00,                         //  .hdr.rcSource.left              = 0x00000000
 	    0x00, 0x00, 0x00, 0x00,                         //  .hdr.rcSource.top               = 0x00000000
@@ -124,8 +127,9 @@ namespace TvLibrary.Implementations.DVB {
 	    0x00, 0x00, 0x00, 0x00,                         //  .hdr.bmiHeader.biClrUsed        = 0x00000000
 	    0x00, 0x00, 0x00, 0x00,                         //  .hdr.bmiHeader.biClrImportant   = 0x00000000
     };
+#pragma warning restore 169
 
-    static byte[] MPEG2AudioFormat =
+    static readonly byte[] MPEG2AudioFormat =
       {	
         0x50, 0x00,				//wFormatTag
 	      0x02, 0x00,				//nChannels
@@ -142,7 +146,7 @@ namespace TvLibrary.Implementations.DVB {
       };
 
 
-    static byte[] MPEG1AudioFormat = 
+    static readonly byte[] MPEG1AudioFormat = 
       {
 	      0x50, 0x00,				//wFormatTag
 	      0x02, 0x00,				//nChannels
@@ -158,7 +162,7 @@ namespace TvLibrary.Implementations.DVB {
 	      0x01, 0x00,	0x1C, 0x00, 0x00, 0x00,	0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 
       };
-    static byte[] LPCMAudioFormat =
+    static readonly byte[] LPCMAudioFormat =
         {
           0x00, 0x00,             // format type      = 0x0000=WAVE_FORMAT_UNKNOWN
           0x02, 0x00,             // channels
@@ -169,7 +173,7 @@ namespace TvLibrary.Implementations.DVB {
           0x16, 0x00,             // extra size       = 0x0016 = 22 bytes
           };
 
-
+#pragma warning disable 169
     static byte[] AC3AudioFormat = {
       0x00, 0x20,				//wFormatTag
       0x06, 0x00,				//nChannels
@@ -179,8 +183,9 @@ namespace TvLibrary.Implementations.DVB {
       0x00, 0x00,				//wBitsPerSample
       0x00, 0x00				//cbSize
     };
+#pragma warning restore 169
 
-    static byte[] AACAudioFormat = {
+    static readonly byte[] AACAudioFormat = {
       0xFF, 0x00,				//wFormatTag
       0x02, 0x00,				//nChannels
       0x80, 0xBB, 0x00, 0x00, //nSamplesPerSec
@@ -191,6 +196,7 @@ namespace TvLibrary.Implementations.DVB {
       0x11, 0x90
     };
 
+#pragma warning disable 169
     static byte[] AACAudioFormat2 = {
 	    0xFF, 0x00,				//wFormatTag
 	    0x02, 0x00,				//nChannels
@@ -201,10 +207,9 @@ namespace TvLibrary.Implementations.DVB {
 	    0x02, 0x00,				//cbSize
 	    0x11, 0x90
     };
+#pragma warning restore 169
 
     #endregion
-
-    private FilterGraphTools() { }
 
     /// <summary>
     /// Add a filter to a DirectShow Graph using its CLSID
@@ -235,21 +240,24 @@ namespace TvLibrary.Implementations.DVB {
     /// <exception cref="System.Runtime.InteropServices.COMException">Thrown if errors occur when the filter is add to the graph</exception>
 
     [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
-    public static IBaseFilter AddFilterFromClsid(IGraphBuilder graphBuilder, Guid clsid, string name) {
-      int hr = 0;
+    public static IBaseFilter AddFilterFromClsid(IGraphBuilder graphBuilder, Guid clsid, string name)
+    {
       IBaseFilter filter = null;
 
       if (graphBuilder == null)
         throw new ArgumentNullException("graphBuilder");
 
-      try {
+      try
+      {
         Type type = Type.GetTypeFromCLSID(clsid);
         filter = (IBaseFilter)Activator.CreateInstance(type);
 
-        hr = graphBuilder.AddFilter(filter, name);
+        int hr = graphBuilder.AddFilter(filter, name);
         DsError.ThrowExceptionForHR(hr);
-      } catch {
-        if (filter != null) {
+      } catch
+      {
+        if (filter != null)
+        {
           Marshal.ReleaseComObject(filter);
           filter = null;
         }
@@ -273,8 +281,8 @@ namespace TvLibrary.Implementations.DVB {
     /// <exception cref="System.ArgumentNullException">Thrown if graphBuilder is null</exception>
     /// <exception cref="System.Runtime.InteropServices.COMException">Thrown if errors occur when the filter is add to the graph</exception>
 
-    public static IBaseFilter AddFilterByName(IGraphBuilder graphBuilder, Guid deviceCategory, string friendlyName) {
-      int hr = 0;
+    public static IBaseFilter AddFilterByName(IGraphBuilder graphBuilder, Guid deviceCategory, string friendlyName)
+    {
       IBaseFilter filter = null;
 
       if (graphBuilder == null)
@@ -282,11 +290,12 @@ namespace TvLibrary.Implementations.DVB {
 
       DsDevice[] devices = DsDevice.GetDevicesOfCat(deviceCategory);
 
-      for (int i = 0; i < devices.Length; i++) {
+      for (int i = 0; i < devices.Length; i++)
+      {
         if (!devices[i].Name.Equals(friendlyName))
           continue;
 
-        hr = (graphBuilder as IFilterGraph2).AddSourceFilterForMoniker(devices[i].Mon, null, friendlyName, out filter);
+        int hr = ((IFilterGraph2)graphBuilder).AddSourceFilterForMoniker(devices[i].Mon, null, friendlyName, out filter);
         DsError.ThrowExceptionForHR(hr);
 
         break;
@@ -312,8 +321,8 @@ namespace TvLibrary.Implementations.DVB {
     /// <exception cref="System.Runtime.InteropServices.COMException">Thrown if errors occur when the filter is add to the graph</exception>
 
     [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
-    public static IBaseFilter AddFilterByDevicePath(IGraphBuilder graphBuilder, string devicePath, string name) {
-      int hr = 0;
+    public static IBaseFilter AddFilterByDevicePath(IGraphBuilder graphBuilder, string devicePath, string name)
+    {
       IBaseFilter filter = null;
 #if USING_NET11
 			UCOMIBindCtx bindCtx = null;
@@ -322,25 +331,32 @@ namespace TvLibrary.Implementations.DVB {
       IBindCtx bindCtx = null;
       IMoniker moniker = null;
 #endif
-      int eaten;
 
       if (graphBuilder == null)
         throw new ArgumentNullException("graphBuilder");
 
-      try {
-        hr = NativeMethods.CreateBindCtx(0, out bindCtx);
+      try
+      {
+        int hr = NativeMethods.CreateBindCtx(0, out bindCtx);
         Marshal.ThrowExceptionForHR(hr);
+        int eaten;
 
         hr = NativeMethods.MkParseDisplayName(bindCtx, devicePath, out eaten, out moniker);
         Marshal.ThrowExceptionForHR(hr);
 
-        hr = (graphBuilder as IFilterGraph2).AddSourceFilterForMoniker(moniker, bindCtx, name, out filter);
+        hr = ((IFilterGraph2)graphBuilder).AddSourceFilterForMoniker(moniker, bindCtx, name, out filter);
         DsError.ThrowExceptionForHR(hr);
-      } catch {
+      } catch (Exception ex)
+      {
+        Log.Log.WriteFile("Error occured while adding filter by device path: ", ex);
         // An error occur. Just returning null...
-      } finally {
-        if (bindCtx != null) Marshal.ReleaseComObject(bindCtx);
-        if (moniker != null) Marshal.ReleaseComObject(moniker);
+      }
+      finally
+      {
+        if (bindCtx != null)
+          Marshal.ReleaseComObject(bindCtx);
+        if (moniker != null)
+          Marshal.ReleaseComObject(moniker);
       }
 
       return filter;
@@ -356,21 +372,25 @@ namespace TvLibrary.Implementations.DVB {
     /// <exception cref="System.ArgumentNullException">Thrown if graphBuilder is null</exception>
 
     [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
-    public static IBaseFilter FindFilterByName(IGraphBuilder graphBuilder, string filterName) {
-      int hr = 0;
+    public static IBaseFilter FindFilterByName(IGraphBuilder graphBuilder, string filterName)
+    {
+
       IBaseFilter filter = null;
-      IEnumFilters enumFilters = null;
+      IEnumFilters enumFilters;
 
       if (graphBuilder == null)
         throw new ArgumentNullException("graphBuilder");
 
-      hr = graphBuilder.EnumFilters(out enumFilters);
-      if (hr == 0) {
+      int hr = graphBuilder.EnumFilters(out enumFilters);
+      if (hr == 0)
+      {
         IBaseFilter[] filters = new IBaseFilter[1];
         int fetched;
 
-        while (enumFilters.Next(filters.Length, filters, out fetched) == 0) {
-          if (GetFilterName(filters[0]).Equals(filterName)) {
+        while (enumFilters.Next(filters.Length, filters, out fetched) == 0)
+        {
+          if (GetFilterName(filters[0]).Equals(filterName))
+          {
             filter = filters[0];
             break;
           }
@@ -391,25 +411,28 @@ namespace TvLibrary.Implementations.DVB {
     /// <exception cref="System.ArgumentNullException">Thrown if graphBuilder is null</exception>
 
     [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
-    public static IBaseFilter FindFilterByClsid(IGraphBuilder graphBuilder, Guid filterClsid) {
-      int hr = 0;
+    public static IBaseFilter FindFilterByClsid(IGraphBuilder graphBuilder, Guid filterClsid)
+    {
       IBaseFilter filter = null;
-      IEnumFilters enumFilters = null;
+      IEnumFilters enumFilters;
 
       if (graphBuilder == null)
         throw new ArgumentNullException("graphBuilder");
 
-      hr = graphBuilder.EnumFilters(out enumFilters);
-      if (hr == 0) {
+      int hr = graphBuilder.EnumFilters(out enumFilters);
+      if (hr == 0)
+      {
         IBaseFilter[] filters = new IBaseFilter[1];
         int fetched;
 
-        while (enumFilters.Next(filters.Length, filters, out fetched) == 0) {
+        while (enumFilters.Next(filters.Length, filters, out fetched) == 0)
+        {
           Guid clsid;
 
           hr = filters[0].GetClassID(out clsid);
 
-          if ((hr == 0) && (clsid == filterClsid)) {
+          if ((hr == 0) && (clsid == filterClsid))
+          {
             filter = filters[0];
             break;
           }
@@ -444,8 +467,8 @@ namespace TvLibrary.Implementations.DVB {
     /// <remarks>This method assumes that the filter is part of the given graph</remarks>
 
     [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
-    public static bool RenderPin(IGraphBuilder graphBuilder, IBaseFilter source, string pinName) {
-      int hr = 0;
+    public static bool RenderPin(IGraphBuilder graphBuilder, IBaseFilter source, string pinName)
+    {
 
       if (graphBuilder == null)
         throw new ArgumentNullException("graphBuilder");
@@ -455,8 +478,9 @@ namespace TvLibrary.Implementations.DVB {
 
       IPin pin = DsFindPin.ByName(source, pinName);
 
-      if (pin != null) {
-        hr = graphBuilder.Render(pin);
+      if (pin != null)
+      {
+        int hr = graphBuilder.Render(pin);
         Marshal.ReleaseComObject(pin);
 
         return (hr >= 0);
@@ -474,29 +498,35 @@ namespace TvLibrary.Implementations.DVB {
     /// <remarks>Both input and output pins are disconnected</remarks>
 
     [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
-    public static void DisconnectPins(IBaseFilter filter) {
-      int hr = 0;
+    public static void DisconnectPins(IBaseFilter filter)
+    {
 
       if (filter == null)
         throw new ArgumentNullException("filter");
 
       IEnumPins enumPins;
       IPin[] pins = new IPin[1];
-      int fetched;
-
-      hr = filter.EnumPins(out enumPins);
+      int hr = filter.EnumPins(out enumPins);
       DsError.ThrowExceptionForHR(hr);
 
-      try {
-        while (enumPins.Next(pins.Length, pins, out fetched) == 0) {
-          try {
+      try
+      {
+        int fetched;
+        while (enumPins.Next(pins.Length, pins, out fetched) == 0)
+        {
+          try
+          {
             hr = pins[0].Disconnect();
             DsError.ThrowExceptionForHR(hr);
-          } finally {
+          }
+          finally
+          {
             Marshal.ReleaseComObject(pins[0]);
           }
         }
-      } finally {
+      }
+      finally
+      {
         Marshal.ReleaseComObject(enumPins);
       }
     }
@@ -510,27 +540,32 @@ namespace TvLibrary.Implementations.DVB {
     /// <remarks>This method doesn't throw an exception if an error occurs during pin disconnections</remarks>
 
     [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
-    public static void DisconnectAllPins(IGraphBuilder graphBuilder) {
-      int hr = 0;
+    public static void DisconnectAllPins(IGraphBuilder graphBuilder)
+    {
       IEnumFilters enumFilters;
 
       if (graphBuilder == null)
         throw new ArgumentNullException("graphBuilder");
 
-      hr = graphBuilder.EnumFilters(out enumFilters);
+      int hr = graphBuilder.EnumFilters(out enumFilters);
       DsError.ThrowExceptionForHR(hr);
 
-      try {
+      try
+      {
         IBaseFilter[] filters = new IBaseFilter[1];
         int fetched;
 
-        while (enumFilters.Next(filters.Length, filters, out fetched) == 0) {
-          try {
+        while (enumFilters.Next(filters.Length, filters, out fetched) == 0)
+        {
+          try
+          {
             DisconnectPins(filters[0]);
-          } catch { }
+          } catch (Exception ex) { Log.Log.WriteFile("Error while disconnecting all pins: ", ex); }
           Marshal.ReleaseComObject(filters[0]);
         }
-      } finally {
+      }
+      finally
+      {
         Marshal.ReleaseComObject(enumFilters);
       }
     }
@@ -543,32 +578,38 @@ namespace TvLibrary.Implementations.DVB {
     /// <exception cref="System.Runtime.InteropServices.COMException">Thrown if the method can't enumerate its filters</exception>
 
     [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
-    public static void RemoveAllFilters(IGraphBuilder graphBuilder) {
-      int hr = 0;
+    public static void RemoveAllFilters(IGraphBuilder graphBuilder)
+    {
       IEnumFilters enumFilters;
       ArrayList filtersArray = new ArrayList();
 
       if (graphBuilder == null)
         throw new ArgumentNullException("graphBuilder");
 
-      hr = graphBuilder.EnumFilters(out enumFilters);
+      int hr = graphBuilder.EnumFilters(out enumFilters);
       DsError.ThrowExceptionForHR(hr);
 
-      try {
+      try
+      {
         IBaseFilter[] filters = new IBaseFilter[1];
         int fetched;
 
-        while (enumFilters.Next(filters.Length, filters, out fetched) == 0) {
+        while (enumFilters.Next(filters.Length, filters, out fetched) == 0)
+        {
           filtersArray.Add(filters[0]);
         }
-      } finally {
-        if (enumFilters != null) {
+      }
+      finally
+      {
+        if (enumFilters != null)
+        {
           Marshal.ReleaseComObject(enumFilters);
         }
       }
 
-      foreach (IBaseFilter filter in filtersArray) {
-        hr = graphBuilder.RemoveFilter(filter);
+      foreach (IBaseFilter filter in filtersArray)
+      {
+        graphBuilder.RemoveFilter(filter);
         Marshal.ReleaseComObject(filter);
       }
     }
@@ -584,8 +625,8 @@ namespace TvLibrary.Implementations.DVB {
     /// <remarks>This method overwrites any existing file</remarks>
 
     [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
-    public static void SaveGraphFile(IGraphBuilder graphBuilder, string fileName) {
-      int hr = 0;
+    public static void SaveGraphFile(IGraphBuilder graphBuilder, string fileName)
+    {
       IStorage storage = null;
 #if USING_NET11
             UCOMIStream stream = null;
@@ -596,8 +637,9 @@ namespace TvLibrary.Implementations.DVB {
       if (graphBuilder == null)
         throw new ArgumentNullException("graphBuilder");
 
-      try {
-        hr = NativeMethods.StgCreateDocfile(
+      try
+      {
+        int hr = NativeMethods.StgCreateDocfile(
             fileName,
             STGM.Create | STGM.Transacted | STGM.ReadWrite | STGM.ShareExclusive,
             0,
@@ -616,12 +658,14 @@ namespace TvLibrary.Implementations.DVB {
 
         Marshal.ThrowExceptionForHR(hr);
 
-        hr = (graphBuilder as IPersistStream).Save(stream, true);
+        hr = ((IPersistStream)graphBuilder).Save(stream, true);
         Marshal.ThrowExceptionForHR(hr);
 
         hr = storage.Commit(STGC.Default);
         Marshal.ThrowExceptionForHR(hr);
-      } finally {
+      }
+      finally
+      {
         if (stream != null)
           Marshal.ReleaseComObject(stream);
         if (storage != null)
@@ -640,8 +684,8 @@ namespace TvLibrary.Implementations.DVB {
     /// <seealso cref="SaveGraphFile"/>
 
     [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
-    public static void LoadGraphFile(IGraphBuilder graphBuilder, string fileName) {
-      int hr = 0;
+    public static void LoadGraphFile(IGraphBuilder graphBuilder, string fileName)
+    {
       IStorage storage = null;
 #if USING_NET11
 			UCOMIStream stream = null;
@@ -652,11 +696,12 @@ namespace TvLibrary.Implementations.DVB {
       if (graphBuilder == null)
         throw new ArgumentNullException("graphBuilder");
 
-      try {
+      try
+      {
         if (NativeMethods.StgIsStorageFile(fileName) != 0)
           throw new ArgumentException();
 
-        hr = NativeMethods.StgOpenStorage(
+        int hr = NativeMethods.StgOpenStorage(
             fileName,
             null,
             STGM.Transacted | STGM.Read | STGM.ShareDenyWrite,
@@ -677,9 +722,11 @@ namespace TvLibrary.Implementations.DVB {
 
         Marshal.ThrowExceptionForHR(hr);
 
-        hr = (graphBuilder as IPersistStream).Load(stream);
+        hr = ((IPersistStream)graphBuilder).Load(stream);
         Marshal.ThrowExceptionForHR(hr);
-      } finally {
+      }
+      finally
+      {
         if (stream != null)
           Marshal.ReleaseComObject(stream);
         if (storage != null)
@@ -698,7 +745,8 @@ namespace TvLibrary.Implementations.DVB {
     /// This method is intended to be used with <see cref="ShowFilterPropertyPage">ShowFilterPropertyPage</see>
     /// </remarks>
 
-    public static bool HasPropertyPages(IBaseFilter filter) {
+    public static bool HasPropertyPages(IBaseFilter filter)
+    {
       if (filter == null)
         throw new ArgumentNullException("filter");
 
@@ -726,8 +774,8 @@ namespace TvLibrary.Implementations.DVB {
     /// </example>
 
     [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
-    public static void ShowFilterPropertyPage(IBaseFilter filter, IntPtr parent) {
-      int hr = 0;
+    public static void ShowFilterPropertyPage(IBaseFilter filter, IntPtr parent)
+    {
       FilterInfo filterInfo;
       DsCAUUID caGuid;
       object[] objs;
@@ -735,17 +783,19 @@ namespace TvLibrary.Implementations.DVB {
       if (filter == null)
         throw new ArgumentNullException("filter");
 
-      if (HasPropertyPages(filter)) {
-        hr = filter.QueryFilterInfo(out filterInfo);
+      if (HasPropertyPages(filter))
+      {
+        int hr = filter.QueryFilterInfo(out filterInfo);
         DsError.ThrowExceptionForHR(hr);
 
         if (filterInfo.pGraph != null)
           Marshal.ReleaseComObject(filterInfo.pGraph);
 
-        hr = (filter as ISpecifyPropertyPages).GetPages(out caGuid);
+        hr = ((ISpecifyPropertyPages)filter).GetPages(out caGuid);
         DsError.ThrowExceptionForHR(hr);
 
-        try {
+        try
+        {
           objs = new object[1];
           objs[0] = filter;
 
@@ -757,7 +807,9 @@ namespace TvLibrary.Implementations.DVB {
               0, 0,
               IntPtr.Zero
               );
-        } finally {
+        }
+        finally
+        {
           Marshal.FreeCoTaskMem(caGuid.pElems);
         }
       }
@@ -778,15 +830,17 @@ namespace TvLibrary.Implementations.DVB {
     /// <returns>true if the object is available, false if not</returns>
 
     [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
-    public static bool IsThisComObjectInstalled(Guid clsid) {
+    public static bool IsThisComObjectInstalled(Guid clsid)
+    {
       bool retval = false;
 
-      try {
+      try
+      {
         Type type = Type.GetTypeFromCLSID(clsid);
         object o = Activator.CreateInstance(type);
         retval = true;
         Marshal.ReleaseComObject(o);
-      } catch { }
+      } catch (Exception ex) { Log.Log.WriteFile("Error while checking if a com object is installed - {0} - {1}", clsid, ex); }
 
       return retval;
     }
@@ -801,7 +855,8 @@ namespace TvLibrary.Implementations.DVB {
     /// <returns>true if VMR9 is present, false if not</returns>
 
     [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
-    public static bool IsVMR9Present() {
+    public static bool IsVMR9Present()
+    {
       return IsThisComObjectInstalled(typeof(VideoMixingRenderer9).GUID);
     }
 
@@ -815,7 +870,8 @@ namespace TvLibrary.Implementations.DVB {
     /// <returns>true if VMR7 is present, false if not</returns>
 
     [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
-    public static bool IsVMR7Present() {
+    public static bool IsVMR7Present()
+    {
       return IsThisComObjectInstalled(typeof(VideoMixingRenderer).GUID);
     }
 
@@ -836,7 +892,8 @@ namespace TvLibrary.Implementations.DVB {
     /// If useIntelligentConnect is false, this method works only if the two media types are compatible.
     /// </remarks>
 
-    public static void ConnectFilters(IGraphBuilder graphBuilder, IBaseFilter upFilter, string sourcePinName, IBaseFilter downFilter, string destPinName, bool useIntelligentConnect) {
+    public static void ConnectFilters(IGraphBuilder graphBuilder, IBaseFilter upFilter, string sourcePinName, IBaseFilter downFilter, string destPinName, bool useIntelligentConnect)
+    {
       if (graphBuilder == null)
         throw new ArgumentNullException("graphBuilder");
 
@@ -846,19 +903,20 @@ namespace TvLibrary.Implementations.DVB {
       if (downFilter == null)
         throw new ArgumentNullException("downFilter");
 
-      IPin sourcePin, destPin;
-
-      sourcePin = DsFindPin.ByName(upFilter, sourcePinName);
+      IPin sourcePin = DsFindPin.ByName(upFilter, sourcePinName);
       if (sourcePin == null)
         throw new ArgumentException("The source filter has no pin called : " + sourcePinName, sourcePinName);
 
-      destPin = DsFindPin.ByName(downFilter, destPinName);
+      IPin destPin = DsFindPin.ByName(downFilter, destPinName);
       if (destPin == null)
         throw new ArgumentException("The downstream filter has no pin called : " + destPinName, destPinName);
 
-      try {
+      try
+      {
         ConnectFilters(graphBuilder, sourcePin, destPin, useIntelligentConnect);
-      } finally {
+      }
+      finally
+      {
         Marshal.ReleaseComObject(sourcePin);
         Marshal.ReleaseComObject(destPin);
       }
@@ -879,8 +937,9 @@ namespace TvLibrary.Implementations.DVB {
     /// </remarks>
 
     [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
-    public static void ConnectFilters(IGraphBuilder graphBuilder, IPin sourcePin, IPin destPin, bool useIntelligentConnect) {
-      int hr = 0;
+    public static void ConnectFilters(IGraphBuilder graphBuilder, IPin sourcePin, IPin destPin, bool useIntelligentConnect)
+    {
+      int hr;
 
       if (graphBuilder == null)
         throw new ArgumentNullException("graphBuilder");
@@ -891,10 +950,13 @@ namespace TvLibrary.Implementations.DVB {
       if (destPin == null)
         throw new ArgumentNullException("destPin");
 
-      if (useIntelligentConnect) {
+      if (useIntelligentConnect)
+      {
         hr = graphBuilder.Connect(sourcePin, destPin);
         DsError.ThrowExceptionForHR(hr);
-      } else {
+      }
+      else
+      {
         hr = graphBuilder.ConnectDirect(sourcePin, destPin, null);
         DsError.ThrowExceptionForHR(hr);
       }
@@ -907,18 +969,22 @@ namespace TvLibrary.Implementations.DVB {
     /// <param name="pinSource">souce pin</param>
     /// <param name="filterDest">destination filter</param>
     /// <param name="destPinIndex">input pin index</param>
-    public static bool ConnectPin(IGraphBuilder graphBuilder, IPin pinSource, IBaseFilter filterDest, int destPinIndex) {
+    public static bool ConnectPin(IGraphBuilder graphBuilder, IPin pinSource, IBaseFilter filterDest, int destPinIndex)
+    {
       IPin pin;
       pinSource.ConnectedTo(out pin);
-      if (pin != null) {
+      if (pin != null)
+      {
         Release.ComObject("Connect Pin", pin);
         return false;
       }
       IPin pinDest = DsFindPin.ByDirection(filterDest, PinDirection.Input, destPinIndex);
-      if (pinDest == null) return false;
+      if (pinDest == null)
+        return false;
 
       int hr = graphBuilder.Connect(pinSource, pinDest);
-      if (hr != 0) {
+      if (hr != 0)
+      {
         Release.ComObject("Connect Pin", pinDest);
         throw new TvException("Unable to connect pins");
       }
@@ -933,20 +999,24 @@ namespace TvLibrary.Implementations.DVB {
     /// <param name="sourceFilter">The source filter.</param>
     /// <param name="pinDestination">The pin destination.</param>
     /// <returns></returns>
-    static public bool ConnectFilter(IGraphBuilder graphBuilder, IBaseFilter sourceFilter, IPin pinDestination) {
+    static public bool ConnectFilter(IGraphBuilder graphBuilder, IBaseFilter sourceFilter, IPin pinDestination)
+    {
       //Log.Log.WriteFile("analog: ConnectFilter()");
       Log.Log.WriteFile("analog:  PinDest:{0}", LogPinInfo(pinDestination));
-      for (int i = 0; i <= 10; ++i) {
+      for (int i = 0; i <= 10; ++i)
+      {
         IPin pinOut = DsFindPin.ByDirection(sourceFilter, PinDirection.Output, i);
-        if (pinOut == null) return false;
+        if (pinOut == null)
+          return false;
         Log.Log.WriteFile("analog:  pinSource {0}:{1}", i, LogPinInfo(pinOut));
         int hr = graphBuilder.Connect(pinOut, pinDestination);
-        if (hr == 0) {
+        if (hr == 0)
+        {
           Log.Log.WriteFile("analog:  pins connected");
-          Release.ComObject("pindest" + i.ToString(), pinOut);
+          Release.ComObject("pindest" + i, pinOut);
           return true;
         }
-        Release.ComObject("pindest" + i.ToString(), pinOut);
+        Release.ComObject("pindest" + i, pinOut);
       }
       return false;
     }
@@ -958,15 +1028,18 @@ namespace TvLibrary.Implementations.DVB {
     /// <param name="sourceFilter">The source filter.</param>
     /// <param name="destinationFilter">The destination filter.</param>
     /// <returns></returns>
-    static public bool ConnectFilter(IGraphBuilder graphBuilder, IBaseFilter sourceFilter, IBaseFilter destinationFilter) {
+    static public bool ConnectFilter(IGraphBuilder graphBuilder, IBaseFilter sourceFilter, IBaseFilter destinationFilter)
+    {
       //Log.Log.WriteFile("analog: ConnectFilter()");
       IPin pinIn = DsFindPin.ByDirection(destinationFilter, PinDirection.Input, 0);
       Log.Log.WriteFile("analog:  PinDest:{0}", LogPinInfo(pinIn));
-      for (int i = 0; i <= 10; ++i) {
+      for (int i = 0; i <= 10; ++i)
+      {
         IPin pinOut = DsFindPin.ByDirection(sourceFilter, PinDirection.Output, i);
         Log.Log.WriteFile("analog:  pinSource {0}:{1}", i, LogPinInfo(pinOut));
         int hr = graphBuilder.Connect(pinOut, pinIn);
-        if (hr == 0) {
+        if (hr == 0)
+        {
           Log.Log.WriteFile("analog:  pins connected");
           Release.ComObject("pinIn", pinIn);
           Release.ComObject("pinOut", pinOut);
@@ -986,38 +1059,45 @@ namespace TvLibrary.Implementations.DVB {
     /// <param name="destinationFilter">destination filetr</param>
     /// <param name="deviceName">filter name</param>
     /// <returns></returns>
-    static public bool ConnectFilter(IGraphBuilder graphBuilder, IBaseFilter sourceFilter, IBaseFilter destinationFilter, string deviceName) {
+    static public bool ConnectFilter(IGraphBuilder graphBuilder, IBaseFilter sourceFilter, IBaseFilter destinationFilter, string deviceName)
+    {
       //Log.Log.WriteFile("analog: ConnectFilter()");
-      IPin testPin;
       IPin pinIn = DsFindPin.ByDirection(destinationFilter, PinDirection.Input, 0);
       Log.Log.WriteFile("analog:  PinDest:{0}", LogPinInfo(pinIn));
-      for (int i = 0; i <= 10; ++i) {
+      for (int i = 0; i <= 10; ++i)
+      {
         IPin pinOut = DsFindPin.ByDirection(sourceFilter, PinDirection.Output, i);
-        if (pinOut == null) return false;
+        if (pinOut == null)
+          return false;
         Log.Log.WriteFile("analog:  pinSource {0}:{1}", i, LogPinInfo(pinOut));
 
         //Hauppauge hack - sorry, i attempted to do this right, but hauppauge drivers report incorrect values
         //and it takes a very long time to reject the audio to video connection - diehard2
 
         int hr = -1;
-        testPin = null;
-        try {
+        IPin testPin = null;
+        try
+        {
           pinOut.ConnectedTo(out testPin);
-        } catch (Exception) { }
-        if (testPin != null) {
+        } catch (Exception ex) { Log.Log.WriteFile("Error while connecting a filter: ",ex);}
+        if (testPin != null)
+        {
           Release.ComObject("outPin", pinOut);
           Release.ComObject("testPin", testPin);
           Log.Log.WriteFile("analog: skipping pin");
           continue;
         }
         if (deviceName.Contains("Hauppauge") &&
-          (LogPinInfo(pinOut).Contains("Audio") || LogPinInfo(pinIn).Contains("Audio"))) {
+          (LogPinInfo(pinOut).Contains("Audio") || LogPinInfo(pinIn).Contains("Audio")))
+        {
           if (LogPinInfo(pinOut).Contains("Audio") && LogPinInfo(pinIn).Contains("Audio"))
             hr = graphBuilder.Connect(pinOut, pinIn);
-        } else
+        }
+        else
           hr = graphBuilder.Connect(pinOut, pinIn);
 
-        if (hr == 0) {
+        if (hr == 0)
+        {
           Log.Log.WriteFile("analog:  pins connected");
           Release.ComObject("pinIn", pinIn);
           Release.ComObject("pinOut", pinOut);
@@ -1034,7 +1114,8 @@ namespace TvLibrary.Implementations.DVB {
     /// increment the ComObject referencecount of the object.
     /// </summary>
     /// <param name="o">The object.</param>
-    static private object incRefCountCOM(object o) {
+    static private object incRefCountCOM(object o)
+    {
       IntPtr pUnk = Marshal.GetIUnknownForObject(o);
       object oCom = Marshal.GetObjectForIUnknown(pUnk);
       Marshal.Release(pUnk);
@@ -1046,7 +1127,8 @@ namespace TvLibrary.Implementations.DVB {
     /// </summary>
     /// <param name="o">The object.</param>
     /// <returns>referencecount</returns>
-    static public int getRefCount(object o) {
+    static public int getRefCount(object o)
+    {
       if (o == null)
         return -1;
       int refcount = Marshal.Release(Marshal.GetIUnknownForObject(o));
@@ -1058,7 +1140,8 @@ namespace TvLibrary.Implementations.DVB {
     /// </summary>
     /// <param name="filter">The filter.</param>
     /// <returns>referencecount</returns>
-    static public int getRefCountCOM(object filter) {
+    static public int getRefCountCOM(object filter)
+    {
       if (filter == null)
         return -1;
       object o = incRefCountCOM(filter);
@@ -1071,7 +1154,8 @@ namespace TvLibrary.Implementations.DVB {
     /// </summary>
     /// <param name="pin">The pin.</param>
     /// <returns></returns>
-    static public string LogPinInfo(IPin pin) {
+    static public string LogPinInfo(IPin pin)
+    {
       if (pin == null)
         return " pin==null ";
       PinInfo pinInfo;
@@ -1084,7 +1168,8 @@ namespace TvLibrary.Implementations.DVB {
         Marshal.ReleaseComObject(connectedToPin);
 
       int hr = pin.QueryPinInfo(out pinInfo);
-      if (hr == 0) {
+      if (hr == 0)
+      {
         if (pinInfo.filter != null)
           Marshal.ReleaseComObject(pinInfo.filter);
       }
@@ -1096,7 +1181,8 @@ namespace TvLibrary.Implementations.DVB {
     /// </summary>
     /// <param name="filter">The filter.</param>
     /// <returns></returns>
-    static public string LogFilterInfo(IBaseFilter filter) {
+    static public string LogFilterInfo(IBaseFilter filter)
+    {
       if (filter == null)
         return " filter==null ";
       return String.Format("name:{0} [{1}/{2}]", GetFilterName(filter), getRefCount(filter), getRefCountCOM(filter));
@@ -1107,10 +1193,12 @@ namespace TvLibrary.Implementations.DVB {
     /// </summary>
     /// <param name="filter">The filter.</param>
     /// <returns>FilterName</returns>
-    static public string GetFilterName(IBaseFilter filter) {
+    static public string GetFilterName(IBaseFilter filter)
+    {
       FilterInfo filterInfo;
       int hr = filter.QueryFilterInfo(out filterInfo);
-      if (hr == 0) {
+      if (hr == 0)
+      {
         if (filterInfo.pGraph != null)
           Marshal.ReleaseComObject(filterInfo.pGraph);
       }
@@ -1122,25 +1210,26 @@ namespace TvLibrary.Implementations.DVB {
     /// </summary>
     /// <param name="pin">The pin.</param>
     /// <returns>PinName</returns>
-    static public string GetPinName(IPin pin) {
+    static public string GetPinName(IPin pin)
+    {
       if (pin == null)
         return "";
-      else {
-        PinInfo pinInfo;
-        int hr = pin.QueryPinInfo(out pinInfo);
-        if (hr == 0) {
-          if (pinInfo.filter != null)
-            Marshal.ReleaseComObject(pinInfo.filter);
-        }
-        return String.Format(pinInfo.name);
+      PinInfo pinInfo;
+      int hr = pin.QueryPinInfo(out pinInfo);
+      if (hr == 0)
+      {
+        if (pinInfo.filter != null)
+          Marshal.ReleaseComObject(pinInfo.filter);
       }
+      return String.Format(pinInfo.name);
     }
 
     /// <summary>
     /// Gets the audio MPG2 media.
     /// </summary>
     /// <returns></returns>
-    static public AMMediaType GetAudioMpg2Media() {
+    static public AMMediaType GetAudioMpg2Media()
+    {
       AMMediaType mediaAudio = new AMMediaType();
       mediaAudio.majorType = MediaType.Audio;
       mediaAudio.subType = MediaSubType.Mpeg2Audio;
@@ -1152,15 +1241,16 @@ namespace TvLibrary.Implementations.DVB {
       mediaAudio.unkPtr = IntPtr.Zero;
       mediaAudio.formatType = FormatType.WaveEx;
       mediaAudio.formatSize = MPEG2AudioFormat.GetLength(0);
-      mediaAudio.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mediaAudio.formatSize);
-      System.Runtime.InteropServices.Marshal.Copy(MPEG2AudioFormat, 0, mediaAudio.formatPtr, mediaAudio.formatSize);
+      mediaAudio.formatPtr = Marshal.AllocCoTaskMem(mediaAudio.formatSize);
+      Marshal.Copy(MPEG2AudioFormat, 0, mediaAudio.formatPtr, mediaAudio.formatSize);
       return mediaAudio;
     }
     /// <summary>
     /// Gets the audio MPG1 media.
     /// </summary>
     /// <returns></returns>
-    static public AMMediaType GetAudioMpg1Media() {
+    static public AMMediaType GetAudioMpg1Media()
+    {
       AMMediaType mediaAudio = new AMMediaType();
       mediaAudio.majorType = MediaType.Audio;
       mediaAudio.subType = MediaSubType.MPEG1Payload;
@@ -1172,8 +1262,8 @@ namespace TvLibrary.Implementations.DVB {
       mediaAudio.unkPtr = IntPtr.Zero;
       mediaAudio.formatType = FormatType.WaveEx;
       mediaAudio.formatSize = MPEG1AudioFormat.GetLength(0);
-      mediaAudio.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mediaAudio.formatSize);
-      System.Runtime.InteropServices.Marshal.Copy(MPEG1AudioFormat, 0, mediaAudio.formatPtr, mediaAudio.formatSize);
+      mediaAudio.formatPtr = Marshal.AllocCoTaskMem(mediaAudio.formatSize);
+      Marshal.Copy(MPEG1AudioFormat, 0, mediaAudio.formatPtr, mediaAudio.formatSize);
       return mediaAudio;
     }
 
@@ -1181,7 +1271,8 @@ namespace TvLibrary.Implementations.DVB {
     /// Gets the video MPG2 media.
     /// </summary>
     /// <returns></returns>
-    static public AMMediaType GetVideoMpg2Media() {
+    static public AMMediaType GetVideoMpg2Media()
+    {
       AMMediaType mediaVideo = new AMMediaType();
       mediaVideo.majorType = MediaType.Video;
       mediaVideo.subType = MediaSubType.Mpeg2Video;
@@ -1191,8 +1282,8 @@ namespace TvLibrary.Implementations.DVB {
       mediaVideo.temporalCompression = false;
       mediaVideo.fixedSizeSamples = true;
       mediaVideo.formatSize = Mpeg2ProgramVideo.GetLength(0);
-      mediaVideo.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mediaVideo.formatSize);
-      System.Runtime.InteropServices.Marshal.Copy(Mpeg2ProgramVideo, 0, mediaVideo.formatPtr, mediaVideo.formatSize);
+      mediaVideo.formatPtr = Marshal.AllocCoTaskMem(mediaVideo.formatSize);
+      Marshal.Copy(Mpeg2ProgramVideo, 0, mediaVideo.formatPtr, mediaVideo.formatSize);
       return mediaVideo;
     }
 
@@ -1200,7 +1291,8 @@ namespace TvLibrary.Implementations.DVB {
     /// Gets the audio ac3 media type
     /// </summary>
     /// <returns></returns>
-    static public AMMediaType GetAudioAc3() {
+    static public AMMediaType GetAudioAc3()
+    {
       AMMediaType mediaAc3 = new AMMediaType();
       mediaAc3.majorType = MediaType.Audio;
       mediaAc3.subType = MediaSubType.DolbyAC3;
@@ -1210,15 +1302,16 @@ namespace TvLibrary.Implementations.DVB {
       mediaAc3.temporalCompression = false;
       mediaAc3.fixedSizeSamples = true;
       mediaAc3.formatSize = MPEG1AudioFormat.GetLength(0);
-      mediaAc3.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mediaAc3.formatSize);
-      System.Runtime.InteropServices.Marshal.Copy(MPEG1AudioFormat, 0, mediaAc3.formatPtr, mediaAc3.formatSize);
+      mediaAc3.formatPtr = Marshal.AllocCoTaskMem(mediaAc3.formatSize);
+      Marshal.Copy(MPEG1AudioFormat, 0, mediaAc3.formatPtr, mediaAc3.formatSize);
       return mediaAc3;
     }
     /// <summary>
     /// Gets the audio AAC media type
     /// </summary>
     /// <returns></returns>
-    static public AMMediaType GetAudioAAC() {
+    static public AMMediaType GetAudioAAC()
+    {
       AMMediaType mediaAac = new AMMediaType();
       mediaAac.majorType = MediaType.Audio;
       mediaAac.subType = MediaSubType.AAC;
@@ -1228,8 +1321,8 @@ namespace TvLibrary.Implementations.DVB {
       mediaAac.temporalCompression = false;
       mediaAac.fixedSizeSamples = true;
       mediaAac.formatSize = AACAudioFormat.GetLength(0);
-      mediaAac.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mediaAac.formatSize);
-      System.Runtime.InteropServices.Marshal.Copy(AACAudioFormat, 0, mediaAac.formatPtr, mediaAac.formatSize);
+      mediaAac.formatPtr = Marshal.AllocCoTaskMem(mediaAac.formatSize);
+      Marshal.Copy(AACAudioFormat, 0, mediaAac.formatPtr, mediaAac.formatSize);
       return mediaAac;
     }
     /// <summary>
@@ -1247,15 +1340,16 @@ namespace TvLibrary.Implementations.DVB {
       mediaLATMAAC.temporalCompression = false;
       mediaLATMAAC.fixedSizeSamples = true;
       mediaLATMAAC.formatSize = AACAudioFormat.GetLength(0);
-      mediaLATMAAC.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mediaLATMAAC.formatSize);
-      System.Runtime.InteropServices.Marshal.Copy(AACAudioFormat, 0, mediaLATMAAC.formatPtr, mediaLATMAAC.formatSize);
+      mediaLATMAAC.formatPtr = Marshal.AllocCoTaskMem(mediaLATMAAC.formatSize);
+      Marshal.Copy(AACAudioFormat, 0, mediaLATMAAC.formatPtr, mediaLATMAAC.formatSize);
       return mediaLATMAAC;
     }
     /// <summary>
     /// Gets the audio LPCM media type
     /// </summary>
     /// <returns></returns>
-    static public AMMediaType GetAudioLPCMMedia() {
+    static public AMMediaType GetAudioLPCMMedia()
+    {
       AMMediaType mediaLPCM = new AMMediaType();
       mediaLPCM.majorType = MediaType.Audio;
       mediaLPCM.subType = MediaSubType.DVD_LPCM_AUDIO;
@@ -1265,15 +1359,16 @@ namespace TvLibrary.Implementations.DVB {
       mediaLPCM.temporalCompression = false;
       mediaLPCM.fixedSizeSamples = true;
       mediaLPCM.formatSize = LPCMAudioFormat.GetLength(0);
-      mediaLPCM.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mediaLPCM.formatSize);
-      System.Runtime.InteropServices.Marshal.Copy(LPCMAudioFormat, 0, mediaLPCM.formatPtr, mediaLPCM.formatSize);
+      mediaLPCM.formatPtr = Marshal.AllocCoTaskMem(mediaLPCM.formatSize);
+      Marshal.Copy(LPCMAudioFormat, 0, mediaLPCM.formatPtr, mediaLPCM.formatSize);
       return mediaLPCM;
     }
     /// <summary>
     /// Gets the transport stream media type
     /// </summary>
     /// <returns></returns>
-    static public AMMediaType GetTransportStreamMedia() {
+    static public AMMediaType GetTransportStreamMedia()
+    {
       AMMediaType mediaTS = new AMMediaType();
       mediaTS.majorType = MediaType.Stream;
       mediaTS.subType = MediaSubType.Mpeg2Transport;
@@ -1286,7 +1381,8 @@ namespace TvLibrary.Implementations.DVB {
   #region Unmanaged Code declarations
 
   [Flags]
-  internal enum STGM {
+  internal enum STGM
+  {
     Read = 0x00000000,
     Write = 0x00000001,
     ReadWrite = 0x00000002,
@@ -1308,7 +1404,8 @@ namespace TvLibrary.Implementations.DVB {
   }
 
   [Flags]
-  internal enum STGC {
+  internal enum STGC
+  {
     Default = 0,
     Overwrite = 1,
     OnlyIfCurrent = 2,
@@ -1318,7 +1415,8 @@ namespace TvLibrary.Implementations.DVB {
 
   [Guid("0000000b-0000-0000-C000-000000000046"),
   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  internal interface IStorage {
+  internal interface IStorage
+  {
     [PreserveSig]
     int CreateStream(
         [In, MarshalAs(UnmanagedType.LPWStr)] string pwcsName,
@@ -1437,9 +1535,8 @@ namespace TvLibrary.Implementations.DVB {
        );
   }
 
-  internal sealed class NativeMethods {
-    private NativeMethods() { }
-
+  internal static class NativeMethods
+  {
     [DllImport("ole32.dll")]
 #if USING_NET11
 		public static extern int CreateBindCtx(int reserved, out UCOMIBindCtx ppbc);

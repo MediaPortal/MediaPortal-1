@@ -4,7 +4,6 @@
 //========================================================================
 using System;
 using System.Collections;
-using Gentle.Common;
 using Gentle.Framework;
 using TvLibrary.Log;
 
@@ -138,8 +137,7 @@ namespace TvDatabase
         try
         {
           base.Persist();
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
           Log.Error("Exception in DiseqcMotor.Persist() with Message {0}", ex.Message);
           return;
@@ -192,6 +190,6 @@ namespace TvDatabase
     }
     #endregion
 
-    
+
   }
 }

@@ -21,27 +21,23 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Text;
 using System.Xml;
 using System.Windows.Forms;
 using TvControl;
-using Gentle.Common;
 using Gentle.Framework;
 using TvDatabase;
 using TvLibrary.Interfaces;
 using TvLibrary.Log;
-using Microsoft.Win32;
 using DirectShowLib;
 namespace SetupTv.Sections
 {
   public partial class TvCards : SectionSettings
   {
-    private bool _needRestart = false;
-    int cardId = 0;
-    private Dictionary<string, CardType> cardTypes = new Dictionary<string, CardType>();
-    private TabPage usbWINTV_tabpage = null;
+    private bool _needRestart;
+    int cardId;
+    private readonly Dictionary<string, CardType> cardTypes = new Dictionary<string, CardType>();
+    private TabPage usbWINTV_tabpage;
 
     #region CardInfo class
     public class CardInfo
@@ -77,11 +73,11 @@ namespace SetupTv.Sections
       {
         ToolStripMenuItem item = new ToolStripMenuItem(group.Name);
         item.Tag = group;
-        item.Click += new EventHandler(placeInHybridCardToolStripMenuItem_Click);
+        item.Click += placeInHybridCardToolStripMenuItem_Click;
         placeInHybridCardToolStripMenuItem.DropDownItems.Add(item);
       }
       ToolStripMenuItem itemNew = new ToolStripMenuItem("New...");
-      itemNew.Click += new EventHandler(placeInHybridCardToolStripMenuItem_Click);
+      itemNew.Click += placeInHybridCardToolStripMenuItem_Click;
       placeInHybridCardToolStripMenuItem.DropDownItems.Add(itemNew);
     }
 
@@ -105,7 +101,8 @@ namespace SetupTv.Sections
         group = (CardGroup)menuItem.Tag;
       }
       ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
-      if (indexes.Count == 0) return;
+      if (indexes.Count == 0)
+        return;
       for (int i = 0; i < indexes.Count; ++i)
       {
         ListViewItem item = mpListView1.Items[indexes[i]];
@@ -124,16 +121,13 @@ namespace SetupTv.Sections
       ReOrder();
       TvBusinessLayer layer = new TvBusinessLayer();
       Setting s = layer.GetSetting("enableWinTVTray", "no");
-      if (checkBoxWinTVTray.Checked)
-        s.Value = "yes";
-      else
-        s.Value = "no";
+      s.Value = checkBoxWinTVTray.Checked ? "yes" : "no";
       s.Persist();
       if (_needRestart)
       {
-        bool isAnyUserTS = false;
-        bool isRec = false;
-        bool isUserTS = false;
+        bool isAnyUserTS;
+        bool isRec;
+        bool isUserTS;
         bool isRecOrTS = RemoteControl.Instance.IsAnyCardRecordingOrTimeshifting(new User(), out isUserTS, out isAnyUserTS, out isRec);
 
         if (!isAnyUserTS && !isRec && !isRecOrTS && !isUserTS)
@@ -148,7 +142,7 @@ namespace SetupTv.Sections
       base.OnSectionDeActivated();
     }
 
-    void SaveWinTVSettings(int cardId, string name, string moniker)
+    static void SaveWinTVSettings(int cardId, string name, string moniker)
     {
       String fileName = String.Format(@"{0}\WinTV-CI.xml", Log.GetPathName());
       XmlTextWriter writer = new XmlTextWriter(fileName, System.Text.Encoding.UTF8);
@@ -175,8 +169,11 @@ namespace SetupTv.Sections
       string configfile = String.Format(@"{0}\WinTV-CI.xml", Log.GetPathName());
       XmlDocument doc = new XmlDocument();
       doc.Load(configfile);
-      XmlNode cardNode = doc.DocumentElement.SelectSingleNode("/configuration/card");
-      cardId = int.Parse(cardNode.Attributes["cardId"].Value);
+      if (doc.DocumentElement != null)
+      {
+        XmlNode cardNode = doc.DocumentElement.SelectSingleNode("/configuration/card");
+        cardId = int.Parse(cardNode.Attributes["cardId"].Value);
+      }
     }
 
     public override void OnSectionActivated()
@@ -200,9 +197,8 @@ namespace SetupTv.Sections
           mpComboBoxCard.Items.Add(new CardInfo(card));
         }
         LoadWinTVSettings();
-        mpComboBoxCard.SelectedIndex = cardId-1;
-      }
-      catch (Exception)
+        mpComboBoxCard.SelectedIndex = cardId - 1;
+      } catch (Exception)
       {
       }
       try
@@ -275,8 +271,7 @@ namespace SetupTv.Sections
           }
           item.Tag = card;
         }
-      }
-      catch (Exception)
+      } catch (Exception)
       {
         MessageBox.Show(this, "Unable to access service. Is the TvService running??");
       }
@@ -321,7 +316,8 @@ namespace SetupTv.Sections
     {
       mpListView1.BeginUpdate();
       ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
-      if (indexes.Count == 0) return;
+      if (indexes.Count == 0)
+        return;
       for (int i = 0; i < indexes.Count; ++i)
       {
         int index = indexes[i];
@@ -341,8 +337,10 @@ namespace SetupTv.Sections
     {
       mpListView1.BeginUpdate();
       ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
-      if (indexes.Count == 0) return;
-      if (mpListView1.Items.Count < 2) return;
+      if (indexes.Count == 0)
+        return;
+      if (mpListView1.Items.Count < 2)
+        return;
       for (int i = indexes.Count - 1; i >= 0; i--)
       {
         int index = indexes[i];
@@ -376,10 +374,7 @@ namespace SetupTv.Sections
 
     private void mpListView1_ItemChecked(object sender, ItemCheckedEventArgs e)
     {
-      if (e.Item.Checked)
-        e.Item.Font = new Font(e.Item.Font, FontStyle.Regular);
-      else
-        e.Item.Font = new Font(e.Item.Font, FontStyle.Strikeout);
+      e.Item.Font = e.Item.Checked ? new Font(e.Item.Font, FontStyle.Regular) : new Font(e.Item.Font, FontStyle.Strikeout);
       buttonEdit.Enabled = e.Item.Checked;
     }
 
@@ -427,17 +422,22 @@ namespace SetupTv.Sections
     private void deleteCardToolStripMenuItem_Click(object sender, EventArgs e)
     {
       TreeNode node = treeView1.SelectedNode;
-      if (node == null) return;
+      if (node == null)
+        return;
       Card card = node.Tag as Card;
-      if (card == null) return;
+      if (card == null)
+        return;
       CardGroup group = node.Parent.Tag as CardGroup;
-      IList cards = group.CardGroupMaps();
-      foreach (CardGroupMap map in cards)
+      if (group != null)
       {
-        if (map.IdCard == card.IdCard)
+        IList cards = group.CardGroupMaps();
+        foreach (CardGroupMap map in cards)
         {
-          map.Remove();
-          break;
+          if (map.IdCard == card.IdCard)
+          {
+            map.Remove();
+            break;
+          }
         }
       }
       UpdateHybrids();
@@ -447,9 +447,11 @@ namespace SetupTv.Sections
     private void deleteEntireHybridCardToolStripMenuItem_Click(object sender, EventArgs e)
     {
       TreeNode node = treeView1.SelectedNode;
-      if (node == null) return;
+      if (node == null)
+        return;
       CardGroup group = node.Tag as CardGroup;
-      if (group == null) return;
+      if (group == null)
+        return;
       group.Delete();
       UpdateHybrids();
       RemoteControl.Instance.Restart();
@@ -458,7 +460,8 @@ namespace SetupTv.Sections
     private void buttonEdit_Click(object sender, EventArgs e)
     {
       ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
-      if (indexes == null || indexes.Count == 0) return;      
+      if (indexes == null || indexes.Count == 0)
+        return;
       ListViewItem item = mpListView1.Items[indexes[0]];
       ReOrder();
       UpdateList();
@@ -473,10 +476,10 @@ namespace SetupTv.Sections
 
     private void buttonRemove_Click(object sender, EventArgs e)
     {
-      Card card = (Card)mpListView1.SelectedItems[0].Tag;      
-    
-      DialogResult res =  MessageBox.Show(this, "Are you sure you want to delete this card along with all the channel mappings ? (channels will not be deleted)", "Delete card ?", MessageBoxButtons.YesNo);
-      
+      Card card = (Card)mpListView1.SelectedItems[0].Tag;
+
+      DialogResult res = MessageBox.Show(this, "Are you sure you want to delete this card along with all the channel mappings ? (channels will not be deleted)", "Delete card ?", MessageBoxButtons.YesNo);
+
       if (res == DialogResult.Yes)
       {
         if (card.ReferringCardGroupMap().Count > 0)
@@ -498,25 +501,8 @@ namespace SetupTv.Sections
         }
 
         RemoteControl.Instance.CardRemove(card.IdCard);
-        card = null;
-        try
-        {
-          card = TvDatabase.Card.Retrieve(card.IdCard);
-        }
-        catch 
-        {
-          //ignore
-        }
-
-        if (card == null)
-        {
-          mpListView1.Items.Remove(mpListView1.SelectedItems[0]);
-          _needRestart = true;
-        }
-        else
-        {
-          MessageBox.Show(this, "Card could not be deleted", "delete card failure");
-        }
+        mpListView1.Items.Remove(mpListView1.SelectedItems[0]);
+        _needRestart = true;
       }
     }
 
@@ -531,7 +517,7 @@ namespace SetupTv.Sections
 
     private void linkLabelHybridCard_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      string Url = "http://www.team-mediaportal.com/manual/TV-Server/Configuration/TVServers/HybridCards";
+      const string Url = "http://www.team-mediaportal.com/manual/TV-Server/Configuration/TVServers/HybridCards";
       System.Diagnostics.ProcessStartInfo sInfo = new System.Diagnostics.ProcessStartInfo(Url);
       System.Diagnostics.Process.Start(sInfo);
     }

@@ -19,11 +19,7 @@
  *
  */
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml.Serialization;
 using DirectShowLib.BDA;
-using TvLibrary.Interfaces;
 
 namespace TvLibrary.Channels
 {
@@ -139,11 +135,11 @@ namespace TvLibrary.Channels
     public static bool IsHiBand(DVBSChannel channel, ScanParameters parameters)
     {
       int lof1, lof2, sw;
-      BandTypeConverter.GetDefaultLnbSetup(parameters, channel.BandType, out  lof1, out  lof2, out  sw);
+      GetDefaultLnbSetup(parameters, channel.BandType, out  lof1, out  lof2, out  sw);
 
-      if (sw == 0) return false;
-      if (channel.Frequency >= (sw * 1000)) return true;
-      return false;
+      if (sw == 0)
+        return false;
+      return channel.Frequency >= (sw * 1000);
     }
 
     /// <summary>
@@ -227,7 +223,7 @@ namespace TvLibrary.Channels
   /// <summary>
   /// enum describing the different DisEqc type
   /// </summary>
-  public enum DisEqcType : int
+  public enum DisEqcType
   {
     /// <summary>
     /// diseqc not used
@@ -283,7 +279,7 @@ namespace TvLibrary.Channels
     /// </summary>
     /// <param name="chan">The chan.</param>
     public DVBSChannel(DVBSChannel chan)
-      : base((DVBBaseChannel)chan)
+      : base(chan)
     {
       _polarisation = chan.Polarisation;
       _symbolRate = chan.SymbolRate;
@@ -298,7 +294,7 @@ namespace TvLibrary.Channels
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="T:DVBSChannel"/> class.
+    /// Initializes a new instance of the <see cref="DVBSChannel"/> class.
     /// </summary>
     public DVBSChannel()
     {
@@ -478,19 +474,31 @@ namespace TvLibrary.Channels
     /// </returns>
     public override bool Equals(object obj)
     {
-      if ((obj as DVBSChannel) == null) return false;
-      if (!base.Equals(obj)) return false;
+      if ((obj as DVBSChannel) == null)
+        return false;
+      if (!base.Equals(obj))
+        return false;
       DVBSChannel ch = obj as DVBSChannel;
-      if (ch.Polarisation != Polarisation) return false;
-      if (ch.SatelliteIndex != SatelliteIndex) return false;
-      if (ch.SymbolRate != SymbolRate) return false;
-      if (ch.SwitchingFrequency != SwitchingFrequency) return false;
-      if (ch.DisEqc != DisEqc) return false;
-      if (ch.BandType != BandType) return false;
-      if (ch.ModulationType != ModulationType) return false;
-      if (ch.InnerFecRate != InnerFecRate) return false;
-      if (ch.Pilot != Pilot) return false;
-      if (ch.Rolloff != Rolloff) return false;
+      if (ch.Polarisation != Polarisation)
+        return false;
+      if (ch.SatelliteIndex != SatelliteIndex)
+        return false;
+      if (ch.SymbolRate != SymbolRate)
+        return false;
+      if (ch.SwitchingFrequency != SwitchingFrequency)
+        return false;
+      if (ch.DisEqc != DisEqc)
+        return false;
+      if (ch.BandType != BandType)
+        return false;
+      if (ch.ModulationType != ModulationType)
+        return false;
+      if (ch.InnerFecRate != InnerFecRate)
+        return false;
+      if (ch.Pilot != Pilot)
+        return false;
+      if (ch.Rolloff != Rolloff)
+        return false;
 
       return true;
     }

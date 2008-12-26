@@ -20,36 +20,15 @@
  */
 
 using System;
-using System.IO;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-using System.Net;
-using System.Net.Sockets;
-using DirectShowLib.SBE;
-using TvLibrary;
-using TvLibrary.Implementations;
-using TvLibrary.Interfaces;
-using TvLibrary.Implementations.Analog;
-using TvLibrary.Implementations.DVB;
-using TvLibrary.Implementations.Hybrid;
-using TvLibrary.Channels;
-using TvLibrary.Epg;
-using TvLibrary.ChannelLinkage;
 using TvLibrary.Log;
-using TvLibrary.Streaming;
 using TvControl;
-using TvEngine;
-using TvDatabase;
-using TvEngine.Events;
 
 
 namespace TvService
 {
   public class UserManagement
   {
-    ITvCardHandler _cardHandler;
+    readonly ITvCardHandler _cardHandler;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="UserManagement"/> class.
@@ -102,18 +81,14 @@ namespace TvService
         {
           RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
           return RemoteControl.Instance.IsOwner(_cardHandler.DataBaseCard.IdCard, user);
-        }
-        catch (Exception)
+        } catch (Exception)
         {
           Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
           return false;
         }
       }
-      else
-      {
-        TvCardContext context = (TvCardContext)_cardHandler.Card.Context;
-        return context.IsOwner(user);
-      }
+      TvCardContext context = (TvCardContext)_cardHandler.Card.Context;
+      return context.IsOwner(user);
     }
 
     /// <summary>
@@ -129,22 +104,23 @@ namespace TvService
           RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
           RemoteControl.Instance.RemoveUserFromOtherCards(_cardHandler.DataBaseCard.IdCard, user);
           return;
-        }
-        catch (Exception)
+        } catch (Exception)
         {
           Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
           return;
         }
       }
       TvCardContext context = _cardHandler.Card.Context as TvCardContext;
-      if (context == null) return;
-      if (!context.DoesExists(user)) return;
+      if (context == null)
+        return;
+      if (!context.DoesExists(user))
+        return;
 
       Log.Info("card: remove user:{0} sub:{1}", user.Name, user.SubChannel);
       context.GetUser(ref user);
       context.Remove(user);
       if (context.ContainsUsersForSubchannel(user.SubChannel) == false)
-      {   
+      {
         //only remove subchannel if it exists.
         if (_cardHandler.Card.GetSubChannel(user.SubChannel) != null)
         {
@@ -159,30 +135,34 @@ namespace TvService
       }
     }
 
-		public void HeartBeartUser(User user)
-		{
-			TvCardContext context = _cardHandler.Card.Context as TvCardContext;
-			if (context == null) return;
-			if (!context.DoesExists(user)) return;
-			
-			context.HeartBeatUser(user);
-		}
+    public void HeartBeartUser(User user)
+    {
+      TvCardContext context = _cardHandler.Card.Context as TvCardContext;
+      if (context == null)
+        return;
+      if (!context.DoesExists(user))
+        return;
 
-		public TvStoppedReason GetTvStoppedReason(User user)
-		{
-			TvCardContext context = _cardHandler.Card.Context as TvCardContext;
-			if (context == null) return TvStoppedReason.UnknownReason;
+      context.HeartBeatUser(user);
+    }
 
-			return context.GetTimeshiftStoppedReason(user);
-		}
+    public TvStoppedReason GetTvStoppedReason(User user)
+    {
+      TvCardContext context = _cardHandler.Card.Context as TvCardContext;
+      if (context == null)
+        return TvStoppedReason.UnknownReason;
 
-		public void SetTvStoppedReason(User user, TvStoppedReason reason)
-		{
-			TvCardContext context = _cardHandler.Card.Context as TvCardContext;
-			if (context == null) return;
+      return context.GetTimeshiftStoppedReason(user);
+    }
 
-			context.SetTimeshiftStoppedReason(user, reason);
-		}
+    public void SetTvStoppedReason(User user, TvStoppedReason reason)
+    {
+      TvCardContext context = _cardHandler.Card.Context as TvCardContext;
+      if (context == null)
+        return;
+
+      context.SetTimeshiftStoppedReason(user, reason);
+    }
 
     /// <summary>
     /// Determines whether the card is locked and ifso returns by which user
@@ -215,15 +195,15 @@ namespace TvService
         {
           RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
           return RemoteControl.Instance.GetUsersForCard(_cardHandler.DataBaseCard.IdCard);
-        }
-        catch (Exception)
+        } catch (Exception)
         {
           Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
           return null;
         }
       }
       TvCardContext context = _cardHandler.Card.Context as TvCardContext;
-      if (context == null) return null;
+      if (context == null)
+        return null;
       return context.Users;
     }
   }

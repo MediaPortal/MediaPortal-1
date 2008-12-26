@@ -1,8 +1,27 @@
-using System;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
+#region Copyright (C) 2005-2008 Team MediaPortal
+
+/* 
+ *	Copyright (C) 2005-2008 Team MediaPortal
+ *	http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+
+#endregion
 using System.Windows.Forms;
 
 using System.Collections;
@@ -23,8 +42,8 @@ namespace MediaPortal.UserInterface.Controls
     /// <summary>
     /// Case insensitive comparer object
     /// </summary>  
-    private NumberCaseInsensitiveComparer ObjectCompare;
-    private ImageTextComparer FirstObjectCompare;
+    private readonly NumberCaseInsensitiveComparer ObjectCompare;
+    private readonly ImageTextComparer FirstObjectCompare;
     /// <summary>
     /// Class constructor.  Initializes various elements
     /// </summary>
@@ -75,10 +94,9 @@ namespace MediaPortal.UserInterface.Controls
     public int Compare(object x, object y)
     {
       int compareResult;
-      ListViewItem listviewX, listviewY;
       // Cast the objects to be compared to ListViewItem objects
-      listviewX = (ListViewItem)x;
-      listviewY = (ListViewItem)y;
+      ListViewItem listviewX = (ListViewItem)x;
+      ListViewItem listviewY = (ListViewItem)y;
       if (ColumnToSort == 0 || ColumnToSort >= listviewX.SubItems.Count || ColumnToSort >= listviewY.SubItems.Count)
       {
         compareResult = FirstObjectCompare.Compare(x, y);
@@ -97,17 +115,14 @@ namespace MediaPortal.UserInterface.Controls
         // return normal result of compare operation
         return compareResult;
       }
-      else if (OrderOfSort == SortOrder.Descending)
+      if (OrderOfSort == SortOrder.Descending)
       {
         // Descending sort is selected,
         // return negative result of compare operation
         return (-compareResult);
       }
-      else
-      {
-        // Return '0' to indicate they are equal
-        return 0;
-      }
+      // Return '0' to indicate they are equal
+      return 0;
     }
     /// <summary>
     /// Gets or sets the number of the column to which

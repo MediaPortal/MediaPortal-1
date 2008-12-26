@@ -19,12 +19,8 @@
  *
  */
 
-using System;
-using System.Net;
-using TvLibrary.Implementations;
 using TvLibrary.Interfaces;
 using TvLibrary.Channels;
-using TvLibrary.Log;
 using TvControl;
 
 namespace TvService
@@ -33,7 +29,7 @@ namespace TvService
   {
     #region protected members
 
-    protected bool isFTA(ITvCardHandler tvcard, User user)
+    protected static bool isFTA(ITvCardHandler tvcard, User user)
     {
       IChannel unknownChannel = tvcard.CurrentChannel(ref user);
 
@@ -56,10 +52,6 @@ namespace TvService
         else if (unknownChannel is ATSCChannel)
         {
           fta = ((ATSCChannel)unknownChannel).FreeToAir;
-        }
-        else if (unknownChannel is AnalogChannel)
-        {
-          fta = true;
         }
       }
       return fta;

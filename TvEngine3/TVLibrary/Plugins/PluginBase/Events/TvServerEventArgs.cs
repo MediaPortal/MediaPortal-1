@@ -20,7 +20,6 @@
  */
 using System;
 using System.Collections.Generic;
-using System.Text;
 using TvControl;
 using TvLibrary.Interfaces;
 using TvDatabase;

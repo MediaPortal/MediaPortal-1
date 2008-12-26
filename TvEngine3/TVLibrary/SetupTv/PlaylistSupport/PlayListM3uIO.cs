@@ -24,8 +24,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.IO;
 using SetupTv;
 
@@ -38,10 +36,6 @@ namespace MediaPortal.Playlists
     private PlayList playlist;
     private StreamReader file;
     private string basePath;
-
-    public PlayListM3uIO()
-    {
-    }
 
     public bool Load(PlayList incomingPlaylist, string playlistFileName)
     {
@@ -61,7 +55,7 @@ namespace MediaPortal.Playlists
             return false;
 
           string line = file.ReadLine();
-          if (line == null || line.Length == 0)
+          if (string.IsNullOrEmpty(line))
             return false;
 
           string trimmedLine = line.Trim();
@@ -101,8 +95,7 @@ namespace MediaPortal.Playlists
             line = file.ReadLine();
           }
         }
-      }
-      catch (Exception)
+      } catch (Exception)
       {
         return false;
       }
@@ -112,15 +105,15 @@ namespace MediaPortal.Playlists
     private static bool ExtractM3uInfo(string trimmedLine, ref string songName, ref int lDuration)
     {
       //bool successfull;
-      int iColon = (int)trimmedLine.IndexOf(":");
-      int iComma = (int)trimmedLine.IndexOf(",");
+      int iColon = trimmedLine.IndexOf(":");
+      int iComma = trimmedLine.IndexOf(",");
       if (iColon >= 0 && iComma >= 0 && iComma > iColon)
       {
         iColon++;
         string duration = trimmedLine.Substring(iColon, iComma - iColon);
         iComma++;
         songName = trimmedLine.Substring(iComma);
-        lDuration = System.Int32.Parse(duration);
+        lDuration = Int32.Parse(duration);
         return true;
       }
       return false;
@@ -129,7 +122,7 @@ namespace MediaPortal.Playlists
 
     private bool AddItem(string songName, int duration, string fileName)
     {
-      if (fileName == null || fileName.Length == 0)
+      if (string.IsNullOrEmpty(fileName))
         return false;
 
       PlayListItem newItem = new PlayListItem(songName, fileName, duration);
@@ -152,7 +145,7 @@ namespace MediaPortal.Playlists
       return true;
     }
 
-    public void Save(PlayList playlist, string fileName)
+    public void Save(PlayList playListParam, string fileName)
     {
       try
       {
@@ -160,14 +153,13 @@ namespace MediaPortal.Playlists
         {
           writer.WriteLine(M3U_START_MARKER);
 
-          foreach (PlayListItem item in playlist)
+          foreach (PlayListItem item in playListParam)
           {
             writer.WriteLine("{0}:{1},{2}", M3U_INFO_MARKER, item.Duration, item.Description);
             writer.WriteLine("{0}", item.FileName);
           }
         }
-      }
-      catch (Exception)
+      } catch (Exception)
       {
       }
     }

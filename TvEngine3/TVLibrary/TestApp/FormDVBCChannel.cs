@@ -1,19 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-
-
-using TvLibrary;
-using TvLibrary.Implementations;
 using TvLibrary.Interfaces;
-using TvLibrary.Implementations.Analog;
-using TvLibrary.Implementations.DVB;
 using TvLibrary.Channels;
-using DirectShowLib;
 using DirectShowLib.BDA;
 namespace TestApp
 {

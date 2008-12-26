@@ -29,27 +29,22 @@ using System.Globalization;
 
 namespace MediaPortal.UserInterface.Controls
 {
-	/// <summary>
-	/// Define a TextBox that allow only integer numbers.
-	/// </summary>
-	public class MPNumericTextBox : System.Windows.Forms.TextBox
-	{
-    public MPNumericTextBox()
-      :base()
-		{
-		}
-
+  /// <summary>
+  /// Define a TextBox that allow only integer numbers.
+  /// </summary>
+  public class MPNumericTextBox : TextBox
+  {
     protected override void OnKeyPress(KeyPressEventArgs e)
     {
       base.OnKeyPress(e);
-      if ( (!e.Handled) && ( "1234567890\b".IndexOf(e.KeyChar) < 0) )
+      if ((!e.Handled) && ("1234567890\b".IndexOf(e.KeyChar) < 0))
       {
-       // Yeti.Sys.Win32.MessageBeep(Yeti.Sys.BeepType.SimpleBeep);
+        // Yeti.Sys.Win32.MessageBeep(Yeti.Sys.BeepType.SimpleBeep);
         e.Handled = true;
       }
     }
 
-	  public event EventHandler FormatError;
+    public event EventHandler FormatError;
     public event EventHandler FormatValid;
 
     protected virtual void OnFormatError(EventArgs e)
@@ -72,25 +67,24 @@ namespace MediaPortal.UserInterface.Controls
     {
       try
       {
-        int.Parse(this.Text, NumberStyles.Integer);
+        int.Parse(Text, NumberStyles.Integer);
         OnFormatValid(e);
-      }
-      catch
+      } catch
       {
         OnFormatError(e);
       }
-      base.OnTextChanged (e);
+      base.OnTextChanged(e);
     }
 
     public int Value
     {
       get
       {
-        return int.Parse(this.Text, NumberStyles.Integer);
+        return int.Parse(Text, NumberStyles.Integer);
       }
       set
       {
-        this.Text = value.ToString();
+        Text = value.ToString();
       }
     }
   }

@@ -20,35 +20,17 @@
  */
 
 using System;
-using System.IO;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-using System.Net;
-using System.Net.Sockets;
-using DirectShowLib.SBE;
-using TvLibrary;
-using TvLibrary.Implementations;
 using TvLibrary.Interfaces;
-using TvLibrary.Implementations.Analog;
-using TvLibrary.Implementations.DVB;
-using TvLibrary.Implementations.Hybrid;
-using TvLibrary.Channels;
 using TvLibrary.Epg;
-using TvLibrary.ChannelLinkage;
 using TvLibrary.Log;
-using TvLibrary.Streaming;
 using TvControl;
-using TvEngine;
-using TvDatabase;
-using TvEngine.Events;
 
 namespace TvService
 {
   public class EpgGrabbing
   {
-    ITvCardHandler _cardHandler;
+    readonly ITvCardHandler _cardHandler;
     /// <summary>
     /// Initializes a new instance of the <see cref="DisEqcManagement"/> class.
     /// </summary>
@@ -61,24 +43,24 @@ namespace TvService
     /// <summary>
     /// grabs the epg.
     /// </summary>
-    /// <param name="cardId">id of the card.</param>
     /// <returns></returns>
     public bool Start(BaseEpgGrabber grabber)
     {
       try
       {
-        if (_cardHandler.DataBaseCard.Enabled == false) return false;
+        if (_cardHandler.DataBaseCard.Enabled == false)
+          return false;
 
-				try
-				{
-					RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-					if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return false;
-				}
-				catch (Exception)
-				{
-					Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
-					return false;
-				}
+        try
+        {
+          RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
+          if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard))
+            return false;
+        } catch (Exception)
+        {
+          Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+          return false;
+        }
 
         if (_cardHandler.IsLocal == false)
         {
@@ -86,12 +68,12 @@ namespace TvService
           //RemoteControl.Instance.GrabEpg();
           return false;
         }
-				if (grabber == null) return false;
+        if (grabber == null)
+          return false;
         _cardHandler.Card.GrabEpg(grabber);
         return true;
 
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Write(ex);
         return false;
@@ -105,17 +87,18 @@ namespace TvService
     {
       try
       {
-        if (_cardHandler.DataBaseCard.Enabled == false) return;
-				try
-				{
-					RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-					if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return;
-				}
-				catch (Exception)
-				{
-					Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
-					return;
-				}
+        if (_cardHandler.DataBaseCard.Enabled == false)
+          return;
+        try
+        {
+          RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
+          if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard))
+            return;
+        } catch (Exception)
+        {
+          Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+          return;
+        }
         if (_cardHandler.IsLocal == false)
         {
           //RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
@@ -125,8 +108,7 @@ namespace TvService
         _cardHandler.Card.AbortGrabbing();
         return;
 
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Write(ex);
         return;
@@ -141,17 +123,18 @@ namespace TvService
     {
       get
       {
-        if (_cardHandler.DataBaseCard.Enabled == false) return new List<EpgChannel>();        
-				try
-				{
-					RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-					if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return new List<EpgChannel>(); ;
-				}
-				catch (Exception)
-				{
-					Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
-					return null;
-				}
+        if (_cardHandler.DataBaseCard.Enabled == false)
+          return new List<EpgChannel>();
+        try
+        {
+          RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
+          if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard))
+            return new List<EpgChannel>();
+        } catch (Exception)
+        {
+          Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+          return null;
+        }
         if (_cardHandler.IsLocal == false)
         {
           //RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
@@ -167,7 +150,6 @@ namespace TvService
     /// <summary>
     /// Returns if the card is grabbing the epg or not
     /// </summary>
-    /// <param name="cardId">id of the card.</param>
     /// <returns>true when card is grabbing the epg  otherwise false</returns>
     public bool IsGrabbing
     {
@@ -175,33 +157,32 @@ namespace TvService
       {
         try
         {
-          if (_cardHandler.DataBaseCard.Enabled == false) return false;
-					try
-					{
-						RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-						if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return false;
-					}
-					catch (Exception)
-					{
-						Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
-						return false;
-					}
+          if (_cardHandler.DataBaseCard.Enabled == false)
+            return false;
+          try
+          {
+            RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
+            if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard))
+              return false;
+          } catch (Exception)
+          {
+            Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+            return false;
+          }
           if (_cardHandler.IsLocal == false)
           {
             try
             {
               RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
               return RemoteControl.Instance.IsGrabbingEpg(_cardHandler.DataBaseCard.IdCard);
-            }
-            catch (Exception)
+            } catch (Exception)
             {
               Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
               return false;
             }
           }
           return _cardHandler.Card.IsEpgGrabbing;
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
           Log.Write(ex);
           return false;
@@ -212,7 +193,7 @@ namespace TvService
     /// <summary>
     /// Stops the grabbing epg.
     /// </summary>
-    /// <param name="cardId">The card id.</param>
+    /// <param name="user">User</param>
     public void Stop(User user)
     {
       if (_cardHandler.IsLocal == false)

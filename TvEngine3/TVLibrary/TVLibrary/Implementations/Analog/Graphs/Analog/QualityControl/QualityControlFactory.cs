@@ -23,9 +23,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using TvLibrary.Interfaces;
 using DirectShowLib;
 
@@ -55,15 +52,18 @@ namespace TvLibrary.Implementations.Analog.QualityControl
         return new VideoEncoderControl(configuration, videoEncoder);
       }
 
+#pragma warning disable 618,612
       IEncoderAPI encoderAPI = checkEncoderAPI(filterVideoEncoder, filterCapture, filterMultiplexer, filterVideoCompressor);
       if (encoderAPI != null)
       {
         return new EncoderAPIControl(configuration, encoderAPI);
       }
+#pragma warning restore 618,612
 
       return null;
     }
 
+#pragma warning disable 618,612
     private static IEncoderAPI checkEncoderAPI(IBaseFilter filterVideoEncoder, IBaseFilter filterCapture, IBaseFilter filterMultiplexer, IBaseFilter filterVideoCompressor)
     {
       IEncoderAPI videoEncoder = null;
@@ -90,6 +90,7 @@ namespace TvLibrary.Implementations.Analog.QualityControl
 
       return videoEncoder;
     }
+#pragma warning restore 618,612
 
     private static IVideoEncoder checkVideoEncoder(IBaseFilter filterVideoEncoder, IBaseFilter filterCapture, IBaseFilter filterMultiplexer, IBaseFilter filterVideoCompressor)
     {

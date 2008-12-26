@@ -23,9 +23,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Reflection;
 using System.Threading;
 using System.Text;
 
@@ -59,28 +57,22 @@ namespace TvLibrary.Log
     /// <summary>
     /// Configure after how many days the log file shall be rotated when a new line is added
     /// </summary>
-    static TimeSpan _logDaysToKeep = new TimeSpan(1, 0, 0, 0);
-
-    /// <summary>
-    /// Configure if: 1. (false) the log should be kept but no further logging be done or 
-    /// 2. (true) logs will always be rotated and therefore missing the original error reason
-    /// </summary>
-    static bool _rotateOnOversize = false;
+    static readonly TimeSpan _logDaysToKeep = new TimeSpan(1, 0, 0, 0);
 
     /// <summary>
     /// The maximum size of each log file in Megabytes
     /// </summary>
-    static int _maxLogSizeMb = 100;
+    private const int _maxLogSizeMb = 100;
 
     /// <summary>
     /// The maximum count of identic messages to be logged in a row
     /// </summary>
-    static int _maxRepetitions = 5;
+    private const int _maxRepetitions = 5;
 
     /// <summary>
     /// The last log n lines to compare for repeated entries.
     /// </summary>
-    static List<string> _lastLogLines = new List<string>(_maxRepetitions);
+    static readonly List<string> _lastLogLines = new List<string>(_maxRepetitions);
 
     #region Constructors
 
@@ -120,7 +112,7 @@ namespace TvLibrary.Log
     public static void Write(Exception ex)
     {
       StringBuilder sb = new StringBuilder();
-      sb.AppendFormat("Exception   :{0}\n", ex.ToString());
+      sb.AppendFormat("Exception   :{0}\n", ex);
       sb.AppendFormat("Exception   :{0}\n", ex.Message);
       sb.AppendFormat("  site      :{0}\n", ex.TargetSite);
       sb.AppendFormat("  source    :{0}\n", ex.Source);
@@ -213,6 +205,10 @@ namespace TvLibrary.Log
       WriteToFile(LogType.Info, format, arg);
     }
 
+    ///<summary>
+    /// Returns the path the Application data location
+    ///</summary>
+    ///<returns>Application data path of TvServer</returns>
     public static string GetPathName()
     {
       return String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
@@ -257,11 +253,9 @@ namespace TvLibrary.Log
           try
           {
             File.SetCreationTime(aFileName, DateTime.Now);
-          }
-          catch (Exception) { }
+          } catch (Exception) { }
         }
-      }
-      catch (Exception) { }
+      } catch (Exception) { }
     }
 
     /// <summary>
@@ -296,13 +290,9 @@ namespace TvLibrary.Log
               File.Move(logFileName, bakFileName);
             // Create a new log file with correct timestamps
             CreateBlankFile(logFileName);
-          }
-          catch (UnauthorizedAccessException) { }
-          catch (ArgumentException) { }
-          catch (IOException) { }
+          } catch (UnauthorizedAccessException) { } catch (ArgumentException) { } catch (IOException) { }
         }
-      }
-      catch (Exception)
+      } catch (Exception)
       {
         // Maybe add EventLog here...
       }
@@ -311,9 +301,9 @@ namespace TvLibrary.Log
     /// <summary>
     /// Compares the cache's last log entries to check whether we have repeating lines that should not be logged
     /// </summary>
-    /// <param name="logLine">A new log line</param>
+    /// <param name="aLogLine">A new log line</param>
     /// <returns>True if the cache only contains the exact lines as given by parameter</returns>
-    private static bool IsRepetition(string aLogLine)
+    private static bool IsRepetition(IComparable<string> aLogLine)
     {
       bool result = true;
       // as long as the cache is not full we have no repetitions
@@ -373,19 +363,14 @@ namespace TvLibrary.Log
             // Some log source went out of control here - do not log until out of disk space!
             if (logFi.Length > _maxLogSizeMb * 1000 * 1000)
             {
-              if (_rotateOnOversize)
-                BackupLogFiles();
-              else
-                result = false;
+              result = false;
             }
-          }
-          catch (Exception) { }
+          } catch (Exception) { }
           // File is older than today - _logDaysToKeep = rotate
           if (checkDate.CompareTo(fileDate) > 0)
             BackupLogFiles();
         }
-      }
-      catch (Exception) { }
+      } catch (Exception) { }
       return result;
     }
 
@@ -421,8 +406,7 @@ namespace TvLibrary.Log
               writer.Close();
             }
           }
-        }
-        catch (Exception)
+        } catch (Exception)
         {
         }
       }

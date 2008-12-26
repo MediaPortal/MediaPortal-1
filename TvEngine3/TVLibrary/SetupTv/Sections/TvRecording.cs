@@ -28,26 +28,14 @@ using System;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Data.SqlTypes;
 using System.Drawing;
-using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using System.Xml;
-
-using DirectShowLib;
-using DirectShowLib.BDA;
-
 using Gentle.Framework;
 
 using TvDatabase;
 using TvControl;
-using TvLibrary;
-using TvLibrary.Channels;
-using TvLibrary.Interfaces;
-using TvLibrary.Implementations;
 
 #endregion
 
@@ -74,18 +62,18 @@ namespace SetupTv.Sections
 
     #region Example Format class
 
-    private string[] formatString = { string.Empty, string.Empty };
+    private readonly string[] formatString = { string.Empty, string.Empty };
     private class Example
     {
-      public string Channel;
-      public string Title;
-      public string Episode;
-      public string SeriesNum;
-      public string EpisodeNum;
-      public string EpisodePart;
+      public readonly string Channel;
+      public readonly string Title;
+      public readonly string Episode;
+      public readonly string SeriesNum;
+      public readonly string EpisodeNum;
+      public readonly string EpisodePart;
       public DateTime StartDate;
       public DateTime EndDate;
-      public string Genre;
+      public readonly string Genre;
 
       public Example(string channel, string title, string episode, string seriesNum, string episodeNum, string episodePart, string genre, DateTime startDate, DateTime endDate)
       {
@@ -101,7 +89,7 @@ namespace SetupTv.Sections
       }
     }
 
-    private string ShowExample(string strInput, int recType)
+    private static string ShowExample(string strInput, int recType)
     {
       string strName = string.Empty;
       string strDirectory = string.Empty;
@@ -170,7 +158,7 @@ namespace SetupTv.Sections
 
     #region Vars
 
-    bool _needRestart = false;
+    bool _needRestart;
 
     #endregion
 
@@ -228,8 +216,7 @@ namespace SetupTv.Sections
     public override void SaveSettings()
     {
       TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting;
-      setting = layer.GetSetting("preRecordInterval", "5");
+      Setting setting = layer.GetSetting("preRecordInterval", "5");
       setting.Value = numericUpDownPreRec.Value.ToString();
       setting.Persist();
       setting = layer.GetSetting("postRecordInterval", "5");
@@ -243,36 +230,15 @@ namespace SetupTv.Sections
       setting.Persist();
 
       setting = layer.GetSetting("autodeletewatchedrecordings", "no");
-      if (checkBoxAutoDelete.Checked)
-      {
-        setting.Value = "yes";
-      }
-      else
-      {
-        setting.Value = "no";
-      }
+      setting.Value = checkBoxAutoDelete.Checked ? "yes" : "no";
       setting.Persist();
 
       setting = layer.GetSetting("createtaginfoxml", "yes");
-      if (checkBoxCreateTagInfoXML.Checked)
-      {
-        setting.Value = "yes";
-      }
-      else
-      {
-        setting.Value = "no";
-      }
+      setting.Value = checkBoxCreateTagInfoXML.Checked ? "yes" : "no";
       setting.Persist();
 
       setting = layer.GetSetting("scheduleroverlivetv", "yes");
-      if (checkboxSchedulerPriority.Checked)
-      {
-        setting.Value = "yes";
-      }
-      else
-      {
-        setting.Value = "no";
-      }
+      setting.Value = checkboxSchedulerPriority.Checked ? "yes" : "no";
       setting.Persist();
 
       UpdateDriveInfo(true);
@@ -304,22 +270,6 @@ namespace SetupTv.Sections
       if ((e.KeyChar == '/') || (e.KeyChar == ':') || (e.KeyChar == '*') ||
         (e.KeyChar == '?') || (e.KeyChar == '\"') || (e.KeyChar == '<') ||
         (e.KeyChar == '>') || (e.KeyChar == '|'))
-      {
-        e.Handled = true;
-      }
-    }
-
-    private void textBoxPreInterval_KeyPress(object sender, KeyPressEventArgs e)
-    {
-      if (char.IsNumber(e.KeyChar) == false && e.KeyChar != 8)
-      {
-        e.Handled = true;
-      }
-    }
-
-    private void textBoxPostInterval_KeyPress(object sender, KeyPressEventArgs e)
-    {
-      if (char.IsNumber(e.KeyChar) == false && e.KeyChar != 8)
       {
         e.Handled = true;
       }
@@ -375,7 +325,7 @@ namespace SetupTv.Sections
 
     public override void OnSectionActivated()
     {
-      MatroskaTagHandler.OnTagLookupCompleted += new MatroskaTagHandler.TagLookupSuccessful(OnLookupCompleted);
+      MatroskaTagHandler.OnTagLookupCompleted += OnLookupCompleted;
 
       _needRestart = false;
       comboBoxCards.Items.Clear();
@@ -395,7 +345,7 @@ namespace SetupTv.Sections
     {
       base.OnSectionDeActivated();
 
-      MatroskaTagHandler.OnTagLookupCompleted -= new MatroskaTagHandler.TagLookupSuccessful(OnLookupCompleted);
+      MatroskaTagHandler.OnTagLookupCompleted -= OnLookupCompleted;
 
       SaveSettings();
       if (_needRestart)
@@ -489,19 +439,20 @@ namespace SetupTv.Sections
 
     private void UpdateDriveInfo(bool save)
     {
-      if (comboBoxDrive.SelectedItem == null) return;
+      if (comboBoxDrive.SelectedItem == null)
+        return;
       string drive = (string)comboBoxDrive.SelectedItem;
       ulong freeSpace = Utils.GetFreeDiskSpace(drive);
       long totalSpace = Utils.GetDiskSize(drive);
 
       labelFreeDiskspace.Text = Utils.GetSize((long)freeSpace);
-      labelTotalDiskSpace.Text = Utils.GetSize((long)totalSpace);
+      labelTotalDiskSpace.Text = Utils.GetSize(totalSpace);
       if (labelTotalDiskSpace.Text == "0")
         labelTotalDiskSpace.Text = "Not available - WMI service not available";
       if (save)
       {
         TvBusinessLayer layer = new TvBusinessLayer();
-        Setting setting = layer.GetSetting("freediskspace" + drive[0].ToString());
+        Setting setting = layer.GetSetting("freediskspace" + drive[0]);
         if (mpNumericTextBoxDiskQuota.Value < 500)
           mpNumericTextBoxDiskQuota.Value = 500;
         long quota = mpNumericTextBoxDiskQuota.Value * 1024;
@@ -511,13 +462,12 @@ namespace SetupTv.Sections
       else
       {
         TvBusinessLayer layer = new TvBusinessLayer();
-        Setting setting = layer.GetSetting("freediskspace" + drive[0].ToString());
+        Setting setting = layer.GetSetting("freediskspace" + drive[0]);
         try
         {
           long quota = Int64.Parse(setting.Value);
           mpNumericTextBoxDiskQuota.Value = (int)quota / 1024;
-        }
-        catch (Exception)
+        } catch (Exception)
         {
           mpNumericTextBoxDiskQuota.Value = 0;
         }
@@ -597,9 +547,9 @@ namespace SetupTv.Sections
           TreeNode tx = x as TreeNode;
           TreeNode ty = y as TreeNode;
 
-          result = string.Compare(tx.Text, ty.Text, System.StringComparison.CurrentCulture);
-        }
-        catch (Exception)
+          if (ty != null && tx.Text != null)
+            result = string.Compare(tx.Text, ty.Text, StringComparison.CurrentCulture);
+        } catch (Exception)
         {
         }
 
@@ -627,7 +577,7 @@ namespace SetupTv.Sections
       }
     }
 
-    private List<TreeNode> tvDbRecs = new List<TreeNode>();
+    private readonly List<TreeNode> tvDbRecs = new List<TreeNode>();
 
     #endregion
 
@@ -649,8 +599,7 @@ namespace SetupTv.Sections
         {
           cbRecPaths.SelectedIndex = 0;
         }
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         MessageBox.Show(string.Format("Error gathering recording folders of all tv cards: \n{0}", ex.Message));
       }
@@ -662,8 +611,7 @@ namespace SetupTv.Sections
       {
         CurrentImportPath = cbRecPaths.Text;
         GetTagFiles();
-      }
-      catch (Exception ex2)
+      } catch (Exception ex2)
       {
         MessageBox.Show(string.Format("Error gathering matroska tags: \n{0}", ex2.Message));
       }
@@ -707,8 +655,7 @@ namespace SetupTv.Sections
           if (RecNode != null)
             tvDbRecs.Add(RecNode);
         }
-      }
-      catch (Exception ex1)
+      } catch (Exception ex1)
       {
         MessageBox.Show(string.Format("Error retrieving recordings from database: \n{0}", ex1.Message));
       }
@@ -723,13 +670,11 @@ namespace SetupTv.Sections
       try
       {
         btnImport.Enabled = false;
-        Dictionary<string, MatroskaTagInfo> importTags = new Dictionary<string, MatroskaTagInfo>();
-        Thread lookupThread = new Thread(new ParameterizedThreadStart(MatroskaTagHandler.GetAllMatroskaTags));
+        Thread lookupThread = new Thread(MatroskaTagHandler.GetAllMatroskaTags);
         lookupThread.Name = "MatroskaTagHandler";
-        lookupThread.Start((object)CurrentImportPath);
+        lookupThread.Start(CurrentImportPath);
         lookupThread.IsBackground = true;
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         MessageBox.Show(ex.Message);
       }
@@ -740,8 +685,7 @@ namespace SetupTv.Sections
       try
       {
         Invoke(new MethodTreeViewTags(AddTagFiles), new object[] { FoundTags });
-      }
-      catch (Exception) { }
+      } catch (Exception) { }
     }
 
     /// <summary>
@@ -803,8 +747,7 @@ namespace SetupTv.Sections
         //}
         tvTagRecs.EndUpdate();
         SetImportButton();
-      }
-      catch (Exception)
+      } catch (Exception)
       {
         // just in case the GUI controls could be null due to timing problems on thread callback
         if (btnImport != null)
@@ -816,25 +759,23 @@ namespace SetupTv.Sections
 
     #region Visualisation
 
-    private TreeNode BuildNodeFromRecording(Recording aRec)
+    private static TreeNode BuildNodeFromRecording(Recording aRec)
     {
       try
       {
-        Channel lookupChannel = null;
-        string channelId = "unknown";
+        Channel lookupChannel;
         string channelName = "unknown";
         string startTime = SqlDateTime.MinValue.Value == aRec.StartTime ? "unknown" : aRec.StartTime.ToString();
         string endTime = SqlDateTime.MinValue.Value == aRec.EndTime ? "unknown" : aRec.EndTime.ToString();
         try
         {
-          lookupChannel = (Channel)aRec.ReferencedChannel();
+          lookupChannel = aRec.ReferencedChannel();
           if (lookupChannel != null)
           {
             channelName = lookupChannel.DisplayName;
-            channelId = lookupChannel.IdChannel.ToString();
+            lookupChannel.IdChannel.ToString();
           }
-        }
-        catch (Exception)
+        } catch (Exception)
         {
         }
 
@@ -854,7 +795,7 @@ namespace SetupTv.Sections
         //}
         //TreeNode recItem = new TreeNode(aRec.Title, subitems);
 
-        string NodeTitle = string.Empty;
+        string NodeTitle;
         if (startTime != "unknown" && endTime != "unknown")
           NodeTitle = string.Format("Title: {0} / Channel: {1} / Time: {2}-{3}", aRec.Title, channelName, startTime, endTime);
         else
@@ -864,8 +805,7 @@ namespace SetupTv.Sections
         recItem.Tag = aRec;
         recItem.Checked = true;
         return recItem;
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         MessageBox.Show(string.Format("Could not build TreeNode from recording: {0}\n{1}", aRec.Title, ex.Message));
         return null;
@@ -876,7 +816,7 @@ namespace SetupTv.Sections
 
     #region Tag to recording conversion
 
-    private Recording BuildRecordingFromTag(string aFileName, MatroskaTagInfo aTag)
+    private static Recording BuildRecordingFromTag(string aFileName, MatroskaTagInfo aTag)
     {
       Recording tagRec = null;
       try
@@ -894,15 +834,14 @@ namespace SetupTv.Sections
                                          0,
                                          GetServerId()
                                          );
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         MessageBox.Show(string.Format("Could not build recording from tag: {0}\n{1}", aFileName, ex.Message));
       }
       return tagRec;
     }
 
-    private DateTime GetRecordingStartTime(string aFileName)
+    private static DateTime GetRecordingStartTime(string aFileName)
     {
       DateTime startTime = SqlDateTime.MinValue.Value;
       if (File.Exists(aFileName))
@@ -913,7 +852,7 @@ namespace SetupTv.Sections
       return startTime;
     }
 
-    private DateTime GetRecordingEndTime(string aFileName)
+    private static DateTime GetRecordingEndTime(string aFileName)
     {
       DateTime endTime = SqlDateTime.MinValue.Value;
       if (File.Exists(aFileName))
@@ -924,7 +863,7 @@ namespace SetupTv.Sections
       return endTime;
     }
 
-    private string GetRecordingFilename(string aTagFilename)
+    private static string GetRecordingFilename(string aTagFilename)
     {
       string recordingFile = Path.ChangeExtension(aTagFilename, ".ts");
       try
@@ -939,14 +878,13 @@ namespace SetupTv.Sections
             return recordingFile;
           }
         }
-      }
-      catch (Exception)
+      } catch (Exception)
       {
       }
       return recordingFile;
     }
 
-    private int GetServerId()
+    private static int GetServerId()
     {
       int serverId = 1;
       try
@@ -958,30 +896,28 @@ namespace SetupTv.Sections
           if (computer.HostName.ToLower() == localHost.ToLower())
             serverId = computer.IdServer;
         }
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         MessageBox.Show(string.Format("Could not get ServerID for recording!\n{0}", ex.Message));
       }
       return serverId;
     }
 
-    private int GetChannelIdByDisplayName(string aChannelName)
+    private static int GetChannelIdByDisplayName(string aChannelName)
     {
       int channelId = -1;
       if (string.IsNullOrEmpty(aChannelName))
         return channelId;
       try
       {
-        SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Channel));
+        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
         sb.AddConstraint(Operator.Like, "displayName", aChannelName);
         sb.SetRowLimit(1);
         SqlStatement stmt = sb.GetStatement(true);
         IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
         if (channels.Count > 0)
           channelId = ((Channel)channels[0]).IdChannel;
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         MessageBox.Show(string.Format("Could not get ChannelID for DisplayName: {0}\n{1}", aChannelName, ex.Message));
       }
@@ -1006,8 +942,7 @@ namespace SetupTv.Sections
             try
             {
               currentTagRec.Persist();
-            }
-            catch (Exception ex)
+            } catch (Exception ex)
             {
               MessageBox.Show(string.Format("Importing failed: {0}", ex.Message), "Could not import", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
@@ -1038,8 +973,7 @@ namespace SetupTv.Sections
               try
               {
                 currentDbRec.Delete();
-              }
-              catch (Exception ex)
+              } catch (Exception ex)
               {
                 MessageBox.Show(string.Format("Cleanup failed: {0}", ex.Message), "Could not delete entry", MessageBoxButtons.OK, MessageBoxIcon.Error);
               }

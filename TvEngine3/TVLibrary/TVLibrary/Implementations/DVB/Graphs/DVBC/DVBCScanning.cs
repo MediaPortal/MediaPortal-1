@@ -19,17 +19,10 @@
  *
  */
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Runtime.InteropServices;
-using System.Windows.Forms;
-
 using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Analyzer;
 using TvLibrary.Channels;
 using TvLibrary.Implementations.DVB.Structures;
-using DirectShowLib;
-using DirectShowLib.BDA;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -38,9 +31,9 @@ namespace TvLibrary.Implementations.DVB
   /// </summary>
   public class DVBCScanning : DvbBaseScanning, ITVScanning, IDisposable
   {
-    TvCardDVBC _card;
+    readonly TvCardDVBC _card;
     /// <summary>
-    /// Initializes a new instance of the <see cref="T:DVBCScanning"/> class.
+    /// Initializes a new instance of the <see cref="DVBCScanning"/> class.
     /// </summary>
     /// <param name="card">The card.</param>
     public DVBCScanning(TvCardDVBC card)
@@ -100,15 +93,15 @@ namespace TvLibrary.Implementations.DVB
       dvbcChannel.SymbolRate = tuningChannel.SymbolRate;
       dvbcChannel.ModulationType = tuningChannel.ModulationType;
       dvbcChannel.Frequency = tuningChannel.Frequency;
-      dvbcChannel.IsTv = (info.serviceType == (int)DvbBaseScanning.ServiceType.Video || info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg2HDStream || info.serviceType == (int)DvbBaseScanning.ServiceType.H264Stream || info.serviceType == (int)DvbBaseScanning.ServiceType.AdvancedCodecHDVideoStream || info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg4OrH264Stream);
-      dvbcChannel.IsRadio = (info.serviceType == (int)DvbBaseScanning.ServiceType.Audio);
+      dvbcChannel.IsTv = (info.serviceType == (int)ServiceType.Video || info.serviceType == (int)ServiceType.Mpeg2HDStream || info.serviceType == (int)ServiceType.H264Stream || info.serviceType == (int)ServiceType.AdvancedCodecHDVideoStream || info.serviceType == (int)ServiceType.Mpeg4OrH264Stream);
+      dvbcChannel.IsRadio = (info.serviceType == (int)ServiceType.Audio);
       dvbcChannel.NetworkId = info.networkID;
       dvbcChannel.ServiceId = info.serviceID;
       dvbcChannel.TransportId = info.transportStreamID;
       dvbcChannel.PmtPid = info.network_pmt_PID;
       dvbcChannel.PcrPid = info.pcr_pid;
       dvbcChannel.FreeToAir = !info.scrambled;
-      Log.Log.Write("Found: {0}",dvbcChannel);
+      Log.Log.Write("Found: {0}", dvbcChannel);
       return dvbcChannel;
     }
   }

@@ -4,8 +4,6 @@
 //========================================================================
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using Gentle.Common;
 using Gentle.Framework;
 using TvLibrary.Log;
 
@@ -47,14 +45,14 @@ namespace TvDatabase
       this.idGroup = idGroup;
       this.groupName = groupName;
     }
-    
+
     /// <summary>
     /// Property relating to database column sortOrder
     /// </summary>
     public int SortOrder
     {
-        get { return sortOrder; }
-        set { isChanged |= sortOrder != value; sortOrder = value; }
+      get { return sortOrder; }
+      set { isChanged |= sortOrder != value; sortOrder = value; }
     }
     #endregion
 
@@ -131,8 +129,7 @@ namespace TvDatabase
         try
         {
           base.Persist();
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
           Log.Error("Exception in ChannelGroup.Persist() with Message {0}", ex.Message);
           return;
@@ -142,7 +139,7 @@ namespace TvDatabase
     }
 
     #endregion
-    
+
     #region Relations
 
     /// <summary>

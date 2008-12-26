@@ -21,20 +21,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using TvControl;
-using DirectShowLib;
-
-
-using Gentle.Common;
 using Gentle.Framework;
 using TvDatabase;
-using TvLibrary;
 using TvLibrary.Interfaces;
-using TvLibrary.Implementations;
 using MediaPortal.UserInterface.Controls;
 namespace SetupTv.Sections
 {
@@ -59,7 +50,7 @@ namespace SetupTv.Sections
 
       public override string ToString()
       {
-        return _card.Name.ToString();
+        return _card.Name;
       }
     }
 
@@ -68,8 +59,8 @@ namespace SetupTv.Sections
     {
     }
 
-    private MPListViewStringColumnSorter lvwColumnSorter1;
-    private MPListViewStringColumnSorter lvwColumnSorter2;
+    private readonly MPListViewStringColumnSorter lvwColumnSorter1;
+    private readonly MPListViewStringColumnSorter lvwColumnSorter2;
 
     public TvChannelMapping(string name)
       : base(name)
@@ -78,10 +69,10 @@ namespace SetupTv.Sections
       //mpListViewChannels.ListViewItemSorter = new MPListViewSortOnColumn(1);
       lvwColumnSorter1 = new MPListViewStringColumnSorter();
       lvwColumnSorter1.Order = SortOrder.None;
-      this.mpListViewChannels.ListViewItemSorter = lvwColumnSorter1;
+      mpListViewChannels.ListViewItemSorter = lvwColumnSorter1;
       lvwColumnSorter2 = new MPListViewStringColumnSorter();
       lvwColumnSorter2.Order = SortOrder.None;
-      this.mpListViewMapped.ListViewItemSorter = lvwColumnSorter2;
+      mpListViewMapped.ListViewItemSorter = lvwColumnSorter2;
     }
 
     public override void OnSectionActivated()
@@ -90,8 +81,10 @@ namespace SetupTv.Sections
       IList cards = Card.ListAll();
       foreach (Card card in cards)
       {
-        if (card.Enabled == false) continue;
-        if (!RemoteControl.Instance.CardPresent(card.IdCard)) continue;
+        if (card.Enabled == false)
+          continue;
+        if (!RemoteControl.Instance.CardPresent(card.IdCard))
+          continue;
         mpComboBoxCard.Items.Add(new CardInfo(card));
       }
       if (mpComboBoxCard.Items.Count > 0)
@@ -111,7 +104,7 @@ namespace SetupTv.Sections
       foreach (ListViewItem item in selectedItems)
       {
         Channel channel = (Channel)item.Tag;
-        ChannelMap map = layer.MapChannelToCard(card, channel,mpCheckBoxMapForEpgOnly.Checked);
+        ChannelMap map = layer.MapChannelToCard(card, channel, mpCheckBoxMapForEpgOnly.Checked);
         mpListViewChannels.Items.Remove(item);
 
         int imageIndex = 1;
@@ -119,7 +112,7 @@ namespace SetupTv.Sections
           imageIndex = 2;
         string displayName = channel.DisplayName;
         if (mpCheckBoxMapForEpgOnly.Checked)
-            displayName = channel.DisplayName + " (EPG Only)";
+          displayName = channel.DisplayName + " (EPG Only)";
         ListViewItem newItem = mpListViewMapped.Items.Add(displayName, imageIndex);
         newItem.Tag = map;
       }
@@ -192,19 +185,19 @@ namespace SetupTv.Sections
         try
         {
           channel = map.ReferencedChannel();
-        }
-        catch (Exception)
+        } catch (Exception)
         {
         }
         if (channel == null)
           continue;
-        if (channel.IsTv == false) continue;
+        if (channel.IsTv == false)
+          continue;
         int imageIndex = 1;
         if (channel.FreeToAir == false)
           imageIndex = 2;
         string displayName = channel.DisplayName;
         if (map.EpgOnly)
-            displayName = channel.DisplayName + " (EPG Only)";
+          displayName = channel.DisplayName + " (EPG Only)";
         ListViewItem item = new ListViewItem(displayName, imageIndex);
         item.Tag = map;
         items.Add(item);
@@ -226,26 +219,28 @@ namespace SetupTv.Sections
       items = new List<ListViewItem>();
       foreach (Channel channel in channels)
       {
-        if (channel.IsTv == false) continue;
-        if (channel.IsWebstream()) continue;
+        if (channel.IsTv == false)
+          continue;
+        if (channel.IsWebstream())
+          continue;
 
-				// only add channels that is tuneable on the device selected.
-				bool foundValidTuningDetail = false;
-				foreach (TuningDetail tDetail in channel.ReferringTuningDetail())
-				{										
-					switch (cardType)
-					{
-						case CardType.Analog:
-							foundValidTuningDetail = (tDetail.ChannelType == 0);
-							break;
+        // only add channels that is tuneable on the device selected.
+        bool foundValidTuningDetail = false;
+        foreach (TuningDetail tDetail in channel.ReferringTuningDetail())
+        {
+          switch (cardType)
+          {
+            case CardType.Analog:
+              foundValidTuningDetail = (tDetail.ChannelType == 0);
+              break;
 
-						case CardType.Atsc:
-							foundValidTuningDetail = (tDetail.ChannelType == 1);
-							break;
+            case CardType.Atsc:
+              foundValidTuningDetail = (tDetail.ChannelType == 1);
+              break;
 
-						case CardType.DvbC:
-							foundValidTuningDetail = (tDetail.ChannelType == 2);
-							break;
+            case CardType.DvbC:
+              foundValidTuningDetail = (tDetail.ChannelType == 2);
+              break;
 
 						case CardType.DvbS:
 
@@ -257,28 +252,28 @@ namespace SetupTv.Sections
 							foundValidTuningDetail = (tDetail.ChannelType == 3);
 							break;
 
-						case CardType.DvbT:
-							foundValidTuningDetail = (tDetail.ChannelType == 4);
-							break;
+            case CardType.DvbT:
+              foundValidTuningDetail = (tDetail.ChannelType == 4);
+              break;
 
-						case CardType.RadioWebStream:
-							foundValidTuningDetail = (tDetail.ChannelType == 5);
-							break;
+            case CardType.RadioWebStream:
+              foundValidTuningDetail = (tDetail.ChannelType == 5);
+              break;
 
-						default:
-							foundValidTuningDetail = true;
-							break;
-					}
-					
-					if (foundValidTuningDetail)
-					{
-						break;
-					}
-				}
-				if (!foundValidTuningDetail)
-				{
-					continue;
-				}
+            default:
+              foundValidTuningDetail = true;
+              break;
+          }
+
+          if (foundValidTuningDetail)
+          {
+            break;
+          }
+        }
+        if (!foundValidTuningDetail)
+        {
+          continue;
+        }
 
         int imageIndex = 1;
         if (channel.FreeToAir == false)
@@ -293,24 +288,12 @@ namespace SetupTv.Sections
       mpListViewMapped.EndUpdate();
     }
 
-    private void mpListViewChannels_SelectedIndexChanged(object sender, EventArgs e)
-    {
-
-    }
-
     private void mpListViewChannels_ColumnClick(object sender, ColumnClickEventArgs e)
     {
       if (e.Column == lvwColumnSorter1.SortColumn)
       {
         // Reverse the current sort direction for this column.
-        if (lvwColumnSorter1.Order == SortOrder.Ascending)
-        {
-          lvwColumnSorter1.Order = SortOrder.Descending;
-        }
-        else
-        {
-          lvwColumnSorter1.Order = SortOrder.Ascending;
-        }
+        lvwColumnSorter1.Order = lvwColumnSorter1.Order == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
       }
       else
       {
@@ -320,7 +303,7 @@ namespace SetupTv.Sections
       }
 
       // Perform the sort with these new sort options.
-      this.mpListViewChannels.Sort();
+      mpListViewChannels.Sort();
     }
 
     private void mpListViewMapped_ColumnClick(object sender, ColumnClickEventArgs e)
@@ -328,14 +311,7 @@ namespace SetupTv.Sections
       if (e.Column == lvwColumnSorter2.SortColumn)
       {
         // Reverse the current sort direction for this column.
-        if (lvwColumnSorter2.Order == SortOrder.Ascending)
-        {
-          lvwColumnSorter2.Order = SortOrder.Descending;
-        }
-        else
-        {
-          lvwColumnSorter2.Order = SortOrder.Ascending;
-        }
+        lvwColumnSorter2.Order = lvwColumnSorter2.Order == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
       }
       else
       {
@@ -345,12 +321,13 @@ namespace SetupTv.Sections
       }
 
       // Perform the sort with these new sort options.
-      this.mpListViewMapped.Sort();
+      mpListViewMapped.Sort();
     }
 
     private void mpListViewMapped_DoubleClick(object sender, EventArgs e)
     {
-      if (mpListViewMapped.SelectedItems.Count == 0) return;
+      if (mpListViewMapped.SelectedItems.Count == 0)
+        return;
       ListViewItem item = mpListViewMapped.SelectedItems[0];
       ChannelMap map = (ChannelMap)item.Tag;
       Channel channel = map.ReferencedChannel();

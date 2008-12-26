@@ -4,8 +4,6 @@
 //========================================================================
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using Gentle.Common;
 using Gentle.Framework;
 using TvLibrary.Log;
 

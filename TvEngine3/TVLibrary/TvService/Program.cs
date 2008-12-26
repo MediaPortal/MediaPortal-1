@@ -20,11 +20,9 @@
  */
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration;
 using System.ServiceProcess;
-using System.Text;
 using System.Configuration.Install;
 using TvLibrary.Log;
 
@@ -60,20 +58,20 @@ namespace TvService
         ti.Install(new Hashtable());
         return;
       }
-      else if (opt != null && opt.ToLower() == "/uninstall")
+      if (opt != null && opt.ToLower() == "/uninstall")
       {
         TransactedInstaller ti = new TransactedInstaller();
         ProjectInstaller mi = new ProjectInstaller();
         ti.Installers.Add(mi);
         String path = String.Format("/assemblypath={0}",
-        System.Reflection.Assembly.GetExecutingAssembly().Location);
+                                    System.Reflection.Assembly.GetExecutingAssembly().Location);
         String[] cmdline = { path };
         InstallContext ctx = new InstallContext("", cmdline);
         ti.Context = ctx;
         ti.Uninstall(null);
         return;
       }
-      else if (opt != null && opt.ToLower() == "/debug")
+      if (opt != null && opt.ToLower() == "/debug")
       {
         Service1 s = new Service1();
         s.DoStart(null);
@@ -83,15 +81,13 @@ namespace TvService
         }
       }
 
-      ServiceBase[] ServicesToRun;
-
       // More than one user Service may run within the same process. To add
       // another service to this process, change the following line to
       // create a second service object. For example,
       //
       //   ServicesToRun = new ServiceBase[] {new Service1(), new MySecondUserService()};
       //
-      ServicesToRun = new ServiceBase[] { new Service1() };
+      ServiceBase[] ServicesToRun = new ServiceBase[] { new Service1() };
 
       ServiceBase.Run(ServicesToRun);
     }

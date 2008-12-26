@@ -23,8 +23,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using SetupTv;
@@ -34,27 +32,20 @@ namespace MediaPortal.Playlists
   public class PlayListPLSIO : IPlayListIO
   {
     const string START_PLAYLIST_MARKER = "[playlist]";
-    const string PLAYLIST_NAME = "PlaylistName";
 
     public bool Load(PlayList playlist, string fileName)
     {
-      string basePath;
       string extension = Path.GetExtension(fileName);
       extension.ToLower();
 
       playlist.Clear();
       playlist.Name = Path.GetFileName(fileName);
-      basePath = Path.GetDirectoryName(Path.GetFullPath(fileName));
+      string basePath = Path.GetDirectoryName(Path.GetFullPath(fileName));
       Encoding fileEncoding = Encoding.Default;
       FileStream stream = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
       StreamReader file = new StreamReader(stream, fileEncoding, true);
-      if (file == null)
-      {
-        return false;
-      }
 
-      string line;
-      line = file.ReadLine();
+      string line = file.ReadLine();
       if (line == null)
       {
         file.Close();
@@ -109,7 +100,6 @@ namespace MediaPortal.Playlists
             {
               PlayListItem newItem = new PlayListItem(infoLine, fileName, 0);
               playlist.Add(newItem);
-              fileName = "";
               infoLine = "";
               durationLine = "";
             }
@@ -121,7 +111,8 @@ namespace MediaPortal.Playlists
           }
           else
           {
-            if (infoLine == "") infoLine = System.IO.Path.GetFileName(fileName);
+            if (infoLine == "")
+              infoLine = Path.GetFileName(fileName);
           }
           if (leftPart.StartsWith("length"))
           {
@@ -143,7 +134,7 @@ namespace MediaPortal.Playlists
             {
               Utils.GetQualifiedFilename(basePath, ref fileName);
               newItem.Type = PlayListItem.PlayListItemType.AudioStream;
-            }           
+            }
             playlist.Add(newItem);
             fileName = "";
             infoLine = "";
@@ -156,26 +147,26 @@ namespace MediaPortal.Playlists
 
       if (fileName.Length > 0)
       {
-        PlayListItem newItem = new PlayListItem(infoLine, fileName, 0);
+        new PlayListItem(infoLine, fileName, 0);
       }
 
 
       return true;
     }
 
-    public void Save(PlayList playlist, string fileName)
+    public void Save(PlayList playListParam, string fileName)
     {
       using (StreamWriter writer = new StreamWriter(fileName, false))
       {
         writer.WriteLine(START_PLAYLIST_MARKER);
-        for (int i = 0; i < playlist.Count; i++)
+        for (int i = 0; i < playListParam.Count; i++)
         {
-          PlayListItem item = playlist[i];
+          PlayListItem item = playListParam[i];
           writer.WriteLine("File{0}={1}", i + 1, item.FileName);
           writer.WriteLine("Title{0}={1}", i + 1, item.Description);
           writer.WriteLine("Length{0}={1}", i + 1, item.Duration);
         }
-        writer.WriteLine("NumberOfEntries={0}", playlist.Count);
+        writer.WriteLine("NumberOfEntries={0}", playListParam.Count);
         writer.WriteLine("Version=2");
       }
     }

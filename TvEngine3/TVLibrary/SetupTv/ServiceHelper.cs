@@ -22,11 +22,8 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.ServiceProcess;
 using Microsoft.Win32;
-using System.Management;
 using TvLibrary.Log;
 
 namespace SetupTv
@@ -61,29 +58,29 @@ namespace SetupTv
     {
       get
       {
-          //Patch to be able to use the TvServer Configuration 
-          //when running in debug mode
-          try{
-              //Try an call something to see if the server is alive.
-              //
-             int serverId = TvControl.RemoteControl.Instance.IdServer;
-             return true;
-          }
-          catch(Exception g){
-                return false;
-          }
-          /**
-        ServiceController[] services = ServiceController.GetServices();
-        foreach (ServiceController service in services)
+        //Patch to be able to use the TvServer Configuration 
+        //when running in debug mode
+        try
         {
-          if (String.Compare(service.ServiceName, "TvService", true) == 0)
-          {
-            if (service.Status == ServiceControllerStatus.Running) return true;
-            return false;
-          }
+          //Try an call something to see if the server is alive.
+          //
+          int serverId = TvControl.RemoteControl.Instance.IdServer;
+          return true;
+        } catch (Exception)
+        {
+          return false;
         }
-          */
-        return false;
+        /**
+      ServiceController[] services = ServiceController.GetServices();
+      foreach (ServiceController service in services)
+      {
+        if (String.Compare(service.ServiceName, "TvService", true) == 0)
+        {
+          if (service.Status == ServiceControllerStatus.Running) return true;
+          return false;
+        }
+      }
+        */
       }
     }
 
@@ -99,7 +96,8 @@ namespace SetupTv
         {
           if (String.Compare(service.ServiceName, "TvService", true) == 0)
           {
-            if (service.Status == ServiceControllerStatus.Stopped) return true;
+            if (service.Status == ServiceControllerStatus.Stopped)
+              return true;
             return false;
           }
         }
@@ -157,11 +155,10 @@ namespace SetupTv
             }
             return (hackCounter == 60) ? false : true;
           }
-          else
-            if (service.Status == ServiceControllerStatus.Running)
-            {
-              return true;
-            }
+          if (service.Status == ServiceControllerStatus.Running)
+          {
+            return true;
+          }
         }
       }
       return false;
@@ -174,7 +171,8 @@ namespace SetupTv
     public static bool Restart()
     {
       int hackCounter = 0;
-      if (!IsInstalled(@"TvService")) return false;
+      if (!IsInstalled(@"TvService"))
+        return false;
 
       Stop();
 
@@ -229,26 +227,21 @@ namespace SetupTv
       {
         using (RegistryKey rKey = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\" + aServiceName, true))
         {
-          int startMode = 3; // manual
           if (rKey != null)
           {
-            startMode = (int)rKey.GetValue("Start", (int)3);
+            int startMode = (int)rKey.GetValue("Start", 3);
             if (startMode == 2) // autostart
               return true;
-            else
+            if (aSetEnabled)
             {
-              if (aSetEnabled)
-              {
-                rKey.SetValue("Start", (int)2, RegistryValueKind.DWord);
-                return true;
-              }
-              return false;
+              rKey.SetValue("Start", 2, RegistryValueKind.DWord);
+              return true;
             }
+            return false;
           }
           return false; // probably wrong service name
         }
-      }
-      catch (Exception)
+      } catch (Exception)
       {
         return false;
       }
@@ -268,13 +261,12 @@ namespace SetupTv
           if (rKey != null)
           {
             rKey.SetValue("DependOnService", new string[] { dependsOnService, "Netman" }, RegistryValueKind.MultiString);
-            rKey.SetValue("Start", (int)2, RegistryValueKind.DWord); // Set TVService to autostart
+            rKey.SetValue("Start", 2, RegistryValueKind.DWord); // Set TVService to autostart
           }
         }
 
         return true;
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Error("ServiceHelper: Failed to access registry {0}", ex.Message);
         return false;

@@ -1,9 +1,29 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
+/* 
+ *	Copyright (C) 2005-2008 Team MediaPortal
+ *	http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
 
 namespace TvLibrary.Teletext
 {
+  /// <summary>
+  /// Odd Parity decoder/encoder
+  /// </summary>
   public class OddParity
   {
     private static byte[] m_encode;
@@ -36,6 +56,10 @@ namespace TvLibrary.Teletext
         m_decode[dataP] = data;
       }
     }
+    ///<summary>
+    /// Encodes the given data
+    ///</summary>
+    ///<param name="data">Data to encode</param>
     public static void Encode(ref byte data)
     {
       if (null == m_encode)
@@ -43,9 +67,15 @@ namespace TvLibrary.Teletext
         Initialise();
       }
       if (data < 0x80)
-        data = m_encode[data];
+        if (m_encode != null)
+          data = m_encode[data];
     }
 
+    ///<summary>
+    /// Checks if the data is correct
+    ///</summary>
+    ///<param name="data">Data to check</param>
+    ///<returns>true, if the data is correct</returns>
     public static bool IsCorrect(byte data)
     {
       if (null == m_encode)
@@ -59,6 +89,11 @@ namespace TvLibrary.Teletext
       return true;
     }
 
+    ///<summary>
+    /// Decodes the given data
+    ///</summary>
+    ///<param name="data">Data to decode</param>
+    ///<param name="decodingErrors">Number of decoding errors</param>
     public static void Decode(ref byte data, ref int decodingErrors)
     {
       if (null == m_encode)
@@ -80,6 +115,10 @@ namespace TvLibrary.Teletext
         data &= 0x7f;
       }
     }
+    /// <summary>
+    /// Encodes the given data
+    /// </summary>
+    /// <param name="data">Data to encode</param>
     public static void Encode(byte[] data)
     {
       for (int index = 0; index < data.Length; index++)
@@ -87,6 +126,11 @@ namespace TvLibrary.Teletext
         Encode(ref data[index]);
       }
     }
+    ///<summary>
+    /// Decodes the given data
+    ///</summary>
+    ///<param name="data">Data to decode</param>
+    ///<param name="decodingErrors">Number of decoding errors</param>
     public static void Decode(byte[] data, ref int decodingErrors)
     {
       for (int index = 0; index < data.Length; index++)

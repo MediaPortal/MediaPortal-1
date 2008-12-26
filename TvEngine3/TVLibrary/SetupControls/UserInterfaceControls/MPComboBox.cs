@@ -23,8 +23,6 @@
 
 #endregion
 
-using System;
-
 namespace MediaPortal.UserInterface.Controls
 {
   /// <summary>
@@ -32,10 +30,5 @@ namespace MediaPortal.UserInterface.Controls
   /// </summary>
   public class MPComboBox : System.Windows.Forms.ComboBox
   {
-    public MPComboBox()
-    {
-
-
-    }
   }
 }

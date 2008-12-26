@@ -23,8 +23,6 @@
 
 #endregion
 
-using System;
-
 namespace MediaPortal.UserInterface.Controls
 {
   /// <summary>
@@ -34,7 +32,7 @@ namespace MediaPortal.UserInterface.Controls
   {
     public MPTabPage()
     {
-      this.UseVisualStyleBackColor = true;
+      UseVisualStyleBackColor = true;
     }
   }
 }

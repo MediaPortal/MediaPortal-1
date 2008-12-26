@@ -21,12 +21,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using DirectShowLib;
 using TvLibrary.Channels;
 using TvLibrary.Implementations.DVB.Structures;
 using TvLibrary.Interfaces;
-using TvLibrary.Interfaces.Interfaces;
 using DirectShowLib.BDA;
 using TvDatabase;
 
@@ -39,39 +37,40 @@ namespace TvLibrary.Implementations.DVB
   public class ConditionalAccess
   {
     #region variables
-    bool _useCam;
+
+    readonly bool _useCam;
 
     /// <summary>
     /// CA decryption limit, 0 for disable CA
     /// </summary>
-    int _decryptLimit = 0;
-    CamType _CamType = CamType.Default ;
+    readonly int _decryptLimit;
+    readonly CamType _CamType = CamType.Default;
 
-    DigitalEverywhere _digitalEveryWhere = null;
-    TechnoTrend _technoTrend = null;
-    Twinhan _twinhan = null;
-    KNC _knc = null;
-    Hauppauge _hauppauge = null;
-    DiSEqCMotor _diSEqCMotor = null;
-    Dictionary<int, ConditionalAccessContext> _mapSubChannels;
-    GenericBDAS _genericbdas = null;
-    WinTvCiModule _winTvCiModule = null;
-    GenericATSC _isgenericatsc = null;
-    OnAirATSC _isonairatsc = null;
-    ViXSATSC _isvixsatsc = null;
-    ConexantBDA _conexant = null;
+    readonly DigitalEverywhere _digitalEveryWhere;
+    readonly TechnoTrend _technoTrend;
+    readonly Twinhan _twinhan;
+    readonly KNC _knc;
+    readonly Hauppauge _hauppauge;
+    readonly DiSEqCMotor _diSEqCMotor;
+    readonly Dictionary<int, ConditionalAccessContext> _mapSubChannels;
+    readonly GenericBDAS _genericbdas;
+    readonly WinTvCiModule _winTvCiModule;
+    readonly GenericATSC _isgenericatsc;
+    readonly OnAirATSC _isonairatsc;
+    readonly ViXSATSC _isvixsatsc;
+    readonly ConexantBDA _conexant;
     //anysee _anysee = null;
     #endregion
 
     //ctor
     /// <summary>
-    /// Initializes a new instance of the <see cref="T:ConditionalAccess"/> class.
+    /// Initializes a new instance of the <see cref="ConditionalAccess"/> class.
     /// </summary>
     /// <param name="tunerFilter">The tuner filter.</param>
     /// <param name="analyzerFilter">The capture filter.</param>
     /// <param name="winTvUsbCiFilter">The WinTV CI filter.</param>
     /// <param name="card">Determines the type of TV card</param>    
-    public ConditionalAccess(IBaseFilter tunerFilter, IBaseFilter analyzerFilter, IBaseFilter winTvUsbCiFilter, TvCardDvbBase card)
+    public ConditionalAccess(IBaseFilter tunerFilter, IBaseFilter analyzerFilter, IBaseFilter winTvUsbCiFilter, TvCardBase card)
     {
       try
       {
@@ -80,21 +79,22 @@ namespace TvLibrary.Implementations.DVB
         {
           //fetch decrypt limit from DB and apply it.
           TvBusinessLayer layer = new TvBusinessLayer();
-          Card c = layer.GetCardByDevicePath(card.DevicePath);                    
-          _decryptLimit = c.DecryptLimit;          
+          Card c = layer.GetCardByDevicePath(card.DevicePath);
+          _decryptLimit = c.DecryptLimit;
           _useCam = c.CAM;
-          _CamType = (CamType)c.CamType ;
-          Log.Log.WriteFile("CAM is {0} model",_CamType);
+          _CamType = (CamType)c.CamType;
+          Log.Log.WriteFile("CAM is {0} model", _CamType);
         }
 
         _mapSubChannels = new Dictionary<int, ConditionalAccessContext>();
-        if (tunerFilter == null && analyzerFilter == null) return;
+        if (tunerFilter == null && analyzerFilter == null)
+          return;
         //DVB checks. Conditional Access & DiSEqC etc.
         bool isDVBS = (card is TvCardDVBS);
         bool isDVBT = (card is TvCardDVBT);
         bool isDVBC = (card is TvCardDVBC);
-       
-        if (isDVBC || isDVBS || isDVBT == true)
+
+        if (isDVBC || isDVBS || isDVBT)
         {
           Log.Log.WriteFile("Check for KNC");
           _knc = new KNC(tunerFilter, analyzerFilter);
@@ -106,7 +106,7 @@ namespace TvLibrary.Implementations.DVB
           _knc = null;
 
           Log.Log.WriteFile("Check for Digital Everywhere");
-          _digitalEveryWhere = new DigitalEverywhere(tunerFilter, analyzerFilter);
+          _digitalEveryWhere = new DigitalEverywhere(tunerFilter);
           if (_digitalEveryWhere.IsDigitalEverywhere)
           {
             Log.Log.WriteFile("Digital Everywhere card detected");
@@ -117,7 +117,7 @@ namespace TvLibrary.Implementations.DVB
           _digitalEveryWhere = null;
 
           Log.Log.WriteFile("Check for Twinhan");
-          _twinhan = new Twinhan(tunerFilter, analyzerFilter);
+          _twinhan = new Twinhan(tunerFilter);
           if (_twinhan.IsTwinhan)
           {
             Log.Log.WriteFile("Twinhan card detected");
@@ -136,7 +136,7 @@ namespace TvLibrary.Implementations.DVB
           _technoTrend = null;
 
           Log.Log.WriteFile("Check for Hauppauge");
-          _hauppauge = new Hauppauge(tunerFilter, analyzerFilter);
+          _hauppauge = new Hauppauge(tunerFilter);
           if (_hauppauge.IsHauppauge)
           {
             Log.Log.WriteFile("Hauppauge card detected");
@@ -161,7 +161,7 @@ namespace TvLibrary.Implementations.DVB
           }*/
 
           Log.Log.WriteFile("Check for Conexant based card");
-          _conexant = new ConexantBDA(tunerFilter, analyzerFilter);
+          _conexant = new ConexantBDA(tunerFilter);
           if (_conexant.IsConexant)
           {
             Log.Log.WriteFile("Conexant BDA card detected");
@@ -178,7 +178,7 @@ namespace TvLibrary.Implementations.DVB
 
 
           Log.Log.WriteFile("Check for Generic DVB-S card");
-          _genericbdas = new GenericBDAS(tunerFilter, analyzerFilter);
+          _genericbdas = new GenericBDAS(tunerFilter);
           if (_genericbdas.IsGenericBDAS)
           {
             Log.Log.WriteFile("Generic BDA card detected");
@@ -205,10 +205,10 @@ namespace TvLibrary.Implementations.DVB
 
         //ATSC checks
         bool isATSC = (card is TvCardATSC);
-        if (isATSC == true)
+        if (isATSC)
         {
           Log.Log.WriteFile("Check for ViXS ATSC QAM card");
-          _isvixsatsc = new ViXSATSC(tunerFilter, analyzerFilter);
+          _isvixsatsc = new ViXSATSC(tunerFilter);
           if (_isvixsatsc.IsViXSATSC)
           {
             Log.Log.WriteFile("ViXS ATSC QAM card detected");
@@ -217,7 +217,7 @@ namespace TvLibrary.Implementations.DVB
           _isvixsatsc = null;
 
           Log.Log.WriteFile("Check for OnAir ATSC QAM card");
-          _isonairatsc = new OnAirATSC(tunerFilter, analyzerFilter);
+          _isonairatsc = new OnAirATSC(tunerFilter);
           if (_isonairatsc.IsOnAirATSC)
           {
             Log.Log.WriteFile("OnAir ATSC QAM card detected");
@@ -226,16 +226,15 @@ namespace TvLibrary.Implementations.DVB
           _isonairatsc = null;
 
           Log.Log.WriteFile("Check for Generic ATSC QAM card");
-          _isgenericatsc = new GenericATSC(tunerFilter, analyzerFilter);
+          _isgenericatsc = new GenericATSC(tunerFilter);
           if (_isgenericatsc.IsGenericATSC)
           {
             Log.Log.WriteFile("Generic ATSC QAM card detected");
             return;
           }
-          _isgenericatsc = null;                    
+          _isgenericatsc = null;
         }
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Log.Write(ex);
       }
@@ -245,6 +244,7 @@ namespace TvLibrary.Implementations.DVB
     /// Adds the sub channel.
     /// </summary>
     /// <param name="id">The id.</param>
+    /// <param name="channel">The channel</param>
     public void AddSubChannel(int id, IChannel channel)
     {
       if (!_mapSubChannels.ContainsKey(id))
@@ -315,7 +315,8 @@ namespace TvLibrary.Implementations.DVB
     {
       try
       {
-        if (!_useCam) return true;
+        if (!_useCam)
+          return true;
         if (_knc != null)
         {
           Log.Log.WriteFile("KNC IsCamReady(): IsCamPresent:{0}, IsCamReady:{1}", _knc.IsCamPresent(), _knc.IsCamReady());
@@ -350,8 +351,7 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.Info("WinTVCI:  CAM initialized");
           return true;
         }
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Log.Write(ex);
       }
@@ -365,23 +365,31 @@ namespace TvLibrary.Implementations.DVB
     {
       try
       {
-        if (!_useCam) return;
+        if (!_useCam)
+          return;
         if (_digitalEveryWhere != null)
         {
           _digitalEveryWhere.ResetCAM();
         }
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Log.Write(ex);
       }
     }
 
+    ///<summary>
+    /// Called when the graph is started
+    ///</summary>
+    ///<param name="servicedId">The service id</param>
+    ///<returns></returns>
     public bool OnRunGraph(int servicedId)
     {
       return true;
     }
 
+    /// <summary>
+    /// Called when the graph is stopped
+    /// </summary>
     public void OnStopGraph()
     {
       if (_digitalEveryWhere != null)
@@ -390,7 +398,7 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
-    
+
     /// <summary>
     /// CA enabled or disabled ?
     /// </summary>
@@ -423,9 +431,12 @@ namespace TvLibrary.Implementations.DVB
     {
       get
       {
-        if (_mapSubChannels == null) return 0;
-        if (_mapSubChannels.Count == 0) return 0;
-        if (_decryptLimit == 0) return 0; //CA disabled, so no channels are decrypting.
+        if (_mapSubChannels == null)
+          return 0;
+        if (_mapSubChannels.Count == 0)
+          return 0;
+        if (_decryptLimit == 0)
+          return 0; //CA disabled, so no channels are decrypting.
 
         List<ConditionalAccessContext> filteredChannels = new List<ConditionalAccessContext>();
 
@@ -450,7 +461,7 @@ namespace TvLibrary.Implementations.DVB
             }
             if (!exists)
             {
-              if (!context.Channel.FreeToAir)
+              if (context.Channel != null && !context.Channel.FreeToAir)
               {
                 filteredChannels.Add(context);
               }
@@ -466,27 +477,32 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="PMT">byte array containing the PMT</param>
     /// <param name="pmtLength">length of the pmt array</param>
+    /// <param name="newPmtLength">The new PMT length</param>
     /// <returns></returns>
-    private byte[] PatchPMT_AstonCrypt2(byte[] PMT, int pmtLength, out int newPmtLength)
+    private static byte[] PatchPMT_AstonCrypt2(byte[] PMT, int pmtLength, out int newPmtLength)
     {
-      byte[] newPMT = new byte[1024] ;  // create a new array.
+      byte[] newPMT = new byte[1024];  // create a new array.
 
       int ps = 0;
       int pd = 0;
 
-      for (int i = 0; i < 12; ++i) newPMT[pd++] = PMT[ps++];
-      for (int i = 0; i < PMT[11]; ++i) newPMT[pd++] = PMT[ps++];
-      
+      for (int i = 0; i < 12; ++i)
+        newPMT[pd++] = PMT[ps++];
+      for (int i = 0; i < PMT[11]; ++i)
+        newPMT[pd++] = PMT[ps++];
+
       // Need to patch audio AC3 channels 0x06, , , , ,0x6A in real AC3 descriptor 0x81, .... for ( at least !) ASTONCRYPT CAM module
       while ((ps + 5 < pmtLength) && (pd < 1024))
       {
-          int len = PMT[ps + 4] + 5;
-          for (int i = 0; i < len; ++i)
-          {
-            if (pd >= 1024) break;
-            if ((i == 0) && (PMT[ps] == 0x06) && (PMT[ps + 5] == 0x6A)) { newPMT[pd++] = 0x81; ps++; }
-            else newPMT[pd++] = PMT[ps++];
-          }
+        int len = PMT[ps + 4] + 5;
+        for (int i = 0; i < len; ++i)
+        {
+          if (pd >= 1024)
+            break;
+          if ((i == 0) && (PMT[ps] == 0x06) && (PMT[ps + 5] == 0x6A)) { newPMT[pd++] = 0x81; ps++; }
+          else
+            newPMT[pd++] = PMT[ps++];
+        }
       }
 
       newPmtLength = pd;
@@ -506,9 +522,10 @@ namespace TvLibrary.Implementations.DVB
     {
       try
       {
-        int newLength;
-        if (!_useCam) return true;
-        if (channel.FreeToAir) return true;//no need to descramble this one...
+        if (!_useCam)
+          return true;
+        if (channel.FreeToAir)
+          return true;//no need to descramble this one...
 
         AddSubChannel(subChannel, channel);
         ConditionalAccessContext context = _mapSubChannels[subChannel];
@@ -516,6 +533,7 @@ namespace TvLibrary.Implementations.DVB
         context.Channel = channel;
         if (_CamType == CamType.Astoncrypt2)
         {
+          int newLength;
           context.PMT = PatchPMT_AstonCrypt2(PMT, pmtLength, out newLength);
           context.PMTLength = newLength;
         }
@@ -560,8 +578,7 @@ namespace TvLibrary.Implementations.DVB
           byte[] caPmt = info.caPMT.CaPmtStruct(out caPmtLen);
           return _twinhan.SendPMT(caPmt, caPmtLen);
         }
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Log.Write(ex);
       }
@@ -612,8 +629,7 @@ namespace TvLibrary.Implementations.DVB
           _conexant.SendDiseqCommand(parameters, channel);
           System.Threading.Thread.Sleep(100);
         }
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Log.Write(ex);
       }
@@ -621,6 +637,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Instructs the cam/ci module to use hardware filter and only send the pids listed in pids to the pc
     /// </summary>
+    /// <param name="subChannel">The sub channel id</param>
     /// <param name="channel">The current tv/radio channel.</param>
     /// <param name="pids">The pids.</param>
     /// <remarks>when the pids array is empty, pid filtering is disabled and all pids are received</remarks>
@@ -628,40 +645,41 @@ namespace TvLibrary.Implementations.DVB
     {
       try
       {
-        ArrayList HwPids = new ArrayList() ;
+        ArrayList HwPids = new ArrayList();
 
-        _mapSubChannels[subChannel].HwPids = pids ;
+        _mapSubChannels[subChannel].HwPids = pids;
 
-        Dictionary<int, ConditionalAccessContext>.Enumerator enSubch = _mapSubChannels.GetEnumerator() ;
+        Dictionary<int, ConditionalAccessContext>.Enumerator enSubch = _mapSubChannels.GetEnumerator();
         while (enSubch.MoveNext())
         {
-          
-          ArrayList enPid = enSubch.Current.Value.HwPids ;
+
+          ArrayList enPid = enSubch.Current.Value.HwPids;
           if (enPid != null)
           {
-            for (int i = 0; i < (int)enPid.Count; ++i)
+            for (int i = 0; i < enPid.Count; ++i)
             {
-              if (!HwPids.Contains(enPid[i])) HwPids.Add(enPid[i]);
+              if (!HwPids.Contains(enPid[i]))
+                HwPids.Add(enPid[i]);
             }
           }
         }
 
-        if (!_useCam) return;
+        if (!_useCam)
+          return;
         if (_digitalEveryWhere != null)
         {
-            bool isDvbc, isDvbt, isDvbs, isAtsc;
-          isDvbc = ((channel as DVBCChannel) != null);
-          isDvbt = ((channel as DVBTChannel) != null);
-          isDvbs = ((channel as DVBSChannel) != null);
-          isAtsc = ((channel as ATSCChannel) != null);
+          bool isDvbc = ((channel as DVBCChannel) != null);
+          bool isDvbt = ((channel as DVBTChannel) != null);
+          bool isDvbs = ((channel as DVBSChannel) != null);
+          bool isAtsc = ((channel as ATSCChannel) != null);
 
-          if ((pids.Count!=0) && (isDvbs) && (((DVBSChannel)channel).ModulationType == ModulationType.ModNbc8Psk))
+          if ((pids.Count != 0) && (isDvbs) && (((DVBSChannel)channel).ModulationType == ModulationType.ModNbc8Psk))
           {
-            for (int i = 0; i < (int)HwPids.Count; ++i)
+            for (int i = 0; i < HwPids.Count; ++i)
             {
               Log.Log.Info("FireDTV: HW Filtered Pid : 0x{0:X}", (ushort)HwPids[i]);
             }
-            _digitalEveryWhere.SetHardwarePidFiltering(isDvbc, isDvbt, isDvbs, isAtsc, HwPids);
+            _digitalEveryWhere.SetHardwarePidFiltering(isDvbc, isDvbt, true, isAtsc, HwPids);
           }
           else
           {
@@ -670,8 +688,7 @@ namespace TvLibrary.Implementations.DVB
             _digitalEveryWhere.SetHardwarePidFiltering(isDvbc, isDvbt, isDvbs, isAtsc, pids);
           }
         }
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Log.Write(ex);
       }
@@ -726,12 +743,7 @@ namespace TvLibrary.Implementations.DVB
               {
                 channel.ModulationType = ModulationType.Mod32Qam;
               }
-              if (channel.InnerFecRate == BinaryConvolutionCodeRate.Rate8_9)
-              {
-                channel.ModulationType = ModulationType.Mod16Qam;
-              }
-              else
-                channel.ModulationType = ModulationType.ModBpsk;
+              channel.ModulationType = channel.InnerFecRate == BinaryConvolutionCodeRate.Rate8_9 ? ModulationType.Mod16Qam : ModulationType.ModBpsk;
             }
             //Set the Hauppauge Modulation type
             /*if (channel.ModulationType == ModulationType.ModQpsk)
@@ -849,8 +861,7 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.WriteFile("DigitalEverywhere fec set to:{0}", (int)tuneChannel.InnerFecRate);
           return tuneChannel;
         }
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Log.Write(ex);
       }
@@ -878,8 +889,7 @@ namespace TvLibrary.Implementations.DVB
             _isonairatsc.SetOnAirQam(channel);
           }
         }
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Log.Write(ex);
       }
@@ -901,8 +911,7 @@ namespace TvLibrary.Implementations.DVB
             _isvixsatsc.SetViXSQam(channel);
           }
         }
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Log.Write(ex);
       }
@@ -920,8 +929,7 @@ namespace TvLibrary.Implementations.DVB
         {
           _isvixsatsc.GetViXSQam(channel);
         }
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Log.Write(ex);
       }

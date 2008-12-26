@@ -19,8 +19,6 @@
  *
  */
 using System;
-using System.Collections.Generic;
-using System.Text;
 using TvLibrary.Interfaces;
 
 namespace TvLibrary.Implementations.DVB
@@ -29,7 +27,7 @@ namespace TvLibrary.Implementations.DVB
   /// class describing an analog audio stream
   /// </summary>
   [Serializable]
-  public class AnalogAudioStream: IAudioStream
+  public class AnalogAudioStream : IAudioStream
   {
     #region variables
     string _language;
@@ -39,7 +37,7 @@ namespace TvLibrary.Implementations.DVB
 
     #region ctor
     /// <summary>
-    /// Initializes a new instance of the <see cref="T:AnalogAudioStream"/> class.
+    /// Initializes a new instance of the <see cref="AnalogAudioStream"/> class.
     /// </summary>
     public AnalogAudioStream()
     {
@@ -107,8 +105,10 @@ namespace TvLibrary.Implementations.DVB
     public override bool Equals(object obj)
     {
       AnalogAudioStream stream = obj as AnalogAudioStream;
-      if (stream == null) return false;
-      if (_language == stream.Language && _streamType == stream.StreamType && AudioMode==stream.AudioMode) return true;
+      if (stream == null)
+        return false;
+      if (_language == stream.Language && _streamType == stream.StreamType && AudioMode == stream.AudioMode)
+        return true;
       return false;
     }
     /// <summary>
@@ -119,7 +119,7 @@ namespace TvLibrary.Implementations.DVB
     /// </returns>
     public override int GetHashCode()
     {
-      return base.GetHashCode() ^ _language.GetHashCode() ^ _streamType.GetHashCode()  ^_audioMode.GetHashCode();
+      return base.GetHashCode() ^ _language.GetHashCode() ^ _streamType.GetHashCode() ^ _audioMode.GetHashCode();
     }
     /// <summary>
     /// Returns a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.

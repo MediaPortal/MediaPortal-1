@@ -24,12 +24,7 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Text;
 using DirectShowLib;
-using TvDatabase;
-using TvLibrary.Interfaces;
 using TvLibrary.Implementations.DVB;
 
 namespace TvLibrary.Implementations.Analog.QualityControl
@@ -40,18 +35,19 @@ namespace TvLibrary.Implementations.Analog.QualityControl
   public class EncoderAPIControl : BaseControl
   {
     #region variable
+#pragma warning disable 618,612
     /// <summary>
     /// Instance of the encoder that supports the IEncoderAPI
     /// </summary>
-    private IEncoderAPI _encoderAPI;
+    private readonly IEncoderAPI _encoderAPI;
     #endregion
 
     #region ctor
     /// <summary>
-    /// Initializes a new instance of the <see cref="T:EncoderAPIControl"/> class.
+    /// Initializes a new instance of the <see cref="EncoderAPIControl"/> class.
     /// </summary>
     /// <param name="configuration">The encoder settings to use.</param>
-    /// <param name="videoEncoder">The IEncoderAPI interface to the filter that must be used to control the quality.</param>
+    /// <param name="encoderAPI">The IEncoderAPI interface to the filter that must be used to control the quality.</param>
     public EncoderAPIControl(Configuration configuration, IEncoderAPI encoderAPI)
       : base(configuration)
     {
@@ -60,6 +56,7 @@ namespace TvLibrary.Implementations.Analog.QualityControl
       CheckCapabilities();
     }
     #endregion
+#pragma warning restore 618,612
 
     #region protected method
     /// <summary>

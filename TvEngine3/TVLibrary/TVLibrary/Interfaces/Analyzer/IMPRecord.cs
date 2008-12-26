@@ -19,8 +19,6 @@
  *
  */
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.InteropServices;
 
 namespace TvLibrary.Interfaces.Analyzer
@@ -103,6 +101,7 @@ namespace TvLibrary.Interfaces.Analyzer
     /// Pauses/Continues timeshifting.
     /// </summary>
     /// <param name="subChannelId">SubChannel id</param>
+    /// <param name="onOff">On/off</param>
     /// <returns></returns>
     [PreserveSig]
     int PauseTimeShifting(int subChannelId, short onOff);
@@ -125,7 +124,7 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <param name="callback">Callback to set</param>
     /// <returns></returns>
     [PreserveSig]
-    int TTxSetCallback(int subChannelId,IAnalogTeletextCallBack callback);
+    int TTxSetCallback(int subChannelId, IAnalogTeletextCallBack callback);
 
     /// <summary>
     /// Sets the callback for the video/audio observer
@@ -167,7 +166,8 @@ namespace TvLibrary.Interfaces.Analyzer
   [ComVisible(true), ComImport,
   Guid("14639355-4BA4-471c-BA91-8B4AF51F3A0D"),
   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  public interface IAnalogTeletextCallBack {
+  public interface IAnalogTeletextCallBack
+  {
     /// <summary>
     /// Called when teletext has been received.
     /// </summary>
@@ -184,7 +184,8 @@ namespace TvLibrary.Interfaces.Analyzer
   [ComVisible(true), ComImport,
   Guid("D44ABA24-57B2-44de-8D56-7B95CBF8527A"),
   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  public interface IAnalogChanelScan {
+  public interface IAnalogChanelScan
+  {
     /// <summary>
     /// Starts scanning the current transponder.
     /// </summary>
@@ -225,13 +226,14 @@ namespace TvLibrary.Interfaces.Analyzer
 
   };
 
-    /// <summary>
+  /// <summary>
   /// Interface to the analog channel callback
   /// </summary>
   [ComVisible(true), ComImport,
  Guid("9C9B9E27-A9EA-4ac9-B2FB-FC9FCACECA82"),
   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  public interface IAnalogChannelScanCallback {
+  public interface IAnalogChannelScanCallback
+  {
     /// <summary>
     /// Gets called when the scanning is done
     /// </summary>

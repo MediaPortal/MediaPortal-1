@@ -1,6 +1,24 @@
+/* 
+ *	Copyright (C) 2005-2008 Team MediaPortal
+ *	http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace TvLibrary.Streaming
 {
@@ -11,11 +29,12 @@ namespace TvLibrary.Streaming
   public class RtspClient
   {
     #region variables
-    bool _isActive;
-    string _ipAdress;
-    string _streamName;
-    DateTime _dateTimeStarted;
-    string _description;
+
+    readonly bool _isActive;
+    readonly string _ipAdress;
+    readonly string _streamName;
+    readonly DateTime _dateTimeStarted;
+    readonly string _description;
     #endregion
 
     #region ctor
@@ -33,7 +52,7 @@ namespace TvLibrary.Streaming
     /// <param name="streamName">Name of the stream.</param>
     /// <param name="started">The time the client connected.</param>
     /// <param name="description">The description.</param>
-    public RtspClient(bool isActive, string ipadress, string streamName,string description,DateTime started)
+    public RtspClient(bool isActive, string ipadress, string streamName, string description, DateTime started)
     {
       _isActive = isActive;
       _ipAdress = ipadress;

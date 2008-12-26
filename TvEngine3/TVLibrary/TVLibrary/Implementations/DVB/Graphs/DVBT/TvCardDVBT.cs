@@ -19,20 +19,11 @@
  *
  */
 using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Text;
 using DirectShowLib;
 using DirectShowLib.BDA;
-using TvLibrary.Implementations;
-using DirectShowLib.SBE;
 using TvLibrary.Interfaces;
-using TvLibrary.Interfaces.Analyzer;
 using TvLibrary.Channels;
-using TvLibrary.Epg;
-using TvLibrary.Implementations.DVB.Structures;
 using TvLibrary.Implementations.Helper;
-using TvLibrary.Helper;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -46,32 +37,24 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// holds the the DVB-T tuning space
     /// </summary>
-    protected IDVBTuningSpace _tuningSpace = null;
+    protected IDVBTuningSpace _tuningSpace;
     /// <summary>
     /// holds the current DVB-T tuning request
     /// </summary>
-    protected IDVBTuneRequest _tuneRequest = null;
-    
+    protected IDVBTuneRequest _tuneRequest;
+
     #endregion
 
     #region ctor
     /// <summary>
-    /// Initializes a new instance of the <see cref="T:TvCardDVBT"/> class.
+    /// Initializes a new instance of the <see cref="TvCardDVBT"/> class.
     /// </summary>
     /// <param name="device">The device.</param>
     public TvCardDVBT(DsDevice device)
       : base(device)
     {
-      _cardType = CardType.DvbT;      
+      _cardType = CardType.DvbT;
 
-      try
-      {
-        //        BuildGraph();
-        //        RunGraph();
-        //        StopGraph();
-      } catch (Exception)
-      {
-      }
     }
     #endregion
 
@@ -113,7 +96,7 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Write(ex);
         Dispose();
         _graphState = GraphState.Idle;
-        throw ex;
+        throw;
       }
     }
 
@@ -126,16 +109,22 @@ namespace TvLibrary.Implementations.DVB
       ITuner tuner = (ITuner)_filterNetworkProvider;
       SystemTuningSpaces systemTuningSpaces = new SystemTuningSpaces();
       ITuningSpaceContainer container = systemTuningSpaces as ITuningSpaceContainer;
+      if (container == null)
+      {
+        Log.Log.Error("CreateTuningSpace() Failed to get ITuningSpaceContainer");
+        return;
+      }
       IEnumTuningSpaces enumTuning;
       ITuningSpace[] spaces = new ITuningSpace[2];
 
       ITuneRequest request;
-      int fetched;
       container.get_EnumTuningSpaces(out enumTuning);
       while (true)
       {
+        int fetched;
         enumTuning.Next(1, spaces, out fetched);
-        if (fetched != 1) break;
+        if (fetched != 1)
+          break;
         string name;
         spaces[0].get_UniqueName(out name);
         Log.Log.WriteFile("Found tuningspace {0}", name);
@@ -170,7 +159,7 @@ namespace TvLibrary.Implementations.DVB
 
       object newIndex;
       _tuningSpace.put_DefaultLocator(locator);
-      container.Add((ITuningSpace)_tuningSpace, out newIndex);
+      container.Add(_tuningSpace, out newIndex);
       tuner.put_TuningSpace(_tuningSpace);
       Release.ComObject("ITuningSpaceContainer", container);
 
@@ -184,6 +173,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Tunes the specified channel.
     /// </summary>
+    /// <param name="subChannelId">The sub channel id</param>
     /// <param name="channel">The channel.</param>
     /// <returns></returns>
     public ITvSubChannel Tune(int subChannelId, IChannel channel)
@@ -199,13 +189,13 @@ namespace TvLibrary.Implementations.DVB
         }
 
         Log.Log.Info("dvbt: tune: Assigning oldChannel");
-        DVBTChannel oldChannel = CurrentChannel as DVBTChannel;
         if (CurrentChannel != null)
         {
           //@FIX this fails for back-2-back recordings
           //if (oldChannel.Equals(channel)) return _mapSubChannels[0];
           Log.Log.Info("dvbt: tune: Current Channel != null {0}", CurrentChannel.ToString());
-        } else
+        }
+        else
         { Log.Log.Info("dvbt: tune: Current channel is null"); }
         if (_graphState == GraphState.Idle)
         {
@@ -215,7 +205,8 @@ namespace TvLibrary.Implementations.DVB
           {
             subChannelId = GetNewSubChannel(channel);
           }
-        } else
+        }
+        else
         { Log.Log.Info("dvbt: tune: Graph is tunning"); }
 
         //_pmtPid = -1;
@@ -224,15 +215,15 @@ namespace TvLibrary.Implementations.DVB
         _tuningSpace.get_DefaultLocator(out locator);
         Log.Log.Info("dvbt: tune: Putting bandwidth {0}", dvbtChannel.BandWidth);
         IDVBTLocator dvbtLocator = (IDVBTLocator)locator;
-        int hr = dvbtLocator.put_Bandwidth(dvbtChannel.BandWidth);
+        dvbtLocator.put_Bandwidth(dvbtChannel.BandWidth);
         Log.Log.Info("dvbt: tune: put_ONID {0}", dvbtChannel.NetworkId);
-        hr = _tuneRequest.put_ONID(dvbtChannel.NetworkId);
+        _tuneRequest.put_ONID(dvbtChannel.NetworkId);
         Log.Log.Info("dvbt: tune: put_SID {0}", dvbtChannel.ServiceId);
-        hr = _tuneRequest.put_SID(dvbtChannel.ServiceId);
+        _tuneRequest.put_SID(dvbtChannel.ServiceId);
         Log.Log.Info("dvbt: tune: put_TSID {0}", dvbtChannel.TransportId);
-        hr = _tuneRequest.put_TSID(dvbtChannel.TransportId);
+        _tuneRequest.put_TSID(dvbtChannel.TransportId);
         Log.Log.Info("dvbt: tune: Carrier frequency {0}", (int)dvbtChannel.Frequency);
-        hr = locator.put_CarrierFrequency((int)dvbtChannel.Frequency);
+        locator.put_CarrierFrequency((int)dvbtChannel.Frequency);
         //Log.Log.Info("dvbt: tune: put_Locator {0}", locator.ToString());
         Log.Log.Info("dvbt: tune: put_Locator");
         _tuneRequest.put_Locator(locator);
@@ -245,15 +236,13 @@ namespace TvLibrary.Implementations.DVB
         RunGraph(ch.SubChannelId);
         Log.Log.Info("dvbt: tune: Graph running. Returning {0}", ch.ToString());
         return ch;
-      }
-      catch (TvExceptionNoSignal ex)
-      {        
-        throw ex;
-      }
-      catch (Exception ex)
+      } catch (TvExceptionNoSignal)
+      {
+        throw;
+      } catch (Exception ex)
       {
         Log.Log.Write(ex);
-        throw ex;
+        throw;
       }
       //unreachable return null;
     }
@@ -268,7 +257,8 @@ namespace TvLibrary.Implementations.DVB
     {
       get
       {
-        if (!CheckThreadId()) return null;
+        if (!CheckThreadId())
+          return null;
         return new DVBTScanning(this);
       }
     }
@@ -295,7 +285,8 @@ namespace TvLibrary.Implementations.DVB
     /// </returns>
     public bool CanTune(IChannel channel)
     {
-      if ((channel as DVBTChannel) == null) return false;
+      if ((channel as DVBTChannel) == null)
+        return false;
       return true;
     }
   }

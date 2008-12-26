@@ -19,37 +19,14 @@
  *
  */
 
-using System;
-using System.IO;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-using System.Net;
-using System.Net.Sockets;
-using DirectShowLib.SBE;
-using TvLibrary;
-using TvLibrary.Implementations;
 using TvLibrary.Interfaces;
-using TvLibrary.Implementations.Analog;
-using TvLibrary.Implementations.DVB;
-using TvLibrary.Implementations.Hybrid;
-using TvLibrary.Channels;
-using TvLibrary.Epg;
-using TvLibrary.ChannelLinkage;
-using TvLibrary.Log;
-using TvLibrary.Streaming;
-using TvControl;
-using TvEngine;
-using TvDatabase;
-using TvEngine.Events;
 
 
 namespace TvService
 {
   public class DisEqcManagement
   {
-    ITvCardHandler _cardHandler;
+    readonly ITvCardHandler _cardHandler;
     /// <summary>
     /// Initializes a new instance of the <see cref="DisEqcManagement"/> class.
     /// </summary>
@@ -78,7 +55,8 @@ namespace TvService
       }
 
       IDiSEqCMotor motor = _cardHandler.Card.DiSEqCMotor;
-      if (motor == null) return;
+      if (motor == null)
+        return;
       motor.GetPosition(out  satellitePosition, out  stepsAzimuth, out  stepsElevation);
     }
 
@@ -93,7 +71,8 @@ namespace TvService
       }
 
       IDiSEqCMotor motor = _cardHandler.Card.DiSEqCMotor;
-      if (motor == null) return;
+      if (motor == null)
+        return;
       motor.Reset();
     }
     /// <summary>
@@ -107,7 +86,8 @@ namespace TvService
       }
 
       IDiSEqCMotor motor = _cardHandler.Card.DiSEqCMotor;
-      if (motor == null) return;
+      if (motor == null)
+        return;
       motor.StopMotor();
     }
     /// <summary>
@@ -121,7 +101,8 @@ namespace TvService
       }
 
       IDiSEqCMotor motor = _cardHandler.Card.DiSEqCMotor;
-      if (motor == null) return;
+      if (motor == null)
+        return;
       motor.SetEastLimit();
     }
     /// <summary>
@@ -135,7 +116,8 @@ namespace TvService
       }
 
       IDiSEqCMotor motor = _cardHandler.Card.DiSEqCMotor;
-      if (motor == null) return;
+      if (motor == null)
+        return;
       motor.SetWestLimit();
     }
     /// <summary>
@@ -150,7 +132,8 @@ namespace TvService
       }
 
       IDiSEqCMotor motor = _cardHandler.Card.DiSEqCMotor;
-      if (motor == null) return;
+      if (motor == null)
+        return;
       motor.ForceLimits = onOff;
     }
     /// <summary>
@@ -166,7 +149,8 @@ namespace TvService
       }
 
       IDiSEqCMotor motor = _cardHandler.Card.DiSEqCMotor;
-      if (motor == null) return;
+      if (motor == null)
+        return;
       motor.DriveMotor(direction, numberOfSteps);
     }
     /// <summary>
@@ -181,7 +165,8 @@ namespace TvService
       }
 
       IDiSEqCMotor motor = _cardHandler.Card.DiSEqCMotor;
-      if (motor == null) return;
+      if (motor == null)
+        return;
       motor.StorePosition(position);
     }
     /// <summary>
@@ -195,7 +180,8 @@ namespace TvService
       }
 
       IDiSEqCMotor motor = _cardHandler.Card.DiSEqCMotor;
-      if (motor == null) return;
+      if (motor == null)
+        return;
       motor.GotoReferencePosition();
     }
     /// <summary>
@@ -210,7 +196,8 @@ namespace TvService
       }
 
       IDiSEqCMotor motor = _cardHandler.Card.DiSEqCMotor;
-      if (motor == null) return;
+      if (motor == null)
+        return;
       motor.GotoPosition(position);
     }
     #endregion

@@ -19,38 +19,18 @@
  *
  */
 
-using System;
-using System.IO;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-using System.Net;
-using System.Net.Sockets;
-using DirectShowLib.SBE;
-using TvLibrary;
-using TvLibrary.Implementations;
-using TvLibrary.Interfaces;
-using TvLibrary.Implementations.Analog;
-using TvLibrary.Implementations.DVB;
-using TvLibrary.Implementations.Hybrid;
-using TvLibrary.Channels;
-using TvLibrary.Epg;
-using TvLibrary.Log;
-using TvLibrary.Streaming;
 using TvControl;
-using TvEngine;
 using TvDatabase;
-using TvEngine.Events;
+
 namespace TvService
 {
   public interface ICardAllocation
-  {    
+  {
     /// <summary>
     /// Gets a list of all free cards which can receive the channel specified
     /// List is sorted by priority
     /// </summary>
-    /// <param name="channelName">Name of the channel.</param>
     /// <returns>list containg all free cards which can receive the channel</returns>
     List<CardDetail> GetAvailableCardsForChannel(Dictionary<int, ITvCardHandler> cards, Channel dbChannel, ref User user, bool checkTransponders, out TvResult result, int recommendedCardId);
   }

@@ -20,17 +20,8 @@
  */
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using TvControl;
-
-using Gentle.Common;
-using Gentle.Framework;
-
 using TvDatabase;
 namespace SetupTv.Sections
 {
@@ -49,11 +40,11 @@ namespace SetupTv.Sections
 
     public override void OnSectionActivated()
     {
-      IList servers=Server.ListAll();
+      IList servers = Server.ListAll();
       mpListView1.Items.Clear();
       foreach (Server server in servers)
       {
-        ListViewItem item = mpListView1.Items.Add(server.HostName,0);
+        ListViewItem item = mpListView1.Items.Add(server.HostName, 0);
         if (server.IsMaster)
         {
           item.SubItems.Add("Master");
@@ -64,7 +55,7 @@ namespace SetupTv.Sections
         }
         item.Tag = server;
       }
-			mpListView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);				
+      mpListView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
     }
 
     private void Servers_Load(object sender, EventArgs e)
@@ -75,24 +66,21 @@ namespace SetupTv.Sections
     private void buttonDelete_Click(object sender, EventArgs e)
     {
 
-      if (mpListView1.SelectedIndices.Count < 1) return;
+      if (mpListView1.SelectedIndices.Count < 1)
+        return;
       int index = mpListView1.SelectedIndices[0];
       ListViewItem item = mpListView1.Items[index];
       Server server = (Server)item.Tag;
       server.Delete();
-      MessageBox.Show(this,"Changes made require TvService to restart. Please restart the tvservice");
+      MessageBox.Show(this, "Changes made require TvService to restart. Please restart the tvservice");
       RemoteControl.Instance.Restart();
       OnSectionActivated();
     }
 
-    private void buttonAdd_Click(object sender, EventArgs e)
-    {
-
-    }
-
     private void buttonMaster_Click(object sender, EventArgs e)
     {
-      if (mpListView1.SelectedIndices.Count < 1) return;
+      if (mpListView1.SelectedIndices.Count < 1)
+        return;
       int index = mpListView1.SelectedIndices[0];
       for (int i = 0; i < mpListView1.Items.Count; ++i)
       {
@@ -112,12 +100,13 @@ namespace SetupTv.Sections
         server.Persist();
       }
       RemoteControl.Instance.Restart();
-      MessageBox.Show(this,"Changes made require TvService to restart. Please restart the tvservice");
+      MessageBox.Show(this, "Changes made require TvService to restart. Please restart the tvservice");
     }
 
     private void button1_Click(object sender, EventArgs e)
     {
-      if (mpListView1.SelectedIndices.Count < 1) return;
+      if (mpListView1.SelectedIndices.Count < 1)
+        return;
       int index = mpListView1.SelectedIndices[0];
       ListViewItem item = mpListView1.Items[index];
       Server server = (Server)item.Tag;
@@ -130,7 +119,7 @@ namespace SetupTv.Sections
         server.HostName = dlg.HostName;
         server.Persist();
         RemoteControl.Instance.Restart();
-        MessageBox.Show(this,"Changes made require TvService to restart. Please restart the tvservice");
+        MessageBox.Show(this, "Changes made require TvService to restart. Please restart the tvservice");
       }
 
     }

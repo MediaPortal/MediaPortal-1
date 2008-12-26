@@ -20,52 +20,32 @@
  */
 
 using System;
-using System.IO;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-using System.Net;
-using System.Net.Sockets;
-using DirectShowLib.SBE;
-using TvLibrary;
-using TvLibrary.Implementations;
 using TvLibrary.Interfaces;
-using TvLibrary.Implementations.Analog;
-using TvLibrary.Implementations.DVB;
-using TvLibrary.Implementations.Hybrid;
-using TvLibrary.Channels;
-using TvLibrary.Epg;
-using TvLibrary.ChannelLinkage;
 using TvLibrary.Log;
-using TvLibrary.Streaming;
 using TvControl;
-using TvEngine;
 using TvDatabase;
-using TvEngine.Events;
-
 
 
 namespace TvService
 {
   public class Recorder
   {
-    ITvCardHandler _cardHandler;
-		bool _timeshiftingEpgGrabberEnabled;
+    readonly ITvCardHandler _cardHandler;
+    readonly bool _timeshiftingEpgGrabberEnabled;
     /// <summary>
     /// Initializes a new instance of the <see cref="Recording"/> class.
     /// </summary>
     /// <param name="cardHandler">The card handler.</param>
     public Recorder(ITvCardHandler cardHandler)
     {
-			TvBusinessLayer layer = new TvBusinessLayer();
+      TvBusinessLayer layer = new TvBusinessLayer();
       _cardHandler = cardHandler;
-			_timeshiftingEpgGrabberEnabled = (layer.GetSetting("timeshiftingEpgGrabberEnabled", "no").Value == "yes");
+      _timeshiftingEpgGrabberEnabled = (layer.GetSetting("timeshiftingEpgGrabberEnabled", "no").Value == "yes");
     }
     /// <summary>
     /// Starts recording.
     /// </summary>
-    /// <param name="cardId">id of the card.</param>
+    /// <param name="user">User</param>
     /// <param name="fileName">Name of the recording file.</param>
     /// <param name="contentRecording">if true then create a content recording else a reference recording</param>
     /// <param name="startTime">not used</param>
@@ -74,32 +54,35 @@ namespace TvService
     {
       try
       {
-        if (_cardHandler.DataBaseCard.Enabled == false) return false;
-        
+        if (_cardHandler.DataBaseCard.Enabled == false)
+          return false;
+
         lock (this)
         {
-					try
-					{
-						RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-						if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return false;
+          try
+          {
+            RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
+            if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard))
+              return false;
 
-						if (_cardHandler.IsLocal == false)
-						{
-							return RemoteControl.Instance.StartRecording(ref user, ref fileName, contentRecording, startTime);
-						}
-					}
-					catch (Exception)
-					{
-						Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
-						return false;
-					}
+            if (_cardHandler.IsLocal == false)
+            {
+              return RemoteControl.Instance.StartRecording(ref user, ref fileName, contentRecording, startTime);
+            }
+          } catch (Exception)
+          {
+            Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+            return false;
+          }
 
           TvCardContext context = _cardHandler.Card.Context as TvCardContext;
-          if (context == null) return false;
+          if (context == null)
+            return false;
 
           context.GetUser(ref user);
           ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(user.SubChannel);
-          if (subchannel == null) return false;
+          if (subchannel == null)
+            return false;
           //gibman 
           // RecordingFormat 0 = ts
           // RecordingFormat 1 = mpeg
@@ -120,20 +103,19 @@ namespace TvService
             context.Owner = user;
           }
 
-					if (_timeshiftingEpgGrabberEnabled)
-					{
-						Channel channel = Channel.Retrieve(user.IdChannel);
-						if (channel.GrabEpg)
-							_cardHandler.Card.GrabEpg();
-						else
-							Log.Info("TimeshiftingEPG: channel {0} is not configured for grabbing epg", channel.DisplayName);
-					}
+          if (_timeshiftingEpgGrabberEnabled)
+          {
+            Channel channel = Channel.Retrieve(user.IdChannel);
+            if (channel.GrabEpg)
+              _cardHandler.Card.GrabEpg();
+            else
+              Log.Info("TimeshiftingEPG: channel {0} is not configured for grabbing epg", channel.DisplayName);
+          }
 
           return result;
 
         }
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Write(ex);
       }
@@ -143,39 +125,42 @@ namespace TvService
     /// <summary>
     /// Stops recording.
     /// </summary>
-    /// <param name="cardId">id of the card.</param>
+    /// <param name="user">User</param>
     /// <returns></returns>
     public bool Stop(ref User user)
     {
       try
       {
-        if (_cardHandler.DataBaseCard.Enabled == false) return false;        
+        if (_cardHandler.DataBaseCard.Enabled == false)
+          return false;
         Log.Write("card: StopRecording {0}", _cardHandler.DataBaseCard.IdCard);
         lock (this)
         {
-					try
-					{
-						RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-						if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return false;
-						
-						if (_cardHandler.IsLocal == false)
-						{           
-							return RemoteControl.Instance.StopRecording(ref user);                      
-						}
-					}
-					catch (Exception)
-					{
-						Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
-						return false;
-					}
+          try
+          {
+            RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
+            if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard))
+              return false;
+
+            if (_cardHandler.IsLocal == false)
+            {
+              return RemoteControl.Instance.StopRecording(ref user);
+            }
+          } catch (Exception)
+          {
+            Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+            return false;
+          }
           Log.Write("card: StopRecording for card:{0}", _cardHandler.DataBaseCard.IdCard);
           TvCardContext context = _cardHandler.Card.Context as TvCardContext;
-          if (context == null) return false;
+          if (context == null)
+            return false;
           if (IsRecording(ref user))
           {
             context.GetUser(ref user);
             ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(user.SubChannel);
-            if (subchannel == null) return false;
+            if (subchannel == null)
+              return false;
             subchannel.StopRecording();
             _cardHandler.Card.FreeSubChannel(user.SubChannel);
             if (subchannel.IsTimeShifting == false || context.Users.Length <= 1)
@@ -199,8 +184,7 @@ namespace TvService
           }
           return true;
         }
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Write(ex);
       }
@@ -208,28 +192,32 @@ namespace TvService
     }
 
 
-    
+
     public bool IsRecordingChannel(string channelName)
     {
       User[] users = _cardHandler.Users.GetUsers();
-      if (users == null) return false;
-      if (users.Length == 0) return false;
+      if (users == null)
+        return false;
+      if (users.Length == 0)
+        return false;
 
       for (int i = 0; i < users.Length; ++i)
       {
         User user = users[i];
-        if (!user.IsAdmin) continue;
-        if (_cardHandler.CurrentChannelName(ref user) == null) continue;
+        if (!user.IsAdmin)
+          continue;
+        if (_cardHandler.CurrentChannelName(ref user) == null)
+          continue;
         if (_cardHandler.CurrentChannelName(ref user) == channelName)
         {
           if (_cardHandler.Recorder.IsRecording(ref user))
-          {            
+          {
             return true;
           }
         }
       }
       return false;
-    }    
+    }
 
     /// <summary>
     /// Gets a value indicating whether this card is recording.
@@ -242,73 +230,82 @@ namespace TvService
       get
       {
         User[] users = _cardHandler.Users.GetUsers();
-        if (users == null) return false;
-        if (users.Length == 0) return false;
+        if (users == null)
+          return false;
+        if (users.Length == 0)
+          return false;
         for (int i = 0; i < users.Length; ++i)
         {
           User user = users[i];
-          if (IsRecording(ref user)) return true;
+          if (IsRecording(ref user))
+            return true;
         }
         return false;
       }
     }
 
-    public bool IsRecordingAnyUser ()
+    public bool IsRecordingAnyUser()
     {
       User[] users = _cardHandler.Users.GetUsers();
-      if (users == null) return false;
-      if (users.Length == 0) return false;
+      if (users == null)
+        return false;
+      if (users.Length == 0)
+        return false;
 
       for (int i = 0; i < users.Length; ++i)
       {
         User user = users[i];
-        if (!user.IsAdmin) continue;
-        if (_cardHandler.CurrentChannelName(ref user) == null) continue;
-        
+        if (!user.IsAdmin)
+          continue;
+        if (_cardHandler.CurrentChannelName(ref user) == null)
+          continue;
+
         if (_cardHandler.Recorder.IsRecording(ref user))
         {
           return true;
         }
-        
+
       }
       return false;
-    }    
+    }
 
     /// <summary>
     /// Returns if the card is recording or not
     /// </summary>
-    /// <param name="cardId">id of the card.</param>
+    /// <param name="user">User</param>
     /// <returns>true when card is recording otherwise false</returns>
     public bool IsRecording(ref User user)
     {
       try
       {
-        if (_cardHandler.DataBaseCard.Enabled == false) return false;
+        if (_cardHandler.DataBaseCard.Enabled == false)
+          return false;
 
-				try
-				{
-					RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-					if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return false;
+        try
+        {
+          RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
+          if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard))
+            return false;
 
-					if (_cardHandler.IsLocal == false)
-					{
-						return RemoteControl.Instance.IsRecording(ref user);
-					}
-				}
-				catch (Exception)
-				{
-					Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
-					return false;
-				}
+          if (_cardHandler.IsLocal == false)
+          {
+            return RemoteControl.Instance.IsRecording(ref user);
+          }
+        } catch (Exception)
+        {
+          Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+          return false;
+        }
 
         TvCardContext context = _cardHandler.Card.Context as TvCardContext;
-        if (context == null) return false;
+        if (context == null)
+          return false;
         context.GetUser(ref user);
         ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(user.SubChannel);
-        if (subchannel == null) return false;
+        if (subchannel == null)
+          return false;
         return subchannel.IsRecording;
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Write(ex);
         return false;
@@ -318,38 +315,40 @@ namespace TvService
     /// <summary>
     /// Returns the current filename used for recording
     /// </summary>
-    /// <param name="cardId">id of the card.</param>
+    /// <param name="user">User</param>
     /// <returns>filename or null when not recording</returns>
     public string FileName(ref User user)
     {
       try
       {
-        if (_cardHandler.DataBaseCard.Enabled == false) return "";
+        if (_cardHandler.DataBaseCard.Enabled == false)
+          return "";
 
-				try
-				{
-					RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-					if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return "";
+        try
+        {
+          RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
+          if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard))
+            return "";
 
-					if (_cardHandler.IsLocal == false)
-					{
-						return RemoteControl.Instance.RecordingFileName(ref user);
-					}
-				}
-				catch (Exception)
-				{
-					Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
-					return "";
-				}
+          if (_cardHandler.IsLocal == false)
+          {
+            return RemoteControl.Instance.RecordingFileName(ref user);
+          }
+        } catch (Exception)
+        {
+          Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+          return "";
+        }
 
         TvCardContext context = _cardHandler.Card.Context as TvCardContext;
-        if (context == null) return null;
+        if (context == null)
+          return null;
         context.GetUser(ref user);
         ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(user.SubChannel);
-        if (subchannel == null) return null;
+        if (subchannel == null)
+          return null;
         return subchannel.RecordingFileName;
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Write(ex);
         return "";
@@ -359,36 +358,38 @@ namespace TvService
     /// <summary>
     /// returns the date/time when recording has been started for the card specified
     /// </summary>
-    /// <param name="cardId">id of the card.</param>
+    /// <param name="user">User</param>
     /// <returns>DateTime containg the date/time when recording was started</returns>
     public DateTime RecordingStarted(User user)
     {
       try
       {
-        if (_cardHandler.DataBaseCard.Enabled == false) return DateTime.MinValue;
-				try
-				{
-					RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-					if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return DateTime.MinValue;
-					if (_cardHandler.IsLocal == false)
-					{						
-						return RemoteControl.Instance.RecordingStarted(user);												
-					}
-				}
-				catch (Exception)
-				{
-					Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
-					return DateTime.MinValue;
-				}
+        if (_cardHandler.DataBaseCard.Enabled == false)
+          return DateTime.MinValue;
+        try
+        {
+          RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
+          if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard))
+            return DateTime.MinValue;
+          if (_cardHandler.IsLocal == false)
+          {
+            return RemoteControl.Instance.RecordingStarted(user);
+          }
+        } catch (Exception)
+        {
+          Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+          return DateTime.MinValue;
+        }
 
         TvCardContext context = _cardHandler.Card.Context as TvCardContext;
-        if (context == null) return DateTime.MinValue;
+        if (context == null)
+          return DateTime.MinValue;
         context.GetUser(ref user);
         ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(user.SubChannel);
-        if (subchannel == null) return DateTime.MinValue;
+        if (subchannel == null)
+          return DateTime.MinValue;
         return subchannel.RecordingStarted;
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Write(ex);
         return DateTime.MinValue;

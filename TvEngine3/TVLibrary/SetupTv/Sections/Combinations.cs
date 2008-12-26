@@ -21,24 +21,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Globalization;
-using System.Drawing;
-using System.Text;
-using System.Xml;
 using System.Windows.Forms;
 using TvControl;
-using DirectShowLib;
-
-using Gentle.Common;
 using Gentle.Framework;
-using DirectShowLib.BDA;
 using TvDatabase;
 using TvLibrary;
-using TvLibrary.Log;
 using TvLibrary.Interfaces;
-using TvLibrary.Implementations;
-using TvLibrary.Channels;
 using similaritymetrics;
 using MediaPortal.UserInterface.Controls;
 
@@ -65,14 +53,14 @@ namespace SetupTv.Sections
 
       public override string ToString()
       {
-        return _card.Name.ToString();
+        return _card.Name;
       }
     }
-    private MPListViewStringColumnSorter lvwColumnSorter;
-    private MPListViewStringColumnSorter lvwColumnSorter2;
-    private MPListViewStringColumnSorter lvwColumnSorter3;
 
-    bool _redrawTab1 = false;
+    private readonly MPListViewStringColumnSorter lvwColumnSorter2;
+    private readonly MPListViewStringColumnSorter lvwColumnSorter3;
+
+    bool _redrawTab1;
     public TvCombinations()
       : this("Combinations")
     {
@@ -87,8 +75,8 @@ namespace SetupTv.Sections
       lvwColumnSorter3 = new MPListViewStringColumnSorter();
       lvwColumnSorter2.Order = SortOrder.Descending;
       lvwColumnSorter2.OrderType = MPListViewStringColumnSorter.OrderTypes.AsValue;
-      this.mpListViewMapped.ListViewItemSorter = lvwColumnSorter2;
-      this.mpListViewChannels.ListViewItemSorter = lvwColumnSorter3;
+      mpListViewMapped.ListViewItemSorter = lvwColumnSorter2;
+      mpListViewChannels.ListViewItemSorter = lvwColumnSorter3;
 
     }
 
@@ -111,7 +99,6 @@ namespace SetupTv.Sections
       }
       mpComboBoxCard.SelectedIndex = 0;
 
-      CountryCollection countries = new CountryCollection();
       Dictionary<int, CardType> cards = new Dictionary<int, CardType>();
 
       foreach (Card card in dbsCards)
@@ -120,16 +107,11 @@ namespace SetupTv.Sections
       }
       base.OnSectionActivated();
 
-      
+
     }
 
-    
+
     private void TvCombinations_Load(object sender, EventArgs e)
-    {
-
-    }
-
-    private void mpButtonUnmap_Click(object sender, EventArgs e)
     {
 
     }
@@ -142,8 +124,6 @@ namespace SetupTv.Sections
 
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
       sb.AddOrderByField(true, "sortOrder");
-      SqlStatement stmt = sb.GetStatement(true);
-      IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
 
       Card card = ((CardInfo)mpComboBoxCard.SelectedItem).Card;
       IList maps = card.ReferringChannelMap();
@@ -156,13 +136,13 @@ namespace SetupTv.Sections
         try
         {
           channel = map.ReferencedChannel();
-        }
-        catch (Exception)
+        } catch (Exception)
         {
         }
         if (channel == null)
           continue;
-        if (channel.IsTv == false) continue;
+        if (channel.IsTv == false)
+          continue;
         int imageIndex = 1;
         if (channel.FreeToAir == false)
           imageIndex = 2;
@@ -178,8 +158,10 @@ namespace SetupTv.Sections
     private void mpListViewChannels_SelectedIndexChanged(object sender, EventArgs e)
     {
       mpListViewMapped.Items.Clear();
-      if (mpListViewChannels.SelectedIndices == null) return;
-      if (mpListViewChannels.SelectedIndices.Count != 1) return;
+      if (mpListViewChannels.SelectedIndices == null)
+        return;
+      if (mpListViewChannels.SelectedIndices.Count != 1)
+        return;
       Card card = ((CardInfo)mpComboBoxCard.SelectedItem).Card;
       ListViewItem selectedItem = mpListViewChannels.Items[mpListViewChannels.SelectedIndices[0]];
       Channel selectedChannel = (Channel)selectedItem.Tag;
@@ -190,7 +172,8 @@ namespace SetupTv.Sections
       dlg.WaitForDisplay();
       foreach (Channel channel in allChannels)
       {
-        if (channel.IsTv == false) continue;
+        if (channel.IsTv == false)
+          continue;
         IList details = channel.ReferringTuningDetail();
         if (details != null)
         {
@@ -211,7 +194,8 @@ namespace SetupTv.Sections
             break;
           }
         }
-        if (isMapped) continue;
+        if (isMapped)
+          continue;
         Levenstein comparer = new Levenstein();
         float result = comparer.getSimilarity(selectedChannel.DisplayName, channel.DisplayName);
 
@@ -231,13 +215,15 @@ namespace SetupTv.Sections
 
     private void btnCombine_Click(object sender, EventArgs e)
     {
-      if (mpListViewChannels.SelectedIndices == null) return;
-      if (mpListViewChannels.SelectedIndices.Count != 1) return;
-      if (mpListViewMapped.SelectedIndices == null) return;
-      if (mpListViewMapped.SelectedIndices.Count != 1) return;
+      if (mpListViewChannels.SelectedIndices == null)
+        return;
+      if (mpListViewChannels.SelectedIndices.Count != 1)
+        return;
+      if (mpListViewMapped.SelectedIndices == null)
+        return;
+      if (mpListViewMapped.SelectedIndices.Count != 1)
+        return;
 
-
-      Card card = ((CardInfo)mpComboBoxCard.SelectedItem).Card;
 
       ListViewItem selectedItem = mpListViewChannels.Items[mpListViewChannels.SelectedIndices[0]];
       Channel selectedChannel = (Channel)selectedItem.Tag;
@@ -245,7 +231,6 @@ namespace SetupTv.Sections
       ListViewItem selectedItem2 = mpListViewMapped.Items[mpListViewMapped.SelectedIndices[0]];
       Channel selectedChannel2 = (Channel)selectedItem2.Tag;
 
-      TvBusinessLayer layer = new TvBusinessLayer();
       NotifyForm dlg = new NotifyForm("Combining Channels...", "Updating TuningDetail Table\n\nPlease be patient...");
       dlg.Show();
       dlg.WaitForDisplay();
@@ -327,14 +312,7 @@ namespace SetupTv.Sections
       if (e.Column == lvwColumnSorter3.SortColumn)
       {
         // Reverse the current sort direction for this column.
-        if (lvwColumnSorter3.Order == SortOrder.Ascending)
-        {
-          lvwColumnSorter3.Order = SortOrder.Descending;
-        }
-        else
-        {
-          lvwColumnSorter3.Order = SortOrder.Ascending;
-        }
+        lvwColumnSorter3.Order = lvwColumnSorter3.Order == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
       }
       else
       {
@@ -344,7 +322,7 @@ namespace SetupTv.Sections
       }
 
       // Perform the sort with these new sort options.
-      this.mpListViewChannels.Sort();
+      mpListViewChannels.Sort();
     }
 
     private void mpListViewMapped_ColumnClick(object sender, ColumnClickEventArgs e)
@@ -352,14 +330,7 @@ namespace SetupTv.Sections
       if (e.Column == lvwColumnSorter2.SortColumn)
       {
         // Reverse the current sort direction for this column.
-        if (lvwColumnSorter2.Order == SortOrder.Ascending)
-        {
-          lvwColumnSorter2.Order = SortOrder.Descending;
-        }
-        else
-        {
-          lvwColumnSorter2.Order = SortOrder.Ascending;
-        }
+        lvwColumnSorter2.Order = lvwColumnSorter2.Order == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
       }
       else
       {
@@ -369,9 +340,9 @@ namespace SetupTv.Sections
       }
 
       // Perform the sort with these new sort options.
-      this.mpListViewMapped.Sort();
+      mpListViewMapped.Sort();
     }
   }
 }
 
- 	  	 
+

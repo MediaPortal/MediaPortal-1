@@ -19,13 +19,7 @@
  *
  */
 using System;
-using System.Collections.Generic;
-using System.Text;
-
-using TvLibrary.Log;
-
 using TvDatabase;
-using TvControl;
 
 namespace TvService
 {
@@ -35,15 +29,16 @@ namespace TvService
   public class RecordingDetail
   {
     #region variables
-    Schedule _schedule;
-    Channel _channel;
+
+    readonly Schedule _schedule;
+    readonly Channel _channel;
     string _fileName;
-    DateTime _endTime;
-    TvDatabase.Program _program;
+    readonly DateTime _endTime;
+    readonly TvDatabase.Program _program;
     CardDetail _cardInfo;
     DateTime _dateTimeRecordingStarted;
     Recording _recording;
-    bool _isSerie = false;
+    readonly bool _isSerie;
     #endregion
 
     #region ctor
@@ -54,7 +49,8 @@ namespace TvService
     /// <param name="channel">Channel on which the recording is done</param>
     /// <param name="endTime">Date/Time the recording should start without pre-record interval</param>
     /// <param name="endTime">Date/Time the recording should stop with post record interval</param>
-    public RecordingDetail(Schedule schedule, Channel channel, DateTime startTime, DateTime endTime, bool isSerie)
+    /// <param name="isSerie">Is serie recording</param>
+    public RecordingDetail(Schedule schedule, Channel channel, DateTime endTime, bool isSerie)
     {
       _schedule = schedule;
       _channel = channel;
@@ -210,7 +206,8 @@ namespace TvService
     {
       get
       {
-        if (DateTime.Now >= EndTime.AddMinutes(_schedule.PostRecordInterval)) return false;
+        if (DateTime.Now >= EndTime.AddMinutes(_schedule.PostRecordInterval))
+          return false;
         return true;
       }
     }
@@ -232,16 +229,8 @@ namespace TvService
     /// <param name="recordingPath"></param>
     public void MakeFileName(string recordingPath)
     {
-      Setting setting;
       TvBusinessLayer layer = new TvBusinessLayer();
-      if (!_isSerie)
-      {
-        setting = layer.GetSetting("moviesformat", "%title%");
-      }
-      else
-      {
-        setting = layer.GetSetting("seriesformat", "%title%");
-      }
+      Setting setting = !_isSerie ? layer.GetSetting("moviesformat", "%title%") : layer.GetSetting("seriesformat", "%title%");
       string strInput = "title%";
       if (setting != null)
       {
@@ -250,12 +239,10 @@ namespace TvService
           strInput = setting.Value;
         }
       }
-      string recFileFormat = string.Empty;
-      string recDirFormat = string.Empty;
       string subDirectory = string.Empty;
       string fullPath = recordingPath;
-      string fileName = string.Empty;
-      string recEngineExt = ".mpg";
+      string fileName;
+      const string recEngineExt = ".mpg";
 
       strInput = Utils.ReplaceTag(strInput, "%channel%", Utils.MakeFileName(_schedule.ReferencedChannel().DisplayName), "unknown");
       strInput = Utils.ReplaceTag(strInput, "%title%", Utils.MakeFileName(Program.Title), "unknown");
@@ -310,9 +297,9 @@ namespace TvService
       if (DoesFileExist(fullPath + "\\" + fileName))
       {
         int i = 1;
-        while (DoesFileExist(fullPath + "\\" + fileName + "_" + i.ToString()))
+        while (DoesFileExist(fullPath + "\\" + fileName + "_" + i))
           ++i;
-        fileName += "_" + i.ToString();
+        fileName += "_" + i;
       }
       _fileName = fullPath + "\\" + fileName + recEngineExt;
     }
@@ -323,10 +310,12 @@ namespace TvService
     /// </summary>
     /// <param name="fileName">full path and filename expect the extension.</param>
     /// <returns>true if file exists, otherwise false</returns>
-    bool DoesFileExist(string fileName)
+    static bool DoesFileExist(string fileName)
     {
-      if (System.IO.File.Exists(fileName + ".mpg")) return true;
-      if (System.IO.File.Exists(fileName + ".ts")) return true;
+      if (System.IO.File.Exists(fileName + ".mpg"))
+        return true;
+      if (System.IO.File.Exists(fileName + ".ts"))
+        return true;
       return false;
     }
     #endregion

@@ -19,10 +19,7 @@
  *
  */
 using System;
-using System.Collections.Generic;
-using System.Text;
 using DirectShowLib.BDA;
-using TvLibrary.Interfaces;
 
 namespace TvLibrary.Channels
 {
@@ -38,7 +35,7 @@ namespace TvLibrary.Channels
     #endregion
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="T:DVBCChannel"/> class.
+    /// Initializes a new instance of the <see cref="DVBCChannel"/> class.
     /// </summary>
     public DVBCChannel()
     {
@@ -100,11 +97,15 @@ namespace TvLibrary.Channels
     /// </returns>
     public override bool Equals(object obj)
     {
-      if ((obj as DVBCChannel) == null) return false;
-      if (!base.Equals(obj)) return false;
+      if ((obj as DVBCChannel) == null)
+        return false;
+      if (!base.Equals(obj))
+        return false;
       DVBCChannel ch = obj as DVBCChannel;
-      if (ch.ModulationType != ModulationType) return false;
-      if (ch.SymbolRate != SymbolRate) return false;
+      if (ch.ModulationType != ModulationType)
+        return false;
+      if (ch.SymbolRate != SymbolRate)
+        return false;
 
       return true;
     }
@@ -116,7 +117,7 @@ namespace TvLibrary.Channels
     /// </returns>
     public override int GetHashCode()
     {
-      return base.GetHashCode() ^ _modulation.GetHashCode() ^ _symbolRate.GetHashCode() ;
+      return base.GetHashCode() ^ _modulation.GetHashCode() ^ _symbolRate.GetHashCode();
     }
   }
 }

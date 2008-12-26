@@ -19,11 +19,7 @@
  *
  */
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using System.Threading;
 using DirectShowLib;
@@ -39,9 +35,9 @@ namespace SetupTv.Sections
 {
   public partial class CardAnalog : SectionSettings
   {
-    int _cardNumber;
-    bool _isScanning = false;
-    bool _stopScanning = false;
+    readonly int _cardNumber;
+    bool _isScanning;
+    bool _stopScanning;
     string _cardName;
     string _devicePath;
     Configuration _configuration;
@@ -91,8 +87,8 @@ namespace SetupTv.Sections
       mpComboBoxSensitivity.SelectedIndex = 1;
       UpdateStatus();
       TvBusinessLayer layer = new TvBusinessLayer();
-      mpComboBoxCountry.SelectedIndex = Int32.Parse(layer.GetSetting("analog" + _cardNumber.ToString() + "Country", "0").Value);
-      mpComboBoxSource.SelectedIndex = Int32.Parse(layer.GetSetting("analog" + _cardNumber.ToString() + "Source", "0").Value);
+      mpComboBoxCountry.SelectedIndex = Int32.Parse(layer.GetSetting("analog" + _cardNumber + "Country", "0").Value);
+      mpComboBoxSource.SelectedIndex = Int32.Parse(layer.GetSetting("analog" + _cardNumber + "Source", "0").Value);
       if (String.IsNullOrEmpty(_cardName) || String.IsNullOrEmpty(_devicePath))
       {
         _configuration = Configuration.readConfiguration(_cardNumber, _cardName, _devicePath);
@@ -181,11 +177,10 @@ namespace SetupTv.Sections
     {
       base.OnSectionDeActivated();
       TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting;
-      setting = layer.GetSetting("analog" + _cardNumber.ToString() + "Country", "0");
+      Setting setting = layer.GetSetting("analog" + _cardNumber + "Country", "0");
       setting.Value = mpComboBoxCountry.SelectedIndex.ToString();
       setting.Persist();
-      setting = layer.GetSetting("analog" + _cardNumber.ToString() + "Source", "0");
+      setting = layer.GetSetting("analog" + _cardNumber + "Source", "0");
       setting.Value = mpComboBoxSource.SelectedIndex.ToString();
       setting.Persist();
       UpdateConfiguration();
@@ -282,7 +277,7 @@ namespace SetupTv.Sections
           MessageBox.Show(this, "Card is disabled, please enable the card before scanning");
           return;
         }
-        else if (!RemoteControl.Instance.CardPresent(card.IdCard))
+        if (!RemoteControl.Instance.CardPresent(card.IdCard))
         {
           MessageBox.Show(this, "Card is not found, please make sure card is present before scanning");
           return;
@@ -294,7 +289,7 @@ namespace SetupTv.Sections
           MessageBox.Show(this, "Card is locked. Scanning not possible at the moment ! Perhaps you are scanning an other part of a hybrid card.");
           return;
         }
-        Thread scanThread = new Thread(new ThreadStart(DoTvScan));
+        Thread scanThread = new Thread(DoTvScan);
         scanThread.Name = "Analog TV scan thread";
         scanThread.Start();
       }
@@ -332,10 +327,7 @@ namespace SetupTv.Sections
         int maxChannel = RemoteControl.Instance.MaxChannel(_cardNumber);
         if (maxChannel < 0)
         {
-          if (mpComboBoxSource.SelectedIndex == 0)
-            maxChannel = 69;
-          else
-            maxChannel = 125;
+          maxChannel = mpComboBoxSource.SelectedIndex == 0 ? 69 : 125;
         }
         if (minChannel < 0)
           minChannel = 1;
@@ -352,15 +344,12 @@ namespace SetupTv.Sections
             percent = 0f;
           progressBar1.Value = (int)percent;
           AnalogChannel channel = new AnalogChannel();
-          if (mpComboBoxSource.SelectedIndex == 0)
-            channel.TunerSource = TunerInputType.Antenna;
-          else
-            channel.TunerSource = TunerInputType.Cable;
+          channel.TunerSource = mpComboBoxSource.SelectedIndex == 0 ? TunerInputType.Antenna : TunerInputType.Cable;
           channel.Country = countries.Countries[mpComboBoxCountry.SelectedIndex];
           channel.ChannelNumber = channelNr;
           channel.IsTv = true;
           channel.IsRadio = false;
-          string line = String.Format("channel:{0} source:{1} ", channel.ChannelNumber, mpComboBoxSource.SelectedItem.ToString());
+          string line = String.Format("channel:{0} source:{1} ", channel.ChannelNumber, mpComboBoxSource.SelectedItem);
           ListViewItem item = mpListView1.Items.Add(new ListViewItem(line));
           item.EnsureVisible();
 
@@ -370,18 +359,15 @@ namespace SetupTv.Sections
           {
             if (RemoteControl.Instance.TunerLocked(_cardNumber) == false)
             {
-              line = String.Format("channel:{0} source:{1} : No Signal", channel.ChannelNumber, mpComboBoxSource.SelectedItem.ToString());
+              line = String.Format("channel:{0} source:{1} : No Signal", channel.ChannelNumber, mpComboBoxSource.SelectedItem);
               item.Text = line;
               item.ForeColor = Color.Red;
               continue;
             }
-            else
-            {
-              line = String.Format("channel:{0} source:{1} : Nothing found", channel.ChannelNumber, mpComboBoxSource.SelectedItem.ToString());
-              item.Text = line;
-              item.ForeColor = Color.Red;
-              continue;
-            }
+            line = String.Format("channel:{0} source:{1} : Nothing found", channel.ChannelNumber, mpComboBoxSource.SelectedItem);
+            item.Text = line;
+            item.ForeColor = Color.Red;
+            continue;
           }
           bool exists = false;
           channel = (AnalogChannel)channels[0];
@@ -414,12 +400,12 @@ namespace SetupTv.Sections
           layer.AddChannelToGroup(dbChannel, "Analog");
           if (exists)
           {
-            line = String.Format("channel:{0} source:{1} : Channel update found - {2}", channel.ChannelNumber, mpComboBoxSource.SelectedItem.ToString(), channel.Name);
+            line = String.Format("channel:{0} source:{1} : Channel update found - {2}", channel.ChannelNumber, mpComboBoxSource.SelectedItem, channel.Name);
             channelsUpdated++;
           }
           else
           {
-            line = String.Format("channel:{0} source:{1} : New channel found - {2}", channel.ChannelNumber, mpComboBoxSource.SelectedItem.ToString(), channel.Name);
+            line = String.Format("channel:{0} source:{1} : New channel found - {2}", channel.ChannelNumber, mpComboBoxSource.SelectedItem, channel.Name);
             channelsNew++;
           }
           item.Text = line;
@@ -440,8 +426,7 @@ namespace SetupTv.Sections
         _isScanning = false;
         checkButton.Enabled = true;
       }
-      ListViewItem lastItem = mpListView1.Items.Add(new ListViewItem("Scan done..."));
-      lastItem = mpListView1.Items.Add(new ListViewItem(String.Format("Total tv channels new:{0} updated:{1}", channelsNew, channelsUpdated)));
+      ListViewItem lastItem = mpListView1.Items.Add(new ListViewItem(String.Format("Total tv channels new:{0} updated:{1}", channelsNew, channelsUpdated)));
       lastItem.EnsureVisible();
 
     }
@@ -457,7 +442,7 @@ namespace SetupTv.Sections
           MessageBox.Show(this, "Card is disabled, please enable the card before scanning");
           return;
         }
-        else if (!RemoteControl.Instance.CardPresent(card.IdCard))
+        if (!RemoteControl.Instance.CardPresent(card.IdCard))
         {
           MessageBox.Show(this, "Card is not found, please make sure card is present before scanning");
           return;
@@ -477,7 +462,7 @@ namespace SetupTv.Sections
           MessageBox.Show(this, "The Tv Card does not support radio");
           return;
         }
-        Thread scanThread = new Thread(new ThreadStart(DoRadioScan));
+        Thread scanThread = new Thread(DoRadioScan);
         scanThread.Name = "Analog Radio scan thread";
         scanThread.Start();
       }
@@ -489,14 +474,14 @@ namespace SetupTv.Sections
 
     int SignalStrength(int sensitivity)
     {
-      int i = 0;
+      int i;
       for (i = 0; i < sensitivity * 2; i++)
       {
         if (!RemoteControl.Instance.TunerLocked(_cardNumber))
         {
           break;
         }
-        System.Threading.Thread.Sleep(50);
+        Thread.Sleep(50);
       }
       return ((i * 50) / sensitivity);
     }
@@ -540,17 +525,14 @@ namespace SetupTv.Sections
         {
           if (_stopScanning)
             return;
-          float percent = ((float)(freq - 87500000)) / (108000000f - 87500000f);
+          float percent = ((freq - 87500000)) / (108000000f - 87500000f);
           percent *= 100f;
           if (percent > 100f)
             percent = 100f;
           progressBar1.Value = (int)percent;
           AnalogChannel channel = new AnalogChannel();
           channel.IsRadio = true;
-          if (mpComboBoxSource.SelectedIndex == 0)
-            channel.TunerSource = TunerInputType.Antenna;
-          else
-            channel.TunerSource = TunerInputType.Cable;
+          channel.TunerSource = mpComboBoxSource.SelectedIndex == 0 ? TunerInputType.Antenna : TunerInputType.Cable;
           channel.Country = countries.Countries[mpComboBoxCountry.SelectedIndex];
           channel.Frequency = freq;
           channel.IsTv = false;
@@ -564,7 +546,7 @@ namespace SetupTv.Sections
           user.CardId = _cardNumber;
           RemoteControl.Instance.Tune(ref user, channel, -1);
           UpdateStatus();
-          System.Threading.Thread.Sleep(2000);
+          Thread.Sleep(2000);
           if (SignalStrength(sensitivity) == 100)
           {
             channel.Name = String.Format("{0}", freq);
@@ -572,13 +554,13 @@ namespace SetupTv.Sections
             if (dbChannel != null)
             {
               dbChannel.Name = channel.Name;
-              line = String.Format("frequence:{0} MHz : Channel update found - {2}", freqMHz.ToString("f2"), channel.Name);
+              line = String.Format("frequence:{0} MHz : Channel update found - {1}", freqMHz.ToString("f2"), channel.Name);
               channelsUpdated++;
             }
             else
             {
               dbChannel = layer.AddNewChannel(channel.Name);
-              line = String.Format("frequence:{0} MHz : New channel found - {2}", freqMHz.ToString("f2"), channel.Name);
+              line = String.Format("frequence:{0} MHz : New channel found - {1}", freqMHz.ToString("f2"), channel.Name);
               channelsNew++;
             }
             item.Text = line;
@@ -618,8 +600,7 @@ namespace SetupTv.Sections
         mpComboBoxSensitivity.Enabled = true;
         _isScanning = false;
       }
-      ListViewItem lastItem = mpListView1.Items.Add(new ListViewItem("Scan done..."));
-      lastItem = mpListView1.Items.Add(new ListViewItem(String.Format("Total radio channels new:{0} updated:{1}", channelsNew, channelsUpdated)));
+      ListViewItem lastItem = mpListView1.Items.Add(new ListViewItem(String.Format("Total radio channels new:{0} updated:{1}", channelsNew, channelsUpdated)));
       lastItem.EnsureVisible();
 
     }
@@ -628,7 +609,7 @@ namespace SetupTv.Sections
     {
       TvBusinessLayer layer = new TvBusinessLayer();
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
-      Channel dbChannel = layer.AddChannel("", "CVBS#1 on " + card.IdCard.ToString());
+      Channel dbChannel = layer.AddChannel("", "CVBS#1 on " + card.IdCard);
       dbChannel.IsTv = true;
       dbChannel.Persist();
       AnalogChannel tuningDetail = new AnalogChannel();
@@ -637,7 +618,7 @@ namespace SetupTv.Sections
       tuningDetail.VideoSource = AnalogChannel.VideoInputType.VideoInput1;
       layer.AddTuningDetails(dbChannel, tuningDetail);
       layer.MapChannelToCard(card, dbChannel, false);
-      dbChannel = layer.AddChannel("", "CVBS#2 on " + card.IdCard.ToString());
+      dbChannel = layer.AddChannel("", "CVBS#2 on " + card.IdCard);
       dbChannel.IsTv = true;
       dbChannel.Persist();
       tuningDetail = new AnalogChannel();
@@ -646,7 +627,7 @@ namespace SetupTv.Sections
       tuningDetail.VideoSource = AnalogChannel.VideoInputType.VideoInput2;
       layer.AddTuningDetails(dbChannel, tuningDetail);
       layer.MapChannelToCard(card, dbChannel, false);
-      dbChannel = layer.AddChannel("", "CVBS#3 on " + card.IdCard.ToString());
+      dbChannel = layer.AddChannel("", "CVBS#3 on " + card.IdCard);
       dbChannel.IsTv = true;
       dbChannel.Persist();
       tuningDetail = new AnalogChannel();
@@ -655,7 +636,7 @@ namespace SetupTv.Sections
       tuningDetail.VideoSource = AnalogChannel.VideoInputType.VideoInput3;
       layer.AddTuningDetails(dbChannel, tuningDetail);
       layer.MapChannelToCard(card, dbChannel, false);
-      dbChannel = layer.AddChannel("", "S-Video#1 on " + card.IdCard.ToString());
+      dbChannel = layer.AddChannel("", "S-Video#1 on " + card.IdCard);
       dbChannel.IsTv = true;
       dbChannel.Persist();
       tuningDetail = new AnalogChannel();
@@ -664,7 +645,7 @@ namespace SetupTv.Sections
       tuningDetail.VideoSource = AnalogChannel.VideoInputType.SvhsInput1;
       layer.AddTuningDetails(dbChannel, tuningDetail);
       layer.MapChannelToCard(card, dbChannel, false);
-      dbChannel = layer.AddChannel("", "S-Video#2 on " + card.IdCard.ToString());
+      dbChannel = layer.AddChannel("", "S-Video#2 on " + card.IdCard);
       dbChannel.IsTv = true;
       dbChannel.Persist();
       tuningDetail = new AnalogChannel();
@@ -673,7 +654,7 @@ namespace SetupTv.Sections
       tuningDetail.VideoSource = AnalogChannel.VideoInputType.SvhsInput2;
       layer.AddTuningDetails(dbChannel, tuningDetail);
       layer.MapChannelToCard(card, dbChannel, false);
-      dbChannel = layer.AddChannel("", "S-VideoS#3 on " + card.IdCard.ToString());
+      dbChannel = layer.AddChannel("", "S-VideoS#3 on " + card.IdCard);
       dbChannel.IsTv = true;
       dbChannel.Persist();
       tuningDetail = new AnalogChannel();
@@ -682,7 +663,7 @@ namespace SetupTv.Sections
       tuningDetail.VideoSource = AnalogChannel.VideoInputType.SvhsInput3;
       layer.AddTuningDetails(dbChannel, tuningDetail);
       layer.MapChannelToCard(card, dbChannel, false);
-      dbChannel = layer.AddChannel("", "RGB#1 on " + card.IdCard.ToString());
+      dbChannel = layer.AddChannel("", "RGB#1 on " + card.IdCard);
       dbChannel.IsTv = true;
       dbChannel.Persist();
       tuningDetail = new AnalogChannel();
@@ -691,7 +672,7 @@ namespace SetupTv.Sections
       tuningDetail.VideoSource = AnalogChannel.VideoInputType.RgbInput1;
       layer.AddTuningDetails(dbChannel, tuningDetail);
       layer.MapChannelToCard(card, dbChannel, false);
-      dbChannel = layer.AddChannel("", "RGB#2 on " + card.IdCard.ToString());
+      dbChannel = layer.AddChannel("", "RGB#2 on " + card.IdCard);
       dbChannel.IsTv = true;
       dbChannel.Persist();
       tuningDetail = new AnalogChannel();
@@ -700,7 +681,7 @@ namespace SetupTv.Sections
       tuningDetail.VideoSource = AnalogChannel.VideoInputType.RgbInput2;
       layer.AddTuningDetails(dbChannel, tuningDetail);
       layer.MapChannelToCard(card, dbChannel, false);
-      dbChannel = layer.AddChannel("", "RGB#3 on " + card.IdCard.ToString());
+      dbChannel = layer.AddChannel("", "RGB#3 on " + card.IdCard);
       dbChannel.IsTv = true;
       dbChannel.Persist();
       tuningDetail = new AnalogChannel();
@@ -742,14 +723,7 @@ namespace SetupTv.Sections
         {
           _cardName = RemoteControl.Instance.CardName(_cardNumber);
           _devicePath = RemoteControl.Instance.CardDevice(_cardNumber);
-          if (RemoteControl.Instance.SupportsBitRateModes(_cardNumber))
-          {
-            bitRateModeGroup.Enabled = true;
-          }
-          else
-          {
-            bitRateModeGroup.Enabled = false;
-          }
+          bitRateModeGroup.Enabled = RemoteControl.Instance.SupportsBitRateModes(_cardNumber);
           if (RemoteControl.Instance.SupportsPeakBitRateMode(_cardNumber))
           {
             vbrPeakPlayback.Enabled = true;

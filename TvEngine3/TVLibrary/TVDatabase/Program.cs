@@ -4,7 +4,6 @@
 //========================================================================
 using System;
 using System.Collections;
-using Gentle.Common;
 using Gentle.Framework;
 using TvLibrary.Log;
 
@@ -310,7 +309,7 @@ namespace TvDatabase
     {
       get
       {
-        return parentalRating; 
+        return parentalRating;
       }
       set
       {
@@ -367,8 +366,10 @@ namespace TvDatabase
 
       // execute the statement/query and create a collection of User instances from the result set
       IList result = ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
-      if (result == null) return null;      
-      if (result.Count == 0) return null;
+      if (result == null)
+        return null;
+      if (result.Count == 0)
+        return null;
       return (Program)result[0];
 
       // TODO In the end, a GentleList should be returned instead of an arraylist
@@ -403,6 +404,8 @@ namespace TvDatabase
     /// Retreives any current running Program given its Title , using pre and post recording times 
     /// </summary>
     /// <param name="title">Title we wanna look for</param>
+    /// <param name="preRec">Pre recording value</param>
+    /// <param name="postRec">Post recording value</param>
     /// <returns></returns>
     public static IList RetrieveCurrentRunningByTitle(string title, int preRec, int postRec)
     {
@@ -468,8 +471,7 @@ namespace TvDatabase
         try
         {
           base.Persist();
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
           Log.Error("Exception in Program.Persist() with Message {0}", ex.Message);
           return;
@@ -539,7 +541,8 @@ namespace TvDatabase
     public bool IsRunningAt(DateTime tCurTime)
     {
       bool bRunningAt = false;
-      if (tCurTime >= StartTime && tCurTime <= EndTime) bRunningAt = true;
+      if (tCurTime >= StartTime && tCurTime <= EndTime)
+        bRunningAt = true;
       return bRunningAt;
     }
 
@@ -549,9 +552,9 @@ namespace TvDatabase
       return p;
     }
 
-		public override string ToString()
-		{
-			return String.Format("{0}(ID:{1}) on {2} {3} - {4}", Title, idProgram, IdChannel, StartTime, EndTime);
-		}
+    public override string ToString()
+    {
+      return String.Format("{0}(ID:{1}) on {2} {3} - {4}", Title, idProgram, IdChannel, StartTime, EndTime);
+    }
   }
 }

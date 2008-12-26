@@ -19,8 +19,6 @@
  *
  */
 using System;
-using System.Collections.Generic;
-using System.Text;
 using TvLibrary.Interfaces;
 using DirectShowLib;
 
@@ -96,7 +94,7 @@ namespace TvLibrary.Implementations
     #region ctor
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="T:AnalogChannel"/> class.
+    /// Initializes a new instance of the <see cref="AnalogChannel"/> class.
     /// </summary>
     public AnalogChannel()
     {
@@ -242,17 +240,9 @@ namespace TvLibrary.Implementations
     /// </returns>
     public override string ToString()
     {
-      string line = "";
-      if (IsRadio)
-      {
-        line = "radio:";
-      }
-      else
-      {
-        line = "tv:";
-      }
+      string line = IsRadio ? "radio:" : "tv:";
       line += String.Format("{0} Freq:{1} Channel:{2} Country:{3} Tuner:{4} Video:{5}",
-        Name, Frequency, ChannelNumber, Country.Name, TunerSource,VideoSource);
+        Name, Frequency, ChannelNumber, Country.Name, TunerSource, VideoSource);
       return line;
     }
 
@@ -266,16 +256,25 @@ namespace TvLibrary.Implementations
     /// </returns>
     public override bool Equals(object obj)
     {
-      if ((obj as AnalogChannel) == null) return false;
+      if ((obj as AnalogChannel) == null)
+        return false;
       AnalogChannel ch = obj as AnalogChannel;
-      if (ch.VideoSource != VideoSource) return false;
-      if (ch.TunerSource != TunerSource) return false;
-      if (ch.Country.Id != Country.Id) return false;
-      if (ch.Name != Name) return false;
-      if (ch.Frequency != Frequency) return false;
-      if (ch.ChannelNumber != ChannelNumber) return false;
-      if (ch.IsRadio != IsRadio) return false;
-      if (ch.IsTv != IsTv) return false;
+      if (ch.VideoSource != VideoSource)
+        return false;
+      if (ch.TunerSource != TunerSource)
+        return false;
+      if (ch.Country.Id != Country.Id)
+        return false;
+      if (ch.Name != Name)
+        return false;
+      if (ch.Frequency != Frequency)
+        return false;
+      if (ch.ChannelNumber != ChannelNumber)
+        return false;
+      if (ch.IsRadio != IsRadio)
+        return false;
+      if (ch.IsTv != IsTv)
+        return false;
       return true;
     }
     /// <summary>

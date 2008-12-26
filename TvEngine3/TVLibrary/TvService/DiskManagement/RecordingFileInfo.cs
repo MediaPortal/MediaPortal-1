@@ -19,8 +19,6 @@
  *
  */
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.IO;
 
 using TvDatabase;
@@ -36,8 +34,10 @@ namespace TvService
 
     public int CompareTo(RecordingFileInfo fi)
     {
-      if (info.CreationTime < fi.info.CreationTime) return -1;
-      if (info.CreationTime > fi.info.CreationTime) return 1;
+      if (info.CreationTime < fi.info.CreationTime)
+        return -1;
+      if (info.CreationTime > fi.info.CreationTime)
+        return 1;
       return 0;
     }
 

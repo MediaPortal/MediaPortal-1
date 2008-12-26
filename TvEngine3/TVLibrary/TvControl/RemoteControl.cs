@@ -19,12 +19,7 @@
  *
  */
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.Remoting;
-using System.Runtime.Remoting.Channels;
-using System.Runtime.Remoting.Channels.Tcp;
-using TvControl;
 using TvLibrary.Log;
 // Reverted mantis #1409: using System.Collections;
 
@@ -71,26 +66,25 @@ namespace TvControl
           if (_tvControl != null)
             return _tvControl;
 
-// Reverted mantis #1409: 
-//#if !DEBUG //only use timeouts when (build=release)
-//          try
-//          {
-//            IDictionary t = new Hashtable();
-//            t.Add("timeout", _timeOut);
-//            TcpClientChannel clientChannel = new TcpClientChannel(t, null);
-//            ChannelServices.RegisterChannel(clientChannel);
-//          }
-//          catch (Exception e)
-//          {
-//            //Log.Debug("RemoteControl: could not set timeout on Remoting framework - {0}", e.Message);
-//            //ignore
-//          }
-//#endif          
+          // Reverted mantis #1409: 
+          //#if !DEBUG //only use timeouts when (build=release)
+          //          try
+          //          {
+          //            IDictionary t = new Hashtable();
+          //            t.Add("timeout", _timeOut);
+          //            TcpClientChannel clientChannel = new TcpClientChannel(t, null);
+          //            ChannelServices.RegisterChannel(clientChannel);
+          //          }
+          //          catch (Exception e)
+          //          {
+          //            //Log.Debug("RemoteControl: could not set timeout on Remoting framework - {0}", e.Message);
+          //            //ignore
+          //          }
+          //#endif          
           _tvControl = (IController)Activator.GetObject(typeof(IController), String.Format("tcp://{0}:31456/TvControl", _hostName));
           // int card = _tvControl.Cards;
           return _tvControl;
-        }
-        catch (RemotingTimeoutException exrt)
+        } catch (RemotingTimeoutException exrt)
         {
           try
           {
@@ -102,15 +96,16 @@ namespace TvControl
             return _tvControl;
 
           }
-          // didn't help - do nothing
-          catch (Exception)
+            // didn't help - do nothing
+          catch (Exception ex)
           {
+            Log.Error("RemoteControl: Error getting server Instance - {0}", ex.Message);
           }
         }
-        //   catch (RemotingException exr)
-        //   {
-        //     Log.Error("RemoteControl: Error getting server Instance - {0}", exr.Message);
-        //   }
+          //   catch (RemotingException exr)
+          //   {
+          //     Log.Error("RemoteControl: Error getting server Instance - {0}", exr.Message);
+          //   }
         catch (Exception exg)
         {
           Log.Error("RemoteControl: Error getting server Instance - {0}", exg.Message);
@@ -132,11 +127,12 @@ namespace TvControl
       {
         try
         {
-          int cards = RemoteControl.Instance.Cards;
-          return true;
-        }
-        catch (Exception)
+          int id = Instance.Cards;
+
+          return id >= 0;
+        } catch (Exception)
         {
+          Log.Error("RemoteControl - Error checking connection state");
         }
         return false;
       }

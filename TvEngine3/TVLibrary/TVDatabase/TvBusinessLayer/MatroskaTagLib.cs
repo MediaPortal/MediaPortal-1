@@ -21,9 +21,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Xml;
 using System.IO;
+using TvLibrary.Log;
+
 
 namespace TvDatabase
 {
@@ -68,20 +69,19 @@ namespace TvDatabase
     /// <summary>
     /// Searches a given path and its subdirectories for XML files and loads them into corresponding Matroska tags
     /// </summary>
-    /// <param name="aDirectory">The parent folder (of recordings)</param>
+    /// <param name="aLookupDirString">The parent folder (of recordings)</param>
     public static void GetAllMatroskaTags(object aLookupDirString)
     {
       Dictionary<string, MatroskaTagInfo> fileRecordings = new Dictionary<string, MatroskaTagInfo>();
       string aDirectory = aLookupDirString.ToString();
       try
       {
-        string[] importDirs = null;
+        string[] importDirs;
         // get all subdirectories
         try
         {
           importDirs = Directory.GetDirectories(aDirectory, "*", SearchOption.TopDirectoryOnly);
-        }
-        catch (Exception)
+        } catch (Exception)
         {
           importDirs = new string[] { aDirectory };
         }
@@ -101,16 +101,24 @@ namespace TvDatabase
             {
               try
               {
-                MatroskaTagInfo importTag = MatroskaTagHandler.ReadTag(recordingXml);
+                MatroskaTagInfo importTag = ReadTag(recordingXml);
                 fileRecordings[recordingXml] = importTag;
+              } catch (Exception ex)
+              {
+                Log.Info("Error while reading matroska informations in file: ", ex);
               }
-              catch (Exception) {}
             }
+          } catch (Exception ex)
+          {
+            Log.Info("Error while reading matroska informations in directory: ", ex);
+
           }
-          catch (Exception) {}
         }
+      } catch (Exception ex)
+      {
+        Log.Info("Error while reading all matroska informations : ", ex);
+
       }
-      catch (Exception) {}
       if (OnTagLookupCompleted != null)
         OnTagLookupCompleted(fileRecordings);
     }
@@ -128,25 +136,26 @@ namespace TvDatabase
       XmlDocument doc = new XmlDocument();
       doc.Load(filename);
       XmlNodeList simpleTags = doc.SelectNodes("/tags/tag/SimpleTag");
-      foreach (XmlNode simpleTag in simpleTags)
-      {
-        string tagName = simpleTag.ChildNodes[0].InnerText;
-        switch (tagName)
+      if (simpleTags != null)
+        foreach (XmlNode simpleTag in simpleTags)
         {
-          case "TITLE":
-            info.title = simpleTag.ChildNodes[1].InnerText;
-            break;
-          case "COMMENT":
-            info.description = simpleTag.ChildNodes[1].InnerText;
-            break;
-          case "GENRE":
-            info.genre = simpleTag.ChildNodes[1].InnerText;
-            break;
-          case "CHANNEL_NAME":
-            info.channelName = simpleTag.ChildNodes[1].InnerText;
-            break;
+          string tagName = simpleTag.ChildNodes[0].InnerText;
+          switch (tagName)
+          {
+            case "TITLE":
+              info.title = simpleTag.ChildNodes[1].InnerText;
+              break;
+            case "COMMENT":
+              info.description = simpleTag.ChildNodes[1].InnerText;
+              break;
+            case "GENRE":
+              info.genre = simpleTag.ChildNodes[1].InnerText;
+              break;
+            case "CHANNEL_NAME":
+              info.channelName = simpleTag.ChildNodes[1].InnerText;
+              break;
+          }
         }
-      }
       return info;
     }
 

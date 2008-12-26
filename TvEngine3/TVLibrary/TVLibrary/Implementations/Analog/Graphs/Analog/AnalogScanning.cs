@@ -20,13 +20,9 @@
  */
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Runtime.InteropServices;
 using System.Threading;
-using System.Windows.Forms;
 using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Analyzer;
-using DirectShowLib;
 
 namespace TvLibrary.Implementations.Analog
 {
@@ -35,14 +31,14 @@ namespace TvLibrary.Implementations.Analog
   /// </summary>
   public class AnalogScanning : ITVScanning, IAnalogChannelScanCallback
   {
-    TvCardAnalog _card;
-    long _previousFrequency = 0;
-    int _radioSensitivity = 1;
-    ManualResetEvent _event;
-    IAnalogChanelScan _scanner;
+    private readonly TvCardAnalog _card;
+    private long _previousFrequency;
+    private int _radioSensitivity = 1;
+    private ManualResetEvent _event;
+    private IAnalogChanelScan _scanner;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="T:AnalogScanning"/> class.
+    /// Initializes a new instance of the <see cref="AnalogScanning"/> class.
     /// </summary>
     /// <param name="card">The card.</param>
     public AnalogScanning(TvCardAnalog card)
@@ -101,13 +97,13 @@ namespace TvLibrary.Implementations.Analog
     public List<IChannel> Scan(IChannel channel, ScanParameters settings)
     {
       _card.IsScanning = true;
-      AnalogChannel analogChannel = (AnalogChannel)channel;
       _card.Tune(0, channel);
       if (_card.IsTunerLocked)
       {
         if (channel.IsTv)
         {
-          if (_card.VideoFrequency == _previousFrequency) return new List<IChannel>();
+          if (_card.VideoFrequency == _previousFrequency)
+            return new List<IChannel>();
           _previousFrequency = _card.VideoFrequency;
         }
 
@@ -145,7 +141,8 @@ namespace TvLibrary.Implementations.Analog
               for (int x = 0; x < channelName.Length; ++x)
               {
                 char k = channelName[x];
-                if (k < (char)32 || k > (char)127) break;
+                if (k < (char)32 || k > (char)127)
+                  break;
                 channel.Name += k.ToString();
               }
             }

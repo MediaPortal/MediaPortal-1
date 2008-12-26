@@ -19,31 +19,9 @@
  *
  */
 
-using System;
-using System.IO;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-using System.Net;
-using System.Net.Sockets;
-using DirectShowLib.SBE;
-using TvLibrary;
-using TvLibrary.Implementations;
 using TvLibrary.Interfaces;
-using TvLibrary.Implementations.Analog;
-using TvLibrary.Implementations.DVB;
-using TvLibrary.Implementations.Hybrid;
-using TvLibrary.Implementations.RadioWebStream;
-using TvLibrary.Channels;
-using TvLibrary.Epg;
-using TvLibrary.ChannelLinkage;
-using TvLibrary.Log;
-using TvLibrary.Streaming;
 using TvControl;
-using TvEngine;
 using TvDatabase;
-using TvEngine.Events;
 
 namespace TvService
 {

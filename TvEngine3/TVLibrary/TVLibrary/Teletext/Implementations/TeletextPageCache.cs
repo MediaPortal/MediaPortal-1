@@ -19,13 +19,12 @@
  *
  */
 using System;
-using System.Diagnostics;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Text;
 
 namespace TvLibrary.Teletext
 {
+  ///<summary>
+  /// Teletext page cache
+  ///</summary>
   public class TeletextPageCache : IDisposable
   {
     #region constants
@@ -34,17 +33,30 @@ namespace TvLibrary.Teletext
     #endregion
 
     #region delegates
+    /// <summary>
+    /// On Page updated event
+    /// </summary>
     public event PageEventHandler OnPageUpdated;
+    /// <summary>
+    /// On page added event
+    /// </summary>
     public event PageEventHandler OnPageAdded;
+    /// <summary>
+    /// On Page deleted event
+    /// </summary>
     public event PageEventHandler OnPageDeleted;
     #endregion
 
     #region variables
-    TeletextPage[] _pageCache = new TeletextPage[MAX_PAGE];
+
+    readonly TeletextPage[] _pageCache = new TeletextPage[MAX_PAGE];
     string _channelName = "";
     DateTime _checkTimer = DateTime.MinValue;
     #endregion
 
+    /// <summary>
+    /// Channel name
+    /// </summary>
     public string ChannelName
     {
       get
@@ -57,6 +69,9 @@ namespace TvLibrary.Teletext
       }
     }
 
+    /// <summary>
+    /// Clear the cache
+    /// </summary>
     public void Clear()
     {
       // free alloctated memory
@@ -71,55 +86,87 @@ namespace TvLibrary.Teletext
       _channelName = "";
     }
 
+    /// <summary>
+    /// Gets the number of subpages for the given page number
+    /// </summary>
+    /// <param name="pageNumber">Page number</param>
+    /// <returns>Number of sub pages</returns>
     public int NumberOfSubpages(int pageNumber)
     {
       if (pageNumber < MIN_PAGE || pageNumber >= MAX_PAGE)
         throw new ArgumentOutOfRangeException(String.Format("page is invalid:0x{0:X}", pageNumber));
 
-      if (_pageCache[pageNumber] == null) return -1;
+      if (_pageCache[pageNumber] == null)
+        return -1;
       return _pageCache[pageNumber].SubPageCount;
     }
 
+    /// <summary>
+    /// Checks, if the given page number is in the cache
+    /// </summary>
+    /// <param name="pageNumber">Page nubmer</param>
+    /// <returns>true, if the page is in the cache</returns>
     public bool PageExists(int pageNumber)
     {
       if (pageNumber < MIN_PAGE || pageNumber >= MAX_PAGE)
-        throw new ArgumentOutOfRangeException("page");
+        throw new ArgumentOutOfRangeException("pageNumber");
 
-      if (_pageCache[pageNumber] == null) return false;
+      if (_pageCache[pageNumber] == null)
+        return false;
       return true;
     }
 
+    /// <summary>
+    /// Gets the page, subpage 
+    /// </summary>
+    /// <param name="pageNumber">Page number</param>
+    /// <param name="subPageNumber">Subpage number</param>
+    /// <returns>Bytes of the page, subpage</returns>
     public byte[] GetPage(int pageNumber, int subPageNumber)
     {
       if (pageNumber < MIN_PAGE || pageNumber >= MAX_PAGE)
-        throw new ArgumentOutOfRangeException("page");
+        throw new ArgumentOutOfRangeException("pageNumber");
 
-      if (_pageCache[pageNumber] == null) return null;
-      if (subPageNumber > _pageCache[pageNumber].SubPageCount) return null;
-      return _pageCache[pageNumber].GetSubPage(subPageNumber);
+      if (_pageCache[pageNumber] == null)
+        return null;
+      return subPageNumber > _pageCache[pageNumber].SubPageCount ? null : _pageCache[pageNumber].GetSubPage(subPageNumber);
     }
 
 
-    //
-    // returns true if the page and the subpage exists
+    /// <summary>
+    /// Checks, if the sub page exists
+    /// </summary>
+    /// <param name="pageNumber">Page number</param>
+    /// <param name="subPageNumber">Subpage number</param>
+    /// <returns>returns true if the page and the subpage exists</returns>
     public bool SubPageExists(int pageNumber, int subPageNumber)
     {
       if (pageNumber < MIN_PAGE || pageNumber >= MAX_PAGE)
-        throw new ArgumentOutOfRangeException("page");
+        throw new ArgumentOutOfRangeException("pageNumber");
 
-      if (_pageCache[pageNumber] == null) return false;
-      if (subPageNumber > _pageCache[pageNumber].SubPageCount) return false;
-      return true;
+      if (_pageCache[pageNumber] == null)
+        return false;
+      return subPageNumber <= _pageCache[pageNumber].SubPageCount;
     }
+
+    /// <summary>
+    /// Gets the rotation time of teletext page
+    /// </summary>
+    /// <param name="pageNumber">Page number</param>
+    /// <returns>Timespan of the rotation</returns>
     public TimeSpan RotationTime(int pageNumber)
     {
       if (pageNumber < MIN_PAGE || pageNumber >= MAX_PAGE)
-        throw new ArgumentOutOfRangeException("page");
+        throw new ArgumentOutOfRangeException("pageNumber");
 
-      if (_pageCache[pageNumber] == null) return new TimeSpan(0,0,15);
-      return _pageCache[pageNumber].RotationTime;
+      return _pageCache[pageNumber] == null ? new TimeSpan(0, 0, 15) : _pageCache[pageNumber].RotationTime;
     }
 
+    /// <summary>
+    /// Deletes the page, subpage
+    /// </summary>
+    /// <param name="pageNumber">Page number</param>
+    /// <param name="subPageNumber">Subpage number</param>
     public void DeletePage(int pageNumber, int subPageNumber)
     {
       //if (pageNumber == 0x600) Trace.WriteLine(String.Format("DeletePage {0:X}/{1:X}", pageNumber, subPageNumber));
@@ -128,10 +175,11 @@ namespace TvLibrary.Teletext
         subPageNumber--;
       }
       if (pageNumber < MIN_PAGE || pageNumber >= MAX_PAGE)
-        throw new ArgumentOutOfRangeException("page");
+        throw new ArgumentOutOfRangeException("pageNumber");
 
-      if (_pageCache[pageNumber] == null) return;
-      if (_pageCache[pageNumber].Delete(pageNumber,subPageNumber))
+      if (_pageCache[pageNumber] == null)
+        return;
+      if (_pageCache[pageNumber].Delete(pageNumber, subPageNumber))
       {
         if (OnPageDeleted != null)
         {
@@ -145,13 +193,20 @@ namespace TvLibrary.Teletext
       }
     }
 
-    public void PageReceived(int pageNumber, int subPageNumber,  byte[] pageData, string vbiLines)
+    /// <summary>
+    /// Called when a page is received to store in the cache
+    /// </summary>
+    /// <param name="pageNumber">Page number</param>
+    /// <param name="subPageNumber">Subpage number</param>
+    /// <param name="pageData">PageData </param>
+    /// <param name="vbiLines">VBI lines</param>
+    public void PageReceived(int pageNumber, int subPageNumber, byte[] pageData, string vbiLines)
     {
       //if (pageNumber == 0x600) Trace.WriteLine(String.Format("PageReceived {0:X}/{1:X}", pageNumber, subPageNumber));
       if (pageNumber < MIN_PAGE || pageNumber >= MAX_PAGE)
-        throw new ArgumentOutOfRangeException("page");
+        throw new ArgumentOutOfRangeException("pageNumber");
 
-      
+
       if (_pageCache[pageNumber] == null)
       {
         _pageCache[pageNumber] = new TeletextPage(pageNumber);
@@ -177,7 +232,7 @@ namespace TvLibrary.Teletext
         subPageNumber--;
       }
       bool isUpdate, isNew, isDeleted;
-      _pageCache[pageNumber].SubPageReceived(pageNumber,ref subPageNumber,ref pageData, out isUpdate, out isNew, out isDeleted, vbiLines);
+      _pageCache[pageNumber].SubPageReceived(pageNumber, ref subPageNumber, ref pageData, out isUpdate, out isNew, out isDeleted, vbiLines);
       if (isNew)
       {
         if (OnPageAdded != null)
@@ -200,11 +255,14 @@ namespace TvLibrary.Teletext
         }
       }
       TimeSpan ts = DateTime.Now - _checkTimer;
-      if (ts.TotalSeconds < 10) return;
+      if (ts.TotalSeconds < 10)
+        return;
       for (pageNumber = MIN_PAGE; pageNumber < MAX_PAGE; pageNumber++)
       {
-        if (_pageCache[pageNumber] == null) continue;
-        if (_pageCache[pageNumber].SubPageCount < 0) continue;
+        if (_pageCache[pageNumber] == null)
+          continue;
+        if (_pageCache[pageNumber].SubPageCount < 0)
+          continue;
         ts = DateTime.Now - _pageCache[pageNumber].LastTimeReceived;
         if (ts.TotalSeconds >= 120)
         {
@@ -222,7 +280,9 @@ namespace TvLibrary.Teletext
     }
 
     #region IDisposable Members
-
+    /// <summary>
+    /// Destructor
+    /// </summary>
     public void Dispose()
     {
       Clear();

@@ -19,8 +19,6 @@
  *
  */
 using System;
-using System.Collections.Generic;
-using System.Text;
 using TvLibrary.Interfaces;
 
 namespace TvLibrary.Implementations.DVB
@@ -39,7 +37,7 @@ namespace TvLibrary.Implementations.DVB
 
     #region ctor
     /// <summary>
-    /// Initializes a new instance of the <see cref="T:DVBAudioStream"/> class.
+    /// Initializes a new instance of the <see cref="DVBAudioStream"/> class.
     /// </summary>
     public DVBAudioStream()
     {
@@ -53,7 +51,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// gets/sets  Audio language
     /// </summary>
-    public string Language 
+    public string Language
     {
       get
       {
@@ -106,8 +104,10 @@ namespace TvLibrary.Implementations.DVB
     public override bool Equals(object obj)
     {
       DVBAudioStream stream = obj as DVBAudioStream;
-      if (stream == null) return false;
-      if (_language == stream.Language && _streamType == stream.StreamType && _pid == stream.Pid) return true;
+      if (stream == null)
+        return false;
+      if (_language == stream.Language && _streamType == stream.StreamType && _pid == stream.Pid)
+        return true;
       return false;
     }
     /// <summary>
@@ -129,7 +129,7 @@ namespace TvLibrary.Implementations.DVB
     /// </returns>
     public override int GetHashCode()
     {
-      return base.GetHashCode() ^ _language.GetHashCode() ^_streamType.GetHashCode() ^ _pid.GetHashCode();
+      return base.GetHashCode() ^ _language.GetHashCode() ^ _streamType.GetHashCode() ^ _pid.GetHashCode();
     }
   }
 }

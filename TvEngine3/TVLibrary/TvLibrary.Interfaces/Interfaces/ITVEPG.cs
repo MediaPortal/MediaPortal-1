@@ -18,10 +18,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Text;
 using TvLibrary.Epg;
 
 namespace TvLibrary.Interfaces
@@ -52,8 +50,8 @@ namespace TvLibrary.Interfaces
     /// Gets called when epg has been cancelled
     /// Should be overriden by the class
     /// </summary>
-    public virtual void OnEpgCancelled() 
-    { 
+    public virtual void OnEpgCancelled()
+    {
     }
     /// <summary>
     /// Gets called when epg has been received

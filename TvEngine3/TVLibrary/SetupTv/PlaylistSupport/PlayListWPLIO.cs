@@ -24,8 +24,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Xml;
 using System.IO;
 using SetupTv;
@@ -49,36 +47,35 @@ namespace MediaPortal.Playlists
         if (nodeRoot == null)
           return false;
         XmlNodeList nodeEntries = nodeRoot.SelectNodes("media");
-        foreach (XmlNode node in nodeEntries)
-        {
-          XmlNode srcNode = node.Attributes.GetNamedItem("src");
-          if (srcNode != null)
+        if (nodeEntries != null)
+          foreach (XmlNode node in nodeEntries)
           {
-            if (srcNode.InnerText != null)
+            XmlNode srcNode = node.Attributes.GetNamedItem("src");
+            if (srcNode != null)
             {
-              if (srcNode.InnerText.Length > 0)
+              if (srcNode.InnerText != null)
               {
-                fileName = srcNode.InnerText;
-                Utils.GetQualifiedFilename(basePath, ref fileName);
-                PlayListItem newItem = new PlayListItem(fileName, fileName, 0);
-                newItem.Type = PlayListItem.PlayListItemType.Audio;
-                string description;
-                description = Path.GetFileName(fileName);
-                newItem.Description = description;
-                playlist.Add(newItem);
+                if (srcNode.InnerText.Length > 0)
+                {
+                  fileName = srcNode.InnerText;
+                  Utils.GetQualifiedFilename(basePath, ref fileName);
+                  PlayListItem newItem = new PlayListItem(fileName, fileName, 0);
+                  newItem.Type = PlayListItem.PlayListItemType.Audio;
+                  string description = Path.GetFileName(fileName);
+                  newItem.Description = description;
+                  playlist.Add(newItem);
+                }
               }
             }
           }
-        }
         return true;
-      }
-      catch (Exception)
+      } catch (Exception)
       {
       }
       return false;
     }
 
-    public void Save(PlayList playlist, string fileName)
+    public void Save(PlayList playListParam, string fileName)
     {
       throw new Exception("The method or operation is not implemented.");
     }

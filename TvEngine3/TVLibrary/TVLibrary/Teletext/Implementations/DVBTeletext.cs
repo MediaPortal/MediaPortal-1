@@ -19,11 +19,10 @@
  *
  */
 using System;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Collections;
 using System.Reflection;
 using System.IO;
+using System.Drawing;
 
 namespace TvLibrary.Teletext
 {
@@ -36,32 +35,42 @@ namespace TvLibrary.Teletext
     const int MIN_PAGE = 0x100;
     const int MAX_PAGE = 0x900;
     const int MAX_SUB_PAGES = 0x80;
-    const int MAX_MAGAZINE = 8;
+
     #endregion
 
     #region delegates
+    /// <summary>
+    /// Page update event
+    /// </summary>
     public event PageEventHandler OnPageUpdated;
+    /// <summary>
+    /// Page added event
+    /// </summary>
     public event PageEventHandler OnPageAdded;
+    /// <summary>
+    /// Page deleted event
+    /// </summary>
     public event PageEventHandler OnPageDeleted;
     #endregion
 
     #region variables
-    TeletextPageCache _pageCache = new TeletextPageCache();
-    TeletextPageRenderer _renderer = new TeletextPageRenderer();
-    TeletextDecoder _decoder;
-    FastTextDecoder _fastTextDecoder = new FastTextDecoder();
-    ToptextDecoder _topTextDecoder = new ToptextDecoder();
+
+    readonly TeletextPageCache _pageCache = new TeletextPageCache();
+    readonly TeletextPageRenderer _renderer = new TeletextPageRenderer();
+    readonly TeletextDecoder _decoder;
+    readonly FastTextDecoder _fastTextDecoder = new FastTextDecoder();
+    readonly ToptextDecoder _topTextDecoder = new ToptextDecoder();
 
     int _currentPageNumber = 0x100;
-    int _currentSubPageNumber = 0;
+    int _currentSubPageNumber;
 
-    byte[] analogBuffer = new byte[2048];
-    byte[] tmpBuffer = new byte[46];
+    readonly byte[] tmpBuffer = new byte[46];
 
     #endregion
 
     #region character and other tables
-    byte[] m_lutTable = new byte[] {0x00,0x08,0x04,0x0c,0x02,0x0a,0x06,0x0e,
+
+    readonly byte[] m_lutTable = new byte[] {0x00,0x08,0x04,0x0c,0x02,0x0a,0x06,0x0e,
 										 0x01,0x09,0x05,0x0d,0x03,0x0b,0x07,0x0f,
 										 0x00,0x80,0x40,0xc0,0x20,0xa0,0x60,0xe0,
 										 0x10,0x90,0x50,0xd0,0x30,0xb0,0x70,0xf0
@@ -70,14 +79,20 @@ namespace TvLibrary.Teletext
     #endregion
 
     #region ctor/dtor
+    ///<summary>
+    /// Constructor
+    ///</summary>
     public DVBTeletext()
     {
-      _decoder = new TeletextDecoder(ref _pageCache);
-      _pageCache.OnPageAdded += new PageEventHandler(_pageCache_OnPageAdded);
-      _pageCache.OnPageDeleted += new PageEventHandler(_pageCache_OnPageDeleted);
-      _pageCache.OnPageUpdated += new PageEventHandler(_pageCache_OnPageUpdated);
+      _decoder = new TeletextDecoder(_pageCache);
+      _pageCache.OnPageAdded += _pageCache_OnPageAdded;
+      _pageCache.OnPageDeleted += _pageCache_OnPageDeleted;
+      _pageCache.OnPageUpdated += _pageCache_OnPageUpdated;
     }
 
+    /// <summary>
+    /// Disposes the DVB teletext
+    /// </summary>
     ~DVBTeletext()
     {
       ClearBuffer();
@@ -115,38 +130,59 @@ namespace TvLibrary.Teletext
     #endregion
 
     #region fasttext
+    /// <summary>
+    /// Gets the red teletext page
+    /// </summary>
     public int PageRed
     {
       get
       {
-        if (_fastTextDecoder.Red > 0) return _fastTextDecoder.Red;
+        if (_fastTextDecoder.Red > 0)
+          return _fastTextDecoder.Red;
         return _topTextDecoder.Red;
       }
     }
+    /// <summary>
+    /// Gets the green teletext page
+    /// </summary>
     public int PageGreen
     {
       get
       {
-        if (_fastTextDecoder.Green > 0) return _fastTextDecoder.Green;
+        if (_fastTextDecoder.Green > 0)
+          return _fastTextDecoder.Green;
         return _topTextDecoder.Green;
       }
     }
+    /// <summary>
+    /// Gets the yellow teletext page
+    /// </summary>
     public int PageYellow
     {
       get
       {
-        if (_fastTextDecoder.Yellow > 0) return _fastTextDecoder.Yellow;
+        if (_fastTextDecoder.Yellow > 0)
+          return _fastTextDecoder.Yellow;
         return _topTextDecoder.Yellow;
       }
     }
+    /// <summary>
+    /// Gets the blue teletext page
+    /// </summary>
     public int PageBlue
     {
       get
       {
-        if (_fastTextDecoder.Blue > 0) return _fastTextDecoder.Blue;
+        if (_fastTextDecoder.Blue > 0)
+          return _fastTextDecoder.Blue;
         return _topTextDecoder.Blue;
       }
     }
+
+    /// <summary>
+    /// Gets the page select text.
+    /// </summary>
+    /// <value>The page select text.</value>
     public string PageSelectText
     {
       get
@@ -161,15 +197,25 @@ namespace TvLibrary.Teletext
     #endregion
 
     #region properties
-    public int PercentageOfMaximumHeight {
-      get {
+    /// <summary>
+    /// Gets/Sets  the percentage of the maximum height for the font size
+    /// </summary>
+    /// <value>Percentage of the maximum height of font size.</value>
+    public int PercentageOfMaximumHeight
+    {
+      get
+      {
         return _renderer.PercentageOfMaximumHeight;
       }
-      set {
+      set
+      {
         _renderer.PercentageOfMaximumHeight = value;
       }
     }
 
+    /// <summary>
+    /// turns on/off the conceal (hidden) mode
+    /// </summary>
     public bool HiddenMode
     {
       get
@@ -181,12 +227,20 @@ namespace TvLibrary.Teletext
         _renderer.HiddenMode = value;
       }
     }
+    /// <summary>
+    /// turns on/off transparent mode. In transparent mode the
+    /// teletext page is rendered on transparent background
+    /// </summary>
     public bool TransparentMode
     {
       get { return _renderer.TransparentMode; }
       set { _renderer.TransparentMode = value; }
     }
-    public bool FullscreenMode {
+    ///<summary>
+    /// Gets/Sets the fullscreen mode
+    ///</summary>
+    public bool FullscreenMode
+    {
       get { return _renderer.FullscreenMode; }
       set { _renderer.FullscreenMode = value; }
     }
@@ -194,16 +248,26 @@ namespace TvLibrary.Teletext
 
     #region public methods
     #region channel name
+    /// <summary>
+    /// Gets the teletext channel name
+    /// </summary>
+    /// <returns>Channel name</returns>
     public string GetTeletextChannelName()
     {
       return _pageCache.ChannelName;
     }
+    /// <summary>
+    /// Clears the stored teletext channel name
+    /// </summary>
     public void ClearTeletextChannelName()
     {
       _pageCache.ChannelName = "";
     }
     #endregion
 
+    /// <summary>
+    /// Clears the buffers and cache
+    /// </summary>
     public void ClearBuffer()
     {
       _decoder.Clear();
@@ -211,17 +275,33 @@ namespace TvLibrary.Teletext
       _pageCache.Clear();
     }
 
+    /// <summary>
+    /// returns the rotation time for the page.
+    /// </summary>
+    /// <param name="currentPageNumber">The current page number.</param>
+    /// <returns>timespan contain the rotation time</returns>
     public TimeSpan RotationTime(int currentPageNumber)
     {
       return _pageCache.RotationTime(currentPageNumber);
     }
 
+    /// <summary>
+    /// sets the width/height of the bitmap generated by GetPage()
+    /// </summary>
+    /// <param name="renderWidth">width in pixels</param>
+    /// <param name="renderHeight">height in pixels</param>
     public void SetPageSize(int renderWidth, int renderHeight)
     {
       _renderer.Width = renderWidth;
       _renderer.Height = renderHeight;
     }
 
+    /// <summary>
+    /// Gets the raw teletext page.
+    /// </summary>
+    /// <param name="page">pagenumber (0x100-0x899)</param>
+    /// <param name="subpage">subpagenumber (0x0-0x79)</param>
+    /// <returns>raw teletext page (or null if page is not found)</returns>
     public byte[] GetRawPage(int page, int subpage)
     {
 
@@ -247,13 +327,16 @@ namespace TvLibrary.Teletext
         }
         return byPage;
       }
-      else
-      {
-        return null;
-      }
+      return null;
     }
 
-    public System.Drawing.Bitmap GetPage(int page, int subpage)
+    /// <summary>
+    /// Gets the teletext page and renders it to a Bitmap
+    /// </summary>
+    /// <param name="page">pagenumber (0x100-0x899)</param>
+    /// <param name="subpage">subpagenumber (0x0-0x79)</param>
+    /// <returns>bitmap (or null if page is not found)</returns>
+    public Bitmap GetPage(int page, int subpage)
     {
       _currentPageNumber = page;
       _currentSubPageNumber = subpage;
@@ -273,44 +356,45 @@ namespace TvLibrary.Teletext
         }
         return _renderer.RenderPage(byPage, _currentPageNumber, _currentSubPageNumber);
       }
-      else
+      for (int sub = 0; sub < MAX_SUB_PAGES; sub++)
       {
-        for (int sub = 0; sub < MAX_SUB_PAGES; sub++)
+        if (_pageCache.SubPageExists(_currentPageNumber, sub))//return first aval. subpage
         {
-          if (_pageCache.SubPageExists(_currentPageNumber, sub))//return first aval. subpage
+          _currentSubPageNumber = sub;
+          byte[] byPage = _pageCache.GetPage(_currentPageNumber, _currentSubPageNumber);
+          _fastTextDecoder.Decode(byPage);
+          if (_topTextDecoder.Decode(_pageCache, _currentPageNumber))
           {
-            _currentSubPageNumber = sub;
-            byte[] byPage = _pageCache.GetPage(_currentPageNumber, _currentSubPageNumber);
-            _fastTextDecoder.Decode(byPage);
-            if (_topTextDecoder.Decode(_pageCache, _currentPageNumber))
-            {
-              AddTopTextRow24(ref byPage);
-            }
-            return _renderer.RenderPage(byPage, _currentPageNumber, _currentSubPageNumber);
+            AddTopTextRow24(ref byPage);
           }
+          return _renderer.RenderPage(byPage, _currentPageNumber, _currentSubPageNumber);
         }
-
-        Assembly assm = Assembly.GetExecutingAssembly();
-        string[] names = assm.GetManifestResourceNames();
-        //for (int x = 0; x < names.Length; x++)
-        //  Log.Write("res:{0}", names[x]);
-
-        Stream stream = assm.GetManifestResourceStream("TVCapture.teletext.LogoPage");
-        if (stream != null)
-        {
-          using (BinaryReader reader = new BinaryReader(stream))
-          {
-            byte[] logoPage = new byte[stream.Length];
-            reader.Read(logoPage, 0, (int)stream.Length);
-            _fastTextDecoder.Decode(logoPage);
-            _topTextDecoder.Clear();
-            return _renderer.RenderPage(logoPage, _currentPageNumber, 0);
-          }
-        }
-        return null;
       }
+
+      Assembly assm = Assembly.GetExecutingAssembly();
+      //for (int x = 0; x < names.Length; x++)
+      //  Log.Write("res:{0}", names[x]);
+
+      Stream stream = assm.GetManifestResourceStream("TVCapture.teletext.LogoPage");
+      if (stream != null)
+      {
+        using (BinaryReader reader = new BinaryReader(stream))
+        {
+          byte[] logoPage = new byte[stream.Length];
+          reader.Read(logoPage, 0, (int)stream.Length);
+          _fastTextDecoder.Decode(logoPage);
+          _topTextDecoder.Clear();
+          return _renderer.RenderPage(logoPage, _currentPageNumber, 0);
+        }
+      }
+      return null;
     }
 
+    /// <summary>
+    /// returns the total number of subpages for a pagnumber
+    /// </summary>
+    /// <param name="currentPageNumber">pagenumber 0x100-0x899</param>
+    /// <returns>number of subpages for this pagenumber</returns>
     public int NumberOfSubpages(int currentPageNumber)
     {
       return _pageCache.NumberOfSubpages(currentPageNumber);
@@ -318,9 +402,14 @@ namespace TvLibrary.Teletext
     #endregion
 
     #region decoding
+    ///<summary>
+    /// Saves the given data in the cache and decodes
+    ///</summary>
+    ///<param name="dataPtr">Teletext data</param>
     public void SaveData(IntPtr dataPtr)
     {
-      if (dataPtr == IntPtr.Zero) return;
+      if (dataPtr == IntPtr.Zero)
+        return;
       int dataAdd = (int)dataPtr;
       try
       {
@@ -332,18 +421,16 @@ namespace TvLibrary.Teletext
           {
             for (int b = 4; b < 46; b++)
             {
-              byte upper = 0;
-              byte lower = 0;
-              upper = (byte)((tmpBuffer[b] >> 4) & 0xf);
-              lower = (byte)(tmpBuffer[b] & 0xf);
+              byte upper = (byte)((tmpBuffer[b] >> 4) & 0xf);
+              byte lower = (byte)(tmpBuffer[b] & 0xf);
               tmpBuffer[b - 4] = (byte)((m_lutTable[upper]) | (m_lutTable[lower + 16]));
             }//for(b=4;
-            _decoder.Decode( tmpBuffer, 0, 1);
+            _decoder.Decode(tmpBuffer, 0, 1);
           }//if ((tmpBuffer
         }// for(line=0
-      }
-      catch (Exception)
+      } catch (Exception ex)
       {
+        Log.Log.WriteFile("Error while saving teletext data: ", ex);
       }
     }
     #endregion
@@ -362,7 +449,8 @@ namespace TvLibrary.Teletext
           break;
         }
       }
-      if (offsetRow24 < 0) return;
+      if (offsetRow24 < 0)
+        return;
       byte[] row24 = _topTextDecoder.Row24;
       for (int i = 0; i < 42; ++i)
       {
@@ -373,57 +461,5 @@ namespace TvLibrary.Teletext
 
     #endregion
 
-    #region helper functions
-    int GetNextDecimal(int val)
-    {
-      int ret = val;
-      ret++;
-
-      if ((ret & 15) > 9)
-        ret += 6;
-
-      if ((ret & 240) > 144)
-        ret += 96;
-
-      if (ret > 2201)
-        ret = 256;
-
-      return ret;
-    }
-    bool IsText(byte val)
-    {
-      if (val >= ' ')
-        return true;
-      return false;
-
-    }
-    bool IsAlphaNumeric(byte val)
-    {
-      if (val >= 'A' && val <= 'Z')
-        return true;
-      if (val >= 'a' && val <= 'z')
-        return true;
-      if (val >= '0' && val <= '9')
-        return true;
-      return false;
-    }
-    int GetPreviousDecimal(int val)           /* counting down */
-    {
-      int ret = val;
-      ret--;
-
-      if ((ret & 15) > 0x09)
-        ret -= 6;
-
-      if ((ret & 240) > 144)
-        ret -= 96;
-
-      if (ret < 256)
-        ret = 2201;
-
-      return ret;
-    }
-
-    #endregion
   }// class
 }// namespace

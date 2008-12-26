@@ -19,10 +19,7 @@
  *
  */
 using System;
-using System.Collections.Generic;
-using System.Text;
 using TvLibrary.Interfaces;
-using DirectShowLib;
 
 namespace TvLibrary.Implementations
 {
@@ -42,7 +39,7 @@ namespace TvLibrary.Implementations
     #region ctor
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="T:RadioWebStreamChannel"/> class.
+    /// Initializes a new instance of the <see cref="RadioWebStreamChannel"/> class.
     /// </summary>
     public RadioWebStreamChannel()
     {
@@ -138,7 +135,7 @@ namespace TvLibrary.Implementations
     public override string ToString()
     {
       string line = "radio:";
-      line += String.Format("{0} Url:{1} Country:{2}",Name, Url,Country.Name);
+      line += String.Format("{0} Url:{1} Country:{2}", Name, Url, Country.Name);
       return line;
     }
 
@@ -152,11 +149,15 @@ namespace TvLibrary.Implementations
     /// </returns>
     public override bool Equals(object obj)
     {
-      if ((obj as RadioWebStreamChannel) == null) return false;
+      if ((obj as RadioWebStreamChannel) == null)
+        return false;
       RadioWebStreamChannel ch = obj as RadioWebStreamChannel;
-      if (ch.Country.Id != Country.Id) return false;
-      if (ch.Name != Name) return false;
-      if (ch.Url != Url) return false;
+      if (ch.Country.Id != Country.Id)
+        return false;
+      if (ch.Name != Name)
+        return false;
+      if (ch.Url != Url)
+        return false;
       return true;
     }
     /// <summary>

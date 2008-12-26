@@ -21,20 +21,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using TvControl;
-using DirectShowLib;
-
-using Gentle.Common;
 using Gentle.Framework;
 using TvDatabase;
-using TvLibrary;
 using TvLibrary.Log;
 using TvLibrary.Interfaces;
-using TvLibrary.Implementations;
 using MediaPortal.UserInterface.Controls;
 
 namespace SetupTv.Sections
@@ -44,9 +36,9 @@ namespace SetupTv.Sections
   public partial class TvEpgGrabber : SectionSettings
   {
 
-    bool _loaded = false;
+    bool _loaded;
 
-    private MPListViewStringColumnSorter lvwColumnSorter;
+    private readonly MPListViewStringColumnSorter lvwColumnSorter;
     public TvEpgGrabber()
       : this("TV Epg grabber")
     {
@@ -58,7 +50,7 @@ namespace SetupTv.Sections
       InitializeComponent();
       lvwColumnSorter = new MPListViewStringColumnSorter();
       lvwColumnSorter.Order = SortOrder.None;
-      this.mpListView1.ListViewItemSorter = lvwColumnSorter;
+      mpListView1.ListViewItemSorter = lvwColumnSorter;
     }
 
     void LoadLanguages()
@@ -107,10 +99,7 @@ namespace SetupTv.Sections
     {
       TvBusinessLayer layer = new TvBusinessLayer();
       Setting setting = layer.GetSetting("epgStoreOnlySelected");
-      if (mpCheckBoxStoreOnlySelected.Checked)
-        setting.Value = "yes";
-      else
-        setting.Value = "no";
+      setting.Value = mpCheckBoxStoreOnlySelected.Checked ? "yes" : "no";
       setting.Persist();
       base.OnSectionDeActivated();
       SaveSettings();
@@ -123,7 +112,6 @@ namespace SetupTv.Sections
       TvBusinessLayer layer = new TvBusinessLayer();
       Setting setting = layer.GetSetting("epgStoreOnlySelected");
       mpCheckBoxStoreOnlySelected.Checked = (setting.Value == "yes");
-      CountryCollection countries = new CountryCollection();
       Dictionary<string, CardType> cards = new Dictionary<string, CardType>();
       IList dbsCards = Card.ListAll();
       foreach (Card card in dbsCards)
@@ -145,8 +133,10 @@ namespace SetupTv.Sections
         bool dvbt = false;
         bool dvbs = false;
         bool atsc = false;
-        if (ch.IsTv == false) continue;
-        if (ch.IsWebstream()) continue;
+        if (ch.IsTv == false)
+          continue;
+        if (ch.IsWebstream())
+          continue;
         int imageIndex = 1;
         if (ch.FreeToAir == false)
           imageIndex = 2;
@@ -158,38 +148,51 @@ namespace SetupTv.Sections
             CardType type = cards[map.ReferencedCard().DevicePath];
             switch (type)
             {
-              case CardType.Analog: analog = true; break;
-              case CardType.DvbC: dvbc = true; break;
-              case CardType.DvbT: dvbt = true; break;
-              case CardType.DvbS: dvbs = true; break;
-              case CardType.Atsc: atsc = true; break;
+              case CardType.Analog:
+                analog = true;
+                break;
+              case CardType.DvbC:
+                dvbc = true;
+                break;
+              case CardType.DvbT:
+                dvbt = true;
+                break;
+              case CardType.DvbS:
+                dvbs = true;
+                break;
+              case CardType.Atsc:
+                atsc = true;
+                break;
             }
           }
         }
         string line = "";
-        string[] details = new string[4];
         if (analog)
         {
           line += "Analog";
         }
         if (dvbc)
         {
-          if (line != "") line += ",";
+          if (line != "")
+            line += ",";
           line += "DVB-C";
         }
         if (dvbt)
         {
-          if (line != "") line += ",";
+          if (line != "")
+            line += ",";
           line += "DVB-T";
         }
         if (dvbs)
         {
-          if (line != "") line += ",";
+          if (line != "")
+            line += ",";
           line += "DVB-S";
         }
         if (atsc)
         {
-          if (line != "") line += ",";
+          if (line != "")
+            line += ",";
           line += "ATSC";
         }
         item.SubItems.Add(line);
@@ -203,7 +206,8 @@ namespace SetupTv.Sections
     private void mpListView1_ItemChecked(object sender, ItemCheckedEventArgs e)
     {
       Channel channel = e.Item.Tag as Channel;
-      if (channel == null) return;
+      if (channel == null)
+        return;
       channel.GrabEpg = e.Item.Checked;
       channel.Persist();
     }
@@ -247,7 +251,8 @@ namespace SetupTv.Sections
 
     public override void SaveSettings()
     {
-      if (false == _loaded) return;
+      if (false == _loaded)
+        return;
       TvBusinessLayer layer = new TvBusinessLayer();
       Setting setting = layer.GetSetting("epgLanguages");
       setting.Value = ",";
@@ -263,11 +268,6 @@ namespace SetupTv.Sections
       }
       setting.Persist();
       base.SaveSettings();
-    }
-
-    public override void LoadSettings()
-    {
-      base.LoadSettings();
     }
 
     private void mpButtonAllChannels_Click(object sender, EventArgs e)
@@ -306,14 +306,7 @@ namespace SetupTv.Sections
       if (e.Column == lvwColumnSorter.SortColumn)
       {
         // Reverse the current sort direction for this column.
-        if (lvwColumnSorter.Order == SortOrder.Ascending)
-        {
-          lvwColumnSorter.Order = SortOrder.Descending;
-        }
-        else
-        {
-          lvwColumnSorter.Order = SortOrder.Ascending;
-        }
+        lvwColumnSorter.Order = lvwColumnSorter.Order == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
       }
       else
       {
@@ -323,7 +316,7 @@ namespace SetupTv.Sections
       }
 
       // Perform the sort with these new sort options.
-      this.mpListView1.Sort();
+      mpListView1.Sort();
     }
 
 

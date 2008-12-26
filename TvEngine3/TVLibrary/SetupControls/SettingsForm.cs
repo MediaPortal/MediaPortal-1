@@ -25,22 +25,14 @@
 
 using System;
 using System.Collections;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Forms;
-using System.Xml;
-using System.Net;
-using System.Net.Sockets;
-
-using MediaPortal.UserInterface.Controls;
 using SetupTv;
 
 namespace SetupControls
 {
-  public partial class SettingsForm : SetupControls.MPForm
+  public partial class SettingsForm : MPForm
   {
-    protected SectionSettings _previousSection = null;
+    protected SectionSettings _previousSection;
     protected static Hashtable settingSections = new Hashtable();
 
     /// <summary>
@@ -55,7 +47,7 @@ namespace SetupControls
     {
       InitializeComponent();
 
-      this.linkLabel1.Links.Add(0, linkLabel1.Text.Length, "http://www.team-mediaportal.com/donate.html");
+      linkLabel1.Links.Add(0, linkLabel1.Text.Length, "http://www.team-mediaportal.com/donate.html");
     }
 
     public virtual void AddSection(SectionSettings section)
@@ -94,7 +86,7 @@ namespace SetupControls
 
       //treeNode.EnsureVisible();
     }
-    
+
     public virtual void sectionTree_BeforeSelect(object sender, TreeViewCancelEventArgs e)
     {
       SectionTreeNode treeNode = e.Node as SectionTreeNode;

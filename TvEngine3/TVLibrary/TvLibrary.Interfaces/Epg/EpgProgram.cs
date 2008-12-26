@@ -20,7 +20,6 @@
  */
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace TvLibrary.Epg
 {
@@ -39,7 +38,7 @@ namespace TvLibrary.Epg
     #region ctor
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="T:EpgProgram"/> class.
+    /// Initializes a new instance of the <see cref="EpgProgram"/> class.
     /// </summary>
     /// <param name="startTime">The start time.</param>
     /// <param name="endTime">The end time.</param>
@@ -114,8 +113,10 @@ namespace TvLibrary.Epg
     /// </returns>
     public int CompareTo(EpgProgram other)
     {
-      if (other.StartTime > StartTime) return -1;
-      if (other.StartTime < StartTime) return 1;
+      if (other.StartTime > StartTime)
+        return -1;
+      if (other.StartTime < StartTime)
+        return 1;
       return 0;
     }
 

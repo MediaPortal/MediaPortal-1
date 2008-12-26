@@ -24,12 +24,7 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Text;
 using DirectShowLib;
-using TvDatabase;
-using TvLibrary.Interfaces;
 using TvLibrary.Implementations.DVB;
 
 namespace TvLibrary.Implementations.Analog.QualityControl
@@ -43,15 +38,15 @@ namespace TvLibrary.Implementations.Analog.QualityControl
     /// <summary>
     /// Instance of the encoder that supports the ICodecAPI
     /// </summary>
-    private ICodecAPI _codecAPI;
+    private readonly ICodecAPI _codecAPI;
     #endregion
 
     #region ctor
     /// <summary>
-    /// Initializes a new instance of the <see cref="T:CodecAPIControl"/> class.
+    /// Initializes a new instance of the <see cref="CodecAPIControl"/> class.
     /// </summary>
     /// <param name="configuration">The encoder settings to use.</param>
-    /// <param name="videoEncoder">The ICodecAPI interface to the filter that must be used to control the quality.</param>
+    /// <param name="codecAPI">The ICodecAPI interface to the filter that must be used to control the quality.</param>
     public CodecAPIControl(Configuration configuration, ICodecAPI codecAPI)
       : base(configuration)
     {

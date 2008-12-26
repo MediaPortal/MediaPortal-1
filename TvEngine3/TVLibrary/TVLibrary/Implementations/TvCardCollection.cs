@@ -20,13 +20,11 @@
  */
 using System;
 using System.Collections.Generic;
-using System.Text;
 using TvDatabase;
 using TvLibrary.Interfaces;
 using TvLibrary.Implementations.DVB;
 using TvLibrary.Implementations.Analog;
 using TvLibrary.Implementations.RadioWebStream;
-using System.Runtime.InteropServices;
 using DirectShowLib;
 using DirectShowLib.BDA;
 
@@ -38,7 +36,7 @@ namespace TvLibrary.Implementations
   /// </summary>
   public class TvCardCollection
   {
-    List<ITVCard> _cards;
+    readonly List<ITVCard> _cards;
 
     /// <summary>
     /// ctor
@@ -49,8 +47,7 @@ namespace TvLibrary.Implementations
       // Logic here to delay detection of cards
       // Ideally this should occur after standby event.
       TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting;
-      setting = layer.GetSetting("delayCardDetect", "0");
+      Setting setting = layer.GetSetting("delayCardDetect", "0");
       int delayDetect = Convert.ToInt32(setting.Value);
       if (delayDetect >= 1)
       {
@@ -62,7 +59,7 @@ namespace TvLibrary.Implementations
       DetectCards();
     }
 
-    bool ConnectFilter(IFilterGraph2 graphBuilder, IBaseFilter networkFilter, IBaseFilter tunerFilter)
+    static bool ConnectFilter(IFilterGraph2 graphBuilder, IBaseFilter networkFilter, IBaseFilter tunerFilter)
     {
       IPin pinOut = DsFindPin.ByDirection(networkFilter, PinDirection.Output, 0);
       IPin pinIn = DsFindPin.ByDirection(tunerFilter, PinDirection.Input, 0);
@@ -75,8 +72,7 @@ namespace TvLibrary.Implementations
     /// </summary>
     void DetectCards()
     {
-      DsDevice[] devices;
-      devices = DsDevice.GetDevicesOfCat(FilterCategory.LegacyAmFilterCategory);
+      DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.LegacyAmFilterCategory);
       for (int i = 0; i < devices.Length; ++i)
       {
         if (String.Compare(devices[i].Name, "B2C2 MPEG-2 Source", true) == 0)
@@ -91,8 +87,6 @@ namespace TvLibrary.Implementations
       devices = DsDevice.GetDevicesOfCat(FilterCategory.BDASourceFiltersCategory);
       if (devices.Length > 0)
       {
-        ITuningSpace tuningSpace;
-        ILocator locator;
         IFilterGraph2 graphBuilder = (IFilterGraph2)new FilterGraph();
         DsROTEntry rotEntry = new DsROTEntry(graphBuilder);
 
@@ -100,13 +94,13 @@ namespace TvLibrary.Implementations
         Guid networkProviderClsId = typeof(DVBTNetworkProvider).GUID;
         IBaseFilter networkDVBT = FilterGraphTools.AddFilterFromClsid(graphBuilder, networkProviderClsId, "DVBT Network Provider");
 
-        tuningSpace = (ITuningSpace)new DVBTuningSpace();
+        ITuningSpace tuningSpace = (ITuningSpace)new DVBTuningSpace();
         tuningSpace.put_UniqueName("DVBC TuningSpace");
         tuningSpace.put_FriendlyName("DVBC TuningSpace");
         tuningSpace.put__NetworkType(typeof(DVBTNetworkProvider).GUID);
         ((IDVBTuningSpace)tuningSpace).put_SystemType(DVBSystemType.Terrestrial);
 
-        locator = (ILocator)new DVBTLocator();
+        ILocator locator = (ILocator)new DVBTLocator();
         locator.put_CarrierFrequency(-1);
         locator.put_InnerFEC(FECMethod.MethodNotSet);
         locator.put_InnerFECRate(BinaryConvolutionCodeRate.RateNotSet);
@@ -191,11 +185,7 @@ namespace TvLibrary.Implementations
         for (int i = 0; i < devices.Length; i++)
         {
 
-					string name = devices[i].Name;
-					if (name == null)
-					{						
-						name = "unknown";						
-					}
+					string name = devices[i].Name ?? "unknown";
           name = name.ToLower();
           //Log.Log.WriteFile("Found card:{0}", name);
           //Console.ReadLine();
@@ -240,11 +230,7 @@ namespace TvLibrary.Implementations
       devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSTVTuner);
       for (int i = 0; i < devices.Length; i++)
       {
-				string name = devices[i].Name;
-				if (name == null)
-				{
-					name = "unknown";
-				}
+				string name = devices[i].Name ?? "unknown";
         name = name.ToLower();
         Log.Log.WriteFile("Detected analog card:{0}", name);
         TvCardAnalog analogCard = new TvCardAnalog(devices[i]);

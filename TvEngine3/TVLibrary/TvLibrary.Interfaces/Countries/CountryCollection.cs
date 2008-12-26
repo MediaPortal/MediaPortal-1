@@ -19,8 +19,6 @@
  *
  */
 using System;
-using System.Collections.Generic;
-using System.Text;
 using DirectShowLib;
 namespace TvLibrary
 {
@@ -31,7 +29,8 @@ namespace TvLibrary
   public class CountryCollection
   {
     #region countries
-    Country[] _countryList = new Country[]
+
+    readonly Country[] _countryList = new Country[]
     {
       new Country(93,	"Afghanistan",	        "AF",AnalogVideoStandard.PAL_B),
       new Country(355,	"Albania",	            "AL",AnalogVideoStandard.PAL_B),
@@ -262,6 +261,9 @@ namespace TvLibrary
     };
     #endregion
 
+    ///<summary>
+    /// Default constructor
+    ///</summary>
     public CountryCollection()
     {
       int index = 0;

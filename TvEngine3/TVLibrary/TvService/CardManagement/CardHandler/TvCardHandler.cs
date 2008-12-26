@@ -20,30 +20,13 @@
  */
 
 using System;
-using System.IO;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
 using System.Net;
-using System.Net.Sockets;
-using DirectShowLib.SBE;
 using TvLibrary;
-using TvLibrary.Implementations;
 using TvLibrary.Interfaces;
 using TvLibrary.Implementations.Analog;
-using TvLibrary.Implementations.DVB;
-using TvLibrary.Implementations.Hybrid;
-using TvLibrary.Implementations.RadioWebStream;
-using TvLibrary.Channels;
-using TvLibrary.Epg;
-using TvLibrary.ChannelLinkage;
 using TvLibrary.Log;
-using TvLibrary.Streaming;
 using TvControl;
-using TvEngine;
 using TvDatabase;
-using TvEngine.Events;
 
 namespace TvService
 {
@@ -53,20 +36,20 @@ namespace TvService
     bool _isLocal;
     ITVCard _card;
     Card _dbsCard;
-    UserManagement _userManagement;
-    DisEqcManagement _disEqcManagement;
-    TeletextManagement _teletext;
-    ChannelScanning _scanner;
-    EpgGrabbing _epgGrabbing;
-    AudioStreams _audioStreams;
-    Recorder _recorder;
-    TimeShifter _timerShifter;
-    CardTuner _tuner;
+    readonly UserManagement _userManagement;
+    readonly DisEqcManagement _disEqcManagement;
+    readonly TeletextManagement _teletext;
+    readonly ChannelScanning _scanner;
+    readonly EpgGrabbing _epgGrabbing;
+    readonly AudioStreams _audioStreams;
+    readonly Recorder _recorder;
+    readonly TimeShifter _timerShifter;
+    readonly CardTuner _tuner;
     #endregion
 
     #region ctor
     /// <summary>
-    /// Initializes a new instance of the <see cref="TvCard"/> class.
+    /// Initializes a new instance of the <see cref="ITVCard"/> class.
     /// </summary>
     public TvCardHandler(Card dbsCard, ITVCard card)
     {
@@ -77,10 +60,7 @@ namespace TvService
         analogCard.CardId = _dbsCard.IdCard;
       }
       Card = card;
-      if (_card == null)
-        IsLocal = false;
-      else
-        IsLocal = true;
+      IsLocal = _card != null;
       _userManagement = new UserManagement(this);
       _disEqcManagement = new DisEqcManagement(this);
       _teletext = new TeletextManagement(this);
@@ -200,8 +180,7 @@ namespace TvService
           {
             RemoteControl.HostName = _dbsCard.ReferencedServer().HostName;
             return RemoteControl.Instance.SupportsSubChannels(_dbsCard.IdCard);
-          }
-          catch (Exception)
+          } catch (Exception)
           {
             Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
             return false;
@@ -252,8 +231,10 @@ namespace TvService
       get
       {
         User[] users = Users.GetUsers();
-        if (users == null) return true;
-        if (users.Length == 0) return true;
+        if (users == null)
+          return true;
+        if (users.Length == 0)
+          return true;
         return false;
       }
     }
@@ -272,8 +253,7 @@ namespace TvService
           {
             RemoteControl.HostName = _dbsCard.ReferencedServer().HostName;
             return RemoteControl.Instance.HasCA(_dbsCard.IdCard);
-          }
-          catch (Exception)
+          } catch (Exception)
           {
             Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
             return false;
@@ -298,8 +278,7 @@ namespace TvService
           {
             RemoteControl.HostName = _dbsCard.ReferencedServer().HostName;
             return RemoteControl.Instance.NumberOfChannelsDecrypting(_dbsCard.IdCard);
-          }
-          catch (Exception)
+          } catch (Exception)
           {
             Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
             return 0;
@@ -315,7 +294,6 @@ namespace TvService
     /// <summary>
     /// Gets the type of card.
     /// </summary>
-    /// <param name="cardId">id of card.</param>
     /// <value>cardtype (Analog,DvbS,DvbT,DvbC,Atsc,WebStream)</value>
     public CardType Type
     {
@@ -329,16 +307,14 @@ namespace TvService
             {
               RemoteControl.HostName = _dbsCard.ReferencedServer().HostName;
               return RemoteControl.Instance.Type(_dbsCard.IdCard);
-            }
-            catch (Exception)
+            } catch (Exception)
             {
               Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
               return CardType.Analog;
             }
           }
           return _card.CardType;
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
           Log.Write(ex);
           return CardType.Analog;
@@ -349,7 +325,6 @@ namespace TvService
     /// <summary>
     /// Gets the name for a card.
     /// </summary>
-    /// <param name="cardId">id of card.</param>
     /// <returns>name of card</returns>
     public string CardName
     {
@@ -363,16 +338,14 @@ namespace TvService
             {
               RemoteControl.HostName = _dbsCard.ReferencedServer().HostName;
               return RemoteControl.Instance.CardName(_dbsCard.IdCard);
-            }
-            catch (Exception)
+            } catch (Exception)
             {
               Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
               return "";
             }
           }
           return _card.Name;
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
           Log.Write(ex);
           return "";
@@ -383,7 +356,6 @@ namespace TvService
     /// <summary>
     /// Gets the name for a card.
     /// </summary>
-    /// <param name="cardId">id of the card.</param>
     /// <returns>device of card</returns>
     public string CardDevice()
     {
@@ -395,16 +367,14 @@ namespace TvService
           {
             RemoteControl.HostName = _dbsCard.ReferencedServer().HostName;
             return RemoteControl.Instance.CardDevice(_dbsCard.IdCard);
-          }
-          catch (Exception)
+          } catch (Exception)
           {
             Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
             return "";
           }
         }
         return _dbsCard.DevicePath;
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Write(ex);
         return "";
@@ -415,7 +385,6 @@ namespace TvService
     /// <summary>
     /// Returns if the tuner is locked onto a signal or not
     /// </summary>
-    /// <param name="cardId">id of the card.</param>
     /// <returns>true when tuner is locked to a signal otherwise false</returns>
     public bool TunerLocked
     {
@@ -423,23 +392,22 @@ namespace TvService
       {
         try
         {
-          if (_dbsCard.Enabled == false) return false;
+          if (_dbsCard.Enabled == false)
+            return false;
           if (IsLocal == false)
           {
             try
             {
               RemoteControl.HostName = _dbsCard.ReferencedServer().HostName;
               return RemoteControl.Instance.TunerLocked(_dbsCard.IdCard);
-            }
-            catch (Exception)
+            } catch (Exception)
             {
               Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
               return false;
             }
           }
           return _card.IsTunerLocked;
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
           Log.Write(ex);
           return false;
@@ -450,7 +418,6 @@ namespace TvService
     /// <summary>
     /// Returns the signal quality for a card
     /// </summary>
-    /// <param name="cardId">id of the card.</param>
     /// <returns>signal quality (0-100)</returns>
     public int SignalQuality
     {
@@ -458,23 +425,22 @@ namespace TvService
       {
         try
         {
-          if (_dbsCard.Enabled == false) return 0;
+          if (_dbsCard.Enabled == false)
+            return 0;
           if (IsLocal == false)
           {
             try
             {
               RemoteControl.HostName = _dbsCard.ReferencedServer().HostName;
               return RemoteControl.Instance.SignalQuality(_dbsCard.IdCard);
-            }
-            catch (Exception)
+            } catch (Exception)
             {
               Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
               return 0;
             }
           }
           return _card.SignalQuality;
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
           Log.Write(ex);
           return 0;
@@ -485,7 +451,6 @@ namespace TvService
     /// <summary>
     /// Returns the signal level for a card.
     /// </summary>
-    /// <param name="cardId">id of the card.</param>
     /// <returns>signal level (0-100)</returns>
     public int SignalLevel
     {
@@ -493,23 +458,22 @@ namespace TvService
       {
         try
         {
-          if (_dbsCard.Enabled == false) return 0;
+          if (_dbsCard.Enabled == false)
+            return 0;
           if (IsLocal == false)
           {
             try
             {
               RemoteControl.HostName = _dbsCard.ReferencedServer().HostName;
               return RemoteControl.Instance.SignalLevel(_dbsCard.IdCard);
-            }
-            catch (Exception)
+            } catch (Exception)
             {
               Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
               return 0;
             }
           }
           return _card.SignalLevel;
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
           Log.Write(ex);
           return 0;
@@ -520,12 +484,12 @@ namespace TvService
     /// <summary>
     /// Updates the signal state for a card.
     /// </summary>
-    /// <param name="cardId">id of the card.</param>
     public void UpdateSignalSate()
     {
       try
       {
-        if (_dbsCard.Enabled == false) return;
+        if (_dbsCard.Enabled == false)
+          return;
         if (IsLocal == false)
         {
           try
@@ -533,16 +497,14 @@ namespace TvService
             RemoteControl.HostName = _dbsCard.ReferencedServer().HostName;
             RemoteControl.Instance.UpdateSignalSate(_dbsCard.IdCard);
             return;
-          }
-          catch (Exception)
+          } catch (Exception)
           {
             Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
             return;
           }
         }
         _card.ResetSignalUpdate();
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Write(ex);
       }
@@ -558,23 +520,22 @@ namespace TvService
       {
         try
         {
-          if (_dbsCard.Enabled == false) return 0;
+          if (_dbsCard.Enabled == false)
+            return 0;
           if (IsLocal == false)
           {
             try
             {
               RemoteControl.HostName = _dbsCard.ReferencedServer().HostName;
               return RemoteControl.Instance.MinChannel(_dbsCard.IdCard);
-            }
-            catch (Exception)
+            } catch (Exception)
             {
               Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
               return 0;
             }
           }
           return _card.MinChannel;
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
           Log.Write(ex);
           return 0;
@@ -593,23 +554,22 @@ namespace TvService
       {
         try
         {
-          if (_dbsCard.Enabled == false) return 0;
+          if (_dbsCard.Enabled == false)
+            return 0;
           if (IsLocal == false)
           {
             try
             {
               RemoteControl.HostName = _dbsCard.ReferencedServer().HostName;
               return RemoteControl.Instance.MaxChannel(_dbsCard.IdCard);
-            }
-            catch (Exception)
+            } catch (Exception)
             {
               Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
               return 0;
             }
           }
           return _card.MaxChannel;
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
           Log.Write(ex);
           return 0;
@@ -631,8 +591,10 @@ namespace TvService
 
     public void SetParameters()
     {
-      if (!IsLocal) return;
-      if (_card == null) return;
+      if (!IsLocal)
+        return;
+      if (_card == null)
+        return;
       ScanParameters settings = new ScanParameters();
       TvBusinessLayer layer = new TvBusinessLayer();
       settings.TimeOutTune = Int32.Parse(layer.GetSetting("timeoutTune", "2").Value);
@@ -665,28 +627,29 @@ namespace TvService
     {
       try
       {
-        if (_dbsCard.Enabled == false) return null;
+        if (_dbsCard.Enabled == false)
+          return null;
         if (IsLocal == false)
         {
           try
           {
             RemoteControl.HostName = _dbsCard.ReferencedServer().HostName;
             return RemoteControl.Instance.CurrentChannel(ref user);
-          }
-          catch (Exception)
+          } catch (Exception)
           {
             Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
             return null;
           }
         }
         TvCardContext context = _card.Context as TvCardContext;
-        if (context == null) return null;
+        if (context == null)
+          return null;
         context.GetUser(ref user);
         ITvSubChannel subchannel = _card.GetSubChannel(user.SubChannel);
-        if (subchannel == null) return null;
+        if (subchannel == null)
+          return null;
         return subchannel.CurrentChannel;
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Write(ex);
         return null;
@@ -703,15 +666,15 @@ namespace TvService
 
       try
       {
-        if (_dbsCard.Enabled == false) return -1;
+        if (_dbsCard.Enabled == false)
+          return -1;
         if (IsLocal == false)
         {
           try
           {
             RemoteControl.HostName = _dbsCard.ReferencedServer().HostName;
             return RemoteControl.Instance.CurrentDbChannel(ref user);
-          }
-          catch (Exception)
+          } catch (Exception)
           {
             Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
             return -1;
@@ -720,8 +683,7 @@ namespace TvService
         TvCardContext context = (TvCardContext)_card.Context;
         context.GetUser(ref user);
         return user.IdChannel;
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Write(ex);
         return -1;
@@ -737,15 +699,15 @@ namespace TvService
     {
       try
       {
-        if (_dbsCard.Enabled == false) return "";
+        if (_dbsCard.Enabled == false)
+          return "";
         if (IsLocal == false)
         {
           try
           {
             RemoteControl.HostName = _dbsCard.ReferencedServer().HostName;
             return RemoteControl.Instance.CurrentChannelName(ref user);
-          }
-          catch (Exception)
+          } catch (Exception)
           {
             Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
             return "";
@@ -753,14 +715,16 @@ namespace TvService
         }
 
         TvCardContext context = _card.Context as TvCardContext;
-        if (context == null) return "";
+        if (context == null)
+          return "";
         context.GetUser(ref user);
         ITvSubChannel subchannel = _card.GetSubChannel(user.SubChannel);
-        if (subchannel == null) return "";
-        if (subchannel.CurrentChannel == null) return "";
+        if (subchannel == null)
+          return "";
+        if (subchannel.CurrentChannel == null)
+          return "";
         return subchannel.CurrentChannel.Name;
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Write(ex);
         return "";
@@ -771,34 +735,34 @@ namespace TvService
     /// Returns whether the channel to which the card is tuned is
     /// scrambled or not.
     /// </summary>
-    /// <param name="cardId">id of the card.</param>
     /// <returns>yes if channel is scrambled and CI/CAM cannot decode it, otherwise false</returns>
     public bool IsScrambled(ref User user)
     {
       try
       {
-        if (_dbsCard.Enabled == false) return true;
+        if (_dbsCard.Enabled == false)
+          return true;
         if (IsLocal == false)
         {
           try
           {
             RemoteControl.HostName = _dbsCard.ReferencedServer().HostName;
             return RemoteControl.Instance.IsScrambled(ref user);
-          }
-          catch (Exception)
+          } catch (Exception)
           {
             Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
             return false;
           }
         }
         TvCardContext context = _card.Context as TvCardContext;
-        if (context == null) return false;
+        if (context == null)
+          return false;
         context.GetUser(ref user);
         ITvSubChannel subchannel = _card.GetSubChannel(user.SubChannel);
-        if (subchannel == null) return false;
+        if (subchannel == null)
+          return false;
         return (false == subchannel.IsReceivingAudioVideo);
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Write(ex);
         return false;
@@ -812,7 +776,8 @@ namespace TvService
     {
       try
       {
-        if (_dbsCard.Enabled == false) return;
+        if (_dbsCard.Enabled == false)
+          return;
         if (IsLocal == false)
         {
           try
@@ -820,8 +785,7 @@ namespace TvService
             RemoteControl.HostName = _dbsCard.ReferencedServer().HostName;
             RemoteControl.Instance.StopCard(user);
             return;
-          }
-          catch (Exception)
+          } catch (Exception)
           {
             Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
             return;
@@ -842,8 +806,7 @@ namespace TvService
           context.Clear();
         }
         _card.StopGraph();
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Write(ex);
       }
@@ -855,25 +818,27 @@ namespace TvService
     /// <returns></returns>
     public int GetCurrentVideoStream(User user)
     {
-      if (_dbsCard.Enabled == false) return -1;
+      if (_dbsCard.Enabled == false)
+        return -1;
       if (IsLocal == false)
       {
         try
         {
           RemoteControl.HostName = _dbsCard.ReferencedServer().HostName;
           return RemoteControl.Instance.GetCurrentVideoStream(user);
-        }
-        catch (Exception)
+        } catch (Exception)
         {
           Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
           return -1;
         }
       }
       TvCardContext context = _card.Context as TvCardContext;
-      if (context == null) return -1;
+      if (context == null)
+        return -1;
       context.GetUser(ref user);
       ITvSubChannel subchannel = _card.GetSubChannel(user.SubChannel);
-      if (subchannel == null) return -1;
+      if (subchannel == null)
+        return -1;
       return subchannel.GetCurrentVideoStream;
     }
 

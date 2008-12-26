@@ -24,12 +24,7 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Text;
 using DirectShowLib;
-using TvDatabase;
-using TvLibrary.Interfaces;
 using TvLibrary.Implementations.DVB;
 
 namespace TvLibrary.Implementations.Analog.QualityControl
@@ -43,12 +38,12 @@ namespace TvLibrary.Implementations.Analog.QualityControl
     /// <summary>
     /// Instance of the encoder that supports the IVideoEncoder
     /// </summary>
-    private IVideoEncoder _videoEncoder;
+    private readonly IVideoEncoder _videoEncoder;
     #endregion
 
     #region ctor
     /// <summary>
-    /// Initializes a new instance of the <see cref="T:VideoEncoderControl"/> class.
+    /// Initializes a new instance of the <see cref="VideoEncoderControl"/> class.
     /// </summary>
     /// <param name="configuration">The encoder settings to use.</param>
     /// <param name="videoEncoder">The IVideoEncoder interface to the filter that must be used to control the quality.</param>

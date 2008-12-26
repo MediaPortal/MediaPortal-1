@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using Gentle.Common;
 using Gentle.Framework;
 using TvLibrary.Log;
 
@@ -21,7 +20,7 @@ namespace TvDatabase
     [TableColumn("idCardGroup", NotNull = true)]
     private int idCardGroup;
     #endregion
-    
+
     #region Constructors
     /// <summary> 
     /// Create a new object by specifying all fields (except the auto-generated primary key field). 
@@ -123,8 +122,7 @@ namespace TvDatabase
         try
         {
           base.Persist();
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
           Log.Error("Exception in CardGroupMap.Persist() with Message {0}", ex.Message);
           return;

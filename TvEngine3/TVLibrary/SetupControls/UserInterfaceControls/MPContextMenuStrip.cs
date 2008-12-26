@@ -23,8 +23,6 @@
 
 #endregion
 
-using System;
-
 namespace MediaPortal.UserInterface.Controls
 {
   /// <summary>
@@ -32,9 +30,5 @@ namespace MediaPortal.UserInterface.Controls
   /// </summary>
   public class MPContextMenuStrip : System.Windows.Forms.ContextMenuStrip
   {
-    public MPContextMenuStrip()
-    {
-
-    }
   }
 }

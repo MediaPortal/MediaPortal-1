@@ -26,13 +26,9 @@
 using System;
 using System.Collections;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using System.Net;
-using System.Net.Sockets;
-using MediaPortal.UserInterface.Controls;
 using TvLibrary.Interfaces;
 using TvLibrary.Log;
 using TvControl;
@@ -47,7 +43,7 @@ namespace SetupTv
   /// </summary>
   public class SetupTvSettingsForm : SetupControls.SettingsForm
   {
-    private PluginLoader _pluginLoader = new PluginLoader();
+    private readonly PluginLoader _pluginLoader = new PluginLoader();
     private Plugins pluginsRoot;
     private TvBusinessLayer layer;
 
@@ -55,173 +51,7 @@ namespace SetupTv
     {
       try
       {
-        CheckForIllegalCrossThreadCalls = false;
-        //
-        // Set caption
-        //
-        Text = "MediaPortal - TV Server Configuration";
-
-        //
-        // Build options tree
-        //
-        try
-        {
-          XmlDocument doc = new XmlDocument();
-          doc.Load(String.Format(@"{0}\gentle.config", Log.GetPathName()));
-          XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
-          XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString");
-          XmlNode nodeProvider = nodeKey.Attributes.GetNamedItem("name");
-
-          Gentle.Framework.ProviderFactory.ResetGentle(true);
-          Gentle.Framework.GentleSettings.DefaultProviderName = nodeProvider.InnerText;
-          Gentle.Framework.IGentleProvider prov = Gentle.Framework.ProviderFactory.GetDefaultProvider();
-          Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(node.InnerText);
-        }
-        catch (Exception ex)
-        {
-          MessageBox.Show("Unable to open:" + String.Format(@"{0}\gentle.config", Log.GetPathName()));
-          Log.Write(ex);
-        }
-        IList dbsServers = null;
-
-        try
-        {
-          dbsServers = Server.ListAll();
-        }
-        catch (Exception ex)
-        {
-          MessageBox.Show("Failed to open database");
-          Log.Error("Unable to get list of servers");
-          Log.Write(ex);
-        }
-
-        Project project = new Project();
-        AddSection(project);
-
-        layer = new TvBusinessLayer();
-        Servers servers = new Servers();
-        AddSection(servers);
-        dbsServers = Server.ListAll();
-
-        if (dbsServers != null)
-        {
-          foreach (Server server in dbsServers)
-          {
-            if (server.IsMaster)
-            {
-              RemoteControl.HostName = server.HostName;
-
-              if (server.ReferringCard().Count > 0)
-              {
-                try
-                {
-                  Card c = (Card)server.ReferringCard()[0];
-                  CardType type = RemoteControl.Instance.Type(c.IdCard);
-                }
-                catch
-                {
-                  MessageBox.Show(this, "Unable to connect to " + RemoteControl.HostName);
-                }
-              }
-              break;
-            }
-          }
-
-          foreach (Server server in dbsServers)
-          {
-            int cardNo = 1;
-            bool isLocal = server.HostName.ToLower() == Dns.GetHostName().ToLower();
-            bool DvbCheck = false;
-            TvCards cardPage = new TvCards(server.HostName);
-            AddChildSection(servers, cardPage, 0);
-            foreach (Card dbsCard in server.ReferringCard())
-            {
-              if (RemoteControl.Instance.CardPresent(dbsCard.IdCard))
-              {
-                CardType type = RemoteControl.Instance.Type(dbsCard.IdCard);
-                string cardName = dbsCard.Name;
-                switch (type)
-                {
-                  case CardType.Analog:
-                    cardName = String.Format("{0} Analog {1}", cardNo, cardName);
-                    AddChildSection(cardPage, new CardAnalog(cardName, dbsCard.IdCard), 1);
-                    break;
-                  case CardType.DvbT:
-                    cardName = String.Format("{0} DVB-T {1}", cardNo, cardName);
-                    AddChildSection(cardPage, new CardDvbT(cardName, dbsCard.IdCard), 1);
-                    DvbCheck = true;
-                    break;
-                  case CardType.DvbC:
-                    cardName = String.Format("{0} DVB-C {1}", cardNo, cardName);
-                    AddChildSection(cardPage, new CardDvbC(cardName, dbsCard.IdCard), 1);
-                    DvbCheck = true;
-                    break;
-                  case CardType.DvbS:
-                    cardName = String.Format("{0} DVB-S {1}", cardNo, cardName);
-                    AddChildSection(cardPage, new CardDvbS(cardName, dbsCard.IdCard), 1);
-                    DvbCheck = true;
-                    break;
-                  case CardType.Atsc:
-                    cardName = String.Format("{0} ATSC {1}", cardNo, cardName);
-                    AddChildSection(cardPage, new CardAtsc(cardName, dbsCard.IdCard), 1);
-                    DvbCheck = true;
-                    break;
-                  case CardType.Unknown:
-                    cardName = String.Format("{0} Unknown {1}", cardNo, cardName);
-                    AddChildSection(cardPage, new CardAnalog(cardName, dbsCard.IdCard), 1);
-                    break;
-                }
-              }
-              cardNo++;
-            }
-            if (isLocal)
-              Utils.CheckPrerequisites(DvbCheck);
-          }
-
-          TvChannels tvChannels = new TvChannels();
-          AddSection(tvChannels);
-          AddChildSection(tvChannels, new TvCombinations());
-          AddChildSection(tvChannels, new TvChannelMapping());
-          AddChildSection(tvChannels, new TvEpgGrabber());
-          AddChildSection(tvChannels, new TvGroups());
-
-          RadioChannels radioChannels = new RadioChannels();
-          AddSection(radioChannels);
-          AddChildSection(radioChannels, new RadioCombinations("Radio Combinations"));
-          AddChildSection(radioChannels, new RadioChannelMapping());
-          AddChildSection(radioChannels, new RadioEpgGrabber());
-          AddChildSection(radioChannels, new RadioGroups());
-
-          AddSection(new ScanSettings());
-          AddSection(new TvRecording());
-          AddSection(new TvSchedules());
-          AddSection(new StreamingServer());
-
-          AddSection(new TestService("Manual Control"));
-
-          _pluginLoader.Load();
-          pluginsRoot = new Plugins("Plugins", _pluginLoader);
-          AddSection(pluginsRoot);
-
-          pluginsRoot.ChangedActivePlugins += new SetupTv.Sections.Plugins.ChangedEventHandler(SectChanged);
-
-          foreach (ITvServerPlugin plugin in _pluginLoader.Plugins)
-          {
-            SectionSettings settings = plugin.Setup;
-            if (settings != null)
-            {
-              Setting isActive = layer.GetSetting(String.Format("plugin{0}", plugin.Name), "false");
-              settings.Text = plugin.Name;
-              if (isActive.Value == "true")
-              {
-                AddChildSection(pluginsRoot, settings);
-              }
-            }
-          }
-          sectionTree.SelectedNode = sectionTree.Nodes[0];
-          // make sure window is in front of mediaportal
-        }
-        BringToFront();
+        Init();
       }
       catch (Exception ex)
       {
@@ -230,13 +60,182 @@ namespace SetupTv
       }
     }
 
+    private void Init()
+    {
+      CheckForIllegalCrossThreadCalls = false;
+      //
+      // Set caption
+      //
+      Text = "MediaPortal - TV Server Configuration";
+
+      //
+      // Build options tree
+      //
+      try
+      {
+        XmlDocument doc = new XmlDocument();
+        doc.Load(String.Format(@"{0}\gentle.config", Log.GetPathName()));
+        XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
+        XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString");
+        XmlNode nodeProvider = nodeKey.Attributes.GetNamedItem("name");
+
+        Gentle.Framework.ProviderFactory.ResetGentle(true);
+        Gentle.Framework.GentleSettings.DefaultProviderName = nodeProvider.InnerText;
+        Gentle.Framework.ProviderFactory.GetDefaultProvider();
+        Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(node.InnerText);
+      }
+      catch (Exception ex)
+      {
+        MessageBox.Show("Unable to open:" + String.Format(@"{0}\gentle.config", Log.GetPathName()));
+        Log.Write(ex);
+      }
+
+      try
+      {
+        Server.ListAll();
+      }
+      catch (Exception ex)
+      {
+        MessageBox.Show("Failed to open database");
+        Log.Error("Unable to get list of servers");
+        Log.Write(ex);
+      }
+
+      Project project = new Project();
+      AddSection(project);
+
+      layer = new TvBusinessLayer();
+      Servers servers = new Servers();
+      AddSection(servers);
+      IList dbsServers = Server.ListAll();
+
+      if (dbsServers != null)
+      {
+        foreach (Server server in dbsServers)
+        {
+          if (server.IsMaster)
+          {
+            RemoteControl.HostName = server.HostName;
+
+            if (server.ReferringCard().Count > 0)
+            {
+              try
+              {
+                Card c = (Card)server.ReferringCard()[0];
+                RemoteControl.Instance.Type(c.IdCard);
+              }
+              catch
+              {
+                MessageBox.Show(this, "Unable to connect to " + RemoteControl.HostName);
+              }
+            }
+            break;
+          }
+        }
+
+        foreach (Server server in dbsServers)
+        {
+          int cardNo = 1;
+          bool isLocal = server.HostName.ToLower() == Dns.GetHostName().ToLower();
+          bool DvbCheck = false;
+          TvCards cardPage = new TvCards(server.HostName);
+          AddChildSection(servers, cardPage, 0);
+          foreach (Card dbsCard in server.ReferringCard())
+          {
+            if (RemoteControl.Instance.CardPresent(dbsCard.IdCard))
+            {
+              CardType type = RemoteControl.Instance.Type(dbsCard.IdCard);
+              string cardName = dbsCard.Name;
+              switch (type)
+              {
+                case CardType.Analog:
+                  cardName = String.Format("{0} Analog {1}", cardNo, cardName);
+                  AddChildSection(cardPage, new CardAnalog(cardName, dbsCard.IdCard), 1);
+                  break;
+                case CardType.DvbT:
+                  cardName = String.Format("{0} DVB-T {1}", cardNo, cardName);
+                  AddChildSection(cardPage, new CardDvbT(cardName, dbsCard.IdCard), 1);
+                  DvbCheck = true;
+                  break;
+                case CardType.DvbC:
+                  cardName = String.Format("{0} DVB-C {1}", cardNo, cardName);
+                  AddChildSection(cardPage, new CardDvbC(cardName, dbsCard.IdCard), 1);
+                  DvbCheck = true;
+                  break;
+                case CardType.DvbS:
+                  cardName = String.Format("{0} DVB-S {1}", cardNo, cardName);
+                  AddChildSection(cardPage, new CardDvbS(cardName, dbsCard.IdCard), 1);
+                  DvbCheck = true;
+                  break;
+                case CardType.Atsc:
+                  cardName = String.Format("{0} ATSC {1}", cardNo, cardName);
+                  AddChildSection(cardPage, new CardAtsc(cardName, dbsCard.IdCard), 1);
+                  DvbCheck = true;
+                  break;
+                case CardType.Unknown:
+                  cardName = String.Format("{0} Unknown {1}", cardNo, cardName);
+                  AddChildSection(cardPage, new CardAnalog(cardName, dbsCard.IdCard), 1);
+                  break;
+              }
+            }
+            cardNo++;
+          }
+          if (isLocal)
+            Utils.CheckPrerequisites(DvbCheck);
+        }
+
+        TvChannels tvChannels = new TvChannels();
+        AddSection(tvChannels);
+        AddChildSection(tvChannels, new TvCombinations());
+        AddChildSection(tvChannels, new TvChannelMapping());
+        AddChildSection(tvChannels, new TvEpgGrabber());
+        AddChildSection(tvChannels, new TvGroups());
+
+        RadioChannels radioChannels = new RadioChannels();
+        AddSection(radioChannels);
+        AddChildSection(radioChannels, new RadioCombinations("Radio Combinations"));
+        AddChildSection(radioChannels, new RadioChannelMapping());
+        AddChildSection(radioChannels, new RadioEpgGrabber());
+        AddChildSection(radioChannels, new RadioGroups());
+
+        AddSection(new ScanSettings());
+        AddSection(new TvRecording());
+        AddSection(new TvSchedules());
+        AddSection(new StreamingServer());
+
+        AddSection(new TestService("Manual Control"));
+
+        _pluginLoader.Load();
+        pluginsRoot = new Plugins("Plugins", _pluginLoader);
+        AddSection(pluginsRoot);
+
+        pluginsRoot.ChangedActivePlugins += SectChanged;
+
+        foreach (ITvServerPlugin plugin in _pluginLoader.Plugins)
+        {
+          SectionSettings settings = plugin.Setup;
+          if (settings != null)
+          {
+            Setting isActive = layer.GetSetting(String.Format("plugin{0}", plugin.Name), "false");
+            settings.Text = plugin.Name;
+            if (isActive.Value == "true")
+            {
+              AddChildSection(pluginsRoot, settings);
+            }
+          }
+        }
+        sectionTree.SelectedNode = sectionTree.Nodes[0];
+        // make sure window is in front of mediaportal
+      }
+      BringToFront();
+    }
+
 
     public void RemoveChildSection(SectionSettings parentSection, SectionSettings section)
     {
       // Remove section from tree
       if (parentSection != null)
       {
-        SectionTreeNode treeNode = new SectionTreeNode(section);
         SectionTreeNode parentTreeNode = (SectionTreeNode)settingSections[parentSection.Text];
 
         for (int i = 0; i < parentTreeNode.GetNodeCount(true); i++)
@@ -380,11 +379,6 @@ namespace SetupTv
         }
     }
 
-    public override void sectionTree_AfterSelect(object sender, TreeViewEventArgs e)
-    {
-      base.sectionTree_AfterSelect(sender, e);
-    }
-
     public override bool ActivateSection(SectionSettings section)
     {
       try
@@ -490,10 +484,11 @@ namespace SetupTv
         //
         // Load settings for all child nodes
         //
-        foreach (TreeNode childNode in treeNode.Nodes)
-        {
-          LoadSectionSettings(childNode);
-        }
+        if (treeNode != null)
+          foreach (TreeNode childNode in treeNode.Nodes)
+          {
+            LoadSectionSettings(childNode);
+          }
       }
     }
 
@@ -514,10 +509,11 @@ namespace SetupTv
         //
         // Load settings for all child nodes
         //
-        foreach (TreeNode childNode in treeNode.Nodes)
-        {
-          SaveSectionSettings(childNode);
-        }
+        if (treeNode != null)
+          foreach (TreeNode childNode in treeNode.Nodes)
+          {
+            SaveSectionSettings(childNode);
+          }
       }
     }
 
@@ -585,6 +581,7 @@ namespace SetupTv
       process.Start();
     }
 
+    #region Windows Form Designer generated code
 
     private new void InitializeComponent()
     {
@@ -603,5 +600,6 @@ namespace SetupTv
       this.PerformLayout();
 
     }
+    #endregion
   }
 }

@@ -19,8 +19,6 @@
  *
  */
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.InteropServices;
 
 namespace TvLibrary.Interfaces.Analyzer
@@ -90,7 +88,7 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <param name="classification">The classification</param>
     /// <returns></returns>
     [PreserveSig]
-    int GetEPGEvent([In] uint channel, [In] uint eventid, [Out] out uint languageCount, [Out] out uint date, [Out] out uint time, [Out] out uint duration, out IntPtr genre,[Out] out int starRating,out IntPtr classification );
+    int GetEPGEvent([In] uint channel, [In] uint eventid, [Out] out uint languageCount, [Out] out uint date, [Out] out uint time, [Out] out uint duration, out IntPtr genre, [Out] out int starRating, out IntPtr classification);
 
     /// <summary>
     /// Gets the EPG language.
@@ -101,9 +99,10 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <param name="language">The language.</param>
     /// <param name="eventText">The event text.</param>
     /// <param name="eventDescription">The event description.</param>
+    /// <param name="parentalRating">The parental rating</param>
     /// <returns></returns>
     [PreserveSig]
-    int GetEPGLanguage([In] uint channel, [In] uint eventid, [In]uint languageIndex, [Out] out uint language, [Out] out IntPtr eventText, [Out] out IntPtr eventDescription,[Out] out int parentalRating);
+    int GetEPGLanguage([In] uint channel, [In] uint eventid, [In]uint languageIndex, [Out] out uint language, [Out] out IntPtr eventText, [Out] out IntPtr eventDescription, [Out] out int parentalRating);
 
     /// <summary>
     /// Start grabbing MGW

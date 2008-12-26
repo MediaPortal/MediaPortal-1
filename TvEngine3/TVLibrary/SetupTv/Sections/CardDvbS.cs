@@ -22,22 +22,17 @@ using System;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using System.Threading;
 using System.Xml;
 using System.Net;
-using DirectShowLib;
 using TvDatabase;
 using TvControl;
 using TvLibrary;
 using TvLibrary.Log;
 using TvLibrary.Channels;
 using TvLibrary.Interfaces;
-using TvLibrary.Implementations;
 using DirectShowLib.BDA;
 
 namespace SetupTv.Sections
@@ -66,7 +61,7 @@ namespace SetupTv.Sections
       {
         return SatteliteName.CompareTo(other.SatteliteName);
       }
-      
+
 
       #region IComparable<SatteliteContext> Members
 
@@ -90,12 +85,18 @@ namespace SetupTv.Sections
 
       public int CompareTo(Transponder other)
       {
-        if (Polarisation < other.Polarisation) return 1;
-        if (Polarisation > other.Polarisation) return -1;
-        if (CarrierFrequency > other.CarrierFrequency) return 1;
-        if (CarrierFrequency < other.CarrierFrequency) return -1;
-        if (SymbolRate > other.SymbolRate) return 1;
-        if (SymbolRate < other.SymbolRate) return -1;
+        if (Polarisation < other.Polarisation)
+          return 1;
+        if (Polarisation > other.Polarisation)
+          return -1;
+        if (CarrierFrequency > other.CarrierFrequency)
+          return 1;
+        if (CarrierFrequency < other.CarrierFrequency)
+          return -1;
+        if (SymbolRate > other.SymbolRate)
+          return 1;
+        if (SymbolRate < other.SymbolRate)
+          return -1;
         return 0;
       }
       public override string ToString()
@@ -106,21 +107,22 @@ namespace SetupTv.Sections
     #endregion
 
     #region variables
-    int _cardNumber;
-    List<Transponder> _transponders = new List<Transponder>();
-    int _channelCount = 0;
 
-    int _tvChannelsNew = 0;
-    int _radioChannelsNew = 0;
-    int _tvChannelsUpdated = 0;
-    int _radioChannelsUpdated = 0;
-    bool _isScanning = false;
-    bool _stopScanning = false;
-    bool _enableEvents = false;
-    bool _ignoreCheckBoxCreateGroupsClickEvent = false;
+    readonly int _cardNumber;
+    readonly List<Transponder> _transponders = new List<Transponder>();
+    private int _channelCount;
+
+    int _tvChannelsNew;
+    int _radioChannelsNew;
+    int _tvChannelsUpdated;
+    int _radioChannelsUpdated;
+    bool _isScanning;
+    private bool _stopScanning;
+    bool _enableEvents;
+    bool _ignoreCheckBoxCreateGroupsClickEvent;
     User _user;
-    bool dvbs2 = false;
-    int _count = 0;
+    bool dvbs2;
+    int _count;
     #endregion
 
     #region ctors
@@ -146,9 +148,12 @@ namespace SetupTv.Sections
     #region helper methods
     void DownloadTransponder(SatteliteContext context)
     {
-      if (context.Url == null) return;
-      if (context.Url.Length == 0) return;
-      if (!context.Url.ToLower().StartsWith("http://")) return;
+      if (context.Url == null)
+        return;
+      if (context.Url.Length == 0)
+        return;
+      if (!context.Url.ToLower().StartsWith("http://"))
+        return;
       string itemLine = String.Format("Downloading transponders for:{0}", context.SatteliteName);
       ListViewItem item = listViewStatus.Items.Add(new ListViewItem(itemLine));
       item.EnsureVisible();
@@ -157,9 +162,8 @@ namespace SetupTv.Sections
       {
         try
         {
-          System.IO.File.Delete(context.FileName);
-        }
-        catch (Exception)
+          File.Delete(context.FileName);
+        } catch (Exception)
         {
         }
         item.Text = itemLine + " connecting...";
@@ -173,14 +177,15 @@ namespace SetupTv.Sections
           Application.DoEvents();
           using (Stream resStream = response.GetResponseStream())
           {
-            using (System.IO.TextReader tin = new StreamReader(resStream))
+            using (TextReader tin = new StreamReader(resStream))
             {
-              using (System.IO.TextWriter tout = System.IO.File.CreateText(context.FileName))
+              using (TextWriter tout = File.CreateText(context.FileName))
               {
                 while (true)
                 {
                   string line = tin.ReadLine();
-                  if (line == null) break;
+                  if (line == null)
+                    break;
                   tout.WriteLine(line);
                 }
               }
@@ -188,8 +193,7 @@ namespace SetupTv.Sections
           }
         }
         item.Text = itemLine + " done";
-      }
-      catch (Exception)
+      } catch (Exception)
       {
         item.Text = itemLine + " failed";
       }
@@ -204,22 +208,21 @@ namespace SetupTv.Sections
       string[] tpdata;
       // load transponder list and start scan
       // first check if we are to look for the dvbs2 scanning file with the -S2 extension
-      if (dvbs2 == true)
+      if (dvbs2)
       {
         Log.Info("DVBS: Also using DVB-S2 transponder scanning information");
-        string transpondername = System.IO.Path.GetFileNameWithoutExtension(tsfilename).ToLower();
+        string transpondername = Path.GetFileNameWithoutExtension(tsfilename).ToLower();
         //@"\Tuningparameters\"
         tsfilename = @"Tuningparameters\" + transpondername + "-S2.ini";
-        if (!System.IO.File.Exists(tsfilename))
+        if (!File.Exists(tsfilename))
         {
           Log.Info("DVBS: {0} transponder scanning file not present!", tsfilename);
           return;
         }
       }
-      System.IO.TextReader tin = System.IO.File.OpenText(tsfilename);
+      TextReader tin = File.OpenText(tsfilename);
       do
       {
-        line = null;
         line = tin.ReadLine();
         if (line != null)
         {
@@ -263,52 +266,88 @@ namespace SetupTv.Sections
                 for (int idx = 3; idx < tpdata.Length; ++idx)
                 {
                   string fieldValue = tpdata[idx].ToLower();
-                  if (fieldValue == "8psk") transponder.Modulation = ModulationType.Mod8Psk;
-                  if (fieldValue == "qpsk") transponder.Modulation = ModulationType.ModQpsk;
-                  if (fieldValue == "16apsk") transponder.Modulation = ModulationType.Mod16Apsk;
-                  if (fieldValue == "32apsk") transponder.Modulation = ModulationType.Mod32Apsk;
+                  if (fieldValue == "8psk")
+                    transponder.Modulation = ModulationType.Mod8Psk;
+                  if (fieldValue == "qpsk")
+                    transponder.Modulation = ModulationType.ModQpsk;
+                  if (fieldValue == "16apsk")
+                    transponder.Modulation = ModulationType.Mod16Apsk;
+                  if (fieldValue == "32apsk")
+                    transponder.Modulation = ModulationType.Mod32Apsk;
 
-                  if (fieldValue == "12") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate1_2;
-                  if (fieldValue == "23") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate2_3;
-                  if (fieldValue == "34") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate3_4;
-                  if (fieldValue == "35") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate3_5;
-                  if (fieldValue == "45") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate4_5;
-                  if (fieldValue == "511") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate5_11;
-                  if (fieldValue == "56") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate5_6;
-                  if (fieldValue == "78") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate7_8;
-                  if (fieldValue == "14") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate1_4;
-                  if (fieldValue == "13") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate1_3;
-                  if (fieldValue == "25") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate2_5;
-                  if (fieldValue == "67") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate6_7;
-                  if (fieldValue == "89") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate8_9;
-                  if (fieldValue == "910") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate9_10;
+                  if (fieldValue == "12")
+                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate1_2;
+                  if (fieldValue == "23")
+                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate2_3;
+                  if (fieldValue == "34")
+                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate3_4;
+                  if (fieldValue == "35")
+                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate3_5;
+                  if (fieldValue == "45")
+                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate4_5;
+                  if (fieldValue == "511")
+                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate5_11;
+                  if (fieldValue == "56")
+                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate5_6;
+                  if (fieldValue == "78")
+                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate7_8;
+                  if (fieldValue == "14")
+                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate1_4;
+                  if (fieldValue == "13")
+                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate1_3;
+                  if (fieldValue == "25")
+                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate2_5;
+                  if (fieldValue == "67")
+                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate6_7;
+                  if (fieldValue == "89")
+                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate8_9;
+                  if (fieldValue == "910")
+                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate9_10;
 
-                  if (fieldValue == "1/2") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate1_2;
-                  if (fieldValue == "2/3") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate2_3;
-                  if (fieldValue == "3/4") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate3_4;
-                  if (fieldValue == "3/5") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate3_5;
-                  if (fieldValue == "4/5") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate4_5;
-                  if (fieldValue == "5/11") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate5_11;
-                  if (fieldValue == "5/6") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate5_6;
-                  if (fieldValue == "7/8") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate7_8;
-                  if (fieldValue == "1/4") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate1_4;
-                  if (fieldValue == "1/3") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate1_3;
-                  if (fieldValue == "2/5") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate2_5;
-                  if (fieldValue == "6/7") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate6_7;
-                  if (fieldValue == "8/9") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate8_9;
-                  if (fieldValue == "9/10") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate9_10;
+                  if (fieldValue == "1/2")
+                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate1_2;
+                  if (fieldValue == "2/3")
+                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate2_3;
+                  if (fieldValue == "3/4")
+                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate3_4;
+                  if (fieldValue == "3/5")
+                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate3_5;
+                  if (fieldValue == "4/5")
+                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate4_5;
+                  if (fieldValue == "5/11")
+                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate5_11;
+                  if (fieldValue == "5/6")
+                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate5_6;
+                  if (fieldValue == "7/8")
+                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate7_8;
+                  if (fieldValue == "1/4")
+                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate1_4;
+                  if (fieldValue == "1/3")
+                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate1_3;
+                  if (fieldValue == "2/5")
+                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate2_5;
+                  if (fieldValue == "6/7")
+                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate6_7;
+                  if (fieldValue == "8/9")
+                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate8_9;
+                  if (fieldValue == "9/10")
+                    transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate9_10;
 
-                  if (fieldValue == "off") transponder.Pilot = Pilot.Off;
-                  if (fieldValue == "on") transponder.Pilot = Pilot.On;
+                  if (fieldValue == "off")
+                    transponder.Pilot = Pilot.Off;
+                  if (fieldValue == "on")
+                    transponder.Pilot = Pilot.On;
 
-                  if (fieldValue == "0.20") transponder.Rolloff = RollOff.Twenty;
-                  if (fieldValue == "0.25") transponder.Rolloff = RollOff.TwentyFive;
-                  if (fieldValue == "0.35") transponder.Rolloff = RollOff.ThirtyFive;
+                  if (fieldValue == "0.20")
+                    transponder.Rolloff = RollOff.Twenty;
+                  if (fieldValue == "0.25")
+                    transponder.Rolloff = RollOff.TwentyFive;
+                  if (fieldValue == "0.35")
+                    transponder.Rolloff = RollOff.ThirtyFive;
                 }
                 _transponders.Add(transponder);
                 _count += 1;
-              }
-              catch{ }
+              } catch { }
             }
           }
         }
@@ -317,10 +356,10 @@ namespace SetupTv.Sections
       tin.Close();
       dvbs2 = false;
     }
-    
+
     void LoadTransponders(SatteliteContext context)
     {
-      if (!System.IO.File.Exists(context.FileName))
+      if (!File.Exists(context.FileName))
       {
         DownloadTransponder(context);
       }
@@ -340,21 +379,22 @@ namespace SetupTv.Sections
       _transponders.Sort();
     }
 
-    List<SatteliteContext> LoadSattelites()
+    static List<SatteliteContext> LoadSattelites()
     {
       List<SatteliteContext> satellites = new List<SatteliteContext>();
       XmlDocument doc = new XmlDocument();
-      doc.Load(System.IO.Directory.GetCurrentDirectory() + @"\Tuningparameters\satellites.xml");
+      doc.Load(Directory.GetCurrentDirectory() + @"\Tuningparameters\satellites.xml");
       XmlNodeList nodes = doc.SelectNodes("/satellites/satellite");
-      foreach (XmlNode node in nodes)
-      {
-        SatteliteContext ts = new SatteliteContext();
-        ts.SatteliteName = node.Attributes.GetNamedItem("name").Value;
-        ts.Url = node.Attributes.GetNamedItem("url").Value;
-        string name = Utils.FilterFileName(ts.SatteliteName);
-        ts.FileName = System.IO.Directory.GetCurrentDirectory() + @"\Tuningparameters\" + name + ".ini";
-        satellites.Add(ts);
-      }
+      if (nodes != null)
+        foreach (XmlNode node in nodes)
+        {
+          SatteliteContext ts = new SatteliteContext();
+          ts.SatteliteName = node.Attributes.GetNamedItem("name").Value;
+          ts.Url = node.Attributes.GetNamedItem("url").Value;
+          string name = Utils.FilterFileName(ts.SatteliteName);
+          ts.FileName = Directory.GetCurrentDirectory() + @"\Tuningparameters\" + name + ".ini";
+          satellites.Add(ts);
+        }
 
       /*
       string[] files = System.IO.Directory.GetFiles(System.IO.Directory.GetCurrentDirectory() + @"\Tuningparameters", "*.tpl");
@@ -469,29 +509,29 @@ namespace SetupTv.Sections
       mpDisEqc4.SelectedIndex = 0;
 
       TvBusinessLayer layer = new TvBusinessLayer();
-      mpTransponder1.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber.ToString() + "SatteliteContext1", "0").Value);
-      mpTransponder2.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber.ToString() + "SatteliteContext2", "0").Value);
-      mpTransponder3.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber.ToString() + "SatteliteContext3", "0").Value);
-      mpTransponder4.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber.ToString() + "SatteliteContext4", "0").Value);
+      mpTransponder1.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber + "SatteliteContext1", "0").Value);
+      mpTransponder2.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber + "SatteliteContext2", "0").Value);
+      mpTransponder3.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber + "SatteliteContext3", "0").Value);
+      mpTransponder4.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber + "SatteliteContext4", "0").Value);
 
-      mpDisEqc1.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber.ToString() + "DisEqc1", "0").Value);
-      mpDisEqc2.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber.ToString() + "DisEqc2", "0").Value);
-      mpDisEqc3.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber.ToString() + "DisEqc3", "0").Value);
-      mpDisEqc4.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber.ToString() + "DisEqc4", "0").Value);
+      mpDisEqc1.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber + "DisEqc1", "0").Value);
+      mpDisEqc2.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber + "DisEqc2", "0").Value);
+      mpDisEqc3.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber + "DisEqc3", "0").Value);
+      mpDisEqc4.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber + "DisEqc4", "0").Value);
 
-      mpBand1.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber.ToString() + "band1", "0").Value);
-      mpBand2.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber.ToString() + "band2", "0").Value);
-      mpBand3.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber.ToString() + "band3", "0").Value);
-      mpBand4.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber.ToString() + "band4", "0").Value);
+      mpBand1.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber + "band1", "0").Value);
+      mpBand2.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber + "band2", "0").Value);
+      mpBand3.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber + "band3", "0").Value);
+      mpBand4.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber + "band4", "0").Value);
 
-      mpLNB1.Checked = (layer.GetSetting("dvbs" + _cardNumber.ToString() + "LNB1", "false").Value == "true");
-      mpLNB2.Checked = (layer.GetSetting("dvbs" + _cardNumber.ToString() + "LNB2", "false").Value == "true");
-      mpLNB3.Checked = (layer.GetSetting("dvbs" + _cardNumber.ToString() + "LNB3", "false").Value == "true");
-      mpLNB4.Checked = (layer.GetSetting("dvbs" + _cardNumber.ToString() + "LNB4", "false").Value == "true");
-      mpLNB1_CheckedChanged(null, null); ;
-      mpLNB2_CheckedChanged(null, null); ;
-      mpLNB3_CheckedChanged(null, null); ;
-      mpLNB4_CheckedChanged(null, null); ;
+      mpLNB1.Checked = (layer.GetSetting("dvbs" + _cardNumber + "LNB1", "false").Value == "true");
+      mpLNB2.Checked = (layer.GetSetting("dvbs" + _cardNumber + "LNB2", "false").Value == "true");
+      mpLNB3.Checked = (layer.GetSetting("dvbs" + _cardNumber + "LNB3", "false").Value == "true");
+      mpLNB4.Checked = (layer.GetSetting("dvbs" + _cardNumber + "LNB4", "false").Value == "true");
+      mpLNB1_CheckedChanged(null, null);
+      mpLNB2_CheckedChanged(null, null);
+      mpLNB3_CheckedChanged(null, null);
+      mpLNB4_CheckedChanged(null, null);
 
       checkBox2.Checked = (layer.GetSetting("lnbDefault", "true").Value != "true");
       textBoxLNBLo.Text = layer.GetSetting("LnbLowFrequency", "0").Value;
@@ -499,21 +539,20 @@ namespace SetupTv.Sections
       textBoxLNBSwitch.Text = layer.GetSetting("LnbSwitchFrequency", "0").Value;
       checkBox2_CheckedChanged(null, null);
 
-      checkBoxCreateGroups.Checked = (layer.GetSetting("dvbs" + _cardNumber.ToString() + "creategroups", "false").Value == "true");
+      checkBoxCreateGroups.Checked = (layer.GetSetting("dvbs" + _cardNumber + "creategroups", "false").Value == "true");
       if (!checkBoxCreateGroups.Checked)
       {
-        checkBoxCreateGroupsSat.Checked = (layer.GetSetting("dvbs" + _cardNumber.ToString() + "creategroupssat", "false").Value == "true");
+        checkBoxCreateGroupsSat.Checked = (layer.GetSetting("dvbs" + _cardNumber + "creategroupssat", "false").Value == "true");
       }
 
-      checkEnableDVBS2.Checked = (layer.GetSetting("dvbs" + _cardNumber.ToString() + "enabledvbs2", "false").Value == "true");
+      checkEnableDVBS2.Checked = (layer.GetSetting("dvbs" + _cardNumber + "enabledvbs2", "false").Value == "true");
       if (!checkEnableDVBS2.Checked)
       {
-        checkEnableDVBS2.Checked = (layer.GetSetting("dvbs" + _cardNumber.ToString() + "enabledvbs2", "false").Value == "true");
+        checkEnableDVBS2.Checked = (layer.GetSetting("dvbs" + _cardNumber + "enabledvbs2", "false").Value == "true");
       }
 
-      Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
       _enableEvents = true;
-      mpLNB1_CheckedChanged(null, null); ;
+      mpLNB1_CheckedChanged(null, null);
     }
 
     public override void OnSectionDeActivated()
@@ -525,91 +564,94 @@ namespace SetupTv.Sections
 
     public override void SaveSettings()
     {
-      Setting setting;
       TvBusinessLayer layer = new TvBusinessLayer();
-      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "creategroups", "false");
+      Setting setting = layer.GetSetting("dvbs" + _cardNumber + "creategroups", "false");
       setting.Value = checkBoxCreateGroups.Checked ? "true" : "false";
       setting.Persist();
 
-      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "creategroupssat", "false");
+      setting = layer.GetSetting("dvbs" + _cardNumber + "creategroupssat", "false");
       setting.Value = checkBoxCreateGroupsSat.Checked ? "true" : "false";
       setting.Persist();
 
-      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "SatteliteContext1", "0");
+      setting = layer.GetSetting("dvbs" + _cardNumber + "SatteliteContext1", "0");
       setting.Value = mpTransponder1.SelectedIndex.ToString();
       setting.Persist();
-      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "SatteliteContext2", "0");
+      setting = layer.GetSetting("dvbs" + _cardNumber + "SatteliteContext2", "0");
       setting.Value = mpTransponder2.SelectedIndex.ToString();
       setting.Persist();
-      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "SatteliteContext3", "0");
+      setting = layer.GetSetting("dvbs" + _cardNumber + "SatteliteContext3", "0");
       setting.Value = mpTransponder3.SelectedIndex.ToString();
       setting.Persist();
-      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "SatteliteContext4", "0");
+      setting = layer.GetSetting("dvbs" + _cardNumber + "SatteliteContext4", "0");
       setting.Value = mpTransponder4.SelectedIndex.ToString();
       setting.Persist();
 
-      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "DisEqc1", "0");
+      setting = layer.GetSetting("dvbs" + _cardNumber + "DisEqc1", "0");
       setting.Value = mpDisEqc1.SelectedIndex.ToString();
       setting.Persist();
-      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "DisEqc2", "0");
+      setting = layer.GetSetting("dvbs" + _cardNumber + "DisEqc2", "0");
       setting.Value = mpDisEqc2.SelectedIndex.ToString();
       setting.Persist();
-      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "DisEqc3", "0");
+      setting = layer.GetSetting("dvbs" + _cardNumber + "DisEqc3", "0");
       setting.Value = mpDisEqc3.SelectedIndex.ToString();
       setting.Persist();
-      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "DisEqc4", "0");
+      setting = layer.GetSetting("dvbs" + _cardNumber + "DisEqc4", "0");
       setting.Value = mpDisEqc4.SelectedIndex.ToString();
       setting.Persist();
 
-      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "band1", "0");
+      setting = layer.GetSetting("dvbs" + _cardNumber + "band1", "0");
       setting.Value = mpBand1.SelectedIndex.ToString();
       setting.Persist();
-      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "band2", "0");
+      setting = layer.GetSetting("dvbs" + _cardNumber + "band2", "0");
       setting.Value = mpBand2.SelectedIndex.ToString();
       setting.Persist();
-      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "band3", "0");
+      setting = layer.GetSetting("dvbs" + _cardNumber + "band3", "0");
       setting.Value = mpBand3.SelectedIndex.ToString();
       setting.Persist();
-      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "band4", "0");
+      setting = layer.GetSetting("dvbs" + _cardNumber + "band4", "0");
       setting.Value = mpBand4.SelectedIndex.ToString();
       setting.Persist();
 
-      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "LNB1", "false");
+      setting = layer.GetSetting("dvbs" + _cardNumber + "LNB1", "false");
       setting.Value = mpLNB1.Checked ? "true" : "false";
       setting.Persist();
 
-      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "LNB2", "false");
+      setting = layer.GetSetting("dvbs" + _cardNumber + "LNB2", "false");
       setting.Value = mpLNB2.Checked ? "true" : "false";
       setting.Persist();
-      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "LNB3", "false");
+      setting = layer.GetSetting("dvbs" + _cardNumber + "LNB3", "false");
       setting.Value = mpLNB3.Checked ? "true" : "false";
       setting.Persist();
-      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "LNB4", "false");
+      setting = layer.GetSetting("dvbs" + _cardNumber + "LNB4", "false");
       setting.Value = mpLNB4.Checked ? "true" : "false";
       setting.Persist();
 
-      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "enabledvbs2", "false");
+      setting = layer.GetSetting("dvbs" + _cardNumber + "enabledvbs2", "false");
       setting.Value = checkEnableDVBS2.Checked ? "true" : "false";
       setting.Persist();
 
       bool restart = false;
       setting = layer.GetSetting("lnbDefault", "true");
-      if (setting.Value != (checkBox2.Checked ? "false" : "true")) restart = true;
+      if (setting.Value != (checkBox2.Checked ? "false" : "true"))
+        restart = true;
       setting.Value = checkBox2.Checked ? "false" : "true";
       setting.Persist();
 
       setting = layer.GetSetting("LnbLowFrequency", "0");
-      if (setting.Value != textBoxLNBLo.Text) restart = true;
+      if (setting.Value != textBoxLNBLo.Text)
+        restart = true;
       setting.Value = textBoxLNBLo.Text;
       setting.Persist();
 
       setting = layer.GetSetting("LnbHighFrequency", "0");
-      if (setting.Value != textBoxLNBHi.Text) restart = true;
+      if (setting.Value != textBoxLNBHi.Text)
+        restart = true;
       setting.Value = textBoxLNBHi.Text;
       setting.Persist();
 
       setting = layer.GetSetting("LnbSwitchFrequency", "0");
-      if (setting.Value != textBoxLNBSwitch.Text) restart = true;
+      if (setting.Value != textBoxLNBSwitch.Text)
+        restart = true;
       setting.Value = textBoxLNBSwitch.Text;
       setting.Persist();
       if (restart)
@@ -619,22 +661,19 @@ namespace SetupTv.Sections
       }
     }
 
-    void UpdateStatus(int LNB)
+    void UpdateStatus()
     {
       progressBarLevel.Value = Math.Min(100, RemoteControl.Instance.SignalLevel(_cardNumber));
       progressBarQuality.Value = Math.Min(100, RemoteControl.Instance.SignalQuality(_cardNumber));
       progressBarSatLevel.Value = Math.Min(100, RemoteControl.Instance.SignalLevel(_cardNumber));
       progressBarSatQuality.Value = Math.Min(100, RemoteControl.Instance.SignalQuality(_cardNumber));
-      if (RemoteControl.Instance.TunerLocked(_cardNumber))
-        labelTunerLock.Text = "Yes";
-      else
-        labelTunerLock.Text = "No";
+      labelTunerLock.Text = RemoteControl.Instance.TunerLocked(_cardNumber) ? "Yes" : "No";
     }
 
     public override void OnSectionActivated()
     {
       base.OnSectionActivated();
-      UpdateStatus(1);
+      UpdateStatus();
       labelCurrentPosition.Text = "";
       tabControl1_SelectedIndexChanged(null, null);
       _user = new User();
@@ -652,18 +691,19 @@ namespace SetupTv.Sections
           MessageBox.Show(this, "Card is disabled, please enable the card before scanning");
           return;
         }
-				else if (!RemoteControl.Instance.CardPresent(card.IdCard))
-				{
-					MessageBox.Show(this, "Card is not found, please make sure card is present before scanning");
-					return;
-				}
+        if (!RemoteControl.Instance.CardPresent(card.IdCard))
+        {
+          MessageBox.Show(this, "Card is not found, please make sure card is present before scanning");
+          return;
+        }
         // Check if the card is locked for scanning.
         User user;
-        if (RemoteControl.Instance.IsCardInUse(_cardNumber, out user)) {
+        if (RemoteControl.Instance.IsCardInUse(_cardNumber, out user))
+        {
           MessageBox.Show(this, "Card is locked. Scanning not possible at the moment ! Perhaps you are scanning an other part of a hybrid card.");
           return;
         }
-        Thread scanThread = new Thread(new ThreadStart(DoScan));
+        Thread scanThread = new Thread(DoScan);
         scanThread.Name = "DVB-S scan thread";
         scanThread.Start();
       }
@@ -708,25 +748,27 @@ namespace SetupTv.Sections
 
         if (mpLNB1.Checked)
           Scan(1, (BandType)mpBand1.SelectedIndex, (DisEqcType)mpDisEqc1.SelectedIndex, (SatteliteContext)mpTransponder1.SelectedItem);
-        if (_stopScanning) return;
+        if (_stopScanning)
+          return;
 
         if (mpLNB2.Checked)
           Scan(2, (BandType)mpBand2.SelectedIndex, (DisEqcType)mpDisEqc2.SelectedIndex, (SatteliteContext)mpTransponder2.SelectedItem);
-        if (_stopScanning) return;
+        if (_stopScanning)
+          return;
 
         if (mpLNB3.Checked)
           Scan(3, (BandType)mpBand3.SelectedIndex, (DisEqcType)mpDisEqc3.SelectedIndex, (SatteliteContext)mpTransponder3.SelectedItem);
-        if (_stopScanning) return;
+        if (_stopScanning)
+          return;
 
         if (mpLNB4.Checked)
           Scan(4, (BandType)mpBand4.SelectedIndex, (DisEqcType)mpDisEqc4.SelectedIndex, (SatteliteContext)mpTransponder4.SelectedItem);
 
-        ListViewItem item = listViewStatus.Items.Add(new ListViewItem(String.Format("Total radio channels new:{0} updated:{1}", _radioChannelsNew, _radioChannelsUpdated)));
-        item = listViewStatus.Items.Add(new ListViewItem(String.Format("Total tv channels new:{0} updated:{1}", _tvChannelsNew, _tvChannelsUpdated)));
-        item = listViewStatus.Items.Add(new ListViewItem("Scan done..."));
+        listViewStatus.Items.Add(new ListViewItem(String.Format("Total radio channels new:{0} updated:{1}", _radioChannelsNew, _radioChannelsUpdated)));
+        listViewStatus.Items.Add(new ListViewItem(String.Format("Total tv channels new:{0} updated:{1}", _tvChannelsNew, _tvChannelsUpdated)));
+        ListViewItem item = listViewStatus.Items.Add(new ListViewItem("Scan done..."));
         item.EnsureVisible();
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Write(ex);
       }
@@ -762,13 +804,14 @@ namespace SetupTv.Sections
     void Scan(int LNB, BandType bandType, DisEqcType disEqc, SatteliteContext context)
     {
       LoadTransponders(context);
-      if (_channelCount == 0) return;
+      if (_channelCount == 0)
+        return;
 
       TvBusinessLayer layer = new TvBusinessLayer();
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
 
       int position = -1;
-      Setting setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "motorEnabled", "no");
+      Setting setting = layer.GetSetting("dvbs" + _cardNumber + "motorEnabled", "no");
       if (setting.Value == "yes")
       {
         foreach (DiSEqCMotor motor in card.ReferringDiSEqCMotor())
@@ -785,10 +828,12 @@ namespace SetupTv.Sections
       user.CardId = _cardNumber;
       for (int index = 0; index < _channelCount; ++index)
       {
-        if (_stopScanning) return;
+        if (_stopScanning)
+          return;
         float percent = ((float)(index)) / _channelCount;
         percent *= 100f;
-        if (percent > 100f) percent = 100f;
+        if (percent > 100f)
+          percent = 100f;
         progressBar1.Value = (int)percent;
 
         DVBSChannel tuneChannel = new DVBSChannel();
@@ -826,11 +871,11 @@ namespace SetupTv.Sections
         {
           RemoteControl.Instance.Tune(ref user, tuneChannel, -1);
         }
-        UpdateStatus(LNB);
+        UpdateStatus();
 
         IChannel[] channels = RemoteControl.Instance.Scan(_cardNumber, tuneChannel);
 
-        UpdateStatus(LNB);
+        UpdateStatus();
 
         if (channels == null || channels.Length == 0)
         {
@@ -841,24 +886,21 @@ namespace SetupTv.Sections
             item.ForeColor = Color.Red;
             continue;
           }
-          else
-          {
-            line = String.Format("lnb:{0} {1}tp- {2} {3} {4}:Nothing found", LNB, 1 + index, tuneChannel.Frequency, tuneChannel.Polarisation, tuneChannel.SymbolRate);
-            item.Text = line;
-            item.ForeColor = Color.Red;
-            continue;
-          }
+          line = String.Format("lnb:{0} {1}tp- {2} {3} {4}:Nothing found", LNB, 1 + index, tuneChannel.Frequency, tuneChannel.Polarisation, tuneChannel.SymbolRate);
+          item.Text = line;
+          item.ForeColor = Color.Red;
+          continue;
         }
 
         int newChannels = 0;
         int updatedChannels = 0;
-        bool exists;
         for (int i = 0; i < channels.Length; ++i)
         {
           Channel dbChannel;
           DVBSChannel channel = (DVBSChannel)channels[i];
           //TuningDetail currentDetail = layer.GetChannel(channel);
           TuningDetail currentDetail = layer.GetChannel(channel.Provider, channel.Name, channel.ServiceId);
+          bool exists;
           if (currentDetail == null)
           {
             //add new channel
@@ -899,8 +941,8 @@ namespace SetupTv.Sections
             //update tuning details...
             channel.SatelliteIndex = position;// context.Satelite.IdSatellite;
             currentDetail.SatIndex = position;//context.Satelite.IdSatellite;
-						TuningDetail td = layer.UpdateTuningDetails(dbChannel, channel, currentDetail);
-						td.Persist();
+            TuningDetail td = layer.UpdateTuningDetails(dbChannel, channel, currentDetail);
+            td.Persist();
           }
           if (channel.IsTv)
           {
@@ -928,7 +970,7 @@ namespace SetupTv.Sections
               newChannels++;
             }
           }
-          layer.MapChannelToCard(card, dbChannel,false);
+          layer.MapChannelToCard(card, dbChannel, false);
           line = String.Format("lnb:{0} {1}tp- {2} {3} {4}:New:{5} Updated:{6}",
               LNB, 1 + index, tuneChannel.Frequency, tuneChannel.Polarisation, tuneChannel.SymbolRate, newChannels, updatedChannels);
           item.Text = line;
@@ -942,14 +984,6 @@ namespace SetupTv.Sections
 
     }
 
-    private void mpComboBoxCam_SelectedIndexChanged(object sender, EventArgs e)
-    {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
-      //card.CamType = mpComboBoxCam.SelectedIndex;
-      card.Persist();
-    }
-
     #endregion
 
     #region DiSEqC Motor tab
@@ -958,7 +992,7 @@ namespace SetupTv.Sections
     {
       _enableEvents = false;
       TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "motorEnabled", "no");
+      Setting setting = layer.GetSetting("dvbs" + _cardNumber + "motorEnabled", "no");
       bool enabled = false;
       if (setting.Value == "yes")
       {
@@ -971,8 +1005,8 @@ namespace SetupTv.Sections
       for (int i = 1; i < 127; ++i)
         comboBoxStepSize.Items.Add(i.ToString());
 
-      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "motorStepSize", "10");
-      int stepsize = 10;
+      setting = layer.GetSetting("dvbs" + _cardNumber + "motorStepSize", "10");
+      int stepsize;
       if (Int32.TryParse(setting.Value, out stepsize))
         comboBoxStepSize.SelectedIndex = stepsize - 1;
       else
@@ -980,8 +1014,8 @@ namespace SetupTv.Sections
 
       comboBoxSat.Items.Clear();
 
-      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "selectedMotorSat", "0");
-      int index = 0;
+      setting = layer.GetSetting("dvbs" + _cardNumber + "selectedMotorSat", "0");
+      int index;
       Int32.TryParse(setting.Value, out index);
 
       List<SatteliteContext> satellites = LoadSattelites();
@@ -1012,8 +1046,10 @@ namespace SetupTv.Sections
 
     private void buttonMoveWest_Click(object sender, EventArgs e)
     {
-      if (_enableEvents == false) return;
-      if (checkBox1.Checked == false) return;
+      if (_enableEvents == false)
+        return;
+      if (checkBox1.Checked == false)
+        return;
       //move motor west
       RemoteControl.Instance.DiSEqCDriveMotor(_cardNumber, DiSEqCDirection.West, (byte)(1 + comboBoxStepSize.SelectedIndex));
       comboBox1_SelectedIndexChanged(null, null);//tune..;
@@ -1021,8 +1057,10 @@ namespace SetupTv.Sections
 
     private void buttonSetWestLimit_Click(object sender, EventArgs e)
     {
-      if (_enableEvents == false) return;
-      if (checkBox1.Checked == false) return;
+      if (_enableEvents == false)
+        return;
+      if (checkBox1.Checked == false)
+        return;
       //set motor west limit
       RemoteControl.Instance.DiSEqCSetWestLimit(_cardNumber);
     }
@@ -1034,11 +1072,13 @@ namespace SetupTv.Sections
 
     private void button1_Click(object sender, EventArgs e)
     {
-      if (_enableEvents == false) return;
+      if (_enableEvents == false)
+        return;
       //goto selected sat
-      if (comboBoxSat.SelectedIndex < 0) return;
-      if (checkBox1.Checked == false) return;
-      TvBusinessLayer layer = new TvBusinessLayer();
+      if (comboBoxSat.SelectedIndex < 0)
+        return;
+      if (checkBox1.Checked == false)
+        return;
       SatteliteContext sat = (SatteliteContext)comboBoxSat.Items[comboBoxSat.SelectedIndex];
 
       Card card = Card.Retrieve(_cardNumber);
@@ -1048,7 +1088,7 @@ namespace SetupTv.Sections
         if (motor.IdSatellite == sat.Satelite.IdSatellite)
         {
           RemoteControl.Instance.DiSEqCGotoPosition(_cardNumber, (byte)motor.Position);
-          MessageBox.Show("Satellite moving to position:" + motor.Position.ToString(), "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+          MessageBox.Show("Satellite moving to position:" + motor.Position, "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
           comboBox1_SelectedIndexChanged(null, null);
           return;
         }
@@ -1058,12 +1098,13 @@ namespace SetupTv.Sections
 
     private void buttonStore_Click(object sender, EventArgs e)
     {
-      if (_enableEvents == false) return;
-      if (checkBox1.Checked == false) return;
+      if (_enableEvents == false)
+        return;
+      if (checkBox1.Checked == false)
+        return;
       //store motor position..
       int index = -1;
       SatteliteContext sat = (SatteliteContext)comboBoxSat.SelectedItem;
-      TvBusinessLayer layer = new TvBusinessLayer();
       Card card = Card.Retrieve(_cardNumber);
       IList motorSettings = card.ReferringDiSEqCMotor();
       foreach (DiSEqCMotor motor in motorSettings)
@@ -1081,14 +1122,16 @@ namespace SetupTv.Sections
         motor.Persist();
       }
       RemoteControl.Instance.DiSEqCStorePosition(_cardNumber, (byte)(index));
-      MessageBox.Show("Satellite position stored to:" + index.ToString(), "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+      MessageBox.Show("Satellite position stored to:" + index, "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
     }
 
     private void buttonMoveEast_Click(object sender, EventArgs e)
     {
-      if (_enableEvents == false) return;
-      if (checkBox1.Checked == false) return;
+      if (_enableEvents == false)
+        return;
+      if (checkBox1.Checked == false)
+        return;
       //move motor east
       RemoteControl.Instance.DiSEqCDriveMotor(_cardNumber, DiSEqCDirection.East, (byte)(1 + comboBoxStepSize.SelectedIndex));
       comboBox1_SelectedIndexChanged(null, null);//tune..
@@ -1096,18 +1139,22 @@ namespace SetupTv.Sections
 
     private void buttonSetEastLimit_Click(object sender, EventArgs e)
     {
-      if (_enableEvents == false) return;
-      if (checkBox1.Checked == false) return;
+      if (_enableEvents == false)
+        return;
+      if (checkBox1.Checked == false)
+        return;
       //set motor east limit
       RemoteControl.Instance.DiSEqCSetEastLimit(_cardNumber);
     }
 
     private void comboBoxSat_SelectedIndexChanged(object sender, EventArgs e)
     {
-      if (_enableEvents == false) return;
-      if (checkBox1.Checked == false) return;
+      if (_enableEvents == false)
+        return;
+      if (checkBox1.Checked == false)
+        return;
       TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "selectedMotorSat", "0");
+      Setting setting = layer.GetSetting("dvbs" + _cardNumber + "selectedMotorSat", "0");
       setting.Value = comboBoxSat.SelectedIndex.ToString();
       setting.Persist();
       LoadMotorTransponder();
@@ -1116,13 +1163,15 @@ namespace SetupTv.Sections
 
     private void checkBoxEnabled_CheckedChanged(object sender, EventArgs e)
     {
-      if (_enableEvents == false) return;
-      if (checkBox1.Checked == false) return;
+      if (_enableEvents == false)
+        return;
+      if (checkBox1.Checked == false)
+        return;
       TvBusinessLayer layer = new TvBusinessLayer();
       if (checkBoxEnabled.Checked)
       {
         RemoteControl.Instance.DiSEqCForceLimit(_cardNumber, true);
-        Setting setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "limitsEnabled", "yes");
+        Setting setting = layer.GetSetting("dvbs" + _cardNumber + "limitsEnabled", "yes");
         setting.Value = "yes";
         setting.Persist();
       }
@@ -1131,7 +1180,7 @@ namespace SetupTv.Sections
         if (MessageBox.Show("Disabling the east/west limits could damage your dish!!! Are you sure?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.Yes)
         {
           RemoteControl.Instance.DiSEqCForceLimit(_cardNumber, false);
-          Setting setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "limitsEnabled", "yes");
+          Setting setting = layer.GetSetting("dvbs" + _cardNumber + "limitsEnabled", "yes");
           setting.Value = "no";
           setting.Persist();
         }
@@ -1140,7 +1189,7 @@ namespace SetupTv.Sections
           _enableEvents = false;
           checkBoxEnabled.Checked = true;
           RemoteControl.Instance.DiSEqCForceLimit(_cardNumber, true);
-          Setting setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "limitsEnabled", "yes");
+          Setting setting = layer.GetSetting("dvbs" + _cardNumber + "limitsEnabled", "yes");
           setting.Value = "yes";
           setting.Persist();
           _enableEvents = true;
@@ -1151,7 +1200,7 @@ namespace SetupTv.Sections
     void LoadMotorTransponder()
     {
       TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "limitsEnabled", "yes");
+      Setting setting = layer.GetSetting("dvbs" + _cardNumber + "limitsEnabled", "yes");
       if (setting.Value == "yes")
         checkBoxEnabled.Checked = true;
       if (setting.Value == "no")
@@ -1174,10 +1223,11 @@ namespace SetupTv.Sections
 
     private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
     {
-      if (_enableEvents == false) return;
-      if (checkBox1.Checked == false) return;
+      if (_enableEvents == false)
+        return;
+      if (checkBox1.Checked == false)
+        return;
       Transponder transponder = (Transponder)comboBox1.SelectedItem;
-      TvBusinessLayer layer = new TvBusinessLayer();
       DVBSChannel tuneChannel = new DVBSChannel();
       tuneChannel.Frequency = transponder.CarrierFrequency;
       tuneChannel.Polarisation = transponder.Polarisation;
@@ -1200,22 +1250,26 @@ namespace SetupTv.Sections
       progressBarQuality.Value = 1;
       progressBarSatLevel.Value = 1;
       progressBarSatQuality.Value = 1;
-      labelTunerLock.Text=String.Empty; 
+      labelTunerLock.Text = String.Empty;
 
     }
 
     private void buttonStop_Click(object sender, EventArgs e)
     {
-      if (_enableEvents == false) return;
-      if (checkBox1.Checked == false) return;
+      if (_enableEvents == false)
+        return;
+      if (checkBox1.Checked == false)
+        return;
       RemoteControl.Instance.DiSEqCStopMotor(_cardNumber);
       comboBox1_SelectedIndexChanged(null, null);
     }
 
     private void buttonGotoStart_Click(object sender, EventArgs e)
     {
-      if (_enableEvents == false) return;
-      if (checkBox1.Checked == false) return;
+      if (_enableEvents == false)
+        return;
+      if (checkBox1.Checked == false)
+        return;
       RemoteControl.Instance.DiSEqCGotoReferencePosition(_cardNumber);
       comboBox1_SelectedIndexChanged(null, null);
 
@@ -1223,26 +1277,32 @@ namespace SetupTv.Sections
 
     private void buttonUp_Click(object sender, EventArgs e)
     {
-      if (_enableEvents == false) return;
-      if (checkBox1.Checked == false) return;
+      if (_enableEvents == false)
+        return;
+      if (checkBox1.Checked == false)
+        return;
       //move motor up
       RemoteControl.Instance.DiSEqCDriveMotor(_cardNumber, DiSEqCDirection.Up, (byte)(1 + comboBoxStepSize.SelectedIndex));
     }
 
     private void buttonDown_Click(object sender, EventArgs e)
     {
-      if (_enableEvents == false) return;
-      if (checkBox1.Checked == false) return;
+      if (_enableEvents == false)
+        return;
+      if (checkBox1.Checked == false)
+        return;
       //move motor up
       RemoteControl.Instance.DiSEqCDriveMotor(_cardNumber, DiSEqCDirection.Down, (byte)(1 + comboBoxStepSize.SelectedIndex));
     }
 
     private void comboBoxStepSize_SelectedIndexChanged(object sender, EventArgs e)
     {
-      if (_enableEvents == false) return;
-      if (checkBox1.Checked == false) return;
+      if (_enableEvents == false)
+        return;
+      if (checkBox1.Checked == false)
+        return;
       TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "motorStepSize", "10");
+      Setting setting = layer.GetSetting("dvbs" + _cardNumber + "motorStepSize", "10");
       setting.Value = String.Format("{0}", (1 + comboBoxStepSize.SelectedIndex));
       setting.Persist();
 
@@ -1267,24 +1327,25 @@ namespace SetupTv.Sections
       buttonReset.Enabled = checkBox1.Checked;
 
       TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "motorEnabled", "no");
-      if (checkBox1.Checked) setting.Value = "yes";
-      else setting.Value = "no";
+      Setting setting = layer.GetSetting("dvbs" + _cardNumber + "motorEnabled", "no");
+      setting.Value = checkBox1.Checked ? "yes" : "no";
       setting.Persist();
     }
 
-    bool reentrant = false;
+    bool reentrant;
     DateTime _signalTimer = DateTime.MinValue;
     private void timer1_Tick(object sender, EventArgs e)
     {
-      if (reentrant) return;
+      if (reentrant)
+        return;
       try
       {
         reentrant = true;
         TimeSpan ts = DateTime.Now - _signalTimer;
         if (ts.TotalMilliseconds > 500)
         {
-          if (checkBox1.Checked == false) return;
+          if (checkBox1.Checked == false)
+            return;
 
           RemoteControl.Instance.UpdateSignalSate(_cardNumber);
           _signalTimer = DateTime.Now;
@@ -1302,25 +1363,16 @@ namespace SetupTv.Sections
               offset = String.Format("{0} steps east", stepsAzimuth);
             if (stepsElevation < 0)
             {
-              if (offset.Length != 0)
-                offset = String.Format("{0}, {1} steps up", offset, -stepsElevation);
-              else
-                offset = String.Format("{0} steps up", -stepsElevation);
+              offset = offset.Length != 0 ? String.Format("{0}, {1} steps up", offset, -stepsElevation) : String.Format("{0} steps up", -stepsElevation);
             }
             else if (stepsElevation > 0)
             {
-              if (offset.Length != 0)
-                offset = String.Format("{0}, {1} steps down", offset, stepsElevation);
-              else
-                offset = String.Format("{0} steps down", stepsElevation);
+              offset = offset.Length != 0 ? String.Format("{0}, {1} steps down", offset, stepsElevation) : String.Format("{0} steps down", stepsElevation);
             }
-            if (offset.Length > 0)
-              labelCurrentPosition.Text = String.Format("{0} of {1}", offset, satPosition);
-            else
-              labelCurrentPosition.Text = satPosition;
+            labelCurrentPosition.Text = offset.Length > 0 ? String.Format("{0} of {1}", offset, satPosition) : satPosition;
           }
         }
-        UpdateStatus(1);
+        UpdateStatus();
       }
       finally
       {
@@ -1330,7 +1382,8 @@ namespace SetupTv.Sections
 
     private void buttonReset_Click(object sender, EventArgs e)
     {
-      if (checkBox1.Checked == false) return;
+      if (checkBox1.Checked == false)
+        return;
       RemoteControl.Instance.DiSEqCReset(_cardNumber);
     }
 
@@ -1340,7 +1393,7 @@ namespace SetupTv.Sections
     {
       listViewStatus.Items.Clear();
       string itemLine = String.Format("Updating satellites...");
-      ListViewItem item = listViewStatus.Items.Add(new ListViewItem(itemLine));
+      listViewStatus.Items.Add(new ListViewItem(itemLine));
       Application.DoEvents();
       List<SatteliteContext> sats = LoadSattelites();
       foreach (SatteliteContext sat in sats)
@@ -1348,7 +1401,7 @@ namespace SetupTv.Sections
         DownloadTransponder(sat);
       }
       itemLine = String.Format("Update finished");
-      item = listViewStatus.Items.Add(new ListViewItem(itemLine));
+      listViewStatus.Items.Add(new ListViewItem(itemLine));
     }
 
     #region LNB selection tab
@@ -1389,9 +1442,11 @@ namespace SetupTv.Sections
 
     private void mpBand1_SelectedIndexChanged(object sender, EventArgs e)
     {
-      if (_enableEvents == false) return;
-      if (checkBox2.Checked) return;
-      int lof1 = 0, lof2 = 0, sw = 0;
+      if (_enableEvents == false)
+        return;
+      if (checkBox2.Checked)
+        return;
+      int lof1, lof2, sw;
       ScanParameters p = new ScanParameters();
       BandTypeConverter.GetDefaultLnbSetup(p, (BandType)mpBand1.SelectedIndex, out lof1, out lof2, out sw);
       textBoxLNBLo.Text = lof1.ToString();
@@ -1417,7 +1472,8 @@ namespace SetupTv.Sections
 
     private void checkBoxCreateGroupsSat_CheckedChanged(object sender, EventArgs e)
     {
-      if (_ignoreCheckBoxCreateGroupsClickEvent) return;
+      if (_ignoreCheckBoxCreateGroupsClickEvent)
+        return;
       _ignoreCheckBoxCreateGroupsClickEvent = true;
       if (checkBoxCreateGroups.Checked)
       {
@@ -1428,7 +1484,8 @@ namespace SetupTv.Sections
 
     private void checkBoxCreateGroups_CheckedChanged(object sender, EventArgs e)
     {
-      if (_ignoreCheckBoxCreateGroupsClickEvent) return;
+      if (_ignoreCheckBoxCreateGroupsClickEvent)
+        return;
       _ignoreCheckBoxCreateGroupsClickEvent = true;
       if (checkBoxCreateGroupsSat.Checked)
       {

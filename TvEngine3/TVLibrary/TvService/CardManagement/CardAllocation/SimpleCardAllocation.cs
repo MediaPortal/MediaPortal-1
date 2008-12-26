@@ -20,30 +20,13 @@
  */
 
 using System;
-using System.IO;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-using System.Net;
-using System.Net.Sockets;
 using System.Threading;
 using System.Runtime.CompilerServices;
-using DirectShowLib.SBE;
-using TvLibrary;
-using TvLibrary.Implementations;
 using TvLibrary.Interfaces;
-using TvLibrary.Implementations.Analog;
-using TvLibrary.Implementations.DVB;
-using TvLibrary.Implementations.Hybrid;
-using TvLibrary.Channels;
-using TvLibrary.Epg;
 using TvLibrary.Log;
-using TvLibrary.Streaming;
 using TvControl;
-using TvEngine;
 using TvDatabase;
-using TvEngine.Events;
 
 namespace TvService
 {
@@ -55,7 +38,7 @@ namespace TvService
 
     #region private members
 
-    private void UpdateChannelStateUsers(ref IList<User> allUsers, ChannelState chState, int channelId)
+    private static void UpdateChannelStateUsers(IList<User> allUsers, ChannelState chState, int channelId)
     {
       for (int i = 0; i < allUsers.Count; i++)
       {
@@ -63,16 +46,19 @@ namespace TvService
         try
         {
           u = allUsers[i];
-        }
-        catch (NullReferenceException) { }
+        } catch (NullReferenceException) { }
 
-        if (u == null) continue;
-        if (u.IsAdmin) continue; //scheduler users do not need to have their channelstates set.
-        ChannelState currentChState = ChannelState.tunable;
+        if (u == null)
+          continue;
+        if (u.IsAdmin)
+          continue; //scheduler users do not need to have their channelstates set.
+        ChannelState currentChState;
         bool stateExists = u.ChannelStates.TryGetValue(channelId, out currentChState);
 
-        if (stateExists && currentChState == chState) continue;
-        if (currentChState != ChannelState.nottunable && chState == ChannelState.nottunable) continue;
+        if (stateExists && currentChState == chState)
+          continue;
+        if (currentChState != ChannelState.nottunable && chState == ChannelState.nottunable)
+          continue;
 
         try
         {
@@ -85,19 +71,20 @@ namespace TvService
           {
             u.ChannelStates.Add(channelId, chState);
           }
-        }
-        catch (NullReferenceException) { }
+        } catch (NullReferenceException) { }
 
       }
     }
 
-    private void UpdateChannelStateUser(ref User user, ChannelState chState, int channelId)
+    private static void UpdateChannelStateUser(User user, ChannelState chState, int channelId)
     {
-      ChannelState currentChState = ChannelState.tunable;
+      ChannelState currentChState;
       bool stateExists = user.ChannelStates.TryGetValue(channelId, out currentChState);
 
-      if (stateExists && currentChState == chState) return;
-      if (currentChState != ChannelState.nottunable) return;
+      if (stateExists && currentChState == chState)
+        return;
+      if (currentChState != ChannelState.nottunable)
+        return;
 
       if (stateExists && currentChState == ChannelState.nottunable)
       {
@@ -110,7 +97,7 @@ namespace TvService
       }
     }
 
-    private IList<User> GetActiveUsers(Dictionary<int, ITvCardHandler> cards)
+    private static IList<User> GetActiveUsers(Dictionary<int, ITvCardHandler> cards)
     {
       // find all users
       IList<User> allUsers = new List<User>();
@@ -138,8 +125,7 @@ namespace TvService
             }
           }
         }
-      }
-      catch (InvalidOperationException tex)
+      } catch (InvalidOperationException tex)
       {
         Log.Error("SimpleCardAllocation: Possible race condition occured when getting users - {0}", tex.StackTrace);
       }
@@ -148,19 +134,19 @@ namespace TvService
     }
 
     [MethodImpl(MethodImplOptions.Synchronized)]
-    private void DoSetChannelStates(Dictionary<int, ITvCardHandler> cards, List<Channel> channels, bool checkTransponders, IList<User> allUsers, TVController tvController)
+    private static void DoSetChannelStates(Dictionary<int, ITvCardHandler> cards, ICollection<Channel> channels, bool checkTransponders, IList<User> allUsers, TVController tvController)
     {
       try
       {
         //construct list of all cards we can use to tune to the new channel
-        List<CardDetail> cardsAvailable = new List<CardDetail>();
         Log.Debug("Controller: DoSetChannelStates for {0} channels", channels.Count);
 
-        Dictionary<int, ITvCardHandler>.Enumerator enumerator = cards.GetEnumerator();
+        Dictionary<int, ITvCardHandler>.Enumerator enumerator;
 
         // find all users      
         //IList<User> allUsers = GetActiveUsers(cards);
-        if (allUsers == null || allUsers.Count == 0) return; // no users, no point in continuing.
+        if (allUsers == null || allUsers.Count == 0)
+          return; // no users, no point in continuing.
 
         Dictionary<int, ChannelState> TSandRecStates = tvController.GetAllTimeshiftingAndRecordingChannels();
 
@@ -170,7 +156,7 @@ namespace TvService
         {
           if (!ch.VisibleInGuide)
           {
-            UpdateChannelStateUsers(ref allUsers, ChannelState.nottunable, ch.IdChannel);
+            UpdateChannelStateUsers(allUsers, ChannelState.nottunable, ch.IdChannel);
             continue;
           }
 
@@ -181,211 +167,206 @@ namespace TvService
           {
             //no tuning details??
             //Log.Info("Controller:  No tuning details for channel:{0}", ch.Name);
-            UpdateChannelStateUsers(ref allUsers, ChannelState.nottunable, ch.IdChannel);
+            UpdateChannelStateUsers(allUsers, ChannelState.nottunable, ch.IdChannel);
             continue;
           }
-          else
+          foreach (IChannel tuningDetail in tuningDetails)
           {
-            foreach (IChannel tuningDetail in tuningDetails)
+            //Log.Info("Controller:   channel #{0} {1} ", number, tuningDetail.ToString());
+            enumerator = cards.GetEnumerator();
+
+            while (enumerator.MoveNext())
             {
-              //Log.Info("Controller:   channel #{0} {1} ", number, tuningDetail.ToString());
-              enumerator = cards.GetEnumerator();
+              KeyValuePair<int, ITvCardHandler> keyPair = enumerator.Current;
 
-              while (enumerator.MoveNext())
+              int cardId = keyPair.Value.DataBaseCard.IdCard;
+              ITvCardHandler tvcard = cards[cardId];
+
+              //check if card is enabled
+              if (!keyPair.Value.DataBaseCard.Enabled)
               {
-                KeyValuePair<int, ITvCardHandler> keyPair = enumerator.Current;
+                //not enabled, so skip the card
+                //Log.Info("Controller:    card:{0} type:{1} is disabled", cardId, tvcard.Type);
+                UpdateChannelStateUsers(allUsers, ChannelState.nottunable, ch.IdChannel);
+                continue;
+              }
 
-                int cardId = keyPair.Value.DataBaseCard.IdCard;
-                ITvCardHandler tvcard = cards[cardId];
+              if (!tvcard.Tuner.CanTune(tuningDetail))
+              {
+                //card cannot tune to this channel, so skip it
+                //Log.Info("Controller:    card:{0} type:{1} cannot tune to channel", cardId, tvcard.Type);
+                UpdateChannelStateUsers(allUsers, ChannelState.nottunable, ch.IdChannel);
+                continue;
+              }
 
-                //check if card is enabled
-                if (!keyPair.Value.DataBaseCard.Enabled)
+              //check if channel is mapped to this card and that the mapping is not for "Epg Only"
+              ChannelMap channelMap = null;
+              foreach (ChannelMap map in ch.ReferringChannelMap())
+              {
+                if (map.ReferencedCard().DevicePath == keyPair.Value.DataBaseCard.DevicePath && !map.EpgOnly)
                 {
-                  //not enabled, so skip the card
-                  //Log.Info("Controller:    card:{0} type:{1} is disabled", cardId, tvcard.Type);
-                  UpdateChannelStateUsers(ref allUsers, ChannelState.nottunable, ch.IdChannel);
-                  continue;
+                  //yes
+                  channelMap = map;
+                  break;
                 }
+              }
+              if (null == channelMap)
+              {
+                //channel is not mapped to this card, so skip it
+                //Log.Info("Controller:    card:{0} type:{1} channel not mapped", cardId, tvcard.Type);
+                UpdateChannelStateUsers(allUsers, ChannelState.nottunable, ch.IdChannel);
+                continue;
+              }
 
-                if (!tvcard.Tuner.CanTune(tuningDetail))
-                {
-                  //card cannot tune to this channel, so skip it
-                  //Log.Info("Controller:    card:{0} type:{1} cannot tune to channel", cardId, tvcard.Type);
-                  UpdateChannelStateUsers(ref allUsers, ChannelState.nottunable, ch.IdChannel);
-                  continue;
-                }
+              //ok card could be used to tune to this channel
+              //now we check if its free...                              
 
-                //check if channel is mapped to this card and that the mapping is not for "Epg Only"
-                ChannelMap channelMap = null;
-                foreach (ChannelMap map in ch.ReferringChannelMap())
+              if (tvcard.Tuner.IsTunedToTransponder(tuningDetail) && (tvcard.SupportsSubChannels || (checkTransponders == false)))
+              {
+                //card is in use, but it is tuned to the same transponder.
+                //meaning.. we can use it.
+                if (tvcard.HasCA && keyPair.Value.DataBaseCard.DecryptLimit > 0) //does the card have a CA module and a CA limit, if yes then proceed to check cam decrypt limit.                
                 {
-                  if (map.ReferencedCard().DevicePath == keyPair.Value.DataBaseCard.DevicePath && !map.EpgOnly)
+
+                  //but we must check if cam can decode the extra channel as well
+
+                  //first check if cam is already decrypting this channel
+                  int camDecrypting = tvcard.NumberOfChannelsDecrypting;
+
+                  bool checkCam = true;
+                  User[] currentUsers = tvcard.Users.GetUsers();
+                  if (currentUsers != null)
                   {
-                    //yes
-                    channelMap = map;
-                    break;
-                  }
-                }
-                if (null == channelMap)
-                {
-                  //channel is not mapped to this card, so skip it
-                  //Log.Info("Controller:    card:{0} type:{1} channel not mapped", cardId, tvcard.Type);
-                  UpdateChannelStateUsers(ref allUsers, ChannelState.nottunable, ch.IdChannel);
-                  continue;
-                }
-
-                //ok card could be used to tune to this channel
-                //now we check if its free...                              
-
-                if (tvcard.Tuner.IsTunedToTransponder(tuningDetail) && (tvcard.SupportsSubChannels || (checkTransponders == false)))
-                {
-                  //card is in use, but it is tuned to the same transponder.
-                  //meaning.. we can use it.
-                  if (tvcard.HasCA && keyPair.Value.DataBaseCard.DecryptLimit > 0) //does the card have a CA module and a CA limit, if yes then proceed to check cam decrypt limit.                
-                  {
-
-                    //but we must check if cam can decode the extra channel as well
-
-                    //first check if cam is already decrypting this channel
-                    int camDecrypting = tvcard.NumberOfChannelsDecrypting;
-
-                    bool checkCam = true;
-                    User[] currentUsers = tvcard.Users.GetUsers();
-                    if (currentUsers != null)
+                    for (int i = 0; i < currentUsers.Length; ++i)
                     {
-                      for (int i = 0; i < currentUsers.Length; ++i)
+                      User tmpUser = currentUsers[i];
+                      if (tvcard.CurrentDbChannel(ref tmpUser) == ch.IdChannel)
                       {
-                        User tmpUser = currentUsers[i];
-                        if (tvcard.CurrentDbChannel(ref tmpUser) == ch.IdChannel)
-                        {
-                          //yes, cam already is descrambling this channel
-                          checkCam = false;
-                          break;
-                        }
+                        //yes, cam already is descrambling this channel
+                        checkCam = false;
+                        break;
                       }
                     }
-
-                    //if the user is already using this card
-                    //and is watching a scrambled signal
-                    //then we must the CAM will always be able to watch the requested channel
-                    //since the users zaps
-
-                    for (int i = 0; i < allUsers.Count; i++)
-                    {
-                      User user = allUsers[i];
-                      bool isRec = false;
-
-                      Channel currentUserCh = Channel.Retrieve(user.IdChannel);
-                      if (currentUserCh != null)
-                      {
-                        isRec = tvcard.Recorder.IsRecordingChannel(currentUserCh.Name);
-                      }
-                      if (tvcard.TimeShifter.IsTimeShifting(ref user) && !isRec)
-                      {
-                        bool fta = isFTA(tvcard, user);
-                        if (!fta)
-                        {
-                          camDecrypting--;
-                        }
-                      }
-
-                      //check if cam is capable of descrambling an extra channel
-                      bool canDecrypt = true;
-                      int dbDecryptLimit = keyPair.Value.DataBaseCard.DecryptLimit;
-                      if (dbDecryptLimit > 0)
-                      {
-                        canDecrypt = (camDecrypting < dbDecryptLimit);
-                      }
-                      if (canDecrypt || ch.FreeToAir || (checkCam == false))
-                      {
-                        //it is.. we can really use this card
-                        //Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder decrypting {2}/{3} channels",
-                        //    cardId, tvcard.Type, tvcard.NumberOfChannelsDecrypting, keyPair.Value.DataBaseCard.DecryptLimit);
-                        user = allUsers[i];
-                        UpdateChannelStateUser(ref user, ChannelState.tunable, ch.IdChannel);
-                        allUsers[i] = user;
-                      }
-                      else
-                      {
-                        //it is not, skip this card
-                        //Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder decrypting {2}/{3} channels. cam limit reached",
-                        //     cardId, tvcard.Type, tvcard.NumberOfChannelsDecrypting, keyPair.Value.DataBaseCard.DecryptLimit);
-
-                        //allow admin users like the scheduler to use this card anyway
-                        if (user.IsAdmin)
-                        {
-                          //allow admin users like the scheduler to use this card anyway
-                        }
-                        else
-                        {
-                          user = allUsers[i];
-                          UpdateChannelStateUser(ref user, ChannelState.nottunable, ch.IdChannel);
-                          allUsers[i] = user;
-                          //continue;                      
-                        }
-                      }
-                    } //foreach allusers end
-                    //continue;                      
-                  } //end of cam present block              
-                  else // no cam present
-                  {
-                    //Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder no CA present", cardId, tvcard.Type);
-                    UpdateChannelStateUsers(ref allUsers, ChannelState.tunable, ch.IdChannel);
                   }
-                }
-                else
-                {
-                  //different transponder, are we the owner of this card?                
+
+                  //if the user is already using this card
+                  //and is watching a scrambled signal
+                  //then we must the CAM will always be able to watch the requested channel
+                  //since the users zaps
+
                   for (int i = 0; i < allUsers.Count; i++)
                   {
                     User user = allUsers[i];
-                    if (!tvcard.Users.IsOwner(user))
+                    bool isRec = false;
+
+                    Channel currentUserCh = Channel.Retrieve(user.IdChannel);
+                    if (currentUserCh != null)
                     {
-                      //no
-                      //Log.Info("Controller:    card:{0} type:{1} is tuned to different transponder", cardId, tvcard.Type);
+                      isRec = tvcard.Recorder.IsRecordingChannel(currentUserCh.Name);
+                    }
+                    if (tvcard.TimeShifter.IsTimeShifting(ref user) && !isRec)
+                    {
+                      bool fta = isFTA(tvcard, user);
+                      if (!fta)
+                      {
+                        camDecrypting--;
+                      }
+                    }
+
+                    //check if cam is capable of descrambling an extra channel
+                    bool canDecrypt = true;
+                    int dbDecryptLimit = keyPair.Value.DataBaseCard.DecryptLimit;
+                    if (dbDecryptLimit > 0)
+                    {
+                      canDecrypt = (camDecrypting < dbDecryptLimit);
+                    }
+                    if (canDecrypt || ch.FreeToAir || (checkCam == false))
+                    {
+                      //it is.. we can really use this card
+                      //Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder decrypting {2}/{3} channels",
+                      //    cardId, tvcard.Type, tvcard.NumberOfChannelsDecrypting, keyPair.Value.DataBaseCard.DecryptLimit);
+                      user = allUsers[i];
+                      UpdateChannelStateUser(user, ChannelState.tunable, ch.IdChannel);
+                      allUsers[i] = user;
+                    }
+                    else
+                    {
+                      //it is not, skip this card
+                      //Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder decrypting {2}/{3} channels. cam limit reached",
+                      //     cardId, tvcard.Type, tvcard.NumberOfChannelsDecrypting, keyPair.Value.DataBaseCard.DecryptLimit);
+
+                      //allow admin users like the scheduler to use this card anyway
                       if (user.IsAdmin)
                       {
                         //allow admin users like the scheduler to use this card anyway
                       }
                       else
                       {
-                        UpdateChannelStateUser(ref user, ChannelState.nottunable, ch.IdChannel);
+                        user = allUsers[i];
+                        UpdateChannelStateUser(user, ChannelState.nottunable, ch.IdChannel);
                         allUsers[i] = user;
-                        //continue;
+                        //continue;                      
                       }
+                    }
+                  } //foreach allusers end
+                  //continue;                      
+                } //end of cam present block              
+                else // no cam present
+                {
+                  //Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder no CA present", cardId, tvcard.Type);
+                  UpdateChannelStateUsers(allUsers, ChannelState.tunable, ch.IdChannel);
+                }
+              }
+              else
+              {
+                //different transponder, are we the owner of this card?                
+                for (int i = 0; i < allUsers.Count; i++)
+                {
+                  User user = allUsers[i];
+                  if (!tvcard.Users.IsOwner(user))
+                  {
+                    //no
+                    //Log.Info("Controller:    card:{0} type:{1} is tuned to different transponder", cardId, tvcard.Type);
+                    if (user.IsAdmin)
+                    {
+                      //allow admin users like the scheduler to use this card anyway
                     }
                     else
                     {
-                      UpdateChannelStateUser(ref user, ChannelState.tunable, ch.IdChannel);
+                      UpdateChannelStateUser(user, ChannelState.nottunable, ch.IdChannel);
                       allUsers[i] = user;
+                      //continue;
                     }
                   }
-                  //continue;
+                  else
+                  {
+                    UpdateChannelStateUser(user, ChannelState.tunable, ch.IdChannel);
+                    allUsers[i] = user;
+                  }
                 }
+                //continue;
+              }
 
-                if (TSandRecStates.ContainsKey(ch.IdChannel))
+              if (TSandRecStates.ContainsKey(ch.IdChannel))
+              {
+                ChannelState cs = TSandRecStates[ch.IdChannel];
+
+                if (cs == ChannelState.recording)
                 {
-                  ChannelState cs = TSandRecStates[ch.IdChannel];
-
-                  if (cs == ChannelState.recording)
-                  {
-                    UpdateChannelStateUsers(ref allUsers, ChannelState.recording, ch.IdChannel);
-                  }
-                  else if (cs == ChannelState.timeshifting)
-                  {
-                    UpdateChannelStateUsers(ref allUsers, ChannelState.timeshifting, ch.IdChannel);
-                  }
+                  UpdateChannelStateUsers(allUsers, ChannelState.recording, ch.IdChannel);
                 }
-              } //while card end
-            } //foreach tuningdetail end      
-          }
+                else if (cs == ChannelState.timeshifting)
+                {
+                  UpdateChannelStateUsers(allUsers, ChannelState.timeshifting, ch.IdChannel);
+                }
+              }
+            } //while card end
+          } //foreach tuningdetail end      
         }
-      }
-      catch (InvalidOperationException tex)
+      } catch (InvalidOperationException tex)
       {
         Log.Error("SimpleCardAllocation: Possible race condition occured setting channel states - {0}", tex.StackTrace);
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Error("SimpleCardAllocation: An unknown error occured while setting channel states - {0}\n{1}", ex.Message, ex.StackTrace);
       }
@@ -431,14 +412,11 @@ namespace TvService
 
       DoSetChannelStates(cards, channels, checkTransponders, allUsers, tvController);
 
-      if (allUsers != null && allUsers.Count > 0)
+      if (allUsers.Count > 0)
       {
         return allUsers[0].ChannelStates;
       }
-      else
-      {
-        return new Dictionary<int, ChannelState>();
-      }
+      return new Dictionary<int, ChannelState>();
     }
 
     #endregion
@@ -449,7 +427,6 @@ namespace TvService
     /// Gets a list of all free cards which can receive the channel specified
     /// List is sorted by priority
     /// </summary>
-    /// <param name="channelName">Name of the channel.</param>
     /// <returns>list containg all free cards which can receive the channel</returns>
     public List<CardDetail> GetAvailableCardsForChannel(Dictionary<int, ITvCardHandler> cards, Channel dbChannel, ref User user, bool checkTransponders, out TvResult result, int recommendedCardId)
     {
@@ -465,11 +442,9 @@ namespace TvService
 
 
         int cardsFound = 0;
-        int number = 0;
         //foreach tuning detail
         foreach (IChannel tuningDetail in tuningDetails)
         {
-          number++;
           //Log.Info("Controller:   channel #{0} {1} ", number, tuningDetail.ToString());
           Dictionary<int, ITvCardHandler>.Enumerator enumerator = cards.GetEnumerator();
 
@@ -498,8 +473,7 @@ namespace TvService
                 Log.Info("Controller:    card:{0} type:{1} is not present", cardId, tvcard.Type);
                 continue;
               }
-            }
-            catch (Exception)
+            } catch (Exception)
             {
               Log.Error("card: unable to connect to slave controller at:{0}", keyPair.Value.DataBaseCard.ReferencedServer().HostName);
               continue;
@@ -612,10 +586,6 @@ namespace TvService
                   }
                 }
               } //end of cam present block              
-              else // no cam present
-              {
-                //Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder no CA present", cardId, tvcard.Type);
-              }
             }
             else
             {
@@ -649,16 +619,12 @@ namespace TvService
         }
         else
         {
-          if (cardsFound == 0)
-            result = TvResult.ChannelNotMappedToAnyCard;
-          else
-            result = TvResult.AllCardsBusy;
+          result = cardsFound == 0 ? TvResult.ChannelNotMappedToAnyCard : TvResult.AllCardsBusy;
         }
         //Log.Info("Controller: found {0} available", cardsAvailable.Count);
 
         return cardsAvailable;
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         result = TvResult.UnknownError;
         Log.Write(ex);

@@ -18,12 +18,11 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace TvLibrary.Teletext
 {
+  /// <summary>
+  /// Fast text decoder
+  /// </summary>
   public class FastTextDecoder
   {
     #region variables
@@ -34,13 +33,11 @@ namespace TvLibrary.Teletext
     int _whitePage = -1;
     #endregion
 
-    #region ctor
-    public FastTextDecoder()
-    {
-    }
-    #endregion
-
     #region public members
+    ///<summary>
+    /// Decodes the fast text data
+    ///</summary>
+    ///<param name="pageData">Teletext page data</param>
     public void Decode(byte[] pageData)
     {
       _redPage = -1;
@@ -50,7 +47,8 @@ namespace TvLibrary.Teletext
       _whitePage = -1;
 
       int maxRows = pageData.Length / 42;
-      if (maxRows < 1) return;
+      if (maxRows < 1)
+        return;
 
       int pageNumber = 0;
       for (int rowNr = 0; rowNr < maxRows; rowNr++)
@@ -60,7 +58,7 @@ namespace TvLibrary.Teletext
           pageNumber = Hamming.GetPageNumber(rowNr * 42, ref pageData);
         if (packetNumber == 27)
         {
-          DecodePacket27(pageNumber, rowNr * 42, ref pageData);
+          DecodePacket27(pageNumber, rowNr * 42, pageData);
           return;
         }
       }
@@ -68,7 +66,7 @@ namespace TvLibrary.Teletext
     #endregion
 
     #region private members
-    void DecodePacket27(int pageNumber, int offset, ref byte[] pageData)
+    void DecodePacket27(int pageNumber, int offset, byte[] pageData)
     {
       offset += 3;
       // Links 0 through 5
@@ -85,10 +83,6 @@ namespace TvLibrary.Teletext
 
         byte pageUnits = linkData[0];
         byte pageTens = linkData[1];
-        byte s1 = (byte)(linkData[2]);
-        byte s2 = (byte)(linkData[3] & 0x7);
-        byte s3 = (byte)(linkData[4]);
-        byte s4 = (byte)(linkData[5] & 0x3);
 
         byte m1 = (byte)(linkData[3] >> 3);
         byte m2 = (byte)((linkData[5] & 0x4) >> 2);
@@ -97,7 +91,8 @@ namespace TvLibrary.Teletext
 
         // Magazine is complemented
         int Magazine = pageNumber / 0x100;
-        if (Magazine == 8) Magazine = 0;
+        if (Magazine == 8)
+          Magazine = 0;
 
         byte linkMagazine = (byte)(m ^ (Magazine % 8));
 
@@ -113,11 +108,21 @@ namespace TvLibrary.Teletext
         }
         switch (index)
         {
-          case 0: _redPage = pageNr; break;
-          case 1: _greenPage = pageNr; break;
-          case 2: _yellowPage = pageNr; break;
-          case 3: _bluePage = pageNr; break;
-          case 5: _whitePage = pageNr; break;
+          case 0:
+            _redPage = pageNr;
+            break;
+          case 1:
+            _greenPage = pageNr;
+            break;
+          case 2:
+            _yellowPage = pageNr;
+            break;
+          case 3:
+            _bluePage = pageNr;
+            break;
+          case 5:
+            _whitePage = pageNr;
+            break;
         }
       }
     }
@@ -175,9 +180,9 @@ namespace TvLibrary.Teletext
     /// <returns>
     /// 	<c>true</c> if the page is a decimal page; otherwise, <c>false</c>.
     /// </returns>
-    bool IsDecimalPage(int i)
+    static bool IsDecimalPage(int i)
     {
-      return (bool)(((i & 0x00F) <= 9) && ((i & 0x0F0) <= 0x90));
+      return ((i & 0x00F) <= 9) && ((i & 0x0F0) <= 0x90);
     }
     #endregion
   }

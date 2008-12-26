@@ -18,15 +18,13 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.InteropServices;
-using DirectShowLib;
 
 namespace TvLibrary.Interfaces.Analyzer
 {
-
+  /// <summary>
+  /// TsWriter channel name
+  /// </summary>
   [ComImport, Guid("C564CEB9-FC77-4776-8CB8-96DD87624161")]
   public class ITsChannel { }
 }

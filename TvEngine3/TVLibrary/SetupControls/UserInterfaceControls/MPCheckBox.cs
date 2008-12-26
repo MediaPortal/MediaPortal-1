@@ -23,8 +23,6 @@
 
 #endregion
 
-using System;
-
 namespace MediaPortal.UserInterface.Controls
 {
   /// <summary>
@@ -34,9 +32,14 @@ namespace MediaPortal.UserInterface.Controls
   {
     public MPCheckBox()
     {
-      this.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.AutoSize = true;
-      this.UseVisualStyleBackColor = true;
+      Init();
+    }
+
+    private void Init()
+    {
+      FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      AutoSize = true;
+      UseVisualStyleBackColor = true;
     }
   }
 }

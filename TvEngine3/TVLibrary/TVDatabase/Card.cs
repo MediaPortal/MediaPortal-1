@@ -4,7 +4,6 @@
 //========================================================================
 using System;
 using System.Collections;
-using Gentle.Common;
 using Gentle.Framework;
 using TvLibrary.Log;
 
@@ -241,7 +240,7 @@ namespace TvDatabase
     /// </summary>
     public bool supportSubChannels
     {
-      get { return this.supportsSubChannels(); }
+      get { return supportsSubChannels(); }
     }
     #endregion
 
@@ -288,8 +287,7 @@ namespace TvDatabase
         try
         {
           base.Persist();
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
           Log.Error("Exception in Card.Persist() with Message {0}", ex.Message);
           return;
@@ -305,15 +303,15 @@ namespace TvDatabase
     /// <summary>
     /// Checks if a card can view a specific channel
     /// </summary>
-    /// <param name="_card">Card object</param>
-    /// <param name="_channelId">Channel id</param>
+    /// <param name="channelId">Channel id</param>
     /// <returns>true/false</returns>
     public bool canViewTvChannel(int channelId)
     {
-      IList _cardChannels = this.ReferringChannelMap();
+      IList _cardChannels = ReferringChannelMap();
       foreach (ChannelMap _cmap in _cardChannels)
       {
-          if (channelId == _cmap.IdChannel && !_cmap.EpgOnly) return true;
+        if (channelId == _cmap.IdChannel && !_cmap.EpgOnly)
+          return true;
       }
       return false;
     }
@@ -321,35 +319,25 @@ namespace TvDatabase
     /// <summary>
     /// Checks if a card can tune a specific channel
     /// </summary>
-    /// <param name="_card">Card object</param>
-    /// <param name="_channelId">Channel id</param>
+    /// <param name="channelId">Channel id</param>
     /// <returns>true/false</returns>
     public bool canTuneTvChannel(int channelId)
     {
-        IList _cardChannels = this.ReferringChannelMap();
-        foreach (ChannelMap _cmap in _cardChannels)
-        {
-            if (channelId == _cmap.IdChannel) return true;
-        }
-        return false;
+      IList _cardChannels = ReferringChannelMap();
+      foreach (ChannelMap _cmap in _cardChannels)
+      {
+        if (channelId == _cmap.IdChannel)
+          return true;
+      }
+      return false;
     }
 
     /// <summary>
     /// Checks if a card can view multiple channels from a same transponder
     /// </summary>
-    /// <param name="_card">Card object</param>
-    /// <param name="_channelId"></param>
     /// <returns>true/false</returns>
     public bool supportsSubChannels()
     {
-      IList refChan = this.ReferringChannelMap();
-      // the first channelmap is enough to know about the card's tuning details
-      ChannelMap map = (ChannelMap)refChan[0];
-      Channel chan = Channel.Retrieve(map.IdChannel);
-      IList tuninfos = chan.ReferringTuningDetail();
-      // whatever the # of tuningdetails , one is enough to know about the channel's Type
-      TuningDetail tuninfo = (TuningDetail)tuninfos[0];
-      //if (tuninfo.ChannelType != 0) return true; // then referring card must be Not Analog
       return true;
     }
 

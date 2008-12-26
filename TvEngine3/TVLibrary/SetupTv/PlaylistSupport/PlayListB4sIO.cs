@@ -23,8 +23,6 @@
 
 #endregion
 
-using System.Collections.Generic;
-using System.Text;
 using System.Xml;
 using System.IO;
 using System;
@@ -40,12 +38,15 @@ namespace MediaPortal.Playlists
 
       XmlDocument doc = new XmlDocument();
       doc.Load(fileName);
-      if (doc.DocumentElement == null) return false;
+      if (doc.DocumentElement == null)
+        return false;
       string root = doc.DocumentElement.Name;
-      if (root != "WinampXML") return false;
+      if (root != "WinampXML")
+        return false;
 
       XmlNode nodeRoot = doc.DocumentElement.SelectSingleNode("/WinampXML/playlist");
-      if (nodeRoot == null) return false;
+      if (nodeRoot == null)
+        return false;
       nodeEntries = nodeRoot.SelectNodes("entry");
       return true;
     }
@@ -76,8 +77,7 @@ namespace MediaPortal.Playlists
           playlist.Add(newItem);
         }
         return true;
-      }
-      catch (Exception)
+      } catch (Exception)
       {
         return false;
       }
@@ -93,12 +93,8 @@ namespace MediaPortal.Playlists
 
     private static string ReadInfoLine(XmlNode node, string file)
     {
-      string infoLine;
       XmlNode nodeName = node.SelectSingleNode("Name");
-      if (nodeName == null)
-        infoLine = Path.GetFileName(file);
-      else
-        infoLine = nodeName.InnerText;
+      string infoLine = nodeName == null ? Path.GetFileName(file) : nodeName.InnerText;
       return infoLine;
     }
 
@@ -120,29 +116,32 @@ namespace MediaPortal.Playlists
       return file;
     }
 
-    public void Save(PlayList playlist, string fileName)
+    public void Save(PlayList playListParam, string fileName)
     {
       XmlWriterSettings settings = new XmlWriterSettings();
       settings.Indent = true;
       settings.OmitXmlDeclaration = true;
       using (XmlWriter writer = XmlWriter.Create(fileName, settings))
       {
-        writer.WriteStartElement("WinampXML");
-        writer.WriteStartElement("playlist");
-        writer.WriteAttributeString("num_entries", playlist.Count.ToString());
-        writer.WriteAttributeString("label", playlist.Name);
-
-        foreach(PlayListItem item in playlist)
+        if (writer != null)
         {
-          writer.WriteStartElement("entry");
-          writer.WriteAttributeString("Playstring", "file:" + item.FileName);
-          writer.WriteElementString("Name", item.Description);
-          writer.WriteElementString("Length", item.Duration.ToString());
+          writer.WriteStartElement("WinampXML");
+          writer.WriteStartElement("playListParam");
+          writer.WriteAttributeString("num_entries", playListParam.Count.ToString());
+          writer.WriteAttributeString("label", playListParam.Name);
+
+          foreach (PlayListItem item in playListParam)
+          {
+            writer.WriteStartElement("entry");
+            writer.WriteAttributeString("Playstring", "file:" + item.FileName);
+            writer.WriteElementString("Name", item.Description);
+            writer.WriteElementString("Length", item.Duration.ToString());
+            writer.WriteEndElement();
+          }
+
+          writer.WriteEndElement();
           writer.WriteEndElement();
         }
-
-        writer.WriteEndElement();
-        writer.WriteEndElement();
       }
 
     }

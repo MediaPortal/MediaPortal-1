@@ -19,9 +19,6 @@
  *
  */
 using System;
-using System.Collections.Generic;
-using System.Text;
-using TvLibrary.Interfaces;
 
 namespace TvLibrary
 {
@@ -32,14 +29,14 @@ namespace TvLibrary
   public class TvExceptionNoSignal : Exception
   {
     /// <summary>
-    /// Initializes a new instance of the <see cref="T:TvException"/> class.
+    /// Initializes a new instance of the <see cref="TvException"/> class.
     /// </summary>
     public TvExceptionNoSignal()
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="T:TvException"/> class.
+    /// Initializes a new instance of the <see cref="TvException"/> class.
     /// </summary>
     /// <param name="message">The message.</param>
     public TvExceptionNoSignal(string message)
@@ -49,7 +46,7 @@ namespace TvLibrary
 
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="T:TvException"/> class.
+    /// Initializes a new instance of the <see cref="TvException"/> class.
     /// </summary>
     /// <param name="message">The message.</param>
     /// <param name="innerException">The inner exception.</param>
@@ -58,7 +55,7 @@ namespace TvLibrary
     {
     }
 
-  }  
+  }
 
   /// <summary>
   /// Exception class for the tv library
@@ -67,14 +64,14 @@ namespace TvLibrary
   public class TvException : Exception
   {
     /// <summary>
-    /// Initializes a new instance of the <see cref="T:TvException"/> class.
+    /// Initializes a new instance of the <see cref="TvException"/> class.
     /// </summary>
     public TvException()
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="T:TvException"/> class.
+    /// Initializes a new instance of the <see cref="TvException"/> class.
     /// </summary>
     /// <param name="message">The message.</param>
     public TvException(string message)
@@ -84,7 +81,7 @@ namespace TvLibrary
 
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="T:TvException"/> class.
+    /// Initializes a new instance of the <see cref="TvException"/> class.
     /// </summary>
     /// <param name="message">The message.</param>
     /// <param name="innerException">The inner exception.</param>

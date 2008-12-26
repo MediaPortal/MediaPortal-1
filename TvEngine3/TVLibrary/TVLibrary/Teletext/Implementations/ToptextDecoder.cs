@@ -19,8 +19,6 @@
  *
  */
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace TvLibrary.Teletext
 {
@@ -31,7 +29,6 @@ namespace TvLibrary.Teletext
   {
     #region constants
     const int NotPresent = 0x0;
-    const int SubtitlePage = 0x01;
     const int ProgramInfoBlockPageSingle = 0x02;
     const int ProgramInfoBlockPageMulti = 0x03;
     const int BlockPageSingle = 0x04;
@@ -42,8 +39,6 @@ namespace TvLibrary.Teletext
     const int NormalPageInfo = 0x09;
     const int NormalPageMulti = 0x0a;
     const int NormalPageMultiInfo = 0x0b;
-    const int DontCare = 0x0e;
-    const int EndTable = 0x0f;
 
     const int TOP_BASIC_PAGE = 0x1f0;
     const int TOP_MULTI_PAGE = 0x1f1;
@@ -122,10 +117,12 @@ namespace TvLibrary.Teletext
     /// </summary>
     /// <param name="number">The number.</param>
     /// <returns></returns>
-    int ConvertToHex(int number)
+    static int ConvertToHex(int number)
     {
-      if (number < 0) return -1;
-      int mag = number / 100; number -= (mag * 100);
+      if (number < 0)
+        return -1;
+      int mag = number / 100;
+      number -= (mag * 100);
       int tens = (number / 10);
       int units = (number % 10);
       return mag * 0x100 + tens * 0x10 + units;
@@ -140,25 +137,31 @@ namespace TvLibrary.Teletext
     {
       int red, green, yellow, blue;
       string nextGroup, nextBlock;
-      if (!GetPageLinks(cache, pageNumber, out red, out green, out yellow, out blue, out nextGroup, out nextBlock)) return false;
+      if (!GetPageLinks(cache, pageNumber, out red, out green, out yellow, out blue, out nextGroup, out nextBlock))
+        return false;
       _pageRed = ConvertToHex(red);
       _pageGreen = ConvertToHex(green);
       _pageYellow = ConvertToHex(yellow);
       _pageBlue = ConvertToHex(blue);
-      if (nextGroup == String.Empty) nextGroup = green.ToString();
-      if (nextBlock == String.Empty) nextBlock = yellow.ToString();
+      if (nextGroup == String.Empty)
+        nextGroup = green.ToString();
+      if (nextBlock == String.Empty)
+        nextBlock = yellow.ToString();
 
       Hamming.SetPacketNumber(0, ref _row24, pageNumber, 24);
       int spaces = 40 - (nextGroup.Length + nextBlock.Length + 3 + 3 + 4);
       spaces /= 3;
       string line = ((char)TeletextPageRenderer.Attributes.AlphaRed) + red.ToString();
-      for (int x = 0; x < spaces; x++) line += " ";
+      for (int x = 0; x < spaces; x++)
+        line += " ";
 
       line += ((char)TeletextPageRenderer.Attributes.AlphaGreen) + nextGroup;
-      for (int x = 0; x < spaces; x++) line += " ";
+      for (int x = 0; x < spaces; x++)
+        line += " ";
 
       line += ((char)TeletextPageRenderer.Attributes.AlphaYellow) + nextBlock;
-      for (int x = 0; x < spaces; x++) line += " ";
+      for (int x = 0; x < spaces; x++)
+        line += " ";
       line += ((char)TeletextPageRenderer.Attributes.AlphaCyan) + blue.ToString();
       for (int i = 0; i < line.Length && i <= 40; ++i)
       {
@@ -194,7 +197,8 @@ namespace TvLibrary.Teletext
       nextBlock = "";
       redPage = greenPage = yellowPage = bluePage = -1;
 
-      if (!DecodeBasicPage(cache)) return false;
+      if (!DecodeBasicPage(cache))
+        return false;
       DecodeMultiPage(cache);
       DecodeAdditionalPages(cache);
 
@@ -226,8 +230,7 @@ namespace TvLibrary.Teletext
           if (_pageType[page] == GroupPageSingle || _pageType[page] == GroupPageMulti)
           {
             greenPage = page;
-            nextGroup = _pageDescription[greenPage];
-            if (nextGroup == null) nextGroup = greenPage.ToString();
+            nextGroup = _pageDescription[greenPage] ?? greenPage.ToString();
           }
         }
         if (yellowPage == -1)
@@ -235,8 +238,7 @@ namespace TvLibrary.Teletext
           if (_pageType[page] == BlockPageSingle || _pageType[page] == BlockPageMulti)
           {
             yellowPage = page;
-            nextBlock = _pageDescription[yellowPage];
-            if (nextBlock == null) nextBlock = yellowPage.ToString();
+            nextBlock = _pageDescription[yellowPage] ?? yellowPage.ToString();
           }
         }
       }
@@ -248,8 +250,7 @@ namespace TvLibrary.Teletext
           if (_pageType[page] == GroupPageSingle || _pageType[page] == GroupPageMulti)
           {
             greenPage = page;
-            nextGroup = _pageDescription[greenPage];
-            if (nextGroup == null) nextGroup = greenPage.ToString();
+            nextGroup = _pageDescription[greenPage] ?? greenPage.ToString();
           }
         }
         if (yellowPage == -1)
@@ -257,8 +258,7 @@ namespace TvLibrary.Teletext
           if (_pageType[page] == BlockPageSingle || _pageType[page] == BlockPageMulti)
           {
             yellowPage = page;
-            nextBlock = _pageDescription[yellowPage];
-            if (nextBlock == null) nextBlock = yellowPage.ToString();
+            nextBlock = _pageDescription[yellowPage] ?? yellowPage.ToString();
           }
         }
       }
@@ -316,7 +316,8 @@ namespace TvLibrary.Teletext
     /// </returns>
     static public bool IsTopTextPage(int pageNumber, int subPageNumber)
     {
-      if (pageNumber >= TOP_BASIC_PAGE && pageNumber < 0x1fd) return true;
+      if (pageNumber >= TOP_BASIC_PAGE && pageNumber < 0x1fd)
+        return true;
       return false;
     }
 
@@ -330,7 +331,8 @@ namespace TvLibrary.Teletext
       //basic toppage contains information which teletext pages are onair
       //and if onair if it has subpages or not
       //also contains the type for each page
-      if (!cache.PageExists(TOP_BASIC_PAGE)) return false;
+      if (!cache.PageExists(TOP_BASIC_PAGE))
+        return false;
       byte[] basicPage = cache.GetPage(TOP_BASIC_PAGE, 0);
       for (int pageNr = 100; pageNr <= 899; pageNr++)
       {
@@ -373,7 +375,8 @@ namespace TvLibrary.Teletext
     void DecodeMultiPage(TeletextPageCache cache)
     {
       // multi page contains the number of subpages transmitted for each page (100-899);
-      if (!cache.PageExists(TOP_MULTI_PAGE)) return;
+      if (!cache.PageExists(TOP_MULTI_PAGE))
+        return;
       byte[] multiPage = cache.GetPage(TOP_MULTI_PAGE, 0);
       for (int pageNr = 100; pageNr <= 899; pageNr++)
       {
@@ -408,7 +411,8 @@ namespace TvLibrary.Teletext
       //
       for (int pageNr = TOP_ADDITIONAL_PAGE; pageNr < 0x1fd; ++pageNr)
       {
-        if (!cache.PageExists(pageNr)) continue;
+        if (!cache.PageExists(pageNr))
+          continue;
         byte[] additionalPage = cache.GetPage(pageNr, 0);
         int lineCounter = 0;
         while (true)
@@ -432,7 +436,8 @@ namespace TvLibrary.Teletext
 
                   description += (char)(additionalPage[row * 42 + col] & 0x7f);
                 }
-                if (magazine == 0) magazine = 8;
+                if (magazine == 0)
+                  magazine = 8;
                 int pageNo = magazine * 100 + pageTens * 10 + pageUnits;
                 if (pageNo >= 100 && pageNo <= 899)
                 {
@@ -442,11 +447,12 @@ namespace TvLibrary.Teletext
             }
           }
           lineCounter++;
-          if (lineCounter >= 43) break;
+          if (lineCounter >= 43)
+            break;
         }
       }
     }
   }
 }
 
- 	  	 
+

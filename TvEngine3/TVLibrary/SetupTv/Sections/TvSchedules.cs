@@ -20,23 +20,12 @@
  */
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
 
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using System.Globalization;
 using TvControl;
-using DirectShowLib;
-
-using Gentle.Common;
-using Gentle.Framework;
 using TvDatabase;
-using TvLibrary;
-using TvLibrary.Interfaces;
-using TvLibrary.Implementations;
-using MediaPortal.UserInterface.Controls;
 
 namespace SetupTv.Sections
 {
@@ -77,7 +66,7 @@ namespace SetupTv.Sections
           case ScheduleRecordingType.Weekly:
             item.ImageIndex = 0;
             item.SubItems.Add("Weekly");
-            item.SubItems.Add(String.Format("{0} {1}", schedule.StartTime.DayOfWeek.ToString(), schedule.StartTime.ToString("HH:mm:ss", mmddFormat)));
+            item.SubItems.Add(String.Format("{0} {1}", schedule.StartTime.DayOfWeek, schedule.StartTime.ToString("HH:mm:ss", mmddFormat)));
             break;
           case ScheduleRecordingType.Weekends:
             item.ImageIndex = 0;

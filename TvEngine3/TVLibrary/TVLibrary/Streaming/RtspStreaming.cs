@@ -20,12 +20,9 @@
  */
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Net;
-using System.Net.Sockets;
-using TvLibrary.Log;
 
 namespace TvLibrary.Streaming
 {
@@ -36,32 +33,32 @@ namespace TvLibrary.Streaming
   {
     #region imports
     [DllImport("StreamingServer.dll", CharSet = CharSet.Ansi)]
-    protected static extern void StreamSetup(string ipAdress);
+    private static extern void StreamSetup(string ipAdress);
 
     [DllImport("StreamingServer.dll", CharSet = CharSet.Ansi)]
-    protected static extern void StreamRun();
+    private static extern void StreamRun();
 
     [DllImport("StreamingServer.dll", CharSet = CharSet.Ansi)]
-    protected static extern void StreamAddTimeShiftFile(string streamName, string fileName, bool isProgramStream);
+    private static extern void StreamAddTimeShiftFile(string streamName, string fileName, bool isProgramStream);
 
     [DllImport("StreamingServer.dll", CharSet = CharSet.Ansi)]
-    protected static extern void StreamAddMpegFile(string streamName, string fileName);
+    private static extern void StreamAddMpegFile(string streamName, string fileName);
 
     [DllImport("StreamingServer.dll", CharSet = CharSet.Ansi)]
-    protected static extern void StreamRemove(string streamName);
+    private static extern void StreamRemove(string streamName);
 
 
     [DllImport("StreamingServer.dll", CharSet = CharSet.Ansi)]
-    protected static extern void StreamGetClientCount(ref short clients);
+    private static extern void StreamGetClientCount(ref short clients);
 
     [DllImport("StreamingServer.dll", CharSet = CharSet.Ansi)]
-    protected static extern void StreamGetClientDetail(short clientNr, out IntPtr ipAdres, out IntPtr streamName, ref short isActive, out long ticks);
+    private static extern void StreamGetClientDetail(short clientNr, out IntPtr ipAdres, out IntPtr streamName, ref short isActive, out long ticks);
     #endregion
 
     #region variables
-    bool _running = false;
-    bool _initialized = false;
-    Dictionary<string, RtspStream> _streams;
+    bool _running;
+    readonly bool _initialized;
+    readonly Dictionary<string, RtspStream> _streams;
     #endregion
 
     #region ctor
@@ -81,8 +78,7 @@ namespace TvLibrary.Streaming
         }
         _initialized = true;
         _streams = new Dictionary<string, RtspStream>();
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Log.Write(ex);
       }
@@ -121,24 +117,24 @@ namespace TvLibrary.Streaming
           {
             streamName = Marshal.PtrToStringAnsi(ptrStream);
           }
-          string description="";
+          string description = "";
 
           if (_streams.ContainsKey(streamName))
           {
             RtspStream stream = _streams[streamName];
-            if (stream.Recording != null && stream.Recording.Length>0)
+            if (!string.IsNullOrEmpty(stream.Recording))
               description = stream.Recording;
-						else if (stream.Card.SubChannels.Length>0)
+            else if (stream.Card.SubChannels.Length > 0)
             {
-              description = stream.Card.SubChannels[0].CurrentChannel.Name;							
+              description = stream.Card.SubChannels[0].CurrentChannel.Name;
             }
           }
 
-					if (description.Length > 0)
-					{
-						RtspClient client = new RtspClient(isActive != 0, ipadress, streamName, description, started);
-						clients.Add(client);
-					}
+          if (description.Length > 0)
+          {
+            RtspClient client = new RtspClient(isActive != 0, ipadress, streamName, description, started);
+            clients.Add(client);
+          }
         }
         return clients;
       }
@@ -150,11 +146,13 @@ namespace TvLibrary.Streaming
     /// </summary>
     public void Start()
     {
-      if (_initialized == false) return;
-      if (_running) return;
+      if (_initialized == false)
+        return;
+      if (_running)
+        return;
       Log.Log.WriteFile("RTSP: start streamer");
       _running = true;
-      Thread thread = new Thread(new ThreadStart(workerThread));
+      Thread thread = new Thread(workerThread);
       thread.SetApartmentState(ApartmentState.STA);
       thread.IsBackground = true;
       thread.Name = "RTSP Streaming thread";
@@ -168,7 +166,8 @@ namespace TvLibrary.Streaming
     public void Stop()
     {
       Log.Log.WriteFile("RTSP: stop streamer");
-      if (_initialized == false) return;
+      if (_initialized == false)
+        return;
       StopAllStreams();
       _running = false;
     }
@@ -182,7 +181,7 @@ namespace TvLibrary.Streaming
       {
         removals.Add(key);
       }
-      foreach(string key in removals)
+      foreach (string key in removals)
       {
         Remove(key);
       }
@@ -191,12 +190,11 @@ namespace TvLibrary.Streaming
     /// <summary>
     /// Creates a new RTSP stream
     /// </summary>
-    /// <param name="streamName">Name of the stream.</param>
-    /// <param name="fileName">Name of the timeshift file.</param>
-    /// <param name="isProgramStream">true if file is a mpeg-2 program stream, false if file is a mpeg-2 transport stream.</param>
+    /// <param name="stream">The rtsp stream</param>
     public void AddStream(RtspStream stream)
     {
-      if (_initialized == false) return;
+      if (_initialized == false)
+        return;
       if (_streams.ContainsKey(stream.Name))
       {
         return;
@@ -222,7 +220,8 @@ namespace TvLibrary.Streaming
     /// <param name="streamName">Name of the stream.</param>
     public void Remove(string streamName)
     {
-      if (_initialized == false) return;
+      if (_initialized == false)
+        return;
       Log.Log.WriteFile("RTSP: remove stream {0}", streamName);
       if (_streams.ContainsKey(streamName))
       {
@@ -262,8 +261,7 @@ namespace TvLibrary.Streaming
         {
           StreamRun();
         }
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Log.Write(ex);
       }
@@ -273,6 +271,9 @@ namespace TvLibrary.Streaming
     #endregion
 
     #region properties
+    ///<summary>
+    /// Number of active rtsp streams
+    ///</summary>
     public int ActiveStreams
     {
       get { return _streams.Count; }

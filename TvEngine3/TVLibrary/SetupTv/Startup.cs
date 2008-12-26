@@ -25,16 +25,13 @@
 
 using System;
 using System.Windows.Forms;
-using System.Collections;
 using System.Collections.Specialized;
 using System.Configuration;
 using System.Reflection;
-using System.IO;
 using System.Threading;
 using System.Diagnostics;
 using TvControl;
 using TvLibrary.Log;
-using TvDatabase;
 
 namespace SetupTv
 {
@@ -53,13 +50,12 @@ namespace SetupTv
   {
     static StartupMode startupMode = StartupMode.Normal;
 
-    string sectionsConfiguration = String.Empty;
+    readonly string sectionsConfiguration = String.Empty;
 
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="arguments"></param>
-    public Startup(string[] arguments)
+    public Startup()
     {
       startupMode = StartupMode.Normal;
     }
@@ -69,8 +65,6 @@ namespace SetupTv
     /// </summary>
     public void Start()
     {
-      FileInfo mpFi = new FileInfo(Assembly.GetExecutingAssembly().Location);
-
       Form applicationForm = null;
 
       switch (startupMode)
@@ -90,7 +84,7 @@ namespace SetupTv
 
       if (applicationForm != null)
       {
-        System.Windows.Forms.Application.Run(applicationForm);
+        Application.Run(applicationForm);
       }
     }
 
@@ -116,7 +110,7 @@ namespace SetupTv
       NameValueCollection appSettings = ConfigurationManager.AppSettings;
       appSettings.Set("GentleConfigFile", String.Format(@"{0}\gentle.config", Log.GetPathName()));
 
-      Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
+      Application.ThreadException += Application_ThreadException;
 
       foreach (string param in arguments)
       {
@@ -152,8 +146,7 @@ namespace SetupTv
           MessageBox.Show("Failed to create the database.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
           return;
         }
-        else
-          Log.Info("- Database created.");
+        Log.Info("- Database created.");
         currentSchemaVersion = dlg.GetCurrentShemaVersion();
       }
 
@@ -193,37 +186,33 @@ namespace SetupTv
         {
           Log.Info("---- Unable to restart tv service----");
           Log.Write(ex);
-          MessageBox.Show("Failed to startup tvservice" + ex.ToString());
+          MessageBox.Show("Failed to startup tvservice" + ex);
           return;
         }
       }
 
       try
       {
-        AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
-        System.Windows.Forms.Application.EnableVisualStyles();
-        System.Windows.Forms.Application.DoEvents();
+        AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+        Application.EnableVisualStyles();
+        Application.DoEvents();
 
-        new Startup(arguments).Start();
+        new Startup().Start();
       }
       catch (Exception ex)
       {
         Log.Write(ex);
       }
-      finally
-      {
-        GC.Collect();
-      }
     }
 
-    private static System.Reflection.Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+    private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
     {
       if (args.Name.Contains(".resources"))
         return null;
       if (args.Name.Contains(".XmlSerializers"))
         return null;
       MessageBox.Show("Failed to locate assembly '" + args.Name + "'." + Environment.NewLine + "Note that the configuration program must be executed from/reside in the MediaPortal folder, the execution will now end.", "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
-      System.Windows.Forms.Application.Exit();
+      Application.Exit();
       return null;
     }
   }

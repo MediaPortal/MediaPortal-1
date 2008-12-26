@@ -26,12 +26,10 @@
 #region Usings
 
 using System;
-using System.IO;
 using System.Collections.Generic;
-using System.ComponentModel;
+using System.IO;
 using System.Diagnostics;
 using System.Drawing;
-using System.Text;
 using System.Reflection;
 using System.Data;
 using System.Data.SqlClient;
@@ -53,7 +51,7 @@ namespace SetupTv
       MySql,
     }
 
-    StartupMode _dialogMode = StartupMode.Normal;
+    readonly StartupMode _dialogMode = StartupMode.Normal;
     ProviderType _provider = ProviderType.MySql;
     string _schemaName = "MpTvDb";
 
@@ -84,14 +82,14 @@ namespace SetupTv
       {
         case StartupMode.Normal:
           if (gbDbLogon.Enabled)
-            this.ActiveControl = tbPassword;
+            ActiveControl = tbPassword;
           break;
         case StartupMode.DbCleanup:
-          this.ActiveControl = btnTest;
+          ActiveControl = btnTest;
           break;
         case StartupMode.DbConfig:
           if (gbServerLocation.Enabled)
-            this.ActiveControl = tbDatabaseName;
+            ActiveControl = tbDatabaseName;
           break;
       }
     }
@@ -223,13 +221,11 @@ namespace SetupTv
       }
       catch (Exception)
       {
-        GC.Collect();
         return false;
       }
 
       SqlConnection.ClearAllPools();
 
-      GC.Collect();
       //database server is found
       return true;
     }
@@ -244,7 +240,6 @@ namespace SetupTv
       try
       {
         Assembly assm = Assembly.GetExecutingAssembly();
-        string[] names = assm.GetManifestResourceNames();
         Stream stream = null;
         switch (_provider)
         {
@@ -259,8 +254,9 @@ namespace SetupTv
         _schemaName = tbDatabaseName.Text;
         string[] CommandScript = null;
         string sql = string.Empty;
-        using (StreamReader reader = new StreamReader(stream))
-          sql = reader.ReadToEnd();
+        if (stream != null)
+          using (StreamReader reader = new StreamReader(stream))
+            sql = reader.ReadToEnd();
 
         switch (_provider)
         {
@@ -281,66 +277,68 @@ namespace SetupTv
             using (SqlConnection connect = new SqlConnection(connectionString))
             {
               connect.Open();
-              foreach (string SingleStmt in CommandScript)
-              {
-                string SqlStmt = SingleStmt.Trim();
-                if (!string.IsNullOrEmpty(SqlStmt) && !SqlStmt.StartsWith("--") && !SqlStmt.StartsWith("/*"))
+              if (CommandScript != null)
+                foreach (string SingleStmt in CommandScript)
                 {
-                  try
+                  string SqlStmt = SingleStmt.Trim();
+                  if (!string.IsNullOrEmpty(SqlStmt) && !SqlStmt.StartsWith("--") && !SqlStmt.StartsWith("/*"))
                   {
-                    using (SqlCommand cmd = new SqlCommand(SqlStmt, connect))
+                    try
                     {
-                      Log.Write("  Exec SQL: {0}", SqlStmt);
-                      cmd.ExecuteNonQuery();
+                      using (SqlCommand cmd = new SqlCommand(SqlStmt, connect))
+                      {
+                        Log.Write("  Exec SQL: {0}", SqlStmt);
+                        cmd.ExecuteNonQuery();
+                      }
                     }
-                  }
-                  catch (SqlException ex)
-                  {
-                    Log.Write("  ********* SQL statement failed! *********");
-                    Log.Write("  ********* Error reason: {0}", ex.Message);
-                    Log.Write("  ********* Error code: {0}, Line: {1} *********", ex.Number.ToString(), ex.LineNumber.ToString());
-                    succeeded = false;
-                    if (connect.State != ConnectionState.Open)
+                    catch (SqlException ex)
                     {
-                      Log.Write("  ********* Connection status = {0} - aborting further command execution..", connect.State.ToString());
-                      break;
+                      Log.Write("  ********* SQL statement failed! *********");
+                      Log.Write("  ********* Error reason: {0}", ex.Message);
+                      Log.Write("  ********* Error code: {0}, Line: {1} *********", ex.Number.ToString(), ex.LineNumber.ToString());
+                      succeeded = false;
+                      if (connect.State != ConnectionState.Open)
+                      {
+                        Log.Write("  ********* Connection status = {0} - aborting further command execution..", connect.State.ToString());
+                        break;
+                      }
                     }
                   }
                 }
-              }
             }
             break;
           case ProviderType.MySql:
             using (MySqlConnection connect = new MySqlConnection(connectionString))
             {
               connect.Open();
-              foreach (string SingleStmt in CommandScript)
-              {
-                string SqlStmt = SingleStmt.Trim();
-                if (!string.IsNullOrEmpty(SqlStmt) && !SqlStmt.StartsWith("--") && !SqlStmt.StartsWith("/*"))
+              if (CommandScript != null)
+                foreach (string SingleStmt in CommandScript)
                 {
-                  try
+                  string SqlStmt = SingleStmt.Trim();
+                  if (!string.IsNullOrEmpty(SqlStmt) && !SqlStmt.StartsWith("--") && !SqlStmt.StartsWith("/*"))
                   {
-                    using (MySqlCommand cmd = new MySqlCommand(SqlStmt, connect))
+                    try
                     {
-                      Log.Write("  Exec SQL: {0}", SqlStmt);
-                      cmd.ExecuteNonQuery();
+                      using (MySqlCommand cmd = new MySqlCommand(SqlStmt, connect))
+                      {
+                        Log.Write("  Exec SQL: {0}", SqlStmt);
+                        cmd.ExecuteNonQuery();
+                      }
                     }
-                  }
-                  catch (MySqlException ex)
-                  {
-                    Log.Write("  ********* SQL statement failed! *********");
-                    Log.Write("  ********* Error reason: {0}", ex.Message);
-                    Log.Write("  ********* Error code: {0} *********", ex.Number.ToString());
-                    succeeded = false;
-                    if (connect.State != ConnectionState.Open)
+                    catch (MySqlException ex)
                     {
-                      Log.Write("  ********* Connection status = {0} - aborting further command execution..", connect.State.ToString());
-                      break;
+                      Log.Write("  ********* SQL statement failed! *********");
+                      Log.Write("  ********* Error reason: {0}", ex.Message);
+                      Log.Write("  ********* Error code: {0} *********", ex.Number.ToString());
+                      succeeded = false;
+                      if (connect.State != ConnectionState.Open)
+                      {
+                        Log.Write("  ********* Connection status = {0} - aborting further command execution..", connect.State.ToString());
+                        break;
+                      }
                     }
                   }
                 }
-              }
             }
             break;
         }
@@ -423,12 +421,8 @@ namespace SetupTv
         CheckServiceName();
 
         string TestDb = _dialogMode == StartupMode.Normal ? string.Empty : tbDatabaseName.Text;
-        bool TestSuccess = false;
 
-        if (rbSQLServer.Checked)
-          TestSuccess = AttemptMsSqlTestConnect(TestDb);
-        else
-          TestSuccess = AttemptMySqlTestConnect(TestDb);
+        bool TestSuccess = rbSQLServer.Checked ? AttemptMsSqlTestConnect(TestDb) : AttemptMySqlTestConnect(TestDb);
 
         // Do not allow to "use" incorrect data
         if (_dialogMode != StartupMode.DbConfig)
@@ -543,15 +537,10 @@ namespace SetupTv
     /// </summary>
     /// <param name="ServerConfigText">The server config value from the connection string</param>
     /// <returns>Hostname of Server</returns>
-    private string ParseServerHostName(string ServerConfigText)
+    private static string ParseServerHostName(string ServerConfigText)
     {
-      string ServerName = string.Empty;
-
       int delimiterPos = ServerConfigText.IndexOf(@"\");
-      if (delimiterPos > 0)
-        ServerName = ServerConfigText.Remove(delimiterPos);
-      else
-        ServerName = ServerConfigText;
+      string ServerName = delimiterPos > 0 ? ServerConfigText.Remove(delimiterPos) : ServerConfigText;
 
       return ServerName;
     }
@@ -571,12 +560,9 @@ namespace SetupTv
       }
 
       XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
-      XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString"); ;
-      XmlNode nodeName = nodeKey.Attributes.GetNamedItem("name"); ;
-      if (rbSQLServer.Checked)
-        nodeName.InnerText = "SQLServer";
-      else
-        nodeName.InnerText = "MySQL";
+      XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString"); 
+      XmlNode nodeName = nodeKey.Attributes.GetNamedItem("name"); 
+      nodeName.InnerText = rbSQLServer.Checked ? "SQLServer" : "MySQL";
       node.InnerText = connectionString;
 
       string ServerName = ParseServerHostName(tbServerHostName.Text);
@@ -593,7 +579,7 @@ namespace SetupTv
       if (_dialogMode == StartupMode.Normal)
         Application.Restart();
       else
-        this.Close();
+        Close();
     }
 
     private void btnDrop_Click(object sender, EventArgs e)
@@ -603,7 +589,7 @@ namespace SetupTv
       else
         MessageBox.Show("Failed to drop the database.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
-      this.Close();
+      Close();
     }
 
     #region Schema update methods
@@ -632,12 +618,13 @@ namespace SetupTv
                   cmd.CommandText = "select * from Version";
                   using (IDataReader reader = cmd.ExecuteReader())
                   {
-                    if (reader.Read())
-                    {
-                      currentSchemaVersion = (int)reader["versionNumber"];
-                      reader.Close();
-                      connect.Close();
-                    }
+                    if (reader != null)
+                      if (reader.Read())
+                      {
+                        currentSchemaVersion = (int)reader["versionNumber"];
+                        reader.Close();
+                        connect.Close();
+                      }
                   }
                 }
               }
@@ -676,11 +663,10 @@ namespace SetupTv
       finally
       {
         SqlConnection.ClearAllPools();
-        GC.Collect();
       }
     }
 
-    private bool ResourceExists(string[] names, string resource)
+    private static bool ResourceExists(IEnumerable<string> names, string resource)
     {
       foreach (string name in names)
       {
@@ -702,10 +688,10 @@ namespace SetupTv
       //Stream stream = null;
       for (int version = currentSchemaVersion + 1 ; version < 100 ; version++)
       {
-        if (ResourceExists(names, "SetupTv." + version.ToString() + "_upgrade_sqlserver_database.sql"))
+        if (ResourceExists(names, "SetupTv." + version + "_upgrade_sqlserver_database.sql"))
         {
-          if (ExecuteSQLScript(version.ToString() + "_upgrade"))
-            Log.Info("- database upgraded to schema version " + version.ToString());
+          if (ExecuteSQLScript(version + "_upgrade"))
+            Log.Info("- database upgraded to schema version " + version);
           else
             return false;
         }
@@ -724,8 +710,7 @@ namespace SetupTv
       // please add better check if needed
       if (DBServerName.ToLowerInvariant() == Environment.MachineName.ToLowerInvariant())
         return true;
-      else
-        return false;
+      return false;
     }
 
     private void CheckServiceName()
@@ -736,65 +721,62 @@ namespace SetupTv
         tbServiceDependency.Enabled = false;
         return;
       }
+      tbServiceDependency.Enabled = true;
+
+      // first try the quick method and assume the user is right or using defaults
+      string ConfiguredServiceName = tbServiceDependency.Text;
+      string DBSearchPattern = @"MySQL";
+      Color clAllOkay = Color.GreenYellow;
+
+      if (ServiceHelper.IsInstalled(ConfiguredServiceName))
+      {
+        tbServiceDependency.BackColor = clAllOkay;
+        DBSearchPattern = ConfiguredServiceName;
+      }
       else
       {
-        tbServiceDependency.Enabled = true;
+        // MSSQL
+        if (rbSQLServer.Checked)
+          DBSearchPattern = @"SQLBrowser";
 
-        // first try the quick method and assume the user is right or using defaults
-        string ConfiguredServiceName = tbServiceDependency.Text;
-        string DBSearchPattern = @"MySQL";
-        Color clAllOkay = Color.GreenYellow;
-
-        if (ServiceHelper.IsInstalled(ConfiguredServiceName))
+        if (ServiceHelper.GetDBServiceName(ref DBSearchPattern))
         {
+          tbServiceDependency.Text = DBSearchPattern;
           tbServiceDependency.BackColor = clAllOkay;
-          DBSearchPattern = ConfiguredServiceName;
         }
         else
         {
-          // MSSQL
-          if (rbSQLServer.Checked)
-            DBSearchPattern = @"SQLBrowser";
-
-          if (ServiceHelper.GetDBServiceName(ref DBSearchPattern))
-          {
-            tbServiceDependency.Text = DBSearchPattern;
-            tbServiceDependency.BackColor = clAllOkay;
-          }
-          else
-          {
-            TvLibrary.Log.Log.Info("SetupDatabaseForm: DB service name not recognized - using defaults");
-            tbServiceDependency.BackColor = Color.Red;
-          }
+          Log.Info("SetupDatabaseForm: DB service name not recognized - using defaults");
+          tbServiceDependency.BackColor = Color.Red;
         }
+      }
 
-        // if a matching service name is available - add it now
-        if (tbServiceDependency.BackColor == clAllOkay && tbServiceDependency.Enabled)
+      // if a matching service name is available - add it now
+      if (tbServiceDependency.BackColor == clAllOkay && tbServiceDependency.Enabled)
+      {
+        if (ServiceHelper.AddDependencyByName(DBSearchPattern))
         {
-          if (ServiceHelper.AddDependencyByName(DBSearchPattern))
+          Log.Info("SetupDatabaseForm: Added dependency for TvService - {0}", DBSearchPattern);
+          if (!ServiceHelper.IsServiceEnabled(DBSearchPattern, false))
           {
-            TvLibrary.Log.Log.Info("SetupDatabaseForm: Added dependency for TvService - {0}", DBSearchPattern);
-            if (!ServiceHelper.IsServiceEnabled(DBSearchPattern, false))
+            if (MessageBox.Show(this,
+                                string.Format("The tv service depends on {0} but this service does not autostart - enable now?", DBSearchPattern),
+                                "Dependency avoids autostart",
+                                MessageBoxButtons.YesNo,
+                                MessageBoxIcon.Warning,
+                                MessageBoxDefaultButton.Button1) == DialogResult.Yes)
             {
-              if (MessageBox.Show(this,
-                                  string.Format("The tv service depends on {0} but this service does not autostart - enable now?", DBSearchPattern),
-                                  "Dependency avoids autostart",
-                                  MessageBoxButtons.YesNo,
-                                  MessageBoxIcon.Warning,
-                                  MessageBoxDefaultButton.Button1) == DialogResult.Yes)
-              {
-                // enable the dependency now
-                if (!ServiceHelper.IsServiceEnabled(DBSearchPattern, true))
-                  MessageBox.Show("Failed to change the startup behaviour", "Dependency error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-              }
-              // start the service right now
-              if (!ServiceHelper.Start(DBSearchPattern))
-                MessageBox.Show(string.Format("Failed to start the dependency service: {0}", DBSearchPattern), "Dependency start error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+              // enable the dependency now
+              if (!ServiceHelper.IsServiceEnabled(DBSearchPattern, true))
+                MessageBox.Show("Failed to change the startup behaviour", "Dependency error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+            // start the service right now
+            if (!ServiceHelper.Start(DBSearchPattern))
+              MessageBox.Show(string.Format("Failed to start the dependency service: {0}", DBSearchPattern), "Dependency start error", MessageBoxButtons.OK, MessageBoxIcon.Error);
           }
-          else
-            TvLibrary.Log.Log.Info("SetupDatabaseForm: Could not add dependency for TvService - {0}", DBSearchPattern);
         }
+        else
+          Log.Info("SetupDatabaseForm: Could not add dependency for TvService - {0}", DBSearchPattern);
       }
     }
 

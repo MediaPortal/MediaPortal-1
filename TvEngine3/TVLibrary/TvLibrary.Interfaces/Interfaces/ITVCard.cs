@@ -18,19 +18,15 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-using System;
 using System.Collections.Generic;
-using System.Text;
 using TvLibrary.Epg;
 using TvLibrary.ChannelLinkage;
-using TvLibrary.Teletext;
-using DirectShowLib.SBE;
 namespace TvLibrary.Interfaces
 {
   /// <summary>
   /// cam types
   /// </summary>
-  public enum CamType:int
+  public enum CamType
   {
     /// <summary>
     /// Default
@@ -39,7 +35,7 @@ namespace TvLibrary.Interfaces
     /// <summary>
     /// Astoncrypt 2 cam
     /// </summary>
-    Astoncrypt2=1
+    Astoncrypt2 = 1
   }
   /// <summary>
   /// interface for a tv card
@@ -65,7 +61,10 @@ namespace TvLibrary.Interfaces
     /// </summary>
     string Name { get;set;}
 
-		bool CardPresent { get;set;}
+    /// <summary>
+    /// Gets/Sets that the card is present
+    /// </summary>
+    bool CardPresent { get;set;}
 
     /// <summary>
     /// Gets/sets the card device
@@ -99,7 +98,7 @@ namespace TvLibrary.Interfaces
     /// Gets or sets the type of the cam.
     /// </summary>
     /// <value>The type of the cam.</value>
-    CamType CamType {get;set;}
+    CamType CamType { get;set;}
 
     /// <summary>
     /// Gets/sets the card type
@@ -117,7 +116,7 @@ namespace TvLibrary.Interfaces
     /// </summary>
     /// <value>The number of channels decrypting.</value>
     int NumberOfChannelsDecrypting { get;}
-    
+
     /// <summary>
     /// Does the card have a CA module.
     /// </summary>
@@ -179,7 +178,7 @@ namespace TvLibrary.Interfaces
     /// <param name="subChannelId">The sub channel id.</param>
     /// <param name="channel">The channel.</param>
     /// <returns>true if succeeded else false</returns>
-    ITvSubChannel Tune(int subChannelId,IChannel channel);
+    ITvSubChannel Tune(int subChannelId, IChannel channel);
 
     #endregion
 

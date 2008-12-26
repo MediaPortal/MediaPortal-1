@@ -20,7 +20,6 @@
  */
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace TvControl
 {
@@ -29,8 +28,7 @@ namespace TvControl
   /// </summary>
   public class TvServer
   {
-
-    void HandleFailure(Exception ex)
+    static void HandleFailure()
     {
       RemoteControl.Clear();
     }
@@ -46,10 +44,9 @@ namespace TvControl
         try
         {
           return RemoteControl.Instance.Cards;
-        }
-        catch (Exception ex)
+        } catch (Exception)
         {
-          HandleFailure(ex);
+          HandleFailure();
         }
         return 0;
       }
@@ -66,16 +63,16 @@ namespace TvControl
       {
         try
         {
-          if (System.IO.File.Exists(fileName)) return fileName;
-        }
-        catch (Exception)
+          if (System.IO.File.Exists(fileName))
+            return fileName;
+        } catch (Exception)
         {
+          HandleFailure();
         }
-        return  RemoteControl.Instance.GetUrlForFile(fileName);
-      }
-      catch (Exception ex)
+        return RemoteControl.Instance.GetUrlForFile(fileName);
+      } catch (Exception)
       {
-        HandleFailure(ex);
+        HandleFailure();
       }
       return "";
     }
@@ -88,10 +85,9 @@ namespace TvControl
       try
       {
         return RemoteControl.Instance.DeleteRecording(idRecording);
-      }
-      catch (Exception ex)
+      } catch (Exception)
       {
-        HandleFailure(ex);
+        HandleFailure();
       }
       return false;
     }
@@ -104,8 +100,7 @@ namespace TvControl
       try
       {
         return RemoteControl.Instance.IsRecordingValid(idRecording);
-      }
-      catch (Exception)
+      } catch (Exception)
       {
         return true;
       }
@@ -121,10 +116,9 @@ namespace TvControl
       try
       {
         return RemoteControl.Instance.GetUserForCard(cardId);
-      }
-      catch (Exception ex)
+      } catch (Exception)
       {
-        HandleFailure(ex);
+        HandleFailure();
       }
       return null;
     }
@@ -136,30 +130,36 @@ namespace TvControl
     /// <param name="user">The user.</param>
     /// <param name="index">index of card</param>
     /// <returns></returns>
-    public VirtualCard CardByIndex(User user,int index)
+    public VirtualCard CardByIndex(User user, int index)
     {
       try
       {
-        int id = RemoteControl.Instance.CardId(index);
+        RemoteControl.Instance.CardId(index);
         return new VirtualCard(user, RemoteControl.HostName);
-      }
-      catch (Exception ex)
+      } catch (Exception)
       {
-        HandleFailure(ex);
+        HandleFailure();
       }
       return null;
     }
 
+    /// <summary>
+    /// Determines whether the specified channel name is recording.
+    /// </summary>
+    /// <param name="channelName">Name of the channel.</param>
+    /// <param name="card">The vcard.</param>
+    /// <returns>
+    /// 	<c>true</c> if the specified channel name is recording; otherwise, <c>false</c>.
+    /// </returns>
     public bool IsRecording(string channelName, out VirtualCard card)
     {
       card = null;
       try
       {
-          return RemoteControl.Instance.IsRecording(channelName,out card);
-      }
-      catch (Exception ex)
+        return RemoteControl.Instance.IsRecording(channelName, out card);
+      } catch (Exception)
       {
-        HandleFailure(ex);
+        HandleFailure();
       }
       return false;
     }
@@ -172,11 +172,11 @@ namespace TvControl
     {
       try
       {
-        if (RemoteControl.Instance.IsAnyCardRecording()) return true;
-      }
-      catch (Exception ex)
+        if (RemoteControl.Instance.IsAnyCardRecording())
+          return true;
+      } catch (Exception)
       {
-        HandleFailure(ex);
+        HandleFailure();
       }
 
       return false;
@@ -199,11 +199,11 @@ namespace TvControl
 
       try
       {
-        if (RemoteControl.Instance.IsAnyCardRecordingOrTimeshifting(userTS, out isUserTS, out isAnyUserTS, out isRec)) return true;
-      }
-      catch (Exception ex)
+        if (RemoteControl.Instance.IsAnyCardRecordingOrTimeshifting(userTS, out isUserTS, out isAnyUserTS, out isRec))
+          return true;
+      } catch (Exception)
       {
-        HandleFailure(ex);
+        HandleFailure();
       }
 
       return false;
@@ -217,36 +217,35 @@ namespace TvControl
     {
       try
       {
-        if (RemoteControl.Instance.IsAnyCardIdle()) return true;
-      }
-      catch (Exception ex)
+        if (RemoteControl.Instance.IsAnyCardIdle())
+          return true;
+      } catch (Exception)
       {
-        HandleFailure(ex);
+        HandleFailure();
       }
 
       return false;
     }
 
-		/// <summary>
-		/// Query what card would be used for timeshifting on any given channel
-		/// </summary>
-		/// <param name="user">user credentials.</param>
-		/// <param name="idChannel">The id channel.</param>    
-		/// <returns>
-		/// returns card id which would be used when doing the actual timeshifting.
-		/// </returns>
-		public int TimeShiftingWouldUseCard(ref User user, int idChannel)
-		{		
-			try
-			{
-				return RemoteControl.Instance.TimeShiftingWouldUseCard(ref user, idChannel);				
-			}
-			catch (Exception ex)
-			{
-				HandleFailure(ex);				
-			}
-			return -1;
-		}
+    /// <summary>
+    /// Query what card would be used for timeshifting on any given channel
+    /// </summary>
+    /// <param name="user">user credentials.</param>
+    /// <param name="idChannel">The id channel.</param>    
+    /// <returns>
+    /// returns card id which would be used when doing the actual timeshifting.
+    /// </returns>
+    public int TimeShiftingWouldUseCard(ref User user, int idChannel)
+    {
+      try
+      {
+        return RemoteControl.Instance.TimeShiftingWouldUseCard(ref user, idChannel);
+      } catch (Exception)
+      {
+        HandleFailure();
+      }
+      return -1;
+    }
 
     /// <summary>
     /// Start timeshifting on a specific channel
@@ -257,17 +256,16 @@ namespace TvControl
     /// <returns>
     /// TvResult indicating whether method succeeded
     /// </returns>
-    public TvResult StartTimeShifting(ref User user,int idChannel, out VirtualCard card)
+    public TvResult StartTimeShifting(ref User user, int idChannel, out VirtualCard card)
     {
       card = null;
       try
       {
-        TvResult result = RemoteControl.Instance.StartTimeShifting(ref user,idChannel, out card);        
+        TvResult result = RemoteControl.Instance.StartTimeShifting(ref user, idChannel, out card);
         return result;
-      }
-      catch (Exception ex)
+      } catch (Exception)
       {
-        HandleFailure(ex);
+        HandleFailure();
       }
       return TvResult.UnknownError;
     }
@@ -288,10 +286,9 @@ namespace TvControl
       {
         return RemoteControl.Instance.IsRecordingSchedule(idSchedule, out  card);
 
-      }
-      catch (Exception ex)
+      } catch (Exception)
       {
-        HandleFailure(ex);
+        HandleFailure();
       }
       return false;
     }
@@ -307,10 +304,9 @@ namespace TvControl
       {
         RemoteControl.Instance.StopRecordingSchedule(idSchedule);
 
-      }
-      catch (Exception ex)
+      } catch (Exception)
       {
-        HandleFailure(ex);
+        HandleFailure();
       }
     }
 
@@ -323,10 +319,9 @@ namespace TvControl
       try
       {
         RemoteControl.Instance.OnNewSchedule();
-      }
-      catch (Exception ex)
+      } catch (Exception)
       {
-        HandleFailure(ex);
+        HandleFailure();
       }
     }
 
@@ -335,15 +330,14 @@ namespace TvControl
     /// This method should be called by a client to check
     /// if there is any upcoming recording
     /// </summary>
-    public bool IsTimeToRecord ( DateTime time )
+    public bool IsTimeToRecord(DateTime time)
     {
       try
       {
         return RemoteControl.Instance.IsTimeToRecord(time);
-      }
-      catch (Exception ex)
+      } catch (Exception)
       {
-        HandleFailure(ex);
+        HandleFailure();
       }
       return false;
     }
@@ -352,15 +346,14 @@ namespace TvControl
     /// This method should be called by a client to check 
     /// if a specific recording is due. 
     /// </summary>
-    public bool IsTimeToRecord(DateTime time, int recordingId )
+    public bool IsTimeToRecord(DateTime time, int recordingId)
     {
       try
       {
         return RemoteControl.Instance.IsTimeToRecord(time, recordingId);
-      }
-      catch (Exception ex)
+      } catch (Exception)
       {
-        HandleFailure(ex);
+        HandleFailure();
       }
       return false;
     }
@@ -375,10 +368,9 @@ namespace TvControl
       try
       {
         RemoteControl.Instance.OnNewSchedule(args);
-      }
-      catch (Exception ex)
+      } catch (Exception)
       {
-        HandleFailure(ex);
+        HandleFailure();
       }
     }
     /// <summary>
@@ -391,10 +383,9 @@ namespace TvControl
         try
         {
           return RemoteControl.Instance.EpgGrabberEnabled;
-        }
-        catch (Exception ex)
+        } catch (Exception)
         {
-          HandleFailure(ex);
+          HandleFailure();
         }
         return false;
       }
@@ -403,10 +394,9 @@ namespace TvControl
         try
         {
           RemoteControl.Instance.EpgGrabberEnabled = value;
-        }
-        catch (Exception ex)
+        } catch (Exception)
         {
-          HandleFailure(ex);
+          HandleFailure();
         }
       }
     }
@@ -421,10 +411,9 @@ namespace TvControl
       try
       {
         RemoteControl.Instance.GetDatabaseConnectionString(out connectionString, out provider);
-      }
-      catch (Exception ex)
+      } catch (Exception)
       {
-        HandleFailure(ex);
+        HandleFailure();
       }
     }
 
@@ -439,10 +428,9 @@ namespace TvControl
       try
       {
         return RemoteControl.Instance.GetRecordingUrl(idRecording);
-      }
-      catch (Exception ex)
+      } catch (Exception)
       {
-        HandleFailure(ex);
+        HandleFailure();
       }
       return "";
     }
@@ -456,10 +444,9 @@ namespace TvControl
       try
       {
         return RemoteControl.Instance.GetAllChannelStatesCached(user);
-      }
-      catch (Exception ex)
+      } catch (Exception)
       {
-        HandleFailure(ex);
+        HandleFailure();
       }
       return null;
     }
@@ -475,11 +462,10 @@ namespace TvControl
       try
       {
         return RemoteControl.Instance.GetAllChannelStatesForGroup(idGroup, user);
-      }
-      catch (Exception ex)
+      } catch (Exception)
       {
-        HandleFailure(ex);
-      }      
+        HandleFailure();
+      }
       return null;
     }
 
@@ -487,17 +473,16 @@ namespace TvControl
     /// Finds out whether a channel is currently tuneable or not
     /// </summary>
     /// <param name="idChannel">the channel id</param>
-		/// <param name="user">User</param>
+    /// <param name="user">User</param>
     /// <returns>an enum indicating tunable/timeshifting/recording</returns>
     public ChannelState GetChannelState(int idChannel, User user)
     {
       try
       {
         return RemoteControl.Instance.GetChannelState(idChannel, user);
-      }
-      catch (Exception ex)
+      } catch (Exception)
       {
-        HandleFailure(ex);
+        HandleFailure();
       }
       return ChannelState.nottunable;
     }
@@ -518,10 +503,9 @@ namespace TvControl
       try
       {
         RemoteControl.Instance.GetAllRecordingChannels(out currentRecChannels, out currentTSChannels, out currentUnavailChannels, out currentAvailChannels);
-      }
-      catch (Exception ex)
+      } catch (Exception)
       {
-        HandleFailure(ex);
+        HandleFailure();
       }
     }
     #endregion

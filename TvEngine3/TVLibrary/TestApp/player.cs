@@ -1,9 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Text;
 using DirectShowLib;
-using DShowNET.TsFileSink;
 using TvLibrary.Log;
 using System.Windows.Forms;
 namespace TestApp
@@ -11,7 +8,7 @@ namespace TestApp
   class Player
   {
     #region structs
-    static byte[] Mpeg2ProgramVideo = 
+    static readonly byte[] Mpeg2ProgramVideo = 
     {
           0x00, 0x00, 0x00, 0x00,							//  .hdr.rcSource.left
           0x00, 0x00, 0x00, 0x00,							//  .hdr.rcSource.top
@@ -87,7 +84,7 @@ namespace TestApp
           0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
     };
 
-    static byte[] MPEG2AudioFormat =
+    static readonly byte[] MPEG2AudioFormat =
       {	
         0x50, 0x00,				//wFormatTag
 	      0x02, 0x00,				//nChannels
@@ -106,22 +103,21 @@ namespace TestApp
     [ComImport, Guid("4F8BF30C-3BEB-43A3-8BF2-10096FD28CF2")]
     protected class TsFileSource { }
 
-    protected IFilterGraph2 _graphBuilder = null;
+    protected IFilterGraph2 _graphBuilder;
     protected DsROTEntry _rotEntry;
     protected TsFileSource _tsFileSource;
     protected IBaseFilter _mpegDemux;
     protected IPin _pinVideo;
     protected IPin _pinAudio;
     IMediaControl _mediaCtrl;
-    protected IVideoWindow _videoWin = null;
-    bool _paused = false;
+    protected IVideoWindow _videoWin;
+    bool _paused;
     public bool Play(string fileName, Form form)
     {
       fileName += ".tsbuffer";
       Log.WriteFile("play:{0}", fileName);
-      int hr;
       _graphBuilder = (IFilterGraph2)new FilterGraph();
-      _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
+      _rotEntry = new DsROTEntry(_graphBuilder);
 
 
       Log.WriteFile("add tsfilesource");
@@ -134,7 +130,7 @@ namespace TestApp
       Log.WriteFile("add mpeg-2 demux");
       MPEG2Demultiplexer demux = new MPEG2Demultiplexer();
       _mpegDemux = (IBaseFilter)demux;
-      hr = _graphBuilder.AddFilter(_mpegDemux, "MPEG-2 Demultiplexer");
+      int hr = _graphBuilder.AddFilter(_mpegDemux, "MPEG-2 Demultiplexer");
 
       #endregion
 
@@ -146,13 +142,15 @@ namespace TestApp
       IMpeg2Demultiplexer demuxer = _mpegDemux as IMpeg2Demultiplexer;
 
 
-      hr = demuxer.CreateOutputPin(GetAudioMpg2Media(), "Audio", out _pinAudio);
+      if (demuxer != null)
+        hr = demuxer.CreateOutputPin(GetAudioMpg2Media(), "Audio", out _pinAudio);
       if (hr != 0)
       {
         Log.WriteFile("unable to create audio pin");
         return false;
       }
-      hr = demuxer.CreateOutputPin(GetVideoMpg2Media(), "Video", out _pinVideo);
+      if (demuxer != null)
+        hr = demuxer.CreateOutputPin(GetVideoMpg2Media(), "Video", out _pinVideo);
       if (hr != 0)
       {
         Log.WriteFile("unable to create video pin");
@@ -258,11 +256,14 @@ namespace TestApp
 
 
       _videoWin = _graphBuilder as IVideoWindow;
-      _videoWin.put_Visible(OABool.True);
-      _videoWin.put_Owner(form.Handle);
-      _videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipSiblings + (int)WindowStyle.ClipChildren));
-      _videoWin.put_MessageDrain(form.Handle);
-      _videoWin.SetWindowPosition(190, 250, 150, 150);
+      if (_videoWin != null)
+      {
+        _videoWin.put_Visible(OABool.True);
+        _videoWin.put_Owner(form.Handle);
+        _videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipSiblings + (int)WindowStyle.ClipChildren));
+        _videoWin.put_MessageDrain(form.Handle);
+        _videoWin.SetWindowPosition(190, 250, 150, 150);
+      }
 
       Log.WriteFile("run graph");
       _mediaCtrl = (IMediaControl)_graphBuilder;
@@ -278,28 +279,34 @@ namespace TestApp
 
       if (_pinAudio != null)
       {
-        Marshal.ReleaseComObject(_pinAudio); _pinAudio = null;
+        Marshal.ReleaseComObject(_pinAudio);
+        _pinAudio = null;
       }
       if (_pinVideo != null)
       {
-        Marshal.ReleaseComObject(_pinVideo); _pinVideo = null;
+        Marshal.ReleaseComObject(_pinVideo);
+        _pinVideo = null;
       }
       if (_mpegDemux != null)
       {
-        Marshal.ReleaseComObject(_mpegDemux); _mpegDemux = null;
+        Marshal.ReleaseComObject(_mpegDemux);
+        _mpegDemux = null;
       }
       if (_tsFileSource != null)
       {
-        Marshal.ReleaseComObject(_tsFileSource); _tsFileSource = null;
+        Marshal.ReleaseComObject(_tsFileSource);
+        _tsFileSource = null;
       }
       if (_rotEntry != null)
       {
-        _rotEntry.Dispose(); _rotEntry = null;
+        _rotEntry.Dispose();
+        _rotEntry = null;
       }
 
       if (_graphBuilder != null)
       {
-        Marshal.ReleaseComObject(_graphBuilder); _graphBuilder = null;
+        Marshal.ReleaseComObject(_graphBuilder);
+        _graphBuilder = null;
       }
     }
 
@@ -312,11 +319,14 @@ namespace TestApp
       set
       {
         _paused = value;
-        if (_paused) _mediaCtrl.Pause();
-        else _mediaCtrl.Run();
+        if (_paused)
+          _mediaCtrl.Pause();
+        else
+          _mediaCtrl.Run();
       }
     }
-    AMMediaType GetAudioMpg2Media()
+
+    static AMMediaType GetAudioMpg2Media()
     {
       AMMediaType mediaAudio = new AMMediaType();
       mediaAudio.majorType = MediaType.Audio;
@@ -329,11 +339,12 @@ namespace TestApp
       mediaAudio.unkPtr = IntPtr.Zero;
       mediaAudio.formatType = FormatType.WaveEx;
       mediaAudio.formatSize = MPEG2AudioFormat.GetLength(0);
-      mediaAudio.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mediaAudio.formatSize);
-      System.Runtime.InteropServices.Marshal.Copy(MPEG2AudioFormat, 0, mediaAudio.formatPtr, mediaAudio.formatSize);
+      mediaAudio.formatPtr = Marshal.AllocCoTaskMem(mediaAudio.formatSize);
+      Marshal.Copy(MPEG2AudioFormat, 0, mediaAudio.formatPtr, mediaAudio.formatSize);
       return mediaAudio;
     }
-    AMMediaType GetVideoMpg2Media()
+
+    static AMMediaType GetVideoMpg2Media()
     {
       AMMediaType mediaVideo = new AMMediaType();
       mediaVideo.majorType = MediaType.Video;
@@ -344,8 +355,8 @@ namespace TestApp
       mediaVideo.temporalCompression = false;
       mediaVideo.fixedSizeSamples = true;
       mediaVideo.formatSize = Mpeg2ProgramVideo.GetLength(0);
-      mediaVideo.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mediaVideo.formatSize);
-      System.Runtime.InteropServices.Marshal.Copy(Mpeg2ProgramVideo, 0, mediaVideo.formatPtr, mediaVideo.formatSize);
+      mediaVideo.formatPtr = Marshal.AllocCoTaskMem(mediaVideo.formatSize);
+      Marshal.Copy(Mpeg2ProgramVideo, 0, mediaVideo.formatPtr, mediaVideo.formatSize);
       return mediaVideo;
     }
   }

@@ -4,9 +4,7 @@
 //========================================================================
 using System;
 using System.Collections;
-using Gentle.Common;
 using Gentle.Framework;
-using System.Globalization;
 using TvLibrary.Log;
 
 namespace TvDatabase
@@ -38,7 +36,7 @@ namespace TvDatabase
     [TableColumn("watched", NotNull = true)]
     private int watched;
 
-    private DateTime _timeStart;
+    private readonly DateTime _timeStart;
     #endregion
 
     #region Constructors

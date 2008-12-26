@@ -35,7 +35,7 @@ namespace SetupTv
 {
   public static class HelpSystem
   {
-    static string helpReferencesFile = String.Format(@"{0}\HelpReferences.xml", Log.GetPathName());
+    static readonly string helpReferencesFile = String.Format(@"{0}\HelpReferences.xml", Log.GetPathName());
     private const string helpReferencesURL = @"http://install.team-mediaportal.com/MP1/HelpReferences_TVServer.xml";
 
     public static void ShowHelp(string sectionName)
@@ -98,7 +98,8 @@ namespace SetupTv
                 while (true)
                 {
                   string line = tin.ReadLine();
-                  if (line == null) break;
+                  if (line == null)
+                    break;
                   tout.WriteLine(line);
                 }
               }
@@ -110,8 +111,7 @@ namespace SetupTv
         File.Move(helpReferencesTemp, helpReferencesFile);
 
         MessageBox.Show("HelpReferences update succeeded.");
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Error("EXCEPTION in UpdateHelpReferences | {0}\r\n{1}", ex.Message, ex.Source);
         MessageBox.Show("HelpReferences update failed.");

@@ -19,21 +19,22 @@
  *
  */
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using DirectShowLib;
 using DirectShowLib.BDA;
-using System.Windows.Forms;
 using TvLibrary.Channels;
 using TvLibrary.Interfaces.Analyzer;
 
 namespace TvLibrary.Implementations.DVB
 {
+  /// <summary>
+  /// KNC CI control class
+  /// </summary>
   public class KNC : IDisposable
   {
-    IKNC _KNCInterface = null;
-    IntPtr ptrPmt;
+    IKNC _KNCInterface;
+    readonly IntPtr ptrPmt;
     /// <summary>
     /// Initializes a new instance of the <see cref="KNC"/> class.
     /// </summary>
@@ -42,7 +43,8 @@ namespace TvLibrary.Implementations.DVB
     public KNC(IBaseFilter tunerFilter, IBaseFilter analyzerFilter)
     {
       _KNCInterface = analyzerFilter as IKNC;
-      _KNCInterface.SetTunerFilter(tunerFilter);
+      if (_KNCInterface != null)
+        _KNCInterface.SetTunerFilter(tunerFilter);
       ptrPmt = Marshal.AllocCoTaskMem(1024);
     }
 
@@ -63,7 +65,8 @@ namespace TvLibrary.Implementations.DVB
     /// </returns>
     public bool IsCamReady()
     {
-      if (_KNCInterface == null) return false;
+      if (_KNCInterface == null)
+        return false;
       bool yesNo = false;
       _KNCInterface.IsCamReady(ref yesNo);
       Log.Log.Info("KNC: IsCAMReady {0}", yesNo);
@@ -80,7 +83,8 @@ namespace TvLibrary.Implementations.DVB
     {
       get
       {
-        if (_KNCInterface == null) return false;
+        if (_KNCInterface == null)
+          return false;
         bool yesNo = false;
         _KNCInterface.IsKNC(ref yesNo);
         Log.Log.Info("KNC: IsKNC {0}", yesNo);
@@ -96,7 +100,8 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public bool SendPMT(byte[] pmt, int PMTlength)
     {
-      if (_KNCInterface == null) return true;
+      if (_KNCInterface == null)
+        return true;
       bool succeeded = false;
       for (int i = 0; i < PMTlength; ++i)
       {
@@ -115,7 +120,8 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public bool DescrambleMultiple(Dictionary<int, ConditionalAccessContext> subChannels)
     {
-      if (_KNCInterface == null) return true;
+      if (_KNCInterface == null)
+        return true;
       List<ConditionalAccessContext> filteredChannels = new List<ConditionalAccessContext>();
       bool succeeded = true;
       Dictionary<int, ConditionalAccessContext>.Enumerator en = subChannels.GetEnumerator();
@@ -125,7 +131,8 @@ namespace TvLibrary.Implementations.DVB
         ConditionalAccessContext context = en.Current.Value;
         foreach (ConditionalAccessContext c in filteredChannels)
         {
-          if (c.Channel.Equals(context.Channel)) exists = true;
+          if (c.Channel.Equals(context.Channel))
+            exists = true;
         }
         if (!exists)
         {
@@ -148,13 +155,16 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="parameters">The scanparameters.</param>
     public void SendDiseqCommand(ScanParameters parameters, DVBSChannel channel)
     {
-      if (_KNCInterface == null) return;
-      
-      short isHiBand = (short)(BandTypeConverter.IsHiBand(channel,parameters) ? 1:0);
+      if (_KNCInterface == null)
+        return;
+
+      short isHiBand = (short)(BandTypeConverter.IsHiBand(channel, parameters) ? 1 : 0);
 
       short isVertical = 0;
-      if (channel.Polarisation == Polarisation.LinearV) isVertical = 1;
-      if (channel.Polarisation == Polarisation.CircularR) isVertical = 1;
+      if (channel.Polarisation == Polarisation.LinearV)
+        isVertical = 1;
+      if (channel.Polarisation == Polarisation.CircularR)
+        isVertical = 1;
       _KNCInterface.SetDisEqc((short)channel.DisEqc, isHiBand, isVertical);
     }
 
@@ -166,7 +176,8 @@ namespace TvLibrary.Implementations.DVB
     /// </returns>
     public bool IsCamPresent()
     {
-      if (_KNCInterface == null) return false;
+      if (_KNCInterface == null)
+        return false;
       bool yesNo = false;
       _KNCInterface.IsCIAvailable(ref yesNo);
       Log.Log.Info("KNC: IsCIAvailable {0}", yesNo);

@@ -21,13 +21,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-using DirectShowLib;
-using DirectShowLib.BDA;
 using TvDatabase;
-using TvLibrary;
 using TvLibrary.Log;
-using TvLibrary.Channels;
 using TvLibrary.Interfaces;
 
 namespace TvService
@@ -102,8 +97,7 @@ namespace TvService
         _currentChannelIndex = -1;
         return null;
       }
-      else
-        return Channels[_currentChannelIndex];
+      return Channels[_currentChannelIndex];
     }
     /// <summary>
     /// Gets or sets the channels for this transponder
@@ -151,87 +145,90 @@ namespace TvService
           return null;
         }
         TvBusinessLayer layer = new TvBusinessLayer();
-        return layer.GetTuningChannelByType(Channels[Index],TuningDetail.ChannelType);
+        return layer.GetTuningChannelByType(Channels[Index], TuningDetail.ChannelType);
       }
     }
     #endregion
 
-      #region public members
-      /// <summary>
-      /// Called when epg times out, simply sets the lastgrabtime for the current channel
-      /// </summary>
-      public void OnTimeOut()
-      {
-        if (Index < 0 || Index >= Channels.Count) return;
-        Channels[Index].LastGrabTime = DateTime.Now;
-        Channels[Index].Persist();
-        Log.Write("EPG: database updated for #{0} {1}", Index, Channels[Index].Name);
-
-      }
-
-      /// <summary>
-      /// Determines whether the specified <see cref="T:System.Object"></see> is equal to the current <see cref="T:System.Object"></see>.
-      /// </summary>
-      /// <param name="obj">The <see cref="T:System.Object"></see> to compare with the current <see cref="T:System.Object"></see>.</param>
-      /// <returns>
-      /// true if the specified <see cref="T:System.Object"></see> is equal to the current <see cref="T:System.Object"></see>; otherwise, false.
-      /// </returns>
-      public override bool Equals(object obj)
-      {
-        Transponder other = (Transponder)obj;
-        if (other.TuningDetail.ChannelType != TuningDetail.ChannelType) return false;
-        if (other.TuningDetail.Frequency != TuningDetail.Frequency) return false;
-        if (other.TuningDetail.Modulation != TuningDetail.Modulation) return false;
-        if (other.TuningDetail.Symbolrate != TuningDetail.Symbolrate) return false;
-        if (other.TuningDetail.Bandwidth != TuningDetail.Bandwidth) return false;
-        if (other.TuningDetail.Polarisation != TuningDetail.Polarisation) return false;
-        return true;
-      }
-
-      /// <summary>
-      /// Calculates a hashcode for comparing Transponder objects
-      /// </summary>
-      public override int GetHashCode()
-      {
-        return TuningDetail.Frequency + TuningDetail.ChannelType;
-      }
-
-      /// <summary>
-      /// Logs the transponder info to the log file.
-      /// </summary>
-      public void Dump()
-      {
-        Log.Write("Transponder:{0} {1} {2} {3} {4} {5}", _currentChannelIndex, TuningDetail.ChannelType, TuningDetail.Frequency, TuningDetail.Modulation, TuningDetail.Symbolrate, TuningDetail.Bandwidth, TuningDetail.Polarisation);
-        foreach (Channel c in _channels)
-        {
-          Log.Write(" {0}", c.Name);
-        }
-      }
-
-      /// <summary>
-      /// Returns a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
-      /// </summary>
-      /// <returns>
-      /// A <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
-      /// </returns>
-      public override string ToString()
-      {
-        return string.Format("type:{0} freq:{1} mod:{2} sr:{3} bw:{4} pol:{5}",
-          TuningDetail.ChannelType, TuningDetail.Frequency,
-          TuningDetail.Modulation, TuningDetail.Symbolrate, TuningDetail.Bandwidth, TuningDetail.Polarisation);
-      }
-      #endregion
+    #region public members
+    /// <summary>
+    /// Called when epg times out, simply sets the lastgrabtime for the current channel
+    /// </summary>
+    public void OnTimeOut()
+    {
+      if (Index < 0 || Index >= Channels.Count)
+        return;
+      Channels[Index].LastGrabTime = DateTime.Now;
+      Channels[Index].Persist();
+      Log.Write("EPG: database updated for #{0} {1}", Index, Channels[Index].Name);
 
     }
+
+    /// <summary>
+    /// Determines whether the specified <see cref="T:System.Object"></see> is equal to the current <see cref="T:System.Object"></see>.
+    /// </summary>
+    /// <param name="obj">The <see cref="T:System.Object"></see> to compare with the current <see cref="T:System.Object"></see>.</param>
+    /// <returns>
+    /// true if the specified <see cref="T:System.Object"></see> is equal to the current <see cref="T:System.Object"></see>; otherwise, false.
+    /// </returns>
+    public override bool Equals(object obj)
+    {
+      Transponder other = (Transponder)obj;
+      if (other.TuningDetail.ChannelType != TuningDetail.ChannelType)
+        return false;
+      if (other.TuningDetail.Frequency != TuningDetail.Frequency)
+        return false;
+      if (other.TuningDetail.Modulation != TuningDetail.Modulation)
+        return false;
+      if (other.TuningDetail.Symbolrate != TuningDetail.Symbolrate)
+        return false;
+      if (other.TuningDetail.Bandwidth != TuningDetail.Bandwidth)
+        return false;
+      if (other.TuningDetail.Polarisation != TuningDetail.Polarisation)
+        return false;
+      return true;
+    }
+
+    /// <summary>
+    /// Calculates a hashcode for comparing Transponder objects
+    /// </summary>
+    public override int GetHashCode()
+    {
+      return TuningDetail.Frequency + TuningDetail.ChannelType;
+    }
+
+    /// <summary>
+    /// Logs the transponder info to the log file.
+    /// </summary>
+    public void Dump()
+    {
+      Log.Write("Transponder:{0} {1} {2} {3} {4} {5}", _currentChannelIndex, TuningDetail.ChannelType, TuningDetail.Frequency, TuningDetail.Modulation, TuningDetail.Symbolrate, TuningDetail.Bandwidth, TuningDetail.Polarisation);
+      foreach (Channel c in _channels)
+      {
+        Log.Write(" {0}", c.Name);
+      }
+    }
+
+    /// <summary>
+    /// Returns a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
+    /// </summary>
+    /// <returns>
+    /// A <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
+    /// </returns>
+    public override string ToString()
+    {
+      return string.Format("type:{0} freq:{1} mod:{2} sr:{3} bw:{4} pol:{5}",
+        TuningDetail.ChannelType, TuningDetail.Frequency,
+        TuningDetail.Modulation, TuningDetail.Symbolrate, TuningDetail.Bandwidth, TuningDetail.Polarisation);
+    }
+    #endregion
+
+  }
 
   public class TransponderList : List<Transponder>
   {
     #region Singleton implementation
     static readonly TransponderList _instance = new TransponderList();
-
-    static TransponderList()
-    {
-    }
 
     public static TransponderList Instance
     {
@@ -242,7 +239,7 @@ namespace TvService
     }
     #endregion
 
-    private Transponder _currentTransponder=null;
+    private Transponder _currentTransponder;
     private int _currentTransponderIndex = -1;
 
     public Transponder CurrentTransponder
@@ -282,14 +279,17 @@ namespace TvService
       foreach (Channel channel in channels)
       {
         //if epg grabbing is enabled and channel is a radio or tv channel
-        if (channel.GrabEpg == false) continue;
-        if (channel.IsRadio == false && channel.IsTv == false) continue;
+        if (channel.GrabEpg == false)
+          continue;
+        if (channel.IsRadio == false && channel.IsTv == false)
+          continue;
 
         //for each tuning detail of the channel
         foreach (TuningDetail detail in channel.ReferringTuningDetail())
         {
           //skip analog channels and webstream channels
-          if (detail.ChannelType == 0 || detail.ChannelType==5) continue;
+          if (detail.ChannelType == 0 || detail.ChannelType == 5)
+            continue;
 
           //create a new transponder
           Transponder t = new Transponder(detail);
@@ -324,17 +324,14 @@ namespace TvService
     public Transponder GetNextTransponder()
     {
       _currentTransponderIndex++;
-      if (_currentTransponderIndex == this.Count)
+      if (_currentTransponderIndex == Count)
       {
         _currentTransponder = null;
         _currentTransponderIndex = -1;
         return null;
       }
-      else
-      {
-        _currentTransponder = this[_currentTransponderIndex];
-        return CurrentTransponder;
-      }
+      _currentTransponder = this[_currentTransponderIndex];
+      return CurrentTransponder;
     }
   }
 

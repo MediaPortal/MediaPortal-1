@@ -27,8 +27,6 @@ using System;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
-
 using TvDatabase;
 using TvLibrary.Log;
 
@@ -39,18 +37,18 @@ namespace TvService
   /// </summary>
   public class DiskManagement
   {
-    System.Timers.Timer _timer;
+    readonly System.Timers.Timer _timer;
     public DiskManagement()
     {
       _timer = new System.Timers.Timer();
       _timer.Interval = 15 * 60 * 1000;
       _timer.Enabled = true;
-      _timer.Elapsed += new System.Timers.ElapsedEventHandler(_timer_Elapsed);
+      _timer.Elapsed += _timer_Elapsed;
       Log.Write("DiskManagement: started");
     }
 
 
-    List<string> GetDisks()
+    static List<string> GetDisks()
     {
       List<string> drives = new List<string>();
 
@@ -72,11 +70,7 @@ namespace TvService
       return drives;
     }
 
-    void OnTimerElapsed(object sender, EventArgs e)
-    {
-      CheckFreeDiskSpace();
-    }
-    void _timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+    static void _timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
       CheckFreeDiskSpace();
     }
@@ -88,7 +82,7 @@ namespace TvService
     /// </summary>
     /// <remarks>Note, this method will run once every 15 minutes
     /// </remarks>
-    void CheckFreeDiskSpace()
+    static void CheckFreeDiskSpace()
     {
       //check diskspace every 15 minutes...
       TvBusinessLayer layer = new TvBusinessLayer();
@@ -110,18 +104,17 @@ namespace TvService
       }
     }
 
-    bool OutOfDiskSpace(string drive)
+    static bool OutOfDiskSpace(string drive)
     {
       TvBusinessLayer layer = new TvBusinessLayer();
 
-      ulong minimiumFreeDiskSpace = 0;
+      ulong minimiumFreeDiskSpace;
 
-      string quotaText = layer.GetSetting("freediskspace" + drive[0].ToString(), "51200").Value;
+      string quotaText = layer.GetSetting("freediskspace" + drive[0], "51200").Value;
       try
       {
         minimiumFreeDiskSpace = (ulong)Int32.Parse(quotaText);
-      }
-      catch (Exception e)
+      } catch (Exception e)
       {
         Log.Error("DiskManagement: Exception at parsing freediskspace ({0}) to drive {1}", quotaText, drive);
         Log.Error(e.ToString());
@@ -137,24 +130,27 @@ namespace TvService
       // Kilobytes to Bytes
       minimiumFreeDiskSpace *= 1024;
 
-      if (minimiumFreeDiskSpace <= 0) return false;
+      if (minimiumFreeDiskSpace <= 0)
+        return false;
 
       ulong freeDiskSpace = Utils.GetFreeDiskSpace(drive);
-      if (freeDiskSpace > minimiumFreeDiskSpace) return false;
+      if (freeDiskSpace > minimiumFreeDiskSpace)
+        return false;
 
       Log.Info("DiskManagement: Drive {0} is out of free space!", drive);
       Log.Info("DiskManagement: Has: {0} Minimum Set: {1}", freeDiskSpace.ToString(), minimiumFreeDiskSpace.ToString());
       return true;
     }
 
-    List<RecordingFileInfo> GetRecordingsOnDrive(string drive)
+    static List<RecordingFileInfo> GetRecordingsOnDrive(string drive)
     {
       List<RecordingFileInfo> recordings = new List<RecordingFileInfo>();
       IList recordedTvShows = Recording.ListAll();
 
       foreach (Recording recorded in recordedTvShows)
       {
-        if (recorded.FileName.ToLower()[0] != drive.ToLower()[0]) continue;
+        if (recorded.FileName.ToLower()[0] != drive.ToLower()[0])
+          continue;
 
         bool add = true;
         foreach (RecordingFileInfo fi in recordings)
@@ -174,8 +170,7 @@ namespace TvService
             fi.filename = recorded.FileName;
             fi.record = recorded;
             recordings.Add(fi);
-          }
-          catch (Exception e)
+          } catch (Exception e)
           {
             Log.Error("DiskManagement: Exception at building FileInfo ({0})", recorded.FileName);
             Log.Write(e);
@@ -185,10 +180,11 @@ namespace TvService
       return recordings;
     }
 
-    void CheckDriveFreeDiskSpace(string drive)
+    static void CheckDriveFreeDiskSpace(string drive)
     {
       //get disk quota to use
-      if (!OutOfDiskSpace(drive)) return;
+      if (!OutOfDiskSpace(drive))
+        return;
 
       Log.Write("DiskManagement: not enough free space on drive: {0}", drive);
 
@@ -207,7 +203,7 @@ namespace TvService
       recordings.Sort();
       while (OutOfDiskSpace(drive) && recordings.Count > 0)
       {
-        RecordingFileInfo fi = (RecordingFileInfo)recordings[0];
+        RecordingFileInfo fi = recordings[0];
         if (fi.record.KeepUntil == (int)KeepMethodType.UntilSpaceNeeded)
         {
           // Delete the file from disk and the recording entry from the database.

@@ -24,19 +24,13 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Management;
-using System.Net;
-using System.ServiceProcess;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Xml;
 using System.Windows.Forms;
 
 using Microsoft.Win32;
@@ -93,8 +87,6 @@ namespace SetupTv
     public delegate void UtilEventHandler(Process proc, bool waitForExit);
 
 
-    static char[] crypt = new char[10] { 'G', 'D', 'J', 'S', 'I', 'B', 'T', 'P', 'W', 'Q' };
-
     // singleton. Dont allow any instance of this class
     private Utils()
     {
@@ -102,7 +94,8 @@ namespace SetupTv
 
     public static string GetDriveSerial(string drive)
     {
-      if (drive == null) return String.Empty;
+      if (drive == null)
+        return String.Empty;
       //receives volume name of drive
       StringBuilder volname = new StringBuilder(256);
       //receives serial number of drive,not in case of network drive(win95/98)
@@ -110,20 +103,20 @@ namespace SetupTv
       uint maxcomplen;//receives maximum component length
       uint sysflags;//receives file system flags
       StringBuilder sysname = new StringBuilder(256);//receives the file system name
-      bool retval;//return value
 
-      retval = GetVolumeInformation(drive.Substring(0, 2), volname, 256, out sn, out maxcomplen, out sysflags, sysname, 256);
+      bool retval = GetVolumeInformation(drive.Substring(0, 2), volname, 256, out sn, out maxcomplen, out sysflags, sysname, 256);
 
       if (retval)
       {
         return String.Format("{0:X}", sn);
       }
-      else return "";
+      return "";
     }
 
     public static string GetDriveName(string drive)
     {
-      if (drive == null) return String.Empty;
+      if (drive == null)
+        return String.Empty;
       //receives volume name of drive
       StringBuilder volname = new StringBuilder(256);
       //receives serial number of drive,not in case of network drive(win95/98)
@@ -131,31 +124,36 @@ namespace SetupTv
       uint maxcomplen;//receives maximum component length
       uint sysflags;//receives file system flags
       StringBuilder sysname = new StringBuilder(256);//receives the file system name
-      bool retval;//return value
 
-      retval = GetVolumeInformation(drive, volname, 256, out sn, out maxcomplen, out sysflags, sysname, 256);
+      bool retval = GetVolumeInformation(drive, volname, 256, out sn, out maxcomplen, out sysflags, sysname, 256);
 
       if (retval)
       {
         return volname.ToString();
       }
-      else return "";
+      return "";
     }
 
     public static int getDriveType(string drive)
     {
-      if (drive == null) return 2;
-      if ((GetDriveType(drive) & 5) == 5) return 5;//cd
-      if ((GetDriveType(drive) & 3) == 3) return 3;//fixed
-      if ((GetDriveType(drive) & 2) == 2) return 2;//removable
-      if ((GetDriveType(drive) & 4) == 4) return 4;//remote disk
-      if ((GetDriveType(drive) & 6) == 6) return 6;//ram disk
+      if (drive == null)
+        return 2;
+      if ((GetDriveType(drive) & 5) == 5)
+        return 5;//cd
+      if ((GetDriveType(drive) & 3) == 3)
+        return 3;//fixed
+      if ((GetDriveType(drive) & 2) == 2)
+        return 2;//removable
+      if ((GetDriveType(drive) & 4) == 4)
+        return 4;//remote disk
+      if ((GetDriveType(drive) & 6) == 6)
+        return 6;//ram disk
       return 0;
     }
 
     public static long GetDiskSize(string drive)
     {
-      long diskSize = 0;
+      long diskSize;
       try
       {
         string cmd = String.Format("win32_logicaldisk.deviceid=\"{0}:\"", drive[0]);
@@ -164,8 +162,7 @@ namespace SetupTv
           disk.Get();
           diskSize = Int64.Parse(disk["Size"].ToString());
         }
-      }
-      catch (Exception)
+      } catch (Exception)
       {
         return -1;
       }
@@ -174,34 +171,35 @@ namespace SetupTv
 
     public static string GetSize(long dwFileSize)
     {
-      if (dwFileSize < 0) return "0";
+      if (dwFileSize < 0)
+        return "0";
       string szTemp;
       // file < 1 kbyte?
       if (dwFileSize < 1024)
       {
         //  substract the integer part of the float value
-        float fRemainder = (((float)dwFileSize) / 1024.0f) - (((float)dwFileSize) / 1024.0f);
+        float fRemainder = (dwFileSize / 1024.0f) - (dwFileSize / 1024.0f);
         float fToAdd = 0.0f;
         if (fRemainder < 0.01f)
           fToAdd = 0.1f;
-        szTemp = String.Format("{0:f} KB", (((float)dwFileSize) / 1024.0f) + fToAdd);
+        szTemp = String.Format("{0:f} KB", (dwFileSize / 1024.0f) + fToAdd);
         return szTemp;
       }
-      long iOneMeg = 1024 * 1024;
+      const long iOneMeg = 1024 * 1024;
 
       // file < 1 megabyte?
       if (dwFileSize < iOneMeg)
       {
-        szTemp = String.Format("{0:f} KB", ((float)dwFileSize) / 1024.0f);
+        szTemp = String.Format("{0:f} KB", dwFileSize / 1024.0f);
         return szTemp;
       }
 
       // file < 1 GByte?
       long iOneGigabyte = iOneMeg;
-      iOneGigabyte *= (long)1000;
+      iOneGigabyte *= 1000;
       if (dwFileSize < iOneGigabyte)
       {
-        szTemp = String.Format("{0:f} MB", ((float)dwFileSize) / ((float)iOneMeg));
+        szTemp = String.Format("{0:f} MB", dwFileSize / ((float)iOneMeg));
         return szTemp;
       }
       //file > 1 GByte
@@ -211,7 +209,7 @@ namespace SetupTv
         dwFileSize -= iOneGigabyte;
         iGigs++;
       }
-      float fMegs = ((float)dwFileSize) / ((float)iOneMeg);
+      float fMegs = dwFileSize / ((float)iOneMeg);
       fMegs /= 1000.0f;
       fMegs += iGigs;
       szTemp = String.Format("{0:f} GB", fMegs);
@@ -220,10 +218,13 @@ namespace SetupTv
 
     public static void GetQualifiedFilename(string strBasePath, ref string strFileName)
     {
-      if (strFileName == null) return;
-      if (strFileName.Length <= 2) return;
-      if (strFileName[1] == ':') return;
-      strBasePath = Utils.RemoveTrailingSlash(strBasePath);
+      if (strFileName == null)
+        return;
+      if (strFileName.Length <= 2)
+        return;
+      if (strFileName[1] == ':')
+        return;
+      strBasePath = RemoveTrailingSlash(strBasePath);
       while (strFileName.StartsWith(@"..\") || strFileName.StartsWith("../"))
       {
         strFileName = strFileName.Substring(3);
@@ -243,67 +244,87 @@ namespace SetupTv
       }
       if (strBasePath.Length == 2 && strBasePath[1] == ':')
         strBasePath += @"\";
-      strFileName = System.IO.Path.Combine(strBasePath, strFileName);
+      strFileName = Path.Combine(strBasePath, strFileName);
     }
 
     public static string stripHTMLtags(string strHTML)
     {
-      if (strHTML == null) return String.Empty;
-      if (strHTML.Length == 0) return String.Empty;
+      if (strHTML == null)
+        return String.Empty;
+      if (strHTML.Length == 0)
+        return String.Empty;
       string stripped = Regex.Replace(strHTML, @"<(.|\n)*?>", string.Empty);
       return stripped.Trim();
     }
 
     public static bool IsNetwork(string strPath)
     {
-      if (strPath == null) return false;
-      if (strPath.Length < 2) return false;
+      if (strPath == null)
+        return false;
+      if (strPath.Length < 2)
+        return false;
       string strDrive = strPath.Substring(0, 2);
-      if (getDriveType(strDrive) == 4) return true;
+      if (getDriveType(strDrive) == 4)
+        return true;
       return false;
     }
 
     public static bool IsHD(string strPath)
     {
-      if (strPath == null) return false;
-      if (strPath.Length < 2) return false;
+      if (strPath == null)
+        return false;
+      if (strPath.Length < 2)
+        return false;
       string strDrive = strPath.Substring(0, 2);
-      if (getDriveType(strDrive) == 3) return true;
+      if (getDriveType(strDrive) == 3)
+        return true;
       return false;
     }
 
     public static bool IsCDDA(string strFile)
     {
-      if (strFile == null) return false;
-      if (strFile.Length <= 0) return false;
-      if (strFile.IndexOf("cdda:") >= 0) return true;
-      if (strFile.IndexOf(".cda") >= 0) return true;
+      if (strFile == null)
+        return false;
+      if (strFile.Length <= 0)
+        return false;
+      if (strFile.IndexOf("cdda:") >= 0)
+        return true;
+      if (strFile.IndexOf(".cda") >= 0)
+        return true;
       return false;
     }
 
     public static bool IsDVD(string strFile)
     {
-      if (strFile == null) return false;
-      if (strFile.Length < 2) return false;
+      if (strFile == null)
+        return false;
+      if (strFile.Length < 2)
+        return false;
       string strDrive = strFile.Substring(0, 2);
-      if (getDriveType(strDrive) == 5) return true;
+      if (getDriveType(strDrive) == 5)
+        return true;
       return false;
     }
 
     public static bool IsRemovable(string strFile)
     {
-      if (strFile == null) return false;
-      if (strFile.Length < 2) return false;
+      if (strFile == null)
+        return false;
+      if (strFile.Length < 2)
+        return false;
       string strDrive = strFile.Substring(0, 2);
-      if (getDriveType(strDrive) == 2) return true;
+      if (getDriveType(strDrive) == 2)
+        return true;
       return false;
     }
 
     public static bool GetDVDLabel(string strFile, out string strLabel)
     {
       strLabel = "";
-      if (strFile == null) return false;
-      if (strFile.Length == 0) return false;
+      if (strFile == null)
+        return false;
+      if (strFile.Length == 0)
+        return false;
       string strDrive = strFile.Substring(0, 2);
       strLabel = GetDriveName(strDrive);
       return true;
@@ -311,8 +332,10 @@ namespace SetupTv
 
     public static bool ShouldStack(string strFile1, string strFile2)
     {
-      if (strFile1 == null) return false;
-      if (strFile2 == null) return false;
+      if (strFile1 == null)
+        return false;
+      if (strFile2 == null)
+        return false;
       try
       {
         // Patterns that are used for matching
@@ -323,8 +346,8 @@ namespace SetupTv
 														 "[-_ ](CD|cd|DISC|disc)[-_ ]{0,1}[0-9]{1,2}"};
 
         // Strip the extensions and make everything lowercase
-        string strFileName1 = System.IO.Path.GetFileNameWithoutExtension(strFile1).ToLower();
-        string strFileName2 = System.IO.Path.GetFileNameWithoutExtension(strFile2).ToLower();
+        string strFileName1 = Path.GetFileNameWithoutExtension(strFile1).ToLower();
+        string strFileName2 = Path.GetFileNameWithoutExtension(strFile2).ToLower();
 
         // Check all the patterns
         for (int i = 0; i < pattern.Length; i++)
@@ -342,8 +365,7 @@ namespace SetupTv
             }
           }
         }
-      }
-      catch (Exception)
+      } catch (Exception)
       {
       }
 
@@ -353,7 +375,8 @@ namespace SetupTv
 
     public static void RemoveStackEndings(ref string strFileName)
     {
-      if (strFileName == null) return;
+      if (strFileName == null)
+        return;
       string[] pattern = {"\\[[0-9]{1,2}-[0-9]{1,2}\\]",
 													 "[-_ ](CD|cd|DISC|disc)[-_ ]{0,1}[0-9]{1,2}"};
       for (int i = 0; i < pattern.Length; i++)
@@ -370,18 +393,22 @@ namespace SetupTv
     {
       strFileName = "";
       strPath = "";
-      if (strFileNameAndPath == null) return;
-      if (strFileNameAndPath.Length == 0) return;
+      if (strFileNameAndPath == null)
+        return;
+      if (strFileNameAndPath.Length == 0)
+        return;
       try
       {
         strFileNameAndPath = strFileNameAndPath.Trim();
-        if (strFileNameAndPath.Length == 0) return;
+        if (strFileNameAndPath.Length == 0)
+          return;
         int i = strFileNameAndPath.Length - 1;
         while (i >= 0)
         {
           char ch = strFileNameAndPath[i];
-          if (ch == ':' || ch == '/' || ch == '\\') break;
-          else i--;
+          if (ch == ':' || ch == '/' || ch == '\\')
+            break;
+          i--;
         }
         if (i >= 0)
         {
@@ -393,8 +420,7 @@ namespace SetupTv
           strPath = "";
           strFileName = strFileNameAndPath;
         }
-      }
-      catch (Exception)
+      } catch (Exception)
       {
         strPath = "";
         strFileName = strFileNameAndPath;
@@ -408,18 +434,17 @@ namespace SetupTv
 
       try
       {
-        IntPtr fHandle = CreateFile(strDrive, System.IO.FileAccess.Read, System.IO.FileShare.ReadWrite, 0, System.IO.FileMode.Open, 0x80, IntPtr.Zero);
+        IntPtr fHandle = CreateFile(strDrive, FileAccess.Read, FileShare.ReadWrite, 0, FileMode.Open, 0x80, IntPtr.Zero);
         if (fHandle.ToInt64() != -1) //INVALID_HANDLE_VALUE)
         {
           uint Result;
-          if (DeviceIoControl(fHandle, 0x002d4808, IntPtr.Zero, 0, IntPtr.Zero, 0, out Result, IntPtr.Zero) == true)
+          if (DeviceIoControl(fHandle, 0x002d4808, IntPtr.Zero, 0, IntPtr.Zero, 0, out Result, IntPtr.Zero))
           {
             result = true;
           }
           CloseHandle(fHandle);
         }
-      }
-      catch (Exception)
+      } catch (Exception)
       {
       }
 
@@ -437,22 +462,19 @@ namespace SetupTv
       {
         if (ldate < 0)
           return DateTime.MinValue;
-        int year, month, day, hour, minute, sec;
-        sec = (int)(ldate % 100L);
         ldate /= 100L;
-        minute = (int)(ldate % 100L);
+        int minute = (int)(ldate % 100L);
         ldate /= 100L;
-        hour = (int)(ldate % 100L);
+        int hour = (int)(ldate % 100L);
         ldate /= 100L;
-        day = (int)(ldate % 100L);
+        int day = (int)(ldate % 100L);
         ldate /= 100L;
-        month = (int)(ldate % 100L);
+        int month = (int)(ldate % 100L);
         ldate /= 100L;
-        year = (int)ldate;
+        int year = (int)ldate;
         DateTime dt = new DateTime(year, month, day, hour, minute, 0, 0);
         return dt;
-      }
-      catch (Exception)
+      } catch (Exception)
       {
       }
       return DateTime.Now;
@@ -462,12 +484,12 @@ namespace SetupTv
     {
       try
       {
-        long iSec = 0;//(long)dt.Second;
-        long iMin = (long)dt.Minute;
-        long iHour = (long)dt.Hour;
-        long iDay = (long)dt.Day;
-        long iMonth = (long)dt.Month;
-        long iYear = (long)dt.Year;
+        const long iSec = 0;
+        long iMin = dt.Minute;
+        long iHour = dt.Hour;
+        long iDay = dt.Day;
+        long iMonth = dt.Month;
+        long iYear = dt.Year;
 
         long lRet = (iYear);
         lRet = lRet * 100L + iMonth;
@@ -476,8 +498,7 @@ namespace SetupTv
         lRet = lRet * 100L + iMin;
         lRet = lRet * 100L + iSec;
         return lRet;
-      }
-      catch (Exception)
+      } catch (Exception)
       {
       }
       return 0;
@@ -485,15 +506,17 @@ namespace SetupTv
 
     public static string MakeFileName(string strText)
     {
-      if (strText == null) return String.Empty;
-      if (strText.Length == 0) return String.Empty;
+      if (strText == null)
+        return String.Empty;
+      if (strText.Length == 0)
+        return String.Empty;
       string strFName = strText.Replace(':', '_');
       strFName = strFName.Replace('/', '_');
       strFName = strFName.Replace('\\', '_');
       strFName = strFName.Replace('*', '_');
       strFName = strFName.Replace('?', '_');
       strFName = strFName.Replace('\"', '_');
-      strFName = strFName.Replace('<', '_'); ;
+      strFName = strFName.Replace('<', '_');
       strFName = strFName.Replace('>', '_');
       strFName = strFName.Replace('|', '_');
       return strFName;
@@ -501,13 +524,15 @@ namespace SetupTv
 
     public static string MakeDirectoryPath(string strText)
     {
-      if (strText == null) return String.Empty;
-      if (strText.Length == 0) return String.Empty;
+      if (strText == null)
+        return String.Empty;
+      if (strText.Length == 0)
+        return String.Empty;
       string strFName = strText.Replace('*', '_');
       strFName = strFName.Replace(':', '_');
       strFName = strFName.Replace('?', '_');
       strFName = strFName.Replace('\"', '_');
-      strFName = strFName.Replace('<', '_'); ;
+      strFName = strFName.Replace('<', '_');
       strFName = strFName.Replace('>', '_');
       strFName = strFName.Replace('|', '_');
       return strFName;
@@ -515,15 +540,17 @@ namespace SetupTv
 
     public static bool FileDelete(string strFile)
     {
-      if (strFile == null) return true;
-      if (strFile.Length == 0) return true;
+      if (strFile == null)
+        return true;
+      if (strFile.Length == 0)
+        return true;
       try
       {
-        if (!System.IO.File.Exists(strFile)) return true;
-        System.IO.File.Delete(strFile);
+        if (!File.Exists(strFile))
+          return true;
+        File.Delete(strFile);
         return true;
-      }
-      catch (Exception)
+      } catch (Exception)
       {
       }
       return false;
@@ -531,14 +558,15 @@ namespace SetupTv
 
     public static bool DirectoryDelete(string strDir)
     {
-      if (strDir == null) return false;
-      if (strDir.Length == 0) return false;
+      if (strDir == null)
+        return false;
+      if (strDir.Length == 0)
+        return false;
       try
       {
-        System.IO.Directory.Delete(strDir);
+        Directory.Delete(strDir);
         return true;
-      }
-      catch (Exception)
+      } catch (Exception)
       {
       }
       return false;
@@ -546,8 +574,10 @@ namespace SetupTv
 
     public static string RemoveTrailingSlash(string strLine)
     {
-      if (strLine == null) return String.Empty;
-      if (strLine.Length == 0) return String.Empty;
+      if (strLine == null)
+        return String.Empty;
+      if (strLine.Length == 0)
+        return String.Empty;
       string strPath = strLine;
       while (strPath.Length > 0)
       {
@@ -555,16 +585,17 @@ namespace SetupTv
         {
           strPath = strPath.Substring(0, strPath.Length - 1);
         }
-        else break;
+        else
+          break;
       }
       return strPath;
     }
 
     public static void RGB2YUV(int R, int G, int B, out int Y, out int U, out int V)
     {
-      Y = (int)(((float)R) * 0.257f + ((float)G) * 0.504f + ((float)B) * 0.098f + 16.0f);
-      U = (int)(((float)R) * -0.148f + ((float)G) * -0.291f + ((float)B) * 0.439f + 128.0f);
-      V = (int)(((float)R) * 0.439f + ((float)G) * -0.368f + ((float)B) * -0.071f + 128.0f);
+      Y = (int)(R * 0.257f + G * 0.504f + B * 0.098f + 16.0f);
+      U = (int)(R * -0.148f + G * -0.291f + B * 0.439f + 128.0f);
+      V = (int)(R * 0.439f + G * -0.368f + B * -0.071f + 128.0f);
       Y = Y & 0xff;
       U = U & 0xff;
       V = V & 0xff;
@@ -583,8 +614,10 @@ namespace SetupTv
 
     public static string FilterFileName(string strName)
     {
-      if (strName == null) return String.Empty;
-      if (strName.Length == 0) return String.Empty;
+      if (strName == null)
+        return String.Empty;
+      if (strName.Length == 0)
+        return String.Empty;
       strName = strName.Replace(@"\", "_");
       strName = strName.Replace("/", "_");
       strName = strName.Replace(":", "_");
@@ -630,28 +663,29 @@ namespace SetupTv
 
     public static void DeleteFiles(string strDir, string strPattern)
     {
-      if (strDir == null) return;
-      if (strDir.Length == 0) return;
+      if (strDir == null)
+        return;
+      if (strDir.Length == 0)
+        return;
 
-      if (strPattern == null) return;
-      if (strPattern.Length == 0) return;
+      if (strPattern == null)
+        return;
+      if (strPattern.Length == 0)
+        return;
 
-      string[] strFiles;
       try
       {
-        if (!System.IO.Directory.Exists(strDir))
+        if (!Directory.Exists(strDir))
           return;
-        strFiles = System.IO.Directory.GetFiles(strDir, strPattern);
+        string[] strFiles = Directory.GetFiles(strDir, strPattern);
         foreach (string strFile in strFiles)
         {
           try
           {
-            System.IO.File.Delete(strFile);
-          }
-          catch (Exception) { }
+            File.Delete(strFile);
+          } catch (Exception) { }
         }
-      }
-      catch (Exception) { }
+      } catch (Exception) { }
 
     }
 
@@ -659,23 +693,24 @@ namespace SetupTv
     {
       try
       {
-        if (dateTime == null) return DateTime.Now;
-        if (dateTime.Length == 0) return DateTime.Now;
+        if (dateTime == null)
+          return DateTime.Now;
+        if (dateTime.Length == 0)
+          return DateTime.Now;
         //format is d-m-y h:m:s
         dateTime = dateTime.Replace(":", "-");
         string[] parts = dateTime.Split('-');
-        if (parts.Length < 6) return DateTime.Now;
-        int hour, min, sec, year, day, month;
-        day = Int32.Parse(parts[0]);
-        month = Int32.Parse(parts[1]);
-        year = Int32.Parse(parts[2]);
+        if (parts.Length < 6)
+          return DateTime.Now;
+        int day = Int32.Parse(parts[0]);
+        int month = Int32.Parse(parts[1]);
+        int year = Int32.Parse(parts[2]);
 
-        hour = Int32.Parse(parts[3]);
-        min = Int32.Parse(parts[4]);
-        sec = Int32.Parse(parts[5]);
+        int hour = Int32.Parse(parts[3]);
+        int min = Int32.Parse(parts[4]);
+        int sec = Int32.Parse(parts[5]);
         return new DateTime(year, month, day, hour, min, sec, 0);
-      }
-      catch (Exception)
+      } catch (Exception)
       {
       }
       return DateTime.Now;
@@ -683,10 +718,14 @@ namespace SetupTv
 
     public static string ReplaceTag(string line, string tag, string value, string empty)
     {
-      if (line == null) return String.Empty;
-      if (line.Length == 0) return String.Empty;
-      if (tag == null) return line;
-      if (tag.Length == 0) return line;
+      if (line == null)
+        return String.Empty;
+      if (line.Length == 0)
+        return String.Empty;
+      if (tag == null)
+        return line;
+      if (tag.Length == 0)
+        return line;
 
       Regex r = new Regex(String.Format(@"\[[^%]*{0}[^\]]*[\]]", tag));
       if (value == empty)
@@ -717,10 +756,11 @@ namespace SetupTv
 
     public static ulong GetFreeDiskSpace(string drive)
     {
-      if (drive == null) return 0;
-      ulong freeBytesAvailable = 0;
-      ulong totalNumberOfBytes = 0;
-      ulong totalNumberOfFreeBytes = 0;
+      if (drive == null)
+        return 0;
+      ulong freeBytesAvailable;
+      ulong totalNumberOfBytes;
+      ulong totalNumberOfFreeBytes;
 
       GetDiskFreeSpaceEx(
          drive[0] + @":\",
@@ -752,9 +792,9 @@ namespace SetupTv
       OsDetection.OSVersionInfo os = new OsDetection.OperatingSystemVersion();
       DialogResult res;
 
-      string MsgNotSupported = "Your platform is not supported by MediaPortal Team because it lacks critical hotfixes! \nPlease check our Wiki's requirements page.";
-      string MsgNotInstallable = "Your platform is not supported and cannot be used for MediaPortal/TV-Server! \nPlease check our Wiki's requirements page.";
-      string MsgBetaServicePack = "You are running a BETA version of Service Pack {0}.\n Please don't do bug reporting with such configuration.";
+      const string MsgNotSupported = "Your platform is not supported by MediaPortal Team because it lacks critical hotfixes! \nPlease check our Wiki's requirements page.";
+      const string MsgNotInstallable = "Your platform is not supported and cannot be used for MediaPortal/TV-Server! \nPlease check our Wiki's requirements page.";
+      const string MsgBetaServicePack = "You are running a BETA version of Service Pack {0}.\n Please don't do bug reporting with such configuration.";
       string ServicePack = "";
       if (!string.IsNullOrEmpty(os.OSCSDVersion))
         ServicePack = " (" + os.OSCSDVersion + ")";
@@ -787,7 +827,8 @@ namespace SetupTv
             Application.Exit();
           }
           res = MessageBox.Show(MsgNotSupported, MsgOsVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
-          if (res == DialogResult.Cancel) Application.Exit();
+          if (res == DialogResult.Cancel)
+            Application.Exit();
           if (checkDvbFix)
             CheckForDvbHotfix();
           break;
@@ -795,14 +836,16 @@ namespace SetupTv
           if (os.OSProductType != OsDetection.OSProductType.Workstation || os.OSServicePackMajor < 1)
           {
             res = MessageBox.Show(MsgNotSupported, MsgOsVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
-            if (res == DialogResult.Cancel) Application.Exit();
+            if (res == DialogResult.Cancel)
+              Application.Exit();
           }
           break;
       }
       if (os.OSServicePackBuild != 0)
       {
         res = MessageBox.Show(String.Format(MsgBetaServicePack, os.OSServicePackMajor), MsgOsVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
-        if (res == DialogResult.Cancel) Application.Exit();
+        if (res == DialogResult.Cancel)
+          Application.Exit();
       }
     }
 
@@ -831,7 +874,7 @@ namespace SetupTv
         {
           string ErrorMsg = string.Empty;
           if (dllPaths.Count == 1)
-            ErrorMsg = string.Format("Your version {0} of Psisdecd.dll has too many bugs! \nPlease check our Wiki's requirements page.", mostRecentVer.ToString());
+            ErrorMsg = string.Format("Your version {0} of Psisdecd.dll has too many bugs! \nPlease check our Wiki's requirements page.", mostRecentVer);
           if (dllPaths.Count > 1)
             ErrorMsg = string.Format("Found {0} occurences of outdated Psisdecd.dll! \nMost recent installed version: {1} \nPlease clean up your system and check our Wiki's requirements page.", dllPaths.Count.ToString(), mostRecentVer.ToString());
           if (dllPaths.Count < 1)
@@ -840,8 +883,7 @@ namespace SetupTv
           TvLibrary.Log.Log.Info("Util: Psisdecd.dll error - {0}", ErrorMsg);
           if (MessageBox.Show(ErrorMsg, "Microsoft SI/PSI parser outdated!", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == DialogResult.OK)
             Process.Start(@"http://wiki.team-mediaportal.com/GeneralRequirements");
-        }
-        catch (Exception) { }
+        } catch (Exception) { }
       }
     }
 
@@ -850,23 +892,22 @@ namespace SetupTv
     /// </summary>
     /// <param name="aFilePath">The full path to the file to check</param>
     /// <param name="aMinimumVersion">The minimum version wanted</param>
+    /// <param name="aCurrentVersion">The current version</param>
     /// <returns>True if the file's version is equal or higher than the given minimum</returns>
     public static bool CheckFileVersion(string aFilePath, string aMinimumVersion, out Version aCurrentVersion)
     {
       aCurrentVersion = new Version(0, 0, 0, 0);
       try
       {
-        System.Version desiredVersion = new System.Version(aMinimumVersion);
+        Version desiredVersion = new Version(aMinimumVersion);
         FileVersionInfo fileVersion = FileVersionInfo.GetVersionInfo(aFilePath);
         if (!string.IsNullOrEmpty(fileVersion.ProductVersion))
         {
-          aCurrentVersion = new System.Version(fileVersion.ProductVersion);
+          aCurrentVersion = new Version(fileVersion.ProductVersion);
           return aCurrentVersion >= desiredVersion;
         }
-        else
-          return false;
-      }
-      catch (Exception)
+        return false;
+      } catch (Exception)
       {
         return false;
       }
@@ -884,35 +925,36 @@ namespace SetupTv
       {
         using (RegistryKey AssemblyKey = Registry.ClassesRoot.OpenSubKey("CLSID"))
         {
-          string[] reggedComps = AssemblyKey.GetSubKeyNames();
-          foreach (string aFilter in reggedComps)
+          if (AssemblyKey != null)
           {
-            try
+            string[] reggedComps = AssemblyKey.GetSubKeyNames();
+            foreach (string aFilter in reggedComps)
             {
-              using (RegistryKey key = AssemblyKey.OpenSubKey(aFilter))
+              try
               {
-                if (key != null)
+                using (RegistryKey key = AssemblyKey.OpenSubKey(aFilter))
                 {
-                  using (RegistryKey defaultkey = key.OpenSubKey("InprocServer32"))
+                  if (key != null)
                   {
-                    if (defaultkey != null)
+                    using (RegistryKey defaultkey = key.OpenSubKey("InprocServer32"))
                     {
-                      string friendlyName = (string)defaultkey.GetValue(null); // Gets the (Default) value from this key            
-                      if (!string.IsNullOrEmpty(friendlyName) && friendlyName.ToLower().IndexOf(aFilename.ToLower()) >= 0)
+                      if (defaultkey != null)
                       {
-                        if (!resultPaths.Contains(friendlyName))
-                          resultPaths.Add(friendlyName);
+                        string friendlyName = (string)defaultkey.GetValue(null); // Gets the (Default) value from this key            
+                        if (!string.IsNullOrEmpty(friendlyName) && friendlyName.ToLower().IndexOf(aFilename.ToLower()) >= 0)
+                        {
+                          if (!resultPaths.Contains(friendlyName))
+                            resultPaths.Add(friendlyName);
+                        }
                       }
                     }
                   }
                 }
-              }
+              } catch (Exception) { }
             }
-            catch (Exception) { }
           }
         }
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         MessageBox.Show(string.Format("Error checking registry for registered Assembly: {0} - {1}", aFilename, ex.Message));
       }
@@ -927,25 +969,31 @@ namespace SetupTv
     public static bool CheckRegistryForInstalledSoftware(string aSoftwareName)
     {
       bool AppFound = false;
-      string componentsKeyName = @"SOFTWARE\Microsoft\Active Setup\Installed Components", friendlyName;
+      const string componentsKeyName = @"SOFTWARE\Microsoft\Active Setup\Installed Components";
+      string friendlyName;
       try
       {
         using (RegistryKey componentsKey = Registry.LocalMachine.OpenSubKey(componentsKeyName))
         {
-          string[] instComps = componentsKey.GetSubKeyNames();
-          foreach (string instComp in instComps)
+          if (componentsKey != null)
           {
-            RegistryKey key = componentsKey.OpenSubKey(instComp);
-            friendlyName = (string)key.GetValue(null); // Gets the (Default) value from this key            
-            if (friendlyName != null && friendlyName.IndexOf(aSoftwareName) >= 0)
+            string[] instComps = componentsKey.GetSubKeyNames();
+            foreach (string instComp in instComps)
             {
-              AppFound = true;
-              break;
+              RegistryKey key = componentsKey.OpenSubKey(instComp);
+              if (key != null)
+              {
+                friendlyName = (string)key.GetValue(null); // Gets the (Default) value from this key            
+                if (friendlyName != null && friendlyName.IndexOf(aSoftwareName) >= 0)
+                {
+                  AppFound = true;
+                  break;
+                }
+              }
             }
           }
         }
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         MessageBox.Show(string.Format("Error checking registry for installed components: {0}", ex.Message));
       }

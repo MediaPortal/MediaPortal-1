@@ -19,15 +19,16 @@
  *
  */
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 
 namespace TvLibrary.Interfaces
 {
+  /// <summary>
+  /// The service provider
+  /// </summary>
   public class ServiceProvider
   {
-    private Dictionary<Type, object> services;
+    private readonly Dictionary<Type, object> services;
 
     /// <summary>
     /// Constructor
@@ -72,7 +73,7 @@ namespace TvLibrary.Interfaces
       {
         return (T)services[t];
       }
-      throw new ArgumentException(String.Format("Service {0} is not registered", t.ToString()));
+      throw new ArgumentException(String.Format("Service {0} is not registered", t));
     }
 
     /// <summary>

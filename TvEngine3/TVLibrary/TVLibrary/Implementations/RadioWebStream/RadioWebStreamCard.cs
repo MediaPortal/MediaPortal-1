@@ -20,22 +20,10 @@
  */
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Xml.Serialization;
-using System.Text;
-using System.Drawing;
-using System.Reflection;
 using DirectShowLib;
-using TvLibrary.Implementations;
-using DirectShowLib.SBE;
-using TvLibrary.Log;
 using TvLibrary.Interfaces;
-using TvLibrary.Interfaces.Analyzer;
-using TvLibrary.Teletext;
 using TvLibrary.Epg;
 using TvLibrary.Implementations.DVB;
-using TvLibrary.Implementations.Helper;
-using TvLibrary.Helper;
 using TvLibrary.ChannelLinkage;
 
 namespace TvLibrary.Implementations.RadioWebStream
@@ -48,15 +36,11 @@ namespace TvLibrary.Implementations.RadioWebStream
   public class RadioWebStreamCard : ITVCard
   {
     #region variables
-    protected string _name;
-    protected string _recordingFileName = "";
-    protected int _managedThreadId;
-    protected bool _isScanning = false;
-    protected DateTime _dateRecordingStarted = DateTime.MinValue;
-    protected object m_context = null;
-    protected IChannel _currentChannel;
-    protected ScanParameters _parameters;
-		protected bool _cardPresent = true;
+    private string _name;
+    private DateTime _dateRecordingStarted = DateTime.MinValue;
+    private object m_context;
+    private ScanParameters _parameters;
+    private bool _cardPresent = true;
     #endregion
 
     #region ctor
@@ -98,6 +82,10 @@ namespace TvLibrary.Implementations.RadioWebStream
       }
     }
 
+    /// <summary>
+    /// Gets or sets the timeout parameters.
+    /// </summary>
+    /// <value>The parameters.</value>
     public ScanParameters Parameters
     {
       get
@@ -114,7 +102,7 @@ namespace TvLibrary.Implementations.RadioWebStream
     /// Checks the thread id.
     /// </summary>
     /// <returns></returns>
-    protected bool CheckThreadId()
+    protected static bool CheckThreadId()
     {
       return true;
       /* unreachable 
@@ -131,7 +119,7 @@ namespace TvLibrary.Implementations.RadioWebStream
     /// <summary>
     /// Starts recording
     /// </summary>
-    /// <param name="recordingType">Recording type (content or reference)</param>
+    /// <param name="transportStream">Recording type (content or reference)</param>
     /// <param name="fileName">filename to which to recording should be saved</param>
     /// <returns></returns>
     protected void StartRecord(bool transportStream, string fileName)
@@ -146,11 +134,10 @@ namespace TvLibrary.Implementations.RadioWebStream
     /// Stop recording
     /// </summary>
     /// <returns></returns>
-    protected void StopRecord()
-    {
+    protected static void StopRecord()
+    { 
       if (!CheckThreadId()) return;
       Log.Log.WriteFile("RadioWebStream:StopRecord()");
-      _recordingFileName = "";
     }
     #endregion
 
@@ -234,6 +221,7 @@ namespace TvLibrary.Implementations.RadioWebStream
     /// <summary>
     /// Tunes the specified channel.
     /// </summary>
+    /// <param name="subChannelId">The sub channel id</param>
     /// <param name="channel">The channel.</param>
     /// <returns></returns>
     public ITvSubChannel Tune(int subChannelId, IChannel channel)
@@ -356,14 +344,18 @@ namespace TvLibrary.Implementations.RadioWebStream
       {
         return CardType.RadioWebStream;
       }
-      set
-      {
-      }
     }
+    /// <summary>
+    /// Stops the current graph
+    /// </summary>
+    /// <returns></returns>
     public void StopGraph()
     {
       if (!CheckThreadId()) return;
     }
+    /// <summary>
+    /// Returns if the tuner belongs to a hybrid card
+    /// </summary>
     public bool IsHybrid
     {
       get
@@ -396,8 +388,7 @@ namespace TvLibrary.Implementations.RadioWebStream
         if (!CheckThreadId()) return 0;
         if (IsTunerLocked)
           return 100;
-        else
-          return 0;
+        return 0;
       }
     }
 
@@ -411,8 +402,7 @@ namespace TvLibrary.Implementations.RadioWebStream
         if (!CheckThreadId()) return 0;
         if (IsTunerLocked)
           return 100;
-        else
-          return 0;
+        return 0;
       }
     }
     #endregion
@@ -583,9 +573,6 @@ namespace TvLibrary.Implementations.RadioWebStream
       {
         return AvailableAudioStreams[0];
       }
-      set
-      {
-      }
     }
     #endregion
 
@@ -616,6 +603,10 @@ namespace TvLibrary.Implementations.RadioWebStream
       }
     }
 
+    /// <summary>
+    /// Gets or sets the context.
+    /// </summary>
+    /// <value>The context.</value>
     public object Context
     {
       get
@@ -628,9 +619,16 @@ namespace TvLibrary.Implementations.RadioWebStream
       }
     }
 
+    /// <summary>
+    /// Grabs the epg.
+    /// </summary>
+    /// <param name="callback">The callback which gets called when epg is received or canceled.</param>
     public void GrabEpg(BaseEpgGrabber callback)
     {
     }
+    /// <summary>
+    /// Start grabbing the epg while timeshifting
+    /// </summary>
     public void GrabEpg()
     {
     }

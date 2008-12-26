@@ -23,7 +23,6 @@
 
 #endregion
 
-using System;
 
 namespace MediaPortal.UserInterface.Controls
 {
@@ -32,9 +31,5 @@ namespace MediaPortal.UserInterface.Controls
   /// </summary>
   public class MPLabel : System.Windows.Forms.Label
   {
-    public MPLabel()
-    {
-      //this.AutoSize = true;
-    }
   }
 }

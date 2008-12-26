@@ -30,10 +30,10 @@ namespace TvLibrary
   [Serializable]
   public class Country
   {
-    int _id;
+    readonly int _id;
     int _index;
-    string _name;
-    string _code;
+    readonly string _name;
+    readonly string _code;
     AnalogVideoStandard _standard;
     /// <summary>
     /// Initializes a new instance of the <see cref="Country"/> class.
@@ -42,7 +42,7 @@ namespace TvLibrary
     {
     }
     /// <summary>
-    /// Initializes a new instance of the <see cref="T:Country"/> class.
+    /// Initializes a new instance of the <see cref="Country"/> class.
     /// </summary>
     /// <param name="id">The id.</param>
     /// <param name="country">The country.</param>
@@ -57,7 +57,7 @@ namespace TvLibrary
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="T:Country"/> class.
+    /// Initializes a new instance of the <see cref="Country"/> class.
     /// </summary>
     /// <param name="id">The id.</param>
     /// <param name="country">The country.</param>
@@ -130,6 +130,9 @@ namespace TvLibrary
       }
     }
 
+    ///<summary>
+    /// Gets/Sets the analog video standard
+    ///</summary>
     public AnalogVideoStandard VideoStandard
     {
       get

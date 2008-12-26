@@ -19,21 +19,9 @@
  *
  */
 using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-using System.Threading;
-using DirectShowLib;
 using TvDatabase;
-using TvControl;
-using TvLibrary;
 using TvLibrary.Log;
-using TvLibrary.Interfaces;
-using TvLibrary.Implementations;
 
 namespace SetupTv.Sections
 {
@@ -88,8 +76,7 @@ namespace SetupTv.Sections
       try
       {
         mpComboBoxPrio.SelectedIndex = Convert.ToInt32(layer.GetSetting("processPriority", "3").Value); //default is normal=3       
-      }
-      catch (Exception)
+      } catch (Exception)
       {
         mpComboBoxPrio.SelectedIndex = 3; //fall back to default which is normal=3
       }
@@ -129,24 +116,15 @@ namespace SetupTv.Sections
       s.Persist();
 
       s = layer.GetSetting("generalEPGAlwaysFillHoles", "no");
-      if (checkBoxAlwaysFillHoles.Checked)
-        s.Value = "yes";
-      else
-        s.Value = "no";
+      s.Value = checkBoxAlwaysFillHoles.Checked ? "yes" : "no";
       s.Persist();
 
       s = layer.GetSetting("generalEPGAlwaysReplace", "no");
-      if (checkBoxAlwaysUpdate.Checked)
-        s.Value = "yes";
-      else
-        s.Value = "no";
+      s.Value = checkBoxAlwaysUpdate.Checked ? "yes" : "no";
       s.Persist();
 
       s = layer.GetSetting("idleEPGGrabberEnabled", "yes");
-      if (checkBoxEnableEPGWhileIdle.Checked)
-        s.Value = "yes";
-      else
-        s.Value = "no";
+      s.Value = checkBoxEnableEPGWhileIdle.Checked ? "yes" : "no";
       s.Persist();
 
       s = layer.GetSetting("timeoutEPG", "10");
@@ -158,10 +136,7 @@ namespace SetupTv.Sections
       s.Persist();
 
       s = layer.GetSetting("timeshiftingEpgGrabberEnabled", "no");
-      if (checkBoxEnableEpgWhileTimeshifting.Checked)
-        s.Value = "yes";
-      else
-        s.Value = "no";
+      s.Value = checkBoxEnableEpgWhileTimeshifting.Checked ? "yes" : "no";
       s.Persist();
 
       s = layer.GetSetting("timeshiftingEpgGrabberTimeout", "2");
@@ -181,10 +156,7 @@ namespace SetupTv.Sections
       s.Persist();
 
       s = layer.GetSetting("linkageScannerEnabled", "no");
-      if (checkBoxEnableLinkageScanner.Checked)
-        s.Value = "yes";
-      else
-        s.Value = "no";
+      s.Value = checkBoxEnableLinkageScanner.Checked ? "yes" : "no";
       s.Persist();
 
       s = layer.GetSetting("processPriority", "3");
@@ -214,12 +186,11 @@ namespace SetupTv.Sections
 
     private void mpComboBoxPrio_SelectedIndexChanged(object sender, EventArgs e)
     {
-      System.Diagnostics.Process process = null;
+      System.Diagnostics.Process process;
       try
       {
         process = System.Diagnostics.Process.GetProcessesByName("TVService")[0];
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Write("could not set priority on tvservice - the process might be terminated : " + ex.Message);
         return;
@@ -252,37 +223,7 @@ namespace SetupTv.Sections
 
     }
 
-    private string GetStarRatingStr(int starRating)
-    {
-      string rating = "<undefined>";
-      switch (starRating)
-      {
-        case 1:
-          rating = "*";
-          break;
-        case 2:
-          rating = "*+";
-          break;
-        case 3:
-          rating = "**";
-          break;
-        case 4:
-          rating = "**+";
-          break;
-        case 5:
-          rating = "***";
-          break;
-        case 6:
-          rating = "***+";
-          break;
-        case 7:
-          rating = "****";
-          break;
-      }
-      return rating;
-    }
-
-    private string EvalTemplate(string template, NameValueCollection values)
+    private static string EvalTemplate(string template, NameValueCollection values)
     {
       for (int i = 0; i < values.Count; i++)
         template = template.Replace(values.Keys[i], values[i]);
@@ -304,7 +245,7 @@ namespace SetupTv.Sections
       edDescriptionTest.Text = EvalTemplate(edDescriptionTemplate.Text, defaults);
     }
 
-    private decimal ValueSanityCheck(decimal Value, int Min, int Max)
+    private static decimal ValueSanityCheck(decimal Value, int Min, int Max)
     {
       if (Value < Min)
         return Min;

@@ -28,51 +28,57 @@ using System.Collections;
 using System.Windows.Forms;
 namespace MediaPortal.Configuration.Controls
 {
-	/// <summary>
-	/// Summary description for ListViewItemComparer.
-	/// </summary>
-	public class ListViewItemComparer : IComparer 
-	{
-		private int col;
-		public ListViewItemComparer() 
-		{
-			col=0;
-		}
-		public ListViewItemComparer(int column) 
-		{
-			col=column;
-		}
-		public int Compare(object x, object y) 
-		{
-      int sortCol = col;
-      if (sortCol >= ((ListViewItem)x).SubItems.Count) sortCol = 0;
-      if (sortCol >= ((ListViewItem)y).SubItems.Count) sortCol = 0;
-      return String.Compare(((ListViewItem)x).SubItems[sortCol].Text, ((ListViewItem)y).SubItems[sortCol].Text);
-		}
-	}
-
-	public class ListViewItemComparerInt : IComparer 
-	{
-		private int col;
-		public ListViewItemComparerInt() 
-		{
-			col=0;
-		}
-		public ListViewItemComparerInt(int column) 
-		{
-			col=column;
-		}
-		public int Compare(object x, object y)
+  /// <summary>
+  /// Summary description for ListViewItemComparer.
+  /// </summary>
+  public class ListViewItemComparer : IComparer
+  {
+    private readonly int col;
+    public ListViewItemComparer()
+    {
+      col = 0;
+    }
+    public ListViewItemComparer(int column)
+    {
+      col = column;
+    }
+    public int Compare(object x, object y)
     {
       int sortCol = col;
-      if (sortCol >= ((ListViewItem)x).SubItems.Count) sortCol = 0;
-      if (sortCol >= ((ListViewItem)y).SubItems.Count) sortCol = 0;
+      if (sortCol >= ((ListViewItem)x).SubItems.Count)
+        sortCol = 0;
+      if (sortCol >= ((ListViewItem)y).SubItems.Count)
+        sortCol = 0;
+      return String.Compare(((ListViewItem)x).SubItems[sortCol].Text, ((ListViewItem)y).SubItems[sortCol].Text);
+    }
+  }
+
+  public class ListViewItemComparerInt : IComparer
+  {
+    private readonly int col;
+    public ListViewItemComparerInt()
+    {
+      col = 0;
+    }
+    public ListViewItemComparerInt(int column)
+    {
+      col = column;
+    }
+    public int Compare(object x, object y)
+    {
+      int sortCol = col;
+      if (sortCol >= ((ListViewItem)x).SubItems.Count)
+        sortCol = 0;
+      if (sortCol >= ((ListViewItem)y).SubItems.Count)
+        sortCol = 0;
 
       int item1 = Int32.Parse(((ListViewItem)x).SubItems[sortCol].Text);
       int item2 = Int32.Parse(((ListViewItem)y).SubItems[sortCol].Text);
-			if (item1 < item2) return -1;
-			if (item1 > item2) return 1;
-			return 0;
-		}
-	}
+      if (item1 < item2)
+        return -1;
+      if (item1 > item2)
+        return 1;
+      return 0;
+    }
+  }
 }

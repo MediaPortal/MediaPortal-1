@@ -20,7 +20,6 @@
  */
 using System;
 using System.Collections.Generic;
-using System.Text;
 using DirectShowLib;
 using similaritymetrics;
 
@@ -38,8 +37,9 @@ namespace TvLibrary
       public int CompareTo(object obj)
       {
         SortItem item = obj as SortItem;
-        if (item.rate < rate) return -1;
-        else return 1;
+        if (item == null || item.rate < rate)
+          return -1;
+        return 1;
       }
       #endregion
     };
@@ -48,25 +48,34 @@ namespace TvLibrary
     {
       try
       {
-        if (devices == null) return devices;
-        if (devices.Length <= 1) return devices;
+        if (devices == null)
+          return devices;
+        if (devices.Length <= 1)
+          return devices;
         List<string> compareNames = new List<string>();
         foreach (object obj in arg)
         {
           DsDevice dev = obj as DsDevice;
-          if (dev == null) continue;
-          if (dev.Name == null) continue;
-          if (dev.Name.Length == 0) continue;
+          if (dev == null)
+            continue;
+          if (dev.Name == null)
+            continue;
+          if (dev.Name.Length == 0)
+            continue;
           compareNames.Add(dev.Name);
         }
-        if (compareNames.Count == 0) return devices;
+        if (compareNames.Count == 0)
+          return devices;
 
         List<string> names = new List<string>();
         for (int i = 0; i < devices.Length; ++i)
         {
-          if (devices[i] == null) continue;
-          if (devices[i].Name == null) continue;
-          if (devices[i].Name.Length == 0) continue;
+          if (devices[i] == null)
+            continue;
+          if (devices[i].Name == null)
+            continue;
+          if (devices[i].Name.Length == 0)
+            continue;
           names.Add(devices[i].Name);
         }
 
@@ -104,8 +113,7 @@ namespace TvLibrary
           index++;
         }
         return newDevices;
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Log.Write(ex);
         return devices;

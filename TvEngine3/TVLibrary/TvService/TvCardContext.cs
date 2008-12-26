@@ -19,28 +19,10 @@
  *
  */
 using System;
-using System.IO;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-using System.Net;
-using System.Net.Sockets;
-using DirectShowLib.SBE;
-using TvLibrary;
-using TvLibrary.Implementations;
-using TvLibrary.Interfaces;
-using TvLibrary.Implementations.Analog;
-using TvLibrary.Implementations.DVB;
-using TvLibrary.Implementations.Hybrid;
-using TvLibrary.Channels;
-using TvLibrary.Epg;
 using TvLibrary.Log;
-using TvLibrary.Streaming;
 using TvControl;
-using TvEngine;
 using TvDatabase;
-using TvEngine.Events;
 
 namespace TvService
 {
@@ -50,10 +32,11 @@ namespace TvService
   public class TvCardContext
   {
     #region variables
-    List<User> _users;
-		List<User> _usersOld; //holding a list of all the timeshifting users that have been stopped - mkaing it possible for the client to query the possible stop reason.
+
+    readonly List<User> _users;
+    readonly List<User> _usersOld; //holding a list of all the timeshifting users that have been stopped - mkaing it possible for the client to query the possible stop reason.
     User _owner;
-    System.Timers.Timer _timer = new System.Timers.Timer();
+    readonly System.Timers.Timer _timer = new System.Timers.Timer();
     #endregion
 
     #region ctor
@@ -63,12 +46,12 @@ namespace TvService
     public TvCardContext()
     {
       _users = new List<User>();
-			_usersOld = new List<User>();
+      _usersOld = new List<User>();
       _owner = null;
       _timer.Interval = 60000;
       _timer.Enabled = true;
-      _timer.Elapsed += new System.Timers.ElapsedEventHandler(_timer_Elapsed);
-    }	
+      _timer.Elapsed += _timer_Elapsed;
+    }
 
     #endregion
 
@@ -76,7 +59,7 @@ namespace TvService
     /// <summary>
     /// Locks the card for the user specifies
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="newUser">The user.</param>
     public void Lock(User newUser)
     {
       _owner = newUser;
@@ -112,11 +95,14 @@ namespace TvService
     /// </returns>
     public bool IsOwner(User user)
     {
-      if (_owner == null) return true;
-      if (_owner.Name == user.Name) return true;
+      if (_owner == null)
+        return true;
+      if (_owner.Name == user.Name)
+        return true;
 
       //exception, always allow everyone to stop the epg grabber
-      if (_owner.Name == "epg") return true;
+      if (_owner.Name == "epg")
+        return true;
       return false;
     }
 
@@ -144,7 +130,8 @@ namespace TvService
     public void Add(User user)
     {
       Log.Info("user:{0} add", user.Name);
-      if (_owner == null) _owner = user;
+      if (_owner == null)
+        _owner = user;
       for (int i = 0; i < _users.Count; ++i)
       {
         if (_users[i].Name == user.Name)
@@ -167,12 +154,13 @@ namespace TvService
       {
         if (existingUser.Name == user.Name)
         {
-          OnStopUser( existingUser);
+          OnStopUser(existingUser);
           _users.Remove(existingUser);
           break;
         }
       }
-      if (_owner == null) return;
+      if (_owner == null)
+        return;
       if (_owner.Name == user.Name)
         _owner = null;
       if (_users.Count > 0)
@@ -181,19 +169,19 @@ namespace TvService
       }
     }
 
-		public void HeartBeatUser(User user)
-		{
-			//Log.Debug("user:{0} heartbeat received", user.Name);
+    public void HeartBeatUser(User user)
+    {
+      //Log.Debug("user:{0} heartbeat received", user.Name);
 
-			foreach (User existingUser in _users)
-			{
-				if (existingUser.Name == user.Name)
-				{
-					existingUser.HeartBeat = DateTime.Now;					
-					break;
-				}
-			}			
-		}
+      foreach (User existingUser in _users)
+      {
+        if (existingUser.Name == user.Name)
+        {
+          existingUser.HeartBeat = DateTime.Now;
+          break;
+        }
+      }
+    }
 
     /// <summary>
     /// Gets the user.
@@ -205,9 +193,9 @@ namespace TvService
       {
         if (existingUser.Name == user.Name && existingUser.CardId == user.CardId)
         {
-					TvStoppedReason reason = user.TvStoppedReason;
+          TvStoppedReason reason = user.TvStoppedReason;
           user = (User)existingUser.Clone();
-					user.TvStoppedReason = reason;
+          user.TvStoppedReason = reason;
           return;
         }
       }
@@ -217,6 +205,7 @@ namespace TvService
     /// Gets the user.
     /// </summary>
     /// <param name="user">The user.</param>
+    /// <param name="exists">User exists</param>
     public void GetUser(ref User user, out bool exists)
     {
       foreach (User existingUser in _users)
@@ -268,41 +257,40 @@ namespace TvService
       }
     }
 
-		/// <summary>
-		/// Sets the timeshifting stopped reason.
-		/// </summary>
-		/// <param name="user">user.</param>		
-		/// <param name="reason">TvStoppedReason.</param>		
-		public void SetTimeshiftStoppedReason(User user, TvStoppedReason reason)
-		{
-			foreach (User existingUser in _users)
-			{
-				if (existingUser.Name == user.Name)
-				{
-					existingUser.TvStoppedReason = reason;
-					return;
-				}
-			}			
-		}
+    /// <summary>
+    /// Sets the timeshifting stopped reason.
+    /// </summary>
+    /// <param name="user">user.</param>		
+    /// <param name="reason">TvStoppedReason.</param>		
+    public void SetTimeshiftStoppedReason(User user, TvStoppedReason reason)
+    {
+      foreach (User existingUser in _users)
+      {
+        if (existingUser.Name == user.Name)
+        {
+          existingUser.TvStoppedReason = reason;
+          return;
+        }
+      }
+    }
 
-		/// <summary>
-		/// Gets the timeshifting stopped reason.
-		/// </summary>
-		/// <param name="user">user.</param>		
-		public TvStoppedReason GetTimeshiftStoppedReason(User user)
-		{			
-			foreach (User existingUser in _usersOld)
-			{
-				if (existingUser.Name == user.Name)
-				{
-					User userFound = null;
-					userFound = (User)existingUser.Clone();
-					//_usersOld.Remove(userFound);
-					return userFound.TvStoppedReason;
-				}
-			}
-			return TvStoppedReason.UnknownReason;
-		}
+    /// <summary>
+    /// Gets the timeshifting stopped reason.
+    /// </summary>
+    /// <param name="user">user.</param>		
+    public TvStoppedReason GetTimeshiftStoppedReason(User user)
+    {
+      foreach (User existingUser in _usersOld)
+      {
+        if (existingUser.Name == user.Name)
+        {
+          User userFound = (User)existingUser.Clone();
+          //_usersOld.Remove(userFound);
+          return userFound.TvStoppedReason;
+        }
+      }
+      return TvStoppedReason.UnknownReason;
+    }
 
     /// <summary>
     /// Gets the users.
@@ -342,37 +330,37 @@ namespace TvService
     {
       foreach (User user in _users)
       {
-        OnStopUser( user);
+        OnStopUser(user);
       }
       _users.Clear();
       _owner = null;
     }
 
 
-		public void OnStopUser(User user)
-		{
-			if (!user.IsAdmin)
-			{
+    public void OnStopUser(User user)
+    {
+      if (!user.IsAdmin)
+      {
 
-				for (int i = 0; i < _usersOld.Count; i++)
-				{
-					User existingUser = (User)_usersOld[i];
-					if (existingUser.Name == user.Name)
-					{						
-						_usersOld.Remove(existingUser);
-					}					
-				}
+        for (int i = 0; i < _usersOld.Count; i++)
+        {
+          User existingUser = _usersOld[i];
+          if (existingUser.Name == user.Name)
+          {
+            _usersOld.Remove(existingUser);
+          }
+        }
 
-				_usersOld.Add(user);
-			}
+        _usersOld.Add(user);
+      }
 
-			History history = user.History as History;
-			if (history != null)
-			{
-				history.Save();
-			}
-			user.History = null;
-		}
+      History history = user.History as History;
+      if (history != null)
+      {
+        history.Save();
+      }
+      user.History = null;
+    }
 
     public void OnZap(User user)
     {
@@ -421,8 +409,7 @@ namespace TvService
             }
           }
         }
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Write(ex);
       }

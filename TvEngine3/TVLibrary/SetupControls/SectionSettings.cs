@@ -20,13 +20,7 @@
  */
 
 using System;
-using System.IO;
 using System.Collections;
-using System.ComponentModel;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Data;
-using System.Windows.Forms;
 using System.Xml;
 
 using SetupControls;
@@ -37,17 +31,24 @@ namespace SetupTv
   {
     public SectionSettings()
     {
-      this.AutoScroll = true;
+      Init();
       InitializeComponent();
     }
 
     public SectionSettings(string text)
     {
-      this.AutoScroll = true;
-      Text = text;
+      Init(text);
     }
 
-
+    private void Init()
+    {
+      AutoScroll = true;
+    }
+    private void Init(string text)
+    {
+      Init();
+      Text = text;
+    }
     public virtual void SaveSettings()
     {
     }

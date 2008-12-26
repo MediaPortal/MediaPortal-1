@@ -21,9 +21,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-using System.Runtime.InteropServices;
-using System.Windows.Forms;
 using System.Threading;
 using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Analyzer;
@@ -73,21 +70,19 @@ namespace TvLibrary.Implementations.DVB
     }
     #endregion
 
-    #region consts
-    const int ScanMaxChannels = 10;
-    #endregion
-
     #region variables
     ITsChannelScan _analyzer;
-    ITVCard _card;
-    List<ushort> _scanPidList = new List<ushort>();
+    readonly ITVCard _card;
     ManualResetEvent _event;
-    protected bool _enableWaitForVCT = false;
+    /// <summary>
+    /// Enable wait for VCT indicator
+    /// </summary>
+    protected bool _enableWaitForVCT;
     #endregion
 
     #region ctor
     /// <summary>
-    /// Initializes a new instance of the <see cref="T:DvbBaseScanning"/> class.
+    /// Initializes a new instance of the <see cref="DvbBaseScanning"/> class.
     /// </summary>
     /// <param name="card">The card.</param>
     public DvbBaseScanning(ITVCard card)
@@ -153,7 +148,8 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public void Dispose()
     {
-      if (_analyzer == null) return;
+      if (_analyzer == null)
+        return;
       //_analyzer.SetPidFilterCallback(null);
     }
     #endregion
@@ -177,11 +173,10 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.WriteFile("Scan: no analyzer interface available");
           return new List<IChannel>();
         }
-        DateTime startTime = DateTime.Now;
         ResetSignalUpdate();
         if (_card.IsTunerLocked == false)
         {
-          System.Threading.Thread.Sleep(settings.TimeOutTune * 1000);
+          Thread.Sleep(settings.TimeOutTune * 1000);
           ResetSignalUpdate();
         }
         Log.Log.WriteFile("Scan: tuner locked:{0} signal:{1} quality:{2}", _card.IsTunerLocked, _card.SignalLevel, _card.SignalQuality);
@@ -192,46 +187,40 @@ namespace TvLibrary.Implementations.DVB
             _event = new ManualResetEvent(false);
             _analyzer.SetCallBack(this);
             _analyzer.Start(_enableWaitForVCT);
-            startTime = DateTime.Now;
             _event.WaitOne(settings.TimeOutSDT * 1000, true);
 
-            int networkId;
-            int transportId;
-            int serviceId;
-            short majorChannel;
-            short minorChannel;
-            short frequency;
-            short freeCAMode;
-            short serviceType;
-            short modulation;
-            IntPtr providerName;
-            IntPtr serviceName;
-            short pmtPid;
             int found = 0;
-            short lcn = -1;
             short channelCount;
-            short hasVideo;
-            short hasAudio;
             _analyzer.GetCount(out channelCount);
-            bool[] channelFound = new bool[channelCount];
             List<IChannel> channelsFound = new List<IChannel>();
-            startTime = DateTime.Now;
 
             for (int i = 0; i < channelCount; ++i)
             {
-              networkId = 0;
-              transportId = 0;
-              serviceId = 0;
+              int networkId;
+              int transportId;
+              int serviceId;
+              short majorChannel;
+              short minorChannel;
+              short frequency;
+              short freeCAMode;
+              short serviceType;
+              short modulation;
+              IntPtr providerName;
+              IntPtr serviceName;
+              short pmtPid;
+              short hasVideo;
+              short hasAudio;
+              short lcn;
               _analyzer.GetChannel((short)i,
                     out networkId, out transportId, out serviceId, out majorChannel, out minorChannel,
                     out frequency, out lcn, out freeCAMode, out serviceType, out modulation, out providerName, out serviceName,
-                    out pmtPid,out hasVideo,out hasAudio);
+                    out pmtPid, out hasVideo, out hasAudio);
               bool isValid = ((networkId != 0 || transportId != 0 || serviceId != 0) && pmtPid != 0);
               string name = DvbTextConverter.Convert(serviceName, "");
               Log.Log.Write("{0}) 0x{1:X} 0x{2:X} 0x{3:X} 0x{4:X} {5} type:{9:X}", i, networkId, transportId, serviceId, pmtPid, name, serviceType);
               ServiceType eServiceType = (ServiceType)serviceType;
-              if (eServiceType == ServiceType.Mpeg2HDStream || eServiceType == ServiceType.H264Stream || eServiceType==ServiceType.AdvancedCodecHDVideoStream)
-                Log.Log.WriteFile("HD Video ({0})!",eServiceType.ToString());
+              if (eServiceType == ServiceType.Mpeg2HDStream || eServiceType == ServiceType.H264Stream || eServiceType == ServiceType.AdvancedCodecHDVideoStream)
+                Log.Log.WriteFile("HD Video ({0})!", eServiceType.ToString());
 
               if ((channel as ATSCChannel) != null)
               {
@@ -261,14 +250,13 @@ namespace TvLibrary.Implementations.DVB
 
                 if (!IsKnownServiceType(info.serviceType))
                 {
-                  if (hasVideo==1)
+                  if (hasVideo == 1)
                     info.serviceType = (int)ServiceType.Video;
                   else
-                    if (hasAudio==1)
+                    if (hasAudio == 1)
                       info.serviceType = (int)ServiceType.Audio;
                 }
-                
-                startTime = DateTime.Now;
+
                 if (IsKnownServiceType(info.serviceType))
                 {
                   if (info.service_name.Length == 0)
@@ -296,7 +284,7 @@ namespace TvLibrary.Implementations.DVB
                   }
                 }
                 else
-                  Log.Log.Write("Found Unknown: {0} {1} type:{2} onid:{3:X} tsid:{4:X} sid:{5:X} pmt:{6:X} hasVideo:{7} hasAudio:{8}", info.service_provider_name, info.service_name, info.serviceType, info.networkID, info.transportStreamID, info.serviceID, info.network_pmt_PID,hasVideo,hasAudio);
+                  Log.Log.Write("Found Unknown: {0} {1} type:{2} onid:{3:X} tsid:{4:X} sid:{5:X} pmt:{6:X} hasVideo:{7} hasAudio:{8}", info.service_provider_name, info.service_name, info.serviceType, info.networkID, info.transportStreamID, info.serviceID, info.network_pmt_PID, hasVideo, hasAudio);
               }
             }
             if (found != channelCount)
@@ -354,6 +342,12 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     #region NIT scanning
+    ///<summary>
+    /// Scan NIT channel
+    ///</summary>
+    ///<param name="channel">Channel</param>
+    ///<param name="settings">Scan Parameters</param>
+    ///<returns>Found channels</returns>
     public List<IChannel> ScanNIT(IChannel channel, ScanParameters settings)
     {
       try
@@ -368,14 +362,12 @@ namespace TvLibrary.Implementations.DVB
         }
         _analyzer.SetCallBack(null);
         _analyzer.ScanNIT();
-        DateTime startTime = DateTime.Now;
-        System.Threading.Thread.Sleep(settings.TimeOutTune * 1000);
+        Thread.Sleep(settings.TimeOutTune * 1000);
         ResetSignalUpdate();
         Log.Log.WriteFile("ScanNIT: tuner locked:{0} signal:{1} quality:{2}", _card.IsTunerLocked, _card.SignalLevel, _card.SignalQuality);
         if (_card.IsTunerLocked || _card.SignalLevel > 0 || _card.SignalQuality > 0)
         {
-          startTime = DateTime.Now;
-          int count = 0;
+          int count;
 
           _event = new ManualResetEvent(false);
           _event.WaitOne(16000, true);
@@ -438,7 +430,7 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     #region Helper
-    private bool IsKnownServiceType(int serviceType)
+    private static bool IsKnownServiceType(int serviceType)
     {
       return (serviceType == (int)ServiceType.Video || serviceType == (int)ServiceType.Mpeg2HDStream ||
               serviceType == (int)ServiceType.Audio || serviceType == (int)ServiceType.H264Stream ||

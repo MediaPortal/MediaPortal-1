@@ -20,34 +20,17 @@
  */
 
 using System;
-using System.IO;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-using System.Net;
-using System.Net.Sockets;
-using DirectShowLib.SBE;
-using TvLibrary;
-using TvLibrary.Implementations;
 using TvLibrary.Interfaces;
-using TvLibrary.Implementations.Analog;
-using TvLibrary.Implementations.DVB;
-using TvLibrary.Implementations.Hybrid;
-using TvLibrary.Channels;
-using TvLibrary.Epg;
 using TvLibrary.Log;
-using TvLibrary.Streaming;
 using TvControl;
-using TvEngine;
 using TvDatabase;
-using TvEngine.Events;
 
 namespace TvService
 {
   public class AdvancedCardAllocation : CardAllocationBase, ICardAllocation
   {
-    #region private members   
+    #region private members
     #endregion
 
     #region ICardAllocation Members
@@ -55,7 +38,6 @@ namespace TvService
     /// Gets a list of all free cards which can receive the channel specified
     /// List is sorted by priority
     /// </summary>
-    /// <param name="channelName">Name of the channel.</param>
     /// <returns>list containg all free cards which can receive the channel</returns>
     public List<CardDetail> GetAvailableCardsForChannel(Dictionary<int, ITvCardHandler> cards, Channel dbChannel, ref User user, bool checkTransponders, out TvResult result, int recommendedCardId)
     {
@@ -115,7 +97,8 @@ namespace TvService
                 check = false;
               }
             }
-            if (check == false) continue;
+            if (check == false)
+              continue;
 
 
             //check if card is enabled
@@ -135,8 +118,7 @@ namespace TvService
                 Log.Info("Controller:    card:{0} type:{1} is not present", cardId, tvcard.Type);
                 continue;
               }
-            }
-            catch (Exception)
+            } catch (Exception)
             {
               Log.Error("card: unable to connect to slave controller at:{0}", keyPair.Value.DataBaseCard.ReferencedServer().HostName);
               continue;
@@ -199,7 +181,7 @@ namespace TvService
                     }
                   }
                 }
-                
+
                 //if the user is already using this card
                 //and is watching a scrambled signal
                 //then we must the CAM will always be able to watch the requested channel
@@ -223,7 +205,7 @@ namespace TvService
                     camDecrypting--;
                   }
                 }
-                
+
                 //check if cam is capable of descrambling an extra channel                
                 int dbDecryptLimit = keyPair.Value.DataBaseCard.DecryptLimit;
                 if (dbDecryptLimit > 0)
@@ -242,7 +224,7 @@ namespace TvService
                   //it is not, skip this card
                   Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder decrypting {2}/{3} channels. cam limit reached",
                          cardId, tvcard.Type, tvcard.NumberOfChannelsDecrypting, keyPair.Value.DataBaseCard.DecryptLimit);
-                  
+
 
                   //allow admin users like the scheduler to use this card anyway                  
                   if (user.IsAdmin)
@@ -255,13 +237,13 @@ namespace TvService
                     {
                       // we are already doing stuff on this transponder, skip it.
                       continue;
-                    }                    
+                    }
                   }
                   else
                   {
                     continue;
                   }
-                }              
+                }
               } //end of cam present block              
               else // no cam present
               {
@@ -270,7 +252,7 @@ namespace TvService
               }
             }
             else
-            {    
+            {
               //different transponder, are we the owner of this card?
               if (false == tvcard.Users.IsOwner(user))
               {
@@ -296,7 +278,8 @@ namespace TvService
             {
               for (int i = 0; i < users.Length; ++i)
               {
-                if (users[i].Name != user.Name) nrOfOtherUsers++;
+                if (users[i].Name != user.Name)
+                  nrOfOtherUsers++;
               }
             }
 
@@ -307,7 +290,7 @@ namespace TvService
               cardInfo.Priority -= 100;
             }
 
-            
+
 
 
             // handle recommended cardid.
@@ -315,7 +298,7 @@ namespace TvService
             // A) if card is free while other cards are busy.
             // B) if card is busy (but decryption slot available) while other cards are busy or free.
 
-            if (recommendedCardId == cardId)              
+            if (recommendedCardId == cardId)
             {
               if (nrOfOtherUsers == 0 || canDecrypt)
               {
@@ -342,16 +325,12 @@ namespace TvService
         }
         else
         {
-          if (cardsFound == 0)
-            result = TvResult.ChannelNotMappedToAnyCard;
-          else
-            result = TvResult.AllCardsBusy;
+          result = cardsFound == 0 ? TvResult.ChannelNotMappedToAnyCard : TvResult.AllCardsBusy;
         }
         Log.Info("Controller: found {0} available", cardsAvailable.Count);
 
         return cardsAvailable;
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         result = TvResult.UnknownError;
         Log.Write(ex);

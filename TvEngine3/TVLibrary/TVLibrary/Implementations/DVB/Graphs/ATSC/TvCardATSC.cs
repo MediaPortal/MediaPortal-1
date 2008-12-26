@@ -19,20 +19,11 @@
  *
  */
 using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Text;
 using DirectShowLib;
 using DirectShowLib.BDA;
-using TvLibrary.Implementations;
-using DirectShowLib.SBE;
 using TvLibrary.Interfaces;
-using TvLibrary.Interfaces.Analyzer;
 using TvLibrary.Channels;
-using TvLibrary.Implementations.DVB.Structures;
 using TvLibrary.Implementations.Helper;
-using TvLibrary.Epg;
-using TvLibrary.Helper;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -45,31 +36,23 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Hold the ATSC tuning space
     /// </summary>
-    protected IATSCTuningSpace _tuningSpace = null;
+    protected IATSCTuningSpace _tuningSpace;
     /// <summary>
     /// Holds the current ATSC tuning request
     /// </summary>
-    protected IATSCChannelTuneRequest _tuneRequest = null;
-    
+    protected IATSCChannelTuneRequest _tuneRequest;
+
     #endregion
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="T:TvCardATSC"/> class.
+    /// Initializes a new instance of the <see cref="TvCardATSC"/> class.
     /// </summary>
     /// <param name="device">The device.</param>
     public TvCardATSC(DsDevice device)
       : base(device)
     {
       _cardType = CardType.Atsc;
-      
-      try
-      {
-        //BuildGraph();
-        //RunGraph();
-        //StopGraph();
-      } catch (Exception)
-      {
-      }
+
     }
 
     #region graphbuilding
@@ -103,7 +86,7 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Write(ex);
         Dispose();
         _graphState = GraphState.Idle;
-        throw ex;
+        throw;
       }
     }
 
@@ -116,15 +99,21 @@ namespace TvLibrary.Implementations.DVB
       ITuner tuner = (ITuner)_filterNetworkProvider;
       SystemTuningSpaces systemTuningSpaces = new SystemTuningSpaces();
       ITuningSpaceContainer container = systemTuningSpaces as ITuningSpaceContainer;
+      if (container == null)
+      {
+        Log.Log.Error("CreateTuningSpace() Failed to get ITuningSpaceContainer");
+        return;
+      }
       IEnumTuningSpaces enumTuning;
       ITuningSpace[] spaces = new ITuningSpace[2];
       ITuneRequest request;
-      int fetched;
       container.get_EnumTuningSpaces(out enumTuning);
       while (true)
       {
+        int fetched;
         enumTuning.Next(1, spaces, out fetched);
-        if (fetched != 1) break;
+        if (fetched != 1)
+          break;
         string name;
         spaces[0].get_UniqueName(out name);
         if (name == "ATSC TuningSpace2")
@@ -162,7 +151,7 @@ namespace TvLibrary.Implementations.DVB
       locator.put_TSID(-1);
       object newIndex;
       _tuningSpace.put_DefaultLocator(locator);
-      container.Add((ITuningSpace)_tuningSpace, out newIndex);
+      container.Add(_tuningSpace, out newIndex);
       tuner.put_TuningSpace(_tuningSpace);
       Release.ComObject("TuningSpaceContainer", container);
       _tuningSpace.CreateTuneRequest(out request);
@@ -189,7 +178,7 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.WriteFile("atsc:Channel is not a ATSC channel!!! {0}", channel.GetType().ToString());
           return null;
         }
-        ATSCChannel oldChannel = CurrentChannel as ATSCChannel;
+        ATSCChannel oldChannel = (ATSCChannel)CurrentChannel;
         if (CurrentChannel != null)
         {
           if (oldChannel.Equals(channel))
@@ -206,16 +195,15 @@ namespace TvLibrary.Implementations.DVB
         ILocator locator;
         _tuningSpace.get_DefaultLocator(out locator);
         IATSCLocator atscLocator = (IATSCLocator)locator;
-        int hr;
         //hr = _tuningSpace.put_InputType(TunerInputType.Cable);
-        hr = atscLocator.put_PhysicalChannel(atscChannel.PhysicalChannel);
-        hr = atscLocator.put_SymbolRate(-1);//atscChannel.SymbolRate);
-        hr = atscLocator.put_TSID(-1);//atscChannel.TransportId);
-        hr = atscLocator.put_CarrierFrequency((int)atscChannel.Frequency);
-        hr = atscLocator.put_InnerFEC(FECMethod.MethodNotSet);
-        hr = atscLocator.put_Modulation(atscChannel.ModulationType);
-        hr = _tuneRequest.put_MinorChannel(atscChannel.MinorChannel);
-        hr = _tuneRequest.put_Channel(atscChannel.MajorChannel);
+        atscLocator.put_PhysicalChannel(atscChannel.PhysicalChannel);
+        atscLocator.put_SymbolRate(-1);//atscChannel.SymbolRate);
+        atscLocator.put_TSID(-1);//atscChannel.TransportId);
+        atscLocator.put_CarrierFrequency((int)atscChannel.Frequency);
+        atscLocator.put_InnerFEC(FECMethod.MethodNotSet);
+        atscLocator.put_Modulation(atscChannel.ModulationType);
+        _tuneRequest.put_MinorChannel(atscChannel.MinorChannel);
+        _tuneRequest.put_Channel(atscChannel.MajorChannel);
         _tuneRequest.put_Locator(locator);
         //ViXS ATSC QAM check
         _conditionalAccess.CheckVIXSQAM(atscChannel);
@@ -229,7 +217,7 @@ namespace TvLibrary.Implementations.DVB
       } catch (Exception ex)
       {
         Log.Log.Write(ex);
-        throw ex;
+        throw;
       }
       //unreachable return null;
     }
@@ -270,7 +258,8 @@ namespace TvLibrary.Implementations.DVB
     /// </returns>
     public bool CanTune(IChannel channel)
     {
-      if ((channel as ATSCChannel) == null) return false;
+      if ((channel as ATSCChannel) == null)
+        return false;
       return true;
     }
   }

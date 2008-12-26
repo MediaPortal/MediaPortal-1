@@ -19,23 +19,24 @@
  *
  */
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using DirectShowLib;
 using DirectShowLib.BDA;
-using System.Windows.Forms;
 using TvLibrary.Channels;
 using TvLibrary.Interfaces.Analyzer;
 
 namespace TvLibrary.Implementations.DVB
 {
+  /// <summary>
+  /// Technotrend CI  control class
+  /// </summary>
   public class TechnoTrend : IDisposable, IDiSEqCController
   {
-    ITechnoTrend _technoTrendInterface = null;
-    IntPtr ptrPmt;
-    IntPtr _ptrDataInstance;
-    DVBSChannel _previousChannel = null;
+    ITechnoTrend _technoTrendInterface;
+    readonly IntPtr ptrPmt;
+    readonly IntPtr _ptrDataInstance;
+    DVBSChannel _previousChannel;
     /// <summary>
     /// Initializes a new instance of the <see cref="TechnoTrend"/> class.
     /// </summary>
@@ -44,7 +45,8 @@ namespace TvLibrary.Implementations.DVB
     public TechnoTrend(IBaseFilter tunerFilter, IBaseFilter analyzerFilter)
     {
       _technoTrendInterface = analyzerFilter as ITechnoTrend;
-      _technoTrendInterface.SetTunerFilter(tunerFilter);
+      if (_technoTrendInterface != null)
+        _technoTrendInterface.SetTunerFilter(tunerFilter);
       ptrPmt = Marshal.AllocCoTaskMem(1024);
       _ptrDataInstance = Marshal.AllocCoTaskMem(1024);
     }
@@ -67,7 +69,8 @@ namespace TvLibrary.Implementations.DVB
     /// </returns>
     public bool IsCamReady()
     {
-      if (_technoTrendInterface == null) return false;
+      if (_technoTrendInterface == null)
+        return false;
       bool yesNo = false;
       _technoTrendInterface.IsCamReady(ref yesNo);
       return yesNo;
@@ -83,7 +86,8 @@ namespace TvLibrary.Implementations.DVB
     {
       get
       {
-        if (_technoTrendInterface == null) return false;
+        if (_technoTrendInterface == null)
+          return false;
         bool yesNo = false;
         _technoTrendInterface.IsTechnoTrend(ref yesNo);
         return yesNo;
@@ -98,7 +102,8 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public bool SendPMT(byte[] pmt, int PMTlength)
     {
-      if (_technoTrendInterface == null) return true;
+      if (_technoTrendInterface == null)
+        return true;
       bool succeeded = false;
       for (int i = 0; i < PMTlength; ++i)
       {
@@ -115,7 +120,8 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public bool DescrambleMultiple(Dictionary<int, ConditionalAccessContext> subChannels)
     {
-      if (_technoTrendInterface == null) return true;
+      if (_technoTrendInterface == null)
+        return true;
       List<ConditionalAccessContext> filteredChannels = new List<ConditionalAccessContext>();
       bool succeeded = true;
       Dictionary<int, ConditionalAccessContext>.Enumerator en = subChannels.GetEnumerator();
@@ -125,7 +131,8 @@ namespace TvLibrary.Implementations.DVB
         ConditionalAccessContext context = en.Current.Value;
         foreach (ConditionalAccessContext c in filteredChannels)
         {
-          if (c.Channel.Equals(context.Channel)) exists = true;
+          if (c.Channel.Equals(context.Channel))
+            exists = true;
         }
         if (!exists)
         {
@@ -149,14 +156,15 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="parameters">The scanparameters.</param>
     public void SendDiseqCommand(ScanParameters parameters, DVBSChannel channel)
     {
-      if (_technoTrendInterface == null) return;
+      if (_technoTrendInterface == null)
+        return;
       if (_previousChannel != null)
       {
         if (_previousChannel.Frequency == channel.Frequency &&
             _previousChannel.DisEqc == channel.DisEqc &&
             _previousChannel.Polarisation == channel.Polarisation)
         {
-          Log.Log.WriteFile("Technotrend: already tuned to diseqc:{0}, frequency:{1}, polarisation:{2}",channel.DisEqc, channel.Frequency, channel.Polarisation);
+          Log.Log.WriteFile("Technotrend: already tuned to diseqc:{0}, frequency:{1}, polarisation:{2}", channel.DisEqc, channel.Frequency, channel.Polarisation);
           return;
         }
       }
@@ -175,7 +183,7 @@ namespace TvLibrary.Implementations.DVB
       // 2        A         B
       // 3        B         A
       // 4        B         B
-      bool hiBand = BandTypeConverter.IsHiBand(channel,parameters);
+      bool hiBand = BandTypeConverter.IsHiBand(channel, parameters);
       Log.Log.WriteFile("TechnoTrend SendDiseqcCommand() diseqc:{0}, antenna:{1} frequency:{2}, polarisation:{3} hiband:{4}", channel.DisEqc, antennaNr, channel.Frequency, channel.Polarisation, hiBand);
       bool isHorizontal = ((channel.Polarisation == Polarisation.LinearH) || (channel.Polarisation == Polarisation.CircularL));
       byte cmd = 0xf0;
@@ -194,7 +202,8 @@ namespace TvLibrary.Implementations.DVB
     /// </returns>
     public bool IsCamPresent()
     {
-      if (_technoTrendInterface == null) return false;
+      if (_technoTrendInterface == null)
+        return false;
       bool yesNo = false;
       _technoTrendInterface.IsCamPresent(ref yesNo);
       return yesNo;
@@ -209,7 +218,8 @@ namespace TvLibrary.Implementations.DVB
     /// <returns>true if succeeded, otherwise false</returns>
     public bool SendDiSEqCCommand(byte[] diSEqC)
     {
-      if (_technoTrendInterface == null) return false;
+      if (_technoTrendInterface == null)
+        return false;
       for (int i = 0; i < diSEqC.Length; ++i)
         Marshal.WriteByte(_ptrDataInstance, i, diSEqC[i]);
       Polarisation pol = Polarisation.LinearV;

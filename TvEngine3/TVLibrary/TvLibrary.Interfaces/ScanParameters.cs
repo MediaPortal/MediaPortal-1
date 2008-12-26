@@ -19,8 +19,6 @@
  *
  */
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace TvLibrary
 {
@@ -39,7 +37,7 @@ namespace TvLibrary
     int _lnbLowFrequency = -1;
     int _lnbHighFrequency = -1;
     int _lnbSwitchFrequency = -1;
-    bool _useDefaultLnbFrequencies=true;
+    bool _useDefaultLnbFrequencies = true;
     int _minFiles = 6;
     int _maxFiles = 20;
     UInt32 _maxFileSize = (256 * 1000 * 1000);
@@ -235,11 +233,13 @@ namespace TvLibrary
     /// <value>The time out Analog scanning.</value>
     public int TimeOutAnalog
     {
-      get { 
+      get
+      {
         return _timeoutAnalog;
       }
-      set { 
-        _timeoutAnalog = value; 
+      set
+      {
+        _timeoutAnalog = value;
       }
     }
 

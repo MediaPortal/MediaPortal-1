@@ -23,19 +23,13 @@
 
 #endregion
 
-using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Drawing;
 using System.Windows.Forms;
-using System.Net;
-using System.IO;
 
 #pragma warning disable 108
 
 namespace SetupTv.Sections
 {
-  public partial class Project : SetupTv.SectionSettings
+  public partial class Project : SectionSettings
   {
     public Project()
       : this("Project") { }
@@ -46,7 +40,7 @@ namespace SetupTv.Sections
       InitializeComponent();
     }
 
-    private void linkLabel1_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
+    private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
       if (linkLabelHomepage.Text == null)
         return;
@@ -57,7 +51,7 @@ namespace SetupTv.Sections
       }
     }
 
-    private void linkLabel2_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
+    private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
       if (linkLabelForums.Text == null)
         return;
@@ -68,7 +62,7 @@ namespace SetupTv.Sections
       }
     }
 
-    private void linkLabel3_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
+    private void linkLabel3_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
       if (linkLabelOnlineDocumentation.Text == null)
         return;
@@ -79,7 +73,7 @@ namespace SetupTv.Sections
       }
     }
 
-    private void linkLabel4_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
+    private void linkLabel4_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
       if (linkLabelSourceforge.Text == null)
         return;

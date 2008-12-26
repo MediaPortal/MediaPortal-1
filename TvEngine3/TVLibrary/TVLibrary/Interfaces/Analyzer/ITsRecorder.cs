@@ -18,9 +18,6 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.InteropServices;
 
 namespace TvLibrary.Interfaces.Analyzer
@@ -65,6 +62,11 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <returns></returns>
     [PreserveSig]
     int SetMode(TimeShiftingMode mode);
+    /// <summary>
+    /// Sets the pmt pid
+    /// </summary>
+    /// <param name="pmtPid">The PMT pid</param>
+    /// <returns></returns>
     [PreserveSig]
     int SetPmtPid(short pmtPid);
   }

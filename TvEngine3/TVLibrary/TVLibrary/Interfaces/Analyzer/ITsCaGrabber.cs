@@ -19,12 +19,13 @@
  *
  */
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.InteropServices;
 
 namespace TvLibrary.Interfaces.Analyzer
 {
+  ///<summary>
+  /// The tswriter ca callback
+  ///</summary>
   [ComVisible(true), ComImport,
  Guid("38536AB6-7A41-404f-917F-C47DD8B639C7"),
   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]

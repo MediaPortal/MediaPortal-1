@@ -19,9 +19,6 @@
  *
  */
 using System;
-using System.Collections.Generic;
-using System.Text;
-using TvLibrary.Interfaces;
 
 namespace TvLibrary.ChannelLinkage
 {
@@ -40,7 +37,7 @@ namespace TvLibrary.ChannelLinkage
 
     #region ctor
     /// <summary>
-    /// Initializes a new instance of the <see cref="T:LinkedChannel"/> class.
+    /// Initializes a new instance of the <see cref="LinkedChannel"/> class.
     /// </summary>
     public LinkedChannel()
     {
@@ -52,6 +49,9 @@ namespace TvLibrary.ChannelLinkage
     #endregion
 
     #region Properties
+    /// <summary>
+    /// Gets/Sets the network id
+    /// </summary>
     public ushort NetworkId
     {
       get
@@ -63,6 +63,10 @@ namespace TvLibrary.ChannelLinkage
         _networkId = value;
       }
     }
+
+    /// <summary>
+    /// Gets/Sets the transport id
+    /// </summary>
     public ushort TransportId
     {
       get
@@ -74,6 +78,10 @@ namespace TvLibrary.ChannelLinkage
         _transportId = value;
       }
     }
+
+    /// <summary>
+    /// Gets/Sets the service id
+    /// </summary>
     public ushort ServiceId
     {
       get
@@ -85,6 +93,10 @@ namespace TvLibrary.ChannelLinkage
         _serviceId = value;
       }
     }
+
+    /// <summary>
+    /// Gets/Sets the linked channel name
+    /// </summary>
     public string Name
     {
       get

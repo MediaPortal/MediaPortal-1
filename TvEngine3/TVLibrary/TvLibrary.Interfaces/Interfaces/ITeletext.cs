@@ -19,12 +19,10 @@
  *
  */
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
-using TvLibrary.Interfaces;
 
-namespace TvLibrary.Teletext {
+namespace TvLibrary.Teletext
+{
   /// <summary>
   /// delegate which is called when a teletext page has been received,modified or deleted
   /// </summary>
@@ -35,7 +33,8 @@ namespace TvLibrary.Teletext {
   /// <summary>
   /// teletext decoder interface
   /// </summary>
-  public interface ITeletext {
+  public interface ITeletext
+  {
     #region events
     /// <summary>
     /// event which gets fired when the current selected pagenumber is updated

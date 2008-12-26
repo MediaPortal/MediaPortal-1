@@ -20,7 +20,6 @@
  */
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Net;
 
 namespace TvControl
@@ -40,7 +39,7 @@ namespace TvControl
     DateTime _lastHeartBeat;
     [NonSerialized]
     object _history;
-    private Dictionary<int, ChannelState> _channelStates = null; //used primarily for miniepg.
+    private Dictionary<int, ChannelState> _channelStates; //used primarily for miniepg.
 
     /// <summary>
     /// Initializes a new instance of the <see cref="User"/> class.
@@ -195,6 +194,9 @@ namespace TvControl
       }
     }
 
+    /// <summary>
+    /// Gets/Sets the time of the last heartbeat
+    /// </summary>
     public DateTime HeartBeat
     {
       get
@@ -207,6 +209,9 @@ namespace TvControl
       }
     }
 
+    /// <summary>
+    /// Gets/Sets the stop reason
+    /// </summary>
     public TvStoppedReason TvStoppedReason
     {
       get

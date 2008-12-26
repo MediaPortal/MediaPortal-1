@@ -20,38 +20,37 @@
  */
 using System;
 using System.Collections.Generic;
-using System.Text;
 using TvLibrary.Interfaces;
 using TvLibrary.Streaming;
 
 namespace TvControl
 {
-	 /// <summary>
+  /// <summary>
   /// enum describing the possible result codes for the tv engine when TV suddenly stops
   /// </summary>
-	public enum TvStoppedReason
-	{
-		/// <summary>
-		/// Timeshifting stopped because of an unknown reason.
-		/// </summary>
-		UnknownReason,
-		/// <summary>
-		/// Timeshifting stopped because a recording started which needed the card.
-		/// </summary>
-		RecordingStarted,
-		/// <summary>
-		/// Timeshifting stopped because client was kicked by server admin.
-		/// </summary>
-		KickedByAdmin,
-		/// <summary>
-		/// Timeshifting stopped because client heartbeat timed out.
-		/// </summary>
-		HeartBeatTimeOut,
+  public enum TvStoppedReason
+  {
+    /// <summary>
+    /// Timeshifting stopped because of an unknown reason.
+    /// </summary>
+    UnknownReason,
+    /// <summary>
+    /// Timeshifting stopped because a recording started which needed the card.
+    /// </summary>
+    RecordingStarted,
+    /// <summary>
+    /// Timeshifting stopped because client was kicked by server admin.
+    /// </summary>
+    KickedByAdmin,
+    /// <summary>
+    /// Timeshifting stopped because client heartbeat timed out.
+    /// </summary>
+    HeartBeatTimeOut,
     /// <summary>
     /// Timeshifting stopped because the owner of the same transponder has decided to change transponder.
     /// </summary>
     OwnerChangedTS
-	}
+  }
 
   /// <summary>
   /// enum describing the possible result codes for the tv engine
@@ -109,13 +108,13 @@ namespace TvControl
     /// <summary>
     /// Operation failed since we are not the owner of the card
     /// </summary>
-    NotTheOwner		
+    NotTheOwner
   }
 
   /// <summary>
   /// current availability of a specific channel
   /// </summary>
-  public enum ChannelState : int
+  public enum ChannelState
   {
     /// <summary>
     /// the channel cannot be tuned right now - maybe all cards are busy
@@ -142,7 +141,7 @@ namespace TvControl
   public interface IController
   {
     #region internal interface
-    
+
     /// <summary>
     /// Gets the server.
     /// </summary>
@@ -189,11 +188,11 @@ namespace TvControl
     /// <returns>true if card can tune to the channel otherwise false</returns>
     bool CanTune(int cardId, IChannel channel);
 
-		/// <summary>
-		/// Method to check if card is currently present and detected
-		/// </summary>
-		/// <returns>true if card is present otherwise false</returns>
-		bool CardPresent(int cardId);
+    /// <summary>
+    /// Method to check if card is currently present and detected
+    /// </summary>
+    /// <returns>true if card is present otherwise false</returns>
+    bool CardPresent(int cardId);
 
     /// <summary>
     /// Method to remove a non-present card from the local card collection
@@ -256,6 +255,13 @@ namespace TvControl
     /// <param name="channel">contains tuningdetails for the transponder.</param>
     /// <returns>list of all channels found</returns>
     IChannel[] Scan(int cardId, IChannel channel);
+
+    /// <summary>
+    /// scans nit the current transponder for channels
+    /// </summary>
+    /// <param name="cardId">id of the card.</param>
+    /// <param name="channel">contains tuningdetails for the transponder.</param>
+    /// <returns>list of all channels found</returns>
     IChannel[] ScanNIT(int cardId, IChannel channel);
 
     /// <summary>
@@ -276,6 +282,7 @@ namespace TvControl
     /// returns which schedule the card specified is currently recording
     /// </summary>
     /// <param name="cardId">card id</param>
+    /// <param name="channelId">channel id</param>
     /// <returns>id of Schedule or -1 if  card not recording</returns>
     int GetRecordingSchedule(int cardId, int channelId);
 
@@ -290,8 +297,8 @@ namespace TvControl
     /// </summary>
     /// <param name="idRecording">id of recording</param>
     /// <returns>URL containing the RTSP adress on which the recording can be found</returns>
-    string GetRecordingUrl(int idRecording);    
-    
+    string GetRecordingUrl(int idRecording);
+
     /// <summary>
     /// Deletes the recording from database and disk
     /// </summary>
@@ -320,6 +327,14 @@ namespace TvControl
     /// <returns>true if a card is recording the schedule, otherwise false</returns>
     bool IsRecordingSchedule(int idSchedule, out VirtualCard card);
 
+    /// <summary>
+    /// Determines whether the specified channel name is recording.
+    /// </summary>
+    /// <param name="channelName">Name of the channel.</param>
+    /// <param name="card">The vcard.</param>
+    /// <returns>
+    /// 	<c>true</c> if the specified channel name is recording; otherwise, <c>false</c>.
+    /// </returns>
     bool IsRecording(string channelName, out VirtualCard card);
 
     /// <summary>
@@ -330,7 +345,7 @@ namespace TvControl
     /// </returns>
     bool IsAnyCardRecording();
 
-/// <summary>
+    /// <summary>
     /// Determines if any card is currently busy recording or timeshifting
     /// </summary>
     /// <param name="userTS">timeshifting user</param>
@@ -341,7 +356,7 @@ namespace TvControl
     /// 	<c>true</c> if a card is recording or timeshifting; otherwise, <c>false</c>.
     /// </returns>
     bool IsAnyCardRecordingOrTimeshifting(User userTS, out bool isUserTS, out bool isAnyUserTS, out bool isRec);
-        /// <summary>
+    /// <summary>
     /// Determines if any card is not locked by a user
     /// </summary>
     /// <returns>
@@ -418,11 +433,11 @@ namespace TvControl
     /// Finds out whether a channel is currently tuneable or not
     /// </summary>
     /// <param name="idChannel">The channel id</param>
-		/// <param name="user">User</param>
+    /// <param name="user">User</param>
     /// <returns>an enum indicating tunable/timeshifting/recording</returns>
     ChannelState GetChannelState(int idChannel, User user);
 
-/// <summary>
+    /// <summary>
     /// Fetches all channels with backbuffer
     /// </summary>
     /// <param name="currentRecChannels"></param>
@@ -448,16 +463,64 @@ namespace TvControl
     #endregion
 
     #region DiSEqC
+    /// <summary>
+    /// Reset DiSEqC for the given card
+    /// </summary>
+    /// <param name="cardId">card id</param>
     void DiSEqCReset(int cardId);
+    /// <summary>
+    /// Stops the DiSEqC motor for the given card
+    /// </summary>
+    /// <param name="cardId">card id</param>
     void DiSEqCStopMotor(int cardId);
+    /// <summary>
+    /// Sets the DiSEqC east limit for the given card
+    /// </summary>
+    /// <param name="cardId">card id</param>
     void DiSEqCSetEastLimit(int cardId);
+    /// <summary>
+    /// Sets the DiSEqC west limit for the given card
+    /// </summary>
+    /// <param name="cardId">card id</param>
     void DiSEqCSetWestLimit(int cardId);
+    /// <summary>
+    /// DiSEqC force limit  for the given card
+    /// </summary>
+    /// <param name="cardId">card id</param>
+    /// <param name="onoff">on/off</param>
     void DiSEqCForceLimit(int cardId, bool onoff);
+    /// <summary>
+    /// Moves the DiSEqC motor for the given card
+    /// </summary>
+    /// <param name="cardId">card id</param>
+    /// <param name="direction">direction</param>
+    /// <param name="numberOfSteps">Number of steps</param>
     void DiSEqCDriveMotor(int cardId, DiSEqCDirection direction, byte numberOfSteps);
+    /// <summary>
+    /// Stores the current DiSEqC position for the given card
+    /// </summary>
+    /// <param name="cardId">card id</param>
+    /// <param name="position">position</param>
     void DiSEqCStorePosition(int cardId, byte position);
+    /// <summary>
+    /// DiSEqC move to the reference position for the given card
+    /// </summary>
+    /// <param name="cardId">card id</param>
     void DiSEqCGotoReferencePosition(int cardId);
+    /// <summary>
+    /// Go to the DiSEqC position for the given card
+    /// </summary>
+    /// <param name="cardId">card id</param>
+    /// <param name="position">position</param>
     void DiSEqCGotoPosition(int cardId, byte position);
-    void DiSEqCGetPosition(int cardId,out int satellitePosition, out int stepsAzimuth, out int stepsElevation);
+    /// <summary>
+    /// Gets the DiSEqC position for the given card
+    /// </summary>
+    /// <param name="cardId">card id</param>
+    /// <param name="satellitePosition">satellite position</param>
+    /// <param name="stepsAzimuth">azimuth</param>
+    /// <param name="stepsElevation">elvation</param>
+    void DiSEqCGetPosition(int cardId, out int satellitePosition, out int stepsAzimuth, out int stepsElevation);
     #endregion
 
     #region sub channels
@@ -525,7 +588,7 @@ namespace TvControl
     /// </summary>
     /// <param name="user">The user.</param>
     /// <returns>true when card is timeshifting otherwise false</returns>
-    bool IsTimeShifting(ref User user);    
+    bool IsTimeShifting(ref User user);
 
 
     /// <summary>
@@ -539,8 +602,9 @@ namespace TvControl
     /// This function checks whether something should be recorded at the given time.
     /// </summary>
     /// <param name="time">the time to check for recordings.</param>
+    /// <param name="scheduleId">schedule id</param>
     /// <returns>true if any recording due to time</returns>
-    bool IsTimeToRecord(DateTime time, int scheduleId );
+    bool IsTimeToRecord(DateTime time, int scheduleId);
 
 
     /// <summary>
@@ -678,7 +742,7 @@ namespace TvControl
     void SetCurrentAudioStream(User user, IAudioStream stream);
     #endregion
 
-        /// <summary>
+    /// <summary>
     /// returns the current video stream on the virtual card. 
     /// </summary>
     /// <param name="user">The user.</param>
@@ -694,7 +758,7 @@ namespace TvControl
     /// <returns>
     /// TvResult indicating whether method succeeded
     /// </returns>
-    TvResult StartTimeShifting(ref User user,ref string fileName);
+    TvResult StartTimeShifting(ref User user, ref string fileName);
 
     /// <summary>
     /// Stops the card.
@@ -703,7 +767,7 @@ namespace TvControl
     void StopCard(User user);
 
 
-		/// <summary>
+    /// <summary>
     /// Query what card would be used for timeshifting on any given channel
     /// </summary>
     /// <param name="user">user credentials.</param>
@@ -711,7 +775,7 @@ namespace TvControl
     /// <returns>
     /// returns card id which would be used when doing the actual timeshifting.
     /// </returns>
-		int TimeShiftingWouldUseCard(ref User user, int idChannel);
+    int TimeShiftingWouldUseCard(ref User user, int idChannel);
 
     /// <summary>
     /// Start timeshifting on a specific channel
@@ -725,20 +789,20 @@ namespace TvControl
     TvResult StartTimeShifting(ref User user, int idChannel, out VirtualCard card);
 
 
-		/// <summary>
-		/// Stops the time shifting.
-		/// </summary>
-		/// <param name="user">user credentials.</param>
-		/// <param name="reason">reason why timeshifting is stopped.</param>
-		/// <returns>true if success otherwise false</returns>
-		bool StopTimeShifting(ref User user, TvStoppedReason reason);
+    /// <summary>
+    /// Stops the time shifting.
+    /// </summary>
+    /// <param name="user">user credentials.</param>
+    /// <param name="reason">reason why timeshifting is stopped.</param>
+    /// <returns>true if success otherwise false</returns>
+    bool StopTimeShifting(ref User user, TvStoppedReason reason);
 
-		/// <summary>
-		/// Gets the reason why timeshifting stopped.
-		/// </summary>
-        /// <param name="user">The user.</param>		
-		/// <returns>TvStoppedReason</returns>
-		TvStoppedReason GetTvStoppedReason(User user);
+    /// <summary>
+    /// Gets the reason why timeshifting stopped.
+    /// </summary>
+    /// <param name="user">The user.</param>		
+    /// <returns>TvStoppedReason</returns>
+    TvStoppedReason GetTvStoppedReason(User user);
 
     /// <summary>
     /// Stops the time shifting.
@@ -781,14 +845,14 @@ namespace TvControl
     /// <returns>
     /// 	<c>true</c> if card is tuned to the transponder; otherwise, <c>false</c>.
     /// </returns>
-    bool IsTunedToTransponder(int cardId,IChannel transponder);
+    bool IsTunedToTransponder(int cardId, IChannel transponder);
 
     /// <summary>
     /// Gets the user for card.
     /// </summary>
     /// <param name="cardId">The card id.</param>
     /// <returns></returns>
-    User GetUserForCard(int cardId);        
+    User GetUserForCard(int cardId);
 
     /// <summary>
     /// Gets the users for card.
@@ -824,13 +888,18 @@ namespace TvControl
     /// </summary>
     int ActiveStreams { get; }
 
+    /// <summary>
+    /// Checks if the card supports sub channels
+    /// </summary>
+    /// <param name="cardId">card id</param>
+    /// <returns>true, if the card supports sub channels; false otherwise</returns>
     bool SupportsSubChannels(int cardId);
 
-		/// <summary>
-		/// Signals heartbeat to the server
-		/// </summary>		
-		/// <param name="user">The user.</param>
-		void HeartBeat(User user);
+    /// <summary>
+    /// Signals heartbeat to the server
+    /// </summary>		
+    /// <param name="user">The user.</param>
+    void HeartBeat(User user);
 
     /// <summary>
     /// Gets the number of channels decrypting.
@@ -907,7 +976,7 @@ namespace TvControl
     /// Sets the bitrate mode
     /// </summary>
     /// <param name="cardId">Unique id of the card</param>
-    /// <param name="qualityType">The new bitrate mdoe</param>
+    /// <param name="bitRateMode">The new bitrate mdoe</param>
     void SetBitRateMode(int cardId, VIDEOENCODER_BITRATE_MODE bitRateMode);
 
     #endregion

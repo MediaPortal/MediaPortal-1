@@ -64,7 +64,6 @@
     <Compile Include="Interfaces\IDiSEqCMotor.cs" />
     <Compile Include="Interfaces\ITVChannelLinkage.cs" />
     <Compile Include="Interfaces\ITvSubChannel.cs" />
-    <Compile Include="Interfaces\SpecialChannel.cs" />
     <Compile Include="RtspClient.cs" />
     <Compile Include="ScanParameters.cs" />
     <Compile Include="ServiceProvider\ServiceProvider.cs" />

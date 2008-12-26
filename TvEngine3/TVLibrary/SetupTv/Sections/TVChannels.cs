@@ -21,15 +21,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Globalization;
-using System.Drawing;
 using System.Text;
 using System.Xml;
 using System.Windows.Forms;
 using TvControl;
 using DirectShowLib;
-using Gentle.Common;
 using Gentle.Framework;
 using DirectShowLib.BDA;
 using TvDatabase;
@@ -38,7 +35,6 @@ using TvLibrary.Log;
 using TvLibrary.Interfaces;
 using TvLibrary.Implementations;
 using TvLibrary.Channels;
-using similaritymetrics;
 using MediaPortal.UserInterface.Controls;
 
 namespace SetupTv.Sections
@@ -64,13 +60,12 @@ namespace SetupTv.Sections
 
       public override string ToString()
       {
-        return _card.Name.ToString();
+        return _card.Name;
       }
     }
-    private MPListViewStringColumnSorter lvwColumnSorter;
-    private MPListViewStringColumnSorter lvwColumnSorter2;
-    private MPListViewStringColumnSorter lvwColumnSorter3;
-    bool _redrawTab1 = false;
+    private readonly MPListViewStringColumnSorter lvwColumnSorter;
+    private readonly MPListViewStringColumnSorter lvwColumnSorter2;
+    bool _redrawTab1;
     public TvChannels()
       : this("TV Channels")
     {
@@ -83,10 +78,9 @@ namespace SetupTv.Sections
       lvwColumnSorter = new MPListViewStringColumnSorter();
       lvwColumnSorter.Order = SortOrder.None;
       lvwColumnSorter2 = new MPListViewStringColumnSorter();
-      lvwColumnSorter3 = new MPListViewStringColumnSorter();
       lvwColumnSorter2.Order = SortOrder.Descending;
       lvwColumnSorter2.OrderType = MPListViewStringColumnSorter.OrderTypes.AsValue;
-      this.mpListView1.ListViewItemSorter = lvwColumnSorter;
+      mpListView1.ListViewItemSorter = lvwColumnSorter;
     }
 
     public override void OnSectionDeActivated()
@@ -119,19 +113,19 @@ namespace SetupTv.Sections
       {
         ToolStripMenuItem item = new ToolStripMenuItem(group.GroupName);
         item.Tag = group;
-        item.Click += new EventHandler(OnAddToFavoritesMenuItem_Click);
+        item.Click += OnAddToFavoritesMenuItem_Click;
         addToFavoritesToolStripMenuItem.DropDownItems.Add(item);
         TabPage page = new TabPage(group.GroupName);
         page.SuspendLayout();
         ChannelsInGroupControl channelsInGroupControl = new ChannelsInGroupControl();
         channelsInGroupControl.Location = new System.Drawing.Point(9, 9);
-        channelsInGroupControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+        channelsInGroupControl.Anchor = ((AnchorStyles.Top | AnchorStyles.Bottom)
+                                         | AnchorStyles.Left)
+                                        | AnchorStyles.Right;
         page.Controls.Add(channelsInGroupControl);
         page.Tag = group;
         page.Location = new System.Drawing.Point(4, 22);
-        page.Padding = new System.Windows.Forms.Padding(3);
+        page.Padding = new Padding(3);
         page.Size = new System.Drawing.Size(457, 374);
         page.UseVisualStyleBackColor = true;
         page.PerformLayout();
@@ -139,7 +133,7 @@ namespace SetupTv.Sections
         tabControl1.TabPages.Add(page);
       }
       ToolStripMenuItem itemNew = new ToolStripMenuItem("New...");
-      itemNew.Click += new EventHandler(OnAddToFavoritesMenuItem_Click);
+      itemNew.Click += OnAddToFavoritesMenuItem_Click;
       addToFavoritesToolStripMenuItem.DropDownItems.Add(itemNew);
     }
 
@@ -164,13 +158,13 @@ namespace SetupTv.Sections
 
       mpListView1.BeginUpdate();
       mpListView1.Items.Clear();
-      IList chs = Channel.ListAll();
+      Channel.ListAll();
       int channelCount = 0;
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
       sb.AddOrderByField(true, "sortOrder");
       SqlStatement stmt = sb.GetStatement(true);
       IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
-      IList allmaps = ChannelMap.ListAll();
+      ChannelMap.ListAll();
       List<ListViewItem> items = new List<ListViewItem>();
       foreach (Channel ch in channels)
       {
@@ -181,7 +175,8 @@ namespace SetupTv.Sections
         bool atsc = false;
         bool webstream = false;
         bool notmapped = true;
-        if (ch.IsTv == false) continue;
+        if (ch.IsTv == false)
+          continue;
         channelCount++;
         if (ch.IsWebstream())
         {
@@ -198,11 +193,26 @@ namespace SetupTv.Sections
               CardType type = cards[map.IdCard];
               switch (type)
               {
-                case CardType.Analog: analog = true; notmapped = false; break;
-                case CardType.DvbC: dvbc = true; notmapped = false; break;
-                case CardType.DvbT: dvbt = true; notmapped = false; break;
-                case CardType.DvbS: dvbs = true; notmapped = false; break;
-                case CardType.Atsc: atsc = true; notmapped = false; break;
+                case CardType.Analog:
+                  analog = true;
+                  notmapped = false;
+                  break;
+                case CardType.DvbC:
+                  dvbc = true;
+                  notmapped = false;
+                  break;
+                case CardType.DvbT:
+                  dvbt = true;
+                  notmapped = false;
+                  break;
+                case CardType.DvbS:
+                  dvbs = true;
+                  notmapped = false;
+                  break;
+                case CardType.Atsc:
+                  atsc = true;
+                  notmapped = false;
+                  break;
               }
             }
           }
@@ -215,32 +225,38 @@ namespace SetupTv.Sections
         }
         if (notmapped)
         {
-          if (builder.Length > 0) builder.Append(",");
+          if (builder.Length > 0)
+            builder.Append(",");
           builder.Append("Channel not mapped to a card");
         }
         if (dvbc)
         {
-          if (builder.Length > 0) builder.Append(",");
+          if (builder.Length > 0)
+            builder.Append(",");
           builder.Append("DVB-C");
         }
         if (dvbt)
         {
-          if (builder.Length > 0) builder.Append(",");
+          if (builder.Length > 0)
+            builder.Append(",");
           builder.Append("DVB-T");
         }
         if (dvbs)
         {
-          if (builder.Length > 0) builder.Append(",");
+          if (builder.Length > 0)
+            builder.Append(",");
           builder.Append("DVB-S");
         }
         if (atsc)
         {
-          if (builder.Length > 0) builder.Append(",");
+          if (builder.Length > 0)
+            builder.Append(",");
           builder.Append("ATSC");
         }
         if (webstream)
         {
-          if (builder.Length > 0) builder.Append(",");
+          if (builder.Length > 0)
+            builder.Append(",");
           builder.Append("Webstream");
         }
         int imageIndex = 1;
@@ -299,7 +315,8 @@ namespace SetupTv.Sections
               break;
           }
         }
-        if (provider.Length > 1) provider = provider.Substring(0, provider.Length - 1);
+        if (provider.Length > 1)
+          provider = provider.Substring(0, provider.Length - 1);
         item.SubItems[1].Text = (provider);
         items.Add(item);
       }
@@ -330,7 +347,8 @@ namespace SetupTv.Sections
       }
 
       ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
-      if (indexes.Count == 0) return;
+      if (indexes.Count == 0)
+        return;
       TvBusinessLayer layer = new TvBusinessLayer();
       for (int i = 0; i < indexes.Count; ++i)
       {
@@ -357,7 +375,7 @@ namespace SetupTv.Sections
       {
         if (channel.IsTv)
         {
-          Gentle.Framework.Broker.Execute("delete from TvMovieMapping WHERE idChannel=" + channel.IdChannel.ToString());
+          Broker.Execute("delete from TvMovieMapping WHERE idChannel=" + channel.IdChannel);
           channel.Delete();
         }
       }
@@ -461,7 +479,8 @@ namespace SetupTv.Sections
     {
       mpListView1.BeginUpdate();
       ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
-      if (indexes.Count == 0) return;
+      if (indexes.Count == 0)
+        return;
       for (int i = 0; i < indexes.Count; ++i)
       {
         int index = indexes[i];
@@ -480,8 +499,10 @@ namespace SetupTv.Sections
     {
       mpListView1.BeginUpdate();
       ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
-      if (indexes.Count == 0) return;
-      if (mpListView1.Items.Count < 2) return;
+      if (indexes.Count == 0)
+        return;
+      if (mpListView1.Items.Count < 2)
+        return;
       for (int i = indexes.Count - 1; i >= 0; i--)
       {
         int index = indexes[i];
@@ -521,10 +542,11 @@ namespace SetupTv.Sections
        * Now fixed but commented out
        * (What is needed for ?)
        */
-      int newIndex = 0;
+      int newIndex;
       if (Int32.TryParse(e.Label, out newIndex))
       {
-        if ((newIndex - 1) == oldIndex) return;
+        if ((newIndex - 1) == oldIndex)
+          return;
         mpListView1.Items.RemoveAt(oldIndex);
         mpListView1.Items.Insert((newIndex - 1), item);
         ReOrder();
@@ -542,7 +564,8 @@ namespace SetupTv.Sections
     private void mpButtonEdit_Click(object sender, EventArgs e)
     {
       ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
-      if (indexes.Count == 0) return;
+      if (indexes.Count == 0)
+        return;
       Channel channel = (Channel)mpListView1.Items[indexes[0]].Tag;
       FormEditChannel dlg = new FormEditChannel();
       dlg.Channel = channel;
@@ -566,14 +589,7 @@ namespace SetupTv.Sections
       if (e.Column == lvwColumnSorter.SortColumn)
       {
         // Reverse the current sort direction for this column.
-        if (lvwColumnSorter.Order == SortOrder.Ascending)
-        {
-          lvwColumnSorter.Order = SortOrder.Descending;
-        }
-        else
-        {
-          lvwColumnSorter.Order = SortOrder.Ascending;
-        }
+        lvwColumnSorter.Order = lvwColumnSorter.Order == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
       }
       else
       {
@@ -583,29 +599,29 @@ namespace SetupTv.Sections
       }
 
       // Perform the sort with these new sort options.
-      this.mpListView1.Sort();
+      mpListView1.Sort();
       ReOrder();
     }
 
-    private void AddAttribute(XmlNode node, string tagName, string tagValue)
+    private static void AddAttribute(XmlNode node, string tagName, string tagValue)
     {
       XmlAttribute attr = node.OwnerDocument.CreateAttribute(tagName);
       attr.InnerText = tagValue;
       node.Attributes.Append(attr);
     }
 
-    private void AddAttribute(XmlNode node, string tagName, int tagValue)
+    private static void AddAttribute(XmlNode node, string tagName, int tagValue)
     {
       AddAttribute(node, tagName, tagValue.ToString());
     }
 
     // store DateTime Values as strings. Improves readability
-    private void AddAttribute(XmlNode node, string tagName, DateTime tagValue)
+    private static void AddAttribute(XmlNode node, string tagName, DateTime tagValue)
     {
       AddAttribute(node, tagName, String.Format("{0}-{1}-{2} {3}:{4}:{5}", tagValue.Year, tagValue.Month, tagValue.Day, tagValue.Hour, tagValue.Minute, tagValue.Second));
     }
 
-    private void AddAttribute(XmlNode node, string tagName, bool tagValue)
+    private static void AddAttribute(XmlNode node, string tagName, bool tagValue)
     {
       AddAttribute(node, tagName, tagValue.ToString());
     }
@@ -684,9 +700,9 @@ namespace SetupTv.Sections
           AddAttribute(nodeTune, "AudioPid", detail.AudioPid);
           AddAttribute(nodeTune, "Bandwidth", detail.Bandwidth);
           AddAttribute(nodeTune, "ChannelNumber", detail.ChannelNumber);
-          AddAttribute(nodeTune, "ChannelType", (int)detail.ChannelType);
-          AddAttribute(nodeTune, "CountryId", (int)detail.CountryId);
-          AddAttribute(nodeTune, "Diseqc", (int)detail.Diseqc);
+          AddAttribute(nodeTune, "ChannelType", detail.ChannelType);
+          AddAttribute(nodeTune, "CountryId", detail.CountryId);
+          AddAttribute(nodeTune, "Diseqc", detail.Diseqc);
           AddAttribute(nodeTune, "FreeToAir", detail.FreeToAir);
           AddAttribute(nodeTune, "Frequency", detail.Frequency);
           AddAttribute(nodeTune, "MajorChannel", detail.MajorChannel);
@@ -696,20 +712,20 @@ namespace SetupTv.Sections
           AddAttribute(nodeTune, "NetworkId", detail.NetworkId);
           AddAttribute(nodeTune, "PcrPid", detail.PcrPid);
           AddAttribute(nodeTune, "PmtPid", detail.PmtPid);
-          AddAttribute(nodeTune, "Polarisation", (int)detail.Polarisation);
+          AddAttribute(nodeTune, "Polarisation", detail.Polarisation);
           AddAttribute(nodeTune, "Provider", detail.Provider);
-          AddAttribute(nodeTune, "ServiceId", (int)detail.ServiceId);
-          AddAttribute(nodeTune, "SwitchingFrequency", (int)detail.SwitchingFrequency);
-          AddAttribute(nodeTune, "Symbolrate", (int)detail.Symbolrate);
-          AddAttribute(nodeTune, "TransportId", (int)detail.TransportId);
-          AddAttribute(nodeTune, "TuningSource", (int)detail.TuningSource);
-          AddAttribute(nodeTune, "VideoPid", (int)detail.VideoPid);
-          AddAttribute(nodeTune, "VideoSource", (int)detail.VideoSource);
-          AddAttribute(nodeTune, "SatIndex", (int)detail.SatIndex);
-          AddAttribute(nodeTune, "InnerFecRate", (int)detail.InnerFecRate);
-          AddAttribute(nodeTune, "Band", (int)detail.Band);
-          AddAttribute(nodeTune, "Pilot", (int)detail.Pilot);
-          AddAttribute(nodeTune, "RollOff", (int)detail.RollOff);
+          AddAttribute(nodeTune, "ServiceId", detail.ServiceId);
+          AddAttribute(nodeTune, "SwitchingFrequency", detail.SwitchingFrequency);
+          AddAttribute(nodeTune, "Symbolrate", detail.Symbolrate);
+          AddAttribute(nodeTune, "TransportId", detail.TransportId);
+          AddAttribute(nodeTune, "TuningSource", detail.TuningSource);
+          AddAttribute(nodeTune, "VideoPid", detail.VideoPid);
+          AddAttribute(nodeTune, "VideoSource", detail.VideoSource);
+          AddAttribute(nodeTune, "SatIndex", detail.SatIndex);
+          AddAttribute(nodeTune, "InnerFecRate", detail.InnerFecRate);
+          AddAttribute(nodeTune, "Band", detail.Band);
+          AddAttribute(nodeTune, "Pilot", detail.Pilot);
+          AddAttribute(nodeTune, "RollOff", detail.RollOff);
           AddAttribute(nodeTune, "Url", detail.Url);
           AddAttribute(nodeTune, "Bitrate", detail.Bitrate);
           nodeTuningDetails.AppendChild(nodeTune);
@@ -789,12 +805,11 @@ namespace SetupTv.Sections
       }
     }
 
-    private string GetNodeAttribute(XmlNode node, string attribute, string defaultValue)
+    private static string GetNodeAttribute(XmlNode node, string attribute, string defaultValue)
     {
       if (node.Attributes[attribute] == null)
         return defaultValue;
-      else
-        return node.Attributes[attribute].Value;
+      return node.Attributes[attribute].Value;
     }
 
     private void mpButtonImport_Click(object sender, EventArgs e)
@@ -807,7 +822,8 @@ namespace SetupTv.Sections
       openFileDialog1.FileName = "export.xml";
       openFileDialog1.AddExtension = true;
       openFileDialog1.Multiselect = false;
-      if (openFileDialog1.ShowDialog(this) != DialogResult.OK) return;
+      if (openFileDialog1.ShowDialog(this) != DialogResult.OK)
+        return;
       NotifyForm dlg = new NotifyForm("Importing tv channels...", "This can take some time\n\nPlease be patient...");
       try
       {
@@ -832,216 +848,214 @@ namespace SetupTv.Sections
         XmlDocument doc = new XmlDocument();
         Log.Info("TvChannels: Trying to import channels from {0}", openFileDialog1.FileName);
         doc.Load(openFileDialog1.FileName);
-        XmlNodeList serverList = doc.SelectNodes("/tvserver/servers/servers");
         XmlNodeList channelList = doc.SelectNodes("/tvserver/channels/channel");
         XmlNodeList scheduleList = doc.SelectNodes("/tvserver/schedules/schedule");
         XmlNodeList channelGroupList = doc.SelectNodes("/tvserver/channelgroups/channelgroup");
-        XmlNodeList cardList = doc.SelectNodes("/tvserver/servers/servers/cards/card");
-        foreach (XmlNode nodeChannel in channelList)
-        {
-          try
+        if (channelList != null)
+          foreach (XmlNode nodeChannel in channelList)
           {
-            channelCount++;
-            Channel dbChannel = null;
-            XmlNodeList tuningList = nodeChannel.SelectNodes("TuningDetails/tune");
-            XmlNodeList mappingList = nodeChannel.SelectNodes("mappings/map");
-            string name = nodeChannel.Attributes["Name"].Value;
-            bool grabEpg = (GetNodeAttribute(nodeChannel, "GrabEpg", "True") == "True");
-            bool isRadio = (GetNodeAttribute(nodeChannel, "IsRadio", "False") == "True");
-            bool isTv = (GetNodeAttribute(nodeChannel, "IsTv", "True") == "True");
-            DateTime lastGrabTime = DateTime.ParseExact(GetNodeAttribute(nodeChannel, "LastGrabTime", "01.01.1900"), "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
-            int sortOrder = Int32.Parse(GetNodeAttribute(nodeChannel, "SortOrder", "0"));
-            int timesWatched = Int32.Parse(GetNodeAttribute(nodeChannel, "TimesWatched", "0"));
-            DateTime totalTimeWatched = DateTime.ParseExact(GetNodeAttribute(nodeChannel, "TotalTimeWatched", "01.01.1900"), "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
-            bool visibileInGuide = (GetNodeAttribute(nodeChannel, "VisibleInGuide", "True") == "True");
-            bool FreeToAir = (GetNodeAttribute(nodeChannel, "FreeToAir", "True") == "True");
-            string displayName = GetNodeAttribute(nodeChannel, "DisplayName", name);
-
-            // rtv: since analog allows NOT to merge channels we need to take care of this. US users e.g. have multiple stations named "Sport" with different tuningdetails.
-            // using AddChannel would incorrectly "merge" these totally different channels.
-            // see this: http://forum.team-mediaportal.com/1-0-rc1-svn-builds-271/importing-exported-channel-list-groups-channels-39368/
-
-            Log.Info("TvChannels: Adding {0}. channel: {1} ({2})", channelCount, name, displayName);
-            if (mergeChannels)
+            try
             {
-              dbChannel = layer.GetChannelByName(name);
-              if (dbChannel == null)
-                dbChannel = layer.AddChannel("", name);
-            }
-            else
-              dbChannel = layer.AddNewChannel(name);
+              channelCount++;
+              Channel dbChannel;
+              XmlNodeList tuningList = nodeChannel.SelectNodes("TuningDetails/tune");
+              XmlNodeList mappingList = nodeChannel.SelectNodes("mappings/map");
+              string name = nodeChannel.Attributes["Name"].Value;
+              bool grabEpg = (GetNodeAttribute(nodeChannel, "GrabEpg", "True") == "True");
+              bool isRadio = (GetNodeAttribute(nodeChannel, "IsRadio", "False") == "True");
+              bool isTv = (GetNodeAttribute(nodeChannel, "IsTv", "True") == "True");
+              DateTime lastGrabTime = DateTime.ParseExact(GetNodeAttribute(nodeChannel, "LastGrabTime", "01.01.1900"), "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
+              int sortOrder = Int32.Parse(GetNodeAttribute(nodeChannel, "SortOrder", "0"));
+              int timesWatched = Int32.Parse(GetNodeAttribute(nodeChannel, "TimesWatched", "0"));
+              DateTime totalTimeWatched = DateTime.ParseExact(GetNodeAttribute(nodeChannel, "TotalTimeWatched", "01.01.1900"), "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
+              bool visibileInGuide = (GetNodeAttribute(nodeChannel, "VisibleInGuide", "True") == "True");
+              bool FreeToAir = (GetNodeAttribute(nodeChannel, "FreeToAir", "True") == "True");
+              string displayName = GetNodeAttribute(nodeChannel, "DisplayName", name);
 
-            dbChannel.GrabEpg = grabEpg;
-            dbChannel.IsRadio = isRadio;
-            dbChannel.IsTv = isTv;
-            dbChannel.LastGrabTime = lastGrabTime;
-            dbChannel.SortOrder = sortOrder;
-            dbChannel.TimesWatched = timesWatched;
-            dbChannel.TotalTimeWatched = totalTimeWatched;
-            dbChannel.VisibleInGuide = visibileInGuide;
-            dbChannel.FreeToAir = FreeToAir;
-            dbChannel.DisplayName = displayName;
-            dbChannel.Persist();
-            foreach (XmlNode nodeMap in mappingList)
-            {
-              int idCard = Int32.Parse(nodeMap.Attributes["IdCard"].Value);
-              XmlNode nodeCard = doc.SelectSingleNode(String.Format("/tvserver/servers/server/cards/card[@IdCard={0}]", idCard));
-              Card dbCard = layer.GetCardByDevicePath(nodeCard.Attributes["DevicePath"].Value);
-              if (dbCard != null)
+              // rtv: since analog allows NOT to merge channels we need to take care of this. US users e.g. have multiple stations named "Sport" with different tuningdetails.
+              // using AddChannel would incorrectly "merge" these totally different channels.
+              // see this: http://forum.team-mediaportal.com/1-0-rc1-svn-builds-271/importing-exported-channel-list-groups-channels-39368/
+
+              Log.Info("TvChannels: Adding {0}. channel: {1} ({2})", channelCount, name, displayName);
+              if (mergeChannels)
               {
-                layer.MapChannelToCard(dbCard, dbChannel, false);
+                dbChannel = layer.GetChannelByName(name);
+                if (dbChannel == null)
+                  dbChannel = layer.AddChannel("", name);
               }
-            }
-            foreach (XmlNode nodeTune in tuningList)
-            {
-              int audioPid = Int32.Parse(nodeTune.Attributes["AudioPid"].Value);
-              int bandwidth = Int32.Parse(nodeTune.Attributes["Bandwidth"].Value);
-              int channelNumber = Int32.Parse(nodeTune.Attributes["ChannelNumber"].Value);
-              int channelType = Int32.Parse(nodeTune.Attributes["ChannelType"].Value);
-              int countryId = Int32.Parse(nodeTune.Attributes["CountryId"].Value);
-              int diseqc = Int32.Parse(nodeTune.Attributes["Diseqc"].Value);
-              bool fta = (nodeTune.Attributes["FreeToAir"].Value == "True");
-              int frequency = Int32.Parse(nodeTune.Attributes["Frequency"].Value);
-              int majorChannel = Int32.Parse(nodeTune.Attributes["MajorChannel"].Value);
-              int minorChannel = Int32.Parse(nodeTune.Attributes["MinorChannel"].Value);
-              int modulation = Int32.Parse(nodeTune.Attributes["Modulation"].Value);
-              name = nodeTune.Attributes["Name"].Value;
-              int networkId = Int32.Parse(nodeTune.Attributes["NetworkId"].Value);
-              int pcrPid = Int32.Parse(nodeTune.Attributes["PcrPid"].Value);
-              int pmtPid = Int32.Parse(nodeTune.Attributes["PmtPid"].Value);
-              int polarisation = Int32.Parse(nodeTune.Attributes["Polarisation"].Value);
-              string provider = GetNodeAttribute(nodeTune, "Provider", "");
-              int serviceId = Int32.Parse(nodeTune.Attributes["ServiceId"].Value);
-              int switchingFrequency = Int32.Parse(nodeTune.Attributes["SwitchingFrequency"].Value);
-              int symbolrate = Int32.Parse(nodeTune.Attributes["Symbolrate"].Value);
-              int transportId = Int32.Parse(nodeTune.Attributes["TransportId"].Value);
-              int tuningSource = Int32.Parse(GetNodeAttribute(nodeTune, "TuningSource", "0"));
-              int videoPid = Int32.Parse(GetNodeAttribute(nodeTune, "VideoPid", "-1"));
-              int videoSource = Int32.Parse(GetNodeAttribute(nodeTune, "VideoSource", "0"));
-              int SatIndex = Int32.Parse(GetNodeAttribute(nodeTune, "SatIndex", "-1"));
-              int InnerFecRate = Int32.Parse(GetNodeAttribute(nodeTune, "InnerFecRate", "-1"));
-              int band = Int32.Parse(GetNodeAttribute(nodeTune, "Band", "0"));
-              int pilot = Int32.Parse(GetNodeAttribute(nodeTune, "Pilot", "-1"));
-              int rollOff = Int32.Parse(GetNodeAttribute(nodeTune, "RollOff", "-1"));
-              string url = GetNodeAttribute(nodeTune, "Url", "");
-              int bitrate = Int32.Parse(GetNodeAttribute(nodeTune, "Bitrate", "0"));
+              else
+                dbChannel = layer.AddNewChannel(name);
 
-              switch (channelType)
+              dbChannel.GrabEpg = grabEpg;
+              dbChannel.IsRadio = isRadio;
+              dbChannel.IsTv = isTv;
+              dbChannel.LastGrabTime = lastGrabTime;
+              dbChannel.SortOrder = sortOrder;
+              dbChannel.TimesWatched = timesWatched;
+              dbChannel.TotalTimeWatched = totalTimeWatched;
+              dbChannel.VisibleInGuide = visibileInGuide;
+              dbChannel.FreeToAir = FreeToAir;
+              dbChannel.DisplayName = displayName;
+              dbChannel.Persist();
+              foreach (XmlNode nodeMap in mappingList)
               {
-                case 0: //AnalogChannel
-                  AnalogChannel analogChannel = new AnalogChannel();
-                  analogChannel.ChannelNumber = channelNumber;
-                  analogChannel.Country = collection.Countries[countryId];
-                  analogChannel.Frequency = frequency;
-                  analogChannel.IsRadio = isRadio;
-                  analogChannel.IsTv = isTv;
-                  analogChannel.Name = name;
-                  analogChannel.TunerSource = (TunerInputType)tuningSource;
-                  analogChannel.VideoSource = (AnalogChannel.VideoInputType)videoSource;
-                  layer.AddTuningDetails(dbChannel, analogChannel);
-                  Log.Info("TvChannels: Added tuning details for analog channel: {0} number: {1}", name, channelNumber);
-                  break;
-                case 1: //ATSCChannel
-                  ATSCChannel atscChannel = new ATSCChannel();
-                  atscChannel.MajorChannel = majorChannel;
-                  atscChannel.MinorChannel = minorChannel;
-                  atscChannel.PhysicalChannel = channelNumber;
-                  atscChannel.FreeToAir = fta;
-                  atscChannel.Frequency = frequency;
-                  atscChannel.IsRadio = isRadio;
-                  atscChannel.IsTv = isTv;
-                  atscChannel.Name = name;
-                  atscChannel.NetworkId = networkId;
-                  atscChannel.PcrPid = pcrPid;
-                  atscChannel.PmtPid = pmtPid;
-                  atscChannel.Provider = provider;
-                  atscChannel.ServiceId = serviceId;
-                  atscChannel.SymbolRate = symbolrate;
-                  atscChannel.TransportId = transportId;
-                  atscChannel.AudioPid = audioPid;
-                  atscChannel.VideoPid = videoPid;
-                  atscChannel.ModulationType = (ModulationType)modulation;
-                  layer.AddTuningDetails(dbChannel, atscChannel);
-                  Log.Info("TvChannels: Added tuning details for ATSC channel: {0} number: {1} provider: {2}", name, channelNumber, provider);
-                  break;
-                case 2: //DVBCChannel
-                  DVBCChannel dvbcChannel = new DVBCChannel();
-                  dvbcChannel.ModulationType = (ModulationType)modulation;
-                  dvbcChannel.FreeToAir = fta;
-                  dvbcChannel.Frequency = frequency;
-                  dvbcChannel.IsRadio = isRadio;
-                  dvbcChannel.IsTv = isTv;
-                  dvbcChannel.Name = name;
-                  dvbcChannel.NetworkId = networkId;
-                  dvbcChannel.PcrPid = pcrPid;
-                  dvbcChannel.PmtPid = pmtPid;
-                  dvbcChannel.Provider = provider;
-                  dvbcChannel.ServiceId = serviceId;
-                  dvbcChannel.SymbolRate = symbolrate;
-                  dvbcChannel.TransportId = transportId;
-                  layer.AddTuningDetails(dbChannel, dvbcChannel);
-                  Log.Info("TvChannels: Added tuning details for DVB-C channel: {0} provider: {1}", name, provider);
-                  break;
-                case 3: //DVBSChannel
-                  DVBSChannel dvbsChannel = new DVBSChannel();
-                  dvbsChannel.DisEqc = (DisEqcType)diseqc;
-                  dvbsChannel.Polarisation = (Polarisation)polarisation;
-                  dvbsChannel.SwitchingFrequency = switchingFrequency;
-                  dvbsChannel.FreeToAir = fta;
-                  dvbsChannel.Frequency = frequency;
-                  dvbsChannel.IsRadio = isRadio;
-                  dvbsChannel.IsTv = isTv;
-                  dvbsChannel.Name = name;
-                  dvbsChannel.NetworkId = networkId;
-                  dvbsChannel.PcrPid = pcrPid;
-                  dvbsChannel.PmtPid = pmtPid;
-                  dvbsChannel.Provider = provider;
-                  dvbsChannel.ServiceId = serviceId;
-                  dvbsChannel.SymbolRate = symbolrate;
-                  dvbsChannel.TransportId = transportId;
-                  dvbsChannel.SatelliteIndex = SatIndex;
-                  dvbsChannel.ModulationType = (ModulationType)modulation;
-                  dvbsChannel.InnerFecRate = (BinaryConvolutionCodeRate)InnerFecRate;
-                  dvbsChannel.BandType = (BandType)band;
-                  dvbsChannel.Pilot = (Pilot)pilot;
-                  dvbsChannel.Rolloff = (RollOff)rollOff;
-                  dvbsChannel.LogicalChannelNumber = channelNumber;
-                  dvbsChannel.VideoPid = videoPid;
-                  dvbsChannel.AudioPid = audioPid;
-                  layer.AddTuningDetails(dbChannel, dvbsChannel);
-                  Log.Info("TvChannels: Added tuning details for DVB-S channel: {0} provider: {1}", name, provider);
-                  break;
-                case 4: //DVBTChannel
-                  DVBTChannel dvbtChannel = new DVBTChannel();
-                  dvbtChannel.BandWidth = bandwidth;
-                  dvbtChannel.FreeToAir = fta;
-                  dvbtChannel.Frequency = frequency;
-                  dvbtChannel.IsRadio = isRadio;
-                  dvbtChannel.IsTv = isTv;
-                  dvbtChannel.Name = name;
-                  dvbtChannel.NetworkId = networkId;
-                  dvbtChannel.PcrPid = pcrPid;
-                  dvbtChannel.PmtPid = pmtPid;
-                  dvbtChannel.Provider = provider;
-                  dvbtChannel.ServiceId = serviceId;
-                  dvbtChannel.TransportId = transportId;
-                  dvbtChannel.VideoPid = videoPid;
-                  dvbtChannel.AudioPid = audioPid;
-                  dvbtChannel.LogicalChannelNumber = channelNumber;
-                  layer.AddTuningDetails(dbChannel, dvbtChannel);
-                  Log.Info("TvChannels: Added tuning details for DVB-T channel: {0} provider: {1}", name, provider);
-                  break;
-                case 5: //Webstream
-                  layer.AddWebStreamTuningDetails(dbChannel, url, bitrate);
-                  break;
+                int idCard = Int32.Parse(nodeMap.Attributes["IdCard"].Value);
+                XmlNode nodeCard = doc.SelectSingleNode(String.Format("/tvserver/servers/server/cards/card[@IdCard={0}]", idCard));
+                Card dbCard = layer.GetCardByDevicePath(nodeCard.Attributes["DevicePath"].Value);
+                if (dbCard != null)
+                {
+                  layer.MapChannelToCard(dbCard, dbChannel, false);
+                }
               }
+              foreach (XmlNode nodeTune in tuningList)
+              {
+                int audioPid = Int32.Parse(nodeTune.Attributes["AudioPid"].Value);
+                int bandwidth = Int32.Parse(nodeTune.Attributes["Bandwidth"].Value);
+                int channelNumber = Int32.Parse(nodeTune.Attributes["ChannelNumber"].Value);
+                int channelType = Int32.Parse(nodeTune.Attributes["ChannelType"].Value);
+                int countryId = Int32.Parse(nodeTune.Attributes["CountryId"].Value);
+                int diseqc = Int32.Parse(nodeTune.Attributes["Diseqc"].Value);
+                bool fta = (nodeTune.Attributes["FreeToAir"].Value == "True");
+                int frequency = Int32.Parse(nodeTune.Attributes["Frequency"].Value);
+                int majorChannel = Int32.Parse(nodeTune.Attributes["MajorChannel"].Value);
+                int minorChannel = Int32.Parse(nodeTune.Attributes["MinorChannel"].Value);
+                int modulation = Int32.Parse(nodeTune.Attributes["Modulation"].Value);
+                name = nodeTune.Attributes["Name"].Value;
+                int networkId = Int32.Parse(nodeTune.Attributes["NetworkId"].Value);
+                int pcrPid = Int32.Parse(nodeTune.Attributes["PcrPid"].Value);
+                int pmtPid = Int32.Parse(nodeTune.Attributes["PmtPid"].Value);
+                int polarisation = Int32.Parse(nodeTune.Attributes["Polarisation"].Value);
+                string provider = GetNodeAttribute(nodeTune, "Provider", "");
+                int serviceId = Int32.Parse(nodeTune.Attributes["ServiceId"].Value);
+                int switchingFrequency = Int32.Parse(nodeTune.Attributes["SwitchingFrequency"].Value);
+                int symbolrate = Int32.Parse(nodeTune.Attributes["Symbolrate"].Value);
+                int transportId = Int32.Parse(nodeTune.Attributes["TransportId"].Value);
+                int tuningSource = Int32.Parse(GetNodeAttribute(nodeTune, "TuningSource", "0"));
+                int videoPid = Int32.Parse(GetNodeAttribute(nodeTune, "VideoPid", "-1"));
+                int videoSource = Int32.Parse(GetNodeAttribute(nodeTune, "VideoSource", "0"));
+                int SatIndex = Int32.Parse(GetNodeAttribute(nodeTune, "SatIndex", "-1"));
+                int InnerFecRate = Int32.Parse(GetNodeAttribute(nodeTune, "InnerFecRate", "-1"));
+                int band = Int32.Parse(GetNodeAttribute(nodeTune, "Band", "0"));
+                int pilot = Int32.Parse(GetNodeAttribute(nodeTune, "Pilot", "-1"));
+                int rollOff = Int32.Parse(GetNodeAttribute(nodeTune, "RollOff", "-1"));
+                string url = GetNodeAttribute(nodeTune, "Url", "");
+                int bitrate = Int32.Parse(GetNodeAttribute(nodeTune, "Bitrate", "0"));
+
+                switch (channelType)
+                {
+                  case 0: //AnalogChannel
+                    AnalogChannel analogChannel = new AnalogChannel();
+                    analogChannel.ChannelNumber = channelNumber;
+                    analogChannel.Country = collection.Countries[countryId];
+                    analogChannel.Frequency = frequency;
+                    analogChannel.IsRadio = isRadio;
+                    analogChannel.IsTv = isTv;
+                    analogChannel.Name = name;
+                    analogChannel.TunerSource = (TunerInputType)tuningSource;
+                    analogChannel.VideoSource = (AnalogChannel.VideoInputType)videoSource;
+                    layer.AddTuningDetails(dbChannel, analogChannel);
+                    Log.Info("TvChannels: Added tuning details for analog channel: {0} number: {1}", name, channelNumber);
+                    break;
+                  case 1: //ATSCChannel
+                    ATSCChannel atscChannel = new ATSCChannel();
+                    atscChannel.MajorChannel = majorChannel;
+                    atscChannel.MinorChannel = minorChannel;
+                    atscChannel.PhysicalChannel = channelNumber;
+                    atscChannel.FreeToAir = fta;
+                    atscChannel.Frequency = frequency;
+                    atscChannel.IsRadio = isRadio;
+                    atscChannel.IsTv = isTv;
+                    atscChannel.Name = name;
+                    atscChannel.NetworkId = networkId;
+                    atscChannel.PcrPid = pcrPid;
+                    atscChannel.PmtPid = pmtPid;
+                    atscChannel.Provider = provider;
+                    atscChannel.ServiceId = serviceId;
+                    atscChannel.SymbolRate = symbolrate;
+                    atscChannel.TransportId = transportId;
+                    atscChannel.AudioPid = audioPid;
+                    atscChannel.VideoPid = videoPid;
+                    atscChannel.ModulationType = (ModulationType)modulation;
+                    layer.AddTuningDetails(dbChannel, atscChannel);
+                    Log.Info("TvChannels: Added tuning details for ATSC channel: {0} number: {1} provider: {2}", name, channelNumber, provider);
+                    break;
+                  case 2: //DVBCChannel
+                    DVBCChannel dvbcChannel = new DVBCChannel();
+                    dvbcChannel.ModulationType = (ModulationType)modulation;
+                    dvbcChannel.FreeToAir = fta;
+                    dvbcChannel.Frequency = frequency;
+                    dvbcChannel.IsRadio = isRadio;
+                    dvbcChannel.IsTv = isTv;
+                    dvbcChannel.Name = name;
+                    dvbcChannel.NetworkId = networkId;
+                    dvbcChannel.PcrPid = pcrPid;
+                    dvbcChannel.PmtPid = pmtPid;
+                    dvbcChannel.Provider = provider;
+                    dvbcChannel.ServiceId = serviceId;
+                    dvbcChannel.SymbolRate = symbolrate;
+                    dvbcChannel.TransportId = transportId;
+                    layer.AddTuningDetails(dbChannel, dvbcChannel);
+                    Log.Info("TvChannels: Added tuning details for DVB-C channel: {0} provider: {1}", name, provider);
+                    break;
+                  case 3: //DVBSChannel
+                    DVBSChannel dvbsChannel = new DVBSChannel();
+                    dvbsChannel.DisEqc = (DisEqcType)diseqc;
+                    dvbsChannel.Polarisation = (Polarisation)polarisation;
+                    dvbsChannel.SwitchingFrequency = switchingFrequency;
+                    dvbsChannel.FreeToAir = fta;
+                    dvbsChannel.Frequency = frequency;
+                    dvbsChannel.IsRadio = isRadio;
+                    dvbsChannel.IsTv = isTv;
+                    dvbsChannel.Name = name;
+                    dvbsChannel.NetworkId = networkId;
+                    dvbsChannel.PcrPid = pcrPid;
+                    dvbsChannel.PmtPid = pmtPid;
+                    dvbsChannel.Provider = provider;
+                    dvbsChannel.ServiceId = serviceId;
+                    dvbsChannel.SymbolRate = symbolrate;
+                    dvbsChannel.TransportId = transportId;
+                    dvbsChannel.SatelliteIndex = SatIndex;
+                    dvbsChannel.ModulationType = (ModulationType)modulation;
+                    dvbsChannel.InnerFecRate = (BinaryConvolutionCodeRate)InnerFecRate;
+                    dvbsChannel.BandType = (BandType)band;
+                    dvbsChannel.Pilot = (Pilot)pilot;
+                    dvbsChannel.Rolloff = (RollOff)rollOff;
+                    dvbsChannel.LogicalChannelNumber = channelNumber;
+                    dvbsChannel.VideoPid = videoPid;
+                    dvbsChannel.AudioPid = audioPid;
+                    layer.AddTuningDetails(dbChannel, dvbsChannel);
+                    Log.Info("TvChannels: Added tuning details for DVB-S channel: {0} provider: {1}", name, provider);
+                    break;
+                  case 4: //DVBTChannel
+                    DVBTChannel dvbtChannel = new DVBTChannel();
+                    dvbtChannel.BandWidth = bandwidth;
+                    dvbtChannel.FreeToAir = fta;
+                    dvbtChannel.Frequency = frequency;
+                    dvbtChannel.IsRadio = isRadio;
+                    dvbtChannel.IsTv = isTv;
+                    dvbtChannel.Name = name;
+                    dvbtChannel.NetworkId = networkId;
+                    dvbtChannel.PcrPid = pcrPid;
+                    dvbtChannel.PmtPid = pmtPid;
+                    dvbtChannel.Provider = provider;
+                    dvbtChannel.ServiceId = serviceId;
+                    dvbtChannel.TransportId = transportId;
+                    dvbtChannel.VideoPid = videoPid;
+                    dvbtChannel.AudioPid = audioPid;
+                    dvbtChannel.LogicalChannelNumber = channelNumber;
+                    layer.AddTuningDetails(dbChannel, dvbtChannel);
+                    Log.Info("TvChannels: Added tuning details for DVB-T channel: {0} provider: {1}", name, provider);
+                    break;
+                  case 5: //Webstream
+                    layer.AddWebStreamTuningDetails(dbChannel, url, bitrate);
+                    break;
+                }
+              }
+            } catch (Exception exc)
+            {
+              Log.Error("TvChannels: Failed to add channel - {0}", exc.Message);
             }
           }
-          catch (Exception exc)
-          {
-            Log.Error("TvChannels: Failed to add channel - {0}", exc.Message);
-          }
-        }
 
         // Import schedules
         foreach (XmlNode nodeSchedule in scheduleList)
@@ -1072,8 +1086,7 @@ namespace SetupTv.Sections
             schedule.Series = (GetNodeAttribute(nodeSchedule, "Series", "False") == "True");
             schedule.Persist();
             Log.Info("TvChannels: Added schedule: {0} on channel: {1}", programName, channel);
-          }
-          catch (Exception ex)
+          } catch (Exception ex)
           {
             Log.Error("TvChannels: Failed to add schedule - {0}", ex.Message);
           }
@@ -1086,9 +1099,8 @@ namespace SetupTv.Sections
             channelGroupCount++;
             string groupName = nodeChannelGroup.Attributes["GroupName"].Value;
             int groupSortOrder = Int32.Parse(nodeChannelGroup.Attributes["SortOrder"].Value);
-            ChannelGroup group = layer.GetGroupByName(groupName, groupSortOrder);
-            if (group == null)
-              group = new ChannelGroup(groupName, groupSortOrder);
+            ChannelGroup group = layer.GetGroupByName(groupName, groupSortOrder) ??
+                                 new ChannelGroup(groupName, groupSortOrder);
             group.Persist();
             XmlNodeList mappingList = nodeChannelGroup.SelectNodes("mappings/map");
             foreach (XmlNode nodeMap in mappingList)
@@ -1101,8 +1113,7 @@ namespace SetupTv.Sections
                 map.Persist();
               }
             }
-          }
-          catch (Exception exg)
+          } catch (Exception exg)
           {
             Log.Error("TvChannels: Failed to add group - {0}", exg.Message);
           }
@@ -1110,10 +1121,9 @@ namespace SetupTv.Sections
         dlg.Close();
         Log.Info("TvChannels: Imported {0} channels, {1} channel groups and {2} schedules", channelCount, channelGroupCount, scheduleCount);
         MessageBox.Show(String.Format("Imported {0} channels, {1} channel groups and {2} schedules", channelCount, channelGroupCount, scheduleCount));
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
-        MessageBox.Show(this, "Error while importing:\n\n" + ex.ToString() + " " + ex.StackTrace);
+        MessageBox.Show(this, "Error while importing:\n\n" + ex + " " + ex.StackTrace);
       }
       finally
       {
@@ -1149,7 +1159,8 @@ namespace SetupTv.Sections
     private void mpButtonPreview_Click(object sender, EventArgs e)
     {
       ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
-      if (indexes.Count == 0) return;
+      if (indexes.Count == 0)
+        return;
       Channel channel = (Channel)mpListView1.Items[indexes[0]].Tag;
       FormPreview previewWindow = new FormPreview();
       previewWindow.Channel = channel;
@@ -1254,7 +1265,7 @@ namespace SetupTv.Sections
         IList details = channel.ReferringTuningDetail();
         if (details.Count > 0)
         {
-          channel.DisplayName = ((TuningDetail)details[0]).ServiceId.ToString() + " " + channel.DisplayName;
+          channel.DisplayName = ((TuningDetail)details[0]).ServiceId + " " + channel.DisplayName;
           channel.Persist();
           item.Tag = channel;
         }

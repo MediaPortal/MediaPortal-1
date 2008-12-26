@@ -23,9 +23,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -68,16 +65,15 @@ namespace SetupControls
         {
           ea.Graphics.DrawString(item.Text, ea.Font, new SolidBrush(ea.ForeColor), bounds.Left, bounds.Top);
         }
-      }
-      catch
+      } catch
       {
         if (ea.Index != -1)
         {
-          ea.Graphics.DrawString(Items[ea.Index].ToString(), ea.Font, new  SolidBrush(ea.ForeColor), bounds.Left, bounds.Top);
+          ea.Graphics.DrawString(Items[ea.Index].ToString(), ea.Font, new SolidBrush(ea.ForeColor), bounds.Left, bounds.Top);
         }
         else
         {
-          ea.Graphics.DrawString(Text, ea.Font, new  SolidBrush(ea.ForeColor), bounds.Left, bounds.Top);
+          ea.Graphics.DrawString(Text, ea.Font, new SolidBrush(ea.ForeColor), bounds.Left, bounds.Top);
         }
       }
 
@@ -88,7 +84,7 @@ namespace SetupControls
   public class ComboBoxExItem
   {
     private string _text;
-    private int _id;
+    private readonly int _id;
     public string Text
     {
       get { return _text; }
@@ -108,11 +104,11 @@ namespace SetupControls
     }
 
     public ComboBoxExItem(string text)
-      : this(text, -1,-1)
+      : this(text, -1, -1)
     {
     }
 
-    public ComboBoxExItem(string text, int imageIndex,int id)
+    public ComboBoxExItem(string text, int imageIndex, int id)
     {
       _id = id;
       _text = text;

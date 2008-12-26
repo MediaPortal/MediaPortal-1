@@ -29,7 +29,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.OleDb;
 using System.Data.SqlClient;
 using System.Data.SqlTypes;
 using System.Diagnostics;
@@ -38,7 +37,6 @@ using System.Text;
 using System.Threading;
 using DirectShowLib;
 using DirectShowLib.BDA;
-using Gentle.Common;
 using Gentle.Framework;
 using MySql.Data.MySqlClient;
 //using FirebirdSql.Data.Firebird;
@@ -55,7 +53,8 @@ namespace TvDatabase
   public class TvBusinessLayer
   {
     #region vars
-    object SingleInsert = new object();
+
+    readonly object SingleInsert = new object();
     #endregion
 
     #region cards
@@ -94,7 +93,8 @@ namespace TvDatabase
       IList cards = Cards;
       foreach (Card card in cards)
       {
-        if (card.Name == name) return card;
+        if (card.Name == name)
+          return card;
       }
       return null;
     }
@@ -104,7 +104,8 @@ namespace TvDatabase
       IList cards = Cards;
       foreach (Card card in cards)
       {
-        if (card.DevicePath == path) return card;
+        if (card.DevicePath == path)
+          return card;
       }
       return null;
     }
@@ -207,7 +208,7 @@ namespace TvDatabase
 
     public TuningDetail GetChannel(DVBBaseChannel channel)
     {
-      int channelType = 0;
+      int channelType;
 
       if (channel is DVBTChannel)
       {
@@ -236,8 +237,10 @@ namespace TvDatabase
 
       SqlStatement stmt = sb.GetStatement(true);
       IList channels = ObjectFactory.GetCollection(typeof(TuningDetail), stmt.Execute());
-      if (channels == null) return null;
-      if (channels.Count == 0) return null;
+      if (channels == null)
+        return null;
+      if (channels.Count == 0)
+        return null;
       return (TuningDetail)channels[0];
     }
 
@@ -249,8 +252,10 @@ namespace TvDatabase
       sb.AddConstraint(Operator.Equals, "serviceId", serviceId);
       SqlStatement stmt = sb.GetStatement(true);
       IList details = ObjectFactory.GetCollection(typeof(TuningDetail), stmt.Execute());
-      if (details == null) return null;
-      if (details.Count == 0) return null;
+      if (details == null)
+        return null;
+      if (details.Count == 0)
+        return null;
       TuningDetail detail = (TuningDetail)details[0];
       return detail;
     }
@@ -263,8 +268,10 @@ namespace TvDatabase
 
       SqlStatement stmt = sb.GetStatement(true);
       IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
-      if (channels == null) return null;
-      if (channels.Count == 0) return null;
+      if (channels == null)
+        return null;
+      if (channels.Count == 0)
+        return null;
       return (Channel)channels[0];
     }
 
@@ -278,8 +285,10 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
       IList details = ObjectFactory.GetCollection(typeof(TuningDetail), stmt.Execute());
 
-      if (details == null) return null;
-      if (details.Count == 0) return null;
+      if (details == null)
+        return null;
+      if (details.Count == 0)
+        return null;
       TuningDetail detail = (TuningDetail)details[0];
       return detail.ReferencedChannel();
     }
@@ -295,8 +304,10 @@ namespace TvDatabase
 
       SqlStatement stmt = sb.GetStatement(true);
       IList channels = ObjectFactory.GetCollection(typeof(TuningDetail), stmt.Execute());
-      if (channels == null) return null;
-      if (channels.Count == 0) return null;
+      if (channels == null)
+        return null;
+      if (channels.Count == 0)
+        return null;
       return (TuningDetail)channels[0];
     }
 
@@ -306,8 +317,10 @@ namespace TvDatabase
       sb.AddConstraint(Operator.Equals, "name", name);
       SqlStatement stmt = sb.GetStatement(true);
       IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
-      if (channels == null) return null;
-      if (channels.Count == 0) return null;
+      if (channels == null)
+        return null;
+      if (channels.Count == 0)
+        return null;
       return channels;
     }
 
@@ -317,8 +330,10 @@ namespace TvDatabase
       sb.AddConstraint(Operator.Equals, "name", name);
       SqlStatement stmt = sb.GetStatement(true);
       IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
-      if (channels == null) return null;
-      if (channels.Count == 0) return null;
+      if (channels == null)
+        return null;
+      if (channels.Count == 0)
+        return null;
       return (Channel)channels[0];
     }
 
@@ -329,30 +344,31 @@ namespace TvDatabase
       sb.AddConstraint(Operator.Equals, "provider", provider);
       SqlStatement stmt = sb.GetStatement(true);
       IList details = ObjectFactory.GetCollection(typeof(TuningDetail), stmt.Execute());
-      if (details == null) return null;
-      if (details.Count == 0) return null;
+      if (details == null)
+        return null;
+      if (details.Count == 0)
+        return null;
       TuningDetail detail = (TuningDetail)details[0];
       return detail.ReferencedChannel();
     }
-    
+
     /// <summary>
     /// Checks if a file doesnt exist and then returns the filename preceded by a CRLF combination.
     /// If the file does exist a empty string is returned.
     /// </summary>
     /// <returns>A String that contains the name of the not existing file </returns>
-    String FileNotExistsString(String fileName)
+    static String FileNotExistsString(String fileName)
     {
       if (!System.IO.File.Exists(fileName))
-        return "\r\n"+fileName;
-      else
-        return "";
+        return "\r\n" + fileName;
+      return "";
     }
 
     /// <summary>
     /// Checks several files that are needed for using the gentle framework for the database.
     /// If some files are not present in the working folder an System.IO.FileNotFoundException exception is thrown
     /// </summary>
-    void checkGentleFiles()
+    static void checkGentleFiles()
     {
       String filesNotFound = "";
       //filesNotFound += FileNotExistsString("Gentle.config");
@@ -372,18 +388,20 @@ namespace TvDatabase
     /// <returns>A Setting object with the stored value, if it doesnt exist the given default string will be the value</returns>
     public Setting GetSetting(string tagName, string defaultValue)
     {
-      if (defaultValue == null) return null;
-      if (tagName == null) return null;
-      if (tagName == "") return null;
+      if (defaultValue == null)
+        return null;
+      if (tagName == null)
+        return null;
+      if (tagName == "")
+        return null;
       SqlBuilder sb;
       try
       {
         sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Setting));
-      }
-      catch (TypeInitializationException e)
+      } catch (TypeInitializationException)
       {
         checkGentleFiles();// Try to throw a more meaningfull exception
-        throw e;// else re-throw the original error
+        throw;// else re-throw the original error
       }
 
       sb.AddConstraint(Operator.Equals, "tag", tagName);
@@ -408,11 +426,10 @@ namespace TvDatabase
       try
       {
         sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Setting));
-      }
-      catch (TypeInitializationException e)
+      } catch (TypeInitializationException)
       {
         checkGentleFiles();// Try to throw a more meaningfull exception
-        throw e;// else re-throw the original error
+        throw;// else re-throw the original error
       }
 
       sb.AddConstraint(Operator.Equals, "tag", tagName);
@@ -431,10 +448,11 @@ namespace TvDatabase
     {
       CountryCollection collection = new CountryCollection();
       IList tuningDetails = channel.ReferringTuningDetail();
-      for (int i = 0 ; i < tuningDetails.Count ; ++i)
+      for (int i = 0; i < tuningDetails.Count; ++i)
       {
         TuningDetail detail = (TuningDetail)tuningDetails[i];
-        if (detail.ChannelType != channelType) continue;
+        if (detail.ChannelType != channelType)
+          continue;
         switch (detail.ChannelType)
         {
           case 0: //AnalogChannel
@@ -540,7 +558,7 @@ namespace TvDatabase
       List<IChannel> tvChannels = new List<IChannel>();
       CountryCollection collection = new CountryCollection();
       IList tuningDetails = channel.ReferringTuningDetail();
-      for (int i = 0 ; i < tuningDetails.Count ; ++i)
+      for (int i = 0; i < tuningDetails.Count; ++i)
       {
         TuningDetail detail = (TuningDetail)tuningDetails[i];
         switch (detail.ChannelType)
@@ -648,15 +666,16 @@ namespace TvDatabase
       return tvChannels;
     }
 
-	public ChannelMap MapChannelToCard(Card card, Channel channel, bool epgOnly)
+    public ChannelMap MapChannelToCard(Card card, Channel channel, bool epgOnly)
     {
       IList channelMaps = card.ReferringChannelMap();
-      for (int i = 0 ; i < channelMaps.Count ; ++i)
+      for (int i = 0; i < channelMaps.Count; ++i)
       {
         ChannelMap map = (ChannelMap)channelMaps[i];
-        if (map.IdChannel == channel.IdChannel && map.IdCard == card.IdCard) return map;
+        if (map.IdChannel == channel.IdChannel && map.IdCard == card.IdCard)
+          return map;
       }
-	  ChannelMap newMap = new ChannelMap(channel.IdChannel, card.IdCard,epgOnly);
+      ChannelMap newMap = new ChannelMap(channel.IdChannel, card.IdCard, epgOnly);
       newMap.Persist();
       return newMap;
     }
@@ -688,8 +707,10 @@ namespace TvDatabase
       sb.AddConstraint(Operator.Equals, "isRadio", 1);
       SqlStatement stmt = sb.GetStatement(true);
       IList radioChannels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
-      if (radioChannels == null) return null;
-      if (radioChannels.Count == 0) return null;
+      if (radioChannels == null)
+        return null;
+      if (radioChannels.Count == 0)
+        return null;
       return radioChannels;
     }
     #endregion
@@ -776,11 +797,7 @@ namespace TvDatabase
         innerFecRate = (int)dvbsChannel.InnerFecRate;
         pilot = (int)dvbsChannel.Pilot;
         rollOff = (int)dvbsChannel.Rolloff;
-        if (dvbsChannel.LogicalChannelNumber > 999)
-        {
-          channelNumber = channel.IdChannel;
-        }
-        else channelNumber = dvbsChannel.LogicalChannelNumber;
+        channelNumber = dvbsChannel.LogicalChannelNumber > 999 ? channel.IdChannel : dvbsChannel.LogicalChannelNumber;
         channelType = 3;
       }
 
@@ -899,11 +916,7 @@ namespace TvDatabase
         innerFecRate = (int)dvbsChannel.InnerFecRate;
         pilot = (int)dvbsChannel.Pilot;
         rollOff = (int)dvbsChannel.Rolloff;
-        if (dvbsChannel.LogicalChannelNumber > 999)
-        {
-          channelNumber = channel.IdChannel;
-        }
-        else channelNumber = dvbsChannel.LogicalChannelNumber;
+        channelNumber = dvbsChannel.LogicalChannelNumber > 999 ? channel.IdChannel : dvbsChannel.LogicalChannelNumber;
         channelType = 3;
       }
 
@@ -971,36 +984,36 @@ namespace TvDatabase
     public TuningDetail AddWebStreamTuningDetails(Channel channel, string url, int bitrate)
     {
       string channelName = channel.Name;
-      long channelFrequency = 0;
-      int channelNumber = 0;
-      int country = 31;
+      const long channelFrequency = 0;
+      const int channelNumber = 0;
+      const int country = 31;
       bool isRadio = channel.IsRadio;
       bool isTv = channel.IsTv;
-      int tunerSource = 0;
-      int videoInputType = 0;
-      int symbolRate = 0;
-      int modulation = 0;
-      int polarisation = 0;
-      int switchFrequency = 0;
-      int diseqc = 0;
-      int bandwidth = 8;
-      bool freeToAir = true;
-      int pcrPid = -1;
-      int pmtPid = -1;
-      int networkId = -1;
-      int serviceId = -1;
-      int transportId = -1;
-      int minorChannel = -1;
-      int majorChannel = -1;
-      string provider = "";
-      int channelType = 5;
-      int videoPid = -1;
-      int audioPid = -1;
-      int band = 0;
-      int satIndex = -1;
-      int innerFecRate = (int)BinaryConvolutionCodeRate.RateNotSet;
-      int pilot = (int)Pilot.NotSet;
-      int rollOff = (int)RollOff.NotSet;
+      const int tunerSource = 0;
+      const int videoInputType = 0;
+      const int symbolRate = 0;
+      const int modulation = 0;
+      const int polarisation = 0;
+      const int switchFrequency = 0;
+      const int diseqc = 0;
+      const int bandwidth = 8;
+      const bool freeToAir = true;
+      const int pcrPid = -1;
+      const int pmtPid = -1;
+      const int networkId = -1;
+      const int serviceId = -1;
+      const int transportId = -1;
+      const int minorChannel = -1;
+      const int majorChannel = -1;
+      const string provider = "";
+      const int channelType = 5;
+      const int videoPid = -1;
+      const int audioPid = -1;
+      const int band = 0;
+      const int satIndex = -1;
+      const int innerFecRate = (int)BinaryConvolutionCodeRate.RateNotSet;
+      const int pilot = (int)Pilot.NotSet;
+      const int rollOff = (int)RollOff.NotSet;
       if (url == null)
         url = "";
       TuningDetail detail = new TuningDetail(channel.IdChannel, channelName, provider,
@@ -1016,37 +1029,37 @@ namespace TvDatabase
     {
       string channelName = channel.Name;
       long channelFrequency = frequency;
-      int channelNumber = 0;
-      int country = 31;
+      const int channelNumber = 0;
+      const int country = 31;
       bool isRadio = channel.IsRadio;
       bool isTv = channel.IsTv;
-      int tunerSource = 0;
-      int videoInputType = 0;
-      int symbolRate = 0;
-      int modulation = 0;
-      int polarisation = 0;
-      int switchFrequency = 0;
-      int diseqc = 0;
-      int bandwidth = 8;
-      bool freeToAir = true;
-      int pcrPid = -1;
-      int pmtPid = -1;
-      int networkId = -1;
-      int serviceId = -1;
-      int transportId = -1;
-      int minorChannel = -1;
-      int majorChannel = -1;
-      string provider = "";
-      int channelType = 6;
-      int videoPid = -1;
-      int audioPid = -1;
-      int band = 0;
-      int satIndex = -1;
-      int innerFecRate = (int)BinaryConvolutionCodeRate.RateNotSet;
-      int pilot = (int)Pilot.NotSet;
-      int rollOff = (int)RollOff.NotSet;
-      string url = "";
-      int bitrate = 0;
+      const int tunerSource = 0;
+      const int videoInputType = 0;
+      const int symbolRate = 0;
+      const int modulation = 0;
+      const int polarisation = 0;
+      const int switchFrequency = 0;
+      const int diseqc = 0;
+      const int bandwidth = 8;
+      const bool freeToAir = true;
+      const int pcrPid = -1;
+      const int pmtPid = -1;
+      const int networkId = -1;
+      const int serviceId = -1;
+      const int transportId = -1;
+      const int minorChannel = -1;
+      const int majorChannel = -1;
+      const string provider = "";
+      const int channelType = 6;
+      const int videoPid = -1;
+      const int audioPid = -1;
+      const int band = 0;
+      const int satIndex = -1;
+      const int innerFecRate = (int)BinaryConvolutionCodeRate.RateNotSet;
+      const int pilot = (int)Pilot.NotSet;
+      const int rollOff = (int)RollOff.NotSet;
+      const string url = "";
+      const int bitrate = 0;
       TuningDetail detail = new TuningDetail(channel.IdChannel, channelName, provider,
                               channelType, channelNumber, (int)channelFrequency, country, isRadio, isTv,
                               networkId, transportId, serviceId, pmtPid, freeToAir,
@@ -1086,8 +1099,9 @@ namespace TvDatabase
 
     public string GetDateTimeString()
     {
-      string provider = Gentle.Framework.ProviderFactory.GetDefaultProvider().Name.ToLower();
-      if (provider == "mysql") return "yyyy-MM-dd HH:mm:ss";
+      string provider = ProviderFactory.GetDefaultProvider().Name.ToLower();
+      if (provider == "mysql")
+        return "yyyy-MM-dd HH:mm:ss";
       return "yyyyMMdd HH:mm:ss";
     }
 
@@ -1115,7 +1129,6 @@ namespace TvDatabase
     public void RemoveAllPrograms(int idChannel)
     {
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Delete, typeof(Program));
-      IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
       sb.AddConstraint(Operator.Equals, "idChannel", idChannel);
       SqlStatement stmt = sb.GetStatement(true);
       ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
@@ -1194,15 +1207,14 @@ namespace TvDatabase
       SqlConnection MsSqlConnect = null;
       SqlCommand MsSqlCmd = null;
       string provider = "";
-      string connectString = "";
       try
       {
+        string connectString;
         try
         {
-          provider = Gentle.Framework.ProviderFactory.GetDefaultProvider().Name.ToLower();
-          connectString = Gentle.Framework.ProviderFactory.GetDefaultProvider().ConnectionString;
-        }
-        catch (Exception cex)
+          provider = ProviderFactory.GetDefaultProvider().Name.ToLower();
+          connectString = ProviderFactory.GetDefaultProvider().ConnectionString;
+        } catch (Exception cex)
         {
           Log.Info("BusinessLayer: GetProgramsForAllChannels could not retrieve connection details - {0}", cex.Message);
           return new Dictionary<int, List<Program>>();
@@ -1215,7 +1227,7 @@ namespace TvDatabase
             MsSqlAdapter.TableMappings.Add("Table", "Program");
             MsSqlConnect.Open();
             MsSqlCmd = new SqlCommand(BuildEpgSelect(channelList, provider), MsSqlConnect);
-            MsSqlCmd.Parameters.Add("startTime", SqlDbType.DateTime).Value = startTime; ;
+            MsSqlCmd.Parameters.Add("startTime", SqlDbType.DateTime).Value = startTime;
             MsSqlCmd.Parameters.Add("endTime", SqlDbType.DateTime).Value = endTime;
             MsSqlAdapter.SelectCommand = MsSqlCmd;
             break;
@@ -1225,7 +1237,7 @@ namespace TvDatabase
             MySQLAdapter.TableMappings.Add("Table", "Program");
             MySQLConnect.Open();
             MySQLCmd = new MySqlCommand(BuildEpgSelect(channelList, provider), MySQLConnect);
-            MySQLCmd.Parameters.Add("?startTime", MySqlDbType.Datetime).Value = startTime; ;
+            MySQLCmd.Parameters.Add("?startTime", MySqlDbType.Datetime).Value = startTime;
             MySQLCmd.Parameters.Add("?endTime", MySqlDbType.Datetime).Value = endTime;
             MySQLAdapter.SelectCommand = MySQLCmd;
             break;
@@ -1238,17 +1250,18 @@ namespace TvDatabase
           switch (provider)
           {
             case "sqlserver":
-              MsSqlAdapter.Fill(dataSet);
+              if (MsSqlAdapter != null)
+                MsSqlAdapter.Fill(dataSet);
               break;
             case "mysql":
-              MySQLAdapter.Fill(dataSet);
+              if (MySQLAdapter != null)
+                MySQLAdapter.Fill(dataSet);
               break;
           }
           return FillProgramMapFromDataSet(dataSet);
         }
 
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Info("BusinessLayer: GetProgramsForAllChannels caused an Exception - {0}, {1}", ex.Message, ex.StackTrace);
         return new Dictionary<int, List<Program>>();
@@ -1260,27 +1273,34 @@ namespace TvDatabase
           switch (provider)
           {
             case "mysql":
-              MySQLConnect.Close();
-              MySQLAdapter.Dispose();
-              MySQLCmd.Dispose();
-              MySQLConnect.Dispose();
+              if (MySQLConnect != null)
+                MySQLConnect.Close();
+              if (MySQLAdapter != null)
+                MySQLAdapter.Dispose();
+              if (MySQLCmd != null)
+                MySQLCmd.Dispose();
+              if (MySQLConnect != null)
+                MySQLConnect.Dispose();
               break;
             case "sqlserver":
-              MsSqlConnect.Close();
-              MsSqlAdapter.Dispose();
-              MsSqlCmd.Dispose();
-              MsSqlConnect.Dispose();
+              if (MsSqlConnect != null)
+                MsSqlConnect.Close();
+              if (MsSqlAdapter != null)
+                MsSqlAdapter.Dispose();
+              if (MsSqlCmd != null)
+                MsSqlCmd.Dispose();
+              if (MsSqlConnect != null)
+                MsSqlConnect.Dispose();
               break;
           }
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
           Log.Info("BusinessLayer: GetProgramsForAllChannels Exception in finally - {0}, {1}", ex.Message, ex.StackTrace);
         }
       }
     }
 
-    private string BuildEpgSelect(List<Channel> channelList, string aProvider)
+    private static string BuildEpgSelect(IEnumerable<Channel> channelList, string aProvider)
     {
       StringBuilder sbSelect = new StringBuilder("SELECT * FROM Program WHERE ");
 
@@ -1321,11 +1341,11 @@ namespace TvDatabase
       return sbSelect.ToString();
     }
 
-    private Dictionary<int, List<Program>> FillProgramMapFromDataSet(DataSet dataSet)
+    private static Dictionary<int, List<Program>> FillProgramMapFromDataSet(DataSet dataSet)
     {
       Dictionary<int, List<Program>> maps = new Dictionary<int, List<Program>>();
       int resultCount = dataSet.Tables[0].Rows.Count;
-      for (int i = 0 ; i < resultCount ; i++)
+      for (int i = 0; i < resultCount; i++)
       {
         DataRow prog = dataSet.Tables[0].Rows[i];
 
@@ -1372,17 +1392,13 @@ namespace TvDatabase
 
     public DateTime GetNewestProgramForChannel(int idChannel)
     {
-      DateTime dtNewestEntry = DateTime.MinValue;
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Program));
       sb.AddConstraint(Operator.Equals, "idChannel", idChannel);
       sb.AddOrderByField(false, "startTime");
       sb.SetRowLimit(1);
       SqlStatement stmt = sb.GetStatement(true);
       IList progs = ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
-      if (progs.Count > 0)
-        return ((Program)progs[0]).StartTime;
-      else
-        return DateTime.MinValue;
+      return progs.Count > 0 ? ((Program)progs[0]).StartTime : DateTime.MinValue;
     }
 
     public IList GetProgramsByTitle(Channel channel, DateTime startTime, DateTime endTime, string title)
@@ -1423,12 +1439,8 @@ namespace TvDatabase
 
     public IList SearchMinimalPrograms(DateTime startTime, DateTime endTime, string programName, Channel channel)
     {
-      IList programs;
       IList progsReturn = new List<Program>();
-      if (channel != null)
-        programs = GetProgramsByTitle(channel, startTime, endTime, programName);
-      else
-        programs = GetProgramsByTitle(startTime, endTime, programName);
+      IList programs = channel != null ? GetProgramsByTitle(channel, startTime, endTime, programName) : GetProgramsByTitle(startTime, endTime, programName);
 
       foreach (Program prog in programs)
       {
@@ -1440,9 +1452,9 @@ namespace TvDatabase
     public IList GetGenres()
     {
       List<string> genres = new List<string>();
-      string connectString = Gentle.Framework.ProviderFactory.GetDefaultProvider().ConnectionString;
+      string connectString = ProviderFactory.GetDefaultProvider().ConnectionString;
 
-      string provider = Gentle.Framework.ProviderFactory.GetDefaultProvider().Name.ToLower();
+      string provider = ProviderFactory.GetDefaultProvider().Name.ToLower();
       if (provider == "mysql")
       {
         using (MySqlConnection connect = new MySqlConnection(connectString))
@@ -1451,8 +1463,8 @@ namespace TvDatabase
           using (MySqlCommand cmd = connect.CreateCommand())
           {
             cmd.CommandText = "select distinct(genre) from Program order by genre";
-            cmd.CommandType = System.Data.CommandType.Text;
-            using (System.Data.IDataReader reader = cmd.ExecuteReader())
+            cmd.CommandType = CommandType.Text;
+            using (IDataReader reader = cmd.ExecuteReader())
             {
               while (reader.Read())
               {
@@ -1472,8 +1484,8 @@ namespace TvDatabase
           using (System.Data.OleDb.OleDbCommand cmd = connect.CreateCommand())
           {
             cmd.CommandText = "select distinct(genre) from Program order by genre";
-            cmd.CommandType = System.Data.CommandType.Text;
-            using (System.Data.IDataReader reader = cmd.ExecuteReader())
+            cmd.CommandType = CommandType.Text;
+            using (IDataReader reader = cmd.ExecuteReader())
             {
               while (reader.Read())
               {
@@ -1555,9 +1567,9 @@ namespace TvDatabase
       return ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
     }
 
-    private string BuildCommandTextMiniGuide(string aProvider, List<Channel> aEpgChannelList)
+    private static string BuildCommandTextMiniGuide(string aProvider, ICollection<Channel> aEpgChannelList)
     {
-      string completeStatement = string.Empty;
+      string completeStatement;
 
       // no channel = no EPG but we need a valid command text
       if (aEpgChannelList.Count < 1)
@@ -1607,8 +1619,8 @@ namespace TvDatabase
     public Dictionary<int, NowAndNext> GetNowAndNext(List<Channel> aEpgChannelList)
     {
       Dictionary<int, NowAndNext> nowNextList = new Dictionary<int, NowAndNext>();
-      string provider = Gentle.Framework.ProviderFactory.GetDefaultProvider().Name.ToLower();
-      string connectString = Gentle.Framework.ProviderFactory.GetDefaultProvider().ConnectionString;
+      string provider = ProviderFactory.GetDefaultProvider().Name.ToLower();
+      string connectString = ProviderFactory.GetDefaultProvider().ConnectionString;
       MySqlConnection MySQLConnect = null;
       MySqlDataAdapter MySQLAdapter = null;
       MySqlCommand MySQLCmd = null;
@@ -1647,16 +1659,21 @@ namespace TvDatabase
         using (DataSet dataSet = new DataSet("Program"))
         {
           // ToDo: check if column fetching wastes performance
-          if (provider == "sqlserver")
-            MsSqlAdapter.Fill(dataSet);
-          else
-            if (provider == "mysql")
-              MySQLAdapter.Fill(dataSet);
+          switch (provider)
+          {
+            case "sqlserver":
+              if (MsSqlAdapter != null)
+                MsSqlAdapter.Fill(dataSet);
+              break;
+            case "mysql":
+              if (MySQLAdapter != null)
+                MySQLAdapter.Fill(dataSet);
+              break;
+          }
 
           nowNextList = BuildNowNextFromDataSet(dataSet);
         }
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Info("BusinessLayer: GetNowNext failed {0}", ex.Message);
       }
@@ -1665,23 +1682,31 @@ namespace TvDatabase
         switch (provider)
         {
           case "mysql":
-            MySQLConnect.Close();
-            MySQLAdapter.Dispose();
-            MySQLCmd.Dispose();
-            MySQLConnect.Dispose();
+            if (MySQLConnect != null)
+              MySQLConnect.Close();
+            if (MySQLAdapter != null)
+              MySQLAdapter.Dispose();
+            if (MySQLCmd != null)
+              MySQLCmd.Dispose();
+            if (MySQLConnect != null)
+              MySQLConnect.Dispose();
             break;
           case "sqlserver":
-            MsSqlConnect.Close();
-            MsSqlAdapter.Dispose();
-            MsSqlCmd.Dispose();
-            MsSqlConnect.Dispose();
+            if (MsSqlConnect != null)
+              MsSqlConnect.Close();
+            if (MsSqlAdapter != null)
+              MsSqlAdapter.Dispose();
+            if (MsSqlCmd != null)
+              MsSqlCmd.Dispose();
+            if (MsSqlConnect != null)
+              MsSqlConnect.Dispose();
             break;
         }
       }
       return nowNextList;
     }
 
-    private Dictionary<int, NowAndNext> BuildNowNextFromDataSet(DataSet dataSet)
+    private static Dictionary<int, NowAndNext> BuildNowNextFromDataSet(DataSet dataSet)
     {
       Dictionary<int, NowAndNext> progList = new Dictionary<int, NowAndNext>();
 
@@ -1756,7 +1781,7 @@ namespace TvDatabase
     {
       try
       {
-        IGentleProvider prov = Gentle.Framework.ProviderFactory.GetDefaultProvider();
+        IGentleProvider prov = ProviderFactory.GetDefaultProvider();
         string provider = prov.Name.ToLower();
         string defaultConnectString = prov.ConnectionString; // Gentle.Framework.ProviderFactory.GetDefaultProvider().ConnectionString;
         int sleepTime = 10;
@@ -1789,13 +1814,13 @@ namespace TvDatabase
         switch (provider)
         {
           case "mysql":
-            importThread = new Thread(new ParameterizedThreadStart(ImportMySqlThread));
+            importThread = new Thread(ImportMySqlThread);
             importThread.Priority = aThreadPriority;
             importThread.Name = "MySQL EPG importer";
             importThread.Start(param);
             break;
           case "sqlserver":
-            importThread = new Thread(new ParameterizedThreadStart(ImportSqlServerThread));
+            importThread = new Thread(ImportSqlServerThread);
             importThread.Priority = aThreadPriority;
             importThread.Name = "MSSQL EPG importer";
             importThread.Start(param);
@@ -1806,8 +1831,7 @@ namespace TvDatabase
         }
 
         return aProgramList.Count;
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Error("BusinessLayer: InsertPrograms error - {0}, {1}", ex.Message, ex.StackTrace);
         return 0;
@@ -1841,11 +1865,11 @@ namespace TvDatabase
     public void OptimizeMySql(string aTable)
     {
       Stopwatch benchClock = new Stopwatch();
-      benchClock.Start();      
+      benchClock.Start();
       MySqlTransaction transact = null;
       try
       {
-        string connectString = (Gentle.Framework.ProviderFactory.GetDefaultProvider()).ConnectionString;
+        string connectString = (ProviderFactory.GetDefaultProvider()).ConnectionString;
         if (string.IsNullOrEmpty(connectString))
           return;
 
@@ -1853,37 +1877,34 @@ namespace TvDatabase
         {
           connection.Open();
           transact = connection.BeginTransaction();
-          using (MySqlCommand cmd = new MySqlCommand(string.Format("LOCK TABLES {0} READ;", aTable), connection))          
+          using (MySqlCommand cmd = new MySqlCommand(string.Format("LOCK TABLES {0} READ;", aTable), connection))
             cmd.ExecuteNonQuery();
-          
-          using (MySqlCommand cmd = new MySqlCommand(string.Format("CHECK TABLE {0}", aTable), connection))          
+
+          using (MySqlCommand cmd = new MySqlCommand(string.Format("CHECK TABLE {0}", aTable), connection))
             cmd.ExecuteNonQuery();
-          
-          using (MySqlCommand cmd = new MySqlCommand(string.Format("UNLOCK TABLES", aTable), connection))          
+
+          using (MySqlCommand cmd = new MySqlCommand(string.Format("UNLOCK TABLES"), connection))
             cmd.ExecuteNonQuery();
-          
-          using (MySqlCommand cmd = new MySqlCommand(string.Format("OPTIMIZE TABLE {0}", aTable), connection))          
+
+          using (MySqlCommand cmd = new MySqlCommand(string.Format("OPTIMIZE TABLE {0}", aTable), connection))
             cmd.ExecuteNonQuery();
-          
+
           transact.Commit();
           benchClock.Stop();
           Log.Info("BusinessLayer: OptimizeMySql successful - duration: {0}ms", benchClock.ElapsedMilliseconds.ToString());
         }
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         try
         {
-          transact.Rollback();
-        }
-        catch (Exception) { }
+          if (transact != null)
+            transact.Rollback();
+        } catch (Exception ex2) { Log.Info("BusinessLayer: OptimizeMySql unsuccessful - ROLLBACK - {0}, {1}", ex2.Message, ex2.StackTrace); }
         Log.Info("BusinessLayer: OptimizeMySql unsuccessful - {0}, {1}", ex.Message, ex.StackTrace);
       }
-      transact = null;
-      GC.Collect();
     }
 
-    private void InsertMySql(ImportParams aImportParam)
+    private static void InsertMySql(ImportParams aImportParam)
     {
       MySqlTransaction transact = null;
       try
@@ -1896,21 +1917,18 @@ namespace TvDatabase
           transact.Commit();
           //OptimizeMySql("Program");
         }
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         try
         {
-          transact.Rollback();
-        }
-        catch (Exception) { }
+          if (transact != null)
+            transact.Rollback();
+        } catch (Exception ex2) { Log.Info("BusinessLayer: OptimizeMySql unsuccessful - ROLLBACK - {0}, {1}", ex2.Message, ex2.StackTrace); }
         Log.Info("BusinessLayer: InsertMySql caused an Exception - {0}, {1}", ex.Message, ex.StackTrace);
       }
-      transact = null;
-      GC.Collect();
     }
 
-    private void InsertSqlServer(ImportParams aImportParam)
+    private static void InsertSqlServer(ImportParams aImportParam)
     {
       SqlTransaction transact = null;
       try
@@ -1922,25 +1940,22 @@ namespace TvDatabase
           ExecuteSqlServerCommand(aImportParam.ProgramList, connection, transact, aImportParam.SleepTime);
           transact.Commit();
         }
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         try
         {
-          transact.Rollback();
-        }
-        catch (Exception) { }
+          if (transact != null)
+            transact.Rollback();
+        } catch (Exception ex2) { Log.Info("BusinessLayer: OptimizeMySql unsuccessful - ROLLBACK - {0}, {1}", ex2.Message, ex2.StackTrace); }
         Log.Info("BusinessLayer: InsertSqlServer caused an Exception - {0}, {1}", ex.Message, ex.StackTrace);
       }
-      transact = null;
-      GC.Collect();
     }
 
     #endregion
 
     #region SQL Builder
 
-    private int ExecuteMySqlCommand(List<Program> aProgramList, MySqlConnection aConnection, MySqlTransaction aTransaction, int aDelay)
+    private static void ExecuteMySqlCommand(IEnumerable<Program> aProgramList, MySqlConnection aConnection, MySqlTransaction aTransaction, int aDelay)
     {
       int aCounter = 0;
       MySqlCommand sqlCmd = new MySqlCommand();
@@ -1968,8 +1983,7 @@ namespace TvDatabase
         sqlCmd.Transaction = aTransaction;
         // Prepare the command since we will reuse it quite often
         sqlCmd.Prepare();
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Info("BusinessLayer: ExecuteMySqlCommand - Prepare caused an Exception - {0}", ex.Message);
       }
@@ -1997,8 +2011,7 @@ namespace TvDatabase
           // Avoid I/O starving
           if (aCounter % 3 == 0)
             Thread.Sleep(aDelay);
-        }
-        catch (MySqlException myex)
+        } catch (MySqlException myex)
         {
           string errorRow = sqlCmd.Parameters["?idChannel"].Value + ", " + sqlCmd.Parameters["?title"].Value + " : " + sqlCmd.Parameters["?startTime"].Value + "-" + sqlCmd.Parameters["?endTime"].Value;
           switch (myex.Number)
@@ -2013,16 +2026,15 @@ namespace TvDatabase
               Log.Info("BusinessLayer: ExecuteMySqlCommand caused a MySqlException - {0}, {1} {2}", myex.Message, myex.Number, myex.HelpLink);
               break;
           }
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
           Log.Info("BusinessLayer: ExecuteMySqlCommand caused an Exception - {0}, {1}", ex.Message, ex.StackTrace);
         }
       }
-      return aCounter;
+      return;
     }
 
-    private int ExecuteSqlServerCommand(List<Program> aProgramList, SqlConnection aConnection, SqlTransaction aTransaction, int aDelay)
+    private static void ExecuteSqlServerCommand(IEnumerable<Program> aProgramList, SqlConnection aConnection, SqlTransaction aTransaction, int aDelay)
     {
       int aCounter = 0;
       SqlCommand sqlCmd = new SqlCommand();
@@ -2050,8 +2062,7 @@ namespace TvDatabase
         sqlCmd.Transaction = aTransaction;
         // Prepare the command since we will reuse it quite often
         // sqlCmd.Prepare(); <-- this would need exact param field length definitions
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Info("BusinessLayer: ExecuteSqlServerCommand - Prepare caused an Exception - {0}", ex.Message);
       }
@@ -2079,8 +2090,7 @@ namespace TvDatabase
           // Avoid I/O starving
           if (aCounter % 2 == 0)
             Thread.Sleep(aDelay);
-        }
-        catch (SqlException msex)
+        } catch (SqlException msex)
         {
           string errorRow = sqlCmd.Parameters["idChannel"].Value + ", " + sqlCmd.Parameters["title"].Value + " : " + sqlCmd.Parameters["startTime"].Value + "-" + sqlCmd.Parameters["endTime"].Value;
           switch (msex.Number)
@@ -2095,13 +2105,12 @@ namespace TvDatabase
               Log.Info("BusinessLayer: InsertSqlServer caused a SqlException - {0}, {1} {2}", msex.Message, msex.Number, msex.HelpLink);
               break;
           }
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
           Log.Error("BusinessLayer: InsertSqlServer error - {0}, {1}", ex.Message, ex.StackTrace);
         }
       }
-      return aCounter;
+      return;
     }
 
     #endregion // SQL builder
@@ -2114,15 +2123,17 @@ namespace TvDatabase
 
     public List<Schedule> GetConflictingSchedules(Schedule rec)
     {
-      Log.Info("GetConflictingSchedules: Schedule = " + rec.ToString());
+      Log.Info("GetConflictingSchedules: Schedule = " + rec);
       List<Schedule> conflicts = new List<Schedule>();
       IList schedulesList = Schedule.ListAll();
       IList cards = Card.ListAll();
-      if (cards.Count == 0) return conflicts;
+      if (cards.Count == 0)
+        return conflicts;
       Log.Info("GetConflictingSchedules: Cards.Count = {0}", cards.Count);
 
       List<Schedule>[] cardSchedules = new List<Schedule>[cards.Count];
-      for (int i = 0 ; i < cards.Count ; i++) cardSchedules[i] = new List<Schedule>();
+      for (int i = 0; i < cards.Count; i++)
+        cardSchedules[i] = new List<Schedule>();
 
       // GEMX: Assign all already scheduled timers to cards. Assume that even possibly overlapping schedulues are ok to the user,
       // as he decided to keep them before. That's why they are in the db
@@ -2131,8 +2142,10 @@ namespace TvDatabase
         List<Schedule> episodes = GetRecordingTimes(schedule);
         foreach (Schedule episode in episodes)
         {
-          if (DateTime.Now > episode.EndTime) continue;
-          if (episode.IsSerieIsCanceled(episode.StartTime)) continue;
+          if (DateTime.Now > episode.EndTime)
+            continue;
+          if (episode.IsSerieIsCanceled(episode.StartTime))
+            continue;
           Schedule overlapping;
           AssignSchedulesToCard(episode, cardSchedules, out overlapping);
         }
@@ -2141,12 +2154,14 @@ namespace TvDatabase
       List<Schedule> newEpisodes = GetRecordingTimes(rec);
       foreach (Schedule newEpisode in newEpisodes)
       {
-        if (DateTime.Now > newEpisode.EndTime) continue;
-        if (newEpisode.IsSerieIsCanceled(newEpisode.StartTime)) continue;
+        if (DateTime.Now > newEpisode.EndTime)
+          continue;
+        if (newEpisode.IsSerieIsCanceled(newEpisode.StartTime))
+          continue;
         Schedule overlapping;
         if (!AssignSchedulesToCard(newEpisode, cardSchedules, out overlapping))
         {
-          Log.Info("GetConflictingSchedules: newEpisode can not be assigned to a card = " + newEpisode.ToString());
+          Log.Info("GetConflictingSchedules: newEpisode can not be assigned to a card = " + newEpisode);
           conflicts.Add(overlapping);
         }
 
@@ -2179,10 +2194,10 @@ namespace TvDatabase
       return conflicts;
     }
 
-    private bool AssignSchedulesToCard(Schedule schedule, List<Schedule>[] cardSchedules, out Schedule overlappingSchedule)
+    private static bool AssignSchedulesToCard(Schedule schedule, List<Schedule>[] cardSchedules, out Schedule overlappingSchedule)
     {
       overlappingSchedule = null;
-      Log.Info("AssignSchedulesToCard: schedule = " + schedule.ToString());
+      Log.Info("AssignSchedulesToCard: schedule = " + schedule);
       IList cards = Card.ListAll();
       bool assigned = false;
       int count = 0;
@@ -2194,13 +2209,13 @@ namespace TvDatabase
           bool free = true;
           foreach (Schedule assignedSchedule in cardSchedules[count])
           {
-            Log.Info("AssignSchedulesToCard: card {0}, ID = {1} has schedule = " + assignedSchedule.ToString(), count, card.IdCard);
+            Log.Info("AssignSchedulesToCard: card {0}, ID = {1} has schedule = " + assignedSchedule, count, card.IdCard);
             if (schedule.IsOverlapping(assignedSchedule))
             {
               if (!(schedule.isSameTransponder(assignedSchedule) && card.supportSubChannels))
               {
                 overlappingSchedule = assignedSchedule;
-                Log.Info("AssignSchedulesToCard: overlapping with " + assignedSchedule.ToString() + " on card {0}, ID = {1}", count, card.IdCard);
+                Log.Info("AssignSchedulesToCard: overlapping with " + assignedSchedule + " on card {0}, ID = {1}", count, card.IdCard);
                 free = false;
                 break;
               }
@@ -2216,7 +2231,8 @@ namespace TvDatabase
         }
         count++;
       }
-      if (!assigned) return false;
+      if (!assigned)
+        return false;
 
       return true;
     }
@@ -2241,7 +2257,7 @@ namespace TvDatabase
 
       if (rec.ScheduleType == (int)ScheduleRecordingType.Daily)
       {
-        for (int i = 0 ; i < days ; ++i)
+        for (int i = 0; i < days; ++i)
         {
           Schedule recNew = rec.Clone();
           recNew.ScheduleType = (int)ScheduleRecordingType.Once;
@@ -2265,7 +2281,7 @@ namespace TvDatabase
 
       if (rec.ScheduleType == (int)ScheduleRecordingType.WorkingDays)
       {
-        for (int i = 0 ; i < days ; ++i)
+        for (int i = 0; i < days; ++i)
         {
           if (dtDay.DayOfWeek != DayOfWeek.Saturday && dtDay.DayOfWeek != DayOfWeek.Sunday)
           {
@@ -2292,8 +2308,7 @@ namespace TvDatabase
 
       if (rec.ScheduleType == (int)ScheduleRecordingType.Weekends)
       {
-        IList progList;
-        progList = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(days), rec.ProgramName, rec.ReferencedChannel());
+        IList progList = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(days), rec.ProgramName, rec.ReferencedChannel());
 
         foreach (Program prog in progList)
         {
@@ -2316,7 +2331,7 @@ namespace TvDatabase
       }
       if (rec.ScheduleType == (int)ScheduleRecordingType.Weekly)
       {
-        for (int i = 0 ; i < days ; ++i)
+        for (int i = 0; i < days; ++i)
         {
           if ((dtDay.DayOfWeek == rec.StartTime.DayOfWeek) && (dtDay.Date >= rec.StartTime.Date))
           {
@@ -2342,18 +2357,7 @@ namespace TvDatabase
       }
 
 
-      IList programs;
-      if (rec.ScheduleType == (int)ScheduleRecordingType.EveryTimeOnThisChannel)
-      {
-        //Log.Debug("get {0} {1} EveryTimeOnThisChannel", rec.ProgramName, rec.ReferencedChannel().Name);
-        programs = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(days), rec.ProgramName, rec.ReferencedChannel());
-      }
-      else
-      {
-        //Log.Debug("get {0} EveryTimeOnAllChannels", rec.ProgramName);
-
-        programs = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(days), rec.ProgramName, null);
-      }
+      IList programs = rec.ScheduleType == (int)ScheduleRecordingType.EveryTimeOnThisChannel ? layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(days), rec.ProgramName, rec.ReferencedChannel()) : layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(days), rec.ProgramName, null);
       foreach (Program prog in programs)
       {
         if (rec.IsRecordingProgram(prog, false))
@@ -2378,11 +2382,8 @@ namespace TvDatabase
       Schedule schedule = GetSchedule(idChannel, programName, startTime, endTime, scheduleType);
       if (schedule != null)
         return schedule;
-      else
-      {
-        Schedule newSchedule = new Schedule(idChannel, programName, startTime, endTime);
-        return newSchedule;
-      }
+      Schedule newSchedule = new Schedule(idChannel, programName, startTime, endTime);
+      return newSchedule;
     }
 
     // Get schedules to import from xml
@@ -2397,8 +2398,10 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
       Log.Info(stmt.Sql);
       IList schedules = ObjectFactory.GetCollection(typeof(Schedule), stmt.Execute());
-      if (schedules == null) return null;
-      if (schedules.Count == 0) return null;
+      if (schedules == null)
+        return null;
+      if (schedules.Count == 0)
+        return null;
       return (Schedule)schedules[0];
     }
 
@@ -2428,8 +2431,10 @@ namespace TvDatabase
       sb.AddConstraint(Operator.Equals, "groupName", name);
       SqlStatement stmt = sb.GetStatement(true);
       IList groups = ObjectFactory.GetCollection(typeof(RadioChannelGroup), stmt.Execute());
-      if (groups == null) return null;
-      if (groups.Count == 0) return null;
+      if (groups == null)
+        return null;
+      if (groups.Count == 0)
+        return null;
       return (RadioChannelGroup)groups[0];
     }
 
@@ -2448,8 +2453,10 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
       Log.Debug(stmt.Sql);
       IList groups = ObjectFactory.GetCollection(typeof(ChannelGroup), stmt.Execute());
-      if (groups == null) return null;
-      if (groups.Count == 0) return null;
+      if (groups == null)
+        return null;
+      if (groups.Count == 0)
+        return null;
       return (ChannelGroup)groups[0];
     }
 

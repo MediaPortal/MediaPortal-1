@@ -21,26 +21,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Globalization;
-using System.Drawing;
 using System.Text;
-using System.Xml;
 using System.Windows.Forms;
 using TvControl;
-using DirectShowLib;
 using MediaPortal.Playlists;
-
-using Gentle.Common;
 using Gentle.Framework;
 using DirectShowLib.BDA;
 using TvDatabase;
-using TvLibrary;
-using TvLibrary.Log;
 using TvLibrary.Interfaces;
 using TvLibrary.Implementations;
-using TvLibrary.Channels;
-using similaritymetrics;
 using MediaPortal.UserInterface.Controls;
 
 namespace SetupTv.Sections
@@ -66,13 +55,12 @@ namespace SetupTv.Sections
 
       public override string ToString()
       {
-        return _card.Name.ToString();
+        return _card.Name;
       }
     }
-    private MPListViewStringColumnSorter lvwColumnSorter;
-    private MPListViewStringColumnSorter lvwColumnSorter2;
-    private MPListViewStringColumnSorter lvwColumnSorter3;
-    bool _redrawTab1 = false;
+    private readonly MPListViewStringColumnSorter lvwColumnSorter;
+    private readonly MPListViewStringColumnSorter lvwColumnSorter2;
+    bool _redrawTab1;
     public RadioChannels()
       : this("Radio Channels")
     {
@@ -86,10 +74,9 @@ namespace SetupTv.Sections
       lvwColumnSorter = new MPListViewStringColumnSorter();
       lvwColumnSorter.Order = SortOrder.None;
       lvwColumnSorter2 = new MPListViewStringColumnSorter();
-      lvwColumnSorter3 = new MPListViewStringColumnSorter();
       lvwColumnSorter2.Order = SortOrder.Descending;
       lvwColumnSorter2.OrderType = MPListViewStringColumnSorter.OrderTypes.AsValue;
-      this.mpListView1.ListViewItemSorter = lvwColumnSorter;
+      mpListView1.ListViewItemSorter = lvwColumnSorter;
 
     }
 
@@ -123,19 +110,19 @@ namespace SetupTv.Sections
       {
         ToolStripMenuItem item = new ToolStripMenuItem(group.GroupName);
         item.Tag = group;
-        item.Click += new EventHandler(OnAddToFavoritesMenuItem_Click);
+        item.Click += OnAddToFavoritesMenuItem_Click;
         addToFavoritesToolStripMenuItem.DropDownItems.Add(item);
         TabPage page = new TabPage(group.GroupName);
         page.SuspendLayout();
         ChannelsInRadioGroupControl channelsInRadioGroupControl = new ChannelsInRadioGroupControl();
         channelsInRadioGroupControl.Location = new System.Drawing.Point(9, 9);
-        channelsInRadioGroupControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+        channelsInRadioGroupControl.Anchor = ((AnchorStyles.Top | AnchorStyles.Bottom)
+                                              | AnchorStyles.Left)
+                                             | AnchorStyles.Right;
         page.Controls.Add(channelsInRadioGroupControl);
         page.Tag = group;
         page.Location = new System.Drawing.Point(4, 22);
-        page.Padding = new System.Windows.Forms.Padding(3);
+        page.Padding = new Padding(3);
         page.Size = new System.Drawing.Size(457, 374);
         page.UseVisualStyleBackColor = true;
         page.PerformLayout();
@@ -143,7 +130,7 @@ namespace SetupTv.Sections
         tabControl1.TabPages.Add(page);
       }
       ToolStripMenuItem itemNew = new ToolStripMenuItem("New...");
-      itemNew.Click += new EventHandler(OnAddToFavoritesMenuItem_Click);
+      itemNew.Click += OnAddToFavoritesMenuItem_Click;
       addToFavoritesToolStripMenuItem.DropDownItems.Add(itemNew);
     }
 
@@ -153,7 +140,6 @@ namespace SetupTv.Sections
       _redrawTab1 = false;
       IList dbsCards = Card.ListAll();
 
-      CountryCollection countries = new CountryCollection();
       Dictionary<int, CardType> cards = new Dictionary<int, CardType>();
 
       foreach (Card card in dbsCards)
@@ -164,13 +150,13 @@ namespace SetupTv.Sections
 
       mpListView1.BeginUpdate();
       mpListView1.Items.Clear();
-      IList chs = Channel.ListAll();
+      Channel.ListAll();
       int channelCount = 0;
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
       sb.AddOrderByField(true, "sortOrder");
       SqlStatement stmt = sb.GetStatement(true);
       IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
-      IList allmaps = ChannelMap.ListAll();
+      ChannelMap.ListAll();
 
       List<ListViewItem> items = new List<ListViewItem>();
       foreach (Channel ch in channels)
@@ -183,7 +169,8 @@ namespace SetupTv.Sections
         bool webstream = false;
         bool fmRadio = false;
         bool notmapped = true;
-        if (ch.IsRadio == false) continue;
+        if (ch.IsRadio == false)
+          continue;
         channelCount++;
         if (ch.IsWebstream())
         {
@@ -192,8 +179,8 @@ namespace SetupTv.Sections
         }
         if (ch.IsFMRadio())
         {
-          fmRadio=true;
-          notmapped=false;
+          fmRadio = true;
+          notmapped = false;
         }
         if (notmapped)
         {
@@ -205,11 +192,26 @@ namespace SetupTv.Sections
               CardType type = cards[map.IdCard];
               switch (type)
               {
-                case CardType.Analog: analog = true; notmapped = false; break;
-                case CardType.DvbC: dvbc = true; notmapped = false; break;
-                case CardType.DvbT: dvbt = true; notmapped = false; break;
-                case CardType.DvbS: dvbs = true; notmapped = false; break;
-                case CardType.Atsc: atsc = true; notmapped = false; break;
+                case CardType.Analog:
+                  analog = true;
+                  notmapped = false;
+                  break;
+                case CardType.DvbC:
+                  dvbc = true;
+                  notmapped = false;
+                  break;
+                case CardType.DvbT:
+                  dvbt = true;
+                  notmapped = false;
+                  break;
+                case CardType.DvbS:
+                  dvbs = true;
+                  notmapped = false;
+                  break;
+                case CardType.Atsc:
+                  atsc = true;
+                  notmapped = false;
+                  break;
               }
             }
           }
@@ -222,37 +224,44 @@ namespace SetupTv.Sections
         }
         if (notmapped)
         {
-          if (builder.Length > 0) builder.Append(",");
+          if (builder.Length > 0)
+            builder.Append(",");
           builder.Append("Channel not mapped to a card");
         }
         if (dvbc)
         {
-          if (builder.Length > 0) builder.Append(",");
+          if (builder.Length > 0)
+            builder.Append(",");
           builder.Append("DVB-C");
         }
         if (dvbt)
         {
-          if (builder.Length > 0) builder.Append(",");
+          if (builder.Length > 0)
+            builder.Append(",");
           builder.Append("DVB-T");
         }
         if (dvbs)
         {
-          if (builder.Length > 0) builder.Append(",");
+          if (builder.Length > 0)
+            builder.Append(",");
           builder.Append("DVB-S");
         }
         if (atsc)
         {
-          if (builder.Length > 0) builder.Append(",");
+          if (builder.Length > 0)
+            builder.Append(",");
           builder.Append("ATSC");
         }
         if (webstream)
         {
-          if (builder.Length > 0) builder.Append(",");
+          if (builder.Length > 0)
+            builder.Append(",");
           builder.Append("Webstream");
         }
         if (fmRadio)
         {
-          if (builder.Length > 0) builder.Append(",");
+          if (builder.Length > 0)
+            builder.Append(",");
           builder.Append("FM Radio");
         }
         int imageIndex = 3;
@@ -314,14 +323,15 @@ namespace SetupTv.Sections
               break;
           }
         }
-        if (provider.Length > 1) provider = provider.Substring(0, provider.Length - 1);
+        if (provider.Length > 1)
+          provider = provider.Substring(0, provider.Length - 1);
         item.SubItems[1].Text = (provider);
         items.Add(item);
       }
       mpListView1.Items.AddRange(items.ToArray());
       mpListView1.EndUpdate();
       mpLabelChannelCount.Text = String.Format("Total channels:{0}", channelCount);
-			mpListView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);				
+      mpListView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
     }
 
     void OnAddToFavoritesMenuItem_Click(object sender, EventArgs e)
@@ -335,7 +345,7 @@ namespace SetupTv.Sections
         {
           return;
         }
-        group = new RadioChannelGroup(dlg.GroupName,9999);
+        group = new RadioChannelGroup(dlg.GroupName, 9999);
         group.Persist();
         UpdateMenu();
       }
@@ -345,7 +355,8 @@ namespace SetupTv.Sections
       }
 
       ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
-      if (indexes.Count == 0) return;
+      if (indexes.Count == 0)
+        return;
       TvBusinessLayer layer = new TvBusinessLayer();
       for (int i = 0; i < indexes.Count; ++i)
       {
@@ -372,7 +383,7 @@ namespace SetupTv.Sections
       {
         if (channel.IsRadio)
         {
-          Gentle.Framework.Broker.Execute("delete from TvMovieMapping WHERE idChannel=" + channel.IdChannel.ToString());
+          Broker.Execute("delete from TvMovieMapping WHERE idChannel=" + channel.IdChannel.ToString());
           channel.Delete();
         }
       }
@@ -462,7 +473,8 @@ namespace SetupTv.Sections
     {
       mpListView1.BeginUpdate();
       ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
-      if (indexes.Count == 0) return;
+      if (indexes.Count == 0)
+        return;
       for (int i = 0; i < indexes.Count; ++i)
       {
         int index = indexes[i];
@@ -481,8 +493,10 @@ namespace SetupTv.Sections
     {
       mpListView1.BeginUpdate();
       ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
-      if (indexes.Count == 0) return;
-      if (mpListView1.Items.Count < 2) return;
+      if (indexes.Count == 0)
+        return;
+      if (mpListView1.Items.Count < 2)
+        return;
       for (int i = indexes.Count - 1; i >= 0; i--)
       {
         int index = indexes[i];
@@ -519,14 +533,14 @@ namespace SetupTv.Sections
         int oldIndex = e.Item;
         ListViewItem item = mpListView1.Items[oldIndex];
         int newIndex = (Int32.Parse(e.Label) - 1);
-        if (newIndex == oldIndex) return;
+        if (newIndex == oldIndex)
+          return;
 
         mpListView1.Items.RemoveAt(oldIndex);
         mpListView1.Items.Insert(newIndex, item);
         ReOrder();
-        e.CancelEdit = true;				
-      }
-      catch (Exception)
+        e.CancelEdit = true;
+      } catch (Exception)
       {
       }
     }
@@ -534,7 +548,8 @@ namespace SetupTv.Sections
     private void mpButtonEdit_Click(object sender, EventArgs e)
     {
       ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
-      if (indexes.Count == 0) return;
+      if (indexes.Count == 0)
+        return;
       Channel channel = (Channel)mpListView1.Items[indexes[0]].Tag;
       FormEditChannel dlg = new FormEditChannel();
       dlg.Channel = channel;
@@ -559,14 +574,7 @@ namespace SetupTv.Sections
       if (e.Column == lvwColumnSorter.SortColumn)
       {
         // Reverse the current sort direction for this column.
-        if (lvwColumnSorter.Order == SortOrder.Ascending)
-        {
-          lvwColumnSorter.Order = SortOrder.Descending;
-        }
-        else
-        {
-          lvwColumnSorter.Order = SortOrder.Ascending;
-        }
+        lvwColumnSorter.Order = lvwColumnSorter.Order == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
       }
       else
       {
@@ -576,7 +584,7 @@ namespace SetupTv.Sections
       }
 
       // Perform the sort with these new sort options.
-      this.mpListView1.Sort();
+      mpListView1.Sort();
       ReOrder();
     }
 
@@ -629,7 +637,7 @@ namespace SetupTv.Sections
       FormEditChannel dlg = new FormEditChannel();
       dlg.Channel = null;
       dlg.IsTv = false;
-      if (dlg.ShowDialog(this)==DialogResult.OK)
+      if (dlg.ShowDialog(this) == DialogResult.OK)
         OnSectionActivated();
     }
 
@@ -667,22 +675,22 @@ namespace SetupTv.Sections
       dlg.Close();
       ReOrder();
       RemoteControl.Instance.OnNewSchedule();
-			mpListView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);				
+      mpListView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
     }
 
     private void btnPlaylist_Click(object sender, EventArgs e)
     {
-      OpenFileDialog dlg=new OpenFileDialog();
-      dlg.AddExtension=false;
-      dlg.CheckFileExists=true;
-      dlg.CheckPathExists=true;
-      dlg.Filter="playlists (*.m3u;*.pls;*.b4s;*.wpl)|*.m3u;*.pls;*.b4s;*.wpl";
-      dlg.Multiselect=false;
-      dlg.Title="Select the playlist file to import";
-      if (dlg.ShowDialog()!=DialogResult.OK)
+      OpenFileDialog dlg = new OpenFileDialog();
+      dlg.AddExtension = false;
+      dlg.CheckFileExists = true;
+      dlg.CheckPathExists = true;
+      dlg.Filter = "playlists (*.m3u;*.pls;*.b4s;*.wpl)|*.m3u;*.pls;*.b4s;*.wpl";
+      dlg.Multiselect = false;
+      dlg.Title = "Select the playlist file to import";
+      if (dlg.ShowDialog() != DialogResult.OK)
         return;
-      IPlayListIO listIO=PlayListFactory.CreateIO(dlg.FileName);
-      PlayList playlist=new PlayList();
+      IPlayListIO listIO = PlayListFactory.CreateIO(dlg.FileName);
+      PlayList playlist = new PlayList();
       if (!listIO.Load(playlist, dlg.FileName))
       {
         MessageBox.Show("There was an error parsing the playlist file", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -692,20 +700,23 @@ namespace SetupTv.Sections
       int iInserted = 0;
       foreach (PlayListItem item in playlist)
       {
-        if (item.FileName==null || item.FileName== "") continue;
-        if (item.Description == null || item.Description == "") item.Description = item.FileName;
-        Channel channel = new Channel(item.Description,true, false, 0, Schedule.MinSchedule, false, Schedule.MinSchedule, 10000, true, "", true, item.Description);
+        if (string.IsNullOrEmpty(item.FileName))
+          continue;
+        if (string.IsNullOrEmpty(item.Description))
+          item.Description = item.FileName;
+        Channel channel = new Channel(item.Description, true, false, 0, Schedule.MinSchedule, false, Schedule.MinSchedule, 10000, true, "", true, item.Description);
         channel.Persist();
-        layer.AddWebStreamTuningDetails(channel,item.FileName,0);
+        layer.AddWebStreamTuningDetails(channel, item.FileName, 0);
         iInserted++;
       }
-      MessageBox.Show("Imported " + iInserted.ToString() + " new channels from playlist");
+      MessageBox.Show("Imported " + iInserted + " new channels from playlist");
     }
 
     private void btnPreview_Click(object sender, EventArgs e)
     {
       ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
-      if (indexes.Count == 0) return;
+      if (indexes.Count == 0)
+        return;
       Channel channel = (Channel)mpListView1.Items[indexes[0]].Tag;
       FormPreview previewWindow = new FormPreview();
       previewWindow.Channel = channel;
@@ -743,7 +754,7 @@ namespace SetupTv.Sections
         IList details = channel.ReferringTuningDetail();
         if (details.Count > 0)
         {
-          channel.DisplayName = ((TuningDetail)details[0]).ServiceId.ToString() + " " + channel.DisplayName;
+          channel.DisplayName = ((TuningDetail)details[0]).ServiceId + " " + channel.DisplayName;
           channel.Persist();
           item.Tag = channel;
         }
@@ -757,7 +768,7 @@ namespace SetupTv.Sections
       NotifyForm dlg = new NotifyForm("Renumbering radio channels...", "This can take some time\n\nPlease be patient...");
       dlg.Show();
       dlg.WaitForDisplay();
-      
+
       foreach (ListViewItem item in mpListView1.SelectedItems)
       {
         Channel channel = (Channel)item.Tag;

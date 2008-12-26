@@ -23,8 +23,6 @@
 
 #endregion
 
-using System;
-
 namespace MediaPortal.UserInterface.Controls
 {
   /// <summary>
@@ -34,8 +32,8 @@ namespace MediaPortal.UserInterface.Controls
   {
     public MPButton()
     {
-      this.FlatStyle = System.Windows.Forms.FlatStyle.Standard;
-      this.UseVisualStyleBackColor = true;
+      FlatStyle = System.Windows.Forms.FlatStyle.Standard;
+      UseVisualStyleBackColor = true;
     }
   }
 }

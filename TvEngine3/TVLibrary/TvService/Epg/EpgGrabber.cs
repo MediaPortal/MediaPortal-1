@@ -21,17 +21,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using TvControl;
-
-using Gentle.Common;
-using Gentle.Framework;
 using TvDatabase;
-using TvLibrary;
 using TvLibrary.Log;
 using TvLibrary.Interfaces;
-using TvLibrary.Channels;
-using TvLibrary.Epg;
 using System.Threading;
 
 namespace TvService
@@ -43,10 +36,9 @@ namespace TvService
     {
       if (x.Card.Priority < y.Card.Priority)
         return 1;
-      else if (x.Card.Priority == y.Card.Priority)
+      if (x.Card.Priority == y.Card.Priority)
         return 0;
-      else
-        return -1;
+      return -1;
     }
   }
 
@@ -61,11 +53,11 @@ namespace TvService
   {
     #region variables
     int _epgReGrabAfter = 4 * 60;//hours
-    System.Timers.Timer _epgTimer = new System.Timers.Timer();
+    readonly System.Timers.Timer _epgTimer = new System.Timers.Timer();
 
     bool _isRunning;
-    bool _reEntrant = false;
-    TVController _tvController;
+    bool _reEntrant;
+    readonly TVController _tvController;
     List<EpgCard> _epgCards;
     #endregion
 
@@ -78,7 +70,7 @@ namespace TvService
     {
       _tvController = controller;
       _epgTimer.Interval = 30000;
-      _epgTimer.Elapsed += new System.Timers.ElapsedEventHandler(_epgTimer_Elapsed);
+      _epgTimer.Elapsed += _epgTimer_Elapsed;
     }
     #endregion
 
@@ -108,7 +100,8 @@ namespace TvService
         Log.Epg("EPG: grabber disabled");
         return;
       }
-      if (_isRunning) return;
+      if (_isRunning)
+        return;
 
       Setting s = layer.GetSetting("timeoutEPGRefresh", "240");
       if (Int32.TryParse(s.Value, out _epgReGrabAfter) == false)
@@ -116,7 +109,8 @@ namespace TvService
         _epgReGrabAfter = 240;
       }
       TransponderList.Instance.RefreshTransponders();
-      if (TransponderList.Instance.Count == 0) return;
+      if (TransponderList.Instance.Count == 0)
+        return;
       Log.Epg("EPG: grabber initialized for {0} transponders..", TransponderList.Instance.Count);
       _isRunning = true;
       IList cards = Card.ListAll();
@@ -125,13 +119,14 @@ namespace TvService
 
       foreach (Card card in cards)
       {
-        if (!card.Enabled || !card.GrabEPG) continue;
+        if (!card.Enabled || !card.GrabEPG)
+          continue;
         try
         {
           RemoteControl.HostName = card.ReferencedServer().HostName;
-          if (!_tvController.CardPresent(card.IdCard)) continue;
-        }
-        catch (Exception e)
+          if (!_tvController.CardPresent(card.IdCard))
+            continue;
+        } catch (Exception e)
         {
           Log.Error("card: unable to start job for card {0} at:{0}", e.Message, card.Name, card.ReferencedServer().HostName);
         }
@@ -149,7 +144,8 @@ namespace TvService
     /// </summary>
     public void Stop()
     {
-      if (_isRunning == false) return;
+      if (_isRunning == false)
+        return;
       Log.Epg("EPG: grabber stopped..");
       _epgTimer.Enabled = false;
       _isRunning = false;
@@ -173,7 +169,8 @@ namespace TvService
     void _epgTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
       //security check, dont allow re-entrancy here
-      if (_reEntrant) return;
+      if (_reEntrant)
+        return;
       if (_epgTimer.Interval == 1000)
         _epgTimer.Interval = 30000;
       try
@@ -185,19 +182,20 @@ namespace TvService
           string threadname = Thread.CurrentThread.Name;
           if (string.IsNullOrEmpty(threadname))
             Thread.CurrentThread.Name = "DVB EPG timer";
-        }
-        catch (InvalidOperationException) { }
+        } catch (InvalidOperationException) { }
 
-        if (_tvController.AllCardsIdle == false) return;
+        if (_tvController.AllCardsIdle == false)
+          return;
         foreach (EpgCard card in _epgCards)
         {
           //Log.Epg("card:{0} grabbing:{1}", card.Card.IdCard, card.IsGrabbing);
-          if (card.IsGrabbing) continue;
-          if (_tvController.AllCardsIdle == false) return;
+          if (card.IsGrabbing)
+            continue;
+          if (_tvController.AllCardsIdle == false)
+            return;
           GrabEpgOnCard(card);
         }
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Write(ex);
       }
@@ -215,18 +213,24 @@ namespace TvService
     {
       CardType type = _tvController.Type(epgCard.Card.IdCard);
       //skip analog and webstream cards 
-      if (type == CardType.Analog || type == CardType.RadioWebStream) return;
+      if (type == CardType.Analog || type == CardType.RadioWebStream)
+        return;
 
       while (TransponderList.Instance.GetNextTransponder() != null)
       {
         //skip transponders which are in use
-        if (TransponderList.Instance.CurrentTransponder.InUse) continue;
+        if (TransponderList.Instance.CurrentTransponder.InUse)
+          continue;
 
         //check if card type is the same as the channel type of the transponder
-        if (type == CardType.Atsc && TransponderList.Instance.CurrentTransponder.TuningDetail.ChannelType != 1) continue;
-        if (type == CardType.DvbC && TransponderList.Instance.CurrentTransponder.TuningDetail.ChannelType != 2) continue;
-        if (type == CardType.DvbS && TransponderList.Instance.CurrentTransponder.TuningDetail.ChannelType != 3) continue;
-        if (type == CardType.DvbT && TransponderList.Instance.CurrentTransponder.TuningDetail.ChannelType != 4) continue;
+        if (type == CardType.Atsc && TransponderList.Instance.CurrentTransponder.TuningDetail.ChannelType != 1)
+          continue;
+        if (type == CardType.DvbC && TransponderList.Instance.CurrentTransponder.TuningDetail.ChannelType != 2)
+          continue;
+        if (type == CardType.DvbS && TransponderList.Instance.CurrentTransponder.TuningDetail.ChannelType != 3)
+          continue;
+        if (type == CardType.DvbT && TransponderList.Instance.CurrentTransponder.TuningDetail.ChannelType != 4)
+          continue;
 
         //find next channel to grab
         while (TransponderList.Instance.CurrentTransponder.GetNextChannel() != null)

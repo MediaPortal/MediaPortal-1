@@ -20,25 +20,17 @@
  */
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using TvControl;
 using TvDatabase;
-using TvLibrary.Interfaces;
-using TvLibrary.Implementations;
 using TvLibrary.Log;
-
-using Gentle.Common;
 using Gentle.Framework;
 using SetupControls;
 namespace SetupTv.Sections
 {
   public partial class TestService : SectionSettings
   {
-    IList _cards = null;
+    IList _cards;
     //Player _player;
     public TestService()
       : this("Manual Control")
@@ -49,8 +41,13 @@ namespace SetupTv.Sections
       : base(name)
     {
       InitializeComponent();
+      Init();
+    }
+
+    private void Init()
+    {
       mpComboBoxChannels.ImageList = imageList1;
-      this.DoubleBuffered = true;
+      DoubleBuffered = true;
     }
 
 
@@ -169,7 +166,6 @@ namespace SetupTv.Sections
       if (mpComboBoxChannels.SelectedItem == null) return;
       string channel = mpComboBoxChannels.SelectedItem.ToString();
       int id = ((ComboBoxExItem)mpComboBoxChannels.SelectedItem).Id;
-      TvServer server = new TvServer();
       VirtualCard card = GetCardRecordingChannel(id);
       if (card != null)
       {
@@ -182,8 +178,7 @@ namespace SetupTv.Sections
         card = GetCardTimeShiftingChannel(id);
         if (card != null)
         {
-          string fileName;
-          fileName = String.Format(@"{0}\{1}.mpg", card.RecordingFolder, Utils.MakeFileName(channel));
+          string fileName = String.Format(@"{0}\{1}.mpg", card.RecordingFolder, Utils.MakeFileName(channel));
           card.StartRecording(ref fileName, true, 0);
           mpButtonTimeShift.Enabled = false;
         }
@@ -206,17 +201,13 @@ namespace SetupTv.Sections
 
       if (mpComboBoxChannels.SelectedItem != null)
       {
-        TvServer server = new TvServer();
         int id = ((ComboBoxExItem)mpComboBoxChannels.SelectedItem).Id;
         VirtualCard card = GetCardTimeShiftingChannel(id);
         if (card != null)
         {
           mpGroupBox1.Visible = true;
           mpGroupBox1.Text = String.Format("Status of card {0}", card.Name);
-          if (card.IsTunerLocked)
-            mpLabelTunerLocked.Text = "yes";
-          else
-            mpLabelTunerLocked.Text = "no";
+          mpLabelTunerLocked.Text = card.IsTunerLocked ? "yes" : "no";
           progressBarLevel.Value = Math.Min(100, card.SignalLevel);
           progressBarQuality.Value = Math.Min(100, card.SignalQuality);
 
@@ -226,22 +217,13 @@ namespace SetupTv.Sections
 
           mpLabelTimeShift.Text = card.TimeShiftFileName;
           mpLabelChannel.Text = card.Channel.ToString();
-          if (card.IsRecording)
-            mpButtonRec.Text = "Stop Rec/TimeShift";
-          else
-            mpButtonRec.Text = "Record";
+          mpButtonRec.Text = card.IsRecording ? "Stop Rec/TimeShift" : "Record";
 
-          if (card.IsTimeShifting)
-            mpButtonTimeShift.Text = "Stop TimeShift";
-          else
-            mpButtonTimeShift.Text = "Start TimeShift";
+          mpButtonTimeShift.Text = card.IsTimeShifting ? "Stop TimeShift" : "Start TimeShift";
 
           return;
         }
-        else
-        {
-          mpGroupBox1.Visible = false;
-        }
+        mpGroupBox1.Visible = false;
       }
       mpLabelTunerLocked.Text = "no";
       progressBarLevel.Value = 0;
@@ -254,18 +236,14 @@ namespace SetupTv.Sections
 
     void UpdateCardStatus()
     {
-
-      ColumnHeaderAutoResizeStyle oldheadsize = ColumnHeaderAutoResizeStyle.HeaderSize;
       if (ServiceHelper.IsStopped) return;
       if (_cards == null) return;
       if (_cards.Count == 0) return;
       try
       {
-        TvServer server = new TvServer();
         ListViewItem item;
         int cardNo = 0;
         int off = 0;
-        bool userFound = false;
         foreach (Card card in _cards)
         {
           cardNo++;
@@ -346,7 +324,7 @@ namespace SetupTv.Sections
           }
           
 
-          userFound = false;
+          bool userFound = false;
           for (int i = 0; i < usersForCard.Length; ++i)
           {
             string tmp = "idle";
@@ -367,8 +345,7 @@ namespace SetupTv.Sections
             if (vcard.IsTimeShifting && vcard.IsGrabbingEpg) tmp = "Timeshifting (Grabbing EPG)";
             if (vcard.IsRecording && vcard.User.IsAdmin && vcard.IsGrabbingEpg) tmp = "Recording (Grabbing EPG)";
             item.SubItems[2].Text = tmp;
-            if (vcard.IsScrambled) tmp = "yes";
-            else tmp = "no";
+            tmp = vcard.IsScrambled ? "yes" : "no";
             item.SubItems[4].Text = tmp;
             item.SubItems[3].Text = vcard.ChannelName;
             item.SubItems[5].Text = usersForCard[i].Name;
@@ -415,8 +392,6 @@ namespace SetupTv.Sections
           item.SubItems[6].Text = "";
         }
 
-        if (oldheadsize != ColumnHeaderAutoResizeStyle.HeaderSize)
-          mpListView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
       }
       catch (Exception ex)
       {
@@ -456,7 +431,7 @@ namespace SetupTv.Sections
     private void mpButtonReGrabEpg_Click(object sender, EventArgs e)
     {
       RemoteControl.Instance.EpgGrabberEnabled = false;
-      Gentle.Framework.Broker.Execute("delete from Program");
+      Broker.Execute("delete from Program");
       IList channels = Channel.ListAll();
       foreach (Channel ch in channels)
       {
@@ -480,7 +455,7 @@ namespace SetupTv.Sections
       foreach (Card card in cards)
       {
         if (card.Enabled == false) continue;
-        if (!TvControl.RemoteControl.Instance.CardPresent(card.IdCard)) continue;
+        if (!RemoteControl.Instance.CardPresent(card.IdCard)) continue;
         User[] usersForCard = RemoteControl.Instance.GetUsersForCard(card.IdCard);
         if (usersForCard == null) continue;
         if (usersForCard.Length == 0) continue;
@@ -512,7 +487,7 @@ namespace SetupTv.Sections
       foreach (Card card in cards)
       {
         if (card.Enabled == false) continue;
-        if (!TvControl.RemoteControl.Instance.CardPresent(card.IdCard)) continue;
+        if (!RemoteControl.Instance.CardPresent(card.IdCard)) continue;
         User[] usersForCard = RemoteControl.Instance.GetUsersForCard(card.IdCard);
         if (usersForCard == null) continue;
         if (usersForCard.Length == 0) continue;

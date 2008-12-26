@@ -20,12 +20,13 @@
  */
 using System;
 using System.Collections.Generic;
-using System.Text;
-using TvLibrary.Epg;
 using TvLibrary.Teletext;
-using DirectShowLib.SBE;
+
 namespace TvLibrary.Interfaces
 {
+  /// <summary>
+  /// Sub Channel interface in TsWriter
+  /// </summary>
   public interface ITvSubChannel
   {
     #region properties

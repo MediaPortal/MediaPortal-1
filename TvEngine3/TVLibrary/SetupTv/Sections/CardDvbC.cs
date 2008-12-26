@@ -19,27 +19,15 @@
  *
  */
 using System;
-using System.IO;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using System.Threading;
-using System.Xml;
-using DirectShowLib;
-
-
 using TvDatabase;
 
 using TvControl;
-using TvLibrary;
 using TvLibrary.Log;
 using TvLibrary.Channels;
 using TvLibrary.Interfaces;
-using TvLibrary.Implementations;
 using DirectShowLib.BDA;
 
 namespace SetupTv.Sections
@@ -53,11 +41,11 @@ namespace SetupTv.Sections
       public int symbolrate;	 // symbol rate
     }
 
-    int _cardNumber;
-    DVBCList[] _dvbcChannels = new DVBCList[1000];
-    int _channelCount = 0;
-    bool _isScanning = false;
-    bool _stopScanning = false;
+    readonly int _cardNumber;
+    readonly DVBCList[] _dvbcChannels = new DVBCList[1000];
+    int _channelCount;
+    bool _isScanning;
+    bool _stopScanning;
 
     public CardDvbC()
       : this("DVBC")
@@ -83,14 +71,11 @@ namespace SetupTv.Sections
       string line;
       string[] tpdata;
       System.IO.TextReader tin = System.IO.File.OpenText(fileName);
-      int LineNr = 0;
       do
       {
-        line = null;
         line = tin.ReadLine();
         if (line != null)
         {
-          LineNr++;
           if (line.Length > 0)
           {
             if (line.StartsWith(";"))
@@ -187,8 +172,7 @@ namespace SetupTv.Sections
                 }
                 _dvbcChannels[_channelCount].symbolrate = Int32.Parse(tpdata[2]) / 1000;
                 _channelCount += 1;
-              }
-              catch
+              } catch
               {
               }
             }
@@ -207,13 +191,13 @@ namespace SetupTv.Sections
         for (int i = 0; i < files.Length; ++i)
         {
           string ext = System.IO.Path.GetExtension(files[i]).ToLower();
-          if (ext != ".dvbc") continue;
+          if (ext != ".dvbc")
+            continue;
           string fileName = System.IO.Path.GetFileNameWithoutExtension(files[i]);
           mpComboBoxCountry.Items.Add(fileName);
         }
         mpComboBoxCountry.SelectedIndex = 0;
-      }
-      catch (Exception)
+      } catch (Exception)
       {
         return;
       }
@@ -232,13 +216,12 @@ namespace SetupTv.Sections
       mpComboBoxMod.SelectedIndex = 3;
       UpdateStatus();
       TvBusinessLayer layer = new TvBusinessLayer();
-      int index = Int32.Parse(layer.GetSetting("dvbc" + _cardNumber.ToString() + "Country", "0").Value);
+      int index = Int32.Parse(layer.GetSetting("dvbc" + _cardNumber + "Country", "0").Value);
       if (index < mpComboBoxCountry.Items.Count)
         mpComboBoxCountry.SelectedIndex = index;
 
 
-      Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
-      checkBoxCreateGroups.Checked = (layer.GetSetting("dvbc" + _cardNumber.ToString() + "creategroups", "false").Value == "true");
+      checkBoxCreateGroups.Checked = (layer.GetSetting("dvbc" + _cardNumber + "creategroups", "false").Value == "true");
 
 
     }
@@ -246,11 +229,11 @@ namespace SetupTv.Sections
     {
       base.OnSectionDeActivated();
       TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting = layer.GetSetting("dvbc" + _cardNumber.ToString() + "Country", "0");
+      Setting setting = layer.GetSetting("dvbc" + _cardNumber + "Country", "0");
       setting.Value = mpComboBoxCountry.SelectedIndex.ToString();
       setting.Persist();
 
-      setting = layer.GetSetting("dvbc" + _cardNumber.ToString() + "creategroups", "false");
+      setting = layer.GetSetting("dvbc" + _cardNumber + "creategroups", "false");
       setting.Value = checkBoxCreateGroups.Checked ? "true" : "false";
       setting.Persist();
       //DatabaseManager.Instance.SaveChanges();
@@ -269,19 +252,20 @@ namespace SetupTv.Sections
           MessageBox.Show(this, "Card is disabled, please enable the card before scanning");
           return;
         }
-				else if (!RemoteControl.Instance.CardPresent(card.IdCard))
-				{
-					MessageBox.Show(this, "Card is not found, please make sure card is present before scanning");
-					return;
-				}
+        if (!RemoteControl.Instance.CardPresent(card.IdCard))
+        {
+          MessageBox.Show(this, "Card is not found, please make sure card is present before scanning");
+          return;
+        }
         // Check if the card is locked for scanning.
         User user;
-        if (RemoteControl.Instance.IsCardInUse(_cardNumber, out user)) {
+        if (RemoteControl.Instance.IsCardInUse(_cardNumber, out user))
+        {
           MessageBox.Show(this, "Card is locked. Scanning not possible at the moment ! Perhaps you are scanning an other part of a hybrid card.");
           return;
         }
         LoadList(String.Format(@"Tuningparameters\{0}.dvbc", mpComboBoxCountry.SelectedItem));
-        Thread scanThread = new Thread(new ThreadStart(DoScan));
+        Thread scanThread = new Thread(DoScan);
         scanThread.Name = "DVB-C scan thread";
         scanThread.Start();
         listViewStatus.Items.Clear();
@@ -307,7 +291,8 @@ namespace SetupTv.Sections
         _stopScanning = false;
         mpButtonScanTv.Text = "Cancel...";
         RemoteControl.Instance.EpgGrabberEnabled = false;
-        if (_channelCount == 0) return;
+        if (_channelCount == 0)
+          return;
 
         mpComboBoxCountry.Enabled = false;
         mpButton1.Enabled = false;
@@ -317,10 +302,12 @@ namespace SetupTv.Sections
 
         for (int index = 0; index < _channelCount; ++index)
         {
-          if (_stopScanning) return;
+          if (_stopScanning)
+            return;
           float percent = ((float)(index)) / _channelCount;
           percent *= 100f;
-          if (percent > 100f) percent = 100f;
+          if (percent > 100f)
+            percent = 100f;
           progressBar1.Value = (int)percent;
 
 
@@ -349,24 +336,21 @@ namespace SetupTv.Sections
               item.ForeColor = Color.Red;
               continue;
             }
-            else
-            {
-              line = String.Format("{0}tp- {1} {2} {3}:Nothing found", 1 + index, tuneChannel.Frequency, tuneChannel.ModulationType, tuneChannel.SymbolRate);
-              item.Text = line;
-              item.ForeColor = Color.Red;
-              continue;
-            }
+            line = String.Format("{0}tp- {1} {2} {3}:Nothing found", 1 + index, tuneChannel.Frequency, tuneChannel.ModulationType, tuneChannel.SymbolRate);
+            item.Text = line;
+            item.ForeColor = Color.Red;
+            continue;
           }
 
           int newChannels = 0;
           int updatedChannels = 0;
-          bool exists;
           for (int i = 0; i < channels.Length; ++i)
           {
             Channel dbChannel;
             DVBCChannel channel = (DVBCChannel)channels[i];
             //TuningDetail currentDetail = layer.GetChannel(channel);
             TuningDetail currentDetail = layer.GetChannel(channel.Provider, channel.Name, channel.ServiceId);
+            bool exists;
             if (currentDetail == null)
             {
               //add new channel
@@ -400,8 +384,8 @@ namespace SetupTv.Sections
             else
             {
               //update tuning details...
-							TuningDetail td = layer.UpdateTuningDetails(dbChannel, channel, currentDetail);
-							td.Persist();
+              TuningDetail td = layer.UpdateTuningDetails(dbChannel, channel, currentDetail);
+              td.Persist();
             }
 
             if (channel.IsTv)
@@ -430,7 +414,7 @@ namespace SetupTv.Sections
                 newChannels++;
               }
             }
-            layer.MapChannelToCard(card, dbChannel,false);
+            layer.MapChannelToCard(card, dbChannel, false);
             line = String.Format("{0}tp- {1} {2} {3}:New:{4} Updated:{5}", 1 + index, tuneChannel.Frequency, tuneChannel.ModulationType, tuneChannel.SymbolRate, newChannels, updatedChannels);
             item.Text = line;
           }
@@ -438,8 +422,7 @@ namespace SetupTv.Sections
 
         //DatabaseManager.Instance.SaveChanges();
 
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Write(ex);
       }
@@ -453,16 +436,10 @@ namespace SetupTv.Sections
         mpButtonScanTv.Text = buttonText;
         _isScanning = false;
       }
-      ListViewItem lastItem = listViewStatus.Items.Add(new ListViewItem(String.Format("Total radio channels new:{0} updated:{1}", radioChannelsNew, radioChannelsUpdated)));
-      lastItem = listViewStatus.Items.Add(new ListViewItem(String.Format("Total tv channels new:{0} updated:{1}", tvChannelsNew, tvChannelsUpdated)));
-
-      lastItem = listViewStatus.Items.Add(new ListViewItem("Scan done..."));
+      listViewStatus.Items.Add(new ListViewItem(String.Format("Total radio channels new:{0} updated:{1}", radioChannelsNew, radioChannelsUpdated)));
+      listViewStatus.Items.Add(new ListViewItem(String.Format("Total tv channels new:{0} updated:{1}", tvChannelsNew, tvChannelsUpdated)));
+      ListViewItem lastItem = listViewStatus.Items.Add(new ListViewItem("Scan done..."));
       lastItem.EnsureVisible();
-    }
-
-    private void mpComboBox1_SelectedIndexChanged(object sender, EventArgs e)
-    {
-
     }
 
     private void mpComboBoxCountry_SelectedIndexChanged(object sender, EventArgs e)
@@ -484,11 +461,11 @@ namespace SetupTv.Sections
         MessageBox.Show(this, "Card is disabled, please enable the card before scanning");
         return;
       }
-			else if (!RemoteControl.Instance.CardPresent(card.IdCard))
-			{
-				MessageBox.Show(this, "Card is not found, please make sure card is present before scanning");
-				return;
-			}
+      if (!RemoteControl.Instance.CardPresent(card.IdCard))
+      {
+        MessageBox.Show(this, "Card is not found, please make sure card is present before scanning");
+        return;
+      }
       RemoteControl.Instance.EpgGrabberEnabled = false;
       mpButton1.Enabled = false;
       DVBCChannel tuneChannel = new DVBCChannel();
@@ -511,15 +488,15 @@ namespace SetupTv.Sections
           item = listViewStatus.Items.Add(new ListViewItem(line));
           item.EnsureVisible();
           _dvbcChannels[i] = new DVBCList();
-          _dvbcChannels[i].frequency = (int)ch.Frequency/10;
+          _dvbcChannels[i].frequency = (int)ch.Frequency / 10;
           _dvbcChannels[i].modulation = ch.ModulationType;
-          _dvbcChannels[i].symbolrate = ch.SymbolRate/10;
+          _dvbcChannels[i].symbolrate = ch.SymbolRate / 10;
 
         }
         _channelCount = channels.Length;
       }
 
-      ListViewItem lastItem = listViewStatus.Items.Add(new ListViewItem(String.Format("Scan done, found {0} transponders..." , _channelCount)));
+      ListViewItem lastItem = listViewStatus.Items.Add(new ListViewItem(String.Format("Scan done, found {0} transponders...", _channelCount)));
       lastItem.EnsureVisible();
       mpButton1.Enabled = true;
 
@@ -528,7 +505,7 @@ namespace SetupTv.Sections
       {
         if (DialogResult.Yes == MessageBox.Show(String.Format("Found {0} transponders. Would you like to scan those?", _channelCount), "Manual scan results", MessageBoxButtons.YesNo))
         {
-          Thread scanThread = new Thread(new ThreadStart(DoScan));
+          Thread scanThread = new Thread(DoScan);
           scanThread.Name = "DVB-C scan thread";
           scanThread.Start();
         }

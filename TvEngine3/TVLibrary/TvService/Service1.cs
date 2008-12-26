@@ -30,24 +30,18 @@
  */
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.ServiceProcess;
-using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using System.Runtime.CompilerServices;
 using System.Runtime.Remoting;
-using System.Runtime.Remoting.Channels;
-using System.Runtime.Remoting.Channels.Tcp;
 using System.Xml;
 using TvDatabase;
 using TvLibrary.Log;
 using TvControl;
 using TvEngine.Interfaces;
 using TvLibrary.Interfaces;
-using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace TvService
@@ -55,11 +49,11 @@ namespace TvService
   public partial class Service1 : ServiceBase, IPowerEventHandler
   {
     #region variables
-    bool _started = false;
-    bool _priorityApplied = false;
+    bool _started;
+    bool _priorityApplied;
     TVController _controller;
-    List<PowerEventHandler> _powerEventHandlers;
-    private bool _reinitializeController = false;
+    readonly List<PowerEventHandler> _powerEventHandlers;
+    private bool _reinitializeController;
 
     #endregion
 
@@ -68,21 +62,20 @@ namespace TvService
     /// </summary>
     public Service1()
     {
-      string applicationPath = System.Windows.Forms.Application.ExecutablePath;
+      string applicationPath = Application.ExecutablePath;
       applicationPath = System.IO.Path.GetFullPath(applicationPath);
       applicationPath = System.IO.Path.GetDirectoryName(applicationPath);
       System.IO.Directory.SetCurrentDirectory(applicationPath);
       _powerEventHandlers = new List<PowerEventHandler>();
       GlobalServiceProvider.Instance.Add<IPowerEventHandler>(this);
-      AddPowerEventHandler(new PowerEventHandler(this.OnPowerEventHandler));
+      AddPowerEventHandler(OnPowerEventHandler);
       // setup the remoting channels
       try
       {
         string remotingFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
         // process the remoting configuration file
         RemotingConfiguration.Configure(remotingFile, false);
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Write(ex);
       }
@@ -111,8 +104,7 @@ namespace TvService
           RequestAdditionalTime(60000);  // starting database can be slow so increase default timeout
           applyProcessPriority();
           _priorityApplied = true;
-        }
-        catch (Exception)
+        } catch (Exception)
         {
           // applyProcessPriority can generate an exception when we cannot connect to the database
         }
@@ -126,9 +118,8 @@ namespace TvService
         ServicePack = " (" + os.OSCSDVersion + ")";
       Log.WriteFile("TVService v" + versionInfo.FileVersion + " is starting up on " + os.OSVersionString + ServicePack);
 
-      Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
-      AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
-      Process currentProcess = Process.GetCurrentProcess();
+      Application.ThreadException += Application_ThreadException;
+      AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
       _powerEventThread = new Thread(PowerEventThread);
       _powerEventThread.Name = "PowerEventThread";
       _powerEventThread.IsBackground = true;
@@ -138,8 +129,7 @@ namespace TvService
       try
       {
         System.IO.Directory.CreateDirectory("pmt");
-      }
-      catch (Exception)
+      } catch (Exception)
       {
       }
       StartRemoting();
@@ -180,10 +170,6 @@ namespace TvService
       if (!Environment.HasShutdownStarted)
       {
         Utils.RestartMCEServices();
-        GC.Collect();
-        GC.Collect();
-        GC.Collect();
-        GC.Collect();
       }
       _started = false;
       Log.WriteFile("TV service stopped");
@@ -193,7 +179,7 @@ namespace TvService
 
     Thread _powerEventThread;
     uint _powerEventThreadId;
-    
+
     [StructLayout(LayoutKind.Sequential)]
     private struct MSG
     {
@@ -339,10 +325,6 @@ namespace TvService
           Log.Error("TV service PowerEventThread cannot create window handle, exiting thread");
           return;
         }
-        else
-        {
-          //Log.Debug("TV service PowerEventThread window handle created");
-        }
 
         // this thread needs an message loop
         Log.Debug("TV service PowerEventThread message loop is running");
@@ -361,8 +343,7 @@ namespace TvService
 
 
             DispatchMessageA(ref msgApi);
-          }
-          catch (Exception ex)
+          } catch (Exception ex)
           {
             Log.Error("TV service PowerEventThread: Exception: {0}", ex.ToString());
           }
@@ -388,12 +369,11 @@ namespace TvService
       Log.Debug("OnPowerEvent: PowerStatus: {0}", powerStatus);
 
       bool accept = true;
-      bool result;
       List<PowerEventHandler> powerEventPreventers = new List<PowerEventHandler>();
       List<PowerEventHandler> powerEventAllowers = new List<PowerEventHandler>();
       foreach (PowerEventHandler handler in _powerEventHandlers)
       {
-        result = handler(powerStatus);
+        bool result = handler(powerStatus);
         if (result == false)
         {
           accept = false;
@@ -404,30 +384,27 @@ namespace TvService
       }
       if (accept)
         return true;
-      else
-      {
-        if (powerEventPreventers.Count > 0)
-          foreach (PowerEventHandler handler in powerEventPreventers)
-            Log.Debug("PowerStatus:{0} rejected by {1}", powerStatus, handler.Target.ToString());
+      if (powerEventPreventers.Count > 0)
+        foreach (PowerEventHandler handler in powerEventPreventers)
+          Log.Debug("PowerStatus:{0} rejected by {1}", powerStatus, handler.Target.ToString());
 
-        // if query suspend: 
-        // everybody that allowed the standby now must receive a deny event
-        // since we will not get a QuerySuspendFailed message by the OS when
-        // we return false to QuerySuspend
-        if (powerStatus == PowerEventType.QuerySuspend ||
+      // if query suspend: 
+      // everybody that allowed the standby now must receive a deny event
+      // since we will not get a QuerySuspendFailed message by the OS when
+      // we return false to QuerySuspend
+      if (powerStatus == PowerEventType.QuerySuspend ||
           powerStatus == PowerEventType.QueryStandBy)
+      {
+        foreach (PowerEventHandler handler in powerEventAllowers)
         {
-          foreach (PowerEventHandler handler in powerEventAllowers)
-          {
-            handler(powerStatus == PowerEventType.QuerySuspend ? PowerEventType.QuerySuspendFailed : PowerEventType.QueryStandByFailed);
-          }
+          handler(powerStatus == PowerEventType.QuerySuspend ? PowerEventType.QuerySuspendFailed : PowerEventType.QueryStandByFailed);
         }
-
-        return false;
       }
+
+      return false;
     }
 
-    void GetDatabaseConnectionString(out string connectionString, out string provider)
+    static void GetDatabaseConnectionString(out string connectionString, out string provider)
     {
       connectionString = "";
       provider = "";
@@ -436,56 +413,52 @@ namespace TvService
         XmlDocument doc = new XmlDocument();
         doc.Load(String.Format(@"{0}\gentle.config", Log.GetPathName()));
         XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
-        XmlNode nodeConnection = nodeKey.Attributes.GetNamedItem("connectionString"); ;
-        XmlNode nodeProvider = nodeKey.Attributes.GetNamedItem("name"); ;
+        XmlNode nodeConnection = nodeKey.Attributes.GetNamedItem("connectionString");
+        XmlNode nodeProvider = nodeKey.Attributes.GetNamedItem("name");
         connectionString = nodeConnection.InnerText;
         provider = nodeProvider.InnerText;
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Write(ex);
       }
     }
 
-    private void applyProcessPriority()
+    private static void applyProcessPriority()
     {
       try
       {
         string connectionString, provider;
         GetDatabaseConnectionString(out connectionString, out provider);
-        string ConnectionLog = connectionString.Remove(connectionString.IndexOf(@"Password=") + 8);
-        // Log.Info("TVService: using {0} database connection: {1}", provider, ConnectionLog);
         Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(connectionString);
 
-        TvDatabase.TvBusinessLayer layer = new TvDatabase.TvBusinessLayer();
+        TvBusinessLayer layer = new TvBusinessLayer();
         int processPriority = Convert.ToInt32(layer.GetSetting("processPriority", "3").Value);
 
         switch (processPriority)
         {
           case 0:
-            Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.RealTime;
+            Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.RealTime;
             break;
           case 1:
-            Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.High;
+            Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
             break;
           case 2:
-            Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.AboveNormal;
+            Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.AboveNormal;
             break;
           case 3:
-            Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.Normal;
+            Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.Normal;
             break;
           case 4:
-            Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.BelowNormal;
+            Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.BelowNormal;
             break;
           case 5:
-            Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.Idle;
+            Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.Idle;
             break;
           default:
-            Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.Normal;
+            Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.Normal;
             break;
         }
-      }
-      catch (Exception)
+      } catch (Exception)
       {
       }
 
@@ -494,7 +467,7 @@ namespace TvService
     private bool OnPowerEventHandler(PowerEventType powerStatus)
     {
       Log.Debug("OnPowerEventHandler: PowerStatus: {0}", powerStatus);
-      
+
       switch (powerStatus)
       {
         case PowerEventType.StandBy:
@@ -510,7 +483,7 @@ namespace TvService
               _controller.DeInit();
             }
           }
-          return true;        
+          return true;
         case PowerEventType.QuerySuspend:
         case PowerEventType.QueryStandBy:
           if (_controller != null)
@@ -520,10 +493,7 @@ namespace TvService
               //OnStop();
               return true;
             }
-            else
-            {
-              return false;
-            }
+            return false;
           }
           return true;
         case PowerEventType.QuerySuspendFailed:
@@ -541,7 +511,7 @@ namespace TvService
             Log.Debug("OnPowerEventHandler: Starting Controller");
             _controller.Restart();
           }
-        
+
           return true;
       }
       return true;
@@ -555,11 +525,10 @@ namespace TvService
       try
       {
         // create the object reference and make the singleton instance available
-        ObjRef objref = RemotingServices.Marshal(_controller, "TvControl", typeof(TvControl.IController));
+        RemotingServices.Marshal(_controller, "TvControl", typeof(IController));
         RemoteControl.Clear();
 
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Write(ex);
       }
@@ -577,8 +546,7 @@ namespace TvService
         {
           RemotingServices.Disconnect(_controller);
         }
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Write(ex);
       }
@@ -595,7 +563,7 @@ namespace TvService
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The <see cref="System.UnhandledExceptionEventArgs"/> instance containing the event data.</param>
-    void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+    static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
     {
       Log.WriteFile("Tvservice stopped due to a app domain exception {0}", e.ExceptionObject);
     }

@@ -19,9 +19,6 @@
  *
  */
 using System;
-using System.Collections.Generic;
-using System.Text;
-using TvLibrary.Log;
 using TvLibrary.Interfaces;
 
 namespace TvLibrary.Implementations.DVB
@@ -108,6 +105,9 @@ namespace TvLibrary.Implementations.DVB
       RecalculatePositions = 0x6f     //  4/6 bytes  
     }
 
+    ///<summary>
+    /// DiseqC Position flags
+    ///</summary>
     public enum DiSEqCPositionFlags : byte
     {
       /// <summary>
@@ -144,7 +144,10 @@ namespace TvLibrary.Implementations.DVB
       PositionReferenceLost = 0x1,
     }
 
-    enum DiSEqCFraming:byte
+    /// <summary>
+    /// DiseqC Framing
+    /// </summary>
+    public enum DiSEqCFraming : byte
     {
       /// <summary>
       /// diseqc framing byte, first transmission
@@ -180,7 +183,10 @@ namespace TvLibrary.Implementations.DVB
       ReplyUnknownCommand = 0xe7
     }
 
-    enum DiSEqCMovement:byte
+    /// <summary>
+    /// DiseqC Movement
+    /// </summary>
+    public enum DiSEqCMovement : byte
     {
       /// <summary>
       /// wildcard for both directions
@@ -199,10 +205,11 @@ namespace TvLibrary.Implementations.DVB
 
 
     #region variables
-    IDiSEqCController _controller;
+
+    readonly IDiSEqCController _controller;
     int _currentPosition = -1;
-    int _currentStepsAzimuth = 0;
-    int _currentStepsElevation = 0;
+    int _currentStepsAzimuth;
+    int _currentStepsElevation;
     #endregion
 
     /// <summary>
@@ -222,35 +229,35 @@ namespace TvLibrary.Implementations.DVB
       byte[] cmd = new byte[3];
       Log.Log.Write("DiSEqC: ClearReset");
       cmd[0] = (byte)DiSEqCFraming.FirstTransmission;
-      cmd[1] = (byte)0x10;
+      cmd[1] = 0x10;
       cmd[2] = (byte)DiSEqCCommands.ClearReset;
       _controller.SendDiSEqCCommand(cmd);
       System.Threading.Thread.Sleep(100);
 
       Log.Log.Write("DiSEqC: PowerOn");
       cmd[0] = (byte)DiSEqCFraming.FirstTransmission;
-      cmd[1] = (byte)0x10;
+      cmd[1] = 0x10;
       cmd[2] = (byte)DiSEqCCommands.PowerOn;
       _controller.SendDiSEqCCommand(cmd);
       System.Threading.Thread.Sleep(100);
 
       Log.Log.Write("DiSEqC: reset");
       cmd[0] = (byte)DiSEqCFraming.FirstTransmission;
-      cmd[1] = (byte)0x10;
+      cmd[1] = 0x10;
       cmd[2] = (byte)DiSEqCCommands.Reset;
       _controller.SendDiSEqCCommand(cmd);
       System.Threading.Thread.Sleep(100);
 
       Log.Log.Write("DiSEqC: clear reset");
       cmd[0] = (byte)DiSEqCFraming.FirstTransmission;
-      cmd[1] = (byte)0x10;
+      cmd[1] = 0x10;
       cmd[2] = (byte)DiSEqCCommands.ClearReset;
       _controller.SendDiSEqCCommand(cmd);
       System.Threading.Thread.Sleep(100);
 
       Log.Log.Write("DiSEqC: PowerOn");
       cmd[0] = (byte)DiSEqCFraming.FirstTransmission;
-      cmd[1] = (byte)0x10;
+      cmd[1] = 0x10;
       cmd[2] = (byte)DiSEqCCommands.PowerOn;
       _controller.SendDiSEqCCommand(cmd);
 
@@ -337,7 +344,8 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="steps">the number of steps to move.</param>
     public void DriveMotor(DiSEqCDirection direction, byte steps)
     {
-      if (steps == 0) return;
+      if (steps == 0)
+        return;
       StopMotor();
       Log.Log.Write("DiSEqC: drive motor {0} for {1} steps", direction.ToString(), steps);
       byte[] cmd = new byte[4];
@@ -378,8 +386,9 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public void StorePosition(byte position)
     {
-      if (position <= 0) throw new ArgumentException("position");
-      Log.Log.Write("DiSEqC: store current position in {0}",position);
+      if (position <= 0)
+        throw new ArgumentException("position");
+      Log.Log.Write("DiSEqC: store current position in {0}", position);
       byte[] cmd = new byte[4];
       cmd[0] = (byte)DiSEqCFraming.FirstTransmission;
       cmd[1] = (byte)DiSEqCMovement.Azimutal;
@@ -421,8 +430,10 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public void GotoPosition(byte position)
     {
-      if (position <= 0) throw new ArgumentException("position");
-      if (_currentStepsAzimuth == 0 && _currentStepsElevation == 0 && position == _currentPosition) return;
+      if (position <= 0)
+        throw new ArgumentException("position");
+      if (_currentStepsAzimuth == 0 && _currentStepsElevation == 0 && position == _currentPosition)
+        return;
       Log.Log.Write("DiSEqC: goto position {0}", position);
       byte[] cmd = new byte[4];
       cmd[0] = (byte)DiSEqCFraming.FirstTransmission;

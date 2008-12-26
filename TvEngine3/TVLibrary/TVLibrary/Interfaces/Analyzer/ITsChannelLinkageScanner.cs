@@ -19,8 +19,6 @@
  *
  */
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.InteropServices;
 
 namespace TvLibrary.Interfaces.Analyzer
@@ -83,11 +81,12 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <param name="network_id">The network id.</param>
     /// <param name="transport_id">The transportid.</param>
     /// <param name="service_id">The service_id.</param>
+    /// <param name="name">The channel name</param>
     /// <returns></returns>
     [PreserveSig]
     int GetLinkedChannel([In] uint channelIndex, [In] uint linkIndex, [In, Out] ref UInt16 network_id, [In, Out] ref UInt16 transport_id, [In, Out] ref UInt16 service_id, out IntPtr name);
 
-    
+
     /// <summary>
     /// Sets the call back which will be called when links have been received
     /// </summary>

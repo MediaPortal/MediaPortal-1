@@ -21,20 +21,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using TvControl;
-using DirectShowLib;
-
-using Gentle.Common;
 using Gentle.Framework;
 using TvDatabase;
-using TvLibrary;
-using TvLibrary.Interfaces;
-using TvLibrary.Implementations;
 using MediaPortal.UserInterface.Controls;
 
 namespace SetupTv.Sections
@@ -50,8 +39,8 @@ namespace SetupTv.Sections
       }
 
     }
-    private MPListViewStringColumnSorter lvwColumnSorter1;
-    private MPListViewStringColumnSorter lvwColumnSorter2;
+    private readonly MPListViewStringColumnSorter lvwColumnSorter1;
+    private readonly MPListViewStringColumnSorter lvwColumnSorter2;
 
     public RadioGroups()
       : this("Radio Groups")
@@ -64,10 +53,10 @@ namespace SetupTv.Sections
       InitializeComponent();
       lvwColumnSorter1 = new MPListViewStringColumnSorter();
       lvwColumnSorter1.Order = SortOrder.None;
-      this.mpListViewChannels.ListViewItemSorter = lvwColumnSorter1;
+      mpListViewChannels.ListViewItemSorter = lvwColumnSorter1;
       lvwColumnSorter2 = new MPListViewStringColumnSorter();
       lvwColumnSorter2.Order = SortOrder.None;
-      this.mpListViewMapped.ListViewItemSorter = lvwColumnSorter2;
+      mpListViewMapped.ListViewItemSorter = lvwColumnSorter2;
     }
 
     public override void OnSectionActivated()
@@ -115,7 +104,8 @@ namespace SetupTv.Sections
     {
       GroupNameForm dlg = new GroupNameForm();
       dlg.ShowDialog(this);
-      if (dlg.GroupName.Length == 0) return;
+      if (dlg.GroupName.Length == 0)
+        return;
       RadioChannelGroup newGroup = new RadioChannelGroup(dlg.GroupName, 9999);
       newGroup.Persist();
       Init();
@@ -149,7 +139,8 @@ namespace SetupTv.Sections
 
     private void mpComboBoxGroup_SelectedIndexChanged(object sender, EventArgs e)
     {
-      if (mpComboBoxGroup.SelectedItem == null) return;
+      if (mpComboBoxGroup.SelectedItem == null)
+        return;
       ComboGroup g = (ComboGroup)mpComboBoxGroup.SelectedItem;
       //g.Group.GroupMaps.ApplySort(new GroupMap.Comparer(), false);
 
@@ -178,7 +169,8 @@ namespace SetupTv.Sections
       foreach (RadioGroupMap map in maps)
       {
         Channel channel = map.ReferencedChannel();
-        if (channel.IsRadio == false) continue;
+        if (channel.IsRadio == false)
+          continue;
         int imageIndex = 0;
         if (channel.FreeToAir)
           imageIndex = 3;
@@ -196,7 +188,8 @@ namespace SetupTv.Sections
       List<ListViewItem> items = new List<ListViewItem>();
       foreach (Channel channel in channels)
       {
-        if (channelsMapped.ContainsKey(channel.IdChannel)) continue;
+        if (channelsMapped.ContainsKey(channel.IdChannel))
+          continue;
         int imageIndex = 0;
         if (channel.FreeToAir)
           imageIndex = 3;
@@ -346,7 +339,8 @@ namespace SetupTv.Sections
     {
       mpListViewGroups.BeginUpdate();
       ListView.SelectedIndexCollection indexes = mpListViewGroups.SelectedIndices;
-      if (indexes.Count == 0) return;
+      if (indexes.Count == 0)
+        return;
       for (int i = 0; i < indexes.Count; ++i)
       {
         int index = indexes[i];
@@ -365,8 +359,10 @@ namespace SetupTv.Sections
     {
       mpListViewGroups.BeginUpdate();
       ListView.SelectedIndexCollection indexes = mpListViewGroups.SelectedIndices;
-      if (indexes.Count == 0) return;
-      if (mpListViewGroups.Items.Count < 2) return;
+      if (indexes.Count == 0)
+        return;
+      if (mpListViewGroups.Items.Count < 2)
+        return;
       for (int i = indexes.Count - 1; i >= 0; i--)
       {
         int index = indexes[i];
@@ -383,11 +379,13 @@ namespace SetupTv.Sections
     private void RenameGroup()
     {
       ListView.SelectedListViewItemCollection items = mpListViewGroups.SelectedItems;
-      if (items.Count != 1) return;
+      if (items.Count != 1)
+        return;
       RadioChannelGroup group = (RadioChannelGroup)items[0].Tag;
       GroupNameForm dlg = new GroupNameForm(group.GroupName);
       dlg.ShowDialog(this);
-      if (dlg.GroupName.Length == 0) return;
+      if (dlg.GroupName.Length == 0)
+        return;
       group.GroupName = dlg.GroupName;
       group.Persist();
       Init();
@@ -408,14 +406,7 @@ namespace SetupTv.Sections
       if (e.Column == lvwColumnSorter1.SortColumn)
       {
         // Reverse the current sort direction for this column.
-        if (lvwColumnSorter1.Order == SortOrder.Ascending)
-        {
-          lvwColumnSorter1.Order = SortOrder.Descending;
-        }
-        else
-        {
-          lvwColumnSorter1.Order = SortOrder.Ascending;
-        }
+        lvwColumnSorter1.Order = lvwColumnSorter1.Order == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
       }
       else
       {
@@ -425,7 +416,7 @@ namespace SetupTv.Sections
       }
 
       // Perform the sort with these new sort options.
-      this.mpListViewChannels.Sort();
+      mpListViewChannels.Sort();
     }
 
     private void mpListViewMapped_ColumnClick(object sender, ColumnClickEventArgs e)
@@ -463,7 +454,8 @@ namespace SetupTv.Sections
     {
       mpListViewMapped.BeginUpdate();
       ListView.SelectedIndexCollection indexes = mpListViewMapped.SelectedIndices;
-      if (indexes.Count == 0) return;
+      if (indexes.Count == 0)
+        return;
       for (int i = 0; i < indexes.Count; ++i)
       {
         int index = indexes[i];
@@ -482,8 +474,10 @@ namespace SetupTv.Sections
     {
       mpListViewMapped.BeginUpdate();
       ListView.SelectedIndexCollection indexes = mpListViewMapped.SelectedIndices;
-      if (indexes.Count == 0) return;
-      if (mpListViewMapped.Items.Count < 2) return;
+      if (indexes.Count == 0)
+        return;
+      if (mpListViewMapped.Items.Count < 2)
+        return;
       for (int i = indexes.Count - 1; i >= 0; i--)
       {
         int index = indexes[i];

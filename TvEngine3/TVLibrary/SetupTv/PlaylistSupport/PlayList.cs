@@ -24,23 +24,17 @@
 #endregion
 
 using System;
-//using MediaPortal.GUI.Library;
 using System.Collections.Generic;
-//using MediaPortal.TagReader;
 using System.Collections;
 
 namespace MediaPortal.Playlists
 {
   //public class PlayList : IEnumerable<PlayListItem>
-  [Serializable()]
+  [Serializable]
   public class PlayList : IEnumerable<PlayListItem> //, IComparer
   {
     protected string _playListName = "";
     protected List<PlayListItem> _listPlayListItems = new List<PlayListItem>();
-
-    public PlayList()
-    {
-    }
 
     public bool AllPlayed()
     {
@@ -68,28 +62,25 @@ namespace MediaPortal.Playlists
 
     public bool Insert(PlayListItem item, int currentSong)
     {
-      bool success = false;
       if (item == null)
-        return success;  
+        return false;  
 
       if (currentSong < _listPlayListItems.Count)
       {
         _listPlayListItems.Insert(currentSong + 1, item);
-        success = true;
       }
       else
       {
         _listPlayListItems.Add(item);
-        success = true;
       }
-      return success;
+      return true;
     }
 
     public bool Insert(PlayListItem item, PlayListItem afterThisItem)
     {
       bool success = false;
       if (item == null)
-        return success;      
+        return false;      
 
       for (int i = 0; i < _listPlayListItems.Count; ++i)
       {
@@ -152,7 +143,7 @@ namespace MediaPortal.Playlists
 
     public virtual void Shuffle()
     {
-      Random r = new System.Random(DateTime.Now.Millisecond);
+      Random r = new Random(DateTime.Now.Millisecond);
 
       // iterate through each catalogue item performing arbitrary swaps
       for (int item = 0; item < Count; item++)
@@ -173,13 +164,13 @@ namespace MediaPortal.Playlists
 
     IEnumerator IEnumerable.GetEnumerator()
     {
-      IEnumerable enumerable = (IEnumerable)_listPlayListItems;
+      IEnumerable enumerable = _listPlayListItems;
       return enumerable.GetEnumerator();
     }
 
     public int MovePlayListItemUp(int iItem)
     {
-      int selectedItemIndex = -1;
+      int selectedItemIndex;
 
       if (iItem < 0 || iItem >= _listPlayListItems.Count)
         return -1;
@@ -218,7 +209,7 @@ namespace MediaPortal.Playlists
 
     public int MovePlayListItemDown(int iItem)
     {
-      int selectedItemIndex = -1;
+      int selectedItemIndex;
 
       if (iItem < 0 || iItem >= _listPlayListItems.Count)
         return -1;

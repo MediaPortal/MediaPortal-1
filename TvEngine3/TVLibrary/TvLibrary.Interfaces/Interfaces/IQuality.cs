@@ -18,23 +18,35 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-using System;
-using System.Collections.Generic;
-using System.Text;
 using TvLibrary.Implementations.Analog;
 
 namespace TvLibrary.Interfaces
 {
 
-    /// <summary>
+  /// <summary>
   /// used by the IVideoEncoder interface getvalue(ENCAPIPARAM_BITRATE_MODE)
   /// </summary>
   public enum VIDEOENCODER_BITRATE_MODE
   {
+    ///<summary>
+    /// Undefined Bitrate mode
+    ///</summary>
     Undefined = -1,
+    /// <summary>
+    /// Constant bit rate mode
+    /// </summary>
     ConstantBitRate = 0,
+    /// <summary>
+    /// Variable bit rate mode
+    /// </summary>
     VariableBitRateAverage,
+    /// <summary>
+    /// Variable peak bit rate mode
+    /// </summary>
     VariableBitRatePeak,
+    /// <summary>
+    /// Bit rate mode not set
+    /// </summary>
     NotSet
   };
 

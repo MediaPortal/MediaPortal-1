@@ -1,18 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-
-using TvLibrary;
-using TvLibrary.Implementations;
 using TvLibrary.Interfaces;
-using TvLibrary.Implementations.Analog;
-using TvLibrary.Implementations.DVB;
 using TvLibrary.Channels;
-using DirectShowLib;
 using DirectShowLib.BDA;
 namespace TestApp
 {
@@ -54,10 +43,7 @@ namespace TestApp
         textBoxSymbolRate.Text = _channel.SymbolRate.ToString();
         textBoxSwitch.Text = _channel.SwitchingFrequency.ToString();
         comboBoxDisEqc.SelectedIndex = (int)_channel.DisEqc;
-        if (_channel.Polarisation == Polarisation.LinearH)
-          comboBoxPol.SelectedIndex = 0;
-        else
-          comboBoxPol.SelectedIndex = 1;
+        comboBoxPol.SelectedIndex = _channel.Polarisation == Polarisation.LinearH ? 0 : 1;
       }
     }
 
@@ -70,10 +56,7 @@ namespace TestApp
       _channel.SymbolRate = Int32.Parse(textBoxSymbolRate.Text);
       _channel.SwitchingFrequency = Int32.Parse(textBoxSwitch.Text);
       _channel.DisEqc = (DisEqcType)comboBoxDisEqc.SelectedIndex;
-      if (comboBoxPol.SelectedIndex == 0)
-        _channel.Polarisation = Polarisation.LinearH;
-      else
-        _channel.Polarisation = Polarisation.LinearV;
+      _channel.Polarisation = comboBoxPol.SelectedIndex == 0 ? Polarisation.LinearH : Polarisation.LinearV;
 
       Close();
     }

@@ -19,8 +19,6 @@
  *
  */
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.InteropServices;
 
 namespace TvLibrary.Interfaces.Analyzer
@@ -37,6 +35,7 @@ namespace TvLibrary.Interfaces.Analyzer
     /// Sets the PMT pid.
     /// </summary>
     /// <param name="pmtPid">The PMT pid.</param>
+    /// <param name="serviceId">The service id</param>
     /// <returns></returns>
     [PreserveSig]
     int SetPmtPid(short pmtPid, int serviceId);

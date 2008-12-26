@@ -19,19 +19,24 @@
  *
  */
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.InteropServices;
 
 namespace TvLibrary.Interfaces.Analyzer
 {
 
+  ///<summary>
+  /// Channel scanning callback
+  ///</summary>
   [ComVisible(true), ComImport,
   Guid("CE141670-1840-4188-8A40-618BA3A5A1C3"),
   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IChannelScanCallback
   {
-	  [PreserveSig] 
+    /// <summary>
+    /// Called when the channel scanning is done
+    /// </summary>
+    /// <returns></returns>
+    [PreserveSig]
     int OnScannerDone();
   }
   /// <summary>
@@ -71,7 +76,7 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <param name="yesNo">true when scanner is finished else false</param>
     /// <returns></returns>
     [PreserveSig]
-	  int IsReady( out bool yesNo);
+    int IsReady(out bool yesNo);
 
     /// <summary>
     /// Gets the details for a channel.
@@ -110,20 +115,50 @@ namespace TvLibrary.Interfaces.Analyzer
                        out short pmtPid,
                        out short hasVideo,
                        out short hasAudio);
-    
+    /// <summary>
+    /// Sets the channel scan callback
+    /// </summary>
+    /// <param name="callback">The callback</param>
+    /// <returns></returns>
     [PreserveSig]
-	  int SetCallBack(IChannelScanCallback callback);
+    int SetCallBack(IChannelScanCallback callback);
 
 
+    /// <summary>
+    /// Start the nit scan
+    /// </summary>
+    /// <returns></returns>
     [PreserveSig]
     int ScanNIT();
 
+    /// <summary>
+    /// Stops the nit scan
+    /// </summary>
+    /// <returns></returns>
     [PreserveSig]
     int StopNIT();
 
+    /// <summary>
+    /// Gets the number of nit transponders
+    /// </summary>
+    /// <param name="transponderCount">Number of transponders</param>
+    /// <returns></returns>
     [PreserveSig]
     int GetNITCount(out int transponderCount);
 
+    /// <summary>
+    /// Gets the nit channel
+    /// </summary>
+    /// <param name="channel">The channel id</param>
+    /// <param name="chType">The channel type</param>
+    /// <param name="frequency">The frequence</param>
+    /// <param name="polarisation">The polarisation</param>
+    /// <param name="modulation">The modulation</param>
+    /// <param name="symbolrate">The symbolrate</param>
+    /// <param name="bandwidth">The bandwith</param>
+    /// <param name="fecInner">The fec inner</param>
+    /// <param name="networkName">The network names</param>
+    /// <returns></returns>
     [PreserveSig]
     int GetNITChannel(int channel, out int chType, out int frequency, out int polarisation, out int modulation, out int symbolrate, out int bandwidth, out int fecInner, out IntPtr networkName);
 

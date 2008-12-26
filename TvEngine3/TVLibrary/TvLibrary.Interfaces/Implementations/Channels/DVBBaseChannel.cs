@@ -19,8 +19,6 @@
  *
  */
 using System;
-using System.Collections.Generic;
-using System.Text;
 using TvLibrary.Interfaces;
 namespace TvLibrary.Channels
 {
@@ -68,6 +66,9 @@ namespace TvLibrary.Channels
       _audioPid = chan._audioPid;
     }
 
+    ///<summary>
+    /// Base constructor
+    ///</summary>
     public DVBBaseChannel()
     {
       _channelName = "";
@@ -290,17 +291,9 @@ namespace TvLibrary.Channels
     /// </returns>
     public override string ToString()
     {
-      string line = "";
-      if (IsRadio)
-      {
-        line = "radio:";
-      }
-      else
-      {
-        line = "tv:";
-      }
+      string line = IsRadio ? "radio:" : "tv:";
       line += String.Format("{0} {1} Freq:{2} ONID:{3} TSID:{4} SID:{5} PMT:0x{6:X} FTA:{7} LCN:{8}",
-        Provider,Name, Frequency,NetworkId, TransportId, ServiceId, PmtPid, FreeToAir,LogicalChannelNumber);
+        Provider, Name, Frequency, NetworkId, TransportId, ServiceId, PmtPid, FreeToAir, LogicalChannelNumber);
       return line;
     }
 
@@ -314,22 +307,37 @@ namespace TvLibrary.Channels
     /// </returns>
     public override bool Equals(object obj)
     {
-      if ((obj as DVBBaseChannel) == null) return false;
+      if ((obj as DVBBaseChannel) == null)
+        return false;
       DVBBaseChannel ch = obj as DVBBaseChannel;
-      if (ch.FreeToAir != FreeToAir) return false;
-      if (ch.Frequency != Frequency) return false;
-      if (ch.IsRadio != IsRadio) return false;
-      if (ch.IsTv != IsTv) return false;
-      if (ch.Name != Name) return false;
-      if (ch.NetworkId != NetworkId) return false;
-      if (ch.PcrPid != PcrPid) return false;
-      if (ch.PmtPid != PmtPid) return false;
-      if (ch.Provider != Provider) return false;
-      if (ch.ServiceId != ServiceId) return false;
-      if (ch.TransportId != TransportId) return false;
-      if (ch.VideoPid != VideoPid) return false;
-      if (ch.AudioPid != AudioPid) return false;
-      if (ch.LogicalChannelNumber != LogicalChannelNumber) return false;
+      if (ch.FreeToAir != FreeToAir)
+        return false;
+      if (ch.Frequency != Frequency)
+        return false;
+      if (ch.IsRadio != IsRadio)
+        return false;
+      if (ch.IsTv != IsTv)
+        return false;
+      if (ch.Name != Name)
+        return false;
+      if (ch.NetworkId != NetworkId)
+        return false;
+      if (ch.PcrPid != PcrPid)
+        return false;
+      if (ch.PmtPid != PmtPid)
+        return false;
+      if (ch.Provider != Provider)
+        return false;
+      if (ch.ServiceId != ServiceId)
+        return false;
+      if (ch.TransportId != TransportId)
+        return false;
+      if (ch.VideoPid != VideoPid)
+        return false;
+      if (ch.AudioPid != AudioPid)
+        return false;
+      if (ch.LogicalChannelNumber != LogicalChannelNumber)
+        return false;
       return true;
     }
     /// <summary>

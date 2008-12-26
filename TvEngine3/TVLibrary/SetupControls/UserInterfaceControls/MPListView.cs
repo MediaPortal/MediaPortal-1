@@ -34,24 +34,24 @@ namespace MediaPortal.UserInterface.Controls
   /// <summary>
   /// Summary description for ListView.
   /// </summary>
-  public class MPListView : System.Windows.Forms.ListView
+  public class MPListView : ListView
   {
     [DllImport("user32")]
     static extern int GetDoubleClickTime();
 
     private const string REORDER = "Reorder";
-    private bool allowRowReorder = false;
+    private bool allowRowReorder;
     private DateTime lastClick = DateTime.MinValue;
 
     public bool AllowRowReorder
     {
       get
       {
-        return this.allowRowReorder;
+        return allowRowReorder;
       }
       set
       {
-        this.allowRowReorder = value;
+        allowRowReorder = value;
         base.AllowDrop = value;
       }
     }
@@ -69,14 +69,13 @@ namespace MediaPortal.UserInterface.Controls
     }
 
     public MPListView()
-      : base()
     {
-       //  Activate double buffering
-      SetStyle( ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer , true );
-      
+      //  Activate double buffering
+      SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
+
       // Allows for catching the WM_ERASEBKGND message
       SetStyle(ControlStyles.EnableNotifyMessage, true);
-      this.AllowRowReorder = true;
+      AllowRowReorder = true;
     }
 
     //protected override void WndProc(ref System.Windows.Forms.Message m)
@@ -98,17 +97,17 @@ namespace MediaPortal.UserInterface.Controls
 
     protected override void OnItemDrag(ItemDragEventArgs e)
     {
-      if (!this.AllowRowReorder)
+      if (!AllowRowReorder)
       {
         return;
       }
-      base.DoDragDrop(REORDER, DragDropEffects.Move);
+      DoDragDrop(REORDER, DragDropEffects.Move);
       base.OnItemDrag(e);
     }
 
     protected override void OnDragEnter(DragEventArgs e)
     {
-      if (!this.AllowRowReorder)
+      if (!AllowRowReorder)
       {
         e.Effect = DragDropEffects.None;
         return;
@@ -119,20 +118,13 @@ namespace MediaPortal.UserInterface.Controls
         return;
       }
       String text = (String)e.Data.GetData(REORDER.GetType());
-      if (text.CompareTo(REORDER) == 0)
-      {
-        e.Effect = DragDropEffects.Move;
-      }
-      else
-      {
-        e.Effect = DragDropEffects.None;
-      }
+      e.Effect = text.CompareTo(REORDER) == 0 ? DragDropEffects.Move : DragDropEffects.None;
       base.OnDragEnter(e);
     }
 
     protected override void OnDragOver(DragEventArgs e)
     {
-      if (!this.AllowRowReorder)
+      if (!AllowRowReorder)
       {
         e.Effect = DragDropEffects.None;
         return;
@@ -142,14 +134,14 @@ namespace MediaPortal.UserInterface.Controls
         e.Effect = DragDropEffects.None;
         return;
       }
-      Point cp = base.PointToClient(new Point(e.X, e.Y));
-      ListViewItem hoverItem = base.GetItemAt(cp.X, cp.Y);
+      Point cp = PointToClient(new Point(e.X, e.Y));
+      ListViewItem hoverItem = GetItemAt(cp.X, cp.Y);
       if (hoverItem == null)
       {
         e.Effect = DragDropEffects.None;
         return;
       }
-      foreach (ListViewItem moveItem in base.SelectedItems)
+      foreach (ListViewItem moveItem in SelectedItems)
       {
         if (moveItem.Index == hoverItem.Index)
         {
@@ -173,29 +165,29 @@ namespace MediaPortal.UserInterface.Controls
 
     protected override void OnDragDrop(DragEventArgs e)
     {
-      if (!this.AllowRowReorder)
+      if (!AllowRowReorder)
       {
         return;
       }
-      if (base.SelectedItems.Count == 0)
+      if (SelectedItems.Count == 0)
       {
         return;
       }
-      Point cp = base.PointToClient(new Point(e.X, e.Y));
-      ListViewItem dragToItem = base.GetItemAt(cp.X, cp.Y);
+      Point cp = PointToClient(new Point(e.X, e.Y));
+      ListViewItem dragToItem = GetItemAt(cp.X, cp.Y);
       if (dragToItem == null)
       {
         return;
       }
       BeginUpdate();
       int dropIndex = dragToItem.Index;
-      if (dropIndex > base.SelectedItems[0].Index)
+      if (dropIndex > SelectedItems[0].Index)
       {
         dropIndex++;
       }
       ArrayList insertItems =
-        new ArrayList(base.SelectedItems.Count);
-      foreach (ListViewItem item in base.SelectedItems)
+        new ArrayList(SelectedItems.Count);
+      foreach (ListViewItem item in SelectedItems)
       {
         insertItems.Add(item.Clone());
       }
@@ -203,11 +195,11 @@ namespace MediaPortal.UserInterface.Controls
       {
         ListViewItem insertItem =
          (ListViewItem)insertItems[i];
-        base.Items.Insert(dropIndex, insertItem);
+        Items.Insert(dropIndex, insertItem);
       }
-      foreach (ListViewItem removeItem in base.SelectedItems)
+      foreach (ListViewItem removeItem in SelectedItems)
       {
-        base.Items.Remove(removeItem);
+        Items.Remove(removeItem);
       }
       base.OnDragDrop(e);
       EndUpdate();
@@ -217,7 +209,7 @@ namespace MediaPortal.UserInterface.Controls
     {
       if (SelectedItems.Count == 0)
       {
-        if (((TimeSpan)(DateTime.Now - lastClick)).TotalMilliseconds < GetDoubleClickTime())
+        if (((DateTime.Now - lastClick)).TotalMilliseconds < GetDoubleClickTime())
         {
           OnDoubleClick(e);
           lastClick = DateTime.MinValue;
@@ -242,19 +234,13 @@ namespace MediaPortal.UserInterface.Controls
     }
 
 
-    protected override void OnPaint(PaintEventArgs pea)
-    {
-        base.OnPaint(pea);
-    }
-
-
     protected override void OnNotifyMessage(Message m)
     {
-        // filter WM_ERASEBKGND
-        if (m.Msg != 0x14)
-        {
-            base.OnNotifyMessage(m);
-        }
+      // filter WM_ERASEBKGND
+      if (m.Msg != 0x14)
+      {
+        base.OnNotifyMessage(m);
+      }
     }
   }
 }

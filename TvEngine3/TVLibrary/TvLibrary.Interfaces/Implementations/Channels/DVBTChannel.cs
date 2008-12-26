@@ -19,9 +19,6 @@
  *
  */
 using System;
-using System.Collections.Generic;
-using System.Text;
-using TvLibrary.Interfaces;
 
 namespace TvLibrary.Channels
 {
@@ -36,7 +33,7 @@ namespace TvLibrary.Channels
     #endregion
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="T:DVBTChannel"/> class.
+    /// Initializes a new instance of the <see cref="DVBTChannel"/> class.
     /// </summary>
     public DVBTChannel()
     {
@@ -79,10 +76,13 @@ namespace TvLibrary.Channels
     /// </returns>
     public override bool Equals(object obj)
     {
-      if ((obj as DVBTChannel) == null) return false;
-      if (!base.Equals(obj)) return false;
+      if ((obj as DVBTChannel) == null)
+        return false;
+      if (!base.Equals(obj))
+        return false;
       DVBTChannel ch = obj as DVBTChannel;
-      if (ch.BandWidth != BandWidth) return false;
+      if (ch.BandWidth != BandWidth)
+        return false;
 
       return true;
     }

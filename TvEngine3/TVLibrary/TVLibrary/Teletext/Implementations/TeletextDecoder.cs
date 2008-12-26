@@ -20,8 +20,6 @@
  */
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Text;
 
 namespace TvLibrary.Teletext
 {
@@ -35,16 +33,17 @@ namespace TvLibrary.Teletext
     #endregion
 
     #region variables
-    int[] _magazineCurrentSubPage = new int[MAX_MAGAZINE + 2];
-    int[] _magazineCurrentPageNr = new int[MAX_MAGAZINE + 2];
-    int[] _magazineLastRow = new int[MAX_MAGAZINE + 2];
-    string[] _vbiLine = new string[MAX_MAGAZINE + 2];
-    List<byte[]> _workingPage = new List<byte[]>();
-    TeletextPageCache _pageCache;
+
+    readonly int[] _magazineCurrentSubPage = new int[MAX_MAGAZINE + 2];
+    readonly int[] _magazineCurrentPageNr = new int[MAX_MAGAZINE + 2];
+    readonly int[] _magazineLastRow = new int[MAX_MAGAZINE + 2];
+    readonly string[] _vbiLine = new string[MAX_MAGAZINE + 2];
+    readonly List<byte[]> _workingPage = new List<byte[]>();
+    readonly TeletextPageCache _pageCache;
     //bool[,] _rowsReceived = new bool[MAX_MAGAZINE + 2, 32];
     string _line = String.Empty;
     bool _isSerial = true;
-    int _prevMagazine = 0;
+    int _prevMagazine;
     #endregion
 
     #region ctor
@@ -52,8 +51,9 @@ namespace TvLibrary.Teletext
     /// Initializes a new instance of the <see cref="TeletextDecoder"/> class.
     /// </summary>
     /// <param name="cache">The cache.</param>
-    public TeletextDecoder(ref TeletextPageCache cache)
+    public TeletextDecoder(TeletextPageCache cache)
     {
+      _prevMagazine = 0;
       _pageCache = cache;
       for (int i = 0; i < MAX_MAGAZINE + 2; ++i)
       {
@@ -88,19 +88,16 @@ namespace TvLibrary.Teletext
     /// <param name="rows">The rows.</param>
     public void Decode(byte[] rowData, int startOff, int rows)
     {
-      int line = 0;
-      int byte1 = 0, byte2 = 0;
       _line = "";
       try
       {
-        int packetNumber;
-        byte magazine;
+        int line;
         for (line = 0; line < rows; line++)
         {
           int off = startOff + line * 43;
           bool copyData = false;
-          byte1 = Hamming.Decode[rowData[off + 0]];
-          byte2 = Hamming.Decode[rowData[off + 1]];
+          int byte1 = Hamming.Decode[rowData[off + 0]];
+          int byte2 = Hamming.Decode[rowData[off + 1]];
 
           //check for invalid hamming bytes
           if (byte1 == 0xFF || byte2 == 0xFF)
@@ -109,10 +106,10 @@ namespace TvLibrary.Teletext
             _line += "HE1 ";
             continue;
           }
-          magazine = (byte)(byte1 & 0x7);
+          byte magazine = (byte)(byte1 & 0x7);
 
           //get packet number
-          packetNumber = Hamming.GetPacketNumber(off, ref rowData);
+          int packetNumber = Hamming.GetPacketNumber(off, ref rowData);
           if (packetNumber < 0)
           {
             _line += "HE2 ";
@@ -181,7 +178,7 @@ namespace TvLibrary.Teletext
           if (packetNumber == 0)
           {
             UpdatePage(magazine);
-            _vbiLine[magazine] = String.Format(" [{0}] {1:X}'", ( line), Hamming.GetPageNumber(off, ref rowData));
+            _vbiLine[magazine] = String.Format(" [{0}] {1:X}'", (line), Hamming.GetPageNumber(off, ref rowData));
             _magazineCurrentPageNr[magazine] = -1;
             _magazineCurrentSubPage[magazine] = -1;
 
@@ -195,7 +192,7 @@ namespace TvLibrary.Teletext
                 break;
               }
             }
-            if (headerError == true)
+            if (headerError)
             {
               //yes then ignore this header.
               _line += "[HER]";
@@ -340,8 +337,7 @@ namespace TvLibrary.Teletext
             }
           }
         }// for (line = 0; line < rows; line++)
-      }
-      catch (Exception)
+      } catch (Exception)
       {
         System.Diagnostics.Trace.WriteLine("EXCEPTION");
         //        Log.WriteFile(Log.LogType.Error,true,"Exception while decoding teletext");
@@ -355,21 +351,6 @@ namespace TvLibrary.Teletext
 
     #region private members
 
-    void Dump(int mag)
-    {/*
-      for (int row = 0; row <= 23; row++)
-      {
-        string line = "";
-        for (int col = 2; col <= 41; col++)
-        {
-          byte k = (byte)((_workingPage[mag][row * 42 + col]) & 0x7f);
-          if (k < 32) k = 32;
-          line += (char)k;
-        }
-       // Log.Log.WriteFile(String.Format("  dec row:{0} {1} ", row, line));
-        System.Diagnostics.Trace.WriteLine(line);
-      }*/
-    }
     void UpdatePage(int magazine)
     {
 
@@ -390,16 +371,17 @@ namespace TvLibrary.Teletext
       }
     }
 
-    bool IsDecimalPage(int i)
+    static bool IsDecimalPage(int i)
     {
-      return (bool)(((i & 0x00F) <= 9) && ((i & 0x0F0) <= 0x90));
+      return ((i & 0x00F) <= 9) && ((i & 0x0F0) <= 0x90);
     }
 
-    bool IsDecimalSubPage(int i)
+    static bool IsDecimalSubPage(int i)
     {
-      if (i >= 0x80) return false;
+      if (i >= 0x80)
+        return false;
 
-      return (bool)(((i & 0x00F) <= 9) && ((i & 0x0F0) <= 0x70));
+      return ((i & 0x00F) <= 9) && ((i & 0x0F0) <= 0x70);
     }
     #endregion
 

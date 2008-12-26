@@ -18,19 +18,16 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Text;
-using DirectShowLib;
 using TvLibrary.Channels;
-using TvLibrary.Implementations.DVB.Structures;
 using TvLibrary.Interfaces;
-using TvLibrary.Interfaces.Interfaces;
 
 
 namespace TvLibrary.Implementations.DVB
 {
+  ///<summary>
+  /// CA Context 
+  ///</summary>
   public class ConditionalAccessContext
   {
     CamType _camType;
@@ -137,14 +134,14 @@ namespace TvLibrary.Implementations.DVB
     /// <value>The Pid list.</value>
     public ArrayList HwPids
     {
-        get
-        {
-            return _HwPids;
-        }
-        set
-        {
-            _HwPids = value;
-        }
+      get
+      {
+        return _HwPids;
+      }
+      set
+      {
+        _HwPids = value;
+      }
     }
 
   }

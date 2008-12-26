@@ -19,10 +19,7 @@
  *
  */
 using System;
-using System.Collections.Generic;
-using System.Text;
 using DirectShowLib.BDA;
-using TvLibrary.Interfaces;
 
 namespace TvLibrary.Channels
 {
@@ -47,7 +44,7 @@ namespace TvLibrary.Channels
     /// </summary>
     /// <param name="chan">The chan.</param>
     public ATSCChannel(ATSCChannel chan)
-      : base((DVBBaseChannel)chan)
+      : base(chan)
     {
       _majorChannel = chan.MajorChannel;
       _minorChannel = chan.MinorChannel;
@@ -59,7 +56,7 @@ namespace TvLibrary.Channels
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="T:ATSCChannel"/> class.
+    /// Initializes a new instance of the <see cref="ATSCChannel"/> class.
     /// </summary>
     public ATSCChannel()
     {
@@ -191,14 +188,21 @@ namespace TvLibrary.Channels
     /// <returns></returns>
     public override bool Equals(object obj)
     {
-      if ((obj as ATSCChannel) == null) return false;
-      if (!base.Equals(obj)) return false;
+      if ((obj as ATSCChannel) == null)
+        return false;
+      if (!base.Equals(obj))
+        return false;
       ATSCChannel ch = obj as ATSCChannel;
-      if (ch.MajorChannel != MajorChannel) return false;
-      if (ch.MinorChannel != MinorChannel) return false;
-      if (ch.ModulationType != ModulationType) return false;
-      if (ch.PhysicalChannel != PhysicalChannel) return false;
-      if (ch.SymbolRate != SymbolRate) return false;
+      if (ch.MajorChannel != MajorChannel)
+        return false;
+      if (ch.MinorChannel != MinorChannel)
+        return false;
+      if (ch.ModulationType != ModulationType)
+        return false;
+      if (ch.PhysicalChannel != PhysicalChannel)
+        return false;
+      if (ch.SymbolRate != SymbolRate)
+        return false;
       //if (ch.AudioPid != AudioPid) return false;
       //if (ch.VideoPid != VideoPid) return false;
       return true;

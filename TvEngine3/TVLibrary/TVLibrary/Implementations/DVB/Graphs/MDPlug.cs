@@ -22,26 +22,13 @@
 
 using System;
 using System.IO;
-using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Xml;
-using Microsoft.Win32;
 using DirectShowLib;
-using DirectShowLib.BDA;
-using TvLibrary.Implementations;
-using DirectShowLib.SBE;
 using TvLibrary.Interfaces;
-using TvLibrary.Interfaces.Analyzer;
 using TvLibrary.Channels;
 using TvLibrary.Implementations.DVB.Structures;
-using TvLibrary.Epg;
-using TvLibrary.Teletext;
-using TvLibrary.Log;
-using TvLibrary.ChannelLinkage;
-using TvLibrary.Helper;
-using MediaPortal.TV.Epg;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -51,9 +38,9 @@ namespace TvLibrary.Implementations.DVB
   public class MDPlugs
   {
     #region variables
-    protected MDPlug[] _mDPlugsArray;
-    protected int _instanceNumber = 0;
-    protected String _cardFolder;
+    private MDPlug[] _mDPlugsArray;
+    private int _instanceNumber;
+    private String _cardFolder;
 
     private Dictionary<string, IChannel> _channelsDecoding;
 
@@ -107,7 +94,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     ~MDPlugs()
     {
-      _channelsDecoding = null;      
+      _channelsDecoding = null;
       Close();
     }
     #endregion
@@ -118,7 +105,7 @@ namespace TvLibrary.Implementations.DVB
     {
       CardFolder = "";
       InstanceNumber = 0;
-      if (System.IO.Directory.Exists("MDPLUGINS") == false)
+      if (Directory.Exists("MDPLUGINS") == false)
         return false;
       Log.Log.Info("mdplugs: MDPLUGINS exist");
 
@@ -129,7 +116,7 @@ namespace TvLibrary.Implementations.DVB
         captureDevice.Mon.GetDisplayName(null, null, out DisplayMoniker);
         CardFolder = captureDevice.Name;
         string xmlFile = AppDomain.CurrentDomain.BaseDirectory + "MDPLUGINS\\MDAPICards.xml";
-        if (!System.IO.File.Exists(xmlFile))
+        if (!File.Exists(xmlFile))
         {
           XmlDocument doc = new XmlDocument();
           XmlNode rootNode = doc.CreateElement("cards");
@@ -156,30 +143,31 @@ namespace TvLibrary.Implementations.DVB
           XmlDocument doc = new XmlDocument();
           doc.Load(xmlFile);
           XmlNodeList cardList = doc.SelectNodes("/cards/card");
-          foreach (XmlNode nodeCard in cardList)
-          {
-            if (nodeCard.Attributes["DevicePath"].Value == DisplayMoniker)
+          if (cardList != null)
+            foreach (XmlNode nodeCard in cardList)
             {
-              if (nodeCard.Attributes["EnableMdapi"].Value == "yes")
+              if (nodeCard.Attributes["DevicePath"].Value == DisplayMoniker)
               {
-                InstanceNumber = 1;
-                nodeCard.Attributes["EnableMdapi"].Value = "1";
-                doc.Save(xmlFile);
+                if (nodeCard.Attributes["EnableMdapi"].Value == "yes")
+                {
+                  InstanceNumber = 1;
+                  nodeCard.Attributes["EnableMdapi"].Value = "1";
+                  doc.Save(xmlFile);
+                }
+                if (nodeCard.Attributes["EnableMdapi"].Value == "no")
+                {
+                  InstanceNumber = 0;
+                  nodeCard.Attributes["EnableMdapi"].Value = "0";
+                  doc.Save(xmlFile);
+                }
+                InstanceNumber = Convert.ToInt32(nodeCard.Attributes["EnableMdapi"].Value);
+                if (InstanceNumber > 0)
+                  useMDAPI = true;
+                CardFolder = nodeCard.Attributes["Name"].Value;
+                cardFound = true;
+                break;
               }
-              if (nodeCard.Attributes["EnableMdapi"].Value == "no")
-              {
-                InstanceNumber = 0;
-                nodeCard.Attributes["EnableMdapi"].Value = "0";
-                doc.Save(xmlFile);
-              }
-              InstanceNumber = System.Convert.ToInt32(nodeCard.Attributes["EnableMdapi"].Value);
-              if (InstanceNumber > 0)
-                useMDAPI = true;
-              CardFolder = nodeCard.Attributes["Name"].Value;
-              cardFound = true;
-              break;
             }
-          }
           if (!cardFound)
           {
             XmlNode nodeNewCard = doc.CreateElement("card");
@@ -200,8 +188,10 @@ namespace TvLibrary.Implementations.DVB
             useMDAPI = true;
           }
         }
+      } catch (Exception ex)
+      {
+        Log.Log.Error("mdplugs: error - useMDAPI = {0}", ex);
       }
-      catch (Exception) { }
       Log.Log.Info("mdplugs: useMDAPI = {0}");
       return useMDAPI;
     }
@@ -234,8 +224,8 @@ namespace TvLibrary.Implementations.DVB
     public void Connectmdapifilter(IFilterGraph2 graphBuilder, ref IBaseFilter infTeeMain, ref IBaseFilter infTeeSecond, ref IBaseFilter filterMpeg2DemuxTif)
     {
       MDPlug[] _mDPlugs = getPlugins();
-      int iplg = 0;
-      int hr = 0;
+      int iplg;
+      int hr;
       string filtername;
 
       //capture -> maintee -> mdapi(n)-> secondtee -> demux
@@ -266,17 +256,15 @@ namespace TvLibrary.Implementations.DVB
       }
       if (_instanceNumber > 1)
       {
-        IPin mdApiOutPrev;
-        IPin mdApiInNext;
         for (iplg = 0; iplg < _instanceNumber - 1; iplg++)
         {
           filtername = "mdapifilter" + (iplg + 1);
           Log.Log.Info("mdplugs: add {0}", filtername);
-          hr = graphBuilder.AddFilter(_mDPlugs[iplg + 1].mdapiFilter, filtername);
+          graphBuilder.AddFilter(_mDPlugs[iplg + 1].mdapiFilter, filtername);
 
           Log.Log.Info("mdplugs: connect mdapifilter{0}->mdapifilter{1}", iplg, iplg + 1);
-          mdApiOutPrev = DsFindPin.ByDirection(_mDPlugs[iplg].mdapiFilter, PinDirection.Output, 0);
-          mdApiInNext = DsFindPin.ByDirection(_mDPlugs[iplg + 1].mdapiFilter, PinDirection.Input, 0);
+          IPin mdApiOutPrev = DsFindPin.ByDirection(_mDPlugs[iplg].mdapiFilter, PinDirection.Output, 0);
+          IPin mdApiInNext = DsFindPin.ByDirection(_mDPlugs[iplg + 1].mdapiFilter, PinDirection.Input, 0);
           hr = graphBuilder.Connect(mdApiOutPrev, mdApiInNext);
           Release.ComObject("mdApiPrev pinout", mdApiOutPrev);
           Release.ComObject("mdApiNext pinin", mdApiInNext);
@@ -313,9 +301,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public void Disconnectmdapifilter(IFilterGraph2 graphBuilder, ref IBaseFilter infTeeMain, ref IBaseFilter infTeeSecond, ref IBaseFilter filterMpeg2DemuxTif)
     {
-      int iplg = 0;
-      int hr = 0;
-      string filtername;
+      int iplg;
 
       MDPlug[] plugins = getPlugins();
       Log.Log.Info("mdplugs: disconnect and reconnecting pins");
@@ -335,7 +321,7 @@ namespace TvLibrary.Implementations.DVB
       graphBuilder.Disconnect(teeSecoundOut);
 
       Log.Log.Info("Reconnecting MainTee to MpegDemux");
-      hr = graphBuilder.Connect(mainTeeOut, mpegDemuxIn);
+      graphBuilder.Connect(mainTeeOut, mpegDemuxIn);
       Release.ComObject("Releasing maintee out", mainTeeOut);
       Release.ComObject("Releasing mpegdemux pinin", mpegDemuxIn);
       Release.ComObject("Releasing teeSecound pinin", teeSecoundIn);
@@ -345,7 +331,7 @@ namespace TvLibrary.Implementations.DVB
       //capture -> maintee -> mdapi(n)-> secondtee -> demux
       for (iplg = 0; iplg < _instanceNumber; iplg++)
       {
-        filtername = "mdapifilter" + iplg;
+        string filtername = "mdapifilter" + iplg;
         Log.Log.Info("mdplugs: remove {0}", filtername);
 
         IPin mdOut = DsFindPin.ByDirection(plugins[iplg].mdapiFilter, PinDirection.Output, 0);
@@ -355,7 +341,7 @@ namespace TvLibrary.Implementations.DVB
         Release.ComObject("Releasing  pinout", mdOut);
         Release.ComObject("Releasing  pinin", mdIn);
 
-        hr = graphBuilder.RemoveFilter(plugins[iplg].mdapiFilter);
+        int hr = graphBuilder.RemoveFilter(plugins[iplg].mdapiFilter);
         if (hr != 0)
         {
           Log.Log.Error("mdplugs:Remove {0} returns:0x{1:X}", filtername, hr);
@@ -364,12 +350,14 @@ namespace TvLibrary.Implementations.DVB
 
         Log.Log.Info("Filter should now be totally removed from graph hr :{0}", hr);
       }
-      iplg = 0;
-      filtername = "mdapifilter" + iplg;
 
       Log.Log.Info("Graph should be clean of MDAPI Filters..");
     }
 
+    /// <summary>
+    /// Frees the given channel
+    /// </summary>
+    /// <param name="channelName">Channel name to be freed</param>
     public void FreeChannel(string channelName)
     {
       Log.Log.Info("mdplug: FreeChannel {0}", channelName);
@@ -383,6 +371,9 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
+    /// <summary>
+    /// Frees all channels
+    /// </summary>
     public void FreeAllChannels()
     {
       Log.Log.Info("mdplug: FreeAllChannels");
@@ -409,7 +400,7 @@ namespace TvLibrary.Implementations.DVB
       int idx = 1;
       foreach (KeyValuePair<string, IChannel> pair in _channelsDecoding)
       {
-        IChannel chan = (IChannel)pair.Value;
+        IChannel chan = pair.Value;
         Log.Log.Info("  slot[" + idx + "] {0}", chan.Name);
         idx++;
       }
@@ -423,8 +414,7 @@ namespace TvLibrary.Implementations.DVB
       }
 
       int channelsDecoding = _channelsDecoding.Count;
-      int nextPluginIndex = 0;
-      nextPluginIndex = channelsDecoding;
+      int nextPluginIndex = channelsDecoding;
 
       if (_channelsDecoding.Count == plugins.Length)
       {
@@ -438,7 +428,7 @@ namespace TvLibrary.Implementations.DVB
       {
         plugins[nextPluginIndex].SetChannel(currentChannel, channelInfo);
         _channelsDecoding.Add(currentChannel.Name, currentChannel);
-      }      
+      }
     }
     #endregion
   }
@@ -450,11 +440,14 @@ namespace TvLibrary.Implementations.DVB
     #region constants
 
     [ComImport, Guid("72E6DB8F-9F33-4D1C-A37C-DE8148C0BE74")]
-    protected class MDAPIFilter { };
+    private class MDAPIFilter { };
     #endregion
 
     #region interfaces
 
+    /// <summary>
+    /// IChangeChannel interface
+    /// </summary>
     [ComVisible(true), ComImport,
     Guid("C3F5AA0D-C475-401B-8FC9-E33FB749CD85"),
      InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -463,15 +456,37 @@ namespace TvLibrary.Implementations.DVB
       /// <summary>
       /// Get the file name of media file.
       /// </summary>
-      /// <param name="fn">The file name buffer.</param>
+      /// <param name="frequency">Frequency</param>
+      /// <param name="bandwidth">Bandwith</param>
+      /// <param name="polarity">Polarity</param>
+      /// <param name="videopid">Video PID</param>
+      /// <param name="audiopid">Audio PID</param>
+      /// <param name="ecmpid">ECM PID</param>
+      /// <param name="caid">CAID</param>
+      /// <param name="providerid">Provider ID</param>
       /// <returns></returns>
       /// <remarks>fn should point to a buffer allocated to at least the length of MAX_PATH (=260)</remarks>
       [PreserveSig]
       int ChangeChannel(int frequency, int bandwidth, int polarity, int videopid, int audiopid, int ecmpid, int caid, int providerid);
+      /// <summary>
+      /// Get the file name of media file.
+      /// </summary>
+      /// <param name="tp82">The file name buffer.</param>
+      /// <returns></returns>
+      /// <remarks>fn should point to a buffer allocated to at least the length of MAX_PATH (=260)</remarks>
       int ChangeChannelTP82([In] IntPtr tp82);
       //      int ChangeChannelTP82_Ex([In] IntPtr tp82, [In] IntPtr tPids2Dec);
+      ///<summary>
+      /// Sets the plugin directory
+      ///</summary>
+      ///<param name="dir">Directory</param>
+      ///<returns></returns>
       int SetPluginsDirectory([In, MarshalAs(UnmanagedType.LPWStr)] string dir);
     }
+
+    /// <summary>
+    /// IChangeChannel_Ex interface
+    /// </summary>
     [ComVisible(true), ComImport,
     Guid("E98B70EE-F5A1-4f46-B8B8-A1324BA92F5F"),
      InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -480,7 +495,8 @@ namespace TvLibrary.Implementations.DVB
       /// <summary>
       /// Get the file name of media file.
       /// </summary>
-      /// <param name="fn">The file name buffer.</param>
+      /// <param name="tp82">The file name buffer.</param>
+      /// <param name="tPids2Dec">tPids2Dec</param>
       /// <returns></returns>
       /// <remarks>fn should point to a buffer allocated to at least the length of MAX_PATH (=260)</remarks>
       [PreserveSig]
@@ -490,78 +506,210 @@ namespace TvLibrary.Implementations.DVB
 
     #region structs
 
+    /// <summary>
+    /// CY System 82 struct
+    /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     public struct CA_System82
     {
+      /// <summary>
+      /// CY TYP
+      /// </summary>
       public ushort CA_Typ;
+      /// <summary>
+      /// ECM
+      /// </summary>
       public ushort ECM;
+      /// <summary>
+      /// EMM
+      /// </summary>
       public ushort EMM;
+      /// <summary>
+      /// Provider Id
+      /// </summary>
       public uint Provider_Id;
     }
 
+    /// <summary>
+    /// TProgram 82 struct
+    /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     public struct TProgram82
     {
+      /// <summary>
+      /// Name
+      /// </summary>
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 30)]
       public byte[] Name;   // to simulate c++ char Name[30]
+      /// <summary>
+      /// Provider
+      /// </summary>
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 30)]
       public byte[] Provider;
+      /// <summary>
+      /// Country
+      /// </summary>
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 30)]
       public byte[] Country;
+      /// <summary>
+      /// Frequence
+      /// </summary>
       public uint Freq;
+      /// <summary>
+      /// PType
+      /// </summary>
       public byte PType;
+      /// <summary>
+      /// Voltage
+      /// </summary>
       public byte Voltage;
+      /// <summary>
+      /// AFC
+      /// </summary>
       public byte Afc;
+      /// <summary>
+      /// DiSEqC
+      /// </summary>
       public byte DiSEqC;
+      /// <summary>
+      /// Symbolrate
+      /// </summary>
       public uint Symbolrate;
+      /// <summary>
+      /// QAM
+      /// </summary>
       public byte Qam;
+      /// <summary>
+      /// FEC
+      /// </summary>
       public byte Fec;
+      /// <summary>
+      /// Norm
+      /// </summary>
       public byte Norm;
+      /// <summary>
+      /// TP Id
+      /// </summary>
       public ushort Tp_id;
+      /// <summary>
+      /// Video PID
+      /// </summary>
       public ushort Video_pid;
+      /// <summary>
+      /// Audio PID
+      /// </summary>
       public ushort Audio_pid;
+      /// <summary>
+      /// Teletext PID
+      /// </summary>
       public ushort TeleText_pid;          // Teletext PID 
+      /// <summary>
+      /// PMT PID
+      /// </summary>
       public ushort PMT_pid;
+      /// <summary>
+      /// PCR PID
+      /// </summary>
       public ushort PCR_pid;
+      /// <summary>
+      /// ECM PID
+      /// </summary>
       public ushort ECM_PID;
+      /// <summary>
+      /// SID PID
+      /// </summary>
       public ushort SID_pid;
+      /// <summary>
+      /// AC3 PID
+      /// </summary>
       public ushort AC3_pid;
+      /// <summary>
+      /// TV Type
+      /// </summary>
       public byte TVType;           //  == 00 PAL ; 11 == NTSC    
+      /// <summary>
+      /// Service type
+      /// </summary>
       public byte ServiceTyp;
+      /// <summary>
+      /// CA ID
+      /// </summary>
       public byte CA_ID;
+      /// <summary>
+      /// Temp Audio
+      /// </summary>
       public ushort Temp_Audio;
+      /// <summary>
+      /// Filter numbers
+      /// </summary>
       public ushort FilterNr;
+      /// <summary>
+      /// Filters
+      /// </summary>
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
       public byte[] Filters;  // to simulate struct PIDFilters Filters[MAX_PID_IDS];
+      /// <summary>
+      /// CA Number
+      /// </summary>
       public ushort CA_Nr;
+      /// <summary>
+      /// CA System82
+      /// </summary>
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
       public CA_System82[] CA_System82;  // to simulate struct TCA_System CA_System[MAX_CA_SYSTEMS];
+      /// <summary>
+      /// CA Country
+      /// </summary>
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
       public byte[] CA_Country;
+      /// <summary>
+      /// Marker
+      /// </summary>
       public byte Marker;
+      /// <summary>
+      /// Link TP
+      /// </summary>
       public ushort Link_TP;
+      /// <summary>
+      /// Link SID
+      /// </summary>
       public ushort Link_SID;
+      /// <summary>
+      /// PDynamic
+      /// </summary>
       public byte PDynamic;
+      /// <summary>
+      /// Extern Buffer
+      /// </summary>
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
       public byte[] Extern_Buffer;
     }
 
+    /// <summary>
+    /// TPids2Dec struct
+    /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     public struct TPids2Dec
     {
+      /// <summary>
+      /// PIDs
+      /// </summary>
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 63)]
       public ushort[] Pids;
+      /// <summary>
+      /// Number of pids
+      /// </summary>
       public ushort nbPids;
     }
     #endregion
 
     #region variables
-    protected TProgram82 _mDPlugTProg82 = new TProgram82();
-    protected TPids2Dec _mPids2Dec = new TPids2Dec();
+    TProgram82 _mDPlugTProg82;
+    TPids2Dec _mPids2Dec;
 
-    public IBaseFilter mdapiFilter = null;
-    protected IChangeChannel _changeChannel = null;
-    protected IChangeChannel_Ex _changeChannel_Ex = null;
+    internal IBaseFilter mdapiFilter;
+    IChangeChannel _changeChannel;
+    IChangeChannel_Ex _changeChannel_Ex;
     #endregion
 
     #region ctor
@@ -593,8 +741,7 @@ namespace TvLibrary.Implementations.DVB
       {
         mdapiFilter = (IBaseFilter)new MDAPIFilter();
         _changeChannel = (IChangeChannel)mdapiFilter;
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Log.Write(ex);
       }
@@ -605,8 +752,7 @@ namespace TvLibrary.Implementations.DVB
         _changeChannel.SetPluginsDirectory(CardFolder);
         Log.Log.Info("mdplug: This MDAPIfilter accept Extend capabilities");
         Log.Log.Info("mdplug: The mdplugin folder for this instance is : MDPlugins\\{0}", CardFolder);
-      }
-      catch (Exception ex)
+      } catch (Exception)
       {
         //Log.Log.Write(ex);
         Log.Log.Info("mdplug: This MDAPIfilter doesnt have Extend capabilities. We will use standard");
@@ -644,13 +790,16 @@ namespace TvLibrary.Implementations.DVB
     public void SetChannel(IChannel currentChannel, ChannelInfo channelInfo)
     {
       int Index;
-      int end_Index = 0;
+      int end_Index;
       //is mdapi installed?
-      if (mdapiFilter == null) return; //nop, then return
+      if (mdapiFilter == null)
+        return; //nop, then return
 
       //did we already receive the pmt?
-      if (channelInfo == null) return; //nop, then return
-      if (channelInfo.caPMT == null) return;
+      if (channelInfo == null)
+        return; //nop, then return
+      if (channelInfo.caPMT == null)
+        return;
       DVBBaseChannel dvbChannel = currentChannel as DVBBaseChannel;
       if (dvbChannel == null) //not a DVB channel??
         return;
@@ -691,7 +840,7 @@ namespace TvLibrary.Implementations.DVB
       //public byte[] Country;
       _mDPlugTProg82.Freq = (uint)dvbChannel.Frequency;
       //public byte PType = (byte);
-      _mDPlugTProg82.Afc = (byte)68;
+      _mDPlugTProg82.Afc = 68;
       //_mDPlugTProg82.DiSEqC = (byte)dvbChannel.DisEqc;
       //_mDPlugTProg82.Symbolrate = (uint)dvbChannel.SymbolRate;
       //public byte Qam;
@@ -702,47 +851,41 @@ namespace TvLibrary.Implementations.DVB
       _mDPlugTProg82.SID_pid = (ushort)dvbChannel.ServiceId;
       _mDPlugTProg82.PMT_pid = (ushort)dvbChannel.PmtPid;
       _mDPlugTProg82.PCR_pid = (ushort)dvbChannel.PcrPid;
-      if (channelInfo != null)
+      _mDPlugTProg82.Video_pid = 0;
+      _mDPlugTProg82.Audio_pid = 0;
+      _mDPlugTProg82.TeleText_pid = 0;
+      _mDPlugTProg82.AC3_pid = 0;
+      _mPids2Dec.nbPids = 0;
+      foreach (PidInfo pid in channelInfo.pids)
       {
-        _mDPlugTProg82.Video_pid = 0;
-        _mDPlugTProg82.Audio_pid = 0;
-        _mDPlugTProg82.TeleText_pid = 0;
-        _mDPlugTProg82.AC3_pid = 0;
-        _mPids2Dec.nbPids = 0;
-        foreach (PidInfo pid in channelInfo.pids)
-        {
-          if (pid.isVideo)
-            if (_mDPlugTProg82.Video_pid == 0) //keep the first one
-              _mDPlugTProg82.Video_pid = (ushort)pid.pid;
+        if (pid.isVideo)
+          if (_mDPlugTProg82.Video_pid == 0) //keep the first one
+            _mDPlugTProg82.Video_pid = (ushort)pid.pid;
 
-          if (pid.isAudio)
-            if (_mDPlugTProg82.Audio_pid == 0) //keep the first one
-              _mDPlugTProg82.Audio_pid = (ushort)pid.pid;
+        if (pid.isAudio)
+          if (_mDPlugTProg82.Audio_pid == 0) //keep the first one
+            _mDPlugTProg82.Audio_pid = (ushort)pid.pid;
 
-          if (pid.isTeletext)
-            if (_mDPlugTProg82.TeleText_pid == 0) //keep the first one
-              _mDPlugTProg82.TeleText_pid = (ushort)pid.pid;
+        if (pid.isTeletext)
+          if (_mDPlugTProg82.TeleText_pid == 0) //keep the first one
+            _mDPlugTProg82.TeleText_pid = (ushort)pid.pid;
 
-          if (pid.isAC3Audio)
-            if (_mDPlugTProg82.AC3_pid == 0) //keep the first one
-              _mDPlugTProg82.AC3_pid = (ushort)pid.pid;
+        if (pid.isAC3Audio)
+          if (_mDPlugTProg82.AC3_pid == 0) //keep the first one
+            _mDPlugTProg82.AC3_pid = (ushort)pid.pid;
 
-          _mPids2Dec.Pids[_mPids2Dec.nbPids++] = (ushort)pid.pid;
-        }
-        if (currentChannel.IsTv)
-          _mDPlugTProg82.ServiceTyp = (byte)1;
-        else
-          _mDPlugTProg82.ServiceTyp = (byte)2;
+        _mPids2Dec.Pids[_mPids2Dec.nbPids++] = (ushort)pid.pid;
       }
+      _mDPlugTProg82.ServiceTyp = currentChannel.IsTv ? (byte)1 : (byte)2;
       //public byte TVType;           //  == 00 PAL ; 11 == NTSC    
       //public ushort Temp_Audio;
-      _mDPlugTProg82.FilterNr = (ushort)0; //to test
+      _mDPlugTProg82.FilterNr = 0; //to test
       //public byte[] Filters;  // to simulate struct PIDFilters Filters[MAX_PID_IDS];
       //public byte[] CA_Country;
       //public byte Marker;
       //public ushort Link_TP;
       //public ushort Link_SID;
-      _mDPlugTProg82.PDynamic = (byte)0; //to test
+      _mDPlugTProg82.PDynamic = 0; //to test
       //public byte[] Extern_Buffer;
       if (channelInfo.caPMT != null)
       {
@@ -816,7 +959,7 @@ namespace TvLibrary.Implementations.DVB
 
 
 
-        _mDPlugTProg82.CA_ID = (byte)0;
+        _mDPlugTProg82.CA_ID = 0;
         _mDPlugTProg82.CA_Nr = (ushort)count;
         if (count == 0)
         {
@@ -829,21 +972,20 @@ namespace TvLibrary.Implementations.DVB
         //find preferred ECM from preferred MDAPIProvID.xml file and pointing CA_ID on the right CA_System82 row
         //first search in channel list for individual match, else search for provider ID match else search for CA_Typ match
         string xmlFile = AppDomain.CurrentDomain.BaseDirectory + "MDPLUGINS\\MDAPIProvID.xml";
-        if (System.IO.File.Exists(xmlFile))
+        if (File.Exists(xmlFile))
         {
           try
           {
             bool providfound = false;
             bool channelfound = false;
             bool catypfound = false;
-            string Provider_Id, Tp_id, SID_pid, PMT_pid, ECM_pid, CAtyp_Id;
             int i;
             XmlDocument doc = new XmlDocument();
             doc.Load(xmlFile);
 
             XmlNode mainNode = doc.SelectSingleNode("/mdapi");
-            bool filloutXMLFile = false;
-            if (!(mainNode as XmlElement).HasAttribute("fillout"))
+            bool filloutXMLFile;
+            if (!((XmlElement)mainNode).HasAttribute("fillout"))
             {
               XmlAttribute fillout = doc.CreateAttribute("fillout");
               fillout.Value = "" + false;
@@ -856,77 +998,80 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.Info("mdplug: MDAPIProvID.xml Filling out MDAPIProvID {0} ", filloutXMLFile);
 
             XmlNodeList channelList = doc.SelectNodes("/mdapi/channels/channel");
-            Tp_id = String.Format("{0:D}", _mDPlugTProg82.Tp_id);
-            SID_pid = String.Format("{0:D}", _mDPlugTProg82.SID_pid);
-            PMT_pid = String.Format("{0:D}", _mDPlugTProg82.PMT_pid);
+            string Tp_id = String.Format("{0:D}", _mDPlugTProg82.Tp_id);
+            string SID_pid = String.Format("{0:D}", _mDPlugTProg82.SID_pid);
+            string PMT_pid = String.Format("{0:D}", _mDPlugTProg82.PMT_pid);
 
-            foreach (XmlNode nodechannel in channelList)
-            {
-              if (nodechannel.Attributes["tp_id"].Value == Tp_id
-                && nodechannel.Attributes["sid"].Value == SID_pid
-                && nodechannel.Attributes["pmt_pid"].Value == PMT_pid)
+            if (channelList != null)
+              foreach (XmlNode nodechannel in channelList)
               {
-                for (i = 0; i < count; ++i)
+                if (nodechannel.Attributes["tp_id"].Value == Tp_id
+                    && nodechannel.Attributes["sid"].Value == SID_pid
+                    && nodechannel.Attributes["pmt_pid"].Value == PMT_pid)
                 {
-                  ECM_pid = String.Format("{0:D}", _mDPlugTProg82.CA_System82[i].ECM);
-                  if (nodechannel.Attributes["ecm_pid"].Value == ECM_pid)
+                  for (i = 0; i < count; ++i)
                   {
-                    _mDPlugTProg82.CA_ID = (byte)i;
-                    _mDPlugTProg82.ECM_PID = _mDPlugTProg82.CA_System82[i].ECM;
-
-                    if ((nodechannel as XmlElement).HasAttribute("emm_pid"))
+                    string ECM_pid = String.Format("{0:D}", _mDPlugTProg82.CA_System82[i].ECM);
+                    if (nodechannel.Attributes["ecm_pid"].Value == ECM_pid)
                     {
-                      _mDPlugTProg82.CA_System82[i].EMM = UInt16.Parse((nodechannel as XmlElement).GetAttribute("emm_pid"));
-                    }
+                      _mDPlugTProg82.CA_ID = (byte)i;
+                      _mDPlugTProg82.ECM_PID = _mDPlugTProg82.CA_System82[i].ECM;
 
-                    channelfound = true;
-                    break;
+                      if (((XmlElement)nodechannel).HasAttribute("emm_pid"))
+                      {
+                        _mDPlugTProg82.CA_System82[i].EMM = UInt16.Parse(((XmlElement)nodechannel).GetAttribute("emm_pid"));
+                      }
+
+                      channelfound = true;
+                      break;
+                    }
                   }
+                  if (channelfound)
+                    break;
                 }
-                if (channelfound)
-                  break;
               }
-            }
             if (!channelfound)
             {
               XmlNodeList providList = doc.SelectNodes("/mdapi/providers/provider");
-              foreach (XmlNode nodeprovid in providList)
-              {
-                for (i = 0; i < count; ++i)
+              if (providList != null)
+                foreach (XmlNode nodeprovid in providList)
                 {
-                  Provider_Id = String.Format("{0:D}", _mDPlugTProg82.CA_System82[i].Provider_Id);
-                  if (nodeprovid.Attributes["ID"].Value == Provider_Id)
+                  for (i = 0; i < count; ++i)
                   {
-                    _mDPlugTProg82.CA_ID = (byte)i;
-                    _mDPlugTProg82.ECM_PID = _mDPlugTProg82.CA_System82[i].ECM;
-                    providfound = true;
-                    break;
+                    string Provider_Id = String.Format("{0:D}", _mDPlugTProg82.CA_System82[i].Provider_Id);
+                    if (nodeprovid.Attributes["ID"].Value == Provider_Id)
+                    {
+                      _mDPlugTProg82.CA_ID = (byte)i;
+                      _mDPlugTProg82.ECM_PID = _mDPlugTProg82.CA_System82[i].ECM;
+                      providfound = true;
+                      break;
+                    }
                   }
+                  if (providfound)
+                    break;
                 }
-                if (providfound)
-                  break;
-              }
             }
 
             if (!channelfound && !providfound)
             {
               XmlNodeList catypList = doc.SelectNodes("/mdapi/CA_Types/CA_Type");
-              foreach (XmlNode nodecatyp in catypList)
-              {
-                for (i = 0; i < count; ++i)
+              if (catypList != null)
+                foreach (XmlNode nodecatyp in catypList)
                 {
-                  CAtyp_Id = String.Format("{0:D}", _mDPlugTProg82.CA_System82[i].CA_Typ);
-                  if (nodecatyp.Attributes["ID"].Value == CAtyp_Id)
+                  for (i = 0; i < count; ++i)
                   {
-                    _mDPlugTProg82.CA_ID = (byte)i;
-                    _mDPlugTProg82.ECM_PID = _mDPlugTProg82.CA_System82[i].ECM;
-                    catypfound = true;
-                    break;
+                    string CAtyp_Id = String.Format("{0:D}", _mDPlugTProg82.CA_System82[i].CA_Typ);
+                    if (nodecatyp.Attributes["ID"].Value == CAtyp_Id)
+                    {
+                      _mDPlugTProg82.CA_ID = (byte)i;
+                      _mDPlugTProg82.ECM_PID = _mDPlugTProg82.CA_System82[i].ECM;
+                      catypfound = true;
+                      break;
+                    }
                   }
+                  if (catypfound)
+                    break;
                 }
-                if (catypfound)
-                  break;
-              }
             }
             Log.Log.Info("mdplug: MDAPIProvID.xml mode used = Channel:{0} Provider:{1} Ca_typ:{2}",
                     channelfound,
@@ -969,7 +1114,8 @@ namespace TvLibrary.Implementations.DVB
                   String possibleValues = "";
                   for (int x = 0; x < ecmList.Count; ++x)
                   {
-                    if (x != 0) possibleValues += ", ";
+                    if (x != 0)
+                      possibleValues += ", ";
                     possibleValues += "" + ecmList[x].Pid;
                     //possibleValues += "(" + ecmList[x].CaId + ")";
                     // ecmList[x].CaId;
@@ -993,15 +1139,16 @@ namespace TvLibrary.Implementations.DVB
                     {
                       bool found = false;
                       XmlNodeList providList = doc.SelectNodes("/mdapi/providers/provider");
-                      foreach (XmlNode nodeprovid in providList)
-                      {
-                        String value = nodeprovid.Attributes["ID"].Value;
-                        if (Int32.Parse(value).CompareTo(ecmList[x].ProviderId) == 0)
+                      if (providList != null)
+                        foreach (XmlNode nodeprovid in providList)
                         {
-                          found = true;
-                          break;
+                          String value = nodeprovid.Attributes["ID"].Value;
+                          if (Int32.Parse(value).CompareTo(ecmList[x].ProviderId) == 0)
+                          {
+                            found = true;
+                            break;
+                          }
                         }
-                      }
 
                       if (!found && ecmList[x].ProviderId != 0)
                       {
@@ -1027,15 +1174,16 @@ namespace TvLibrary.Implementations.DVB
                     {
                       bool found = false;
                       XmlNodeList providList = doc.SelectNodes("/mdapi/CA_Types/CA_Type");
-                      foreach (XmlNode nodeprovid in providList)
-                      {
-                        String value = nodeprovid.Attributes["ID"].Value;
-                        if (Int32.Parse(value).CompareTo(ecmList[x].CaId) == 0)
+                      if (providList != null)
+                        foreach (XmlNode nodeprovid in providList)
                         {
-                          found = true;
-                          break;
+                          String value = nodeprovid.Attributes["ID"].Value;
+                          if (Int32.Parse(value).CompareTo(ecmList[x].CaId) == 0)
+                          {
+                            found = true;
+                            break;
+                          }
                         }
-                      }
                       if (!found)
                       {
 
@@ -1054,8 +1202,7 @@ namespace TvLibrary.Implementations.DVB
 
                 }
 
-              }
-              catch (Exception g)
+              } catch (Exception g)
               {
                 Log.Log.Write(g);
               }
@@ -1063,8 +1210,10 @@ namespace TvLibrary.Implementations.DVB
             }
 
 
+          } catch (Exception e)
+          {
+            Log.Log.Write(e);
           }
-          catch (Exception) { }
         }
 
         Log.Log.Info("mdplug: tp_id:{0}(0x{1:X}) sid:{2}(0x{3:X}) pmt_id:{4}(0x{5:X})",
@@ -1110,8 +1259,7 @@ namespace TvLibrary.Implementations.DVB
            _mDPlugTProg82.CA_Nr,
            _mDPlugTProg82.ECM_PID,
            _mDPlugTProg82.ECM_PID);
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Log.Write(ex);
       }

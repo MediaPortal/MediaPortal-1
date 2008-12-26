@@ -1,8 +1,27 @@
+/* 
+ *	Copyright (C) 2005-2008 Team MediaPortal
+ *	http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+
 using System;
 using System.Collections;
 using System.Runtime.InteropServices;
-using System.Collections.Generic;
-using System.Text;
 
 namespace TvLibrary.Implementations.DVB.Structures
 {
@@ -130,7 +149,7 @@ namespace TvLibrary.Implementations.DVB.Structures
 
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="T:ChannelInfo"/> class.
+    /// Initializes a new instance of the <see cref="ChannelInfo"/> class.
     /// </summary>
     public ChannelInfo()
     {
@@ -248,9 +267,7 @@ namespace TvLibrary.Implementations.DVB.Structures
       pmt.language = "";
       RemoveInvalidChars(ref pmt.language);
       pids.Add(pmt);
-      pmt = new PidInfo();
 
-      byte[] d = new byte[255];
       //Marshal.Copy((IntPtr)(((int)data)+42),d,0,255);
       service_name = Marshal.PtrToStringAnsi((IntPtr)(((int)data) + 42));
       //Marshal.Copy((IntPtr)(((int)data)+297),d,0,255);
@@ -270,7 +287,8 @@ namespace TvLibrary.Implementations.DVB.Structures
       RemoveInvalidChars(ref service_provider_name);
 
     }
-    void RemoveInvalidChars(ref string strTxt)
+
+    static void RemoveInvalidChars(ref string strTxt)
     {
       if (strTxt == null)
       {
@@ -283,7 +301,7 @@ namespace TvLibrary.Implementations.DVB.Structures
         return;
       }
       string strReturn = String.Empty;
-      for (int i = 0; i < (int)strTxt.Length; ++i)
+      for (int i = 0; i < strTxt.Length; ++i)
       {
         char k = strTxt[i];
         if (k == '\'')
@@ -309,20 +327,16 @@ namespace TvLibrary.Implementations.DVB.Structures
         //Log.Log.WriteFile("decodePMTTable() len < 13 len={0}", buf.Length);
         return;
       }
-      int table_id = buf[0];
-      int section_syntax_indicator = (buf[1] >> 7) & 1;
       int section_length = ((buf[1] & 0xF) << 8) + buf[2];
-      int program_number = (buf[3] << 8) + buf[4];
+      int programNumber = (buf[3] << 8) + buf[4];
       int version_number = ((buf[5] >> 1) & 0x1F);
       int current_next_indicator = buf[5] & 1;
-      int section_number = buf[6];
-      int last_section_number = buf[7];
       pcr_pid = ((buf[8] & 0x1F) << 8) + buf[9];   // ! really set pcr_pid ! ( ambass )
       int program_info_length = ((buf[10] & 0xF) << 8) + buf[11];
-      
+
 
       caPMT = new CaPMT();
-      caPMT.ProgramNumber = program_number;
+      caPMT.ProgramNumber = programNumber;
       caPMT.CurrentNextIndicator = current_next_indicator;
       caPMT.VersionNumber = version_number;
       caPMT.CAPmt_Listmanagement = ListManagementType.Only;
@@ -344,14 +358,15 @@ namespace TvLibrary.Implementations.DVB.Structures
       Log.Log.Write("Decode pmt");
       while (len2 > 0)
       {
-        if (pointer + 2 > buf.Length) break;
+        if (pointer + 2 > buf.Length)
+          break;
         int indicator = buf[pointer];
-        x = 0;
         x = buf[pointer + 1] + 2;
         byte[] data = new byte[x];
 
-        if (pointer + x > buf.Length) break;
-        System.Array.Copy(buf, pointer, data, 0, x);
+        if (pointer + x > buf.Length)
+          break;
+        Array.Copy(buf, pointer, data, 0, x);
 
         if (indicator == 0x9) //MPEG CA Descriptor
         {
@@ -380,7 +395,8 @@ namespace TvLibrary.Implementations.DVB.Structures
       PidInfo pidInfo;
       while (len1 > 4)
       {
-        if (pointer + 5 > section_length) break;
+        if (pointer + 5 > section_length)
+          break;
         pidInfo = new PidInfo();
         //System.Array.Copy(buf, pointer, b, 0, 5);
         try
@@ -390,9 +406,9 @@ namespace TvLibrary.Implementations.DVB.Structures
           pidInfo.pid = ((buf[pointer + 1] & 0x1F) << 8) + buf[pointer + 2];
           pidInfo.reserved_2 = (buf[pointer + 3] >> 4) & 0xF;
           pidInfo.ES_info_length = ((buf[pointer + 3] & 0xF) << 8) + buf[pointer + 4];
-        }
-        catch
+        } catch (Exception ex)
         {
+          Log.Log.WriteFile("Error while decoding pmt: ", ex);
         }
 
         switch (pidInfo.stream_type)
@@ -411,11 +427,11 @@ namespace TvLibrary.Implementations.DVB.Structures
             break;
           case 0x3://MPEG-1 AUDIO ISO/IEC 11172 
             pidInfo.isAudio = true;
-						pidInfo.isAC3Audio = false;
+            pidInfo.isAC3Audio = false;
             break;
           case 0x4://MPEG-3 AUDIO ISO/IEC 13818-3 
             pidInfo.isAudio = true;
-						pidInfo.isAC3Audio = false;
+            pidInfo.isAC3Audio = false;
             break;
           case 0x81://AC3 AUDIO
             pidInfo.isAudio = false;
@@ -443,17 +459,16 @@ namespace TvLibrary.Implementations.DVB.Structures
         {
           while (len2 > 0)
           {
-            x = 0;
             if (pointer + 1 < buf.Length)
             {
               int indicator = buf[pointer];
               x = buf[pointer + 1] + 2;
-              
+
               //Log.Log.Write("  descriptor2:{0:X}", indicator);
               if (x + pointer < buf.Length) // parse descriptor data
-              {								
+              {
                 byte[] data = new byte[x];
-                System.Array.Copy(buf, pointer, data, 0, x);
+                Array.Copy(buf, pointer, data, 0, x);
                 if (indicator == 9)
                 {
                   string tmp = "";
@@ -464,28 +479,28 @@ namespace TvLibrary.Implementations.DVB.Structures
                 switch (indicator)
                 {
                   case 0x02: // video
-										pidInfo.isAudio = false;
-										pidInfo.isVideo = true;
-										pidInfo.isTeletext = false;
-										pidInfo.isDVBSubtitle = false;
-										pidInfo.isAC3Audio = false;
-										break;
+                    pidInfo.isAudio = false;
+                    pidInfo.isVideo = true;
+                    pidInfo.isTeletext = false;
+                    pidInfo.isDVBSubtitle = false;
+                    pidInfo.isAC3Audio = false;
+                    break;
                   case 0x03: // audio
                     //Log.Write("dvbsections: indicator {1} {0} found",(indicator==0x02?"for video":"for audio"),indicator);
-										pidInfo.isAudio = true;										
-										pidInfo.isVideo = false;
-										pidInfo.isTeletext = false;
-										pidInfo.isDVBSubtitle = false;
-										pidInfo.isAC3Audio = false;
-										pidInfo.stream_type = 0x03;
+                    pidInfo.isAudio = true;
+                    pidInfo.isVideo = false;
+                    pidInfo.isTeletext = false;
+                    pidInfo.isDVBSubtitle = false;
+                    pidInfo.isAC3Audio = false;
+                    pidInfo.stream_type = 0x03;
                     break;
                   case 0x09:
                     pmtEs.Descriptors.Add(data);
                     pmtEs.ElementaryStreamInfoLength += data.Length;
                     break;
                   case 0x0A: //MPEG_ISO639_Lang																														
-										pidInfo.language = DVB_GetMPEGISO639Lang(data);
-										pidInfo.AddDescriptorData(data); // remember the original descriptor																				
+                    pidInfo.language = DVB_GetMPEGISO639Lang(data);
+                    pidInfo.AddDescriptorData(data); // remember the original descriptor																				
                     break;
                   case 0x52: //stream identifier
                     pidInfo.AddDescriptorData(data);
@@ -496,7 +511,7 @@ namespace TvLibrary.Implementations.DVB.Structures
                     pidInfo.isTeletext = false;
                     pidInfo.isDVBSubtitle = false;
                     pidInfo.isAC3Audio = true;
-                    pidInfo.stream_type = 0x81;																				
+                    pidInfo.stream_type = 0x81;
                     break;
                   case 0x56://teletext
                     pidInfo.isAC3Audio = false;
@@ -550,33 +565,26 @@ namespace TvLibrary.Implementations.DVB.Structures
       }
       //pat.pidCache = pidText;
       //caPMT.Dump();
-    }		
+    }
 
-    private string DVB_GetMPEGISO639Lang(byte[] b)
+    private static string DVB_GetMPEGISO639Lang(byte[] b)
     {
-
-      int descriptor_tag;
-      int descriptor_length;
       string ISO_639_language_code = "";
-      int audio_type;
-      int len;
 
-      descriptor_tag = b[0];
-      descriptor_length = b[1];
+      int descriptor_tag = b[0];
+      int descriptor_length = b[1];
       if (descriptor_length < b.Length)
         if (descriptor_tag == 0xa)
         {
-          len = descriptor_length;
+          int len = descriptor_length;
           byte[] bytes = new byte[len + 1];
 
           int pointer = 2;
 
           while (len > 0)
           {
-            System.Array.Copy(b, pointer, bytes, 0, len);
+            Array.Copy(b, pointer, bytes, 0, len);
             ISO_639_language_code += System.Text.Encoding.ASCII.GetString(bytes, 0, 3);
-            if (bytes.Length >= 4)
-              audio_type = bytes[3];
             pointer += 4;
             len -= 4;
           }
@@ -585,36 +593,24 @@ namespace TvLibrary.Implementations.DVB.Structures
       return ISO_639_language_code;
     }
 
-    string DVB_SubtitleDescriptior(byte[] buf)
+    static string DVB_SubtitleDescriptior(byte[] buf)
     {
-      int descriptor_tag;
-      int descriptor_length;
       string ISO_639_language_code = "";
-      int subtitling_type;
-      int composition_page_id;
-      int ancillary_page_id;
-      int len;
 
-      descriptor_tag = buf[0];
-      descriptor_length = buf[1];
+      int descriptor_tag = buf[0];
+      int descriptor_length = buf[1];
       if (descriptor_length < buf.Length)
         if (descriptor_tag == 0x59)
         {
-          len = descriptor_length;
+          int len = descriptor_length;
           byte[] bytes = new byte[len + 1];
 
           int pointer = 2;
 
           while (len > 0)
           {
-            System.Array.Copy(buf, pointer, bytes, 0, len);
+            Array.Copy(buf, pointer, bytes, 0, len);
             ISO_639_language_code += System.Text.Encoding.ASCII.GetString(bytes, 0, 3);
-            if (bytes.Length >= 4)
-              subtitling_type = bytes[3];
-            if (bytes.Length >= 6)
-              composition_page_id = (bytes[4] << 8) + bytes[5];
-            if (bytes.Length >= 8)
-              ancillary_page_id = (bytes[6] << 8) + bytes[7];
 
             pointer += 8;
             len -= 8;
@@ -624,20 +620,15 @@ namespace TvLibrary.Implementations.DVB.Structures
       return ISO_639_language_code;
     }
 
-    private string DVB_GetTeletextDescriptor(byte[] b)
+    private static string DVB_GetTeletextDescriptor(byte[] b)
     {
-      int descriptor_tag;
-      int descriptor_length;
       string ISO_639_language_code = "";
-      int teletext_type;
-      int teletext_magazine_number;
-      int teletext_page_number;
-      int len;
-      if (b.Length < 2) return String.Empty;
-      descriptor_tag = b[0];
-      descriptor_length = b[1];
+      if (b.Length < 2)
+        return String.Empty;
+      int descriptor_tag = b[0];
+      int descriptor_length = b[1];
 
-      len = descriptor_length;
+      int len = descriptor_length;
       byte[] bytes = new byte[len + 1];
       if (len < b.Length + 2)
         if (descriptor_tag == 0x56)
@@ -646,11 +637,8 @@ namespace TvLibrary.Implementations.DVB.Structures
 
           while (len > 0 && (pointer + 3 <= b.Length))
           {
-            System.Array.Copy(b, pointer, bytes, 0, 3);
+            Array.Copy(b, pointer, bytes, 0, 3);
             ISO_639_language_code += System.Text.Encoding.ASCII.GetString(bytes, 0, 3);
-            teletext_type = (bytes[3] >> 3) & 0x1F;
-            teletext_magazine_number = bytes[3] & 7;
-            teletext_page_number = bytes[4];
             pointer += 5;
             len -= 5;
           }
@@ -667,7 +655,8 @@ namespace TvLibrary.Implementations.DVB.Structures
     /// <param name="catLen">The length of the conditional access table.</param>
     public void DecodeCat(byte[] cat, int catLen)
     {
-      if (catLen < 7) return;
+      if (catLen < 7)
+        return;
       int pos = 8;
       while (pos + 2 < catLen)
       {

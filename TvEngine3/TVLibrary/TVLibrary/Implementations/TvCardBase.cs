@@ -20,29 +20,12 @@
  */
 
 using System;
-using System.IO;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Xml;
-using Microsoft.Win32;
 using DirectShowLib;
-using DirectShowLib.BDA;
-using TvLibrary.Implementations;
-using DirectShowLib.SBE;
 using TvLibrary.Interfaces;
-using TvLibrary.Interfaces.Analyzer;
-using TvLibrary.Channels;
 using TvLibrary.Implementations.DVB;
-using TvLibrary.Implementations.DVB.Structures;
 using TvLibrary.Implementations.Helper;
-using TvLibrary.Epg;
-using TvLibrary.Teletext;
-using TvLibrary.Log;
-using TvLibrary.ChannelLinkage;
-using TvLibrary.Helper;
-using MediaPortal.TV.Epg;
 using TvDatabase;
 
 namespace TvLibrary.Implementations
@@ -54,32 +37,40 @@ namespace TvLibrary.Implementations
   {
 
     #region ctor
-    public TvCardBase(DsDevice device)
-    {      
+    ///<summary>
+    /// Base constructor
+    ///</summary>
+    ///<param name="device">Base DS device</param>
+    protected TvCardBase(DsDevice device)
+    {
       _graphState = GraphState.Idle;
       _device = device;
       _tunerDevice = device;
       _name = device.Name;
-      _devicePath = device.DevicePath;      
+      _devicePath = device.DevicePath;
 
       //get preload card value
-      if (this._devicePath != null)
+      if (_devicePath != null)
       {
         //fetch preload value from db and apply it.
         IList cardsInDbs = Card.ListAll();
         foreach (Card dbsCard in cardsInDbs)
         {
-          if (dbsCard.DevicePath.Equals(this._devicePath))
+          if (dbsCard.DevicePath.Equals(_devicePath))
           {
             _preloadCard = dbsCard.PreloadCard;
             break;
           }
-        }        
+        }
       }
     }
 
     #endregion
 
+    /// <summary>
+    /// Checks if the graph is running
+    /// </summary>
+    /// <returns>true, if the graph is running; false otherwise</returns>
     protected bool GraphRunning()
     {
       bool graphRunning = false;
@@ -87,7 +78,7 @@ namespace TvLibrary.Implementations
       if (_graphBuilder != null)
       {
         FilterState state;
-        (_graphBuilder as IMediaControl).GetState(10, out state);
+        ((IMediaControl) _graphBuilder).GetState(10, out state);
         graphRunning = (state == FilterState.Running);
       }
       //Log.Log.WriteFile("subch:{0} GraphRunning: {1}", _subChannelId, graphRunning);
@@ -95,8 +86,10 @@ namespace TvLibrary.Implementations
     }
 
     #region variables
-
-    protected bool _preloadCard = false;
+    /// <summary>
+    /// Indicates, if the card should be preloaded
+    /// </summary>
+    protected bool _preloadCard;
     /// <summary>
     /// Scanning Paramters
     /// </summary>
@@ -149,7 +142,9 @@ namespace TvLibrary.Implementations
     /// State of the graph
     /// </summary>
     protected GraphState _graphState = GraphState.Idle;
-
+    /// <summary>
+    /// The graph builder
+    /// </summary>
     protected IFilterGraph2 _graphBuilder;
 
     /// <summary>
@@ -179,7 +174,7 @@ namespace TvLibrary.Implementations
     /// <summary>
     /// Last subchannel id
     /// </summary>
-    protected int _subChannelId = 0;
+    protected int _subChannelId;
     /// <summary>
     /// Indicates, if the signal is present
     /// </summary>
@@ -191,16 +186,16 @@ namespace TvLibrary.Implementations
     /// <summary>
     /// The tuner device
     /// </summary>
-    protected DsDevice _tunerDevice = null;
+    protected DsDevice _tunerDevice;
     /// <summary>
     /// Main device of the card
     /// </summary>
-    protected DsDevice _device = null;
+    protected DsDevice _device;
     #endregion
 
     #region properties
 
-     /// <summary>
+    /// <summary>
     /// returns true if card should be preloaded
     /// </summary>
     public bool PreloadCard
@@ -239,7 +234,7 @@ namespace TvLibrary.Implementations
         Dictionary<int, BaseSubChannel>.Enumerator en = _mapSubChannels.GetEnumerator();
         while (en.MoveNext())
         {
-          en.Current.Value.Parameters = value; ;
+          en.Current.Value.Parameters = value;
         }
       }
     }
@@ -328,9 +323,6 @@ namespace TvLibrary.Implementations
       {
         return _cardType;
       }
-      set
-      {
-      }
     }
 
     /// <summary>
@@ -341,7 +333,8 @@ namespace TvLibrary.Implementations
     {
       get
       {
-        if (_conditionalAccess == null) return false;        
+        if (_conditionalAccess == null)
+          return false;
         return (_conditionalAccess.UseCA);
       }
     }
@@ -354,7 +347,8 @@ namespace TvLibrary.Implementations
     {
       get
       {
-        if (_conditionalAccess == null) return 0;
+        if (_conditionalAccess == null)
+          return 0;
         return _conditionalAccess.DecryptLimit;
       }
     }
@@ -367,7 +361,8 @@ namespace TvLibrary.Implementations
     {
       get
       {
-        if (_conditionalAccess == null) return 0;
+        if (_conditionalAccess == null)
+          return 0;
         return _conditionalAccess.NumberOfChannelsDecrypting;
       }
     }
@@ -380,7 +375,8 @@ namespace TvLibrary.Implementations
     {
       get
       {
-        if (_conditionalAccess == null) return null;
+        if (_conditionalAccess == null)
+          return null;
         return _conditionalAccess.DiSEqCMotor;
       }
     }
@@ -397,7 +393,7 @@ namespace TvLibrary.Implementations
       }
       set
       {
-        _isHybrid = false;
+        _isHybrid = value;
       }
     }
 
@@ -421,8 +417,10 @@ namespace TvLibrary.Implementations
       get
       {
         UpdateSignalQuality();
-        if (_signalQuality < 0) _signalQuality = 0;
-        if (_signalQuality > 100) _signalQuality = 100;
+        if (_signalQuality < 0)
+          _signalQuality = 0;
+        if (_signalQuality > 100)
+          _signalQuality = 100;
         return _signalQuality;
       }
     }
@@ -435,8 +433,10 @@ namespace TvLibrary.Implementations
       get
       {
         UpdateSignalQuality();
-        if (_signalLevel < 0) _signalLevel = 0;
-        if (_signalLevel > 100) _signalLevel = 100;
+        if (_signalLevel < 0)
+          _signalLevel = 0;
+        if (_signalLevel > 100)
+          _signalLevel = 100;
         return _signalLevel;
       }
     }
@@ -555,6 +555,10 @@ namespace TvLibrary.Implementations
     {
     }
 
+    ///<summary>
+    /// Checks if the tuner is locked in and a sginal is present
+    ///</summary>
+    ///<returns>true, when the tuner is locked and a signal is present</returns>
     public virtual bool LockedInOnSignal()
     {
       return false;
@@ -614,6 +618,7 @@ namespace TvLibrary.Implementations
     /// Frees the sub channel.
     /// </summary>
     /// <param name="id">Handle to the subchannel.</param>
+    /// <param name="continueGraph">Indicates, if the graph should be continued or stopped</param>
     private void FreeSubChannel(int id, bool continueGraph)
     {
       Log.Log.Info("tvcard:FreeSubChannel:{0} #{1} keep graph={2}", _mapSubChannels.Count, id, continueGraph);

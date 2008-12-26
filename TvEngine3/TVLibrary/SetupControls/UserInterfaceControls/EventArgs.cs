@@ -23,8 +23,6 @@
 
 #endregion
 
-using System;
-
 /// <summary>
 ///	Mikael Wiberg 2003
 ///		mikwib@hotmail.com (usual HoTMaiL spam filters)
@@ -38,200 +36,200 @@ using System;
 /// </summary>
 namespace MWCommon
 {
-	#region TextDirEventArgs & TextDirEventHandler
+  #region TextDirEventArgs & TextDirEventHandler
 
-	/// <summary>
-	/// A delegate for event TextDirEventHandler.
-	/// </summary>
-	public delegate void TextDirEventHandler(object sender, TextDirEventArgs e);
+  /// <summary>
+  /// A delegate for event TextDirEventHandler.
+  /// </summary>
+  public delegate void TextDirEventHandler(object sender, TextDirEventArgs e);
 
-	/// <summary>
-	/// ShadowDirectionEventArgs class.
-	/// </summary>
-	public class TextDirEventArgs : System.EventArgs
-	{
-		private TextDir tdOldTextDir = TextDir.Normal;
-		private TextDir tdNewTextDir = TextDir.Normal;
+  /// <summary>
+  /// ShadowDirectionEventArgs class.
+  /// </summary>
+  public class TextDirEventArgs : System.EventArgs
+  {
+    private readonly TextDir tdOldTextDir = TextDir.Normal;
+    private readonly TextDir tdNewTextDir = TextDir.Normal;
 
-		/// <summary>
-		/// Standard Constructor.
-		/// </summary>
-		/// <param name="tdOld">The old TextDir before the property was changed.</param>
-		/// <param name="tdNew">The new TextDir after the property was changed.</param>
-		public TextDirEventArgs(TextDir tdOld, TextDir tdNew)
-		{
-			tdOldTextDir = tdOld;
-			tdNewTextDir = tdNew;
-		}
+    /// <summary>
+    /// Standard Constructor.
+    /// </summary>
+    /// <param name="tdOld">The old TextDir before the property was changed.</param>
+    /// <param name="tdNew">The new TextDir after the property was changed.</param>
+    public TextDirEventArgs(TextDir tdOld, TextDir tdNew)
+    {
+      tdOldTextDir = tdOld;
+      tdNewTextDir = tdNew;
+    }
 
-		/// <summary>
-		/// The old TextDir before the property was changed.
-		/// </summary>
-		public TextDir OldTextDir
-		{
-			get
-			{
-				return tdOldTextDir;
-			} 
-		}
+    /// <summary>
+    /// The old TextDir before the property was changed.
+    /// </summary>
+    public TextDir OldTextDir
+    {
+      get
+      {
+        return tdOldTextDir;
+      }
+    }
 
-		/// <summary>
-		/// The new TextDir after the property was changed.
-		/// </summary>
-		public TextDir NewTextDir
-		{
-			get
-			{
-				return tdNewTextDir;
-			} 
-		}
-	}
+    /// <summary>
+    /// The new TextDir after the property was changed.
+    /// </summary>
+    public TextDir NewTextDir
+    {
+      get
+      {
+        return tdNewTextDir;
+      }
+    }
+  }
 
-	#endregion TextDirEventArgs & TextDirEventHandler
-
-
-
-
-
-	#region StringFormatEnumEventArgs & StringFormatEnumEventHandler
-
-	/// <summary>
-	/// A delegate for event StringFormatEnumEventHandler.
-	/// </summary>
-	public delegate void StringFormatEnumEventHandler(object sender, StringFormatEnumEventArgs e);
-
-	/// <summary>
-	/// ShadowDirectionEventArgs class.
-	/// </summary>
-	public class StringFormatEnumEventArgs : System.EventArgs
-	{
-		private StringFormatEnum sfeOldStringFormatEnum = StringFormatEnum.GenericDefault;
-		private StringFormatEnum sfeNewStringFormatEnum = StringFormatEnum.GenericDefault;
-
-		/// <summary>
-		/// Standard Constructor.
-		/// </summary>
-		/// <param name="sfeOld">The old StringFormatEnum before the property was changed.</param>
-		/// <param name="sfeNew">The new StringFormatEnum after the property was changed.</param>
-		public StringFormatEnumEventArgs(StringFormatEnum sfeOld, StringFormatEnum sfeNew)
-		{
-			sfeOldStringFormatEnum = sfeOld;
-			sfeNewStringFormatEnum = sfeNew;
-		}
-
-		/// <summary>
-		/// The old StringFormatEnum before the property was changed.
-		/// </summary>
-		public StringFormatEnum OldStringFormatEnum
-		{
-			get
-			{
-				return sfeOldStringFormatEnum;
-			} 
-		}
-
-		/// <summary>
-		/// The new StringFormatEnum after the property was changed.
-		/// </summary>
-		public StringFormatEnum NewStringFormatEnum
-		{
-			get
-			{
-				return sfeNewStringFormatEnum;
-			} 
-		}
-	}
-
-	#endregion StringFormatEnumEventArgs & StringFormatEnumEventHandler
+  #endregion TextDirEventArgs & TextDirEventHandler
 
 
 
 
 
-	#region MWCancelEventArgs & MWCancelEventHandler
+  #region StringFormatEnumEventArgs & StringFormatEnumEventHandler
 
-	/// <summary>
-	/// A delegate for event MWCancelEventHandler.
-	/// </summary>
-	public delegate void MWCancelEventHandler(object sender, MWCancelEventArgs e);
+  /// <summary>
+  /// A delegate for event StringFormatEnumEventHandler.
+  /// </summary>
+  public delegate void StringFormatEnumEventHandler(object sender, StringFormatEnumEventArgs e);
 
-	/// <summary>
-	/// MWCancelEventArgs class.
-	/// The MWCancelEventArgs takes two objects as arguments. These two objects are the current value and the proposed value. These objects
-	///		can be used when setting up EventHandlers for the properties that use them so that the programmer will know what the current
-	///		and proposed values are.
-	///	Note that the MWCancelEventArgs should be used in an OnBeforePROPERTYChanged property - BEFORE the value of the property is changed.
-	/// </summary>
-	public class MWCancelEventArgs : System.ComponentModel.CancelEventArgs
-	{
-		#region Variables
+  /// <summary>
+  /// ShadowDirectionEventArgs class.
+  /// </summary>
+  public class StringFormatEnumEventArgs : System.EventArgs
+  {
+    private readonly StringFormatEnum sfeOldStringFormatEnum = StringFormatEnum.GenericDefault;
+    private readonly StringFormatEnum sfeNewStringFormatEnum = StringFormatEnum.GenericDefault;
 
-		/// <summary>
-		/// The current object before the property is changed.
-		/// </summary>
-		private object oCurrent = null;
+    /// <summary>
+    /// Standard Constructor.
+    /// </summary>
+    /// <param name="sfeOld">The old StringFormatEnum before the property was changed.</param>
+    /// <param name="sfeNew">The new StringFormatEnum after the property was changed.</param>
+    public StringFormatEnumEventArgs(StringFormatEnum sfeOld, StringFormatEnum sfeNew)
+    {
+      sfeOldStringFormatEnum = sfeOld;
+      sfeNewStringFormatEnum = sfeNew;
+    }
 
-		/// <summary>
-		/// The proposed object that will be used if the property is changed.
-		/// </summary>
-		private object oProposed = null;
+    /// <summary>
+    /// The old StringFormatEnum before the property was changed.
+    /// </summary>
+    public StringFormatEnum OldStringFormatEnum
+    {
+      get
+      {
+        return sfeOldStringFormatEnum;
+      }
+    }
 
-		#endregion Variables
+    /// <summary>
+    /// The new StringFormatEnum after the property was changed.
+    /// </summary>
+    public StringFormatEnum NewStringFormatEnum
+    {
+      get
+      {
+        return sfeNewStringFormatEnum;
+      }
+    }
+  }
 
-
-
-		#region Constructors
-
-		/// <summary>
-		/// Standard constructor.
-		/// </summary>
-		public MWCancelEventArgs()
-		{
-		}
-
-		/// <summary>
-		/// Standard Constructor taking the current value of the property and the proposed value of the property as arguments.
-		/// </summary>
-		/// <param name="current">The current object before the property is changed.</param>
-		/// <param name="proposed">The proposed object that will be used if the property is changed.</param>
-		public MWCancelEventArgs(object current, object proposed)
-		{
-			oCurrent = current;
-			oProposed = proposed;
-		}
-
-		#endregion Constructors
+  #endregion StringFormatEnumEventArgs & StringFormatEnumEventHandler
 
 
 
-		#region Properties
 
-		/// <summary>
-		/// The current object before the property is changed.
-		/// </summary>
-		public object Current
-		{
-			get
-			{
-				return oCurrent;
-			} 
-		}
 
-		/// <summary>
-		/// The proposed object that will be used if the property is changed.
-		/// </summary>
-		public object Proposed
-		{
-			get
-			{
-				return oProposed;
-			} 
-		}
+  #region MWCancelEventArgs & MWCancelEventHandler
 
-		#endregion Properties
+  /// <summary>
+  /// A delegate for event MWCancelEventHandler.
+  /// </summary>
+  public delegate void MWCancelEventHandler(object sender, MWCancelEventArgs e);
 
-	}
+  /// <summary>
+  /// MWCancelEventArgs class.
+  /// The MWCancelEventArgs takes two objects as arguments. These two objects are the current value and the proposed value. These objects
+  ///		can be used when setting up EventHandlers for the properties that use them so that the programmer will know what the current
+  ///		and proposed values are.
+  ///	Note that the MWCancelEventArgs should be used in an OnBeforePROPERTYChanged property - BEFORE the value of the property is changed.
+  /// </summary>
+  public class MWCancelEventArgs : System.ComponentModel.CancelEventArgs
+  {
+    #region Variables
 
-	#endregion MWCancelEventArgs & MWCancelEventHandler
+    /// <summary>
+    /// The current object before the property is changed.
+    /// </summary>
+    private readonly object oCurrent;
+
+    /// <summary>
+    /// The proposed object that will be used if the property is changed.
+    /// </summary>
+    private readonly object oProposed;
+
+    #endregion Variables
+
+
+
+    #region Constructors
+
+    /// <summary>
+    /// Standard constructor.
+    /// </summary>
+    public MWCancelEventArgs()
+    {
+    }
+
+    /// <summary>
+    /// Standard Constructor taking the current value of the property and the proposed value of the property as arguments.
+    /// </summary>
+    /// <param name="current">The current object before the property is changed.</param>
+    /// <param name="proposed">The proposed object that will be used if the property is changed.</param>
+    public MWCancelEventArgs(object current, object proposed)
+    {
+      oCurrent = current;
+      oProposed = proposed;
+    }
+
+    #endregion Constructors
+
+
+
+    #region Properties
+
+    /// <summary>
+    /// The current object before the property is changed.
+    /// </summary>
+    public object Current
+    {
+      get
+      {
+        return oCurrent;
+      }
+    }
+
+    /// <summary>
+    /// The proposed object that will be used if the property is changed.
+    /// </summary>
+    public object Proposed
+    {
+      get
+      {
+        return oProposed;
+      }
+    }
+
+    #endregion Properties
+
+  }
+
+  #endregion MWCancelEventArgs & MWCancelEventHandler
 
 }

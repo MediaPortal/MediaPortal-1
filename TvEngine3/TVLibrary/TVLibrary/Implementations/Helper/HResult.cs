@@ -24,8 +24,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.InteropServices;
 
 namespace TvLibrary
@@ -62,45 +60,153 @@ namespace TvLibrary
   public class HResult
   {
     #region Enums
+    /// <summary>
+    /// HResult serverity enum
+    /// </summary>
     public enum Serverity
     {
+      /// <summary>
+      /// Unknown serverity
+      /// </summary>
       Unknown = -1,
+      /// <summary>
+      /// Success serverity
+      /// </summary>
       Success = 0,
+      /// <summary>
+      /// Info serverity
+      /// </summary>
       Info = 1,
+      /// <summary>
+      /// Warning serverity
+      /// </summary>
       Warning = 2,
+      /// <summary>
+      /// Errror serverity
+      /// </summary>
       Error = 3
     }
 
+    /// <summary>
+    /// Facility code enum
+    /// </summary>
     public enum Facility
     {
+      /// <summary>
+      /// Unknown
+      /// </summary>
       Unknown = -1,
+      /// <summary>
+      /// Null
+      /// </summary>
       Null = 0,
+      /// <summary>
+      /// RPC
+      /// </summary>
       RPC = 1,
+      /// <summary>
+      /// Dispatch
+      /// </summary>
       Dispatch = 2,
+      /// <summary>
+      /// Storage
+      /// </summary>
       Storage = 3,
+      /// <summary>
+      /// ITF
+      /// </summary>
       ITF = 4,
+      /// <summary>
+      /// Win32
+      /// </summary>
       Win32 = 7,
+      /// <summary>
+      /// Windows
+      /// </summary>
       Windows = 8,
+      /// <summary>
+      /// Security
+      /// </summary>
       Security = 9,
+      /// <summary>
+      /// Control
+      /// </summary>
       Control = 10,
+      /// <summary>
+      /// Cert
+      /// </summary>
       Cert = 11,
+      /// <summary>
+      /// Internet
+      /// </summary>
       Internet = 12,
+      /// <summary>
+      /// MediaServer
+      /// </summary>
       MediaServer = 13,
+      /// <summary>
+      /// MSMQ
+      /// </summary>
       MSMQ = 14,
+      /// <summary>
+      /// SetupAPI
+      /// </summary>
       SetupAPI = 15,
+      /// <summary>
+      /// SCard
+      /// </summary>
       SCard = 16,
+      /// <summary>
+      /// ComPlus
+      /// </summary>
       ComPlus = 17,
+      /// <summary>
+      /// AAF
+      /// </summary>
       AAF = 18,
+      /// <summary>
+      /// ACS
+      /// </summary>
       ACS = 20,
+      /// <summary>
+      /// DPlay
+      /// </summary>
       DPlay = 21,
+      /// <summary>
+      /// UMI
+      /// </summary>
       UMI = 22,
+      /// <summary>
+      /// SXS
+      /// </summary>
       SXS = 23,
+      /// <summary>
+      /// Windows CE
+      /// </summary>
       WindowsCE = 24,
+      /// <summary>
+      /// HTTP
+      /// </summary>
       HTTP = 25,
+      /// <summary>
+      /// BackgroundCopy
+      /// </summary>
       BackgroundCopy = 32,
+      /// <summary>
+      /// Configuration
+      /// </summary>
       Configuration = 33,
+      /// <summary>
+      /// StateManagement
+      /// </summary>
       StateManagement = 34,
+      /// <summary>
+      /// MetaDirectory
+      /// </summary>
       MetaDirectory = 35,
+      /// <summary>
+      /// D3DX
+      /// </summary>
       D3DX = 0x877
     }
     #endregion
@@ -229,10 +335,7 @@ namespace TvLibrary
     /// </returns>
     public override string ToString()
     {
-      if (_facility == Facility.Unknown)
-        return String.Format("0x{0} - {1}:Unknown(0x{2}):0x{3}", _hresult.ToString("X").PadLeft(8, '0'), _serverity, _facilityCode.ToString("X").PadLeft(3, '0'), _code.ToString("X").PadLeft(4, '0'));
-      else
-        return String.Format("0x{0} - {1}:{2}:0x{3}", _hresult.ToString("X").PadLeft(8, '0'), _serverity, _facility, _code.ToString("X").PadLeft(4, '0'));
+      return _facility == Facility.Unknown ? String.Format("0x{0} - {1}:Unknown(0x{2}):0x{3}", _hresult.ToString("X").PadLeft(8, '0'), _serverity, _facilityCode.ToString("X").PadLeft(3, '0'), _code.ToString("X").PadLeft(4, '0')) : String.Format("0x{0} - {1}:{2}:0x{3}", _hresult.ToString("X").PadLeft(8, '0'), _serverity, _facility, _code.ToString("X").PadLeft(4, '0'));
     }
 
     /// <summary>
@@ -243,10 +346,7 @@ namespace TvLibrary
     /// </returns>
     public string ToDXString()
     {
-      if(_hresult == 0)
-        return String.Format("No DX Error");
-      else
-        return String.Format("DX Error: {0} - Error: {1}, Description:{2}", this.ToString(), DXErrorString, DXErrorDescription);
+      return _hresult == 0 ? String.Format("No DX Error") : String.Format("DX Error: {0} - Error: {1}, Description:{2}", ToString(), DXErrorString, DXErrorDescription);
     }
 
     /// <summary>
@@ -257,46 +357,52 @@ namespace TvLibrary
     /// <returns>bool</returns>
     public static bool operator ==(HResult a, int b)
     {
-      if (a._hresult == (uint)b)
-        return true;
-      else if (a == null)
-        return false;
-      else
-        return false;
-
+      return a._hresult == (uint)b;
     }
 
+    /// <summary>
+    /// Overloaded lt operator
+    /// </summary>
+    /// <param name="a">A</param>
+    /// <param name="b">B</param>
+    /// <returns>true if a._hresult lt b</returns>
     public static bool operator <(HResult a, int b)
     {
-      if (a._hresult < b)
-        return true;
-      else 
-        return false;
+      return a._hresult < b;
     }
 
-    public static bool operator > (HResult a, int b)
+    /// <summary>
+    /// Overloaded gt operator
+    /// </summary>
+    /// <param name="a">A</param>
+    /// <param name="b">B</param>
+    /// <returns>true if a._hresult gt b</returns>
+    public static bool operator >(HResult a, int b)
     {
-      if (a._hresult > b)
-        return true;
-      else
-        return false;
-    }
-    public static bool operator <= (HResult a, int b)
-    {
-      if (a._hresult <= b)
-        return true;
-      else
-        return false;
+      return a._hresult > b;
     }
 
-    public static bool operator >= (HResult a, int b)
+    /// <summary>
+    /// Overloaded lte operator
+    /// </summary>
+    /// <param name="a">A</param>
+    /// <param name="b">B</param>
+    /// <returns>true if a._hresult lte b</returns>
+    public static bool operator <=(HResult a, int b)
     {
-      if (a._hresult >= b)
-        return true;
-      else
-        return false;
+      return a._hresult <= b;
     }
 
+    /// <summary>
+    /// Overloaded gte operator
+    /// </summary>
+    /// <param name="a">A</param>
+    /// <param name="b">B</param>
+    /// <returns>true if a._hresult gte b</returns>
+    public static bool operator >=(HResult a, int b)
+    {
+      return a._hresult >= b;
+    }
 
 
     /// <summary>
@@ -322,7 +428,7 @@ namespace TvLibrary
       // Check for null values and compare run-time types.
       if (obj == null || GetType() != obj.GetType())
         return false;
-      return this._hresult == ((HResult)obj)._hresult;
+      return _hresult == ((HResult)obj)._hresult;
     }
 
     /// <summary>

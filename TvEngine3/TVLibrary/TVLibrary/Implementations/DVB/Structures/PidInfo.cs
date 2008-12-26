@@ -1,6 +1,24 @@
+/* 
+ *	Copyright (C) 2005-2008 Team MediaPortal
+ *	http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace TvLibrary.Implementations.DVB.Structures
 {
@@ -57,7 +75,7 @@ namespace TvLibrary.Implementations.DVB.Structures
     /// <summary>
     /// teletext language
     /// </summary>
-    public string teletextLANG ="";
+    public string teletextLANG = "";
 
     /// <summary>
     /// Ctor for an audio pid
@@ -67,56 +85,61 @@ namespace TvLibrary.Implementations.DVB.Structures
     public void AudioPid(int audioPid, string audioLanguage)
     {
 
-      if (audioLanguage == null) audioLanguage = "";
+      if (audioLanguage == null)
+        audioLanguage = "";
       pid = audioPid;
       language = audioLanguage;
       stream_type = 3;
       isAudio = true;
     }
-      /// <summary>
-      /// Set the content of the descriptor for this PID
-      /// </summary>
-      /// <param name="data"></param>
-      public void AddDescriptorData(byte[] data) {
-          if (data != null)
-          {
-            int start = 0;
-            int descriptor_length = data[1] + 2;
-            if (this.descriptor_data == null)
-            {
-              this.descriptor_data = new byte[descriptor_length]; // descriptor_length and tag
-            }
-            else
-            {
-              start = this.descriptor_data.Length;
-              byte[] newDesc = new byte[this.descriptor_data.Length + descriptor_length];
-              System.Array.Copy(this.descriptor_data, newDesc, this.descriptor_data.Length);
-              this.descriptor_data = newDesc;
-            }
-              if (this.descriptor_data.Length != data.Length)
-              {
-                  Log.Log.WriteFile("PROBLEM : descriptor lengths dont match {0} {1}", data.Length, descriptor_data.Length);
-                  if (descriptor_length > data.Length)
-                    descriptor_length = data.Length;
-              }
-              else Log.Log.WriteFile("Set descriptor data with length {0}", descriptor_data.Length);
-              System.Array.Copy(data, 0, this.descriptor_data, start, descriptor_length);
-          }
+    /// <summary>
+    /// Set the content of the descriptor for this PID
+    /// </summary>
+    /// <param name="data"></param>
+    public void AddDescriptorData(byte[] data)
+    {
+      if (data != null)
+      {
+        int start = 0;
+        int descriptor_length = data[1] + 2;
+        if (descriptor_data == null)
+        {
+          descriptor_data = new byte[descriptor_length]; // descriptor_length and tag
+        }
+        else
+        {
+          start = descriptor_data.Length;
+          byte[] newDesc = new byte[descriptor_data.Length + descriptor_length];
+          Array.Copy(descriptor_data, newDesc, descriptor_data.Length);
+          descriptor_data = newDesc;
+        }
+        if (descriptor_data.Length != data.Length)
+        {
+          Log.Log.WriteFile("PROBLEM : descriptor lengths dont match {0} {1}", data.Length, descriptor_data.Length);
+          if (descriptor_length > data.Length)
+            descriptor_length = data.Length;
+        }
+        else
+          Log.Log.WriteFile("Set descriptor data with length {0}", descriptor_data.Length);
+        Array.Copy(data, 0, descriptor_data, start, descriptor_length);
       }
-      /// <summary>
-      /// Checks if the descriptor data has been set
-      /// </summary>
-      /// <returns></returns>
-      public bool HasDescriptorData() {
-          return descriptor_data != null;
-      }
-      /// <summary>
-      /// Returns the descriptor data
-      /// </summary>
-      /// <returns></returns>
-      public byte[] GetDescriptorData() {
-          return descriptor_data;
-      }
+    }
+    /// <summary>
+    /// Checks if the descriptor data has been set
+    /// </summary>
+    /// <returns></returns>
+    public bool HasDescriptorData()
+    {
+      return descriptor_data != null;
+    }
+    /// <summary>
+    /// Returns the descriptor data
+    /// </summary>
+    /// <returns></returns>
+    public byte[] GetDescriptorData()
+    {
+      return descriptor_data;
+    }
     /// <summary>
     /// Ctor for an ac3 pid
     /// </summary> 
@@ -124,7 +147,8 @@ namespace TvLibrary.Implementations.DVB.Structures
     /// <param name="audioLanguage">The audio language.</param>
     public void Ac3Pid(int ac3Pid, string audioLanguage)
     {
-      if (audioLanguage == null) audioLanguage = "";
+      if (audioLanguage == null)
+        audioLanguage = "";
       pid = ac3Pid;
       language = audioLanguage;
       stream_type = 0x81;
@@ -252,17 +276,28 @@ namespace TvLibrary.Implementations.DVB.Structures
     /// </returns>
     public override string ToString()
     {
-      if (IsH264Video) return String.Format("pid:{0:X} video type:H.264", pid);
-      if (IsMpeg4Video) return String.Format("pid:{0:X} video type:MPEG-4", pid);
-      if (IsMpeg2Video) return String.Format("pid:{0:X} video type:MPEG-2", pid);
-      if (IsMpeg1Video) return String.Format("pid:{0:X} video type:MPEG-1", pid);
-      if (isAC3Audio) return String.Format("pid:{0:X} audio lang:{1} type:AC3", pid, language);
-      if (IsMpeg2Audio) return String.Format("pid:{0:X} audio lang:{1} type:MPEG-2", pid, language);
-      if (IsMpeg1Audio) return String.Format("pid:{0:X} audio lang:{1} type:MPEG-1", pid, language);
-      if (isTeletext) return String.Format("pid:{0:X} teletext type:{1:X}", pid, stream_type);
-      if (isDVBSubtitle) return String.Format("pid:{0:X} subtitle type:{1:X}", pid, stream_type);
-      if (IsAACAudio) return String.Format("pid:{0:X} audio lang:{1} type:AAC", pid, language);
-      if (IsLATMAACAudio) return String.Format("pid:{0:X} audio lang:{1} type:LATM AAC", pid, language);
+      if (IsH264Video)
+        return String.Format("pid:{0:X} video type:H.264", pid);
+      if (IsMpeg4Video)
+        return String.Format("pid:{0:X} video type:MPEG-4", pid);
+      if (IsMpeg2Video)
+        return String.Format("pid:{0:X} video type:MPEG-2", pid);
+      if (IsMpeg1Video)
+        return String.Format("pid:{0:X} video type:MPEG-1", pid);
+      if (isAC3Audio)
+        return String.Format("pid:{0:X} audio lang:{1} type:AC3", pid, language);
+      if (IsMpeg2Audio)
+        return String.Format("pid:{0:X} audio lang:{1} type:MPEG-2", pid, language);
+      if (IsMpeg1Audio)
+        return String.Format("pid:{0:X} audio lang:{1} type:MPEG-1", pid, language);
+      if (isTeletext)
+        return String.Format("pid:{0:X} teletext type:{1:X}", pid, stream_type);
+      if (isDVBSubtitle)
+        return String.Format("pid:{0:X} subtitle type:{1:X}", pid, stream_type);
+      if (IsAACAudio)
+        return String.Format("pid:{0:X} audio lang:{1} type:AAC", pid, language);
+      if (IsLATMAACAudio)
+        return String.Format("pid:{0:X} audio lang:{1} type:LATM AAC", pid, language);
       return string.Format("pid:{0:X} type:{1:X}", pid, stream_type);
     }
   }

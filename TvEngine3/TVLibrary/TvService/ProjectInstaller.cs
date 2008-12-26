@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration.Install;
 using Microsoft.Win32;
@@ -12,10 +11,10 @@ namespace TvService
     public ProjectInstaller()
     {
       InitializeComponent();
-      this.Committed += new InstallEventHandler(ProjectInstaller_Committed);
+      Committed += ProjectInstaller_Committed;
     }
 
-    private void ProjectInstaller_Committed(object sender, InstallEventArgs e)
+    private static void ProjectInstaller_Committed(object sender, InstallEventArgs e)
     {
       SetRegistryOptions();
     }
@@ -23,7 +22,7 @@ namespace TvService
     /// <summary>
     /// Set Service options like "Interact with Desktop" for TVService. Since "InteractDesktop" is readonly it cannot be set with WMI directly.
     /// </summary>
-    private void SetRegistryOptions()
+    private static void SetRegistryOptions()
     {
       try
       {
@@ -36,8 +35,7 @@ namespace TvService
               tveKey.SetValue("Type", ((int)tveKey.GetValue("Type") | 256));
           }
         }
-      }
-      catch (Exception) {}
+      } catch (Exception) { }
     }
   }
 }

@@ -1,11 +1,26 @@
+/* 
+ *	Copyright (C) 2005-2008 Team MediaPortal
+ *	http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using Gentle.Common;
 using Gentle.Framework;
 using TvDatabase;
 namespace SetupTv.Sections
@@ -55,8 +70,8 @@ namespace SetupTv.Sections
         foreach (GroupMap map in maps)
         {
           Channel channel = map.ReferencedChannel();
-          if (channel.IsTv == false) continue;
-          int index = listView1.Items.Count + 1;
+          if (channel.IsTv == false)
+            continue;
           int imageIndex = 1;
           if (channel.FreeToAir == false)
             imageIndex = 2;
@@ -91,7 +106,8 @@ namespace SetupTv.Sections
     {
       listView1.BeginUpdate();
       ListView.SelectedIndexCollection indexes = listView1.SelectedIndices;
-      if (indexes.Count == 0) return;
+      if (indexes.Count == 0)
+        return;
       for (int i = 0; i < indexes.Count; ++i)
       {
         int index = indexes[i];
@@ -110,8 +126,10 @@ namespace SetupTv.Sections
     {
       listView1.BeginUpdate();
       ListView.SelectedIndexCollection indexes = listView1.SelectedIndices;
-      if (indexes.Count == 0) return;
-      if (listView1.Items.Count < 2) return;
+      if (indexes.Count == 0)
+        return;
+      if (listView1.Items.Count < 2)
+        return;
       for (int i = indexes.Count - 1; i >= 0; i--)
       {
         int index = indexes[i];
@@ -139,7 +157,8 @@ namespace SetupTv.Sections
       }
 
       ListView.SelectedIndexCollection indexes = listView1.SelectedIndices;
-      if (indexes.Count == 0) return;
+      if (indexes.Count == 0)
+        return;
       NotifyForm dlg = new NotifyForm("Removing tv channels from group...", "This can take some time\n\nPlease be patient...");
       dlg.Show();
       dlg.WaitForDisplay();
@@ -179,28 +198,30 @@ namespace SetupTv.Sections
       }
 
       ListView.SelectedIndexCollection indexes = listView1.SelectedIndices;
-      if (indexes.Count == 0) return;
+      if (indexes.Count == 0)
+        return;
       TvBusinessLayer layer = new TvBusinessLayer();
       for (int i = 0; i < indexes.Count; ++i)
       {
         ListViewItem item = listView1.Items[indexes[i]];
         GroupMap map = (GroupMap)item.Tag;
-        Channel channel = map.ReferencedChannel();        
+        Channel channel = map.ReferencedChannel();
         layer.AddChannelToGroup(channel, group.GroupName);
       }
     }
 
     private void UpdateMenu()
-    {   
+    {
       addToFavoritesToolStripMenuItem.DropDownItems.Clear();
       IList groups = ChannelGroup.ListAll();
       foreach (ChannelGroup group in groups)
       {
-        if (_channelGroup.GroupName == group.GroupName) continue;
+        if (_channelGroup.GroupName == group.GroupName)
+          continue;
 
         ToolStripMenuItem item = new ToolStripMenuItem(group.GroupName);
         item.Tag = group;
-        item.Click += new EventHandler(OnAddToFavoritesMenuItem_Click);
+        item.Click += OnAddToFavoritesMenuItem_Click;
         addToFavoritesToolStripMenuItem.DropDownItems.Add(item);
 
         /*TabPage page = new TabPage(group.GroupName);
@@ -222,13 +243,13 @@ namespace SetupTv.Sections
         */
       }
       ToolStripMenuItem itemNew = new ToolStripMenuItem("New...");
-      itemNew.Click += new EventHandler(OnAddToFavoritesMenuItem_Click);
+      itemNew.Click += OnAddToFavoritesMenuItem_Click;
       addToFavoritesToolStripMenuItem.DropDownItems.Add(itemNew);
     }
 
     private void addToFavoritesToolStripMenuItem_Click(object sender, EventArgs e)
     {
-      
+
     }
 
     private void deleteThisChannelToolStripMenuItem_Click(object sender, EventArgs e)
@@ -244,7 +265,8 @@ namespace SetupTv.Sections
       }
 
       ListView.SelectedIndexCollection indexes = listView1.SelectedIndices;
-      if (indexes.Count == 0) return;
+      if (indexes.Count == 0)
+        return;
 
       NotifyForm dlg = new NotifyForm("Deleting selected tv channels...", "This can take some time\n\nPlease be patient...");
       dlg.Show();
@@ -288,7 +310,8 @@ namespace SetupTv.Sections
     private void editChannelToolStripMenuItem_Click(object sender, EventArgs e)
     {
       ListView.SelectedIndexCollection indexes = listView1.SelectedIndices;
-      if (indexes.Count == 0) return;
+      if (indexes.Count == 0)
+        return;
       for (int i = indexes.Count - 1; i >= 0; i--)
       {
         int index = indexes[i];
@@ -318,7 +341,8 @@ namespace SetupTv.Sections
         int oldIndex = e.Item;
         ListViewItem item = listView1.Items[oldIndex];
         int newIndex = (Int32.Parse(e.Label) - 1);
-        if (newIndex == oldIndex) return;
+        if (newIndex == oldIndex)
+          return;
 
         listView1.Items.RemoveAt(oldIndex);
         listView1.Items.Insert(newIndex, item);
@@ -332,7 +356,8 @@ namespace SetupTv.Sections
     private void mpButtonPreview_Click(object sender, EventArgs e)
     {
       ListView.SelectedIndexCollection indexes = listView1.SelectedIndices;
-      if (indexes.Count == 0) return;
+      if (indexes.Count == 0)
+        return;
       GroupMap map = (GroupMap)listView1.Items[indexes[0]].Tag;
       FormPreview previewWindow = new FormPreview();
       previewWindow.Channel = map.ReferencedChannel();

@@ -23,7 +23,6 @@
 
 #endregion
 
-using System;
 using System.Windows.Forms;
 
 /// <summary>
@@ -39,188 +38,180 @@ using System.Windows.Forms;
 /// </summary>
 namespace MWCommon
 {
-	/// <summary>
-	/// This class encapsulates a TreeNode and keeps track and deals with its ImageIndex and SelectedImageIndex properties.
-	/// This class was specifically created for the purpose of simulating a TreeNode being selected and deselected. The rendering of this
-	///		happens somewhere inside the MS TreeView's OnPaint EventHandler - which incidentally cannot be overridden. Therefore in order
-	///		to simulate the Image part of a TreeNode being selected the Indexes have to be saved away in a class and then restored when
-	///		the TreeNode is deselected.
-	///	Note that as soon as an MWTreeNodeWrapper object is instantiated the TreeNode it is based on is selected. This is because the
-	///		MWTreeView keeps a Hashtable of selected TreeNodes, so any MWTreeNodeWrapper object that is instantiated is assumed to be
-	///		selected.
-	/// </summary>
-	public class MWTreeNodeWrapper
-	{
-		#region Variables
+  /// <summary>
+  /// This class encapsulates a TreeNode and keeps track and deals with its ImageIndex and SelectedImageIndex properties.
+  /// This class was specifically created for the purpose of simulating a TreeNode being selected and deselected. The rendering of this
+  ///		happens somewhere inside the MS TreeView's OnPaint EventHandler - which incidentally cannot be overridden. Therefore in order
+  ///		to simulate the Image part of a TreeNode being selected the Indexes have to be saved away in a class and then restored when
+  ///		the TreeNode is deselected.
+  ///	Note that as soon as an MWTreeNodeWrapper object is instantiated the TreeNode it is based on is selected. This is because the
+  ///		MWTreeView keeps a Hashtable of selected TreeNodes, so any MWTreeNodeWrapper object that is instantiated is assumed to be
+  ///		selected.
+  /// </summary>
+  public class MWTreeNodeWrapper
+  {
+    #region Variables
 
-		/// <summary>
-		/// Core TreeNode of this MWTreeNodeWrapper object.
-		/// </summary>
-		private TreeNode tnNode = null;
+    /// <summary>
+    /// Core TreeNode of this MWTreeNodeWrapper object.
+    /// </summary>
+    private TreeNode tnNode;
 
-		/// <summary>
-		/// Original ImageIndex of the TreeNode in the Node property.
-		/// </summary>
-		private int iImageIndex = -1;
+    /// <summary>
+    /// Original ImageIndex of the TreeNode in the Node property.
+    /// </summary>
+    private int iImageIndex = -1;
 
-		/// <summary>
-		/// Original SelectedImageIndex of the TreeNode in the Node property.
-		/// </summary>
-		private int iSelectedImageIndex = -1;
+    /// <summary>
+    /// Original SelectedImageIndex of the TreeNode in the Node property.
+    /// </summary>
+    private int iSelectedImageIndex = -1;
 
-		#endregion Variables
-
-
-
-		#region Constructor
-
-		/// <summary>
-		/// Constructor that takes a TreeNode and wraps code around it.
-		/// </summary>
-		/// <param name="tn">TreeNode to wrap code around.</param>
-		public MWTreeNodeWrapper(TreeNode tn)
-		{
-			tnNode = tn;
-			iImageIndex = tnNode.ImageIndex;
-			iSelectedImageIndex = tnNode.SelectedImageIndex;
-
-			if(iImageIndex != -1)
-			{
-				tnNode.ImageIndex = iSelectedImageIndex;
-			}
-			else
-			{
-				tnNode.ImageIndex = tnNode.TreeView.SelectedImageIndex;
-			}
-		}
-
-		#endregion Constructor
+    #endregion Variables
 
 
 
-		#region Properties
+    #region Constructor
 
-		/// <summary>
-		/// Core TreeNode of this MWTreeNodeWrapper object.
-		/// </summary>
-		public TreeNode Node
-		{
-			get
-			{
-				return tnNode;
-			}
-			set
-			{
-				tnNode = value;
-			}
-		}
+    /// <summary>
+    /// Constructor that takes a TreeNode and wraps code around it.
+    /// </summary>
+    /// <param name="tn">TreeNode to wrap code around.</param>
+    public MWTreeNodeWrapper(TreeNode tn)
+    {
+      tnNode = tn;
+      iImageIndex = tnNode.ImageIndex;
+      iSelectedImageIndex = tnNode.SelectedImageIndex;
 
-		/// <summary>
-		/// Original ImageIndex of the TreeNode in the Node property.
-		/// </summary>
-		public int ImageIndex
-		{
-			get
-			{
-				return iImageIndex;
-			}
-			set
-			{
-				iImageIndex = value;
-			}
-		}
+      tnNode.ImageIndex = iImageIndex != -1 ? iSelectedImageIndex : tnNode.TreeView.SelectedImageIndex;
+    }
 
-		/// <summary>
-		/// Original SelectedImageIndex of the TreeNode in the Node property.
-		/// </summary>
-		public int SelectedImageIndex
-		{
-			get
-			{
-				return iSelectedImageIndex;
-			}
-			set
-			{
-				iSelectedImageIndex = value;
-			}
-		}
-
-		#endregion Properties
+    #endregion Constructor
 
 
 
-		#region Methods
+    #region Properties
 
-		/// <summary>
-		/// Select a TreeNode.
-		/// </summary>
-		public void Select()
-		{
-			tnNode.ImageIndex = iSelectedImageIndex;
-		}
+    /// <summary>
+    /// Core TreeNode of this MWTreeNodeWrapper object.
+    /// </summary>
+    public TreeNode Node
+    {
+      get
+      {
+        return tnNode;
+      }
+      set
+      {
+        tnNode = value;
+      }
+    }
 
-		/// <summary>
-		/// Deselect a TreeNode.
-		/// </summary>
-		public void Deselect()
-		{
-			tnNode.ImageIndex = iImageIndex;
-			tnNode.SelectedImageIndex = iSelectedImageIndex;
-		}
+    /// <summary>
+    /// Original ImageIndex of the TreeNode in the Node property.
+    /// </summary>
+    public int ImageIndex
+    {
+      get
+      {
+        return iImageIndex;
+      }
+      set
+      {
+        iImageIndex = value;
+      }
+    }
 
-		#endregion Methods
+    /// <summary>
+    /// Original SelectedImageIndex of the TreeNode in the Node property.
+    /// </summary>
+    public int SelectedImageIndex
+    {
+      get
+      {
+        return iSelectedImageIndex;
+      }
+      set
+      {
+        iSelectedImageIndex = value;
+      }
+    }
 
-
-
-		#region Static Methods
-
-		/// <summary>
-		/// Select the TreeNode in the MWTreeNodeWrapper object supplied.
-		/// </summary>
-		/// <param name="mwtnw">MWTreeNodeWrapper containing TreeNode that should be selected.</param>
-		public static void Select(MWTreeNodeWrapper mwtnw)
-		{
-			mwtnw.Node.ImageIndex = mwtnw.SelectedImageIndex;
-		}
-
-		/// <summary>
-		/// Reselect the TreeNode in the MWTreeNodeWrapper object supplied.
-		/// </summary>
-		/// <param name="mwtnw">MWTreeNodeWrapper containing TreeNode that should be selected.</param>
-		public static void Reselect(MWTreeNodeWrapper mwtnw)
-		{
-			mwtnw.Node.ImageIndex = mwtnw.ImageIndex;
-		}
-
-		/// <summary>
-		/// Deselect the TreeNode in the MWTreeNodeWrapper object supplied.
-		/// </summary>
-		/// <param name="mwtnw">MWTreeNodeWrapper containing TreeNode that should be deselected.</param>
-		public static void Deselect(MWTreeNodeWrapper mwtnw)
-		{
-			mwtnw.Node.ImageIndex = mwtnw.ImageIndex;
-			//mwtnw.Node.SelectedImageIndex = mwtnw.SelectedImageIndex;
-		}
-
-		#endregion Static Methods
+    #endregion Properties
 
 
 
-		#region Methods
+    #region Methods
 
-		/// <summary>
-		/// //XXXX
-		/// Deselect the TreeNode in the MWTreeNodeWrapper object supplied.
-		/// </summary>
-		/// <param name="mwtnw">MWTreeNodeWrapper containing TreeNode that should be deselected.</param>
-		public void Reset()
-		{
-			this.Node.ImageIndex = this.ImageIndex;
-			this.Node.SelectedImageIndex = this.SelectedImageIndex;
-		}
+    /// <summary>
+    /// Select a TreeNode.
+    /// </summary>
+    public void Select()
+    {
+      tnNode.ImageIndex = iSelectedImageIndex;
+    }
 
-		#endregion Methods
+    /// <summary>
+    /// Deselect a TreeNode.
+    /// </summary>
+    public void Deselect()
+    {
+      tnNode.ImageIndex = iImageIndex;
+      tnNode.SelectedImageIndex = iSelectedImageIndex;
+    }
 
-	}
+    #endregion Methods
+
+
+
+    #region Static Methods
+
+    /// <summary>
+    /// Select the TreeNode in the MWTreeNodeWrapper object supplied.
+    /// </summary>
+    /// <param name="mwtnw">MWTreeNodeWrapper containing TreeNode that should be selected.</param>
+    public static void Select(MWTreeNodeWrapper mwtnw)
+    {
+      mwtnw.Node.ImageIndex = mwtnw.SelectedImageIndex;
+    }
+
+    /// <summary>
+    /// Reselect the TreeNode in the MWTreeNodeWrapper object supplied.
+    /// </summary>
+    /// <param name="mwtnw">MWTreeNodeWrapper containing TreeNode that should be selected.</param>
+    public static void Reselect(MWTreeNodeWrapper mwtnw)
+    {
+      mwtnw.Node.ImageIndex = mwtnw.ImageIndex;
+    }
+
+    /// <summary>
+    /// Deselect the TreeNode in the MWTreeNodeWrapper object supplied.
+    /// </summary>
+    /// <param name="mwtnw">MWTreeNodeWrapper containing TreeNode that should be deselected.</param>
+    public static void Deselect(MWTreeNodeWrapper mwtnw)
+    {
+      mwtnw.Node.ImageIndex = mwtnw.ImageIndex;
+      //mwtnw.Node.SelectedImageIndex = mwtnw.SelectedImageIndex;
+    }
+
+    #endregion Static Methods
+
+
+
+    #region Methods
+
+    /// <summary>
+    /// //XXXX
+    /// Deselect the TreeNode in the MWTreeNodeWrapper object supplied.
+    /// </summary>
+    public void Reset()
+    {
+      Node.ImageIndex = ImageIndex;
+      Node.SelectedImageIndex = SelectedImageIndex;
+    }
+
+    #endregion Methods
+
+  }
 
 }

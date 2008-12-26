@@ -23,8 +23,6 @@ using System;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Collections.Generic;
-using System.Text;
-using TvDatabase;
 using TvLibrary.Epg;
 using TvLibrary.Log;
 using TvLibrary.Channels;
@@ -40,9 +38,9 @@ namespace TvDatabase
       this.start = start;
       this.end = end;
     }
-    public bool FitsInHole(DateTime start, DateTime end)
+    public bool FitsInHole(DateTime startParam, DateTime endParam)
     {
-      return (start >= this.start && end <= this.end);
+      return (startParam >= start && endParam <= end);
     }
   }
   public class EpgHoleCollection : List<EpgHole>
@@ -64,9 +62,9 @@ namespace TvDatabase
     string _titleTemplate;
     string _descriptionTemplate;
     string _epgLanguages;
-    string _grabberName;
+    readonly string _grabberName;
     bool _storeOnlySelectedChannels;
-    bool _checkForLastUpdate;
+    readonly bool _checkForLastUpdate;
     int _epgReGrabAfter = 240;//4 hours
     bool _alwaysFillHoles;
     bool _alwaysReplace;
@@ -122,12 +120,12 @@ namespace TvDatabase
           {
             Program prev = (Program)infos[i - 1];
             Program current = (Program)infos[i];
-            TimeSpan diff=current.StartTime-prev.EndTime;
+            TimeSpan diff = current.StartTime - prev.EndTime;
             if (diff.TotalMinutes > 5)
               holes.Add(new EpgHole(prev.EndTime, current.StartTime));
           }
         }
-        Log.Epg("{0}: {1} Found {2} epg holes.", _grabberName, dbChannel.DisplayName,holes.Count);
+        Log.Epg("{0}: {1} Found {2} epg holes.", _grabberName, dbChannel.DisplayName, holes.Count);
       }
       DateTime dbLastProgram = _layer.GetNewestProgramForChannel(dbChannel.IdChannel);
       EpgProgram lastProgram = null;
@@ -145,11 +143,13 @@ namespace TvDatabase
         }
         if (epgProgram.StartTime <= dbLastProgram && !_alwaysReplace)
         {
-          if (epgProgram.StartTime < DateTime.Now) continue;
-          if (!holes.FitsInAnyHole(epgProgram.StartTime, epgProgram.EndTime)) continue;
-          Log.Epg("{0}: Great we stuffed an epg hole {1}-{2} :-)", _grabberName, epgProgram.StartTime.ToShortDateString()+" "+epgProgram.StartTime.ToShortTimeString(), epgProgram.EndTime.ToShortDateString()+" "+epgProgram.EndTime.ToShortTimeString());
+          if (epgProgram.StartTime < DateTime.Now)
+            continue;
+          if (!holes.FitsInAnyHole(epgProgram.StartTime, epgProgram.EndTime))
+            continue;
+          Log.Epg("{0}: Great we stuffed an epg hole {1}-{2} :-)", _grabberName, epgProgram.StartTime.ToShortDateString() + " " + epgProgram.StartTime.ToShortTimeString(), epgProgram.EndTime.ToShortDateString() + " " + epgProgram.EndTime.ToShortTimeString());
         }
-        TvDatabase.Program prog = null;
+        Program prog = null;
         if (_alwaysReplace)
         {
           try
@@ -158,28 +158,27 @@ namespace TvDatabase
 
             if (epgs.Count > 0)
             {
-              prog = (TvDatabase.Program)epgs[0];
-              if (epgs.Count > 1) Log.Epg("- {0} entries are obsolete for {1} from {2} to {3}", epgs.Count - 1, dbChannel.DisplayName, epgProgram.StartTime, epgProgram.EndTime);
+              prog = (Program)epgs[0];
+              if (epgs.Count > 1)
+                Log.Epg("- {0} entries are obsolete for {1} from {2} to {3}", epgs.Count - 1, dbChannel.DisplayName, epgProgram.StartTime, epgProgram.EndTime);
               for (int idx = 1; idx < epgs.Count; idx++)
               {
                 try
                 {
-                  ((TvDatabase.Program)epgs[idx]).Delete();
-                  Log.Epg("- Deleted the epg entry {0} ({1} - {2})", ((TvDatabase.Program)epgs[idx]).Title, ((TvDatabase.Program)epgs[idx]).StartTime, ((TvDatabase.Program)epgs[idx]).EndTime);
-                }
-                catch (Exception ex)
+                  ((Program)epgs[idx]).Delete();
+                  Log.Epg("- Deleted the epg entry {0} ({1} - {2})", ((Program)epgs[idx]).Title, ((Program)epgs[idx]).StartTime, ((Program)epgs[idx]).EndTime);
+                } catch (Exception ex)
                 {
                   Log.Epg("Error during epg entry deletion: {0}", ex.Message);
                 }
               }
             }
-          }
-          catch (Exception ex)
+          } catch (Exception ex)
           {
             Log.Epg("Error the existing epg entry check: {0}", ex.Message);
           }
 
-            
+
         }
         AddProgramAndApplyTemplates(dbChannel, epgProgram, prog);
         iInserted++;
@@ -240,7 +239,7 @@ namespace TvDatabase
     }
 
     #region Template Tools
-    private string GetStarRatingStr(int starRating)
+    private static string GetStarRatingStr(int starRating)
     {
       string rating = "";
       switch (starRating)
@@ -269,7 +268,7 @@ namespace TvDatabase
       }
       return rating;
     }
-    private string EvalTemplate(string template, NameValueCollection values)
+    private static string EvalTemplate(string template, NameValueCollection values)
     {
       for (int i = 0; i < values.Count; i++)
         template = template.Replace(values.Keys[i], values[i]);
@@ -278,7 +277,7 @@ namespace TvDatabase
     #endregion
 
     #region Single Program Updating Tools
-    private void GetEPGLanguage(List<EpgLanguageText> texts, out string title, out string description, out string genre, out int starRating, out string classification, out int parentalRating)
+    private void GetEPGLanguage(IList<EpgLanguageText> texts, out string title, out string description, out string genre, out int starRating, out string classification, out int parentalRating)
     {
       title = "";
       description = "";
@@ -324,14 +323,23 @@ namespace TvDatabase
         }
       }
 
-      if (title == null) title = "";
-      if (description == null) description = "";
-      if (genre == null) genre = "";
-      if (classification == null) classification = "";
+      if (title == null)
+        title = "";
+      if (description == null)
+        description = "";
+      if (genre == null)
+        genre = "";
+      if (classification == null)
+        classification = "";
     }
-    private void AddProgramAndApplyTemplates(Channel dbChannel, EpgProgram ep,TvDatabase.Program dbProg)
+    private void AddProgramAndApplyTemplates(Channel dbChannel, EpgProgram ep, Program dbProg)
     {
-      string title; string description; string genre; int starRating; string classification; int parentRating;
+      string title;
+      string description;
+      string genre;
+      int starRating;
+      string classification;
+      int parentRating;
       GetEPGLanguage(ep.Text, out title, out description, out genre, out starRating, out classification, out parentRating);
       NameValueCollection values = new NameValueCollection();
       values.Add("%TITLE%", title);
@@ -342,16 +350,16 @@ namespace TvDatabase
       values.Add("%CLASSIFICATION%", classification);
       values.Add("%PARENTALRATING%", parentRating.ToString());
       values.Add("%NEWLINE%", Environment.NewLine);
-      title=EvalTemplate(_titleTemplate, values);
-      description=EvalTemplate(_descriptionTemplate, values);
-      if (dbProg==null)
-        dbProg = new TvDatabase.Program(dbChannel.IdChannel, ep.StartTime, ep.EndTime, title, description, genre, false, System.Data.SqlTypes.SqlDateTime.MinValue.Value, string.Empty, string.Empty, starRating, classification, parentRating);
+      title = EvalTemplate(_titleTemplate, values);
+      description = EvalTemplate(_descriptionTemplate, values);
+      if (dbProg == null)
+        dbProg = new Program(dbChannel.IdChannel, ep.StartTime, ep.EndTime, title, description, genre, false, System.Data.SqlTypes.SqlDateTime.MinValue.Value, string.Empty, string.Empty, starRating, classification, parentRating);
       else
       {
         // this prevents a more detailed description getting overriden by a short description from another transponder
         if (dbProg.Title == title)
         {
-           if (dbProg.Description.Length < description.Length)
+          if (dbProg.Description.Length < description.Length)
             dbProg.Description = description;
         }
         else

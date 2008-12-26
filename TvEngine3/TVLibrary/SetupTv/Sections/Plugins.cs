@@ -19,31 +19,17 @@
  *
  */
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using TvControl;
-using DirectShowLib;
-
-
-using Gentle.Common;
-using Gentle.Framework;
 using TvDatabase;
-using TvLibrary;
-using TvLibrary.Interfaces;
-using TvLibrary.Implementations;
 using TvEngine;
 
 namespace SetupTv.Sections
 {
-  public partial class Plugins : SetupTv.SectionSettings
+  public partial class Plugins : SectionSettings
   {
-    PluginLoader _loader;
-    bool _needRestart = false;
-    bool _ignoreEvents = false;
+    readonly PluginLoader _loader;
+    bool _needRestart;
+    bool _ignoreEvents;
     public delegate void ChangedEventHandler(object sender, EventArgs e);
 
     public event ChangedEventHandler ChangedActivePlugins;
@@ -53,7 +39,7 @@ namespace SetupTv.Sections
     public Plugins(string name, PluginLoader loader)
       : base(name)
     {
-      _loader=loader;
+      _loader = loader;
       InitializeComponent();
     }
 
@@ -66,7 +52,7 @@ namespace SetupTv.Sections
       listView1.Items.Clear();
       foreach (ITvServerPlugin plugin in _loader.Plugins)
       {
-        
+
         ListViewItem item = listView1.Items.Add("");
         item.SubItems.Add(plugin.Name);
         item.SubItems.Add(plugin.Author);
@@ -76,7 +62,7 @@ namespace SetupTv.Sections
         item.Tag = setting;
 
       }
-			listView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);				
+      listView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
       _ignoreEvents = false;
     }
 
@@ -84,18 +70,19 @@ namespace SetupTv.Sections
     {
       if (_needRestart)
       {
-       // RemoteControl.Instance.Restart();
+        // RemoteControl.Instance.Restart();
       }
       base.OnSectionDeActivated();
     }
 
     private void listView1_ItemChecked(object sender, ItemCheckedEventArgs e)
     {
-      if (_ignoreEvents) return;
+      if (_ignoreEvents)
+        return;
       Setting setting = e.Item.Tag as Setting;
-      if (setting == null) return;
-      if (e.Item.Checked) setting.Value = "true";
-      else setting.Value = "false";
+      if (setting == null)
+        return;
+      setting.Value = e.Item.Checked ? "true" : "false";
       setting.Persist();
       _needRestart = true;
 
@@ -105,8 +92,8 @@ namespace SetupTv.Sections
     //Pass on the information for the plugin that was changed
     protected virtual void OnChanged(object sender, EventArgs e)
     {
-        if (ChangedActivePlugins != null)
-            ChangedActivePlugins(sender, e);
+      if (ChangedActivePlugins != null)
+        ChangedActivePlugins(sender, e);
     }
   }
 }

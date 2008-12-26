@@ -20,23 +20,12 @@
  */
 using System;
 using System.Collections.Generic;
-using System.Text;
 using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Analyzer;
-using System.Runtime.InteropServices;
-using System.Xml.Serialization;
-using Microsoft.Win32;
-using DirectShowLib;
-using TvLibrary.Implementations;
-using DirectShowLib.SBE;
-using TvLibrary.Log;
 using TvLibrary.Teletext;
-using TvLibrary.Epg;
 using TvLibrary.Implementations.DVB;
 using TvLibrary.Implementations.DVB.Structures;
 using TvLibrary.Implementations.Helper;
-using TvLibrary.Helper;
-using TvLibrary.ChannelLinkage;
 using TvLibrary.Implementations.Analog;
 
 
@@ -132,15 +121,15 @@ namespace TvLibrary.Implementations
     /// <summary>
     /// Indicates, if timeshifting is started
     /// </summary>
-    protected bool _startTimeShifting = false;
+    protected bool _startTimeShifting;
     /// <summary>
     /// Indicates, if recording is started
     /// </summary>
-    protected bool _startRecording = false;
+    protected bool _startRecording;
     /// <summary>
     /// Indicates, if this subchannel should record in transport stream format
     /// </summary>
-    protected bool _recordTransportStream = false;
+    protected bool _recordTransportStream;
     #endregion
 
     #region ctor
@@ -148,7 +137,7 @@ namespace TvLibrary.Implementations
     /// <summary>
     /// Initializes a new instance of the <see cref="BaseSubChannel"/> class.
     /// </summary>
-    public BaseSubChannel()
+    protected BaseSubChannel()
     {      
       _teletextDecoder = new DVBTeletext();
       _timeshiftFileName = String.Empty;
@@ -431,13 +420,7 @@ namespace TvLibrary.Implementations
     {
       OnStopRecording();
       _isRecordingsTransportStream = false;
-      if (_timeshiftFileName != "")
-      {
-        _graphState = GraphState.TimeShifting;
-      } else
-      {
-        _graphState = GraphState.Created;
-      }
+      _graphState = _timeshiftFileName != "" ? GraphState.TimeShifting : GraphState.Created;
       _recordingFileName = "";
       _dateRecordingStarted = DateTime.MinValue;
       return true;
@@ -477,13 +460,13 @@ namespace TvLibrary.Implementations
     {
       if (ptr == IntPtr.Zero) return;
 
-      _packetHeader = _tsHelper.GetHeader((IntPtr)ptr);
+      _packetHeader = _tsHelper.GetHeader(ptr);
       if (_packetHeader.SyncByte != 0x47)
       {
         Log.Log.WriteFile("packet sync error");
         return;
       }
-      if (_packetHeader.TransportError == true)
+      if (_packetHeader.TransportError)
       {
         Log.Log.WriteFile("packet transport error");
         return;
@@ -493,7 +476,7 @@ namespace TvLibrary.Implementations
       {
         if (_teletextDecoder != null)
         {
-          _teletextDecoder.SaveData((IntPtr)ptr);
+          _teletextDecoder.SaveData(ptr);
         }
       }
     }

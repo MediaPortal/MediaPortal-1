@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using Gentle.Common;
 using Gentle.Framework;
 using TvLibrary.Log;
 
@@ -10,7 +9,7 @@ namespace TvDatabase
   /// Instances of this class represent the properties and methods of a row in the table <b>ChannelLinkageMap</b>.
   /// </summary>
   [TableName("ChannelLinkageMap")]
-  public class ChannelLinkageMap: Persistent
+  public class ChannelLinkageMap : Persistent
   {
     #region Members
     private bool isChanged;
@@ -123,8 +122,7 @@ namespace TvDatabase
         try
         {
           base.Persist();
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
           Log.Error("Exception in ChannelLinkageMap.Persist() with Message {0}", ex.Message);
           return;

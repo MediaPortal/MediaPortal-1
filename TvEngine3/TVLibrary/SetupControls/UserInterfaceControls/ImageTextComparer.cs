@@ -1,8 +1,28 @@
-using System;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
+#region Copyright (C) 2005-2008 Team MediaPortal
+
+/* 
+ *	Copyright (C) 2005-2008 Team MediaPortal
+ *	http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+
+#endregion
+
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
 
@@ -13,7 +33,7 @@ namespace MediaPortal.UserInterface.Controls
   public class ImageTextComparer : IComparer
   {
     //private CaseInsensitiveComparer ObjectCompare;
-    private NumberCaseInsensitiveComparer ObjectCompare;
+    private readonly NumberCaseInsensitiveComparer ObjectCompare;
 
     public ImageTextComparer()
     {
@@ -23,34 +43,25 @@ namespace MediaPortal.UserInterface.Controls
     public int Compare(object x, object y)
     {
       //int compareResult;
-      int image1, image2;
-      ListViewItem listviewX, listviewY;
       // Cast the objects to be compared to ListViewItem objects
-      listviewX = (ListViewItem)x;
-      image1 = listviewX.ImageIndex;
-      listviewY = (ListViewItem)y;
-      image2 = listviewY.ImageIndex;
+      ListViewItem listviewX = (ListViewItem)x;
+      int image1 = listviewX.ImageIndex;
+      ListViewItem listviewY = (ListViewItem)y;
+      int image2 = listviewY.ImageIndex;
       if (image1 < image2)
       {
         return -1;
       }
-      else if (image1 == image2)
+      if (image1 == image2)
       {
         return ObjectCompare.Compare(listviewX.Text, listviewY.Text);
       }
-      else
-      {
-        return 1;
-      }
+      return 1;
     }
   }
 
   public class NumberCaseInsensitiveComparer : CaseInsensitiveComparer
   {
-    public NumberCaseInsensitiveComparer()
-    {
-
-    }
     public new int Compare(object x, object y)
     {
       // in case x,y are strings and actually number,
@@ -61,12 +72,10 @@ namespace MediaPortal.UserInterface.Controls
         return base.Compare(System.Convert.ToInt32(x),
                                System.Convert.ToInt32(y));
       }
-      else
-      {
-        return base.Compare(x, y);
-      }
+      return base.Compare(x, y);
     }
-    private bool IsWholeNumber(string strNumber)
+
+    private static bool IsWholeNumber(string strNumber)
     { // use a regular expression to find out if string is actually a number
       Regex objNotWholePattern = new Regex("[^0-9]");
       return !objNotWholePattern.IsMatch(strNumber);

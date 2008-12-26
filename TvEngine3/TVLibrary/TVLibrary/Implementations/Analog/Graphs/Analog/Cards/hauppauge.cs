@@ -24,31 +24,20 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Xml.Serialization;
 using System.Text;
-using System.Drawing;
-using System.Reflection;
 using DirectShowLib;
-using TvLibrary.Implementations;
-using DirectShowLib.SBE;
-using TvLibrary.Log;
-using TvLibrary.Interfaces;
-using TvLibrary.Interfaces.Analyzer;
-using TvLibrary.Teletext;
-using TvLibrary.Epg;
-using TvLibrary.Implementations.DVB;
-using TvLibrary.Helper;
-
 
 
 namespace TvLibrary.Implementations.Analog
 {
 
-	public class Hauppauge:IDisposable
-	{
-    private bool disposed = false;
+  ///<summary>
+  /// Hauppauge quality control
+  ///</summary>
+  public class Hauppauge : IDisposable
+  {
+    private bool disposed;
 
     [DllImport("kernel32.dll")]
     internal static extern IntPtr LoadLibrary(String dllname);
@@ -72,26 +61,26 @@ namespace TvLibrary.Implementations.Analog
     delegate int GetStreamType(out int stream);
     delegate int SetDNRFilter(bool onoff);
 
-    Init _Init = null;
-    DeInit _DeInit = null;
-    IsHauppauge _IsHauppauge = null;
-    SetVidBitRate _SetVidBitRate = null;
-    GetVidBitRate _GetVidBitRate = null;
-    SetAudBitRate _SetAudBitRate = null;
-    GetAudBitRate _GetAudBitRate = null;
-    SetStreamType _SetStreamType = null;
-    GetStreamType _GetStreamType = null;
-    SetDNRFilter _SetDNRFilter = null;
+    readonly Init _Init;
+    readonly DeInit _DeInit;
+    readonly IsHauppauge _IsHauppauge;
+    readonly SetVidBitRate _SetVidBitRate;
+    readonly GetVidBitRate _GetVidBitRate;
+    readonly SetAudBitRate _SetAudBitRate;
+    readonly GetAudBitRate _GetAudBitRate;
+    readonly SetStreamType _SetStreamType;
+    readonly GetStreamType _GetStreamType;
+    readonly SetDNRFilter _SetDNRFilter;
 
-    HResult hr;
-    
+    readonly HResult hr;
+
     //Initializes the Hauppauge interfaces
 
     /// <summary>
     /// Constructor: Require the Hauppauge capture filter, and the deviceid for the card to be passed in
     /// </summary>
-	public Hauppauge(IBaseFilter filter, string tuner)
-	{
+    public Hauppauge(IBaseFilter filter, string tuner)
+    {
       try
       {
         //Don't create the class if we don't have any filter;
@@ -100,10 +89,10 @@ namespace TvLibrary.Implementations.Analog
         {
           return;
         }
-       
+
         //Load Library
         hauppaugelib = LoadLibrary("hauppauge.dll");
-        
+
         //Get Proc addresses, and set the delegates for each function
         IntPtr procaddr = GetProcAddress(hauppaugelib, "Init");
         _Init = (Init)Marshal.GetDelegateForFunctionPointer(procaddr, typeof(Init));
@@ -139,17 +128,16 @@ namespace TvLibrary.Implementations.Analog
         //The following is strangely necessary when using delegates instead of P/Invoke - linked to MP using utf-8
         //Hack
 
-         byte[] encodedstring = Encoding.UTF32.GetBytes(tuner);
-         string card = Encoding.Unicode.GetString(encodedstring);
+        byte[] encodedstring = Encoding.UTF32.GetBytes(tuner);
+        string card = Encoding.Unicode.GetString(encodedstring);
 
         hr = new HResult(_Init(filter, card));
         Log.Log.WriteFile("Hauppauge Quality Control Initializing " + hr.ToDXString());
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Log.WriteFile("Hauppauge Init failed " + ex.Message);
       }
-	}
+    }
 
     /// <summary>
     /// Toggles Dynamic Noise Reduction on/off
@@ -166,8 +154,7 @@ namespace TvLibrary.Implementations.Analog
             return true;
           }
         }
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Log.WriteFile("Hauppauge SetDNR failed " + ex.Message);
       }
@@ -178,8 +165,8 @@ namespace TvLibrary.Implementations.Analog
     /// <summary>
     /// Get the video bit rate
     /// </summary>
-	public bool GetVideoBitRate(out int minKbps, out int maxKbps,out bool isVBR)
-	{
+    public bool GetVideoBitRate(out int minKbps, out int maxKbps, out bool isVBR)
+    {
       maxKbps = minKbps = -1;
       isVBR = false;
       try
@@ -191,20 +178,19 @@ namespace TvLibrary.Implementations.Analog
             _GetVidBitRate(out maxKbps, out minKbps, out isVBR);
           }
         }
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Log.WriteFile("Hauppauge Error GetBitrate " + ex.Message);
       }
 
-			return true;
-	}
+      return true;
+    }
 
     /// <summary>
     /// Sets the video bit rate
     /// </summary>
-	public bool SetVideoBitRate(int minKbps, int maxKbps,bool isVBR)
-	{
+    public bool SetVideoBitRate(int minKbps, int maxKbps, bool isVBR)
+    {
       try
       {
         if (hauppaugelib != IntPtr.Zero)
@@ -216,13 +202,12 @@ namespace TvLibrary.Implementations.Analog
             return true;
           }
         }
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Log.WriteFile("Hauppauge Set Vid Rate " + ex.Message);
       }
       return false;
-	}
+    }
 
     /// <summary>
     /// Get the audio bit rate
@@ -240,8 +225,7 @@ namespace TvLibrary.Implementations.Analog
             return true;
           }
         }
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Log.WriteFile("Hauppauge Get Audio Bitrate " + ex.Message);
       }
@@ -263,8 +247,7 @@ namespace TvLibrary.Implementations.Analog
             return true;
           }
         }
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Log.WriteFile("Hauppauge Set Audio Bit Rate " + ex.Message);
       }
@@ -287,8 +270,7 @@ namespace TvLibrary.Implementations.Analog
             return true;
           }
         }
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Log.WriteFile("Hauppauge Get Stream " + ex.Message);
       }
@@ -310,14 +292,13 @@ namespace TvLibrary.Implementations.Analog
             return true;
           }
         }
-      }
-      catch(Exception ex)
+      } catch (Exception ex)
       {
         Log.Log.WriteFile("Hauppauge Set Stream Type " + ex.Message);
       }
       return false;
     }
-   
+
     #region IDisposable Members
 
     /// <summary>
@@ -334,7 +315,7 @@ namespace TvLibrary.Implementations.Analog
     /// </summary>
     protected virtual void Dispose(bool disposing)
     {
-      if (!this.disposed)
+      if (!disposed)
       {
         if (disposing)
         {
@@ -344,14 +325,13 @@ namespace TvLibrary.Implementations.Analog
         {
           if (hauppaugelib != IntPtr.Zero)
           {
-              if (_IsHauppauge())
-                _DeInit();
-          
-             FreeLibrary(hauppaugelib);
-             hauppaugelib = IntPtr.Zero;
+            if (_IsHauppauge())
+              _DeInit();
+
+            FreeLibrary(hauppaugelib);
+            hauppaugelib = IntPtr.Zero;
           }
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
           Log.Log.WriteFile("Hauppauge exception " + ex.Message);
           Log.Log.WriteFile("Hauppauge Disposed hcw.txt");
@@ -359,11 +339,13 @@ namespace TvLibrary.Implementations.Analog
       }
       disposed = true;
     }
-
-   ~Hauppauge()      
-   {
+    /// <summary>
+    /// Destructor
+    /// </summary>
+    ~Hauppauge()
+    {
       Dispose(false);
-   }
+    }
     #endregion
   }
 }

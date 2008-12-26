@@ -21,19 +21,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using TvControl;
 using TvDatabase;
-using TvLibrary.Interfaces;
 using TvLibrary.Streaming;
-using TvLibrary.Implementations;
 
-
-using Gentle.Common;
-using Gentle.Framework;
 namespace SetupTv.Sections
 {
   public partial class StreamingServer : SectionSettings
@@ -60,11 +52,6 @@ namespace SetupTv.Sections
       base.OnSectionDeActivated();
     }
 
-    private void label1_Click(object sender, EventArgs e)
-    {
-
-    }
-
     private void timer1_Tick(object sender, EventArgs e)
     {
       List<RtspClient> clients = RemoteControl.Instance.StreamingClients;
@@ -74,7 +61,7 @@ namespace SetupTv.Sections
         if (i >= listView1.Items.Count)
         {
           ListViewItem item = new ListViewItem(client.StreamName);
-					item.Tag = client;
+          item.Tag = client;
           item.SubItems.Add(client.IpAdress);
           if (client.IsActive)
             item.SubItems.Add("yes");
@@ -90,72 +77,67 @@ namespace SetupTv.Sections
           ListViewItem item = listView1.Items[i];
           item.Text = client.StreamName;
           item.SubItems[1].Text = client.IpAdress;
-          if (client.IsActive)
-            item.SubItems[2].Text = "yes";
-          else
-            item.SubItems[2].Text = "no";
+          item.SubItems[2].Text = client.IsActive ? "yes" : "no";
           item.SubItems[3].Text = client.DateTimeStarted.ToString("yyyy-MM-dd HH:mm:ss");
           item.SubItems[4].Text = client.Description;
           item.ImageIndex = 0;
         }
       }
       while (listView1.Items.Count > clients.Count)
-        listView1.Items.RemoveAt(listView1.Items.Count-1);
+        listView1.Items.RemoveAt(listView1.Items.Count - 1);
 
-			listView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);				
+      listView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
     }
 
-    private void listView1_SelectedIndexChanged(object sender, EventArgs e)
+    private void mpButtonKick_Click(object sender, EventArgs e)
     {
+      foreach (ListViewItem item in listView1.SelectedItems)
+      {
+        RtspClient client = (RtspClient)item.Tag;
 
+        User user = new User();
+        user.Name = System.Net.Dns.GetHostEntry(client.IpAdress).HostName;
+
+        IList dbsCards = Card.ListAll();
+
+        foreach (Card card in dbsCards)
+        {
+          if (!card.Enabled)
+            continue;
+          if (!RemoteControl.Instance.CardPresent(card.IdCard))
+            continue;
+
+          User[] users = RemoteControl.Instance.GetUsersForCard(card.IdCard);
+          foreach (User u in users)
+          {
+            if (u.Name == user.Name || u.Name == "setuptv")
+            {
+              Channel ch = Channel.Retrieve(u.IdChannel);
+
+              if (ch.Name == client.Description)
+              {
+                user.CardId = card.IdCard;
+                break;
+              }
+            }
+          }
+          if (user.CardId > -1)
+            break;
+        }
+
+        bool res = RemoteControl.Instance.StopTimeShifting(ref user, TvStoppedReason.KickedByAdmin);
+
+        if (res)
+        {
+          listView1.Items.Remove(item);
+        }
+      }
+      listView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
     }
 
-		private void mpButtonKick_Click(object sender, EventArgs e)
-		{
-			foreach (ListViewItem item in listView1.SelectedItems)
-			{
-				RtspClient client = (RtspClient)item.Tag;
-				
-				User user = new User();
-				user.Name = System.Net.Dns.GetHostEntry(client.IpAdress).HostName;        
-
-				IList dbsCards = Card.ListAll();				
-
-                foreach (Card card in dbsCards)
-                {
-                  if (!card.Enabled) continue;
-                  if (!TvControl.RemoteControl.Instance.CardPresent(card.IdCard)) continue;
-
-					        User[] users = TvControl.RemoteControl.Instance.GetUsersForCard(card.IdCard);        					
-					        foreach (User u in users)
-					        {
-						        if (u.Name == user.Name || u.Name == "setuptv")
-						        {							
-							        Channel ch = Channel.Retrieve(u.IdChannel);
-
-							        if (ch.Name == client.Description)
-							        {
-								        user.CardId = card.IdCard;
-								        break;
-							        }
-						        }
-					        } 
-					        if (user.CardId > -1) break;
-                }
-				
-				bool res = TvControl.RemoteControl.Instance.StopTimeShifting(ref user, TvStoppedReason.KickedByAdmin);				
-
-				if (res)
-				{
-					listView1.Items.Remove(item);
-				}
-			}
-			listView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);				  
-		}
-
-		private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			mpButtonKick_Click (sender, e);
-		}
+    private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      mpButtonKick_Click(sender, e);
+    }
   }
 }

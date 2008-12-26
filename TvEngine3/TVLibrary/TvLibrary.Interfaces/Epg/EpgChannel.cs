@@ -20,7 +20,6 @@
  */
 using System;
 using System.Collections.Generic;
-using System.Text;
 using TvLibrary.Interfaces;
 namespace TvLibrary.Epg
 {
@@ -37,7 +36,7 @@ namespace TvLibrary.Epg
 
     #region ctor
     /// <summary>
-    /// Initializes a new instance of the <see cref="T:EpgChannel"/> class.
+    /// Initializes a new instance of the <see cref="EpgChannel"/> class.
     /// </summary>
     public EpgChannel()
     {

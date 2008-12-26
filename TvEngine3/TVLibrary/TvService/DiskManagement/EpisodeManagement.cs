@@ -24,12 +24,8 @@
 #endregion
 
 using System;
-using System.IO;
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
-
-
 using TvDatabase;
 using TvLibrary.Log;
 
@@ -37,10 +33,6 @@ namespace TvService
 {
   public class EpisodeManagement
   {
-    public EpisodeManagement()
-    {
-    }
-
     public List<Recording> GetEpisodes(string title, IList recordings)
     {
       List<Recording> episodes = new List<Recording>();
@@ -72,15 +64,16 @@ namespace TvService
     #region episode disk management
     public void OnScheduleEnded(string recordingFilename, Schedule recording, TvDatabase.Program program)
     {
-      Log.Write( "diskmanagement: recording {0} ended. type:{1} max episodes:{2}",
+      Log.Write("diskmanagement: recording {0} ended. type:{1} max episodes:{2}",
           program.Title, (ScheduleRecordingType)recording.ScheduleType, recording.MaxAirings);
 
-      CheckEpsiodesForRecording(recording,program);
+      CheckEpsiodesForRecording(recording, program);
     }
 
     void CheckEpsiodesForRecording(Schedule schedule, TvDatabase.Program program)
     {
-      if (!schedule.DoesUseEpisodeManagement) return;
+      if (!schedule.DoesUseEpisodeManagement)
+        return;
 
       //check how many episodes we got
       while (true)
@@ -88,11 +81,13 @@ namespace TvService
         IList recordings = Recording.ListAll();
 
         List<Recording> episodes = GetEpisodes(program.Title, recordings);
-        if (episodes.Count <= schedule.MaxAirings) return;
+        if (episodes.Count <= schedule.MaxAirings)
+          return;
 
         Recording oldestEpisode = GetOldestEpisode(episodes);
-        if (oldestEpisode == null) return;
-        Log.Write(  "diskmanagement:   Delete episode {0} {1} {2} {3}",
+        if (oldestEpisode == null)
+          return;
+        Log.Write("diskmanagement:   Delete episode {0} {1} {2} {3}",
                              oldestEpisode.ReferencedChannel(),
                              oldestEpisode.Title,
                              oldestEpisode.StartTime.ToLongDateString(),

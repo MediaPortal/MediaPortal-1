@@ -21,20 +21,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using TvControl;
-using DirectShowLib;
-
-using Gentle.Common;
 using Gentle.Framework;
 using TvDatabase;
-using TvLibrary;
-using TvLibrary.Interfaces;
-using TvLibrary.Implementations;
 using MediaPortal.UserInterface.Controls;
 
 namespace SetupTv.Sections
@@ -50,9 +39,9 @@ namespace SetupTv.Sections
       }
 
     }
-    private MPListViewStringColumnSorter lvwColumnSorter;
-    private MPListViewStringColumnSorter lvwColumnSorter1;
-    private MPListViewStringColumnSorter lvwColumnSorter2;
+    private readonly MPListViewStringColumnSorter lvwColumnSorter;
+    private readonly MPListViewStringColumnSorter lvwColumnSorter1;
+    private readonly MPListViewStringColumnSorter lvwColumnSorter2;
 
     public TvGroups()
       : this("TV Groups")
@@ -65,13 +54,13 @@ namespace SetupTv.Sections
       InitializeComponent();
       lvwColumnSorter = new MPListViewStringColumnSorter();
       lvwColumnSorter.Order = SortOrder.None;
-      this.mpListViewGroups.ListViewItemSorter = lvwColumnSorter;
+      mpListViewGroups.ListViewItemSorter = lvwColumnSorter;
       lvwColumnSorter1 = new MPListViewStringColumnSorter();
       lvwColumnSorter1.Order = SortOrder.None;
-      this.mpListViewChannels.ListViewItemSorter = lvwColumnSorter1;
+      mpListViewChannels.ListViewItemSorter = lvwColumnSorter1;
       lvwColumnSorter2 = new MPListViewStringColumnSorter();
       lvwColumnSorter2.Order = SortOrder.None;
-      this.mpListViewMapped.ListViewItemSorter = lvwColumnSorter2;
+      mpListViewMapped.ListViewItemSorter = lvwColumnSorter2;
     }
 
     public override void OnSectionActivated()
@@ -81,7 +70,7 @@ namespace SetupTv.Sections
       InitMapping();
     }
 
-    
+
     private void Init()
     {
       mpListViewGroups.Items.Clear();
@@ -120,7 +109,8 @@ namespace SetupTv.Sections
     {
       GroupNameForm dlg = new GroupNameForm();
       dlg.ShowDialog(this);
-      if (dlg.GroupName.Length == 0) return;
+      if (dlg.GroupName.Length == 0)
+        return;
       ChannelGroup newGroup = new ChannelGroup(dlg.GroupName, 9999);
       newGroup.Persist();
       Init();
@@ -187,7 +177,8 @@ namespace SetupTv.Sections
       foreach (GroupMap map in maps)
       {
         Channel channel = map.ReferencedChannel();
-        if (channel.IsTv == false) continue;
+        if (channel.IsTv == false)
+          continue;
         int imageIndex = 1;
         if (channel.FreeToAir == false)
           imageIndex = 2;
@@ -205,7 +196,8 @@ namespace SetupTv.Sections
       List<ListViewItem> items = new List<ListViewItem>();
       foreach (Channel channel in channels)
       {
-        if (channelsMapped.ContainsKey(channel.IdChannel)) continue;
+        if (channelsMapped.ContainsKey(channel.IdChannel))
+          continue;
         int imageIndex = 1;
         if (channel.FreeToAir == false)
           imageIndex = 2;
@@ -295,14 +287,7 @@ namespace SetupTv.Sections
       if (e.Column == lvwColumnSorter.SortColumn)
       {
         // Reverse the current sort direction for this column.
-        if (lvwColumnSorter.Order == SortOrder.Ascending)
-        {
-          lvwColumnSorter.Order = SortOrder.Descending;
-        }
-        else
-        {
-          lvwColumnSorter.Order = SortOrder.Ascending;
-        }
+        lvwColumnSorter.Order = lvwColumnSorter.Order == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
       }
       else
       {
@@ -312,7 +297,7 @@ namespace SetupTv.Sections
       }
 
       // Perform the sort with these new sort options.
-      this.mpListViewGroups.Sort();
+      mpListViewGroups.Sort();
     }
 
     private void mpListViewMapped_DragDrop(object sender, DragEventArgs e)
@@ -355,7 +340,8 @@ namespace SetupTv.Sections
     {
       mpListViewGroups.BeginUpdate();
       ListView.SelectedIndexCollection indexes = mpListViewGroups.SelectedIndices;
-      if (indexes.Count == 0) return;
+      if (indexes.Count == 0)
+        return;
       for (int i = 0; i < indexes.Count; ++i)
       {
         int index = indexes[i];
@@ -374,8 +360,10 @@ namespace SetupTv.Sections
     {
       mpListViewGroups.BeginUpdate();
       ListView.SelectedIndexCollection indexes = mpListViewGroups.SelectedIndices;
-      if (indexes.Count == 0) return;
-      if (mpListViewGroups.Items.Count < 2) return;
+      if (indexes.Count == 0)
+        return;
+      if (mpListViewGroups.Items.Count < 2)
+        return;
       for (int i = indexes.Count - 1; i >= 0; i--)
       {
         int index = indexes[i];
@@ -393,11 +381,13 @@ namespace SetupTv.Sections
     private void RenameGroup()
     {
       ListView.SelectedListViewItemCollection items = mpListViewGroups.SelectedItems;
-      if (items.Count != 1) return;
+      if (items.Count != 1)
+        return;
       ChannelGroup group = (ChannelGroup)items[0].Tag;
       GroupNameForm dlg = new GroupNameForm(group.GroupName);
       dlg.ShowDialog(this);
-      if (dlg.GroupName.Length == 0) return;
+      if (dlg.GroupName.Length == 0)
+        return;
       group.GroupName = dlg.GroupName;
       group.Persist();
       Init();
@@ -418,14 +408,7 @@ namespace SetupTv.Sections
       if (e.Column == lvwColumnSorter1.SortColumn)
       {
         // Reverse the current sort direction for this column.
-        if (lvwColumnSorter1.Order == SortOrder.Ascending)
-        {
-          lvwColumnSorter1.Order = SortOrder.Descending;
-        }
-        else
-        {
-          lvwColumnSorter1.Order = SortOrder.Ascending;
-        }
+        lvwColumnSorter1.Order = lvwColumnSorter1.Order == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
       }
       else
       {
@@ -435,7 +418,7 @@ namespace SetupTv.Sections
       }
 
       // Perform the sort with these new sort options.
-      this.mpListViewChannels.Sort();
+      mpListViewChannels.Sort();
     }
 
     private void mpListViewMapped_ColumnClick(object sender, ColumnClickEventArgs e)
@@ -444,14 +427,7 @@ namespace SetupTv.Sections
       if (e.Column == lvwColumnSorter2.SortColumn)
       {
         // Reverse the current sort direction for this column.
-        if (lvwColumnSorter2.Order == SortOrder.Ascending)
-        {
-          lvwColumnSorter2.Order = SortOrder.Descending;
-        }
-        else
-        {
-          lvwColumnSorter2.Order = SortOrder.Ascending;
-        }
+        lvwColumnSorter2.Order = lvwColumnSorter2.Order == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
       }
       else
       {
@@ -461,7 +437,7 @@ namespace SetupTv.Sections
       }
 
       // Perform the sort with these new sort options.
-      this.mpListViewMapped.Sort();
+      mpListViewMapped.Sort();
       ReOrderMap();
       mpListViewMapped.EndUpdate();
     }
@@ -470,7 +446,8 @@ namespace SetupTv.Sections
     {
       mpListViewMapped.BeginUpdate();
       ListView.SelectedIndexCollection indexes = mpListViewMapped.SelectedIndices;
-      if (indexes.Count == 0) return;
+      if (indexes.Count == 0)
+        return;
       for (int i = 0; i < indexes.Count; ++i)
       {
         int index = indexes[i];
@@ -489,8 +466,10 @@ namespace SetupTv.Sections
     {
       mpListViewMapped.BeginUpdate();
       ListView.SelectedIndexCollection indexes = mpListViewMapped.SelectedIndices;
-      if (indexes.Count == 0) return;
-      if (mpListViewMapped.Items.Count < 2) return;
+      if (indexes.Count == 0)
+        return;
+      if (mpListViewMapped.Items.Count < 2)
+        return;
       for (int i = indexes.Count - 1; i >= 0; i--)
       {
         int index = indexes[i];

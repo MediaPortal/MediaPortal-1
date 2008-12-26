@@ -20,44 +20,24 @@
  */
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.InteropServices;
 using DirectShowLib;
-using DirectShowLib.BDA;
-using System.Windows.Forms;
-using TvLibrary.Log;
 using TvLibrary.Channels;
-using TvLibrary.Interfaces.Analyzer;
 
 namespace TvLibrary.Implementations.DVB
 {
   class ViXSATSC
   {
-    #region enums
-    enum BdaDigitalModulator
-    {
-      MODULATION_TYPE = 0,
-      INNER_FEC_TYPE,
-      INNER_FEC_RATE,
-      OUTER_FEC_TYPE,
-      OUTER_FEC_RATE,
-      SYMBOL_RATE,
-      SPECTRAL_INVERSION,
-      GUARD_INTERVAL,
-      TRANSMISSION_MODE
-    };
-    #endregion
-
     #region constants
-    Guid guidViXSTunerExtention = new Guid(0x02779308, 0x77d8, 0x4914, 0x9f, 0x15, 0x7f, 0xa6, 0xe1, 0x55, 0x84, 0xc7);
+
+    readonly Guid guidViXSTunerExtention = new Guid(0x02779308, 0x77d8, 0x4914, 0x9f, 0x15, 0x7f, 0xa6, 0xe1, 0x55, 0x84, 0xc7);
     #endregion
 
     #region variables
-    bool _isViXSATSC = false;
-    IntPtr _tempValue = IntPtr.Zero; //Marshal.AllocCoTaskMem(1024);
-    //IntPtr _tempInstance = Marshal.AllocCoTaskMem(1024);
-    DirectShowLib.IKsPropertySet _propertySet = null;
+
+    private readonly bool _isViXSATSC;
+    readonly IntPtr _tempValue = IntPtr.Zero; //Marshal.AllocCoTaskMem(1024);
+    readonly IKsPropertySet _propertySet;
     #endregion
 
     /// <summary>
@@ -83,13 +63,12 @@ namespace TvLibrary.Implementations.DVB
     /// Initializes a new instance of the <see cref="ViXSATSC"/> class.
     /// </summary>
     /// <param name="tunerFilter">The tuner filter.</param>
-    /// <param name="analyzerFilter">The analyzer filter.</param>
-    public ViXSATSC(IBaseFilter tunerFilter, IBaseFilter analyzerFilter)
+    public ViXSATSC(IBaseFilter tunerFilter)
     {
       IPin pin = DsFindPin.ByName(tunerFilter, "MPEG2 Transport");
       if (pin != null)
       {
-        _propertySet = tunerFilter as DirectShowLib.IKsPropertySet;
+        _propertySet = tunerFilter as IKsPropertySet;
         if (_propertySet != null)
         {
           KSPropertySupport supported;
@@ -114,13 +93,12 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public void SetViXSQam(ATSCChannel channel)
     {
-      int hr;
       KSPropertySupport supported;
       _propertySet.QuerySupported(guidViXSTunerExtention, (int)BdaDigitalModulator.MODULATION_TYPE, out supported);
       if ((supported & KSPropertySupport.Set) == KSPropertySupport.Set)
       {
         Marshal.WriteInt32(_tempValue, (Int32)channel.ModulationType);
-        hr = _propertySet.Set(guidViXSTunerExtention, (int)BdaDigitalModulator.MODULATION_TYPE, _tempValue, 4, _tempValue, 4);
+        int hr = _propertySet.Set(guidViXSTunerExtention, (int)BdaDigitalModulator.MODULATION_TYPE, _tempValue, 4, _tempValue, 4);
         if (hr != 0)
         {
           Log.Log.Info("ViXS ATSC: Set returned:{0:X}", hr);
@@ -145,14 +123,13 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public void GetViXSQam(ATSCChannel channel)
     {
-      int hr;
       KSPropertySupport supported;
       _propertySet.QuerySupported(guidViXSTunerExtention, (int)BdaDigitalModulator.MODULATION_TYPE, out supported);
-      int length;
       if ((supported & KSPropertySupport.Get) == KSPropertySupport.Get)
       {
-        Marshal.WriteInt32(_tempValue, (Int32)0);
-        hr = _propertySet.Get(guidViXSTunerExtention, (int)BdaDigitalModulator.MODULATION_TYPE, _tempValue, 4, _tempValue, 4, out length);
+        int length;
+        Marshal.WriteInt32(_tempValue, 0);
+        int hr = _propertySet.Get(guidViXSTunerExtention, (int)BdaDigitalModulator.MODULATION_TYPE, _tempValue, 4, _tempValue, 4, out length);
         if (hr != 0)
         {
           Log.Log.Info("ViXS ATSC: Get returned:{0:X}", hr);

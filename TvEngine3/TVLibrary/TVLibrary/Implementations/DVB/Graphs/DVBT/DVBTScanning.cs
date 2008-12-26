@@ -19,17 +19,10 @@
  *
  */
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Runtime.InteropServices;
-using System.Windows.Forms;
-
 using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Analyzer;
 using TvLibrary.Channels;
 using TvLibrary.Implementations.DVB.Structures;
-using DirectShowLib;
-using DirectShowLib.BDA;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -38,9 +31,9 @@ namespace TvLibrary.Implementations.DVB
   /// </summary>
   public class DVBTScanning : DvbBaseScanning, ITVScanning, IDisposable
   {
-    TvCardDVBT _card;
+    readonly TvCardDVBT _card;
     /// <summary>
-    /// Initializes a new instance of the <see cref="T:DVBTScanning"/> class.
+    /// Initializes a new instance of the <see cref="DVBTScanning"/> class.
     /// </summary>
     /// <param name="card">The card.</param>
     public DVBTScanning(TvCardDVBT card)
@@ -99,8 +92,8 @@ namespace TvLibrary.Implementations.DVB
       dvbtChannel.Provider = info.service_provider_name;
       dvbtChannel.BandWidth = tuningChannel.BandWidth;
       dvbtChannel.Frequency = tuningChannel.Frequency;
-      dvbtChannel.IsTv = (info.serviceType == (int)DvbBaseScanning.ServiceType.Video || info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg2HDStream || info.serviceType == (int)DvbBaseScanning.ServiceType.H264Stream || info.serviceType == (int)DvbBaseScanning.ServiceType.AdvancedCodecHDVideoStream || info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg4OrH264Stream);
-      dvbtChannel.IsRadio = (info.serviceType == (int)DvbBaseScanning.ServiceType.Audio);
+      dvbtChannel.IsTv = (info.serviceType == (int)ServiceType.Video || info.serviceType == (int)ServiceType.Mpeg2HDStream || info.serviceType == (int)ServiceType.H264Stream || info.serviceType == (int)ServiceType.AdvancedCodecHDVideoStream || info.serviceType == (int)ServiceType.Mpeg4OrH264Stream);
+      dvbtChannel.IsRadio = (info.serviceType == (int)ServiceType.Audio);
       dvbtChannel.NetworkId = info.networkID;
       dvbtChannel.ServiceId = info.serviceID;
       dvbtChannel.TransportId = info.transportStreamID;

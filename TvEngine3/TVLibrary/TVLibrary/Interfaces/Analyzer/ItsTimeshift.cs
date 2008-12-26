@@ -18,9 +18,6 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.InteropServices;
 
 namespace TvLibrary.Interfaces.Analyzer
@@ -47,6 +44,11 @@ Guid("89459BF6-D00E-4d28-928E-9DA8F76B6D3A"),
   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ITsTimeShift
   {
+    ///<summary>
+    /// Sets the timeshift filename
+    ///</summary>
+    ///<param name="fileName">Filename</param>
+    ///<returns>Error code</returns>
     [PreserveSig]
     int SetTimeShiftingFileName([In, MarshalAs(UnmanagedType.LPStr)]			string fileName);
     /// <summary>
@@ -176,6 +178,7 @@ Guid("89459BF6-D00E-4d28-928E-9DA8F76B6D3A"),
     /// Sets the PMT pid.
     /// </summary>
     /// <param name="pmtPid">The PMT pid.</param>
+    /// <param name="serviceId">The service id</param>
     /// <returns></returns>
     [PreserveSig]
     int SetPmtPid(int pmtPid, int serviceId);

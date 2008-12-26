@@ -24,13 +24,9 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Text;
 using DirectShowLib;
-using TvDatabase;
 using TvLibrary.Interfaces;
-using TvLibrary.Implementations.DVB;
 
 namespace TvLibrary.Implementations.Analog.QualityControl
 {
@@ -71,7 +67,7 @@ namespace TvLibrary.Implementations.Analog.QualityControl
     /// Base constructor
     /// </summary>
     /// <param name="configuration">Configuration for the encoder</param>
-    public BaseControl(Configuration configuration)
+    protected BaseControl(Configuration configuration)
     {
       _configuration = configuration;
     }
@@ -194,25 +190,24 @@ namespace TvLibrary.Implementations.Analog.QualityControl
     /// <summary>
     /// Calculate the bitrate for the specified quality percentage
     /// </summary>
-    private int CalcQualityBitrate(double quality, int valMin, int valMax, int valStepDelta)
+    private static int CalcQualityBitrate(double quality, int valMin, int valMax, int valStepDelta)
     {
-      if (quality > 100) quality = 100;
-      if (quality < 0) quality = 0;
+      if (quality > 100)
+        quality = 100;
+      if (quality < 0)
+        quality = 0;
 
       if (quality == 100)
         return valMax;
-      else if (quality == 0)
+      if (quality == 0)
         return valMin;
-      else
-      {
-        int delta = valMax - valMin;
-        int targetquality = valMin + (int)(delta * quality / 100);
+      int delta = valMax - valMin;
+      int targetquality = valMin + (int)(delta * quality / 100);
 
-        int newQuality = valMin;
-        while (newQuality < targetquality)
-          newQuality += valStepDelta;
-        return newQuality;
-      };
+      int newQuality = valMin;
+      while (newQuality < targetquality)
+        newQuality += valStepDelta;
+      return newQuality;
     }
 
     /// <summary>
@@ -231,7 +226,6 @@ namespace TvLibrary.Implementations.Analog.QualityControl
     {
       try
       {
-        int hr;
         // Set new bit rate mode
         if (_supported_BitRateMode)
         {
@@ -239,7 +233,7 @@ namespace TvLibrary.Implementations.Analog.QualityControl
           int newMode = (int)_bitRateMode;
           object newBitRateModeO = newMode;
           Marshal.WriteInt32(newBitRateModeO, 0, newMode);
-          hr = SetValue(PropSetID.ENCAPIPARAM_BitRateMode, ref newBitRateModeO);
+          int hr = SetValue(PropSetID.ENCAPIPARAM_BitRateMode, ref newBitRateModeO);
           if (hr == 0)
           {
             Log.Log.Info("analog: Encoder mode set to {0}", _bitRateMode);
@@ -263,13 +257,12 @@ namespace TvLibrary.Implementations.Analog.QualityControl
     {
       try
       {
-        int hr;
         if (_supported_BitRate)
         {
 
           Log.Log.Info("analog: Encoder BitRate setting to {0}", _qualityType);
           object valueMin, valueMax, steppingDelta;
-          hr = GetParameterRange(PropSetID.ENCAPIPARAM_BitRate, out valueMin, out valueMax, out steppingDelta);
+          int hr = GetParameterRange(PropSetID.ENCAPIPARAM_BitRate, out valueMin, out valueMax, out steppingDelta);
           if (hr == 0)
           {
             int valMin = Marshal.ReadInt32(valueMin, 0);
@@ -278,7 +271,7 @@ namespace TvLibrary.Implementations.Analog.QualityControl
 
             Log.Log.Info("analog: Encoder BitRate Min {0:D} Max {1:D} Delta {2:D}", valMin, valMax, valStepDelta);
 
-            Int32 newBitrate = 50;
+            Int32 newBitrate;
 
             switch (_qualityType)
             {
@@ -300,12 +293,12 @@ namespace TvLibrary.Implementations.Analog.QualityControl
                 newBitrate = CalcQualityBitrate(100, valMin, valMax, valStepDelta);
                 break;
               case QualityType.Default:
-                object qualityObject = null;
+                object qualityObject;
                 GetDefaultValue(PropSetID.ENCAPIPARAM_BitRate, out qualityObject);
                 newBitrate = Marshal.ReadInt32(qualityObject, 0);
                 break;
               default:
-                object qualityObject2 = null;
+                object qualityObject2;
                 GetDefaultValue(PropSetID.ENCAPIPARAM_BitRate, out qualityObject2);
                 newBitrate = Marshal.ReadInt32(qualityObject2, 0);
                 break;
@@ -339,7 +332,7 @@ namespace TvLibrary.Implementations.Analog.QualityControl
 
               Log.Log.Info("analog: Encoder BitRatePeak Min {0:D} Max {1:D} Delta {2:D}", valMin, valMax, valStepDelta);
 
-              Int32 newBitrate = 75;
+              Int32 newBitrate;
 
               switch (_qualityType)
               {
@@ -361,12 +354,12 @@ namespace TvLibrary.Implementations.Analog.QualityControl
                   newBitrate = CalcQualityBitrate(100, valMin, valMax, valStepDelta);
                   break;
                 case QualityType.Default:
-                  object qualityObject = null;
+                  object qualityObject;
                   GetDefaultValue(PropSetID.ENCAPIPARAM_PeakBitRate, out qualityObject);
                   newBitrate = Marshal.ReadInt32(qualityObject, 0);
                   break;
                 default:
-                  object qualityObject2 = null;
+                  object qualityObject2;
                   GetDefaultValue(PropSetID.ENCAPIPARAM_PeakBitRate, out qualityObject2);
                   newBitrate = Marshal.ReadInt32(qualityObject2, 0);
                   break;
@@ -406,10 +399,9 @@ namespace TvLibrary.Implementations.Analog.QualityControl
     {
       try
       {
-        int hr;
         // Can we set the encoding mode?
         //ENCAPIPARAM_BITRATE_MODE 	Specifies the bit-rate mode, as a VIDEOENCODER_BITRATE_MODE enumeration value (32-bit signed long).
-        hr = IsSupported(PropSetID.ENCAPIPARAM_BitRateMode);
+        int hr = IsSupported(PropSetID.ENCAPIPARAM_BitRateMode);
         _supported_BitRateMode = hr == 0;
         if (_supported_BitRateMode)
           Log.Log.Debug("analog: Encoder supports ENCAPIPARAM_BitRateMode");

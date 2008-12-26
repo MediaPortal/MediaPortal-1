@@ -18,12 +18,11 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace TvLibrary.Interfaces
 {
+  /// <summary>
+  /// The global service provider
+  /// </summary>
   public class GlobalServiceProvider
   {
     static ServiceProvider _provider;

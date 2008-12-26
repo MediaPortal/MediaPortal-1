@@ -21,21 +21,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using TvControl;
-using DirectShowLib;
-
-
-using Gentle.Common;
 using Gentle.Framework;
 using TvDatabase;
-using TvLibrary;
-using TvLibrary.Interfaces;
-using TvLibrary.Implementations;
-
 using MediaPortal.UserInterface.Controls;
 namespace SetupTv.Sections
 {
@@ -60,12 +49,12 @@ namespace SetupTv.Sections
 
       public override string ToString()
       {
-        return _card.Name.ToString();
+        return _card.Name;
       }
     }
 
-    private MPListViewStringColumnSorter lvwColumnSorter1;
-    private MPListViewStringColumnSorter lvwColumnSorter2;
+    private readonly MPListViewStringColumnSorter lvwColumnSorter1;
+    private readonly MPListViewStringColumnSorter lvwColumnSorter2;
 
     public RadioChannelMapping()
       : this("Radio Mapping")
@@ -78,10 +67,10 @@ namespace SetupTv.Sections
       InitializeComponent();
       lvwColumnSorter1 = new MPListViewStringColumnSorter();
       lvwColumnSorter1.Order = SortOrder.None;
-      this.mpListViewChannels.ListViewItemSorter = lvwColumnSorter1;
+      mpListViewChannels.ListViewItemSorter = lvwColumnSorter1;
       lvwColumnSorter2 = new MPListViewStringColumnSorter();
       lvwColumnSorter2.Order = SortOrder.None;
-      this.mpListViewMapped.ListViewItemSorter = lvwColumnSorter2;
+      mpListViewMapped.ListViewItemSorter = lvwColumnSorter2;
       //mpListViewChannels.ListViewItemSorter = new MPListViewSortOnColumn(0);
       //mpListViewMapped.ListViewItemSorter = new MPListViewSortOnColumn(0);
     }
@@ -93,12 +82,14 @@ namespace SetupTv.Sections
       IList cards = Card.ListAll();
       foreach (Card card in cards)
       {
-        if (card.Enabled == false) continue;
-				if (!RemoteControl.Instance.CardPresent(card.IdCard)) continue;
-				
+        if (card.Enabled == false)
+          continue;
+        if (!RemoteControl.Instance.CardPresent(card.IdCard))
+          continue;
+
         mpComboBoxCard.Items.Add(new CardInfo(card));
       }
-      if (mpComboBoxCard.Items.Count>0)
+      if (mpComboBoxCard.Items.Count > 0)
         mpComboBoxCard.SelectedIndex = 0;
       mpComboBoxCard_SelectedIndexChanged_1(null, null);
     }
@@ -118,7 +109,7 @@ namespace SetupTv.Sections
       foreach (ListViewItem item in selectedItems)
       {
         Channel channel = (Channel)item.Tag;
-        ChannelMap map = layer.MapChannelToCard(card, channel,false);
+        ChannelMap map = layer.MapChannelToCard(card, channel, false);
         mpListViewChannels.Items.Remove(item);
         int imageIndex = 0;
         if (channel.FreeToAir)
@@ -186,7 +177,8 @@ namespace SetupTv.Sections
       foreach (ChannelMap map in maps)
       {
         Channel channel = map.ReferencedChannel();
-        if (channel.IsRadio == false) continue;
+        if (channel.IsRadio == false)
+          continue;
         int imageIndex = 3;
         if (channel.FreeToAir == false)
           imageIndex = 0;
@@ -212,7 +204,8 @@ namespace SetupTv.Sections
       items = new List<ListViewItem>();
       foreach (Channel channel in channels)
       {
-        if (channel.IsRadio == false) continue;
+        if (channel.IsRadio == false)
+          continue;
         int imageIndex = 0;
         if (channel.FreeToAir)
           imageIndex = 3;
@@ -236,14 +229,7 @@ namespace SetupTv.Sections
       if (e.Column == lvwColumnSorter1.SortColumn)
       {
         // Reverse the current sort direction for this column.
-        if (lvwColumnSorter1.Order == SortOrder.Ascending)
-        {
-          lvwColumnSorter1.Order = SortOrder.Descending;
-        }
-        else
-        {
-          lvwColumnSorter1.Order = SortOrder.Ascending;
-        }
+        lvwColumnSorter1.Order = lvwColumnSorter1.Order == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
       }
       else
       {
@@ -253,7 +239,7 @@ namespace SetupTv.Sections
       }
 
       // Perform the sort with these new sort options.
-      this.mpListViewChannels.Sort();
+      mpListViewChannels.Sort();
     }
 
     private void mpListViewMapped_ColumnClick(object sender, ColumnClickEventArgs e)
@@ -261,14 +247,7 @@ namespace SetupTv.Sections
       if (e.Column == lvwColumnSorter2.SortColumn)
       {
         // Reverse the current sort direction for this column.
-        if (lvwColumnSorter2.Order == SortOrder.Ascending)
-        {
-          lvwColumnSorter2.Order = SortOrder.Descending;
-        }
-        else
-        {
-          lvwColumnSorter2.Order = SortOrder.Ascending;
-        }
+        lvwColumnSorter2.Order = lvwColumnSorter2.Order == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
       }
       else
       {
@@ -278,7 +257,7 @@ namespace SetupTv.Sections
       }
 
       // Perform the sort with these new sort options.
-      this.mpListViewMapped.Sort();
+      mpListViewMapped.Sort();
     }
 
   }

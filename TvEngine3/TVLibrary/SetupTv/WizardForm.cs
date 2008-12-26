@@ -24,12 +24,9 @@
 #endregion
 
 using System;
-using System.Drawing;
 using System.Collections;
-using System.ComponentModel;
 using System.Windows.Forms;
 using System.Xml;
-using System.Reflection;
 
 namespace SetupTv
 {
@@ -44,10 +41,10 @@ namespace SetupTv
 
       public SectionHolder(SectionSettings section, string topic, string information, string expression)
       {
-        this.Section = section;
-        this.Topic = topic;
-        this.Information = information;
-        this.Expression = expression;
+        Section = section;
+        Topic = topic;
+        Information = information;
+        Expression = expression;
       }
     }
 
@@ -65,7 +62,7 @@ namespace SetupTv
     {
       get { return wizardPages; }
     }
-    static ArrayList wizardPages = new ArrayList();
+    static readonly ArrayList wizardPages = new ArrayList();
     public static WizardForm Form
     {
       get { return wizardForm; }
@@ -117,9 +114,6 @@ namespace SetupTv
       {
         LoadSections(sectionConfiguration);
       }
-      else
-      {
-      }
     }
 
     /// <summary>
@@ -158,44 +152,45 @@ namespace SetupTv
           //
           XmlNodeList nodeList = rootElement.SelectNodes("/wizard/sections/section");
 
-          foreach (XmlNode node in nodeList)
-          {
-            //
-            // Fetch section information
-            //
-            XmlNode nameNode = node.SelectSingleNode("name");
-            XmlNode topicNode = node.SelectSingleNode("topic");
-            XmlNode infoNode = node.SelectSingleNode("information");
-            XmlNode dependencyNode = node.SelectSingleNode("dependency");
-
-            if (nameNode != null && nameNode.InnerText.Length > 0)
+          if (nodeList != null)
+            foreach (XmlNode node in nodeList)
             {
               //
-              // Allocate new wizard page
+              // Fetch section information
               //
-              SectionSettings section = CreateSection(nameNode.InnerText);
+              XmlNode nameNode = node.SelectSingleNode("name");
+              XmlNode topicNode = node.SelectSingleNode("topic");
+              XmlNode infoNode = node.SelectSingleNode("information");
+              XmlNode dependencyNode = node.SelectSingleNode("dependency");
 
-              if (section != null)
+              if (nameNode != null && nameNode.InnerText.Length > 0)
               {
                 //
-                // Load wizard specific settings
+                // Allocate new wizard page
                 //
-                section.LoadWizardSettings(node);
+                SectionSettings section = CreateSection(nameNode.InnerText);
 
-                //
-                // Add the section to the sections list
-                //
-                if (dependencyNode == null)
+                if (section != null)
                 {
-                  AddSection(section, topicNode != null ? topicNode.InnerText : String.Empty, infoNode != null ? infoNode.InnerText : String.Empty);
-                }
-                else
-                {
-                  AddSection(section, topicNode != null ? topicNode.InnerText : String.Empty, infoNode != null ? infoNode.InnerText : String.Empty, dependencyNode.InnerText);
+                  //
+                  // Load wizard specific settings
+                  //
+                  section.LoadWizardSettings(node);
+
+                  //
+                  // Add the section to the sections list
+                  //
+                  if (dependencyNode == null)
+                  {
+                    AddSection(section, topicNode != null ? topicNode.InnerText : String.Empty, infoNode != null ? infoNode.InnerText : String.Empty);
+                  }
+                  else
+                  {
+                    AddSection(section, topicNode != null ? topicNode.InnerText : String.Empty, infoNode != null ? infoNode.InnerText : String.Empty, dependencyNode.InnerText);
+                  }
                 }
               }
             }
-          }
         }
       }
       catch (Exception e)
@@ -209,7 +204,7 @@ namespace SetupTv
     /// </summary>
     /// <param name="sectionName"></param>
     /// <returns></returns>
-    private SectionSettings CreateSection(string sectionName)
+    private static SectionSettings CreateSection(string sectionName)
     {
       Type sectionType = Type.GetType("MediaPortal.Configuration.Sections." + sectionName);
 
@@ -234,7 +229,7 @@ namespace SetupTv
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void WizardForm_Load(object sender, System.EventArgs e)
+    private void WizardForm_Load(object sender, EventArgs e)
     {
       //
       // Load settings
@@ -274,7 +269,7 @@ namespace SetupTv
             //
             // Evaluate if this section should be shown at all
             //
-            if (EvaluateExpression(holder.Expression) == true)
+            if (EvaluateExpression(holder.Expression))
             {
               ActivateSection(holder.Section);
 
@@ -285,12 +280,6 @@ namespace SetupTv
               SetInformation(holder.Information);
 
               break;
-            }
-            else
-            {
-              //
-              // Fetch next section
-              //
             }
           }
         }
@@ -314,7 +303,7 @@ namespace SetupTv
     /// </summary>
     /// <param name="expression"></param>
     /// <returns></returns>
-    private bool EvaluateExpression(string expression)
+    private static bool EvaluateExpression(string expression)
     {
       if (expression.Length > 0)
       {
@@ -379,7 +368,7 @@ namespace SetupTv
             //
             // Evaluate if this section should be shown at all
             //
-            if (EvaluateExpression(holder.Expression) == true)
+            if (EvaluateExpression(holder.Expression))
             {
               ActivateSection(holder.Section);
 
@@ -390,12 +379,6 @@ namespace SetupTv
               SetInformation(holder.Information);
 
               break;
-            }
-            else
-            {
-              //
-              // Fetch next section
-              //
             }
           }
         }
@@ -428,10 +411,10 @@ namespace SetupTv
       holderPanel.Controls.Add(section);
     }
 
-    private void nextButton_Click(object sender, System.EventArgs e)
+    private void nextButton_Click(object sender, EventArgs e)
     {
       SectionHolder holder = wizardPages[visiblePageIndex] as SectionHolder;
-      holder.Section.SaveSettings();
+      if (holder != null) holder.Section.SaveSettings();
       if (visiblePageIndex == wizardPages.Count - 1)
       {
         //
@@ -439,7 +422,7 @@ namespace SetupTv
         //
         SaveSectionSettings();
 
-        this.Close();
+        Close();
       }
       else
       {
@@ -450,13 +433,13 @@ namespace SetupTv
       }
     }
 
-    private void cancelButton_Click(object sender, System.EventArgs e)
+    private void cancelButton_Click(object sender, EventArgs e)
     {
 
-      this.Close();
+      Close();
     }
 
-    private void backButton_Click(object sender, System.EventArgs e)
+    private void backButton_Click(object sender, EventArgs e)
     {
       ShowPreviousPage();
     }
@@ -466,26 +449,18 @@ namespace SetupTv
       backButton.Enabled = visiblePageIndex > 0;
       nextButton.Enabled = true;
 
-      if (visiblePageIndex == wizardPages.Count - 1)
-      {
-        nextButton.Text = "&Finish";
-      }
-      else
-      {
-        nextButton.Text = "&Next >";
-      }
+      nextButton.Text = visiblePageIndex == wizardPages.Count - 1 ? "&Finish" : "&Next >";
 
       //
       // Set caption
       //
-      this.Text = String.Format("{0} [{1}/{2}]", wizardCaption, visiblePageIndex + 1, wizardPages.Count);
+      Text = String.Format("{0} [{1}/{2}]", wizardCaption, visiblePageIndex + 1, wizardPages.Count);
     }
 
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="currentNode"></param>
-    private void LoadSectionSettings()
+    private static void LoadSectionSettings()
     {
       foreach (SectionHolder holder in wizardPages)
       {
@@ -496,7 +471,7 @@ namespace SetupTv
     /// <summary>
     /// 
     /// </summary>
-    private void SaveSectionSettings()
+    private static void SaveSectionSettings()
     {
       foreach (SectionHolder holder in wizardPages)
       {

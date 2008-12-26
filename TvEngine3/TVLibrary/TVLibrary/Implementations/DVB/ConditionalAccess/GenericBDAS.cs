@@ -26,61 +26,39 @@
  * /Digi
  */
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Runtime.InteropServices;
 using DirectShowLib;
 using DirectShowLib.BDA;
-using System.Windows.Forms;
-using TvLibrary.Log;
 using TvLibrary.Channels;
-using TvLibrary.Interfaces.Analyzer;
 
 namespace TvLibrary.Implementations.DVB
 {
 
   class GenericBDAS
   {
-    #region enums
-    enum BdaDigitalModulator
-    {
-      MODULATION_TYPE = 0,
-      INNER_FEC_TYPE,
-      INNER_FEC_RATE,
-      OUTER_FEC_TYPE,
-      OUTER_FEC_RATE,
-      SYMBOL_RATE,
-      SPECTRAL_INVERSION,
-      GUARD_INTERVAL,
-      TRANSMISSION_MODE
-    };
-    #endregion
-
     #region variables
-    IntPtr _tempValue = Marshal.AllocCoTaskMem(1024);
-    IntPtr _tempInstance = Marshal.AllocCoTaskMem(1024);
-    DirectShowLib.IKsPropertySet _propertySet = null;
+
+    private readonly IKsPropertySet _propertySet;
     protected IBDA_Topology _TunerDevice;
-    protected bool _isGenericBDAS = false;
+    protected bool _isGenericBDAS;
     #endregion
 
     #region constants
-    Guid guidBdaDigitalDemodulator = new Guid(0xef30f379, 0x985b, 0x4d10, 0xb6, 0x40, 0xa7, 0x9d, 0x5e, 0x4, 0xe1, 0xe0);
+
+    readonly Guid guidBdaDigitalDemodulator = new Guid(0xef30f379, 0x985b, 0x4d10, 0xb6, 0x40, 0xa7, 0x9d, 0x5e, 0x4, 0xe1, 0xe0);
     #endregion
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GenericBDAS"/> class.
     /// </summary>
     /// <param name="tunerFilter">The tuner filter.</param>
-    /// <param name="analyzerFilter">The analyzer filter.</param>
-    public GenericBDAS(IBaseFilter tunerFilter, IBaseFilter analyzerFilter)
+    public GenericBDAS(IBaseFilter tunerFilter)
     {
       _TunerDevice = (IBDA_Topology)tunerFilter;
       //check if the BDA driver supports DiSEqC
       IPin pin = DsFindPin.ByName(tunerFilter, "MPEG2 Transport");
       if (pin != null)
       {
-        _propertySet = pin as DirectShowLib.IKsPropertySet;
+        _propertySet = pin as IKsPropertySet;
         if (_propertySet != null)
         {
           KSPropertySupport supported;
@@ -136,10 +114,9 @@ namespace TvLibrary.Implementations.DVB
     protected bool SendDiSEqCCommand(ulong ulRange)
     {
       Log.Log.Info("GenericBDAS:  SendDiSEqC Command {0}", ulRange);
-      int hr = 0;
       // get ControlNode of tuner control node
-      object ControlNode = null;
-      hr = _TunerDevice.GetControlNode(0, 1, 0, out ControlNode);
+      object ControlNode;
+      int hr = _TunerDevice.GetControlNode(0, 1, 0, out ControlNode);
       if (hr == 0)
       // retrieve the BDA_DeviceControl interface 
       {
@@ -148,7 +125,7 @@ namespace TvLibrary.Implementations.DVB
         {
           if (ControlNode != null)
           {
-            IBDA_FrequencyFilter FrequencyFilter = (IBDA_FrequencyFilter)ControlNode;
+            IBDA_FrequencyFilter FrequencyFilter = ControlNode as IBDA_FrequencyFilter;
             hr = DecviceControl.StartChanges();
             if (hr == 0)
             {
@@ -168,14 +145,11 @@ namespace TvLibrary.Implementations.DVB
                       Log.Log.Info("GenericBDAS:  CommitChanges() Succeeded");
                       return true;
                     }
-                    else
-                    {
-                      // reset configuration
-                      Log.Log.Info("GenericBDAS:  CommitChanges() Failed!");
-                      DecviceControl.StartChanges();
-                      DecviceControl.CommitChanges();
-                      return false;
-                    }
+                    // reset configuration
+                    Log.Log.Info("GenericBDAS:  CommitChanges() Failed!");
+                    DecviceControl.StartChanges();
+                    DecviceControl.CommitChanges();
+                    return false;
                   }
                   Log.Log.Info("GenericBDAS:  CheckChanges() Failed!");
                   return false;
@@ -198,10 +172,9 @@ namespace TvLibrary.Implementations.DVB
     /// <returns>true if succeeded, otherwise false</returns>
     protected bool ReadDiSEqCCommand(out ulong pulRange)
     {
-      int hr = 0;
       // get ControlNode of tuner control node
-      object ControlNode = null;
-      hr = _TunerDevice.GetControlNode(0, 1, 0, out ControlNode);
+      object ControlNode;
+      int hr = _TunerDevice.GetControlNode(0, 1, 0, out ControlNode);
       if (hr == 0)
       // retrieve the BDA_DeviceControl interface 
       {
@@ -210,7 +183,7 @@ namespace TvLibrary.Implementations.DVB
         {
           if (ControlNode != null)
           {
-            IBDA_FrequencyFilter FrequencyFilter = (IBDA_FrequencyFilter)ControlNode;
+            IBDA_FrequencyFilter FrequencyFilter = ControlNode as IBDA_FrequencyFilter;
             hr = DecviceControl.StartChanges();
             if (hr == 0)
             {
@@ -232,7 +205,7 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.Info("GenericBDAS:  GetControlNode Failed!");
       pulRange = 0;
       return false;
-      }//end ReadDiSEqCCommand
+    }//end ReadDiSEqCCommand
 
     /// <summary>
     /// Determines whether [is cam present].

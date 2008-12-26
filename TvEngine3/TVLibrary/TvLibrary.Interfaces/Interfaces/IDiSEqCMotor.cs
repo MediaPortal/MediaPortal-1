@@ -18,10 +18,6 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace TvLibrary.Interfaces
 {
   #region enums

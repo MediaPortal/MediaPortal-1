@@ -4,7 +4,6 @@
 //========================================================================
 using System;
 using System.Collections;
-using Gentle.Common;
 using Gentle.Framework;
 using TvLibrary.Log;
 
@@ -65,7 +64,7 @@ namespace TvDatabase
       this.keepUntilDate = keepUntilDate;
       this.timesWatched = timesWatched;
       this.idServer = idServer;
-      this.stopTime = 0;
+      stopTime = 0;
     }
 
     /// <summary> 
@@ -99,7 +98,7 @@ namespace TvDatabase
     {
       get
       {
-        return (Title.Equals("manual"));        
+        return (Title.Equals("manual"));
       }
     }
 
@@ -178,8 +177,8 @@ namespace TvDatabase
     /// </summary>
     public string FileName
     {
-      get { return this.fileName; }
-      set { isChanged |= this.fileName != value; this.fileName = value; }
+      get { return fileName; }
+      set { isChanged |= fileName != value; fileName = value; }
     }
 
     /// <summary>
@@ -241,8 +240,8 @@ namespace TvDatabase
     /// Static method to retrieve all instances that are stored in the database in one call
     /// </summary>
     public static IList ListAllActive()
-    {      
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Recording));      
+    {
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Recording));
       sb.AddConstraint("starttime=endtime");
 
       SqlStatement stmt = sb.GetStatement(true);
@@ -265,7 +264,7 @@ namespace TvDatabase
       Key key = new Key(typeof(Recording), true, "idRecording", id);
       return Broker.RetrieveInstance(typeof(Recording), key) as Recording;
     }
-    
+
 
     /// <summary>
     /// Retrieves an entity given it's filename.
@@ -273,7 +272,7 @@ namespace TvDatabase
     public static Recording Retrieve(string fileName)
     {
       // Return null if id is smaller than seed and/or increment for autokey
-      if (fileName == null || fileName.Length == 0)
+      if (string.IsNullOrEmpty(fileName))
       {
         return null;
       }
@@ -285,8 +284,9 @@ namespace TvDatabase
 
       // execute the statement/query and create a collection of User instances from the result set
       IList getList = ObjectFactory.GetCollection(typeof(Recording), stmt.Execute());
-      if (getList.Count != 0) return (Recording)getList[0];
-      else return null;           
+      if (getList.Count != 0)
+        return (Recording)getList[0];
+      return null;
     }
 
     /// <summary>
@@ -308,8 +308,7 @@ namespace TvDatabase
         try
         {
           base.Persist();
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
           Log.Error("Exception in Recording.Persist() with Message {0}", ex.Message);
           return;

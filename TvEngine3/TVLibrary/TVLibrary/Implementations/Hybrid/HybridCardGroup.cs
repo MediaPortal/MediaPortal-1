@@ -18,43 +18,25 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Text;
-using DirectShowLib;
-using DirectShowLib.BDA;
-using TvLibrary.Implementations;
-using DirectShowLib.SBE;
 using TvLibrary.Interfaces;
-using TvLibrary.Interfaces.Analyzer;
-using TvLibrary.Channels;
 using TvLibrary.Epg;
 using TvLibrary.ChannelLinkage;
 using TvLibrary.Implementations.Analog;
-using TvLibrary.Implementations.DVB.Structures;
-using TvLibrary.Helper;
 
 namespace TvLibrary.Implementations.Hybrid
 {
+  /// <summary>
+  /// Hybrid card group wrapper
+  /// </summary>
   public class HybridCardGroup
   {
     #region variables
-    List<ITVCard> _cards = new List<ITVCard>();
-    List<int> _idCards = new List<int>();
-    int _currentCardIndex = 0;
-    private string _groupName;
-    #endregion
 
-    #region ctor
-    /// <summary>
-    /// Initializes a new instance of the <see cref="HybridCard"/> class.
-    /// </summary>
-    /// <param name="groupName">The name of the group</param>
-    public HybridCardGroup(string groupName)
-    {
-      _groupName = groupName;
-    }
+    readonly List<ITVCard> _cards = new List<ITVCard>();
+    readonly List<int> _idCards = new List<int>();
+    int _currentCardIndex ;
+
     #endregion
 
     #region methods
@@ -217,6 +199,7 @@ namespace TvLibrary.Implementations.Hybrid
     /// <summary>
     /// Tunes the specified channel.
     /// </summary>
+    /// <param name="subChannelId">The subchannel id</param>
     /// <param name="channel">The channel.</param>
     /// <returns>true if succeeded else false</returns>
     public ITvSubChannel Tune(int subChannelId, IChannel channel)

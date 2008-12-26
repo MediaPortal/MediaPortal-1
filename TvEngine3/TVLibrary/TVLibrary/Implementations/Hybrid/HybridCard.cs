@@ -18,22 +18,10 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Text;
-using DirectShowLib;
-using DirectShowLib.BDA;
-using TvLibrary.Implementations;
-using DirectShowLib.SBE;
 using TvLibrary.Interfaces;
-using TvLibrary.Interfaces.Analyzer;
-using TvLibrary.Channels;
 using TvLibrary.Epg;
 using TvLibrary.ChannelLinkage;
-using TvLibrary.Implementations.Analog;
-using TvLibrary.Implementations.DVB.Structures;
-using TvLibrary.Helper;
 
 namespace TvLibrary.Implementations.Hybrid
 {
@@ -46,11 +34,11 @@ namespace TvLibrary.Implementations.Hybrid
     /// <summary>
     /// Hybrid card group
     /// </summary>
-    private HybridCardGroup _group;
+    private readonly HybridCardGroup _group;
     /// <summary>
     /// Internal card
     /// </summary>
-    private ITVCard _internalCard;
+    private readonly ITVCard _internalCard;
     #endregion
 
     #region ctor
@@ -61,8 +49,8 @@ namespace TvLibrary.Implementations.Hybrid
     /// <param name="internalCard">The internal card for this wrapper</param>
     public HybridCard(HybridCardGroup group,ITVCard internalCard)
     {
-      this._group = group;
-      this._internalCard = internalCard;
+      _group = group;
+      _internalCard = internalCard;
     }
     #endregion
 
@@ -391,6 +379,7 @@ namespace TvLibrary.Implementations.Hybrid
     /// <summary>
     /// Tunes the specified channel.
     /// </summary>
+    /// <param name="subChannelId">The sub channel id</param>
     /// <param name="channel">The channel.</param>
     /// <returns>true if succeeded else false</returns>
     public ITvSubChannel Tune(int subChannelId, IChannel channel)

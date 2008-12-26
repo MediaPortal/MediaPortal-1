@@ -20,57 +20,84 @@
  */
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.InteropServices;
 using DirectShowLib;
-using DirectShowLib.BDA;
-using System.Windows.Forms;
-using TvLibrary.Log;
 using TvLibrary.Channels;
-using TvLibrary.Interfaces.Analyzer;
 
 namespace TvLibrary.Implementations.DVB
 {
+  enum BdaDigitalModulator
+  {
+    MODULATION_TYPE = 0,
+    INNER_FEC_TYPE,
+    INNER_FEC_RATE,
+    OUTER_FEC_TYPE,
+    OUTER_FEC_RATE,
+    SYMBOL_RATE,
+    SPECTRAL_INVERSION,
+    GUARD_INTERVAL,
+    TRANSMISSION_MODE
+  };
+
+  enum BdaTunerExtension
+  {
+    KSPROPERTY_BDA_DISEQC = 0,
+    KSPROPERTY_BDA_SCAN_FREQ,
+    KSPROPERTY_BDA_CHANNEL_CHANGE,
+    KSPROPERTY_BDA_EFFECTIVE_FREQ,
+    KSPROPERTY_BDA_PILOT = 0x20,
+    KSPROPERTY_BDA_ROLL_OFF = 0x21
+  };
+
+  enum DisEqcVersion
+  {
+    DISEQC_VER_1X = 1,
+    DISEQC_VER_2X,
+  };
+
+  enum RxMode
+  {
+    RXMODE_INTERROGATION = 1, // Expecting multiple devices attached
+    RXMODE_QUICKREPLY,      // Expecting 1 rx (rx is suspended after 1st rx received)
+    RXMODE_NOREPLY,         // Expecting to receive no Rx message(s)
+    RXMODE_DEFAULT = 0        // use current register setting
+  };
+
+  enum BurstModulationType
+  {
+    TONE_BURST_UNMODULATED = 0,
+    TONE_BURST_MODULATED
+  };
+
   class GenericATSC
   {
     #region enums
-    enum BdaDigitalModulator
-    {
-      MODULATION_TYPE = 0,
-      INNER_FEC_TYPE,
-      INNER_FEC_RATE,
-      OUTER_FEC_TYPE,
-      OUTER_FEC_RATE,
-      SYMBOL_RATE,
-      SPECTRAL_INVERSION,
-      GUARD_INTERVAL,
-      TRANSMISSION_MODE
-    };
+
     #endregion
 
     #region constants
-    Guid guidBdaDigitalDemodulator = new Guid(0xef30f379, 0x985b, 0x4d10, 0xb6, 0x40, 0xa7, 0x9d, 0x5e, 0x4, 0xe1, 0xe0);
+
+    readonly Guid guidBdaDigitalDemodulator = new Guid(0xef30f379, 0x985b, 0x4d10, 0xb6, 0x40, 0xa7, 0x9d, 0x5e, 0x4, 0xe1, 0xe0);
     #endregion
 
     #region variables
-    bool _isGenericATSC = false;
-    IntPtr _tempValue = Marshal.AllocCoTaskMem(1024);
-    IntPtr _tempInstance = Marshal.AllocCoTaskMem(1024);
-    DirectShowLib.IKsPropertySet _propertySet = null;
+
+    readonly bool _isGenericATSC;
+    readonly IntPtr _tempValue = Marshal.AllocCoTaskMem(1024);
+    readonly IntPtr _tempInstance = Marshal.AllocCoTaskMem(1024);
+    readonly IKsPropertySet _propertySet;
     #endregion
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GenericATSC"/> class.
     /// </summary>
     /// <param name="tunerFilter">The tuner filter.</param>
-    /// <param name="analyzerFilter">The analyzer filter.</param>
-    public GenericATSC(IBaseFilter tunerFilter, IBaseFilter analyzerFilter)
+    public GenericATSC(IBaseFilter tunerFilter)
     {
       IPin pin = DsFindPin.ByName(tunerFilter, "MPEG2 Transport");
       if (pin != null)
       {
-        _propertySet = pin as DirectShowLib.IKsPropertySet;
+        _propertySet = pin as IKsPropertySet;
         if (_propertySet != null)
         {
           KSPropertySupport supported;
@@ -90,7 +117,6 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public void SetXPATSCQam(ATSCChannel channel)
     {
-      int hr;
       KSPropertySupport supported;
       _propertySet.QuerySupported(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, out supported);
       //Log.Log.Info("GenericATSC: BdaDigitalDemodulator supported: {0}", supported);
@@ -98,7 +124,7 @@ namespace TvLibrary.Implementations.DVB
       {
         Log.Log.Info("GenericATSC: Set ModulationType: {0}", channel.ModulationType);
         Marshal.WriteInt32(_tempValue, (Int32)channel.ModulationType);
-        hr = _propertySet.Set(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, _tempInstance, 32, _tempValue, 4);
+        int hr = _propertySet.Set(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, _tempInstance, 32, _tempValue, 4);
         if (hr != 0)
         {
           Log.Log.Info("GenericATSC: Set returned:{0:X}", hr);

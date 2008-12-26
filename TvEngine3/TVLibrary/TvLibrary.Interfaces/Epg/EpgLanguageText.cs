@@ -19,8 +19,6 @@
  *
  */
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace TvLibrary.Epg
 {
@@ -42,7 +40,7 @@ namespace TvLibrary.Epg
 
     #region ctor
     /// <summary>
-    /// Initializes a new instance of the <see cref="T:EpgLanguageText"/> class.
+    /// Initializes a new instance of the <see cref="EpgLanguageText"/> class.
     /// </summary>
     /// <param name="language">The language.</param>
     /// <param name="title">The title.</param>
@@ -51,7 +49,7 @@ namespace TvLibrary.Epg
     /// <param name="starRating">The star rating</param>
     /// <param name="classification">The classification</param>
     /// <param name="parentalRating">The parental rating.</param>
-    public EpgLanguageText(string language, string title, string description, string genre,int starRating,string classification, int parentalRating)
+    public EpgLanguageText(string language, string title, string description, string genre, int starRating, string classification, int parentalRating)
     {
       Language = language;
       Title = title;
@@ -76,8 +74,7 @@ namespace TvLibrary.Epg
       }
       set
       {
-        _language = value;
-        if (_language == null) _language = "";
+        _language = value ?? "";
       }
     }
     /// <summary>
@@ -92,8 +89,7 @@ namespace TvLibrary.Epg
       }
       set
       {
-        _title = value;
-        if (_title == null) _title = "";
+        _title = value ?? "";
       }
     }
     /// <summary>
@@ -108,8 +104,7 @@ namespace TvLibrary.Epg
       }
       set
       {
-        _description = value;
-        if (_description == null) _description = "";
+        _description = value ?? "";
       }
     }
     /// <summary>
@@ -124,8 +119,7 @@ namespace TvLibrary.Epg
       }
       set
       {
-        _genre = value;
-        if (_genre == null) _genre = "";
+        _genre = value ?? "";
       }
     }
     /// <summary>
@@ -155,8 +149,7 @@ namespace TvLibrary.Epg
       }
       set
       {
-        _classification = value;
-        if (_classification == null) _classification = "";
+        _classification = value ?? "";
       }
     }
     /// <summary>

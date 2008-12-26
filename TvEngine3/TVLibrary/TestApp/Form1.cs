@@ -1,21 +1,14 @@
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Text;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Threading;
 using TvLibrary.Implementations;
 using TvLibrary.Interfaces;
-using TvLibrary.Channels;
 using TvLibrary.Implementations.Analog;
 using TvLibrary.Implementations.DVB;
 
-using TvLibrary.Epg;
 namespace TestApp
 {
   public partial class Form1 : Form
@@ -34,10 +27,10 @@ namespace TestApp
     protected static extern void StreamRemove(string streamName);
     #endregion
 
-    TvCardCollection _tvcards = new TvCardCollection();
+    readonly TvCardCollection _tvcards = new TvCardCollection();
     ITVCard _currentCard;
-    bool _stopStreaming = false;
-    bool _streamingRunning = false;
+    bool _stopStreaming;
+    bool _streamingRunning;
     int _currentPageNumber=0x600;
     //Player _player;
 
@@ -58,7 +51,7 @@ namespace TestApp
         comboBoxCards.SelectedIndex = 0;
         _currentCard = _tvcards.Cards[0];
       }
-      timer1.Tick += new EventHandler(timer1_Tick);
+      timer1.Tick += timer1_Tick;
       timer1.Enabled = true;
     }
 
@@ -67,10 +60,7 @@ namespace TestApp
       lock (this)
       {
         if (_currentCard == null) return;
-        if (_currentCard.IsTunerLocked)
-          labelTunerLock.Text = "yes";
-        else
-          labelTunerLock.Text = "no";
+        labelTunerLock.Text = _currentCard.IsTunerLocked ? "yes" : "no";
 
         int level = _currentCard.SignalLevel;
         if (level < 0) level = 0;
@@ -83,10 +73,7 @@ namespace TestApp
         if (quality > 100) quality = 100;
         if (_currentCard.SubChannels.Length > 0)
         {
-          if (_currentCard.SubChannels[0].CurrentChannel != null)
-            labelChannel.Text = _currentCard.SubChannels[0].CurrentChannel.ToString();
-          else
-            labelChannel.Text = "";
+          labelChannel.Text = _currentCard.SubChannels[0].CurrentChannel != null ? _currentCard.SubChannels[0].CurrentChannel.ToString() : "";
           progressBarQuality.Value = quality;
           buttonScan.Enabled = true;// (_currentCard.IsTunerLocked);
           buttonTimeShift.Enabled = (_currentCard.IsTunerLocked && (_currentCard.SubChannels[0].IsRecording == false));
@@ -94,20 +81,11 @@ namespace TestApp
           buttonTimeShiftTS.Enabled = (_currentCard.IsTunerLocked && (_currentCard.SubChannels[0].IsRecording == false));
           buttonRecordMpg.Enabled = (_currentCard.SubChannels[0].IsTimeShifting || _currentCard.SubChannels[0].IsRecording);
           btnEPG.Enabled = _currentCard.IsTunerLocked;
-          if (_currentCard.SubChannels[0].IsRecording)
-            buttonRecord.Text = "Stop recording";
-          else
-            buttonRecord.Text = "Record";
+          buttonRecord.Text = _currentCard.SubChannels[0].IsRecording ? "Stop recording" : "Record";
 
-          if (_currentCard.SubChannels[0].IsTimeShifting)
-            buttonTimeShift.Text = "Stop timeshifting";
-          else
-            buttonTimeShift.Text = "Timeshift";
+          buttonTimeShift.Text = _currentCard.SubChannels[0].IsTimeShifting ? "Stop timeshifting" : "Timeshift";
 
-          if (_currentCard.SubChannels[0].IsReceivingAudioVideo)
-            labelScrambled.Text = "no";
-          else
-            labelScrambled.Text = "yes";
+          labelScrambled.Text = _currentCard.SubChannels[0].IsReceivingAudioVideo ? "no" : "yes";
         } else {
           buttonTimeShift.Enabled = _currentCard.IsTunerLocked;
           buttonTimeShiftTS.Enabled = _currentCard.IsTunerLocked;
@@ -256,30 +234,6 @@ namespace TestApp
       MessageBox.Show(this, "Grabbing epg...");
     }
 
-    void epgGrabber_OnEpgReceived(object sender, List<EpgChannel> epg)
-    {
-      if (epg != null)
-      {
-        using (FileStream stream = new FileStream("epg.xml", FileMode.OpenOrCreate, FileAccess.Write))
-        {
-          using (StreamWriter writer = new StreamWriter(stream))
-          {
-            foreach (EpgChannel epgChan in epg)
-            {
-              writer.WriteLine("Channel:{0} programs:{1}", epgChan.ToString(), epgChan.Programs.Count);
-              foreach (EpgProgram program in epgChan.Programs)
-              {
-                writer.WriteLine(" {0}-{1} title:{2} genre:{3} description:{4}",
-                    program.StartTime, program.EndTime, program.Text[0].Title, program.Text[0].Genre, program.Text[0].Description);
-
-              }
-            }
-          }
-        }
-      }
-      MessageBox.Show(this, "Epg grabbed and save to epg.xml...");
-    }
-
     private void buttonTimeShift_Click(object sender, EventArgs e)
     {
       if (_currentCard.SubChannels[0].IsTimeShifting)
@@ -290,9 +244,9 @@ namespace TestApp
       else
       {
         string fileName = String.Format("live{0}.dvr-ms", comboBoxCards.SelectedIndex);
-        if (System.IO.File.Exists(fileName))
+        if (File.Exists(fileName))
         {
-          System.IO.File.Delete(fileName);
+          File.Delete(fileName);
         }
         _currentCard.SubChannels[0].StartTimeShifting(fileName);
         MessageBox.Show(this, "Timeshifting to:" + fileName);
@@ -309,9 +263,9 @@ namespace TestApp
       else
       {
         string fileName = String.Format("recording{0}.dvr-ms", comboBoxCards.SelectedIndex);
-        if (System.IO.File.Exists(fileName))
+        if (File.Exists(fileName))
         {
-          System.IO.File.Delete(fileName);
+          File.Delete(fileName);
         }
         _currentCard.SubChannels[0].StartRecording(false, fileName);
         MessageBox.Show(this, "Recording to:" + fileName);
@@ -353,15 +307,15 @@ namespace TestApp
         return;
       }
       _currentCard.SubChannels[0].TeletextDecoder.SetPageSize(400, 400);
-      _currentCard.SubChannels[0].TeletextDecoder.OnPageDeleted += new TvLibrary.Teletext.PageEventHandler(TeletextDecoder_OnPageDeleted);
-      _currentCard.SubChannels[0].TeletextDecoder.OnPageAdded += new TvLibrary.Teletext.PageEventHandler(TeletextDecoder_OnPageAdded);
-      _currentCard.SubChannels[0].TeletextDecoder.OnPageUpdated += new TvLibrary.Teletext.PageEventHandler(TeletextDecoder_OnPageUpdated);
+      _currentCard.SubChannels[0].TeletextDecoder.OnPageDeleted += TeletextDecoder_OnPageDeleted;
+      _currentCard.SubChannels[0].TeletextDecoder.OnPageAdded += TeletextDecoder_OnPageAdded;
+      _currentCard.SubChannels[0].TeletextDecoder.OnPageUpdated += TeletextDecoder_OnPageUpdated;
     }
 
-    void TeletextDecoder_OnPageDeleted(int pageNumber, int subPageNumber)
+    static void TeletextDecoder_OnPageDeleted(int pageNumber, int subPageNumber)
     {
     }
-    int updatectr=0;
+
     void UpdatePage(int pageNumber, int subPageNumber)
     {
       if (pageNumber ==_currentPageNumber) return;
@@ -417,7 +371,7 @@ namespace TestApp
       {
         _stopStreaming = false;
         _streamingRunning = true;
-        Thread thread = new Thread(new ThreadStart(workerThread));
+        Thread thread = new Thread(workerThread);
         thread.SetApartmentState(ApartmentState.STA);
         thread.IsBackground = true;
         thread.Name = "Streaming thread";
@@ -444,7 +398,7 @@ namespace TestApp
     {
       try
       {
-        string fileAndPath = System.IO.Path.GetFullPath("live.ts.tsbuffer");
+        string fileAndPath = Path.GetFullPath("live.ts.tsbuffer");
         StreamSetup();
         StreamAddTs("stream0", fileAndPath);
         while (_stopStreaming == false)
@@ -466,10 +420,9 @@ namespace TestApp
 
     private void textBoxPageNr_TextChanged(object sender, EventArgs e)
     {
-      int pageNumber;
       try
       {
-          pageNumber=Convert.ToInt32(textBoxPageNr.Text,16);
+          int pageNumber=Convert.ToInt32(textBoxPageNr.Text,16);
           _currentPageNumber = pageNumber;
           pictureBox3.Image = _currentCard.SubChannels[0].TeletextDecoder.GetPage(_currentPageNumber, 0);
       }catch(Exception){}

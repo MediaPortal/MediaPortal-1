@@ -1,14 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
 using TvEngine;
 using TvLibrary.Log;
 namespace SetupTv
 {
   public class PluginLoader
   {
-    List<ITvServerPlugin> _plugins = new List<ITvServerPlugin>();
+    readonly List<ITvServerPlugin> _plugins = new List<ITvServerPlugin>();
 
     /// <summary>
     /// returns a list of all plugins loaded.
@@ -32,8 +31,7 @@ namespace SetupTv
           foreach (string strFile in strFiles)
             LoadPlugin(strFile);
         }
-      }
-      catch (Exception)
+      } catch (Exception)
       {
       }
     }
@@ -43,7 +41,7 @@ namespace SetupTv
     /// <param name="strFile">The STR file.</param>
     void LoadPlugin(string strFile)
     {
-      Type[] foundInterfaces = null;
+      Type[] foundInterfaces;
 
       try
       {
@@ -58,27 +56,24 @@ namespace SetupTv
             {
               if (t.IsClass)
               {
-                if (t.IsAbstract) continue;
+                if (t.IsAbstract)
+                  continue;
 
-                Object newObj = null;
-                ITvServerPlugin plugin = null;
-                TypeFilter myFilter2 = new TypeFilter(MyInterfaceFilter);
+                TypeFilter myFilter2 = MyInterfaceFilter;
                 try
                 {
                   foundInterfaces = t.FindInterfaces(myFilter2, "TvEngine.ITvServerPlugin");
                   if (foundInterfaces.Length > 0)
                   {
-                    newObj = (object)Activator.CreateInstance(t);
-                    plugin = (ITvServerPlugin)newObj;
+                    object newObj = Activator.CreateInstance(t);
+                    ITvServerPlugin plugin = (ITvServerPlugin)newObj;
                     _plugins.Add(plugin);
                   }
-                }
-                catch (System.Reflection.TargetInvocationException)
+                } catch (TargetInvocationException)
                 {
                   Log.WriteFile("PluginManager: {0} is incompatible with the current tvserver version and won't be loaded!", t.FullName);
                   continue;
-                }
-                catch (Exception iPluginException)
+                } catch (Exception iPluginException)
                 {
                   Log.WriteFile("Exception while loading IPlugin instances: {0}", t.FullName);
                   Log.WriteFile(iPluginException.ToString());
@@ -86,20 +81,18 @@ namespace SetupTv
                   Log.WriteFile(iPluginException.StackTrace);
                 }
               }
-            }
-            catch (System.NullReferenceException)
+            } catch (NullReferenceException)
             { }
           }
         }
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.WriteFile("PluginManager: Plugin file {0} is broken or incompatible with the current tvserver version and won't be loaded!", strFile.Substring(strFile.LastIndexOf(@"\") + 1));
         Log.WriteFile("PluginManager: Exception: {0}", ex);
       }
     }
 
-    bool MyInterfaceFilter(Type typeObj, Object criteriaObj)
+    static bool MyInterfaceFilter(Type typeObj, Object criteriaObj)
     {
       return (typeObj.ToString().Equals(criteriaObj.ToString()));
     }

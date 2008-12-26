@@ -28,31 +28,70 @@ namespace TvLibrary.Implementations.DVB.Structures
   /// </summary>
   public class TSHelperTools
   {
-
+    /// <summary>
+    /// TS Header struct
+    /// </summary>
     public struct TSHeader
     {
+      /// <summary>
+      /// Sync byte
+      /// </summary>
       public int SyncByte;
+      /// <summary>
+      /// Transport error
+      /// </summary>
       public bool TransportError;
+      /// <summary>
+      /// Payload unit start
+      /// </summary>
       public bool PayloadUnitStart;
+      /// <summary>
+      /// Transport priority
+      /// </summary>
       public bool TransportPriority;
+      /// <summary>
+      /// Pid
+      /// </summary>
       public int Pid;
+      /// <summary>
+      /// Transport scrambling
+      /// </summary>
       public int TransportScrambling;
+      /// <summary>
+      /// Adaption field control
+      /// </summary>
       public int AdaptionFieldControl;
+      /// <summary>
+      /// Continuity Counter
+      /// </summary>
       public int ContinuityCounter;
+      /// <summary>
+      /// Adpation field
+      /// </summary>
       public int AdaptionField;
+      /// <summary>
+      /// Table id
+      /// </summary>
       public int TableID;
+      /// <summary>
+      /// Section Len
+      /// </summary>
       public int SectionLen;
+      /// <summary>
+      /// Is MHW Table
+      /// </summary>
       public bool IsMHWTable;
+      /// <summary>
+      /// MHW Indicator
+      /// </summary>
       public int MHWIndicator;
     }
 
-    public TSHelperTools()
-    {
-      //
-      // TODO: Fügen Sie hier die Konstruktorlogik hinzu
-      //
-    }
-
+    ///<summary>
+    /// Converts the raw data into a TsHeader
+    ///</summary>
+    ///<param name="streamData">Raw data</param>
+    ///<returns>Ts Header struct</returns>
     public TSHeader GetHeader(IntPtr streamData)
     {
       byte[] data = new byte[8];
@@ -74,6 +113,11 @@ namespace TvLibrary.Implementations.DVB.Structures
       header.SectionLen = ((data[6] - 0x70) << 8) + data[7];
       return header;
     }
+    ///<summary>
+    /// Converts the binary data into a TsHeader
+    ///</summary>
+    ///<param name="data">Binary data</param>
+    ///<returns>Ts Header struct</returns>
     public TSHeader GetHeader(byte[] data)
     {
       TSHeader header = new TSHeader();

@@ -21,14 +21,13 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
 using TvEngine;
 using TvLibrary.Log;
 namespace TvService
 {
   class PluginLoader
   {
-    List<ITvServerPlugin> _plugins = new List<ITvServerPlugin>();
+    readonly List<ITvServerPlugin> _plugins = new List<ITvServerPlugin>();
 
     /// <summary>
     /// returns a list of all plugins loaded.
@@ -50,9 +49,9 @@ namespace TvService
         string[] strFiles = System.IO.Directory.GetFiles("plugins", "*.dll");
         foreach (string strFile in strFiles)
           LoadPlugin(strFile);
-      }
-      catch (Exception)
+      } catch (Exception)
       {
+        Log.WriteFile("PluginManager: Error while loading dll's");
       }
     }
     /// <summary>
@@ -61,7 +60,7 @@ namespace TvService
     /// <param name="strFile">The STR file.</param>
     void LoadPlugin(string strFile)
     {
-      Type[] foundInterfaces = null;
+      Type[] foundInterfaces;
 
       try
       {
@@ -76,28 +75,26 @@ namespace TvService
             {
               if (t.IsClass)
               {
-                if (t.IsAbstract) continue;
+                if (t.IsAbstract)
+                  continue;
 
-                Object newObj = null;
-                ITvServerPlugin plugin = null;
-                TypeFilter myFilter2 = new TypeFilter(MyInterfaceFilter);
+                ITvServerPlugin plugin;
+                TypeFilter myFilter2 = MyInterfaceFilter;
                 try
                 {
                   foundInterfaces = t.FindInterfaces(myFilter2, "TvEngine.ITvServerPlugin");
                   if (foundInterfaces.Length > 0)
                   {
-                    newObj = (object)Activator.CreateInstance(t);
+                    Object newObj = Activator.CreateInstance(t);
                     plugin = (ITvServerPlugin)newObj;
                     _plugins.Add(plugin);
                     Log.WriteFile("PluginManager: Loaded {0} version:{1} author:{2}", plugin.Name, plugin.Version, plugin.Author);
                   }
-                }
-                catch (System.Reflection.TargetInvocationException)
+                } catch (TargetInvocationException)
                 {
                   Log.WriteFile("PluginManager: {0} is incompatible with the current tvserver version and won't be loaded!", t.FullName);
                   continue;
-                }
-                catch (Exception ex)
+                } catch (Exception ex)
                 {
                   Log.WriteFile("Exception while loading ITvServerPlugin instances: {0}", t.FullName);
                   Log.WriteFile(ex.ToString());
@@ -105,20 +102,18 @@ namespace TvService
                   Log.WriteFile(ex.StackTrace);
                 }
               }
-            }
-            catch (System.NullReferenceException)
+            } catch (NullReferenceException)
             { }
           }
         }
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.WriteFile("PluginManager: Plugin file {0} is broken or incompatible with the current tvserver version and won't be loaded!", strFile.Substring(strFile.LastIndexOf(@"\") + 1));
         Log.WriteFile("PluginManager: Exception: {0}", ex);
       }
     }
 
-    bool MyInterfaceFilter(Type typeObj, Object criteriaObj)
+    static bool MyInterfaceFilter(Type typeObj, Object criteriaObj)
     {
       return (typeObj.ToString().Equals(criteriaObj.ToString()));
     }

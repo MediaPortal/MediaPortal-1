@@ -20,22 +20,9 @@
  */
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Xml.Serialization;
-using System.Text;
-using Microsoft.Win32;
 using DirectShowLib;
-using TvLibrary.Implementations;
-using DirectShowLib.SBE;
-using TvLibrary.Log;
 using TvLibrary.Interfaces;
-using TvLibrary.Teletext;
-using TvLibrary.Epg;
 using TvLibrary.Implementations.DVB;
-using TvLibrary.Implementations.DVB.Structures;
-using TvLibrary.Implementations.Helper;
-using TvLibrary.Helper;
-using TvLibrary.ChannelLinkage;
 using TvLibrary.Interfaces.Analyzer;
 
 namespace TvLibrary.Implementations.Analog
@@ -46,11 +33,10 @@ namespace TvLibrary.Implementations.Analog
   public class AnalogSubChannel : BaseSubChannel, ITvSubChannel, IAnalogTeletextCallBack, IAnalogVideoAudioObserver
   {
     #region variables
-    private TvCardAnalog _card;
-    private IBaseFilter _filterTvTunerFilter;
-    private IBaseFilter _filterTvAudioTuner;
-    private IBaseFilter _mpFileWriter;
-    private IMPRecord _mpRecord;
+    private readonly TvCardAnalog _card;
+    private readonly IBaseFilter _filterTvAudioTuner;
+    private readonly IBaseFilter _mpFileWriter;
+    private readonly IMPRecord _mpRecord;
     #endregion
 
     #region ctor
@@ -58,11 +44,10 @@ namespace TvLibrary.Implementations.Analog
     /// <summary>
     /// Initializes a new instance of the <see cref="AnalogSubChannel"/> class.
     /// </summary>
-    public AnalogSubChannel(TvCardAnalog card, int subchnnelId, IBaseFilter filterTvTunerFilter, IBaseFilter filterTvAudioTuner, IPin pinVBI, IBaseFilter mpFileWriter):base()
+    public AnalogSubChannel(TvCardAnalog card, int subchnnelId, IBaseFilter filterTvAudioTuner, IPin pinVBI, IBaseFilter mpFileWriter)
     {
       _card = card;
       _hasTeletext = (pinVBI != null);
-      _filterTvTunerFilter = filterTvTunerFilter;
       _filterTvAudioTuner = filterTvAudioTuner;
       _mpFileWriter = mpFileWriter;
       _mpRecord = (IMPRecord)_mpFileWriter;
@@ -126,10 +111,14 @@ namespace TvLibrary.Implementations.Analog
     /// </summary>
     public override void OnGraphStarted()
     {
-      Log.Log.WriteFile("analog subch:{0} OnGraphStarted", _subChannelId);      
+      Log.Log.WriteFile("analog subch:{0} OnGraphStarted", _subChannelId);
       _dateTimeShiftStarted = DateTime.MinValue;
     }
 
+    /// <summary>
+    /// Should be called when graph is about to stop.
+    /// stops any timeshifting/recording on this channel
+    /// </summary>
     public override void OnGraphStop()
     {
       if (_mpRecord != null)
@@ -139,6 +128,10 @@ namespace TvLibrary.Implementations.Analog
       }
     }
 
+    /// <summary>
+    /// should be called when graph has been stopped
+    /// Resets the graph state
+    /// </summary>
     public override void OnGraphStopped()
     {
     }
@@ -158,9 +151,9 @@ namespace TvLibrary.Implementations.Analog
       _timeshiftFileName = fileName;
       Log.Log.WriteFile("analog:SetTimeShiftFileName:{0}", fileName);
       Log.Log.WriteFile("analog:SetTimeShiftFileName: uses .ts");
-      ScanParameters _parameters = _card.Parameters;
+      ScanParameters parameters = _card.Parameters;
       _mpRecord.SetVideoAudioObserver(_subChannelId, this);
-      _mpRecord.SetTimeShiftParams(_subChannelId, _parameters.MinimumFiles, _parameters.MaximumFiles, _parameters.MaximumFileSize);
+      _mpRecord.SetTimeShiftParams(_subChannelId, parameters.MinimumFiles, parameters.MaximumFiles, parameters.MaximumFileSize);
       _mpRecord.SetTimeShiftFileName(_subChannelId, fileName);
       _mpRecord.StartTimeShifting(_subChannelId);
       _dateTimeShiftStarted = DateTime.Now;
@@ -195,13 +188,14 @@ namespace TvLibrary.Implementations.Analog
       {
         Log.Log.WriteFile("analog:SetRecording: uses .ts");
         _mpRecord.SetRecordingMode(_subChannelId, TimeShiftingMode.TransportStream);
-      } else
+      }
+      else
       {
         Log.Log.WriteFile("analog:SetRecording: uses .mpg");
         _mpRecord.SetRecordingMode(_subChannelId, TimeShiftingMode.ProgramStream);
       }
       _mpRecord.SetRecordingFileName(_subChannelId, fileName);
-      _mpRecord.StartRecord(_subChannelId );
+      _mpRecord.StartRecord(_subChannelId);
     }
 
     /// <summary>
@@ -229,10 +223,12 @@ namespace TvLibrary.Implementations.Analog
       get
       {
         List<IAudioStream> streams = new List<IAudioStream>();
-        if (_filterTvAudioTuner == null) return streams;
+        if (_filterTvAudioTuner == null)
+          return streams;
         IAMTVAudio tvAudioTunerInterface = _filterTvAudioTuner as IAMTVAudio;
-        TVAudioMode availableAudioModes;
-        tvAudioTunerInterface.GetAvailableTVAudioModes(out availableAudioModes);
+        TVAudioMode availableAudioModes = TVAudioMode.None;
+        if (tvAudioTunerInterface != null)
+          tvAudioTunerInterface.GetAvailableTVAudioModes(out availableAudioModes);
         if ((availableAudioModes & (TVAudioMode.Stereo)) != 0)
         {
           AnalogAudioStream stream = new AnalogAudioStream();
@@ -280,14 +276,17 @@ namespace TvLibrary.Implementations.Analog
     {
       get
       {
-        if (_filterTvAudioTuner == null) return null;
+        if (_filterTvAudioTuner == null)
+          return null;
         IAMTVAudio tvAudioTunerInterface = _filterTvAudioTuner as IAMTVAudio;
-        TVAudioMode mode;
-        tvAudioTunerInterface.get_TVAudioMode(out mode);
+        TVAudioMode mode = TVAudioMode.None;
+        if (tvAudioTunerInterface != null)
+          tvAudioTunerInterface.get_TVAudioMode(out mode);
         List<IAudioStream> streams = AvailableAudioStreams;
         foreach (AnalogAudioStream stream in streams)
         {
-          if (stream.AudioMode == mode) return stream;
+          if (stream.AudioMode == mode)
+            return stream;
         }
         return null;
       }
@@ -297,7 +296,8 @@ namespace TvLibrary.Implementations.Analog
         if (stream != null && _filterTvAudioTuner != null)
         {
           IAMTVAudio tvAudioTunerInterface = _filterTvAudioTuner as IAMTVAudio;
-          tvAudioTunerInterface.put_TVAudioMode(stream.AudioMode);
+          if (tvAudioTunerInterface != null)
+            tvAudioTunerInterface.put_TVAudioMode(stream.AudioMode);
         }
       }
     }
@@ -330,6 +330,9 @@ namespace TvLibrary.Implementations.Analog
     #endregion
 
     #region teletext
+    /// <summary>
+    /// A derrived class should activate or deactivate the teletext grabbing on the tv card.
+    /// </summary>
     protected override void OnGrabTeletext()
     {
       if (_hasTeletext)
@@ -337,11 +340,13 @@ namespace TvLibrary.Implementations.Analog
         if (_grabTeletext)
         {
           _mpRecord.TTxSetCallback(_subChannelId, this);
-        } else
+        }
+        else
         {
           _mpRecord.TTxSetCallback(_subChannelId, null);
         }
-      } else
+      }
+      else
       {
         _grabTeletext = false;
         _mpRecord.TTxSetCallback(_subChannelId, null);

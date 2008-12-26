@@ -19,16 +19,7 @@
  *
  */
 using System;
-using System.Collections.Generic;
-using System.Text;
-using DirectShowLib.SBE;
-using TvLibrary;
-using TvLibrary.Implementations;
 using TvLibrary.Interfaces;
-using TvLibrary.Implementations.Analog;
-using TvLibrary.Implementations.DVB;
-using TvLibrary.Channels;
-
 using TvDatabase;
 namespace TvService
 {
@@ -37,9 +28,9 @@ namespace TvService
   /// </summary>
   public class CardDetail : IComparable<CardDetail>
   {
-    int _cardId;
-    Card _card;
-    IChannel _detail;
+    readonly int _cardId;
+    readonly Card _card;
+    readonly IChannel _detail;
     int _priority;
 
     /// <summary>
@@ -108,8 +99,10 @@ namespace TvService
     // higher priority means that this one should be more to the front of the list
     public int CompareTo(CardDetail other)
     {
-      if (Priority > other.Priority) return -1;
-      if (Priority < other.Priority) return 1;
+      if (Priority > other.Priority)
+        return -1;
+      if (Priority < other.Priority)
+        return 1;
       return 0;
     }
 

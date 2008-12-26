@@ -20,15 +20,10 @@
  */
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.InteropServices;
 using DirectShowLib;
 using DirectShowLib.BDA;
-using System.Windows.Forms;
-using TvLibrary.Log;
 using TvLibrary.Channels;
-using TvLibrary.Interfaces.Analyzer;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -36,21 +31,14 @@ namespace TvLibrary.Implementations.DVB
   {
     #region enums
 
-    enum TunerID
-    {
-      FCV1236D_LG3302,
-      LGTDVSH002F_LG3302,
-      LGTDVSH062F_LG3303
-    };
-
-    enum DTVDemodeMode
+    public enum DTVDemodeMode
     {
       QAM64_MODE = 0x00,
       QAM256_MODE = 0x01,
       VSBMODE = 0x03
     };
 
-    enum NimTunerProperties
+    public enum NimTunerProperties
     {
       INIM_DMODE_TUNER_ID = 0,		// Get Only
       INIM_DMODE_SWRESET = 1,		// Set Only
@@ -61,29 +49,30 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     #region constants
-    Guid guidOnAirNimTuner = new Guid(0x87f6acbc, 0xbe46, 0x4ea5, 0x90, 0x12, 0x1d, 0x21, 0x1c, 0x47, 0x3f, 0x71);
+
+    readonly Guid guidOnAirNimTuner = new Guid(0x87f6acbc, 0xbe46, 0x4ea5, 0x90, 0x12, 0x1d, 0x21, 0x1c, 0x47, 0x3f, 0x71);
     #endregion
 
     #region variables
-    bool _isOnAirATSC = false;
-    IntPtr _tempValue = Marshal.AllocCoTaskMem(1024);
-    IntPtr _tempInstance = Marshal.AllocCoTaskMem(1024);
-    DirectShowLib.IKsPropertySet _propertySet = null;
+
+    readonly bool _isOnAirATSC;
+    readonly IntPtr _tempValue = Marshal.AllocCoTaskMem(1024);
+    readonly IntPtr _tempInstance = Marshal.AllocCoTaskMem(1024);
+    readonly IKsPropertySet _propertySet;
     #endregion
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GenericATSC"/> class.
     /// </summary>
     /// <param name="tunerFilter">The tuner filter.</param>
-    /// <param name="analyzerFilter">The analyzer filter.</param>
-    public OnAirATSC(IBaseFilter tunerFilter, IBaseFilter analyzerFilter)
+    public OnAirATSC(IBaseFilter tunerFilter)
     {
       //May need to add the WDM Filter to the graph for the OnAir tuners Get / Set properties
       //We'll test the BDA filter first in case SDK is dated...
       IPin pin = DsFindPin.ByName(tunerFilter, "MPEG2 Transport");
       if (pin != null)
       {
-        _propertySet = tunerFilter as DirectShowLib.IKsPropertySet;
+        _propertySet = tunerFilter as IKsPropertySet;
         if (_propertySet != null)
         {
           KSPropertySupport supported;
@@ -116,9 +105,11 @@ namespace TvLibrary.Implementations.DVB
 
         //Below is a BDA test as SDK was based on WDM
         int onAirMod = (int)DTVDemodeMode.VSBMODE;
-        if (channel.ModulationType == ModulationType.Mod64Qam) onAirMod = (int)DTVDemodeMode.QAM64_MODE;
-        if (channel.ModulationType == ModulationType.Mod256Qam) onAirMod = (int)DTVDemodeMode.QAM256_MODE;
-        Marshal.WriteInt32(_tempValue, (Int32)onAirMod);
+        if (channel.ModulationType == ModulationType.Mod64Qam)
+          onAirMod = (int)DTVDemodeMode.QAM64_MODE;
+        if (channel.ModulationType == ModulationType.Mod256Qam)
+          onAirMod = (int)DTVDemodeMode.QAM256_MODE;
+        Marshal.WriteInt32(_tempValue, onAirMod);
         hr = _propertySet.Set(guidOnAirNimTuner, (int)NimTunerProperties.INIM_DMODE_MODE, _tempInstance, 32, _tempValue, 4);
         if (hr != 0)
         {
@@ -126,11 +117,11 @@ namespace TvLibrary.Implementations.DVB
         }
       }
       //below is for info only - uncomment if debugging
-      int length;
       if ((supported & KSPropertySupport.Get) == KSPropertySupport.Get)
       {
+        int length;
         Log.Log.Info("OnAirATSC: Get ModulationType");
-        Marshal.WriteInt32(_tempValue, (Int32)0);
+        Marshal.WriteInt32(_tempValue, 0);
         hr = _propertySet.Get(guidOnAirNimTuner, (int)NimTunerProperties.INIM_DMODE_TUNER_ID, _tempInstance, 32, _tempValue, 4, out length);
         Log.Log.Info("OnAirATSC: Get Modulation returned:{0:X} len:{1} value:{2}", hr, length, Marshal.ReadInt32(_tempValue));
         //Added this here to see the the Tuner Get properties report anything also.

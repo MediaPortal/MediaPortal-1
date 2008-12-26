@@ -4,9 +4,7 @@
 //========================================================================
 using System;
 using System.Collections;
-using Gentle.Common;
 using Gentle.Framework;
-using System.Globalization;
 using TvLibrary.Log;
 
 namespace TvDatabase
@@ -17,10 +15,10 @@ namespace TvDatabase
   [TableName("Channel")]
   public class Channel : Persistent
   {
-    Program _currentProgram = null;
-    Program _nextProgram = null;
+    Program _currentProgram;
+    Program _nextProgram;
 
-    ChannelGroup _currentGroup = null;
+    ChannelGroup _currentGroup;
 
     #region Members
     private bool isChanged;
@@ -73,7 +71,7 @@ namespace TvDatabase
       this.externalId = externalId;
       this.freetoair = freetoair;
       this.displayName = displayName;
-      this.epgHasGaps = false;
+      epgHasGaps = false;
     }
 
     /// <summary> 
@@ -95,7 +93,7 @@ namespace TvDatabase
       this.externalId = externalId;
       this.freetoair = freetoair;
       this.displayName = displayName;
-      this.epgHasGaps = false;
+      epgHasGaps = false;
     }
     #endregion
 
@@ -284,8 +282,7 @@ namespace TvDatabase
         try
         {
           base.Persist();
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
           Log.Error("Exception in Channel.Persist() with Message {0}", ex.Message);
           return;
@@ -532,21 +529,14 @@ namespace TvDatabase
       }
     }
 
-    string GetDateTimeString()
-    {
-      string provider = Gentle.Framework.ProviderFactory.GetDefaultProvider().Name.ToLower();
-      if (provider == "mysql") return "yyyy-MM-dd HH:mm:ss";
-      return "yyyyMMdd HH:mm:ss";
-    }
-
     public Program GetProgramAt(DateTime date)
     {
       //IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
       //DateTime startTime = DateTime.Now;
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
       sb.AddConstraint(Operator.Equals, "idChannel", IdChannel);
-      sb.AddConstraint(Operator.GreaterThan,"endTime", date);
-      sb.AddConstraint(Operator.LessThanOrEquals,"startTime", date);
+      sb.AddConstraint(Operator.GreaterThan, "endTime", date);
+      sb.AddConstraint(Operator.LessThanOrEquals, "startTime", date);
       sb.AddOrderByField(true, "startTime");
       sb.SetRowLimit(1);
       SqlStatement stmt = sb.GetStatement(true);
@@ -571,7 +561,6 @@ namespace TvDatabase
       _currentProgram = null;
       _nextProgram = null;
 
-      IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
       DateTime date = DateTime.Now;
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
       sb.AddConstraint(Operator.Equals, "idChannel", IdChannel);
@@ -601,23 +590,23 @@ namespace TvDatabase
 
     public void Delete()
     {
-      Gentle.Framework.Broker.Execute("delete from History WHERE idChannel=" + idChannel.ToString());
-      Gentle.Framework.Broker.Execute("delete from Conflict WHERE idChannel=" + idChannel.ToString());
-      Gentle.Framework.Broker.Execute("delete from Program WHERE idChannel=" + idChannel.ToString());
-      Gentle.Framework.Broker.Execute("delete from Schedule WHERE idChannel=" + idChannel.ToString());
-			// recordings should be stay in the DB
+      Broker.Execute("delete from History WHERE idChannel=" + idChannel);
+      Broker.Execute("delete from Conflict WHERE idChannel=" + idChannel);
+      Broker.Execute("delete from Program WHERE idChannel=" + idChannel);
+      Broker.Execute("delete from Schedule WHERE idChannel=" + idChannel);
+      // recordings should be stay in the DB
       //Gentle.Framework.Broker.Execute("delete from Recording WHERE idChannel=" + idChannel.ToString());
-      Gentle.Framework.Broker.Execute("delete from ChannelMap WHERE idChannel=" + idChannel.ToString());      
-      Gentle.Framework.Broker.Execute("delete from TuningDetail WHERE idChannel=" + idChannel.ToString());
-      
+      Broker.Execute("delete from ChannelMap WHERE idChannel=" + idChannel);
+      Broker.Execute("delete from TuningDetail WHERE idChannel=" + idChannel);
+
       if (IsRadio)
       {
-        Gentle.Framework.Broker.Execute("delete from RadioGroupMap WHERE idChannel=" + idChannel.ToString());
+        Broker.Execute("delete from RadioGroupMap WHERE idChannel=" + idChannel);
       }
       else
       {
-        Gentle.Framework.Broker.Execute("delete from GroupMap WHERE idChannel=" + idChannel.ToString());
-        Gentle.Framework.Broker.Execute("delete from ChannelLinkageMap WHERE idPortalChannel=" + idChannel.ToString() + " OR idLinkedChannel=" + idChannel.ToString());
+        Broker.Execute("delete from GroupMap WHERE idChannel=" + idChannel);
+        Broker.Execute("delete from ChannelLinkageMap WHERE idPortalChannel=" + idChannel + " OR idLinkedChannel=" + idChannel);
       }
       Remove();
     }
@@ -628,7 +617,8 @@ namespace TvDatabase
       {
         if (serviceid == detail.ServiceId)
         {
-          if (String.Compare(detail.Provider, providerName, true) == 0) return detail;
+          if (String.Compare(detail.Provider, providerName, true) == 0)
+            return detail;
         }
       }
       return null;
@@ -638,15 +628,17 @@ namespace TvDatabase
     {
       foreach (TuningDetail detail in ReferringTuningDetail())
       {
-        if (detail.ChannelType == channelType) return true;
+        if (detail.ChannelType == channelType)
+          return true;
       }
       return false;
     }
 
     public bool IsWebstream()
     {
-      IList details = this.ReferringTuningDetail();
-      if (details == null) return false;
+      IList details = ReferringTuningDetail();
+      if (details == null)
+        return false;
       foreach (TuningDetail detail in details)
       {
         if (detail.ChannelType == 5)
@@ -656,8 +648,9 @@ namespace TvDatabase
     }
     public bool IsFMRadio()
     {
-      IList details = this.ReferringTuningDetail();
-      if (details == null) return false;
+      IList details = ReferringTuningDetail();
+      if (details == null)
+        return false;
       foreach (TuningDetail detail in details)
       {
         if (detail.ChannelType == 6)

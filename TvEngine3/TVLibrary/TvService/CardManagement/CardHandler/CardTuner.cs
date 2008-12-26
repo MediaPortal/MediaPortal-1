@@ -20,36 +20,20 @@
  */
 
 using System;
-using System.IO;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-using System.Net;
-using System.Net.Sockets;
-using DirectShowLib.SBE;
 using TvLibrary;
 using TvLibrary.Implementations;
 using TvLibrary.Interfaces;
-using TvLibrary.Implementations.Analog;
-using TvLibrary.Implementations.DVB;
-using TvLibrary.Implementations.Hybrid;
 using TvLibrary.Channels;
-using TvLibrary.Epg;
-using TvLibrary.ChannelLinkage;
 using TvLibrary.Log;
-using TvLibrary.Streaming;
 using TvControl;
-using TvEngine;
 using TvDatabase;
-using TvEngine.Events;
 
 
 namespace TvService
 {
   public class CardTuner
   {
-    ITvCardHandler _cardHandler;
+    readonly ITvCardHandler _cardHandler;
     /// <summary>
     /// Initializes a new instance of the <see cref="CardTuner"/> class.
     /// </summary>
@@ -63,15 +47,17 @@ namespace TvService
     /// <summary>
     /// Tunes the the specified card to the channel.
     /// </summary>
-    /// <param name="cardId">id of the card.</param>
+    /// <param name="user">User</param>
     /// <param name="channel">The channel.</param>
+    /// <param name="idChannel">The channel id</param>
     /// <returns></returns>
     public TvResult Tune(ref User user, IChannel channel, int idChannel)
     {
       ITvSubChannel result = null;
       try
       {
-        if (_cardHandler.DataBaseCard.Enabled == false) return TvResult.CardIsDisabled;
+        if (_cardHandler.DataBaseCard.Enabled == false)
+          return TvResult.CardIsDisabled;
         Log.Info("card: Tune {0} to {1}", _cardHandler.DataBaseCard.IdCard, channel.Name);
         lock (this)
         {
@@ -81,8 +67,7 @@ namespace TvService
             {
               RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
               return RemoteControl.Instance.Tune(ref user, channel, idChannel);
-            }
-            catch (Exception)
+            } catch (Exception)
             {
               Log.Error("card: unable to connect to slave controller at: {0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
               return TvResult.ConnectionToSlaveFailed;
@@ -167,14 +152,14 @@ namespace TvService
             //_cardHandler.Card.FreeSubChannel(result.SubChannelId);
             return TvResult.AllCardsBusy;
           }
-          
+
           //no need to recheck if signal is ok, this is done sooner now.
           /*if (!isLocked)
           {
             _cardHandler.Card.FreeSubChannel(result.SubChannelId);
             return TvResult.NoSignalDetected;
           } 
-          */         
+          */
 
           if (result.IsTimeShifting || result.IsRecording)
           {
@@ -182,16 +167,14 @@ namespace TvService
           }
           return TvResult.Succeeded;
         }
-      }
-      catch (TvExceptionNoSignal tvex)
+      } catch (TvExceptionNoSignal)
       {
         if (result != null)
         {
           _cardHandler.Card.FreeSubChannel(result.SubChannelId);
         }
         return TvResult.NoSignalDetected;
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Write(ex);
         if (result != null)
@@ -206,25 +189,27 @@ namespace TvService
     /// <summary>
     /// Tune the card to the specified channel
     /// </summary>
-    /// <param name="idCard">The id card.</param>
+    /// <param name="user">User</param>
     /// <param name="channel">The channel.</param>
+    /// <param name="dbChannel">The db channel</param>
     /// <returns>TvResult indicating whether method succeeded</returns>
     public TvResult CardTune(ref User user, IChannel channel, Channel dbChannel)
     {
       try
       {
-        if (_cardHandler.DataBaseCard.Enabled == false) return TvResult.CardIsDisabled;
-        
-				try
-				{
-					RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-					if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return TvResult.CardIsDisabled;
-				}
-				catch (Exception)
-				{
-					Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
-					return TvResult.UnknownError;
-				}
+        if (_cardHandler.DataBaseCard.Enabled == false)
+          return TvResult.CardIsDisabled;
+
+        try
+        {
+          RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
+          if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard))
+            return TvResult.CardIsDisabled;
+        } catch (Exception)
+        {
+          Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+          return TvResult.UnknownError;
+        }
 
         TvResult result;
         Log.WriteFile("card: CardTune {0} {1} {2}:{3}:{4}", _cardHandler.DataBaseCard.IdCard, channel.Name, user.Name, user.CardId, user.SubChannel);
@@ -241,8 +226,7 @@ namespace TvService
         result = Tune(ref user, channel, dbChannel.IdChannel);
         Log.Info("card2:{0} {1} {2}", user.Name, user.CardId, user.SubChannel);
         return result;
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Write(ex);
         return TvResult.UnknownError;
@@ -264,17 +248,19 @@ namespace TvService
         {
           RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
           return RemoteControl.Instance.IsTunedToTransponder(_cardHandler.DataBaseCard.IdCard, transponder);
-        }
-        catch (Exception)
+        } catch (Exception)
         {
           Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
           return false;
         }
       }
       ITvSubChannel[] subchannels = _cardHandler.Card.SubChannels;
-      if (subchannels == null) return false;
-      if (subchannels.Length == 0) return false;
-      if (subchannels[0].CurrentChannel == null) return false;
+      if (subchannels == null)
+        return false;
+      if (subchannels.Length == 0)
+        return false;
+      if (subchannels[0].CurrentChannel == null)
+        return false;
       return (false == IsDifferentTransponder(subchannels[0].CurrentChannel, transponder));
     }
 
@@ -283,7 +269,6 @@ namespace TvService
     /// <summary>
     /// Method to check if card can tune to the channel specified
     /// </summary>
-    /// <param name="cardId">id of card.</param>
     /// <param name="channel">channel.</param>
     /// <returns>true if card can tune to the channel otherwise false</returns>
     public bool CanTune(IChannel channel)
@@ -291,26 +276,26 @@ namespace TvService
 
       try
       {
-        if (_cardHandler.DataBaseCard.Enabled == false) return false;
+        if (_cardHandler.DataBaseCard.Enabled == false)
+          return false;
 
-				try
-				{
-					RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-					if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return false;
+        try
+        {
+          RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
+          if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard))
+            return false;
 
-					if (_cardHandler.IsLocal == false)
-					{
-						return RemoteControl.Instance.CanTune(_cardHandler.DataBaseCard.IdCard, channel);
-					}
-				}
-				catch (Exception)
-				{
-					Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
-					return false;
-				}
+          if (_cardHandler.IsLocal == false)
+          {
+            return RemoteControl.Instance.CanTune(_cardHandler.DataBaseCard.IdCard, channel);
+          }
+        } catch (Exception)
+        {
+          Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+          return false;
+        }
         return _cardHandler.Card.CanTune(channel);
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Write(ex);
         return false;
@@ -329,11 +314,14 @@ namespace TvService
       DVBCChannel dvbcChannelNew = transponder2 as DVBCChannel;
       // Check the type of the channel. If they are different, than we are definitely 
       // on a different transponder. This could happen with hybrid card.
-      if (!transponder1.GetType().Equals(transponder2.GetType())) return true;
+      if (!transponder1.GetType().Equals(transponder2.GetType()))
+        return true;
       if (dvbcChannelNew != null)
       {
         DVBCChannel dvbcChannelCurrent = transponder1 as DVBCChannel;
-        if (dvbcChannelNew.Frequency != dvbcChannelCurrent.Frequency) return true;
+        if (dvbcChannelCurrent != null)
+          if (dvbcChannelNew.Frequency != dvbcChannelCurrent.Frequency)
+            return true;
         return false;
       }
 
@@ -341,7 +329,9 @@ namespace TvService
       if (dvbtChannelNew != null)
       {
         DVBTChannel dvbtChannelCurrent = transponder1 as DVBTChannel;
-        if (dvbtChannelNew.Frequency != dvbtChannelCurrent.Frequency) return true;
+        if (dvbtChannelCurrent != null)
+          if (dvbtChannelNew.Frequency != dvbtChannelCurrent.Frequency)
+            return true;
         return false;
       }
 
@@ -349,14 +339,25 @@ namespace TvService
       if (dvbsChannelNew != null)
       {
         DVBSChannel dvbsChannelCurrent = transponder1 as DVBSChannel;
-        if (dvbsChannelNew.Frequency != dvbsChannelCurrent.Frequency) return true;
-        if (dvbsChannelNew.Polarisation != dvbsChannelCurrent.Polarisation) return true;
-        if (dvbsChannelNew.ModulationType != dvbsChannelCurrent.ModulationType) return true;
-        if (dvbsChannelNew.SatelliteIndex != dvbsChannelCurrent.SatelliteIndex) return true;
-        if (dvbsChannelNew.InnerFecRate != dvbsChannelCurrent.InnerFecRate) return true;
-        if (dvbsChannelNew.Pilot != dvbsChannelCurrent.Pilot) return true;
-        if (dvbsChannelNew.Rolloff != dvbsChannelCurrent.Rolloff) return true;
-        if (dvbsChannelNew.DisEqc != dvbsChannelCurrent.DisEqc) return true;
+        if (dvbsChannelCurrent != null)
+        {
+          if (dvbsChannelNew.Frequency != dvbsChannelCurrent.Frequency)
+            return true;
+          if (dvbsChannelNew.Polarisation != dvbsChannelCurrent.Polarisation)
+            return true;
+          if (dvbsChannelNew.ModulationType != dvbsChannelCurrent.ModulationType)
+            return true;
+          if (dvbsChannelNew.SatelliteIndex != dvbsChannelCurrent.SatelliteIndex)
+            return true;
+          if (dvbsChannelNew.InnerFecRate != dvbsChannelCurrent.InnerFecRate)
+            return true;
+          if (dvbsChannelNew.Pilot != dvbsChannelCurrent.Pilot)
+            return true;
+          if (dvbsChannelNew.Rolloff != dvbsChannelCurrent.Rolloff)
+            return true;
+          if (dvbsChannelNew.DisEqc != dvbsChannelCurrent.DisEqc)
+            return true;
+        }
         return false;
       }
 
@@ -364,9 +365,15 @@ namespace TvService
       if (atscChannelNew != null)
       {
         ATSCChannel atscChannelCurrent = transponder1 as ATSCChannel;
-        if (atscChannelNew.MajorChannel != atscChannelCurrent.MajorChannel) return true;
-        if (atscChannelNew.MinorChannel != atscChannelCurrent.MinorChannel) return true;
-        if (atscChannelNew.PhysicalChannel != atscChannelCurrent.PhysicalChannel) return true;
+        if (atscChannelCurrent != null)
+        {
+          if (atscChannelNew.MajorChannel != atscChannelCurrent.MajorChannel)
+            return true;
+          if (atscChannelNew.MinorChannel != atscChannelCurrent.MinorChannel)
+            return true;
+          if (atscChannelNew.PhysicalChannel != atscChannelCurrent.PhysicalChannel)
+            return true;
+        }
         return false;
       }
 
@@ -374,13 +381,23 @@ namespace TvService
       if (analogChannelNew != null)
       {
         AnalogChannel analogChannelCurrent = transponder1 as AnalogChannel;
-        if (analogChannelNew.IsTv != analogChannelCurrent.IsTv) return true;
-        if (analogChannelNew.IsRadio != analogChannelCurrent.IsRadio) return true;
-        if (analogChannelNew.Country.Id != analogChannelCurrent.Country.Id) return true;
-        if (analogChannelNew.VideoSource != analogChannelCurrent.VideoSource) return true;
-        if (analogChannelNew.TunerSource != analogChannelCurrent.TunerSource) return true;
-        if (analogChannelNew.ChannelNumber != analogChannelCurrent.ChannelNumber) return true;
-        if (analogChannelNew.Frequency != analogChannelCurrent.Frequency) return true;
+        if (analogChannelCurrent != null)
+        {
+          if (analogChannelNew.IsTv != analogChannelCurrent.IsTv)
+            return true;
+          if (analogChannelNew.IsRadio != analogChannelCurrent.IsRadio)
+            return true;
+          if (analogChannelNew.Country.Id != analogChannelCurrent.Country.Id)
+            return true;
+          if (analogChannelNew.VideoSource != analogChannelCurrent.VideoSource)
+            return true;
+          if (analogChannelNew.TunerSource != analogChannelCurrent.TunerSource)
+            return true;
+          if (analogChannelNew.ChannelNumber != analogChannelCurrent.ChannelNumber)
+            return true;
+          if (analogChannelNew.Frequency != analogChannelCurrent.Frequency)
+            return true;
+        }
         return false;
       }
 
