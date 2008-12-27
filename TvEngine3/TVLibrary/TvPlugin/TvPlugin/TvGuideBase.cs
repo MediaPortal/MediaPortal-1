@@ -25,13 +25,9 @@
 
 #region usings
 using System;
-using System.Text;
-using System.Diagnostics;
-using System.Threading;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Windows.Forms;
 using System.IO;
 using System.Globalization;
 
@@ -42,8 +38,6 @@ using MediaPortal.Player;
 using MediaPortal.Configuration;
 
 using TvDatabase;
-using Gentle.Common;
-using Gentle.Framework;
 using TvControl;
 
 #endregion
@@ -137,7 +131,7 @@ namespace TvPlugin
     int _channelNumberMaxLength = 3;
     bool _useNewRecordingButtonColor = false;
     bool _notificationEnabled = false;
-
+    bool _recalculateProgramOffset;
     #endregion
 
     #region ctor
@@ -485,6 +479,15 @@ namespace TvPlugin
             SetFocus();
           }
           break;
+        case Action.ActionType.ACTION_TVGUIDE_INCREASE_DAY:
+          OnNextDay();
+          break;
+
+        case Action.ActionType.ACTION_TVGUIDE_DECREASE_DAY:
+          OnPreviousDay();
+          break;
+
+
       }
       base.OnAction(action);
     }
@@ -728,6 +731,7 @@ namespace TvPlugin
               _viewingTime = DateTime.Now;
               _viewingTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, _viewingTime.Hour, _viewingTime.Minute, 0, 0);
               _viewingTime = _viewingTime.AddDays(iDay);
+              _recalculateProgramOffset = true;
               Update(false);
               SetFocus();
               return true;
@@ -1116,7 +1120,7 @@ namespace TvPlugin
             //if (null!=img) _currentChannel=img.Label1;
           }
           Channel channel = (Channel)_channelList[_singleChannelNumber];
-          setGuideHeadngVisibility(false);
+          setGuideHeadingVisibility(false);
           RenderSingleChannel(channel);
         }
         else
@@ -1138,7 +1142,7 @@ namespace TvPlugin
           }
           Dictionary<int, List<Program>> programs = layer.GetProgramsForAllChannels(Utils.longtodate(iStart), Utils.longtodate(iEnd), visibleChannels);
           // make sure the TV Guide heading is visiable and the single channel labels are not.
-          setGuideHeadngVisibility(true);
+          setGuideHeadingVisibility(true);
           setSingleChannelLabelVisibility(false);
           chan = _channelOffset;
           for (int iChannel = 0; iChannel < _channelCount; iChannel++)
@@ -1316,10 +1320,10 @@ namespace TvPlugin
       {
         if (chan < _channelList.Count)
         {
-          Channel tvChan = (Channel)_channelList[chan];
+          Channel tvChan = _channelList[chan];
 
           strLogo = Utils.GetCoverArt(Thumbs.TVChannel, tvChan.DisplayName);
-          if (System.IO.File.Exists(strLogo))
+          if (File.Exists(strLogo))
           {
             GUIButton3PartControl img = GetControl(iChannel + (int)Controls.IMG_CHAN1) as GUIButton3PartControl;
             if (img != null)
@@ -1350,8 +1354,6 @@ namespace TvPlugin
       IList programs = new ArrayList();
       DateTime dtStart = DateTime.Now;
       DateTime dtEnd = dtStart.AddDays(30);
-      long iStart = Utils.datetolong(dtStart);
-      long iEnd = Utils.datetolong(dtEnd);
 
       TvBusinessLayer layer = new TvBusinessLayer();
       programs = layer.GetPrograms(channel, dtStart, dtEnd);
@@ -1363,7 +1365,7 @@ namespace TvPlugin
       GUILabelControl channelLabel = GetControl((int)Controls.SINGLE_CHANNEL_LABEL) as GUILabelControl;
       GUIImage channelImage = GetControl((int)Controls.SINGLE_CHANNEL_IMAGE) as GUIImage;
 
-      strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, channel.DisplayName);
+      strLogo = Utils.GetCoverArt(Thumbs.TVChannel, channel.DisplayName);
       if (channelImage == null)
       {
         if (strLogo.Length > 0)
@@ -1385,7 +1387,7 @@ namespace TvPlugin
           channelImage.YPosition + 10,
           300, 40, "font16", channel.DisplayName, 4294967295, GUIControl.Alignment.Left, true);
         channelLabel.AllocResources();
-        GUIControl temp = (GUIControl)channelLabel;
+        GUIControl temp = channelLabel;
         Add(ref temp);
       }
 
@@ -1399,9 +1401,56 @@ namespace TvPlugin
       {
         channelLabel.Label = channel.DisplayName;
       }
+      if (_recalculateProgramOffset)
+      {
+        _recalculateProgramOffset = false;
+        bool found = false;
+        for (int i = 0; i < programs.Count; i++)
+        {
+          Program program = (Program)programs[i];
+          if (program.StartTime >= _viewingTime)
+          {
+            _programOffset = i;
+            found = true;
+            break;
+          }
+        }
+        if (!found)
+        {
+          _programOffset = programs.Count;
+        }
+      }
+      else if (_programOffset < programs.Count)
+      {
+        int day = ((Program)programs[_programOffset]).StartTime.DayOfYear;
+        bool changed = false;
+        while (day > _viewingTime.DayOfYear)
+        {
+          _viewingTime = _viewingTime.AddDays(1.0);
+          changed = true;
+        }
+        while (day < _viewingTime.DayOfYear)
+        {
+          _viewingTime = _viewingTime.AddDays(-1.0);
+          changed = true;
+        }
+        if (changed)
+        {
+          GUISpinControl cntlDay = GetControl((int)Controls.SPINCONTROL_DAY) as GUISpinControl;
 
-
-
+          // Find first day in TVGuide and set spincontrol position 
+          int iDay = CalcDays();
+          for (; iDay < 0; ++iDay)
+          {
+            _viewingTime = _viewingTime.AddDays(1.0);
+          }
+          for (; iDay >= MaxDaysInGuide; --iDay)
+          {
+            _viewingTime = _viewingTime.AddDays(-1.0);
+          }
+          cntlDay.Value = iDay;
+        }
+      }
       // ichan = number of rows
       for (int ichan = 0; ichan < _channelCount; ++ichan)
       {
@@ -1422,7 +1471,18 @@ namespace TvPlugin
           program = (Program)programs[offset + ichan];
         else
         {
-          program = new Program(channel.IdChannel, DateTime.Now, DateTime.Now, "-", "-", "-", false, DateTime.MinValue, string.Empty, string.Empty, -1, string.Empty, -1);
+          program = (Program)programs[programs.Count - 1];
+          if (program.EndTime.DayOfYear == _viewingTime.DayOfYear)
+          {
+            program = new Program(channel.IdChannel, program.EndTime, program.EndTime, "-", "-", "-", false,
+                                  DateTime.MinValue, string.Empty, string.Empty, -1, string.Empty, -1);
+          }
+          else
+          {
+            program = new Program(channel.IdChannel, _viewingTime, _viewingTime, "-", "-", "-", false,
+                                  DateTime.MinValue, string.Empty, string.Empty, -1, string.Empty, -1);
+
+          }
         }
 
         int ypos = GetControl(ichan + (int)Controls.IMG_CHAN1).YPosition;
@@ -1507,7 +1567,7 @@ namespace TvPlugin
             program.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
             program.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
-          if (program.StartTime.Date != DateTime.Now.Date)
+          if (program.StartTime.DayOfYear != _viewingTime.DayOfYear)
           {
             img.Label1 = String.Format("{0} {1}", Utils.GetShortDayString(program.StartTime), program.Title);
           }
@@ -2088,6 +2148,12 @@ namespace TvPlugin
       }
       if (_singleChannelView)
       {
+        if (_cursorX == 0 && _programOffset == 0 && _cursorY == 0)
+        {
+          _cursorX = -1;
+          GetControl((int)Controls.SPINCONTROL_DAY).Focus = true;
+          return;
+        }
         if (_cursorX > 0)
         {
           _cursorX--;
@@ -2629,6 +2695,7 @@ namespace TvPlugin
         _backupChannelOffset = _channelOffset;
 
         _programOffset = _cursorY = _cursorX = 0;
+        _recalculateProgramOffset = true;
       }
       else
       {
@@ -2939,6 +3006,7 @@ namespace TvPlugin
     void OnNextDay()
     {
       _viewingTime = _viewingTime.AddDays(1.0);
+      _recalculateProgramOffset = true;
       Update(false);
       SetFocus();
     }
@@ -2946,6 +3014,7 @@ namespace TvPlugin
     void OnPreviousDay()
     {
       _viewingTime = _viewingTime.AddDays(-1.0);
+      _recalculateProgramOffset = true;
       Update(false);
       SetFocus();
     }
@@ -3389,7 +3458,7 @@ namespace TvPlugin
       return timeFromNow;
     }
 
-    void setGuideHeadngVisibility(bool visible)
+    void setGuideHeadingVisibility(bool visible)
     {
       // can't rely on the heading text control having a unique id, so locate it using the localised heading string.
       // todo: update all skins to have a unique id for this control...?
@@ -3409,12 +3478,23 @@ namespace TvPlugin
     {
       GUILabelControl channelLabel = GetControl((int)Controls.SINGLE_CHANNEL_LABEL) as GUILabelControl;
       GUIImage channelImage = GetControl((int)Controls.SINGLE_CHANNEL_IMAGE) as GUIImage;
+      GUISpinControl timeInterval = GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL) as GUISpinControl;
 
       if (channelLabel != null)
+      {
         channelLabel.Visible = visible;
+      }
 
       if (channelImage != null)
+      {
         channelImage.Visible = visible;
+      }
+
+      if (timeInterval != null)
+      {
+        timeInterval.Visible = !visible;
+      }
+
 
     }
 
