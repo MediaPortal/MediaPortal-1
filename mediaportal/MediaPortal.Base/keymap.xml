@@ -928,6 +928,18 @@
       <sound />
       <description>goto current time</description>
     </action>
+    <action>
+      <id>9991</id>
+      <key>I</key>
+      <sound />
+      <description>Increase Day</description>
+    </action>
+    <action>
+      <id>9992</id>
+      <key>U</key>
+      <sound />
+      <description>Decrease Day</description>
+    </action>
   </window>
   <window>
     <id>3001</id>
