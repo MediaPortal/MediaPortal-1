@@ -524,12 +524,14 @@ namespace MediaPortal.Configuration.Sections
           string sharePathData = xmlreader.GetValueAsString(section, sharePath, "");
           string sharePinData = MediaPortal.Util.Utils.DecryptPin(xmlreader.GetValueAsString(section, sharePin, ""));
 
-          // provide one default share
+          // provide default shares
           if (index == 0 && shareNameData == string.Empty)
           {
             shareNameData = Util.VirtualDirectory.GetShareNameDefault(defaultSharePath);
             sharePathData = defaultSharePath;
             sharePinData = string.Empty;
+
+            AddStaticShares(DriveType.DVD, "DVD");
           }
 
           bool shareTypeData = xmlreader.GetValueAsBool(section, shareType, false);
@@ -555,11 +557,6 @@ namespace MediaPortal.Configuration.Sections
           }
         }
       }
-
-      //
-      // Add static shares
-      //
-      AddStaticShares(DriveType.DVD, "DVD");
     }
 
     protected void SaveSettings(string section)
