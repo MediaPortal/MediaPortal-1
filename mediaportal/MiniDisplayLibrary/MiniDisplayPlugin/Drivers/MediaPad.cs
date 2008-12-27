@@ -37,10 +37,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
   /// <author>JoeDalton</author>
   public class MediaPad : BaseDisplay, IDisplay
   {
-    private double mediaPadId; //Unique ID of the Mediapad
-    private double mediaPadLcdId; //Unique ID of the Mediapad LCD display
-    private bool isDisabled = false;
-    private string errorMessage;
+    private readonly double mediaPadId; //Unique ID of the Mediapad
+    private readonly double mediaPadLcdId; //Unique ID of the Mediapad LCD display
+    private readonly bool isDisabled;
+    private readonly string errorMessage;
 
     public MediaPad()
     {
@@ -61,12 +61,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     }
 
     #region IDisplay Members
-
-    public void Setup(string s, int a, int b, int c, int d, int e, int q, bool f, int g, bool h, int i, bool r)
-    {
-      //
-      return;
-    }
 
     public bool IsDisabled
     {
@@ -145,19 +139,22 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     }
 
     /// <summary>
-    /// Initializes the driver
+    /// Initializes the display
     /// </summary>
-    /// <param name="port">ignored</param>
-    /// <param name="lines">ignored</param>
-    /// <param name="cols">ignored</param>
-    /// <param name="delay">ignored</param>
-    /// <param name="linesG">ignored</param>
-    /// <param name="colsG">ignored</param>
-    /// <param name="timeG">ignored</param>
-    /// <param name="backLight">ignored</param>
-    /// <param name="contrast">ignored</param>
-    public void Setup(string port, int lines, int cols, int delay, int linesG, int colsG, int timeG, bool backLight,
-                      int contrast)
+    /// <param name="_port">The port the display is connected to</param>
+    /// <param name="_lines">The number of lines in text mode</param>
+    /// <param name="_cols">The number of columns in text mode</param>
+    /// <param name="_delay">Communication delay in text mode</param>
+    /// <param name="_linesG">The height in pixels in graphic mode</param>
+    /// <param name="_colsG">The width in pixels in graphic mode</param>
+    /// <param name="_delayG">Communication delay in graphic mode</param>
+    /// <param name="_backLight">Backlight on?</param>
+    /// <param name="_backLightLevel">Backlight level</param>
+    /// <param name="_contrast">Contrast on?</param>
+    /// <param name="_contrastLevel">Contrast level</param>
+    /// <param name="_blankOnExit">Blank on exit?</param>
+    public void Setup(string _port, int _lines, int _cols, int _delay, int _linesG, int _colsG, int _delayG,
+                      bool _backLight, int _backLightLevel, bool _contrast, int _contrastLevel, bool _blankOnExit)
     {
       Log.Info("MiniDisplay: Found Logitech diNovo Mediapad with ID {0} and LCD ID {1}", mediaPadId, mediaPadLcdId);
       SetDisplayMode(ScreenMode.Normal);
@@ -215,8 +212,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     /// <param name="mode">The <see cref="ScreenMode"/> to set the display to.</param>
     private void SetDisplayMode(ScreenMode mode)
     {
-      Status res;
-      res = SetMode(mediaPadLcdId, mode);
+      Status res = SetMode(mediaPadLcdId, mode);
       if (res != Status.Success)
       {
         Log.Warn("MiniDisplay: Could not switch Mediapad to time mode ({0})", res.ToString());
@@ -228,8 +224,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     /// </summary>
     private void Beep()
     {
-      Status res;
-      res = MakeBeep(mediaPadLcdId);
+      Status res = MakeBeep(mediaPadLcdId);
       if (res != Status.Success)
       {
         Log.Warn("MiniDisplay: Could not make Mediapad beep ({0}", res.ToString());

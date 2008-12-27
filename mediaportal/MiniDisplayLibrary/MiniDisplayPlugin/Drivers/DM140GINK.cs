@@ -33,7 +33,6 @@ using MediaPortal.Player;
 using MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Control;
 using MediaPortal.TV.Recording;
 
-
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
   /// <summary>
@@ -50,8 +49,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     #region Readonly Fields
 
-    private readonly int lines = 2;
-    private readonly bool isDisabled = false;
+    private const int lines = 2;
+    private readonly bool isDisabled;
     private readonly string errorMessage = "";
 
     #endregion
@@ -75,12 +74,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     #endregion
 
     #region IDisplay Members
-
-    public void Setup(string s, int a, int b, int c, int d, int e, int q, bool f, int g, bool h, int i, bool r)
-    {
-      //
-      return;
-    }
 
     public void CleanUp()
     {
@@ -166,8 +159,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         vfd.writeLine(line, RemoveDiacritics(message));
 
         //Volume calculation
-        int vol;
-        vol = VolumeHandler.Instance.Volume / 2730;
+        int vol = VolumeHandler.Instance.Volume / 2730;
 
         // Display symbols
         // LiveTV, LiveRadio
@@ -290,9 +282,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     /// <param name="_colsG">The width in pixels in graphic mode</param>
     /// <param name="_delayG">Communication delay in graphic mode</param>
     /// <param name="_backLight">Backlight on?</param>
-    /// <param name="_contrast">Contrast setting</param>
+    /// <param name="_backLightLevel">Backlight level</param>
+    /// <param name="_contrast">Contrast on?</param>
+    /// <param name="_contrastLevel">Contrast level</param>
+    /// <param name="_blankOnExit">Blank on exit?</param>
     public void Setup(string _port, int _lines, int _cols, int _delay, int _linesG, int _colsG, int _delayG,
-                      bool _backLight, int _contrast)
+                      bool _backLight, int _backLightLevel, bool _contrast, int _contrastLevel, bool _blankOnExit)
     {
       try
       {
