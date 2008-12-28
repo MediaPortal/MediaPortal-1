@@ -126,7 +126,9 @@ namespace MediaPortal.GUI.Library
       GUI_MSG_SHOW_BALLONTIP_SONGCHANGE = 88, // rtv
       GUI_MSG_STOP_SERVER_TIMESHIFTING = 89, //joboehl
       GUI_MSG_AUDIOVOLUME_CHANGED = 90, //joboehl 
-      GUI_MSG_CALLBACK = 91 // dero: callback in MPMain thread
+      GUI_MSG_CALLBACK = 91, // dero: callback in MPMain thread
+      GUI_MSG_BLURAY_DISK_INSERTED =92,
+      GUI_MSG_HDDVD_DISK_INSERTED = 93
     };
 
     private string _label = "";

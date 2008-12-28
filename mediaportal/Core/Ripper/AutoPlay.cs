@@ -54,7 +54,9 @@ namespace MediaPortal.Ripper
       AUDIO_CD = 2,
       PHOTOS = 3,
       VIDEOS = 4,
-      AUDIO = 5
+      AUDIO = 5,
+      BLURAY = 6,
+      HDDVD = 7
     }
 
     #endregion
@@ -71,7 +73,6 @@ namespace MediaPortal.Ripper
     /// </summary>
     static AutoPlay()
     {
-
       m_dvd = "No";
       m_audiocd = "No";
       allfiles = new ArrayList();
@@ -156,8 +157,6 @@ namespace MediaPortal.Ripper
       msg.Label = DriveLetter;
       msg.SendToTargetWindow = true;
       GUIWindowManager.SendThreadMessage(msg);
-
-
     }
 
     /// <summary>
@@ -257,40 +256,6 @@ namespace MediaPortal.Ripper
       GUIMessage msg;
       switch (DetectMediaType(strDrive))
       {
-        //case MediaType.DVD:
-        //  Log.Info("ExamineCD: DVD inserted into drive {0}", strDrive);
-
-        //  bool PlayDVD = false;
-        //  if (m_dvd == "Yes")
-        //  {
-        //    // Automaticaly play the CD
-        //    PlayDVD = true;
-        //    Log.Info("DVD Autoplay = auto");
-        //  }
-        //  else if (m_dvd == "Ask")
-        //  {
-        //    if (ShouldWeAutoPlay(MediaType.DVD))
-        //    {
-        //      PlayDVD = true;
-        //      Log.Info("DVD Autoplay = ask,answer = yes");
-        //    }
-        //    else
-        //    {
-        //      Log.Info("DVD Autoplay = ask, answer = no");
-        //    }
-        //  }
-        //  if (PlayDVD)
-        //  {
-        //    // dont interrupt if we're already playing
-        //    if (g_Player.Playing && g_Player.IsDVD) return;
-
-        //    // We are going to autoplay if..
-        //    //Log.Write ("We seem to want to play the DVD");
-        //    Log.Info("Autoplay:start DVD in {0}", strDrive);
-        //    g_Player.PlayDVD(strDrive + @"\VIDEO_TS\VIDEO_TS.IFO");
-        //  }
-        //  break;
-
         case MediaType.AUDIO_CD:
           Log.Info("ExamineCD: Audio CD inserted into drive {0}", strDrive);
           //m_audiocd tells us if we want to autoplay or not.
@@ -366,6 +331,20 @@ namespace MediaPortal.Ripper
       GUIMessage msg;
       switch (DetectMediaType(strDrive))
       {
+        case MediaType.BLURAY:
+          Log.Info("BLU-RAY volume inserted {0}", strDrive);
+          GUIMessage msgBluray = new GUIMessage(GUIMessage.MessageType.GUI_MSG_BLURAY_DISK_INSERTED, 0, 0, 0, 0, 0, null);
+          msgBluray.Label = strDrive;
+          GUIGraphicsContext.SendMessage(msgBluray);
+          break;
+
+        case MediaType.HDDVD:
+          Log.Info("HD DVD volume inserted {0}", strDrive);
+          GUIMessage msgHDDVD = new GUIMessage(GUIMessage.MessageType.GUI_MSG_HDDVD_DISK_INSERTED, 0, 0, 0, 0, 0, null);
+          msgHDDVD.Label = strDrive;
+          GUIGraphicsContext.SendMessage(msgHDDVD);
+          break;
+
         case MediaType.DVD:
           Log.Info("DVD volume inserted {0}", strDrive);
           if (m_dvd == "Yes")
@@ -505,12 +484,11 @@ namespace MediaPortal.Ripper
         if (Directory.Exists(strDrive + "\\VIDEO_TS"))
           return MediaType.DVD;
 
-        // following has been replaced by isARedBookCD:
-        //string[] files = Directory.GetFiles(strDrive + "\\", "*.cda");
-        //if (files != null && files.Length != 0)
-        //{
-        //  return MediaType.AUDIO_CD;
-        //}
+        if (File.Exists(strDrive + "\\BDMV\\index.bdmv"))
+          return MediaType.BLURAY;
+
+        if (Directory.Exists(strDrive + "\\HVDVD_TS"))
+          return MediaType.HDDVD;
 
         if (isARedBookCD(strDrive))
           return MediaType.AUDIO_CD;
