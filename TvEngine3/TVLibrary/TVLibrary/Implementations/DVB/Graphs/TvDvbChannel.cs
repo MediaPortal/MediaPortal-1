@@ -986,7 +986,7 @@ namespace TvLibrary.Implementations.DVB
                 //                }
                 //                _channelInfo.pcr_pid = channel.PcrPid;
                 // update any service scrambled / unscambled changes
-                if (_channelInfo.scrambled == channel.FreeToAir)
+                if (_channelInfo.scrambled = channel.FreeToAir)
                 {
                   channel.FreeToAir = !_channelInfo.scrambled;
                 }
