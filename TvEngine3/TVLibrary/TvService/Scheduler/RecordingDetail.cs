@@ -19,6 +19,7 @@
  *
  */
 using System;
+using System.Text.RegularExpressions;
 using TvDatabase;
 
 namespace TvService
@@ -279,6 +280,10 @@ namespace TvService
       {
         subDirectory = Utils.RemoveTrailingSlash(subDirectory);
         subDirectory = Utils.MakeDirectoryPath(subDirectory);
+
+        /* Replace any trailing dots in path name; Bugfix for Mantis 1881 */
+        subDirectory = new Regex(@"\.*$").Replace(subDirectory, "");
+
         fullPath = recordingPath + "\\" + subDirectory;
         if (!System.IO.Directory.Exists(fullPath))
           System.IO.Directory.CreateDirectory(fullPath);
