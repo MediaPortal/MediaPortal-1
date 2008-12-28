@@ -217,7 +217,6 @@ namespace MediaPortal.Configuration
         // The initial hint allows to choose a mode so we need to ask before loading that setting
         advancedMode = xmlreader.GetValueAsBool("general", "AdvancedConfigMode", false);
       }
-      
       toolStripButtonSwitchAdvanced.Text = AdvancedMode ? "Switch to standard mode" : "Switch to expert mode";
       GUILocalizeStrings.Load(strLanguage);
       // Register Bass.Net
@@ -257,6 +256,8 @@ namespace MediaPortal.Configuration
       }
 
       Log.Info("settingsform constructor done");
+      GUIGraphicsContext.Skin = Config.GetFile(Config.Dir.Skin, "Blue3", string.Empty);
+      Log.Info("SKIN : " + GUIGraphicsContext.Skin);
     }
 
     #region Section handling

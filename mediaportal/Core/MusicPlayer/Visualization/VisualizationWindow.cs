@@ -26,6 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Data;
@@ -627,7 +628,7 @@ namespace MediaPortal.Visualization
           return;
 
         // If we got heare as a result of the Configuration.exe app there's no skin file to load
-        if (GUIGraphicsContext.Skin.Length == 0)
+        if (Process.GetCurrentProcess().ProcessName.Equals("Configuration"))
           return;
 
         string skinFilePath = System.IO.Path.Combine(System.Windows.Forms.Application.StartupPath,

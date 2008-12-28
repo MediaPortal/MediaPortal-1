@@ -78,8 +78,11 @@ namespace MediaPortal.Visualization
 
             if (!isValidVizObject || oCom == null)
             {
+              if (oCom != null)
+              {
                 DirectShowUtil.ReleaseComObject(oCom);
-                iWmpEffects = null;
+              }
+              iWmpEffects = null;
                 throw new Exception("Object is not a IWMPEffects interface!");
             }
         }
