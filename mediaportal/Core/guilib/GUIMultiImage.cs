@@ -289,39 +289,13 @@ namespace MediaPortal.GUI.Library
         LoadDirectory();
 
       // Randomize or sort our images if necessary
-      //if (m_randomized)
-      //  random_shuffle(m_files.begin(), m_files.end());
+      if (m_randomized && m_files.Count > 1)
+        Random_Shuffle(ref m_files);
 
       for (int i = 0; i < m_files.Count; i++)
       {
         GUIImage pImage = new GUIImage(ParentID, GetID, _positionX, _positionY, _width, _height, m_files[i], 0);
-
         m_images.Add(pImage);
-      }
-
-      //randomize the images if specified by skin
-      if (m_randomized && m_images.Count > 1)
-      {
-        //create a second list to work with and copy ordered images to it
-        List<GUIImage> randomlist = new List<GUIImage>();
-        randomlist.AddRange(m_images);
-        //Log.Info("m_images.Count is {0}", m_images.Count.ToString());
-        //clear the images from the original list so that we can add them back randomly
-        m_images.Clear();
-        int randomCount = randomlist.Count;
-        //Log.Info("{0} files to sort", randomCount.ToString());
-        Random r = new Random();
-        int randomnum;
-
-        for (int i = 0; i < randomCount; i++)
-        {
-          randomnum = r.Next(0, randomlist.Count - 1);
-          //add random image to image list
-          m_images.Add(randomlist[randomnum]);
-          //Log.Info("Added image {0} to m_images", randomnum.ToString());
-          //remove said image from our second list so it wont be picked again
-          randomlist.RemoveAt(randomnum);
-        }
       }
 
       // Load in the current image, and reset our timer
@@ -456,6 +430,19 @@ namespace MediaPortal.GUI.Library
 
       // flag as loaded - no point in antly reloading them
       m_directoryLoaded = true;
+    }
+
+    // Shuffles inplace.
+    public void Random_Shuffle(ref List<string> listToShuffle)
+    {
+      Random r = new Random();
+      for (int i = listToShuffle.Count - 1; i > 1; --i)
+      {
+        int randIndx = r.Next(i);
+        string temp = listToShuffle[i];
+        listToShuffle[i] = listToShuffle[randIndx]; // move random num to end of list.
+        listToShuffle[randIndx] = temp;
+      }
     }
 
   }
