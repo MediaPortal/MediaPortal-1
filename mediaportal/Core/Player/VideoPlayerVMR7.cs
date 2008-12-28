@@ -759,7 +759,7 @@ namespace MediaPortal.Player
           {
             if (basicAudio != null)
             {
-              // Divide by 100 to get equivalent decibel value. For example, –10,000 is –100 dB. 
+              // Divide by 100 to get equivalent decibel value. For example, ï¿½10,000 is ï¿½100 dB. 
               float fPercent = (float)m_iVolume / 100.0f;
               int iVolume = (int)(5000.0f * fPercent);
               basicAudio.put_Volume((iVolume - 5000));
@@ -1304,7 +1304,8 @@ namespace MediaPortal.Player
           //Get the trackname part by removing the language part from the string.
           streamName = regex.Replace(streamName, "").Trim();
           //Put things back together
-          streamName = language + (streamName == string.Empty ? "" : " [" + streamName + "]");
+          //streamName = language +(streamName == string.Empty ? "" : " [" + streamName + "]");
+          //if you do the above the subtitle preference for mkv embedded subtitles are not matched to the configuration settings.
         }
         return streamName;
       }

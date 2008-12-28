@@ -361,12 +361,10 @@ namespace MediaPortal.Player
             if (useVobSub != false)
             {
               Log.Info("VideoPlayerVMR9: Setting DirectVobsub parameters");
-              //string defaultLanguage;
               string strTmp = "";
               string strFont = xmlreader.GetValueAsString("subtitles", "fontface", "Arial");
               int iFontSize = xmlreader.GetValueAsInt("subtitles", "fontsize", 18);
               bool bBold = xmlreader.GetValueAsBool("subtitles", "bold", true);
-              //defaultLanguage = xmlreader.GetValueAsString("subtitles", "language", "English");
               strTmp = xmlreader.GetValueAsString("subtitles", "color", "ffffff");
               long iColor = Convert.ToInt64(strTmp, 16);
               int iShadow = xmlreader.GetValueAsInt("subtitles", "shadow", 5);

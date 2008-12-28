@@ -1322,9 +1322,7 @@ namespace DShowNET.Helper
             {
               FilterInfo filter_infos = new FilterInfo();
               foundfilter[0].QueryFilterInfo(out filter_infos);
-
-              Log.Info("GetFilterByName: {0}, {1}", name, filter_infos.achName);
-
+              Log.Debug("GetFilterByName: {0}, {1}", name, filter_infos.achName);
               if (filter_infos.achName.LastIndexOf(name) != -1)
               {
                 ReleaseComObject(ienumFilt); ienumFilt = null;
@@ -1332,7 +1330,8 @@ namespace DShowNET.Helper
               }
               ReleaseComObject(foundfilter[0]);
             }
-          } while (iFetched == 1 && hr == 0);
+          }
+          while (iFetched == 1 && hr == 0);
           if (ienumFilt != null)
             ReleaseComObject(ienumFilt);
           ienumFilt = null;
