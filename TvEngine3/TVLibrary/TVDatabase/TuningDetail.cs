@@ -67,6 +67,8 @@ namespace TvDatabase
     private int pcrPid;
     [TableColumn("videoSource", NotNull = true)]
     private int videoSource;
+    [TableColumn("audioSource", NotNull = true)]
+    private int audioSource;
     [TableColumn("tuningSource", NotNull = true)]
     private int tuningSource;
     [TableColumn("videoPid", NotNull = true)]
@@ -94,7 +96,7 @@ namespace TvDatabase
     /// <summary> 
     /// Create a new object by specifying all fields (except the auto-generated primary key field). 
     /// </summary> 
-    public TuningDetail(int idChannel, string name, string provider, int channelType, int channelNumber, int frequency, int countryId, bool isRadio, bool isTv, int networkId, int transportId, int serviceId, int pmtPid, bool freeToAir, int modulation, int polarisation, int symbolrate, int diseqc, int switchingFrequency, int bandwidth, int majorChannel, int minorChannel, int pcrPid, int videoSource, int tuningSource, int videoPid, int audioPid, int band, int satIndex, int innerFecRate, int pilot, int rollOff, string url, int bitrate)
+    public TuningDetail(int idChannel, string name, string provider, int channelType, int channelNumber, int frequency, int countryId, bool isRadio, bool isTv, int networkId, int transportId, int serviceId, int pmtPid, bool freeToAir, int modulation, int polarisation, int symbolrate, int diseqc, int switchingFrequency, int bandwidth, int majorChannel, int minorChannel, int pcrPid, int videoSource, int audioSource, int tuningSource, int videoPid, int audioPid, int band, int satIndex, int innerFecRate, int pilot, int rollOff, string url, int bitrate)
     {
       isChanged = true;
       this.idChannel = idChannel;
@@ -121,6 +123,7 @@ namespace TvDatabase
       this.minorChannel = minorChannel;
       this.pcrPid = pcrPid;
       this.videoSource = videoSource;
+      this.audioSource = audioSource;
       this.tuningSource = tuningSource;
       this.audioPid = audioPid;
       this.videoPid = videoPid;
@@ -137,7 +140,7 @@ namespace TvDatabase
     /// Create an object from an existing row of data. This will be used by Gentle to 
     /// construct objects from retrieved rows. 
     /// </summary> 
-    public TuningDetail(int idTuning, int idChannel, string name, string provider, int channelType, int channelNumber, int frequency, int countryId, bool isRadio, bool isTv, int networkId, int transportId, int serviceId, int pmtPid, bool freeToAir, int modulation, int polarisation, int symbolrate, int diseqc, int switchingFrequency, int bandwidth, int majorChannel, int minorChannel, int pcrPid, int videoSource, int tuningSource, int videoPid, int audioPid, int band, int satIndex, int innerFecRate, int pilot, int rollOff, string url, int bitrate)
+    public TuningDetail(int idTuning, int idChannel, string name, string provider, int channelType, int channelNumber, int frequency, int countryId, bool isRadio, bool isTv, int networkId, int transportId, int serviceId, int pmtPid, bool freeToAir, int modulation, int polarisation, int symbolrate, int diseqc, int switchingFrequency, int bandwidth, int majorChannel, int minorChannel, int pcrPid, int videoSource, int audioSource, int tuningSource, int videoPid, int audioPid, int band, int satIndex, int innerFecRate, int pilot, int rollOff, string url, int bitrate)
     {
       this.idTuning = idTuning;
       this.idChannel = idChannel;
@@ -164,6 +167,7 @@ namespace TvDatabase
       this.minorChannel = minorChannel;
       this.pcrPid = pcrPid;
       this.videoSource = videoSource;
+      this.audioSource = audioSource;
       this.tuningSource = tuningSource;
       this.audioPid = audioPid;
       this.videoPid = videoPid;
@@ -425,6 +429,15 @@ namespace TvDatabase
     {
       get { return videoSource; }
       set { isChanged |= videoSource != value; videoSource = value; }
+    }
+
+    /// <summary>
+    /// Property relating to database column audioSource
+    /// </summary>
+    public int AudioSource
+    {
+      get { return audioSource; }
+      set { isChanged |= audioSource != value; audioSource = value; }
     }
 
     /// <summary>

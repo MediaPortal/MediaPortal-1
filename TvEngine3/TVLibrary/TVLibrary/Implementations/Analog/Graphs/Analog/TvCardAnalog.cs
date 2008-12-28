@@ -3630,6 +3630,7 @@ namespace TvLibrary.Implementations.Analog
 
     #region scanning interface
     ///<summary>
+    /// Returns the channel scanner interface
     ///</summary>
     ///<returns></returns>
     public IAnalogChanelScan GetChannelScanner()

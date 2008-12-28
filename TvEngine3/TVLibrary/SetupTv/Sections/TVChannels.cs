@@ -721,6 +721,7 @@ namespace SetupTv.Sections
           AddAttribute(nodeTune, "TuningSource", detail.TuningSource);
           AddAttribute(nodeTune, "VideoPid", detail.VideoPid);
           AddAttribute(nodeTune, "VideoSource", detail.VideoSource);
+          AddAttribute(nodeTune, "AudioSource", (int)detail.AudioSource);
           AddAttribute(nodeTune, "SatIndex", detail.SatIndex);
           AddAttribute(nodeTune, "InnerFecRate", detail.InnerFecRate);
           AddAttribute(nodeTune, "Band", detail.Band);
@@ -933,6 +934,7 @@ namespace SetupTv.Sections
                 int tuningSource = Int32.Parse(GetNodeAttribute(nodeTune, "TuningSource", "0"));
                 int videoPid = Int32.Parse(GetNodeAttribute(nodeTune, "VideoPid", "-1"));
                 int videoSource = Int32.Parse(GetNodeAttribute(nodeTune, "VideoSource", "0"));
+                int audioSource = Int32.Parse(GetNodeAttribute(nodeTune, "AudioSource", "0"));
                 int SatIndex = Int32.Parse(GetNodeAttribute(nodeTune, "SatIndex", "-1"));
                 int InnerFecRate = Int32.Parse(GetNodeAttribute(nodeTune, "InnerFecRate", "-1"));
                 int band = Int32.Parse(GetNodeAttribute(nodeTune, "Band", "0"));
@@ -952,6 +954,7 @@ namespace SetupTv.Sections
                     analogChannel.IsTv = isTv;
                     analogChannel.Name = name;
                     analogChannel.TunerSource = (TunerInputType)tuningSource;
+                    analogChannel.AudioSource = (AnalogChannel.AudioInputType)audioSource;
                     analogChannel.VideoSource = (AnalogChannel.VideoInputType)videoSource;
                     layer.AddTuningDetails(dbChannel, analogChannel);
                     Log.Info("TvChannels: Added tuning details for analog channel: {0} number: {1}", name, channelNumber);

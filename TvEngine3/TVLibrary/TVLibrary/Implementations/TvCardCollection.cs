@@ -83,6 +83,17 @@ namespace TvLibrary.Implementations
           //break;  maybe more than one B2C2 card ?
         }
       }
+      devices = DsDevice.GetDevicesOfCat(FilterCategory.WDMStreamingEncoderDevices);
+      for (int i = 0; i < devices.Length; ++i)
+      {
+        if (String.Compare(devices[i].Name, "Hauppauge HD PVR Encoder", true) == 0)
+        {
+          Log.Log.WriteFile("Detected Hauppauge HD PVR");
+          TvCardHDPVR card = new TvCardHDPVR(devices[i]);
+          _cards.Add(card);
+        }
+      }
+
 
       devices = DsDevice.GetDevicesOfCat(FilterCategory.BDASourceFiltersCategory);
       if (devices.Length > 0)

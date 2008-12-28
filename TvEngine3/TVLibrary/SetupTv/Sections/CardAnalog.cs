@@ -690,6 +690,33 @@ namespace SetupTv.Sections
       tuningDetail.VideoSource = AnalogChannel.VideoInputType.RgbInput3;
       layer.AddTuningDetails(dbChannel, tuningDetail);
       layer.MapChannelToCard(card, dbChannel, false);
+      dbChannel = layer.AddChannel("", "YRYBY#1 on " + card.IdCard);
+      dbChannel.IsTv = true;
+      dbChannel.Persist();
+      tuningDetail = new AnalogChannel();
+      tuningDetail.IsTv = true;
+      tuningDetail.Name = dbChannel.Name;
+      tuningDetail.VideoSource = AnalogChannel.VideoInputType.YRYBYInput1;
+      layer.AddTuningDetails(dbChannel, tuningDetail);
+      layer.MapChannelToCard(card, dbChannel, false);
+      dbChannel = layer.AddChannel("", "YRYBY#2 on " + card.IdCard);
+      dbChannel.IsTv = true;
+      dbChannel.Persist();
+      tuningDetail = new AnalogChannel();
+      tuningDetail.IsTv = true;
+      tuningDetail.Name = dbChannel.Name;
+      tuningDetail.VideoSource = AnalogChannel.VideoInputType.YRYBYInput2;
+      layer.AddTuningDetails(dbChannel, tuningDetail);
+      layer.MapChannelToCard(card, dbChannel, false);
+      dbChannel = layer.AddChannel("", "YRYBY#3 on " + card.IdCard);
+      dbChannel.IsTv = true;
+      dbChannel.Persist();
+      tuningDetail = new AnalogChannel();
+      tuningDetail.IsTv = true;
+      tuningDetail.Name = dbChannel.Name;
+      tuningDetail.VideoSource = AnalogChannel.VideoInputType.YRYBYInput3;
+      layer.AddTuningDetails(dbChannel, tuningDetail);
+      layer.MapChannelToCard(card, dbChannel, false);
       MessageBox.Show(this, "Channels added.");
     }
 

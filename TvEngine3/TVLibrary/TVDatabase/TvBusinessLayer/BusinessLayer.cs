@@ -465,6 +465,7 @@ namespace TvDatabase
             analogChannel.Name = detail.Name;
             analogChannel.TunerSource = (TunerInputType)detail.TuningSource;
             analogChannel.VideoSource = (AnalogChannel.VideoInputType)detail.VideoSource;
+            analogChannel.AudioSource = (AnalogChannel.AudioInputType)detail.AudioSource;
             return analogChannel;
           case 1: //ATSCChannel
             ATSCChannel atscChannel = new ATSCChannel();
@@ -573,6 +574,7 @@ namespace TvDatabase
             analogChannel.Name = channel.Name; //detail.Name;
             analogChannel.TunerSource = (TunerInputType)detail.TuningSource;
             analogChannel.VideoSource = (AnalogChannel.VideoInputType)detail.VideoSource;
+            analogChannel.AudioSource = (AnalogChannel.AudioInputType)detail.AudioSource;
             tvChannels.Add(analogChannel);
             break;
           case 1: //ATSCChannel
@@ -726,6 +728,7 @@ namespace TvDatabase
       bool isTv = false;
       int tunerSource = 0;
       int videoInputType = 0;
+      int audioInputType = 0;
       int symbolRate = 0;
       int modulation = 0;
       int polarisation = 0;
@@ -761,6 +764,7 @@ namespace TvDatabase
         isTv = analogChannel.IsTv;
         tunerSource = (int)analogChannel.TunerSource;
         videoInputType = (int)analogChannel.VideoSource;
+        audioInputType = (int)analogChannel.AudioSource;
         channelType = 0;
       }
 
@@ -831,7 +835,7 @@ namespace TvDatabase
                               channelType, channelNumber, (int)channelFrequency, country, isRadio, isTv,
                               networkId, transportId, serviceId, pmtPid, freeToAir,
                               modulation, polarisation, symbolRate, diseqc, switchFrequency,
-                              bandwidth, majorChannel, minorChannel, pcrPid, videoInputType, tunerSource, videoPid, audioPid, band, satIndex, innerFecRate, pilot, rollOff, "", 0);
+                              bandwidth, majorChannel, minorChannel, pcrPid, videoInputType, audioInputType, tunerSource, videoPid, audioPid, band, satIndex, innerFecRate, pilot, rollOff, "", 0);
       detail.Persist();
       return detail;
     }
@@ -846,6 +850,7 @@ namespace TvDatabase
       bool isTv = false;
       int tunerSource = 0;
       int videoInputType = 0;
+      int audioInputType = 0;
       int symbolRate = 0;
       int modulation = 0;
       int polarisation = 0;
@@ -881,6 +886,7 @@ namespace TvDatabase
         isTv = analogChannel.IsTv;
         tunerSource = (int)analogChannel.TunerSource;
         videoInputType = (int)analogChannel.VideoSource;
+        audioInputType = (int)analogChannel.AudioSource;
         channelType = 0;
       }
       ATSCChannel atscChannel = tvChannel as ATSCChannel;
@@ -969,6 +975,7 @@ namespace TvDatabase
       detail.MinorChannel = minorChannel;
       detail.PcrPid = pcrPid;
       detail.VideoSource = videoInputType;
+      detail.AudioSource = audioInputType;
       detail.TuningSource = tunerSource;
       detail.VideoPid = videoPid;
       detail.AudioPid = audioPid;
@@ -991,6 +998,7 @@ namespace TvDatabase
       bool isTv = channel.IsTv;
       const int tunerSource = 0;
       const int videoInputType = 0;
+      const int audioInputType = 0;
       const int symbolRate = 0;
       const int modulation = 0;
       const int polarisation = 0;
@@ -1020,7 +1028,7 @@ namespace TvDatabase
                               channelType, channelNumber, (int)channelFrequency, country, isRadio, isTv,
                               networkId, transportId, serviceId, pmtPid, freeToAir,
                               modulation, polarisation, symbolRate, diseqc, switchFrequency,
-                              bandwidth, majorChannel, minorChannel, pcrPid, videoInputType, tunerSource, videoPid, audioPid, band, satIndex, innerFecRate, pilot, rollOff, url, bitrate);
+                              bandwidth, majorChannel, minorChannel, pcrPid, videoInputType, audioInputType, tunerSource, videoPid, audioPid, band, satIndex, innerFecRate, pilot, rollOff, url, bitrate);
       detail.Persist();
       return detail;
     }
@@ -1035,6 +1043,7 @@ namespace TvDatabase
       bool isTv = channel.IsTv;
       const int tunerSource = 0;
       const int videoInputType = 0;
+      const int audioInputType = 0;
       const int symbolRate = 0;
       const int modulation = 0;
       const int polarisation = 0;
@@ -1064,7 +1073,7 @@ namespace TvDatabase
                               channelType, channelNumber, (int)channelFrequency, country, isRadio, isTv,
                               networkId, transportId, serviceId, pmtPid, freeToAir,
                               modulation, polarisation, symbolRate, diseqc, switchFrequency,
-                              bandwidth, majorChannel, minorChannel, pcrPid, videoInputType, tunerSource, videoPid, audioPid, band, satIndex, innerFecRate, pilot, rollOff, url, bitrate);
+                              bandwidth, majorChannel, minorChannel, pcrPid, videoInputType, audioInputType, tunerSource, videoPid, audioPid, band, satIndex, innerFecRate, pilot, rollOff, url, bitrate);
       detail.Persist();
       return detail;
     }

@@ -212,6 +212,8 @@
     </Compile>
     <EmbeddedResource Include="39_upgrade_mysql_database.sql" />
     <EmbeddedResource Include="39_upgrade_sqlserver_database.sql" />
+    <EmbeddedResource Include="41_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="41_upgrade_sqlserver_database.sql" />
     <None Include="App.config" />
     <EmbeddedResource Include="create_mysql_database.sql" />
     <EmbeddedResource Include="create_sqlserver_database.sql" />

@@ -74,12 +74,14 @@
     <Compile Include="DeviceSorter.cs" />
     <Compile Include="Implementations\Analog\Graphs\Analog\Cards\hauppauge.cs" />
     <Compile Include="Implementations\Analog\Graphs\Analog\AnalogSubChannel.cs" />
+    <Compile Include="Implementations\Analog\Graphs\Analog\HDPVRChannel.cs" />
     <Compile Include="Implementations\Analog\Graphs\Analog\QualityControl\CodecAPIControl.cs" />
     <Compile Include="Implementations\Analog\Graphs\Analog\QualityControl\BaseControl.cs" />
     <Compile Include="Implementations\Analog\Graphs\Analog\QualityControl\EncoderAPIControl.cs" />
     <Compile Include="Implementations\Analog\Graphs\Analog\QualityControl\QualityControlFactory.cs" />
     <Compile Include="Implementations\Analog\Graphs\Analog\QualityControl\VideoEncoderControl.cs" />
     <Compile Include="Implementations\Analog\Graphs\Analog\TvCardAnalog.cs" />
+    <Compile Include="Implementations\Analog\Graphs\Analog\TVCardHDPVR.cs" />
     <Compile Include="Implementations\BaseSubChannel.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\ConditionalAccessContext.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\ConexantBDA.cs" />

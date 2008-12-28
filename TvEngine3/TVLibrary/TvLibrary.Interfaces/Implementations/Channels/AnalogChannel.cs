@@ -76,7 +76,65 @@ namespace TvLibrary.Implementations
       /// <summary>
       /// RGB input #3
       /// </summary>
-      RgbInput3
+      RgbInput3,
+      /// <summary>
+      /// RGB input #1
+      /// </summary>
+      YRYBYInput1,
+      /// <summary>
+      /// RGB input #2
+      /// </summary>
+      YRYBYInput2,
+      /// <summary>
+      /// RGB input #3
+      /// </summary>
+      YRYBYInput3
+    }
+    /// <summary>
+    /// Audio input type
+    /// </summary>
+    public enum AudioInputType
+    {
+      /// <summary>
+      /// Tuner input
+      /// </summary>
+      Tuner,
+      /// <summary>
+      /// AUX input #1
+      /// </summary>
+      AUXInput1,
+      /// <summary>
+      /// AUX input #2
+      /// </summary>
+      AUXInput2,
+      /// <summary>
+      /// AUX input #3
+      /// </summary>
+      AUXInput3,
+      /// <summary>
+      /// Line input #1
+      /// </summary>
+      LineInput1,
+      /// <summary>
+      /// Line input #2
+      /// </summary>
+      LineInput2,
+      /// <summary>
+      /// Line input #3
+      /// </summary>
+      LineInput3,
+      /// <summary>
+      /// SPDIF input #1
+      /// </summary>
+      SPDIFInput1,
+      /// <summary>
+      /// SPDIF input #2
+      /// </summary>
+      SPDIFInput2,
+      /// <summary>
+      /// SPDIF input #3
+      /// </summary>
+      SPDIFInput3
     }
     #endregion
 
@@ -88,6 +146,7 @@ namespace TvLibrary.Implementations
     bool _isRadio;
     TunerInputType _tunerSource;
     VideoInputType _videoInputType;
+    AudioInputType _audioInputType;
 
     #endregion
 
@@ -102,6 +161,7 @@ namespace TvLibrary.Implementations
       _country = collection.GetTunerCountryFromID(31);
       TunerSource = TunerInputType.Cable;
       _videoInputType = VideoInputType.Tuner;
+      _audioInputType = AudioInputType.AUXInput1;
       _channelNumber = 4;
       _isRadio = false;
       Name = String.Empty;
@@ -123,6 +183,22 @@ namespace TvLibrary.Implementations
       set
       {
         _videoInputType = value;
+      }
+    }
+
+    /// <summary>
+    /// Gets or sets the audio source.
+    /// </summary>
+    /// <value>The audio source.</value>
+    public AudioInputType AudioSource
+    {
+      get
+      {
+        return _audioInputType;
+      }
+      set
+      {
+        _audioInputType = value;
       }
     }
 
@@ -241,8 +317,8 @@ namespace TvLibrary.Implementations
     public override string ToString()
     {
       string line = IsRadio ? "radio:" : "tv:";
-      line += String.Format("{0} Freq:{1} Channel:{2} Country:{3} Tuner:{4} Video:{5}",
-        Name, Frequency, ChannelNumber, Country.Name, TunerSource, VideoSource);
+      line += String.Format("{0} Freq:{1} Channel:{2} Country:{3} Tuner:{4} Video:{5} Audio:{6}",
+        Name, Frequency, ChannelNumber, Country.Name, TunerSource, VideoSource, AudioSource);
       return line;
     }
 
@@ -260,6 +336,8 @@ namespace TvLibrary.Implementations
         return false;
       AnalogChannel ch = obj as AnalogChannel;
       if (ch.VideoSource != VideoSource)
+        return false;
+      if (ch.AudioSource != AudioSource)
         return false;
       if (ch.TunerSource != TunerSource)
         return false;
@@ -287,7 +365,7 @@ namespace TvLibrary.Implementations
     {
       return base.GetHashCode() ^ _channelName.GetHashCode() ^ _channelFrequency.GetHashCode() ^
              _channelNumber.GetHashCode() ^ _country.GetHashCode() ^ _isRadio.GetHashCode() ^
-              _tunerSource.GetHashCode() ^ _videoInputType.GetHashCode();
+              _tunerSource.GetHashCode() ^ _videoInputType.GetHashCode() ^ _audioInputType.GetHashCode();
     }
   }
 }

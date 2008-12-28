@@ -119,6 +119,7 @@ namespace SetupTv.Sections
               else
                 analogChannel.TunerSource = TunerInputType.Antenna;
               analogChannel.VideoSource = (AnalogChannel.VideoInputType)comboBoxVideoSource.SelectedIndex;
+              analogChannel.AudioSource = (AnalogChannel.AudioInputType)comboBoxAudioSource.SelectedIndex;
               analogChannel.Frequency = (int)GetFrequency(textBoxAnalogFrequency.Text, "2");
 
               layer.AddTuningDetails(_channel, analogChannel);
@@ -386,6 +387,7 @@ namespace SetupTv.Sections
           else
             detail.TuningSource = (int)TunerInputType.Antenna;
           detail.VideoSource = comboBoxVideoSource.SelectedIndex;
+          detail.AudioSource = comboBoxAudioSource.SelectedIndex;
           detail.Frequency = (int)GetFrequency(textBoxAnalogFrequency.Text, "2");
           detail.Persist();
         }
@@ -588,6 +590,7 @@ namespace SetupTv.Sections
           CountryCollection collection = new CountryCollection();
           comboBoxCountry.SelectedIndex = detail.CountryId;
           comboBoxVideoSource.SelectedIndex = detail.VideoSource;
+          comboBoxAudioSource.SelectedIndex = detail.AudioSource;
           textBoxAnalogFrequency.Text = SetFrequency(detail.Frequency, "2");
         }
 
