@@ -959,7 +959,7 @@ namespace MediaPortal.Util
         // 2nd pattern matches ?cd?## and ?disc?## for example -cd2 which is cd 2.
         //     ? is -_ or space (second ? is optional), ## is 1 or 2 digits
         string[] pattern = {"\\[[0-9]{1,2}-[0-9]{1,2}\\]",
-														 "[-_ ](CD|cd|DISC|disc|part|Part|DVD)[-_ ]{0,1}[0-9]{1,2}"};
+														 "[-_ ]\\({0,1}(CD|cd|DISC|disc|part|Part|DVD)[-_ ]{0,1}[0-9]{1,2}\\){0,1}"};
 
         // Strip the extensions and make everything lowercase
         string strFileName1 = System.IO.Path.GetFileNameWithoutExtension(strFile1).ToLower();
@@ -995,7 +995,7 @@ namespace MediaPortal.Util
 
       if (strFileName == null) return;
       string[] pattern = {"\\[[0-9]{1,2}-[0-9]{1,2}\\]",
-													 "[-_ ](CD|cd|DISC|disc|part|Part|DVD)[-_ ]{0,1}[0-9]{1,2}"};
+													 "[-_ ]\\({0,1}(CD|cd|DISC|disc|part|Part|DVD)[-_ ]{0,1}[0-9]{1,2}\\){0,1}"};
       for (int i = 0; i < pattern.Length; i++)
       {
         // See if we can find the special patterns in both filenames
