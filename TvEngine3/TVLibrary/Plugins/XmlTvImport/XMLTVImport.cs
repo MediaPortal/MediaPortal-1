@@ -23,15 +23,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Text;
 using System.Threading;
 using System.Xml;
 
 using TvDatabase;
 using TvLibrary.Log;
-using TvLibrary.Implementations;
 
-using Gentle.Common;
 using Gentle.Framework;
 
 namespace TvEngine
@@ -195,12 +192,10 @@ namespace TvEngine
       }*/
 
       //TVDatabase.SupressEvents = true;
-      bool useTimeZone = false;
-      int timeZoneCorrection = 0;
-      useTimeZone = layer.GetSetting("xmlTvUseTimeZone", "true").Value == "true";
+      bool useTimeZone = layer.GetSetting("xmlTvUseTimeZone", "false").Value == "true";
       int hours = Int32.Parse(layer.GetSetting("xmlTvTimeZoneHours", "0").Value);
       int mins = Int32.Parse(layer.GetSetting("xmlTvTimeZoneMins", "0").Value);
-      timeZoneCorrection = hours * 60 + mins;
+      int timeZoneCorrection = hours * 60 + mins;
 
       ArrayList Programs = new ArrayList();
       Dictionary<int, ChannelPrograms> dChannelPrograms = new Dictionary<int, ChannelPrograms>();
@@ -532,7 +527,10 @@ namespace TvEngine
                     }
                   }
 
-                  // add timezone correction
+                  //
+                  // add time correction
+                  //
+
                   // correct program starttime
                   DateTime dateTimeStart = longtodate(startDate);
                   dateTimeStart = dateTimeStart.AddMinutes(timeZoneCorrection);
@@ -540,20 +538,14 @@ namespace TvEngine
                   if (useTimeZone)
                   {
                     int off = GetTimeOffset(timeZoneStart);
-                    int h = off / 100;                // 220 -> 2,  -220 -> -2
-                    int m = off - (h * 100);     // 220 -> 20, -220 -> -20
+                    int h = off / 100;             // 220 -> 2,  -220 -> -2
+                    int m = off - (h * 100);       // 220 -> 20, -220 -> -20
 
-                    // convert to UTC
                     dateTimeStart = dateTimeStart.AddHours(-h);
                     dateTimeStart = dateTimeStart.AddMinutes(-m);
-
-                    // and back to local time
-                    dateTimeStart = dateTimeStart.ToLocalTime();
                   }
-
                   startDate = datetolong(dateTimeStart);
-
-
+        
                   if (nodeStop != null)
                   {
                     // correct program endtime
@@ -563,17 +555,12 @@ namespace TvEngine
                     if (useTimeZone)
                     {
                       int off = GetTimeOffset(timeZoneEnd);
-                      int h = off / 100;                // 220 -> 2,  -220 -> -2
+                      int h = off / 100;           // 220 -> 2,  -220 -> -2
                       int m = off - (h * 100);     // 220 -> 20, -220 -> -20
 
-                      // convert to UTC
                       dateTimeEnd = dateTimeEnd.AddHours(-h);
                       dateTimeEnd = dateTimeEnd.AddMinutes(-m);
-
-                      // and back to local time
-                      dateTimeEnd = dateTimeEnd.ToLocalTime();
                     }
-
                     stopDate = datetolong(dateTimeEnd);
                   }
                   else stopDate = startDate;

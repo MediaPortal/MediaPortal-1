@@ -383,9 +383,9 @@ namespace SetupTv.Sections
       this.checkBox1.AutoSize = true;
       this.checkBox1.Location = new System.Drawing.Point(9, 158);
       this.checkBox1.Name = "checkBox1";
-      this.checkBox1.Size = new System.Drawing.Size(288, 17);
+      this.checkBox1.Size = new System.Drawing.Size(265, 17);
       this.checkBox1.TabIndex = 22;
-      this.checkBox1.Text = "Apply timezone compensation when loading tvguide.xml";
+      this.checkBox1.Text = "Apply time compensation when loading tvguide.xml";
       this.checkBox1.UseVisualStyleBackColor = true;
       // 
       // buttonBrowse
@@ -892,12 +892,12 @@ namespace SetupTv.Sections
       this.saveFileExport.Title = "Export the mapped guidechannels";
       this.saveFileExport.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileExport_FileOk);
       // 
-      // XmlSetup
+      // XmlTvSetup
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.tabControl1);
-      this.Name = "XmlSetup";
+      this.Name = "XmlTvSetup";
       this.Size = new System.Drawing.Size(483, 450);
       this.Load += new System.EventHandler(this.XmlSetup_Load);
       this.tabControl1.ResumeLayout(false);

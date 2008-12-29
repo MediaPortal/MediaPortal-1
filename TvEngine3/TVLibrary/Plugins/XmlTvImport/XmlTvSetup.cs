@@ -23,12 +23,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Globalization;
 using System.Drawing;
 using System.Text;
 using System.Xml;
 using System.Windows.Forms;
-using TvControl;
 using TvDatabase;
 using TvEngine;
 using TvLibrary.Log;
@@ -37,7 +35,7 @@ using Tst;
 
 namespace SetupTv.Sections
 {
-  public partial class XmlTvSetup : SetupTv.SectionSettings
+  public partial class XmlTvSetup : SectionSettings
   {
     public XmlTvSetup()
       : this("XmlTv")
@@ -119,7 +117,7 @@ namespace SetupTv.Sections
     {
       TvBusinessLayer layer = new TvBusinessLayer();
       textBoxFolder.Text = layer.GetSetting("xmlTv", System.IO.Directory.GetCurrentDirectory()).Value;
-      checkBox1.Checked = layer.GetSetting("xmlTvUseTimeZone", "true").Value == "true";
+      checkBox1.Checked = layer.GetSetting("xmlTvUseTimeZone", "false").Value == "true";
       cbImportXML.Checked = layer.GetSetting("xmlTvImportXML", "true").Value == "true";
       cbImportLST.Checked = layer.GetSetting("xmlTvImportLST", "false").Value == "true";
       checkBoxDeleteBeforeImport.Checked = layer.GetSetting("xmlTvDeleteBeforeImport", "true").Value == "true";
