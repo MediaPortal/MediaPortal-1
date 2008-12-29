@@ -59,7 +59,6 @@ namespace MediaPortal.DeployTool.InstallationChecks
       {
         return false;
       }
-      return false;
     }
     public bool UnInstall()
     {

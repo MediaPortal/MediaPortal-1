@@ -23,9 +23,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Net.Sockets;
 
 namespace MediaPortal.DeployTool.InstallationChecks
@@ -45,7 +42,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
         clnt.Close();
         return true;
       }
-      catch (Exception ex)
+      catch
       {
         return false;
       }
