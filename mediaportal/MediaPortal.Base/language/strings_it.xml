@@ -1751,6 +1751,9 @@
     <String id="103009" prefix="La Mia ">TV/Mini EPG</String>
     <String id="103011" prefix="La Mia ">TV/Impostazioni Ritaglio</String>
     <String id="104711" prefix="La Mia ">Wikipedia</String>
+    <String id="105000">Allarme</String>
+    <String id="105001">Allarme - Dettagli allarme</String>
+    <String id="105002">Allarme - Tempo di sleep</String>
     <String id="105900" prefix="I Miei ">Trailers</String>
     <String id="106666">Power Scheduler in attesa</String>
     <String id="107700" prefix="La Mia ">TV/Televideo</String>
