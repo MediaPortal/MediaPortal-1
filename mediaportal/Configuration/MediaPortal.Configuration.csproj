@@ -638,6 +638,10 @@
     <Compile Include="WizardForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <EmbeddedResource Include="Sections\BaseShares.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>BaseShares.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Sections\BaseViews.resx">
       <SubType>Designer</SubType>
       <DependentUpon>BaseViews.cs</DependentUpon>

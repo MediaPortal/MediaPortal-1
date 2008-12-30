@@ -217,7 +217,7 @@ namespace MediaPortal.Configuration
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(168, 23);
       this.label3.TabIndex = 23;
-      this.label3.Text = "folder on the remote ftp server";
+      this.label3.Text = "Folder on the remote ftp server";
       // 
       // label8
       // 
@@ -347,9 +347,9 @@ namespace MediaPortal.Configuration
       this.label2.AutoSize = true;
       this.label2.Location = new System.Drawing.Point(16, 72);
       this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(62, 13);
+      this.label2.Size = new System.Drawing.Size(155, 13);
       this.label2.TabIndex = 8;
-      this.label2.Text = "Local folder";
+      this.label2.Text = "Media folder / optical disk drive";
       // 
       // nameTextBox
       // 
@@ -396,7 +396,7 @@ namespace MediaPortal.Configuration
       // EditShareForm
       // 
       this.AcceptButton = this.okButton;
-      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.CancelButton = this.cancelButton;
       this.ClientSize = new System.Drawing.Size(426, 402);
       this.Controls.Add(this.okButton);
