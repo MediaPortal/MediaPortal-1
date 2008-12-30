@@ -623,6 +623,7 @@ namespace SetupTv.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxFolder.Location = new System.Drawing.Point(23, 186);
       this.textBoxFolder.Name = "textBoxFolder";
+      this.textBoxFolder.ReadOnly = true;
       this.textBoxFolder.Size = new System.Drawing.Size(326, 20);
       this.textBoxFolder.TabIndex = 2;
       this.textBoxFolder.TextChanged += new System.EventHandler(this.textBoxFolder_TextChanged);
@@ -656,9 +657,9 @@ namespace SetupTv.Sections
       this.buttonTimeShiftBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonTimeShiftBrowse.Location = new System.Drawing.Point(355, 236);
       this.buttonTimeShiftBrowse.Name = "buttonTimeShiftBrowse";
-      this.buttonTimeShiftBrowse.Size = new System.Drawing.Size(23, 20);
+      this.buttonTimeShiftBrowse.Size = new System.Drawing.Size(51, 20);
       this.buttonTimeShiftBrowse.TabIndex = 21;
-      this.buttonTimeShiftBrowse.Text = "...";
+      this.buttonTimeShiftBrowse.Text = "Browse";
       this.buttonTimeShiftBrowse.UseVisualStyleBackColor = true;
       this.buttonTimeShiftBrowse.Click += new System.EventHandler(this.buttonTimeShiftBrowse_Click);
       // 
@@ -667,9 +668,9 @@ namespace SetupTv.Sections
       this.buttonBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonBrowse.Location = new System.Drawing.Point(355, 186);
       this.buttonBrowse.Name = "buttonBrowse";
-      this.buttonBrowse.Size = new System.Drawing.Size(23, 20);
+      this.buttonBrowse.Size = new System.Drawing.Size(51, 20);
       this.buttonBrowse.TabIndex = 4;
-      this.buttonBrowse.Text = "...";
+      this.buttonBrowse.Text = "Browse";
       this.buttonBrowse.UseVisualStyleBackColor = true;
       this.buttonBrowse.Click += new System.EventHandler(this.buttonBrowse_Click);
       // 
@@ -688,6 +689,7 @@ namespace SetupTv.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxTimeShiftFolder.Location = new System.Drawing.Point(23, 236);
       this.textBoxTimeShiftFolder.Name = "textBoxTimeShiftFolder";
+      this.textBoxTimeShiftFolder.ReadOnly = true;
       this.textBoxTimeShiftFolder.Size = new System.Drawing.Size(326, 20);
       this.textBoxTimeShiftFolder.TabIndex = 19;
       this.textBoxTimeShiftFolder.TextChanged += new System.EventHandler(this.textBoxTimeShiftFolder_TextChanged);
