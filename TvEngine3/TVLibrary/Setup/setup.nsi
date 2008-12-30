@@ -1,7 +1,7 @@
-#region Copyright (C) 2005-2008 Team MediaPortal
+#region Copyright (C) 2005-2009 Team MediaPortal
 
 /* 
- *	Copyright (C) 2005-2008 Team MediaPortal
+ *	Copyright (C) 2005-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -23,30 +23,44 @@
 
 #endregion
 
+#---------------------------------------------------------------------------
+# SPECIAL BUILDS
+#---------------------------------------------------------------------------
+# Uncomment the following line to create a setup for "Heise Verlag" / ct' magazine  (without Gabest Filters)
+;!define HEISE_BUILD
+# swtich for command line execution: /DHEISE_BUILD
 
-# DEFINES
+# Uncomment the following line to create a setup in debug mode
+;!define BUILD_TYPE "Debug"
+# swtich for command line execution: /DBUILD_TYPE=Debug
+# by default BUILD_TYPE is set to "Release"
+!ifndef BUILD_TYPE
+  !define BUILD_TYPE "Release"
+!endif
+
+#---------------------------------------------------------------------------
+# DEVELOPMENT ENVIRONMENT
+#---------------------------------------------------------------------------
+# path definitions
 !define svn_ROOT "..\..\.."
 !define svn_MP "${svn_ROOT}\mediaportal"
 !define svn_TVServer "${svn_ROOT}\TvEngine3\TVLibrary"
 !define svn_DeployTool "${svn_ROOT}\Tools\MediaPortal.DeployTool"
 !define svn_InstallScripts "${svn_ROOT}\Tools\InstallationScripts"
 
+# additional path definitions
+!define TVSERVER.BASE "${svn_TVServer}\TVServer.Base"
+!define MEDIAPORTAL.FILTERBIN "${svn_ROOT}\DirectShowFilters\bin\${BUILD_TYPE}"
+!define MEDIAPORTAL.BASE "${svn_MP}\MediaPortal.Base"
+
 #**********************************************************************************************************#
 #
 #   For building the installer on your own you need:
-#       1. Lastest NSIS version from http://nsis.sourceforge.net/Download
-#       2. The xml-plugin from http://nsis.sourceforge.net/XML_plug-in
+#       1. Latest NSIS version from http://nsis.sourceforge.net/Download
 #
 #**********************************************************************************************************#
 Name "MediaPortal TV Server / Client"
 SetCompressor /SOLID lzma
-
-!define TVSERVER.BASE "..\TVServer.Base"
-!define MEDIAPORTAL.FILTERBIN "..\..\..\DirectShowFilters\bin\Release"
-!define MEDIAPORTAL.BASE "..\..\..\mediaportal\MediaPortal.Base"
-
-!define BUILD_TYPE "Release"
-;!define BUILD_TYPE "Debug"
 
 #---------------------------------------------------------------------------
 # VARIABLES
@@ -83,12 +97,19 @@ Var RemoveAll       ; Set, when the user decided to uninstall everything
 !ifndef VER_BUILD
     !define VER_BUILD   0
 !endif
-!if ${VER_BUILD} == 0       # it's a stable release
+
+
+!if ${BUILD_TYPE} == "Debug"
+    !define VERSION "1.0 >>DEBUG<< build ${VER_BUILD} for TESTING ONLY"
+!else
+  !if ${VER_BUILD} == 0       # it's a stable release
     !define VERSION "1.0"
-!else                       # it's an svn reöease
+  !else                       # it's an svn reöease
     !define VERSION "1.0 SVN build ${VER_BUILD} for TESTING ONLY"
+  !endif
 !endif
 BrandingText "$(^Name) ${VERSION} by ${COMPANY}"
+
 
 !define INSTALL_LOG
 
@@ -275,37 +296,37 @@ ${MementoSection} "MediaPortal TV Server" SecServer
 
   ; The Plugin Directory
   SetOutPath $INSTDIR\Plugins
-  File ..\Plugins\ComSkipLauncher\bin\Release\ComSkipLauncher.dll
-  File ..\Plugins\ConflictsManager\bin\Release\ConflictsManager.dll
+  File ..\Plugins\ComSkipLauncher\bin\${BUILD_TYPE}\ComSkipLauncher.dll
+  File ..\Plugins\ConflictsManager\bin\${BUILD_TYPE}\ConflictsManager.dll
   # removed it because it is not working like it should
-  #File ..\Plugins\PersonalTVGuide\bin\Release\PersonalTVGuide.dll
-  File ..\Plugins\PowerScheduler\bin\Release\PowerScheduler.dll
-  File ..\Plugins\ServerBlaster\ServerBlaster\bin\Release\ServerBlaster.dll
-  File ..\Plugins\TvMovie\bin\Release\TvMovie.dll
-  File ..\Plugins\XmlTvImport\bin\Release\XmlTvImport.dll
+  #File ..\Plugins\PersonalTVGuide\bin\${BUILD_TYPE}\PersonalTVGuide.dll
+  File ..\Plugins\PowerScheduler\bin\${BUILD_TYPE}\PowerScheduler.dll
+  File ..\Plugins\ServerBlaster\ServerBlaster\bin\${BUILD_TYPE}\ServerBlaster.dll
+  File ..\Plugins\TvMovie\bin\${BUILD_TYPE}\TvMovie.dll
+  File ..\Plugins\XmlTvImport\bin\${BUILD_TYPE}\XmlTvImport.dll
 
   ; Rest of Files
   SetOutPath $INSTDIR
-  File ..\DirectShowLib\bin\Release\DirectShowLib.dll
-  File ..\Plugins\PluginBase\bin\Release\PluginBase.dll
-  File ..\Plugins\PowerScheduler\PowerScheduler.Interfaces\bin\Release\PowerScheduler.Interfaces.dll
-  File "..\Plugins\ServerBlaster\ServerBlaster (Learn)\bin\Release\Blaster.exe"
-  File ..\SetupTv\bin\Release\SetupTv.exe
-  File ..\SetupTv\bin\Release\SetupTv.exe.config
-  File ..\TvControl\bin\Release\TvControl.dll
-  File ..\TVDatabase\bin\Release\TVDatabase.dll
+  File ..\DirectShowLib\bin\${BUILD_TYPE}\DirectShowLib.dll
+  File ..\Plugins\PluginBase\bin\${BUILD_TYPE}\PluginBase.dll
+  File ..\Plugins\PowerScheduler\PowerScheduler.Interfaces\bin\${BUILD_TYPE}\PowerScheduler.Interfaces.dll
+  File "..\Plugins\ServerBlaster\ServerBlaster (Learn)\bin\${BUILD_TYPE}\Blaster.exe"
+  File ..\SetupTv\bin\${BUILD_TYPE}\SetupTv.exe
+  File ..\SetupTv\bin\${BUILD_TYPE}\SetupTv.exe.config
+  File ..\TvControl\bin\${BUILD_TYPE}\TvControl.dll
+  File ..\TVDatabase\bin\${BUILD_TYPE}\TVDatabase.dll
   File ..\TVDatabase\references\Gentle.Common.DLL
   File ..\TVDatabase\references\Gentle.Framework.DLL
   File ..\TVDatabase\references\Gentle.Provider.MySQL.dll
   File ..\TVDatabase\references\Gentle.Provider.SQLServer.dll
   File ..\TVDatabase\references\log4net.dll
   File ..\TVDatabase\references\MySql.Data.dll
-  File ..\TVDatabase\TvBusinessLayer\bin\Release\TvBusinessLayer.dll
-  File ..\TvLibrary.Interfaces\bin\Release\TvLibrary.Interfaces.dll
-  File ..\TVLibrary\bin\Release\TVLibrary.dll
-  File ..\TvService\bin\Release\TvService.exe
-  File ..\TvService\bin\Release\TvService.exe.config
-  File ..\SetupControls\bin\Release\SetupControls.dll
+  File ..\TVDatabase\TvBusinessLayer\bin\${BUILD_TYPE}\TvBusinessLayer.dll
+  File ..\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll
+  File ..\TVLibrary\bin\${BUILD_TYPE}\TVLibrary.dll
+  File ..\TvService\bin\${BUILD_TYPE}\TvService.exe
+  File ..\TvService\bin\${BUILD_TYPE}\TvService.exe.config
+  File ..\SetupControls\bin\${BUILD_TYPE}\SetupControls.dll
 
   ; 3rd party assemblys
   File "${TVSERVER.BASE}\dvblib.dll"
@@ -476,17 +497,17 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
   #---------------------------- File Copy ----------------------
   ; Common Files
   SetOutPath "$MPdir.Base"
-  File ..\Plugins\PowerScheduler\PowerScheduler.Interfaces\bin\Release\PowerScheduler.Interfaces.dll
-  File ..\TvControl\bin\Release\TvControl.dll
-  File ..\TVDatabase\bin\Release\TVDatabase.dll
+  File ..\Plugins\PowerScheduler\PowerScheduler.Interfaces\bin\${BUILD_TYPE}\PowerScheduler.Interfaces.dll
+  File ..\TvControl\bin\${BUILD_TYPE}\TvControl.dll
+  File ..\TVDatabase\bin\${BUILD_TYPE}\TVDatabase.dll
   File ..\TVDatabase\references\Gentle.Common.DLL
   File ..\TVDatabase\references\Gentle.Framework.DLL
   File ..\TVDatabase\references\Gentle.Provider.MySQL.dll
   File ..\TVDatabase\references\Gentle.Provider.SQLServer.dll
   File ..\TVDatabase\references\log4net.dll
   File ..\TVDatabase\references\MySql.Data.dll
-  File ..\TVDatabase\TvBusinessLayer\bin\Release\TvBusinessLayer.dll
-  File ..\TvLibrary.Interfaces\bin\Release\TvLibrary.Interfaces.dll
+  File ..\TVDatabase\TvBusinessLayer\bin\${BUILD_TYPE}\TvBusinessLayer.dll
+  File ..\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll
   
   ;Gentle.Config
   SetOutPath "$MPdir.Config"
@@ -494,9 +515,9 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
 
   ; The Plugins
   SetOutPath "$MPdir.Plugins\Process"
-  File ..\Plugins\PowerScheduler\ClientPlugin\bin\Release\PowerSchedulerClientPlugin.dll
+  File ..\Plugins\PowerScheduler\ClientPlugin\bin\${BUILD_TYPE}\PowerSchedulerClientPlugin.dll
   SetOutPath "$MPdir.Plugins\Windows"
-  File ..\TvPlugin\TvPlugin\bin\Release\TvPlugin.dll
+  File ..\TvPlugin\TvPlugin\bin\${BUILD_TYPE}\TvPlugin.dll
 
   #---------------------------------------------------------------------------
   # FILTER REGISTRATION       for TVClient

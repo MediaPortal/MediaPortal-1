@@ -1,7 +1,7 @@
-#region Copyright (C) 2005-2008 Team MediaPortal
+#region Copyright (C) 2005-2009 Team MediaPortal
 
 /* 
- *	Copyright (C) 2005-2008 Team MediaPortal
+ *	Copyright (C) 2005-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -23,40 +23,48 @@
 
 #endregion
 
+#---------------------------------------------------------------------------
+# SPECIAL BUILDS
+#---------------------------------------------------------------------------
+# Uncomment the following line to create a setup for "Heise Verlag" / ct' magazine  (without Gabest Filters)
+;!define HEISE_BUILD
+# swtich for command line execution: /DHEISE_BUILD
 
-# DEFINES
+# Uncomment the following line to create a setup in debug mode
+;!define BUILD_TYPE "Debug"
+# swtich for command line execution: /DBUILD_TYPE=Debug
+# by default BUILD_TYPE is set to "Release"
+!ifndef BUILD_TYPE
+  !define BUILD_TYPE "Release"
+!endif
+
+#---------------------------------------------------------------------------
+# DEVELOPMENT ENVIRONMENT
+#---------------------------------------------------------------------------
+# path definitions
 !define svn_ROOT "..\.."
 !define svn_MP "${svn_ROOT}\mediaportal"
 !define svn_TVServer "${svn_ROOT}\TvEngine3\TVLibrary"
 !define svn_DeployTool "${svn_ROOT}\Tools\MediaPortal.DeployTool"
 !define svn_InstallScripts "${svn_ROOT}\Tools\InstallationScripts"
 
+# additional path definitions
+!ifdef SVN_BUILD
+  !define MEDIAPORTAL.BASE "E:\compile\compare_mp1_test"
+!else
+  !define MEDIAPORTAL.BASE "${svn_MP}\MediaPortal.Base"
+!endif
+!define MEDIAPORTAL.FILTERBIN "${svn_ROOT}\DirectShowFilters\bin\${BUILD_TYPE}"
+!define MEDIAPORTAL.XBMCBIN "${svn_MP}\xbmc\bin\${BUILD_TYPE}"
+
 #**********************************************************************************************************#
 #
 #   For building the installer on your own you need:
-#       1. Lastest NSIS version from http://nsis.sourceforge.net/Download
-#       2. The xml-plugin from http://nsis.sourceforge.net/XML_plug-in
+#       1. Latest NSIS version from http://nsis.sourceforge.net/Download
 #
 #**********************************************************************************************************#
 Name "MediaPortal"
 SetCompressor /SOLID lzma
-
-!ifdef SVN_BUILD
-  !define MEDIAPORTAL.BASE "E:\compile\compare_mp1_test"
-!else
-  !define MEDIAPORTAL.BASE "..\MediaPortal.Base"
-!endif
-!define MEDIAPORTAL.FILTERBIN "..\..\DirectShowFilters\bin\Release"
-!define MEDIAPORTAL.XBMCBIN "..\xbmc\bin\Release"
-
-!define BUILD_TYPE "Release"
-;!define BUILD_TYPE "Debug"
-
-#---------------------------------------------------------------------------
-# SPECIAL BUILDS
-#---------------------------------------------------------------------------
-; Uncomment the following line to create a special installer for "Heise Verlag" / ct' magazine
-;!define HEISE_BUILD
 
 #---------------------------------------------------------------------------
 # VARIABLES
@@ -92,12 +100,19 @@ Var RemoveAll       ; Set, when the user decided to uninstall everything
 !ifndef VER_BUILD
     !define VER_BUILD   0
 !endif
-!if ${VER_BUILD} == 0       # it's a stable release
+
+
+!if ${BUILD_TYPE} == "Debug"
+    !define VERSION "1.0 >>DEBUG<< build ${VER_BUILD} for TESTING ONLY"
+!else
+  !if ${VER_BUILD} == 0       # it's a stable release
     !define VERSION "1.0"
-!else                       # it's an svn reöease
+  !else                       # it's an svn reöease
     !define VERSION "1.0 SVN build ${VER_BUILD} for TESTING ONLY"
+  !endif
 !endif
 BrandingText "$(^Name) ${VERSION} by ${COMPANY}"
+
 
 !define INSTALL_LOG
 
@@ -380,7 +395,7 @@ Section "MediaPortal core files (required)" SecCore
   ; ========================================
   ; MediaPortalEXE
   ;should be           , but because of postbuild.bat there are too much matching files
-  ;File "..\xbmc\bin\Release\${BUILD_TYPE}\MediaPortal.*"
+  ;File "..\xbmc\bin\${BUILD_TYPE}\MediaPortal.*"
   File "..\xbmc\bin\${BUILD_TYPE}\MediaPortal.exe"
   File "..\xbmc\bin\${BUILD_TYPE}\MediaPortal.exe.config"
   ; Configuration
@@ -393,8 +408,8 @@ Section "MediaPortal core files (required)" SecCore
   File "..\MiniDisplayLibrary\bin\${BUILD_TYPE}\MiniDisplayLibrary.*"
 
   #those files are moved to MediaPortal.Base
-  #File "..\core\directshowhelper\directshowhelper\Release\dshowhelper.dll"
-  #File "..\core\DXUtil\Release\DXUtil.dll"
+  #File "..\core\directshowhelper\directshowhelper\${BUILD_TYPE}\dshowhelper.dll"
+  #File "..\core\DXUtil\${BUILD_TYPE}\DXUtil.dll"
   #File "..\core\fontengine\fontengine\${BUILD_TYPE}\fontengine.*"
 
   ; Utils
