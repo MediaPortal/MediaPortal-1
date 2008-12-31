@@ -36,7 +36,7 @@
     <control>
       <description>movie border</description>
       <type>image</type>
-      <id>0</id>
+      <id>23</id>
     </control>
     <control>
       <description>movie poster</description>
@@ -46,6 +46,8 @@
       <posY>130</posY>
       <width>208</width>
       <height>292</height>
+      <texture flipY="true" diffuse="Thumb_Mask.png">#MyTrailers.Details.Poster</texture>
+      <keepaspectratio>yes</keepaspectratio>
     </control>
     <control>
       <type>button</type>
@@ -64,7 +66,7 @@
       <id>3</id>
       <posX>26</posX>
       <posY>175</posY>
-      <label>71119922</label>
+      <label>-</label>
       <width>200</width>
       <onup>2</onup>
       <ondown>40</ondown>
@@ -76,7 +78,7 @@
       <id>40</id>
       <posX>26</posX>
       <posY>220</posY>
-      <label>71119924</label>
+      <label>-</label>
       <width>200</width>
       <onup>3</onup>
       <ondown>41</ondown>
@@ -88,7 +90,7 @@
       <id>41</id>
       <posX>26</posX>
       <posY>265</posY>
-      <label>71119923</label>
+      <label>-</label>
       <width>200</width>
       <onup>40</onup>
       <ondown>42</ondown>
@@ -247,7 +249,7 @@
       <posX>379</posX>
       <posY>450</posY>
       <width>900</width>
-      <height>150</height>
+      <height>120</height>
       <font>font13</font>
       <label>#plot</label>
       <align>right</align>

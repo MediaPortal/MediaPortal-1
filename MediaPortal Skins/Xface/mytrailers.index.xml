@@ -64,7 +64,7 @@
           <textureHeight>380</textureHeight>
           <font>font12</font>
           <textXOff>8</textXOff>
-          <textYOff>-120</textYOff>
+          <textYOff>-115</textYOff>
           <selectedColor>20ffffff</selectedColor>
           <textcolor>00ffffff</textcolor>
           <background>Coverbig.png</background>
@@ -217,6 +217,16 @@
           <onright>50</onright>
         </control>
       </control>
+    </control>
+    <control>
+      <type>image</type>
+      <posX>1250</posX>
+      <posY>15</posY>
+      <width>35</width>
+      <height>35</height>
+      <texture>Clock.png</texture>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
   </controls>
 </window>
