@@ -230,10 +230,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MediaPortal.Base\xAPTransport.dll</HintPath>
     </Reference>
-    <Reference Include="XihSolutions.DotMSN, Version=2.0.1.15051, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\MediaPortal.Base\plugins\Windows\XihSolutions.DotMSN.dll</HintPath>
-    </Reference>
     <ProjectReference Include="..\Core\Core.csproj">
       <Name>Core</Name>
       <Project>{02FFFC1F-2555-4B99-8B01-3432D0673855}</Project>
