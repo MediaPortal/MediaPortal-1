@@ -265,6 +265,7 @@
       <posY>580</posY>
       <width>106</width>
       <height>75</height>
+      <keepaspectratio>yes</keepaspectratio>
       <texture>#TV.View.thumb</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
@@ -275,7 +276,7 @@
       <id>1</id>
       <width>266</width>
       <height>37</height>
-      <posX>205</posX>
+      <posX>165</posX>
       <posY>600</posY>
       <label>#TV.View.channel</label>
       <align>left</align>
@@ -290,7 +291,7 @@
       <id>1</id>
       <width>266</width>
       <height>37</height>
-      <posX>205</posX>
+      <posX>165</posX>
       <posY>625</posY>
       <label>#TV.View.start - #TV.View.stop</label>
       <align>left</align>
@@ -303,7 +304,7 @@
       <description>Channel label</description>
       <type>label</type>
       <id>13</id>
-      <posX>205</posX>
+      <posX>165</posX>
       <posY>575</posY>
       <label>602</label>
       <font>font13</font>

@@ -148,6 +148,7 @@
       <width>53</width>
       <height>37</height>
       <zoom>no</zoom>
+      <keepaspectratio>yes</keepaspectratio>
       <texture>defaultVideoBig.png</texture>
     </control>
     <control>
