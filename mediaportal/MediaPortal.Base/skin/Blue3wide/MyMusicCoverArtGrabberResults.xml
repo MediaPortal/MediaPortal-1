@@ -9,6 +9,8 @@
       <type>image</type>
       <description>background image</description>
       <id>1</id>
+      <width>1280</width>
+      <height>720</height>
     </control>
     <control>
       <type>image</type>
