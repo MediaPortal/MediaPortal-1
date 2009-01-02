@@ -1152,7 +1152,7 @@ namespace MediaPortal.Configuration
         playlistFolder = xmlreader.GetValueAsString("movies", "playlists", "");
         if (playlistFolder == string.Empty)
         {
-          MessageBox.Show("No movie playlist folder specified", "MediaPortal Settings", MessageBoxButtons.OK,
+          MessageBox.Show("No video playlist folder specified", "MediaPortal Settings", MessageBoxButtons.OK,
                           MessageBoxIcon.Exclamation);
           return false;
         }
@@ -1186,7 +1186,7 @@ namespace MediaPortal.Configuration
         }
         if (!added)
         {
-          MessageBox.Show("No movie folders specified", "MediaPortal Settings", MessageBoxButtons.OK,
+          MessageBox.Show("No video folders specified", "MediaPortal Settings", MessageBoxButtons.OK,
                           MessageBoxIcon.Exclamation);
           return false;
         }
