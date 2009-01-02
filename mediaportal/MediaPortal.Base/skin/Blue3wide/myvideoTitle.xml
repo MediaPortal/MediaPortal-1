@@ -104,7 +104,7 @@
           <overlay>yes</overlay>
           <id>600</id>
           <posX>58</posX>
-          <posY>426</posY>
+          <posY>436</posY>
           <width>161</width>
           <height>121</height>
           <keepaspectratio>yes</keepaspectratio>
@@ -118,7 +118,7 @@
           <overlay>yes</overlay>
           <id>1</id>
           <posX>72</posX>
-          <posY>425</posY>
+          <posY>435</posY>
           <width>135</width>
           <height>125</height>
           <texture flipY="true" diffuse="Thumb_Mask.png">Picture_cover.png</texture>
@@ -504,9 +504,9 @@
       <description>video rectangle</description>
       <type>image</type>
       <id>0</id>
-      <posX>87</posX>
+     <posX>78</posX>
       <posY>523</posY>
-      <width>215</width>
+      <width>155</width>
       <height>155</height>
       <texture>Picture_cover.png</texture>
       <animation effect="fade" time="250">visiblechange</animation>
@@ -516,10 +516,12 @@
       <description>video preview window</description>
       <type>videowindow</type>
       <id>0</id>
-      <posX>97</posX>
-      <posY>531</posY>
-      <width>192</width>
-      <height>137</height>
+      <posX>86</posX>
+      <posY>528</posY>
+      <width>140</width>
+      <height>138</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
       <action>18</action>
       <textureFocus>tv_green_border.png</textureFocus>
       <animation effect="fade" time="250">visiblechange</animation>
@@ -529,9 +531,9 @@
       <description>play logo</description>
       <type>image</type>
       <id>0</id>
-      <posX>311</posX>
+       <posX>251</posX>
       <posY>575</posY>
-      <width>64</width>
+      <width>52</width>
       <height>52</height>
       <texture>logo_play.png</texture>
       <animation effect="fade" time="250">visiblechange</animation>
@@ -541,9 +543,9 @@
       <description>Pause logo</description>
       <type>image</type>
       <id>0</id>
-      <posX>311</posX>
+      <posX>251</posX>
       <posY>575</posY>
-      <width>64</width>
+      <width>52</width>
       <height>52</height>
       <texture>logo_pause.png</texture>
       <animation effect="fade" time="250">visiblechange</animation>
@@ -555,7 +557,7 @@
       <id>0</id>
       <width>248</width>
       <height>37</height>
-      <posX>97</posX>
+      <posX>78</posX>
       <posY>683</posY>
       <font>font12</font>
       <label>#Play.Current.Title\r#Play.Current.Artist\r#Play.Current.Album\r#Play.Current.Duration</label>

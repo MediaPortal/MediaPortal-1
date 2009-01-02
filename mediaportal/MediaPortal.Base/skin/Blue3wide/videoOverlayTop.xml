@@ -8,7 +8,7 @@
       <description>Pause logo</description>
       <type>image</type>
       <id>4</id>
-      <posX>326</posX>
+       <posX>251</posX>
       <posY>575</posY>
       <width>52</width>
       <height>52</height>
@@ -19,7 +19,7 @@
       <description>FF logo</description>
       <type>image</type>
       <id>5</id>
-      <posX>326</posX>
+       <posX>251</posX>
       <posY>575</posY>
       <width>52</width>
       <height>52</height>
@@ -30,7 +30,7 @@
       <description>RW logo</description>
       <type>image</type>
       <id>6</id>
-      <posX>17</posX>
+       <posX>251</posX>
       <posY>575</posY>
       <width>52</width>
       <height>52</height>

@@ -8,6 +8,7 @@
   <define>#header.hover:-</define>
   <controls>
     <import>common.window.xml</import>
+    <import>common.time.xml</import>
     <control>
       <type>actiongroup</type>
       <description>action menu</description>
@@ -22,6 +23,8 @@
       <width>568</width>
       <height>900</height>
       <dimColor>00ffffff</dimColor>
+      <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
+      <visible>!Control.HasFocus(50)</visible>
       <control>
         <type>image</type>
         <posX>26</posX>
@@ -41,7 +44,7 @@
           <id>999</id>
           <posX>71</posX>
           <posY>596</posY>
-          <width>355</width>
+          <width>285</width>
           <height>93</height>
           <font>font14</font>
           <label>#Play.Current.Title</label>
@@ -54,7 +57,7 @@
           <id>999</id>
           <posX>71</posX>
           <posY>546</posY>
-          <width>355</width>
+          <width>285</width>
           <height>93</height>
           <font>font14</font>
           <label>#Play.Current.Artist</label>
@@ -67,7 +70,7 @@
           <id>999</id>
           <posX>71</posX>
           <posY>571</posY>
-          <width>355</width>
+          <width>285</width>
           <height>93</height>
           <font>font14</font>
           <label>#Play.Current.Album</label>
@@ -79,8 +82,8 @@
           <type>label</type>
           <overlay>yes</overlay>
           <id>0</id>
-          <posX>257</posX>
-          <posY>486</posY>
+          <posX>71</posX>
+          <posY>523</posY>
           <width>355</width>
           <height>87</height>
           <font>font32</font>
@@ -90,52 +93,26 @@
            <visible>!Control.HasFocus(50)+player.hasmedia</visible>
         </control>
         <control>
-          <description>music logo</description>
-          <type>image</type>
-          <overlay>yes</overlay>
-          <id>600</id>
-          <posX>71</posX>
-          <posY>486</posY>
-          <width>126</width>
-          <height>96</height>
-          <keepaspectratio>yes</keepaspectratio>
-          <centered>yes</centered>
-          <texture flipY="true" diffuse="Thumb_Mask.png">#Play.Current.Thumb</texture>
-          <visible>!Control.HasFocus(50)+player.hasmedia</visible>
-        </control>
-        <control>
-          <description>music logo</description>
-          <type>image</type>
-          <overlay>yes</overlay>
-          <id>1</id>
-          <posX>65</posX>
-          <posY>485</posY>
-          <width>142</width>
-          <height>100</height>
-          <texture flipY="true" diffuse="Thumb_Mask.png">Picture_cover.png</texture>
-          <visible>!Control.HasFocus(50)+player.hasmedia+control.hasthumb(600)</visible>
-        </control>
-        <control>
           <description>Progress background</description>
           <type>image</type>
           <id>1</id>
           <posX>71</posX>
           <posY>626</posY>
-          <width>320</width>
+          <width>250</width>
           <height>27</height>
           <texture>osd_progress_background.png</texture>
-          <visible>!Control.HasFocus(50)+player.hasmedia</visible>
+          <visible>player.hasmedia</visible>
         </control>
         <control>
           <description>progress bar</description>
           <type>progress</type>
-          <id>1</id>
-          <posX>48</posX>
+          <id>0</id>
+          <posX>62</posX>
           <posY>631</posY>
-          <width>336</width>
+          <width>250</width>
           <height>18</height>
           <label>#percentage</label>
-          <visible>!Control.HasFocus(50)+player.hasmedia</visible>
+          <visible>player.hasmedia</visible>
         </control>
         <control>
           <description>group element</description>
@@ -234,10 +211,10 @@
     <control>
       <id>1</id>
       <type>image</type>
-      <posX>78</posX>
-      <posY>191</posY>
-      <width>227</width>
-      <height>222</height>
+     <posX>86</posX>
+      <posY>141</posY>
+      <width>188</width>
+      <height>272</height>
       <texture flipY="true" diffuse="Thumb_Mask.png">missing_Coverart.png</texture>
       <visible>[facadeview.playlist|facadeview.album]+Control.HasFocus(50)</visible>
       <animation effect="fade" time="450" reversible="false">visible</animation>
@@ -245,10 +222,10 @@
     <control>
       <id>1</id>
       <type>image</type>
-      <posX>78</posX>
-      <posY>191</posY>
-      <width>227</width>
-      <height>222</height>
+      <posX>86</posX>
+      <posY>141</posY>
+      <width>188</width>
+      <height>272</height>
       <texture flipY="true" diffuse="Thumb_Mask.png">#selectedthumb</texture>
       <visible>[facadeview.playlist|facadeview.album]+Control.HasFocus(50)</visible>
       <animation effect="fade" time="450" reversible="false">visible</animation>
@@ -256,10 +233,10 @@
     <control>
       <type>image</type>
       <id>1</id>
-      <posX>71</posX>
-      <posY>187</posY>
-      <width>245</width>
-      <height>228</height>
+      <posX>79</posX>
+      <posY>137</posY>
+      <width>204</width>
+      <height>282</height>
       <texture flipY="true" diffuse="Thumb_Mask.png">Picture_cover.png</texture>
       <visible>[facadeview.playlist|facadeview.album]+Control.HasFocus(50)</visible>
       <animation effect="fade" time="450" reversible="false">visible</animation>
@@ -306,7 +283,7 @@
       <id>99</id>
       <posX>78</posX>
       <posY>523</posY>
-      <width>255</width>
+      <width>155</width>
       <height>155</height>
       <texture>Picture_cover.png</texture>
       <animation effect="fade" time="250">visiblechange</animation>
@@ -316,10 +293,12 @@
       <description>video preview window</description>
       <type>videowindow</type>
       <id>1</id>
-      <posX>86</posX>
-      <posY>530</posY>
-      <width>235</width>
-      <height>140</height>
+       <posX>86</posX>
+      <posY>528</posY>
+      <width>140</width>
+      <height>138</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
       <action>18</action>
       <textureFocus>tv_green_border.png</textureFocus>
       <animation effect="fade" time="250">visiblechange</animation>
@@ -329,9 +308,9 @@
       <description>play logo</description>
       <type>image</type>
       <id>0</id>
-      <posX>345</posX>
+      <posX>251</posX>
       <posY>575</posY>
-      <width>64</width>
+      <width>52</width>
       <height>52</height>
       <texture>logo_play.png</texture>
       <animation effect="fade" time="250">visiblechange</animation>
@@ -341,9 +320,9 @@
       <description>Pause logo</description>
       <type>image</type>
       <id>0</id>
-      <posX>345</posX>
+      <posX>251</posX>
       <posY>575</posY>
-      <width>64</width>
+      <width>52</width>
       <height>52</height>
       <texture>logo_pause.png</texture>
       <animation effect="fade" time="250">visiblechange</animation>

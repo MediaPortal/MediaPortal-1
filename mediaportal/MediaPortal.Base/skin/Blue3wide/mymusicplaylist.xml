@@ -23,8 +23,8 @@
       <width>568</width>
       <height>900</height>
       <dimColor>00ffffff</dimColor>
-      <visible>!Control.HasFocus(50)</visible>
       <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
+      <visible>!Control.HasFocus(50)</visible>
       <control>
         <type>image</type>
         <posX>26</posX>
@@ -41,14 +41,14 @@
           <description>caption of the selected item</description>
           <type>label</type>
           <overlay>yes</overlay>
-          <id>0</id>
+          <id>999</id>
           <posX>71</posX>
           <posY>596</posY>
           <width>285</width>
           <height>93</height>
           <font>font12</font>
           <label>#Play.Current.Title</label>
-          <visible>player.hasmedia</visible>
+          <visible>!Control.HasFocus(50)+player.hasmedia</visible>
         </control>
         <control>
           <description>caption of the selected item</description>
@@ -61,7 +61,7 @@
           <height>93</height>
           <font>font12</font>
           <label>#Play.Current.Artist</label>
-          <visible>player.hasmedia</visible>
+          <visible>!Control.HasFocus(50)+player.hasaudio+!plugin.isenabled(Audioscrobbler)</visible>
         </control>
         <control>
           <description>caption of the selected item</description>
@@ -74,7 +74,7 @@
           <height>93</height>
           <font>font12</font>
           <label>#Play.Current.Album</label>
-          <visible>player.hasmedia</visible>
+           <visible>!Control.HasFocus(50)+player.hasmedia</visible>
         </control>
         <control>
           <description>caption of the selected item2</description>
@@ -90,7 +90,7 @@
           <align>left</align>
           <textcolor>20ffffff</textcolor>
           <label>#currentplaytime</label>
-          <visible>player.hasaudio+!plugin.isenabled(Audioscrobbler)</visible>
+          <visible>!Control.HasFocus(50)+player.hasaudio+!plugin.isenabled(Audioscrobbler)</visible>
         </control>
         <control>
           <description>music logo</description>
@@ -146,6 +146,9 @@
           <posX>71</posX>
           <posY>121</posY>
           <layout>StackLayout</layout>
+           <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
+          <animation effect="slide" time="450" end="-300,0" reversible="false">hidden</animation>
+           <visible>!Control.HasFocus(50)</visible>
           <control>
             <description>View-As button</description>
             <type>button</type>

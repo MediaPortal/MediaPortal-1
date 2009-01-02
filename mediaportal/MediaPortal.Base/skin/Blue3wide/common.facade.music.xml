@@ -124,6 +124,10 @@
           <onleft>2</onleft>
           <onright>2</onright>
           <scrollOffset>2</scrollOffset>
+          <itemWidth>32</itemWidth>
+     <itemHeight>32</itemHeight>
+    <IconXOff>12</IconXOff>
+    <IconYOff>4</IconYOff>
         </control>
       </control>
     </control>

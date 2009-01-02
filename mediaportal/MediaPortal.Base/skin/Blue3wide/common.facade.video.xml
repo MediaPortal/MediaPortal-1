@@ -42,7 +42,7 @@
           <thumbWidth>87</thumbWidth>
           <thumbHeight>137</thumbHeight>
           <thumbPosX>5</thumbPosX>
-          <thumbPosY>5</thumbPosY>  
+          <thumbPosY>5</thumbPosY>
           <itemWidthBig>195</itemWidthBig>
           <itemHeightBig>250</itemHeightBig>
           <thumbWidthBig>140</thumbWidthBig>
@@ -101,6 +101,10 @@
           <id>50</id>
           <onleft>2</onleft>
           <onright>2</onright>
+          <itemWidth>32</itemWidth>
+     <itemHeight>32</itemHeight>
+    <IconXOff>12</IconXOff>
+    <IconYOff>4</IconYOff>
           <scrollOffset>2</scrollOffset>
         </control>
       </control>
