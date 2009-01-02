@@ -1750,6 +1750,7 @@
     <String id="103007" prefix="Min ">TV/Zap OSD</String>
     <String id="103009" prefix="Min ">TV/Mini EPG</String>
     <String id="103011" prefix="Min ">TV/Beskjær-innstillinger</String>
+    <String id="103012">TV Tuner detaljer</String>
     <String id="104711" prefix="Min ">Wikipedia</String>
     <String id="105000">Alarm</String>
     <String id="105001">Alarm - Alarm Detaljer</String>
