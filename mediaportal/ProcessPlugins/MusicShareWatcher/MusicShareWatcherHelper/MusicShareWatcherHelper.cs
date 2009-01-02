@@ -313,7 +313,7 @@ namespace MediaPortal.MusicShareWatcher
     {
       MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml"));
       string strDefault = xmlreader.GetValueAsString("music", "default", string.Empty);
-      for (int i = 0; i < 20; i++)
+      for (int i = 0; i < VirtualDirectory.MaxSharesCount; i++)
       {
         string strShareName = String.Format("sharename{0}", i);
         string strSharePath = String.Format("sharepath{0}", i);

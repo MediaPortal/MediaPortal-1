@@ -146,6 +146,11 @@ namespace MediaPortal.Util
       set { showFilesWithoutExtension = value; }
     }
 
+    public static int MaxSharesCount
+    {
+      get { return MaximumShares; }
+    }
+
     public void AddDrives()
     {
     }

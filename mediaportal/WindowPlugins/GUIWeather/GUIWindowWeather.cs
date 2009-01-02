@@ -26,16 +26,18 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
+using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Net;
-using System.Drawing;
+using System.Threading;
 using System.Xml;
 
 using MediaPortal.GUI.Library;
 using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
-using System.Threading;
+
+using MediaPortal.Util;
 
 namespace MediaPortal.GUI.Weather
 {
@@ -243,7 +245,7 @@ namespace MediaPortal.GUI.Weather
         Log.Info("GUIWindowWeather: SkipConnectionTest: {0}", _skipConnectionTest);
 
         bool bFound = false;
-        for (int i = 0; i < 20; i++)
+        for (int i = 0; i < VirtualDirectory.MaxSharesCount; i++)
         {
           string cityTag = String.Format("city{0}", i);
           string strCodeTag = String.Format("code{0}", i);

@@ -303,7 +303,7 @@ namespace MediaPortal.GUI.Pictures
         fileMenuPinCode = MediaPortal.Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
         string strDefault = xmlreader.GetValueAsString("pictures", "default", string.Empty);
         virtualDirectory.Clear();
-        for (int i = 0; i < 20; i++)
+        for (int i = 0; i < VirtualDirectory.MaxSharesCount; i++)
         {
           string shareName = String.Format("sharename{0}", i);
           string sharePath = String.Format("sharepath{0}", i);
