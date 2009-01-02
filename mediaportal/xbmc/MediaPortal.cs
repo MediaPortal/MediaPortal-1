@@ -339,7 +339,13 @@ public class MediaPortalApp : D3DApp, IRender
             Log.Debug("Main: TV service found. Checking status...");
             if (ctrl.Status == ServiceControllerStatus.StartPending || ctrl.Status == ServiceControllerStatus.Stopped)
             {
-              Log.Info("Main: TV service start is pending. Waiting...");
+              if (ctrl.Status==ServiceControllerStatus.StartPending)
+                Log.Info("Main: TV service start is pending. Waiting...");
+              if (ctrl.Status == ServiceControllerStatus.Stopped)
+              {
+                Log.Info("Main: TV service is stopped, so we try start it...");
+                ctrl.Start();
+              }
               if (splashScreen != null)
                 splashScreen.SetInformation("Waiting for startup of TV service...");
               try
