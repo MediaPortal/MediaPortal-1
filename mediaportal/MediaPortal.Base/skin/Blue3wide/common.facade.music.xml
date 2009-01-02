@@ -39,8 +39,10 @@
           <textcolor2>ffffffff</textcolor2>
           <textXOff2>746</textXOff2>
           <textYOff2>75</textYOff2>
-          <itemWidth>128</itemWidth>
+          <itemWidth>90</itemWidth>
           <itemHeight>90</itemHeight>
+          <IconXOff>12</IconXOff>
+    	  <IconYOff>9</IconYOff>
           <spaceBetweenItems>24</spaceBetweenItems>
           <textureHeight>112</textureHeight>
           <scrollOffset>1</scrollOffset>
