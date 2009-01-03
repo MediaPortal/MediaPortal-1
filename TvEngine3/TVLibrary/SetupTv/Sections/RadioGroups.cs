@@ -19,7 +19,6 @@
  *
  */
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Gentle.Framework;
@@ -72,7 +71,7 @@ namespace SetupTv.Sections
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(RadioChannelGroup));
       sb.AddOrderByField(true, "sortOrder");
       SqlStatement stmt = sb.GetStatement(true);
-      IList groups = ObjectFactory.GetCollection(typeof(RadioChannelGroup), stmt.Execute());
+      IList<RadioChannelGroup> groups = ObjectFactory.GetCollection<RadioChannelGroup>(stmt.Execute());
       foreach (RadioChannelGroup group in groups)
       {
         ListViewItem item = mpListViewGroups.Items.Add(group.GroupName);
@@ -124,7 +123,7 @@ namespace SetupTv.Sections
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(RadioChannelGroup));
       sb.AddOrderByField(true, "sortOrder");
       SqlStatement stmt = sb.GetStatement(true);
-      IList groups = ObjectFactory.GetCollection(typeof(RadioChannelGroup), stmt.Execute());
+      IList<RadioChannelGroup> groups = ObjectFactory.GetCollection<RadioChannelGroup>(stmt.Execute());
       foreach (RadioChannelGroup group in groups)
       {
         ComboGroup g = new ComboGroup();
@@ -155,7 +154,7 @@ namespace SetupTv.Sections
       sb.AddConstraint(Operator.Equals, "isRadio", 1);
       sb.AddOrderByField(true, "sortOrder");
       SqlStatement stmt = sb.GetStatement(true);
-      IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
+      IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
 
 
       Dictionary<int, bool> channelsMapped = new Dictionary<int, bool>();
@@ -164,7 +163,7 @@ namespace SetupTv.Sections
       sb.AddConstraint(Operator.Equals, "idGroup", g.Group.IdGroup);
       sb.AddOrderByField(true, "sortOrder");
       stmt = sb.GetStatement(true);
-      IList maps = ObjectFactory.GetCollection(typeof(RadioGroupMap), stmt.Execute());
+      IList<RadioGroupMap> maps = ObjectFactory.GetCollection<RadioGroupMap>(stmt.Execute());
 
       foreach (RadioGroupMap map in maps)
       {

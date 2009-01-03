@@ -3,7 +3,7 @@
 // with the Gentle.NET Business Entity template, $Rev: 965 $
 //========================================================================
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using Gentle.Framework;
 using TvLibrary.Log;
 
@@ -325,9 +325,9 @@ namespace TvDatabase
     /// <summary>
     /// Static method to retrieve all instances that are stored in the database in one call
     /// </summary>
-    public static IList ListAll()
+    public static IList<Program> ListAll()
     {
-      return Broker.RetrieveList(typeof(Program));
+      return Broker.RetrieveList<Program>();
     }
 
     /// <summary>
@@ -341,7 +341,7 @@ namespace TvDatabase
         return null;
       }
       Key key = new Key(typeof(Program), true, "idProgram", id);
-      return Broker.RetrieveInstance(typeof(Program), key) as Program;
+      return Broker.RetrieveInstance<Program>(key);
     }
 
     /// <summary>
@@ -365,12 +365,12 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
 
       // execute the statement/query and create a collection of User instances from the result set
-      IList result = ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
+      IList<Program> result = ObjectFactory.GetCollection<Program>(stmt.Execute());
       if (result == null)
         return null;
       if (result.Count == 0)
         return null;
-      return (Program)result[0];
+      return result[0];
 
       // TODO In the end, a GentleList should be returned instead of an arraylist
       //return new GentleList( typeof(ChannelMap), this );
@@ -381,7 +381,7 @@ namespace TvDatabase
     /// </summary>
     /// <param name="title">Title we wanna look for</param>
     /// <returns></returns>
-    public static IList RetrieveByTitle(string title)
+    public static IList<Program> RetrieveByTitle(string title)
     {
       //select * from 'foreigntable'
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
@@ -394,7 +394,7 @@ namespace TvDatabase
 
       // execute the statement/query and create a collection of User instances from the result set
       //return (Program)ObjectFactory.GetCollection(typeof(Program), stmt.Execute())[0];
-      return ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
+      return ObjectFactory.GetCollection<Program>(stmt.Execute());
 
       // TODO In the end, a GentleList should be returned instead of an arraylist
       //return new GentleList( typeof(ChannelMap), this );
@@ -407,7 +407,7 @@ namespace TvDatabase
     /// <param name="preRec">Pre recording value</param>
     /// <param name="postRec">Post recording value</param>
     /// <returns></returns>
-    public static IList RetrieveCurrentRunningByTitle(string title, int preRec, int postRec)
+    public static IList<Program> RetrieveCurrentRunningByTitle(string title, int preRec, int postRec)
     {
       //select * from 'foreigntable'
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
@@ -419,7 +419,7 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
 
       // execute the statement/query and create a collection of User instances from the result set
-      return ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
+      return ObjectFactory.GetCollection<Program>(stmt.Execute());
 
       // TODO In the end, a GentleList should be returned instead of an arraylist
       //return new GentleList( typeof(ChannelMap), this );
@@ -432,7 +432,7 @@ namespace TvDatabase
     /// <param name="startTime">StartTime</param>
     /// <param name="endTime">EndTime</param>
     /// <returns></returns>
-    public static IList RetrieveByTitleAndTimesInterval(string title, DateTime startTime, DateTime endTime)
+    public static IList<Program> RetrieveByTitleAndTimesInterval(string title, DateTime startTime, DateTime endTime)
     {
       //select * from 'foreigntable'
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
@@ -446,7 +446,7 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
 
       // execute the statement/query and create a collection of User instances from the result set
-      return ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
+      return ObjectFactory.GetCollection<Program>(stmt.Execute());
 
       // TODO In the end, a GentleList should be returned instead of an arraylist
       //return new GentleList( typeof(ChannelMap), this );
@@ -458,7 +458,7 @@ namespace TvDatabase
     /// </summary>
     public static Program Retrieve(Key key)
     {
-      return Broker.RetrieveInstance(typeof(Program), key) as Program;
+      return Broker.RetrieveInstance<Program>(key);
     }
 
     /// <summary>
@@ -487,7 +487,7 @@ namespace TvDatabase
     /// <summary>
     /// Get a list of Favorite referring to the current entity.
     /// </summary>
-    public IList ReferringFavorite()
+    public IList<Favorite> ReferringFavorite()
     {
       //select * from 'foreigntable'
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Favorite));
@@ -500,7 +500,7 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
 
       // execute the statement/query and create a collection of User instances from the result set
-      return ObjectFactory.GetCollection(typeof(Favorite), stmt.Execute());
+      return ObjectFactory.GetCollection<Favorite>(stmt.Execute());
 
       // TODO In the end, a GentleList should be returned instead of an arraylist
       //return new GentleList( typeof(Favorite), this );
@@ -516,7 +516,7 @@ namespace TvDatabase
 
     public void Delete()
     {
-      IList list = ReferringFavorite();
+      IList<Favorite> list = ReferringFavorite();
       foreach (Favorite favorite in list)
         favorite.Remove();
       Remove();

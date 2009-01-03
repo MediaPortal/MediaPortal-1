@@ -19,7 +19,6 @@
  *
  */
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using TvControl;
 using TvDatabase;
@@ -113,7 +112,7 @@ namespace TvService
         return;
       Log.Epg("EPG: grabber initialized for {0} transponders..", TransponderList.Instance.Count);
       _isRunning = true;
-      IList cards = Card.ListAll();
+      IList<Card> cards = Card.ListAll();
       _epgCards = new List<EpgCard>();
 
 

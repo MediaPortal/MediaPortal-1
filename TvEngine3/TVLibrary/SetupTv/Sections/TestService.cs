@@ -19,7 +19,7 @@
  *
  */
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using TvControl;
 using TvDatabase;
@@ -30,7 +30,7 @@ namespace SetupTv.Sections
 {
   public partial class TestService : SectionSettings
   {
-    IList _cards;
+    IList<Card> _cards;
     //Player _player;
     public TestService()
       : this("Manual Control")
@@ -59,7 +59,7 @@ namespace SetupTv.Sections
       RemoteControl.Instance.EpgGrabberEnabled = true;
 
       comboBoxGroups.Items.Clear();
-      IList groups = ChannelGroup.ListAll();
+      IList<ChannelGroup> groups = ChannelGroup.ListAll();
       foreach (ChannelGroup group in groups)
         comboBoxGroups.Items.Add(new ComboBoxExItem(group.GroupName,-1,group.IdGroup));
       if (comboBoxGroups.Items.Count==0)
@@ -432,7 +432,7 @@ namespace SetupTv.Sections
     {
       RemoteControl.Instance.EpgGrabberEnabled = false;
       Broker.Execute("delete from Program");
-      IList channels = Channel.ListAll();
+      IList<Channel> channels = Channel.ListAll();
       foreach (Channel ch in channels)
       {
         ch.LastGrabTime = Schedule.MinSchedule;
@@ -451,7 +451,7 @@ namespace SetupTv.Sections
     /// <returns>virtual card</returns>
     public VirtualCard GetCardTimeShiftingChannel(int channelId)
     {
-      IList cards = Card.ListAll();
+      IList<Card> cards = Card.ListAll();
       foreach (Card card in cards)
       {
         if (card.Enabled == false) continue;
@@ -483,7 +483,7 @@ namespace SetupTv.Sections
     /// <returns>virtual card</returns>
     public VirtualCard GetCardRecordingChannel(int channelId)
     {
-      IList cards = Card.ListAll();
+      IList<Card> cards = Card.ListAll();
       foreach (Card card in cards)
       {
         if (card.Enabled == false) continue;
@@ -516,7 +516,7 @@ namespace SetupTv.Sections
         SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
         sb.AddOrderByField(true, "sortOrder");
         SqlStatement stmt = sb.GetStatement(true);
-        IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
+        IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
         foreach (Channel ch in channels)
         {
           if (ch.IsTv == false) continue;
@@ -532,7 +532,7 @@ namespace SetupTv.Sections
       else
       {
         ChannelGroup group = ChannelGroup.Retrieve(idItem.Id);
-        IList maps = group.ReferringGroupMap();
+        IList<GroupMap> maps = group.ReferringGroupMap();
         foreach (GroupMap map in maps)
         {
           Channel ch = map.ReferencedChannel();

@@ -1,9 +1,10 @@
+
 //========================================================================
 // This file was generated using the MyGeneration tool in combination
 // with the Gentle.NET Business Entity template, $Rev: 965 $
 //========================================================================
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using Gentle.Framework;
 using TvLibrary.Log;
 
@@ -249,9 +250,9 @@ namespace TvDatabase
     /// <summary>
     /// Static method to retrieve all instances that are stored in the database in one call
     /// </summary>
-    public static IList ListAll()
+    public static IList<Card> ListAll()
     {
-      return Broker.RetrieveList(typeof(Card));
+      return Broker.RetrieveList<Card>();
     }
 
     /// <summary>
@@ -265,7 +266,7 @@ namespace TvDatabase
         return null;
       }
       Key key = new Key(typeof(Card), true, "idCard", id);
-      return Broker.RetrieveInstance(typeof(Card), key) as Card;
+      return Broker.RetrieveInstance<Card>(key);
     }
 
     /// <summary>
@@ -274,7 +275,7 @@ namespace TvDatabase
     /// </summary>
     public static Card Retrieve(Key key)
     {
-      return Broker.RetrieveInstance(typeof(Card), key) as Card;
+      return Broker.RetrieveInstance<Card>(key);
     }
 
     /// <summary>
@@ -307,7 +308,7 @@ namespace TvDatabase
     /// <returns>true/false</returns>
     public bool canViewTvChannel(int channelId)
     {
-      IList _cardChannels = ReferringChannelMap();
+      IList<ChannelMap> _cardChannels = ReferringChannelMap();
       foreach (ChannelMap _cmap in _cardChannels)
       {
         if (channelId == _cmap.IdChannel && !_cmap.EpgOnly)
@@ -323,7 +324,7 @@ namespace TvDatabase
     /// <returns>true/false</returns>
     public bool canTuneTvChannel(int channelId)
     {
-      IList _cardChannels = ReferringChannelMap();
+      IList<ChannelMap> _cardChannels = ReferringChannelMap();
       foreach (ChannelMap _cmap in _cardChannels)
       {
         if (channelId == _cmap.IdChannel)
@@ -348,7 +349,7 @@ namespace TvDatabase
     /// <summary>
     /// Get a list of ChannelMap referring to the current entity.
     /// </summary>
-    public IList ReferringChannelMap()
+    public IList<ChannelMap> ReferringChannelMap()
     {
       //select * from 'foreigntable'
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(ChannelMap));
@@ -361,12 +362,12 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
 
       // execute the statement/query and create a collection of User instances from the result set
-      return ObjectFactory.GetCollection(typeof(ChannelMap), stmt.Execute());
+      return ObjectFactory.GetCollection<ChannelMap>(stmt.Execute());
 
       // TODO In the end, a GentleList should be returned instead of an arraylist
       //return new GentleList( typeof(ChannelMap), this );
     }
-    public IList ReferringCardGroupMap()
+    public IList<CardGroupMap> ReferringCardGroupMap()
     {
       //select * from 'foreigntable'
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(CardGroupMap));
@@ -379,7 +380,7 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
 
       // execute the statement/query and create a collection of User instances from the result set
-      return ObjectFactory.GetCollection(typeof(CardGroupMap), stmt.Execute());
+      return ObjectFactory.GetCollection<CardGroupMap>(stmt.Execute());
 
       // TODO In the end, a GentleList should be returned instead of an arraylist
       //return new GentleList( typeof(ChannelMap), this );
@@ -388,7 +389,7 @@ namespace TvDatabase
     /// <summary>
     /// Get a list of ChannelMap referring to the current entity.
     /// </summary>
-    public IList ReferringDiSEqCMotor()
+    public IList<DiSEqCMotor> ReferringDiSEqCMotor()
     {
       //select * from 'foreigntable'
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(DiSEqCMotor));
@@ -401,7 +402,7 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
 
       // execute the statement/query and create a collection of User instances from the result set
-      return ObjectFactory.GetCollection(typeof(DiSEqCMotor), stmt.Execute());
+      return ObjectFactory.GetCollection<DiSEqCMotor>(stmt.Execute());
 
       // TODO In the end, a GentleList should be returned instead of an arraylist
       //return new GentleList( typeof(ChannelMap), this );
@@ -418,16 +419,16 @@ namespace TvDatabase
 
     public void Delete()
     {
-      IList list = ReferringChannelMap();
+      IList<ChannelMap> list = ReferringChannelMap();
       foreach (ChannelMap map in list)
         map.Delete();
 
-      list = ReferringCardGroupMap();
-      foreach (CardGroupMap cardGroupMap in list)
+      IList<CardGroupMap> listCardGroupMap = ReferringCardGroupMap();
+      foreach (CardGroupMap cardGroupMap in listCardGroupMap)
         cardGroupMap.Remove();
 
-      list = ReferringDiSEqCMotor();
-      foreach (DiSEqCMotor disEqc in list)
+      IList<DiSEqCMotor> listDiSEqCMotor = ReferringDiSEqCMotor();
+      foreach (DiSEqCMotor disEqc in listDiSEqCMotor)
         disEqc.Remove();
 
       Remove();

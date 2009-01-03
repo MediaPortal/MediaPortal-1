@@ -217,7 +217,7 @@ namespace TvEngine
 
           Dictionary<int, Channel> guideChannels = new Dictionary<int, Channel>();
 
-          IList allChannels = Channel.ListAll();
+          IList<Channel> allChannels = Channel.ListAll();
 
           int iChannel = 0;
 
@@ -326,7 +326,7 @@ namespace TvEngine
           sb.AddConstraint(Operator.NotEquals, "externalId", "");
 
           SqlStatement stmt = sb.GetStatement(true);
-          allChannels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
+          allChannels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
           if (allChannels.Count == 0)
           {
             _isImporting = false;
@@ -726,11 +726,11 @@ namespace TvEngine
                 // retrieve all programs for this channel
                 ArrayList programs = new ArrayList();
                 {
-                  SqlBuilder sb2 = new SqlBuilder(StatementType.Select, typeof(TvDatabase.Program));
+                  SqlBuilder sb2 = new SqlBuilder(StatementType.Select, typeof(Program));
                   sb2.AddConstraint(Operator.Equals, "idChannel", idChannel);
                   sb2.AddOrderByField(false, "starttime");
                   SqlStatement stmt2 = sb2.GetStatement(true);
-                  IList programsInDbs = ObjectFactory.GetCollection(typeof(TvDatabase.Program), stmt2.Execute());
+                  IList<Program> programsInDbs = ObjectFactory.GetCollection<Program>(stmt2.Execute());
 
                   int count = programsInDbs.Count;
                   programs.Capacity = count;

@@ -671,7 +671,7 @@ namespace TvPlugin
       int totalItems = 0;
       if (currentFolder==null || currentFolder=="..")
       {
-        IList groups=RadioChannelGroup.ListAll();
+        IList<RadioChannelGroup> groups=RadioChannelGroup.ListAll();
         foreach (RadioChannelGroup group in groups)
         {
           if (!showAllChannelsGroup)
@@ -703,7 +703,7 @@ namespace TvPlugin
           RadioChannelGroup root = layer.GetRadioChannelGroupByName(rootGroup);
           if (root != null)
           {
-            IList maps = root.ReferringRadioGroupMap();
+            IList<RadioGroupMap> maps = root.ReferringRadioGroupMap();
             foreach (RadioGroupMap map in maps)
             {
               Channel channel = map.ReferencedChannel();
@@ -750,7 +750,7 @@ namespace TvPlugin
         item.ThumbnailImage = String.Empty;
         MediaPortal.Util.Utils.SetDefaultIcons(item);
         facadeView.Add(item);
-        IList maps=group.ReferringRadioGroupMap();
+        IList<RadioGroupMap> maps=group.ReferringRadioGroupMap();
         foreach (RadioGroupMap map in maps)
         {
           Channel channel=map.ReferencedChannel();
@@ -849,11 +849,11 @@ namespace TvPlugin
       SortMethod method = currentSortMethod;
       bool bAscending = sortAscending;
       Channel channel1 = item1.MusicTag as Channel;
-      IList details1 = channel1.ReferringTuningDetail();
-      TuningDetail detail1 = (TuningDetail)details1[0];
+      IList<TuningDetail> details1 = channel1.ReferringTuningDetail();
+      TuningDetail detail1 = details1[0];
       Channel channel2 = item2.MusicTag as Channel;
-      IList details2 = channel2.ReferringTuningDetail();
-      TuningDetail detail2 = (TuningDetail)details2[0];
+      IList<TuningDetail> details2 = channel2.ReferringTuningDetail();
+      TuningDetail detail2 = details2[0];
       switch (method)
       {
         case SortMethod.Name:
@@ -1013,8 +1013,8 @@ namespace TvPlugin
 
     string GetPlayPath(Channel channel)
     {
-      IList details=channel.ReferringTuningDetail();
-      TuningDetail detail=(TuningDetail)details[0];
+      IList<TuningDetail> details=channel.ReferringTuningDetail();
+      TuningDetail detail=details[0];
       if (channel.IsWebstream())
         return detail.Url;
       {

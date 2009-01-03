@@ -1,5 +1,5 @@
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using Gentle.Framework;
 using TvLibrary.Log;
 
@@ -169,9 +169,9 @@ namespace TvDatabase
     /// <summary>
     /// Static method to retrieve all instances that are stored in the database in one call
     /// </summary>
-    public static IList ListAll()
+    public static IList<Keyword> ListAll()
     {
-      return Broker.RetrieveList(typeof(Keyword));
+      return Broker.RetrieveList<Keyword>();
     }
 
     /// <summary>
@@ -185,7 +185,7 @@ namespace TvDatabase
         return null;
       }
       Key key = new Key(typeof(Keyword), true, "idKeyword", id);
-      return Broker.RetrieveInstance(typeof(Keyword), key) as Keyword;
+      return Broker.RetrieveInstance<Keyword>(key);
     }
 
     /// <summary>
@@ -194,7 +194,7 @@ namespace TvDatabase
     /// </summary>
     public static Keyword Retrieve(Key key)
     {
-      return Broker.RetrieveInstance(typeof(Keyword), key) as Keyword;
+      return Broker.RetrieveInstance<Keyword>(key);
     }
 
     /// <summary>
@@ -222,26 +222,26 @@ namespace TvDatabase
     /// <summary>
     /// Get a list of Timespan referring to the current entity.
     /// </summary>
-    public IList ReferringTimespan()
+    public IList<Timespan> ReferringTimespan()
     {
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Timespan));
       sb.AddConstraint(Operator.Equals, "idKeyword", idKeyword);
       sb.AddOrderByField("SortOrder");
       SqlStatement stmt = sb.GetStatement(true);
-      return ObjectFactory.GetCollection(typeof(Timespan), stmt.Execute());
+      return ObjectFactory.GetCollection<Timespan>(stmt.Execute());
     }
 
     /// <summary>
     /// Get a list of ChannelGroup referring to the current entity.
     /// </summary>
-    public IList ReferringChannelGroup()
+    public IList<GroupMap> ReferringChannelGroup()
     {
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(KeywordMap));
       sb.AddConstraint(Operator.Equals, "idKeyword", idKeyword);
       sb.AddOrderByField("SortOrder");
       SqlStatement stmt = sb.GetStatement(true);
-      ArrayList returnList = new ArrayList();
-      IList list = ObjectFactory.GetCollection(typeof(KeywordMap), stmt.Execute());
+      List<GroupMap> returnList = new List<GroupMap>();
+      IList<KeywordMap> list = ObjectFactory.GetCollection<KeywordMap>(stmt.Execute());
       foreach (KeywordMap map in list)
       {
         ChannelGroup group = map.ReferencedChannelGroup();

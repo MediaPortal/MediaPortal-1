@@ -92,7 +92,7 @@ namespace TvPlugin
     DateTime _viewingTime = DateTime.Now;
     int _channelOffset = 0;
     List<Channel> _channelList = new List<Channel>();
-    IList _recordingList = new ArrayList();
+    IList<Schedule> _recordingList = new List<Schedule>();
 
     int _timePerBlock = 30; // steps of 30 minutes
     int _channelCount = 5;
@@ -1351,7 +1351,7 @@ namespace TvPlugin
           chan = 0;
       }
 
-      IList programs = new ArrayList();
+      IList<Program> programs = new List<Program>();
       DateTime dtStart = DateTime.Now;
       DateTime dtEnd = dtStart.AddDays(30);
 
@@ -2745,7 +2745,7 @@ namespace TvPlugin
                 VirtualCard card = null;
 
                 //first lets find out if we have any EPG data on the selected item or not.
-                IList prgList = Program.RetrieveByTitleAndTimesInterval(_currentProgram.Title, _currentProgram.StartTime, _currentProgram.EndTime);
+                IList<Program> prgList = Program.RetrieveByTitleAndTimesInterval(_currentProgram.Title, _currentProgram.StartTime, _currentProgram.EndTime);
                 bool isRec = false;
 
                 if (rec.IdChannel == _currentProgram.IdChannel)

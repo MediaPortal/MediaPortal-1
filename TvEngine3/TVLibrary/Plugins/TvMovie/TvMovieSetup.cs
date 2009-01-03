@@ -24,13 +24,12 @@
 #endregion
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
-using System.Xml;
 
 using TvDatabase;
 using TvEngine;
@@ -256,7 +255,7 @@ namespace SetupTv.Sections
           treeViewMpChannels.Nodes.Clear();
           try
           {
-            ArrayList mpChannelList = database.GetChannels();
+            List<Channel> mpChannelList = database.GetChannels();
             foreach (Channel channel in mpChannelList)
             {
               //TreeNode[] subItems = new TreeNode[] { new TreeNode(channel.IdChannel.ToString()), new TreeNode(channel.DisplayName) };
@@ -333,7 +332,7 @@ namespace SetupTv.Sections
     /// </summary>
     private void SaveMapping()
     {
-      IList mappingList = TvMovieMapping.ListAll();
+      IList<TvMovieMapping> mappingList = TvMovieMapping.ListAll();
 
       if (mappingList != null && mappingList.Count > 0)
       {
@@ -388,7 +387,7 @@ namespace SetupTv.Sections
       }
       try
       {
-        IList mappingDb = TvMovieMapping.ListAll();
+        IList<TvMovieMapping> mappingDb = TvMovieMapping.ListAll();
         if (mappingDb != null && mappingDb.Count > 0)
         {
           foreach (TvMovieMapping mapping in mappingDb)

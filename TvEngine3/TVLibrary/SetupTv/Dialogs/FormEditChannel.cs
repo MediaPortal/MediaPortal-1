@@ -19,18 +19,10 @@
  *
  */
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using TvDatabase;
 using TvLibrary;
 using TvLibrary.Implementations;
-using TvLibrary.Interfaces;
-using TvLibrary.Implementations.DVB;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using TvLibrary.Channels;
@@ -39,15 +31,15 @@ namespace SetupTv.Sections
 {
   public partial class FormEditChannel : Form
   {
-    bool _analog = false;
-    bool _dvbt = false;
-    bool _dvbc = false;
-    bool _dvbs = false;
-    bool _atsc = false;
-    bool _newChannel = false;
+    bool _analog;
+    bool _dvbt;
+    bool _dvbc;
+    bool _dvbs;
+    bool _atsc;
+    bool _newChannel;
     bool _isTv = true;
-    bool _webstream = false;
-    bool _fmRadio = false;
+    bool _webstream;
+    bool _fmRadio;
     Channel _channel;
     public FormEditChannel()
     {
@@ -114,10 +106,7 @@ namespace SetupTv.Sections
               analogChannel.Name = _channel.Name;
               analogChannel.ChannelNumber = channelNumber;
               analogChannel.Country = countries.Countries[comboBoxCountry.SelectedIndex];
-              if (comboBoxInput.SelectedIndex == 1)
-                analogChannel.TunerSource = TunerInputType.Cable;
-              else
-                analogChannel.TunerSource = TunerInputType.Antenna;
+              analogChannel.TunerSource = comboBoxInput.SelectedIndex == 1 ? TunerInputType.Cable : TunerInputType.Antenna;
               analogChannel.VideoSource = (AnalogChannel.VideoInputType)comboBoxVideoSource.SelectedIndex;
               analogChannel.AudioSource = (AnalogChannel.AudioInputType)comboBoxAudioSource.SelectedIndex;
               analogChannel.Frequency = (int)GetFrequency(textBoxAnalogFrequency.Text, "2");
@@ -336,10 +325,7 @@ namespace SetupTv.Sections
                         dvbtChannel.ServiceId = sid;
                         dvbtChannel.Provider = textBoxDVBTProvider.Text;
                         dvbtChannel.FreeToAir = checkBoxDVBTfta.Checked;
-                        if (comboBoxBandWidth.SelectedIndex == 0)
-                          dvbtChannel.BandWidth = 7;
-                        else
-                          dvbtChannel.BandWidth = 8;
+                        dvbtChannel.BandWidth = comboBoxBandWidth.SelectedIndex == 0 ? 7 : 8;
                         dvbtChannel.PmtPid = pmt;
                         layer.AddTuningDetails(_channel, dvbtChannel);
                       }
@@ -366,8 +352,8 @@ namespace SetupTv.Sections
           _channel.Persist();
           layer.AddFMRadioTuningDetails(_channel, (int)GetFrequency(edFMFreq.Text, "3"));
         }
-        this.DialogResult = DialogResult.OK;
-        this.Close();
+        DialogResult = DialogResult.OK;
+        Close();
         return;
       }
 
@@ -499,10 +485,7 @@ namespace SetupTv.Sections
           detail.ServiceId = Int32.Parse(textBox6.Text);
           detail.Provider = textBoxDVBTProvider.Text;
           detail.FreeToAir = checkBoxDVBTfta.Checked;
-          if (comboBoxBandWidth.SelectedIndex == 0)
-            detail.Bandwidth = 7;
-          else
-            detail.Bandwidth = 8;
+          detail.Bandwidth = comboBoxBandWidth.SelectedIndex == 0 ? 7 : 8;
           detail.PmtPid = Int32.Parse(textBoxPmt.Text);
           detail.Persist();
         }
@@ -522,8 +505,8 @@ namespace SetupTv.Sections
           detail.Persist();
         }
       }
-      this.DialogResult = DialogResult.OK;
-      this.Close();
+      DialogResult = DialogResult.OK;
+      Close();
     }
 
     private void FormEditChannel_Load(object sender, EventArgs e)
@@ -560,8 +543,11 @@ namespace SetupTv.Sections
       comboBoxPilot.SelectedIndex = 0;
       comboBoxRollOff.SelectedIndex = 0;
       //General Tab
-      textBoxName.Text = _channel.DisplayName;
-      checkBoxVisibleInTvGuide.Checked = _channel.VisibleInGuide;
+      if (_channel != null)
+      {
+        textBoxName.Text = _channel.DisplayName;
+        checkBoxVisibleInTvGuide.Checked = _channel.VisibleInGuide;
+      }
       if (_newChannel)
       {
         _analog = true;
@@ -578,111 +564,110 @@ namespace SetupTv.Sections
         textBoxDVBTfreq.Text = "";
         return;
       }
-      foreach (TuningDetail detail in _channel.ReferringTuningDetail())
-      {
-        //Analog Tab
-        if (detail.ChannelType == 0 || _newChannel)
+      if (_channel != null)
+        foreach (TuningDetail detail in _channel.ReferringTuningDetail())
         {
-          _analog = true;
-          textBoxChannel.Text = detail.ChannelNumber.ToString();
-          if (detail.TuningSource == (int)TunerInputType.Cable)
-            comboBoxInput.SelectedIndex = 1;
-          CountryCollection collection = new CountryCollection();
-          comboBoxCountry.SelectedIndex = detail.CountryId;
-          comboBoxVideoSource.SelectedIndex = detail.VideoSource;
-          comboBoxAudioSource.SelectedIndex = detail.AudioSource;
-          textBoxAnalogFrequency.Text = SetFrequency(detail.Frequency, "2");
-        }
-
-        //ATSC Tab
-        if (detail.ChannelType == 1 || _newChannel)
-        {
-          _atsc = true;
-          textBoxProgram.Text = detail.ChannelNumber.ToString();
-          textBoxFrequency.Text = detail.Frequency.ToString();
-          textBoxMajor.Text = detail.MajorChannel.ToString();
-          textBoxMinor.Text = detail.MinorChannel.ToString();
-          switch ((ModulationType)detail.Modulation)
+          //Analog Tab
+          if (detail.ChannelType == 0 || _newChannel)
           {
-            case ModulationType.ModNotSet:
-              comboBoxQAMModulation.SelectedIndex = 0;
-              break;
-            case ModulationType.Mod8Vsb:
-              comboBoxQAMModulation.SelectedIndex = 1;
-              break;
-            case ModulationType.Mod64Qam:
-              comboBoxQAMModulation.SelectedIndex = 2;
-              break;
-            case ModulationType.Mod256Qam:
-              comboBoxQAMModulation.SelectedIndex = 3;
-              break;
+            _analog = true;
+            textBoxChannel.Text = detail.ChannelNumber.ToString();
+            if (detail.TuningSource == (int)TunerInputType.Cable)
+              comboBoxInput.SelectedIndex = 1;
+            comboBoxCountry.SelectedIndex = detail.CountryId;
+            comboBoxVideoSource.SelectedIndex = detail.VideoSource;
+            comboBoxAudioSource.SelectedIndex = detail.AudioSource;
+            textBoxAnalogFrequency.Text = SetFrequency(detail.Frequency, "2");
           }
-          textBoxQamONID.Text = detail.NetworkId.ToString();
-          textBoxQamTSID.Text = detail.TransportId.ToString();
-          textBoxQamSID.Text = detail.ServiceId.ToString();
-          textBoxQamPmt.Text = detail.PmtPid.ToString();
-          textBoxQamProvider.Text = detail.Provider;
-          checkBoxQamfta.Checked = detail.FreeToAir;
-        }
 
-        //DVB-C Tab
-        if (detail.ChannelType == 2 || _newChannel)
-        {
-          _dvbc = true;
-          textboxFreq.Text = detail.Frequency.ToString();
-          textBoxONID.Text = detail.NetworkId.ToString();
-          textBoxTSID.Text = detail.TransportId.ToString();
-          textBoxSID.Text = detail.ServiceId.ToString();
-          textBoxSymbolRate.Text = detail.Symbolrate.ToString();
-          textBoxDVBCPmt.Text = detail.PmtPid.ToString();
-          textBoxDVBCProvider.Text = detail.Provider;
-          checkBoxDVBCfta.Checked = detail.FreeToAir;
-        }
-
-        //DVB-S Tab
-        if (detail.ChannelType == 3 || _newChannel)
-        {
-          _dvbs = true;
-          textBox5.Text = detail.Frequency.ToString();
-          textBox4.Text = detail.NetworkId.ToString();
-          textBox3.Text = detail.TransportId.ToString();
-          textBox2.Text = detail.ServiceId.ToString();
-          textBox1.Text = detail.Symbolrate.ToString();
-          textBoxSwitch.Text = detail.SwitchingFrequency.ToString();
-          textBoxDVBSChannel.Text = detail.ChannelNumber.ToString();
-          textBoxDVBSPmt.Text = detail.PmtPid.ToString();
-          textBoxDVBSProvider.Text = detail.Provider ;
-          checkBoxDVBSfta.Checked = detail.FreeToAir ;
-          switch ((Polarisation)detail.Polarisation)
+          //ATSC Tab
+          if (detail.ChannelType == 1 || _newChannel)
           {
-            case Polarisation.LinearH:
-              comboBoxPol.SelectedIndex = 0;
-              break;
-            case Polarisation.LinearV:
-              comboBoxPol.SelectedIndex = 1;
-              break;
-            case Polarisation.CircularL:
-              comboBoxPol.SelectedIndex = 2;
-              break;
-            case Polarisation.CircularR:
-              comboBoxPol.SelectedIndex = 2;
-              break;
-          }
-          comboBoxModulation.SelectedIndex = (int)detail.Modulation + 1;
-          comboBoxInnerFecRate.SelectedIndex = detail.InnerFecRate + 1;
-          comboBoxPilot.SelectedIndex = (int)detail.Pilot + 1;
-          comboBoxRollOff.SelectedIndex = (int)detail.RollOff + 1;
-          comboBoxDisEqc.SelectedIndex = (int)detail.Diseqc;
-          Satellite sat = null;
-          foreach (DiSEqCMotor motor in DiSEqCMotor.ListAll())
-          {
-            if (detail.SatIndex == motor.Position)
+            _atsc = true;
+            textBoxProgram.Text = detail.ChannelNumber.ToString();
+            textBoxFrequency.Text = detail.Frequency.ToString();
+            textBoxMajor.Text = detail.MajorChannel.ToString();
+            textBoxMinor.Text = detail.MinorChannel.ToString();
+            switch ((ModulationType)detail.Modulation)
             {
-              sat = Satellite.Retrieve(motor.IdSatellite);
-              break;
+              case ModulationType.ModNotSet:
+                comboBoxQAMModulation.SelectedIndex = 0;
+                break;
+              case ModulationType.Mod8Vsb:
+                comboBoxQAMModulation.SelectedIndex = 1;
+                break;
+              case ModulationType.Mod64Qam:
+                comboBoxQAMModulation.SelectedIndex = 2;
+                break;
+              case ModulationType.Mod256Qam:
+                comboBoxQAMModulation.SelectedIndex = 3;
+                break;
             }
+            textBoxQamONID.Text = detail.NetworkId.ToString();
+            textBoxQamTSID.Text = detail.TransportId.ToString();
+            textBoxQamSID.Text = detail.ServiceId.ToString();
+            textBoxQamPmt.Text = detail.PmtPid.ToString();
+            textBoxQamProvider.Text = detail.Provider;
+            checkBoxQamfta.Checked = detail.FreeToAir;
           }
-          /*if (sat != null)
+
+          //DVB-C Tab
+          if (detail.ChannelType == 2 || _newChannel)
+          {
+            _dvbc = true;
+            textboxFreq.Text = detail.Frequency.ToString();
+            textBoxONID.Text = detail.NetworkId.ToString();
+            textBoxTSID.Text = detail.TransportId.ToString();
+            textBoxSID.Text = detail.ServiceId.ToString();
+            textBoxSymbolRate.Text = detail.Symbolrate.ToString();
+            textBoxDVBCPmt.Text = detail.PmtPid.ToString();
+            textBoxDVBCProvider.Text = detail.Provider;
+            checkBoxDVBCfta.Checked = detail.FreeToAir;
+          }
+
+          //DVB-S Tab
+          if (detail.ChannelType == 3 || _newChannel)
+          {
+            _dvbs = true;
+            textBox5.Text = detail.Frequency.ToString();
+            textBox4.Text = detail.NetworkId.ToString();
+            textBox3.Text = detail.TransportId.ToString();
+            textBox2.Text = detail.ServiceId.ToString();
+            textBox1.Text = detail.Symbolrate.ToString();
+            textBoxSwitch.Text = detail.SwitchingFrequency.ToString();
+            textBoxDVBSChannel.Text = detail.ChannelNumber.ToString();
+            textBoxDVBSPmt.Text = detail.PmtPid.ToString();
+            textBoxDVBSProvider.Text = detail.Provider ;
+            checkBoxDVBSfta.Checked = detail.FreeToAir ;
+            switch ((Polarisation)detail.Polarisation)
+            {
+              case Polarisation.LinearH:
+                comboBoxPol.SelectedIndex = 0;
+                break;
+              case Polarisation.LinearV:
+                comboBoxPol.SelectedIndex = 1;
+                break;
+              case Polarisation.CircularL:
+                comboBoxPol.SelectedIndex = 2;
+                break;
+              case Polarisation.CircularR:
+                comboBoxPol.SelectedIndex = 2;
+                break;
+            }
+            comboBoxModulation.SelectedIndex = detail.Modulation + 1;
+            comboBoxInnerFecRate.SelectedIndex = detail.InnerFecRate + 1;
+            comboBoxPilot.SelectedIndex = detail.Pilot + 1;
+            comboBoxRollOff.SelectedIndex = detail.RollOff + 1;
+            comboBoxDisEqc.SelectedIndex = detail.Diseqc;
+            foreach (DiSEqCMotor motor in DiSEqCMotor.ListAll())
+            {
+              if (detail.SatIndex == motor.Position)
+              {
+                Satellite.Retrieve(motor.IdSatellite);
+                break;
+              }
+            }
+            /*if (sat != null)
           {
             for (int i = 0; i < comboBoxSatellite.Items.Count; ++i)
             {
@@ -693,41 +678,38 @@ namespace SetupTv.Sections
               }
             }
           }*/
-        }
+          }
 
-        //DVB-T Tab
-        if (detail.ChannelType == 4 || _newChannel)
-        {
-          _dvbt = true;
-          textBoxDVBTChannel.Text = detail.ChannelNumber.ToString();
-          textBoxDVBTfreq.Text = detail.Frequency.ToString();
-          textBox8.Text = detail.NetworkId.ToString();
-          textBox7.Text = detail.TransportId.ToString();
-          textBox6.Text = detail.ServiceId.ToString();
-          textBoxDVBTProvider.Text = detail.Provider;
-          checkBoxDVBTfta.Checked = detail.FreeToAir;
-          if (detail.Bandwidth == 7)
-            comboBoxBandWidth.SelectedIndex = 0;
-          else
-            comboBoxBandWidth.SelectedIndex = 1;
-          textBoxPmt.Text = detail.PmtPid.ToString();
-        }
+          //DVB-T Tab
+          if (detail.ChannelType == 4 || _newChannel)
+          {
+            _dvbt = true;
+            textBoxDVBTChannel.Text = detail.ChannelNumber.ToString();
+            textBoxDVBTfreq.Text = detail.Frequency.ToString();
+            textBox8.Text = detail.NetworkId.ToString();
+            textBox7.Text = detail.TransportId.ToString();
+            textBox6.Text = detail.ServiceId.ToString();
+            textBoxDVBTProvider.Text = detail.Provider;
+            checkBoxDVBTfta.Checked = detail.FreeToAir;
+            comboBoxBandWidth.SelectedIndex = detail.Bandwidth == 7 ? 0 : 1;
+            textBoxPmt.Text = detail.PmtPid.ToString();
+          }
 
-        //Webstream Tab
-        if (detail.ChannelType == 5 || _newChannel)
-        {
-          _webstream = true;
-          edStreamURL.Text = detail.Url;
-          nudStreamBitrate.Value = detail.Bitrate;
-        }
+          //Webstream Tab
+          if (detail.ChannelType == 5 || _newChannel)
+          {
+            _webstream = true;
+            edStreamURL.Text = detail.Url;
+            nudStreamBitrate.Value = detail.Bitrate;
+          }
 
-        //FM Radio
-        if (detail.ChannelType == 6 || _newChannel)
-        {
-          _fmRadio = true;
-          edFMFreq.Text = SetFrequency(detail.Frequency, "3");
+          //FM Radio
+          if (detail.ChannelType == 6 || _newChannel)
+          {
+            _fmRadio = true;
+            edFMFreq.Text = SetFrequency(detail.Frequency, "3");
+          }
         }
-      }
     }
 
     private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
@@ -791,7 +773,7 @@ namespace SetupTv.Sections
 
     }
 
-    long GetFrequency(string text, string precision)
+    static long GetFrequency(string text, string precision)
     {
       float tmp = 123.25f;
       if (tmp.ToString("f" + precision).IndexOf(',') > 0)
@@ -807,7 +789,7 @@ namespace SetupTv.Sections
       return (long)freq;
     }
 
-    string SetFrequency(long frequency, string precision)
+    static string SetFrequency(long frequency, string precision)
     {
       float freq = frequency;
       freq /= 1000000f;
@@ -817,7 +799,7 @@ namespace SetupTv.Sections
     private void btnSearchSHOUTcast_Click(object sender, EventArgs e)
     {
       SearchSHOUTcast dlg = new SearchSHOUTcast();
-      DialogResult dialogResult = dlg.ShowDialog(this);
+      dlg.ShowDialog(this);
       if (dlg.Station == null) return;
       textBoxName.Text = dlg.Station.name;
       edStreamURL.Text = dlg.Station.url;
@@ -846,8 +828,8 @@ namespace SetupTv.Sections
 
     private void mpButtonCancel_Click(object sender, EventArgs e)
     {
-      this.DialogResult = DialogResult.Cancel;
-      this.Close();
+      DialogResult = DialogResult.Cancel;
+      Close();
     }
   }
 }

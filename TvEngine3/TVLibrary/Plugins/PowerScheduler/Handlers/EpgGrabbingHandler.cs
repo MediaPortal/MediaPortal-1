@@ -23,12 +23,9 @@
 
 #region Usings
 using System;
-using System.Text;
-using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using TvControl;
-using TvService;
 using TvDatabase;
 using TvLibrary.Log;
 using TvLibrary.Interfaces;

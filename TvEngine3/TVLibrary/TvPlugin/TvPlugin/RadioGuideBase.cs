@@ -1080,7 +1080,7 @@ namespace TvPlugin
         if (chan >= _channelList.Count) chan = 0;
       }
 
-      IList programs;
+      IList<Program> programs;
       DateTime dtStart = DateTime.Now;
       DateTime dtEnd = dtStart.AddDays(30);
       long iStart = Utils.datetolong(dtStart);
@@ -1272,7 +1272,7 @@ namespace TvPlugin
       }
 
 
-      IList programs;
+      IList<Program> programs;
       TvBusinessLayer layer = new TvBusinessLayer();
       programs = layer.GetPrograms(channel, Utils.longtodate(iStart), Utils.longtodate(iEnd));
       if (programs.Count == 0)
@@ -2198,7 +2198,7 @@ namespace TvPlugin
       _channelList = new ArrayList();
       if (Radio.selectedGroup == null)
       {
-        IList channels = Channel.ListAll();
+        IList<Channel> channels = Channel.ListAll();
         foreach (Channel channel in channels)
         {
           if (channel.IsRadio)
@@ -2208,7 +2208,7 @@ namespace TvPlugin
       else
       {
         Radio.selectedGroup.ReferringRadioGroupMap();
-        IList maps = Radio.selectedGroup.ReferringRadioGroupMap();
+        IList<RadioGroupMap> maps = Radio.selectedGroup.ReferringRadioGroupMap();
         foreach (RadioGroupMap map in maps)
         {
           Channel channel = map.ReferencedChannel();

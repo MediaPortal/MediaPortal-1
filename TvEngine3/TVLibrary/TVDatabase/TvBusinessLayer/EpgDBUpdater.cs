@@ -20,7 +20,6 @@
  */
 
 using System;
-using System.Collections;
 using System.Collections.Specialized;
 using System.Collections.Generic;
 using TvLibrary.Epg;
@@ -113,13 +112,13 @@ namespace TvDatabase
       if ((dbChannel.EpgHasGaps || _alwaysFillHoles) && !_alwaysReplace)
       {
         Log.Epg("{0}: {1} is marked to have epg gaps. Calculating them...", _grabberName, dbChannel.DisplayName);
-        IList infos = _layer.GetPrograms(dbChannel, DateTime.Now);
+        IList<Program> infos = _layer.GetPrograms(dbChannel, DateTime.Now);
         if (infos.Count > 1)
         {
           for (int i = 1; i < infos.Count; i++)
           {
-            Program prev = (Program)infos[i - 1];
-            Program current = (Program)infos[i];
+            Program prev = infos[i - 1];
+            Program current = infos[i];
             TimeSpan diff = current.StartTime - prev.EndTime;
             if (diff.TotalMinutes > 5)
               holes.Add(new EpgHole(prev.EndTime, current.StartTime));
@@ -154,19 +153,19 @@ namespace TvDatabase
         {
           try
           {
-            IList epgs = _layer.GetProgramExists(dbChannel, epgProgram.StartTime, epgProgram.EndTime);
+            IList<Program> epgs = _layer.GetProgramExists(dbChannel, epgProgram.StartTime, epgProgram.EndTime);
 
             if (epgs.Count > 0)
             {
-              prog = (Program)epgs[0];
+              prog = epgs[0];
               if (epgs.Count > 1)
                 Log.Epg("- {0} entries are obsolete for {1} from {2} to {3}", epgs.Count - 1, dbChannel.DisplayName, epgProgram.StartTime, epgProgram.EndTime);
               for (int idx = 1; idx < epgs.Count; idx++)
               {
                 try
                 {
-                  ((Program)epgs[idx]).Delete();
-                  Log.Epg("- Deleted the epg entry {0} ({1} - {2})", ((Program)epgs[idx]).Title, ((Program)epgs[idx]).StartTime, ((Program)epgs[idx]).EndTime);
+                  epgs[idx].Delete();
+                  Log.Epg("- Deleted the epg entry {0} ({1} - {2})", epgs[idx].Title, epgs[idx].StartTime, epgs[idx].EndTime);
                 } catch (Exception ex)
                 {
                   Log.Epg("Error during epg entry deletion: {0}", ex.Message);

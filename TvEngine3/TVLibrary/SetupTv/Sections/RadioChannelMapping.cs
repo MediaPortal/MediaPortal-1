@@ -19,7 +19,6 @@
  *
  */
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using TvControl;
@@ -81,7 +80,7 @@ namespace SetupTv.Sections
     public override void OnSectionActivated()
     {
       mpComboBoxCard.Items.Clear();
-      IList cards = Card.ListAll();
+      IList<Card> cards = Card.ListAll();
       foreach (Card card in cards)
       {
         if (card.Enabled == false)
@@ -170,10 +169,10 @@ namespace SetupTv.Sections
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
       sb.AddOrderByField(true, "sortOrder");
       SqlStatement stmt = sb.GetStatement(true);
-      IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
+      IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
 
       Card card = ((CardInfo)mpComboBoxCard.SelectedItem).Card;
-      IList maps = card.ReferringChannelMap();
+      IList<ChannelMap> maps = card.ReferringChannelMap();
 
       // get cardtype, dvb, analogue etc.		
       CardType cardType = RemoteControl.Instance.Type(card.IdCard);

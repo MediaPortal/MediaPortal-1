@@ -19,7 +19,6 @@
  *
  */
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using TvLibrary.Interfaces;
@@ -96,7 +95,7 @@ namespace TvLibrary.Implementations.DVB
     /// Sets the hw pids.
     /// </summary>
     /// <param name="pids">The pids.</param>
-    protected virtual void SetHwPids(ArrayList pids)
+    protected virtual void SetHwPids(List<ushort> pids)
     {
     }
     /// <summary>

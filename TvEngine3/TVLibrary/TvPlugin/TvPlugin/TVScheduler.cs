@@ -410,10 +410,10 @@ namespace TvPlugin
 
     void LoadDirectory()
     {
-      IList conflictsList = Conflict.ListAll();
+      IList<Conflict> conflictsList = Conflict.ListAll();
       btnConflicts.Visible = conflictsList.Count > 0;
       GUIControl.ClearControl(GetID, listSchedules.GetID);
-      IList schedulesList = Schedule.ListAll();
+      IList<Schedule> schedulesList = Schedule.ListAll();
       int total = 0;
       bool showSeries = btnSeries.Selected;
 
@@ -943,7 +943,7 @@ namespace TvPlugin
       GUIDialogDateTime dlg = (GUIDialogDateTime)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_DATETIME);
       if (dlg != null)
       {        
-        IList channels = Channel.ListAll();
+        IList<Channel> channels = Channel.ListAll();
         dlg.SetHeading(637);
         dlg.Items.Clear();
         dlg.EnableChannel = true;
@@ -1009,7 +1009,7 @@ namespace TvPlugin
     void OnCleanup()
     {
       int iCleaned = 0;
-      IList itemlist = Schedule.ListAll();
+      IList<Schedule> itemlist = Schedule.ListAll();
       foreach (Schedule rec in itemlist)
       {
         if (rec.IsDone() || rec.Canceled != Schedule.MinSchedule)

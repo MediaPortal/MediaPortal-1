@@ -3,7 +3,7 @@
 // with the Gentle.NET Business Entity template, $Rev: 965 $
 //========================================================================
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using Gentle.Framework;
 using TvLibrary.Log;
 
@@ -88,12 +88,12 @@ namespace TvDatabase
     /// <summary>
     /// Static method to retrieve all instances that are stored in the database in one call
     /// </summary>
-    public static IList ListAll()
+    public static IList<RadioChannelGroup> ListAll()
     {
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(RadioChannelGroup));
       sb.AddOrderByField(true, "sortOrder");
       SqlStatement stmt = sb.GetStatement(true);
-      return ObjectFactory.GetCollection(typeof(RadioChannelGroup), stmt.Execute());
+      return ObjectFactory.GetCollection<RadioChannelGroup>(stmt.Execute());
     }
 
     /// <summary>
@@ -107,7 +107,7 @@ namespace TvDatabase
         return null;
       }
       Key key = new Key(typeof(RadioChannelGroup), true, "idGroup", id);
-      return Broker.RetrieveInstance(typeof(RadioChannelGroup), key) as RadioChannelGroup;
+      return Broker.RetrieveInstance<RadioChannelGroup>(key);
     }
 
     /// <summary>
@@ -116,7 +116,7 @@ namespace TvDatabase
     /// </summary>
     public static RadioChannelGroup Retrieve(Key key)
     {
-      return Broker.RetrieveInstance(typeof(RadioChannelGroup), key) as RadioChannelGroup;
+      return Broker.RetrieveInstance<RadioChannelGroup>(key);
     }
 
     /// <summary>
@@ -146,7 +146,7 @@ namespace TvDatabase
     /// <summary>
     /// Get a list of GroupMap referring to the current entity.
     /// </summary>
-    public IList ReferringRadioGroupMap()
+    public IList<RadioGroupMap> ReferringRadioGroupMap()
     {
       //select * from 'foreigntable'
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(RadioGroupMap));
@@ -160,7 +160,7 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
 
       // execute the statement/query and create a collection of User instances from the result set
-      return ObjectFactory.GetCollection(typeof(RadioGroupMap), stmt.Execute());
+      return ObjectFactory.GetCollection<RadioGroupMap>(stmt.Execute());
 
       // TODO In the end, a GentleList should be returned instead of an arraylist
       //return new GentleList( typeof(GroupMap), this );
@@ -170,7 +170,7 @@ namespace TvDatabase
 
     public void Delete()
     {
-      IList list = ReferringRadioGroupMap();
+      IList<RadioGroupMap> list = ReferringRadioGroupMap();
       foreach (RadioGroupMap map in list)
       {
         map.Remove();

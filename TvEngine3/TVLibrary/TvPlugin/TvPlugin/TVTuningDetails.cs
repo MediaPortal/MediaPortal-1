@@ -62,10 +62,10 @@ namespace TvPlugin
       Channel chan=TVHome.Navigator.Channel;
       if (chan!=null)
       {
-        IList details=chan.ReferringTuningDetail();
+        IList<TuningDetail> details=chan.ReferringTuningDetail();
         if (details.Count > 0)
         {
-          TuningDetail detail = (TuningDetail)details[0];
+          TuningDetail detail = details[0];
           GUIPropertyManager.SetProperty("#TV.TuningDetails.Band", detail.Band.ToString());
           GUIPropertyManager.SetProperty("#TV.TuningDetails.BandWidth", detail.Bandwidth.ToString());
           GUIPropertyManager.SetProperty("#TV.TuningDetails.ChannelType", detail.ChannelType.ToString());

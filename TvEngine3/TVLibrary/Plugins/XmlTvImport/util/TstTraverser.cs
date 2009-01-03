@@ -31,7 +31,6 @@
 //      1997  
 
 using System;
-using System.Collections;
 
 namespace Tst
 {

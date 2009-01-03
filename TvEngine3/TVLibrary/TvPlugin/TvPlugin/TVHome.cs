@@ -1399,7 +1399,7 @@ namespace TvPlugin
 
       try
       {
-        IList cards = TvDatabase.Card.ListAll();
+        IList<Card> cards = TvDatabase.Card.ListAll();
       }
       catch (Exception)
       {
@@ -1415,7 +1415,7 @@ namespace TvPlugin
           {
             try
             {
-              IList cards = TvDatabase.Card.ListAll();
+              IList<Card> cards = TvDatabase.Card.ListAll();
               success = true;
             }
             catch (Exception)
@@ -1928,7 +1928,7 @@ namespace TvPlugin
       dlg.SetHeading(200052); // Active Recordings
       int selected = 0;
 
-      IList cards = TvDatabase.Card.ListAll();
+      IList<Card> cards = TvDatabase.Card.ListAll();
       List<Channel> channels = new List<Channel>();
       int count = 0;
       TvServer server = new TvServer();
@@ -1970,7 +1970,7 @@ namespace TvPlugin
 
 
             //retrive the EPG info from when the rec. was started.
-            IList schedulesList = Schedule.ListAll();
+            IList<Schedule> schedulesList = Schedule.ListAll();
             if (schedulesList != null)
             {
               Schedule rec = Schedule.Retrieve(tvcard.RecordingScheduleId);
@@ -2066,7 +2066,7 @@ namespace TvPlugin
       dlg.SetHeading(692); // Active Tv Streams
       int selected = 0;
 
-      IList cards = TvDatabase.Card.ListAll();
+      IList<Card> cards = TvDatabase.Card.ListAll();
       List<Channel> channels = new List<Channel>();
       int count = 0;
       TvServer server = new TvServer();
@@ -3372,7 +3372,7 @@ namespace TvPlugin
           allRadioChannelsGroup = new RadioChannelGroup("All Channels", 9999);
           allRadioChannelsGroup.Persist();
         }
-        IList radioChannels = layer.GetAllRadioChannels();
+        IList<Channel> radioChannels = layer.GetAllRadioChannels();
         if (radioChannels != null)
         {
           if (radioChannels.Count > allRadioChannelsGroup.ReferringRadioGroupMap().Count)
@@ -3388,8 +3388,8 @@ namespace TvPlugin
         sb = new SqlBuilder(StatementType.Select, typeof(ChannelGroup));
         sb.AddOrderByField(true, "groupName");
         stmt = sb.GetStatement(true);
-        IList groups = ObjectFactory.GetCollection(typeof(ChannelGroup), stmt.Execute());
-        IList allgroupMaps = GroupMap.ListAll();
+        IList<ChannelGroup> groups = ObjectFactory.GetCollection<ChannelGroup>(stmt.Execute());
+        IList<GroupMap> allgroupMaps = GroupMap.ListAll();
 
         bool hideAllChannelsGroup = false;
         using (
@@ -3746,7 +3746,7 @@ namespace TvPlugin
     /// <param name="useZapDelay">If true, the configured zap delay is used. Otherwise it zaps immediately.</param>
     public void ZapToChannelNumber(int channelNr, bool useZapDelay)
     {
-      IList channels = CurrentGroup.ReferringGroupMap();
+      IList<GroupMap> channels = CurrentGroup.ReferringGroupMap();
       if (channelNr >= 0)
       {
 
@@ -3786,7 +3786,7 @@ namespace TvPlugin
     /// <param name="useZapDelay">If true, the configured zap delay is used. Otherwise it zaps immediately.</param>
     public void ZapToChannel(int channelNr, bool useZapDelay)
     {
-      IList channels = CurrentGroup.ReferringGroupMap();
+      IList<GroupMap> channels = CurrentGroup.ReferringGroupMap();
       channelNr--;
       if (channelNr >= 0 && channelNr < channels.Count)
       {
@@ -3962,7 +3962,7 @@ namespace TvPlugin
     /// <returns></returns>
     private int GetChannelIndex(Channel ch)
     {
-      IList groupMaps = CurrentGroup.ReferringGroupMap();
+      IList<GroupMap> groupMaps = CurrentGroup.ReferringGroupMap();
       for (int i = 0; i < groupMaps.Count; i++)
       {
         GroupMap gm = (GroupMap)groupMaps[i];

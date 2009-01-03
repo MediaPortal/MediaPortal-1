@@ -3,7 +3,7 @@
 // with the Gentle.NET Business Entity template, $Rev: 965 $
 //========================================================================
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using Gentle.Framework;
 using TvLibrary.Log;
 
@@ -99,9 +99,9 @@ namespace TvDatabase
     /// <summary>
     /// Static method to retrieve all instances that are stored in the database in one call
     /// </summary>
-    public static IList ListAll()
+    public static IList<DiSEqCMotor> ListAll()
     {
-      return Broker.RetrieveList(typeof(DiSEqCMotor));
+      return Broker.RetrieveList<DiSEqCMotor>();
     }
 
     /// <summary>
@@ -115,7 +115,7 @@ namespace TvDatabase
         return null;
       }
       Key key = new Key(typeof(DiSEqCMotor), true, "idDiSEqCMotor", id);
-      return Broker.RetrieveInstance(typeof(DiSEqCMotor), key) as DiSEqCMotor;
+      return Broker.RetrieveInstance<DiSEqCMotor>(key);
     }
 
     /// <summary>
@@ -124,7 +124,7 @@ namespace TvDatabase
     /// </summary>
     public static DiSEqCMotor Retrieve(Key key)
     {
-      return Broker.RetrieveInstance(typeof(DiSEqCMotor), key) as DiSEqCMotor;
+      return Broker.RetrieveInstance<DiSEqCMotor>(key);
     }
 
     /// <summary>
@@ -154,7 +154,7 @@ namespace TvDatabase
     /// <summary>
     /// Get a list of Card referring to the current entity.
     /// </summary>
-    public IList ReferringCard()
+    public IList<Card> ReferringCard()
     {
       //select * from 'foreigntable'
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Card));
@@ -167,13 +167,13 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
 
       // execute the statement/query and create a collection of User instances from the result set
-      return ObjectFactory.GetCollection(typeof(Card), stmt.Execute());
+      return ObjectFactory.GetCollection<Card>(stmt.Execute());
     }
 
     /// <summary>
     /// Get a list of Satellite referring to the current entity.
     /// </summary>
-    public IList ReferringSatellite()
+    public IList<Satellite> ReferringSatellite()
     {
       //select * from 'foreigntable'
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Satellite));
@@ -186,7 +186,7 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
 
       // execute the statement/query and create a collection of User instances from the result set
-      return ObjectFactory.GetCollection(typeof(Satellite), stmt.Execute());
+      return ObjectFactory.GetCollection<Satellite>(stmt.Execute());
     }
     #endregion
 

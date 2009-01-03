@@ -24,22 +24,14 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
-using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading;
-using System.Xml;
-
 using Microsoft.Win32;
-
-using Gentle.Common;
-using Gentle.Framework;
-
 using TvDatabase;
 using TvLibrary.Log;
 
@@ -104,7 +96,7 @@ namespace TvEngine
     private bool _canceled = false;
     private List<TVMChannel> _tvmEpgChannels;
     private List<Program> _tvmEpgProgs = new List<Program>(500);
-    private ArrayList _channelList = null;
+    private List<Channel> _channelList = null;
     private int _programsCounter = 0;
     private bool _useShortProgramDesc = false;
     private bool _extendDescription = false;
@@ -324,12 +316,12 @@ namespace TvEngine
     #endregion
 
     #region Public functions
-    public ArrayList GetChannels()
+    public List<Channel> GetChannels()
     {
-      ArrayList tvChannels = new ArrayList();
+      List<Channel> tvChannels = new List<Channel>();
       try
       {
-        IList allChannels = Channel.ListAll();
+        IList<Channel> allChannels = Channel.ListAll();
         foreach (Channel channel in allChannels)
         {
           if (channel.IsTv && channel.VisibleInGuide)
@@ -488,7 +480,7 @@ namespace TvEngine
       if (_canceled)
         return;
 
-      ArrayList mappingList = GetMappingList();
+      List<Mapping> mappingList = GetMappingList();
       if (mappingList == null || mappingList.Count < 1)
       {
         Log.Info("TVMovie: Cannot import from TV Movie database - no mappings found");
@@ -522,7 +514,7 @@ namespace TvEngine
       _tvmEpgProgs.Clear();
 
       // get all tv channels from MP DB via gentle.net
-      IList allChannels = Channel.ListAll();
+      IList<Channel> allChannels = Channel.ListAll();
 
       foreach (TVMChannel station in _tvmEpgChannels)
       {
@@ -610,7 +602,7 @@ namespace TvEngine
       _xmlFile = String.Format(@"{0}\TVMovieMapping.xml", Log.GetPathName());
     }
 
-    private int ImportStation(string stationName, List<Mapping> channelNames, IList allChannels, bool useGentle)
+    private int ImportStation(string stationName, List<Mapping> channelNames, IList<Channel> allChannels, bool useGentle)
     {
       int counter = 0;
       string sqlSelect = string.Empty;
@@ -690,7 +682,7 @@ namespace TvEngine
     /// <summary>
     /// Takes a DataRow worth of EPG Details to persist them in MP's program table
     /// </summary>
-    private void ImportSingleChannelData(List<Mapping> channelNames, IList allChannels, bool useGentlePersist, int aCounter,
+    private void ImportSingleChannelData(List<Mapping> channelNames, IList<Channel> allChannels, bool useGentlePersist, int aCounter,
                                          string SenderKennung, string Beginn, string Ende, string Sendung, string Genre, string Kurzkritik, string KurzBeschreibung, string Beschreibung,
                                          string Audiodescription, string DolbySuround, string Stereo, string DolbyDigital, string Dolby, string Zweikanalton,
                                          string FSK, string Herstellungsjahr, string Originaltitel, string Regie, string Darsteller, string Interessant, string Bewertungen)
@@ -871,12 +863,12 @@ namespace TvEngine
     /// Retrieve all channel-mappings from TvMovieMapping table
     /// </summary>
     /// <returns></returns>
-    private ArrayList GetMappingList()
+    private List<Mapping> GetMappingList()
     {
-      ArrayList mappingList = new ArrayList();
+      List<Mapping> mappingList = new List<Mapping>();
       try
       {
-        IList mappingDb = TvMovieMapping.ListAll();
+        IList<TvMovieMapping> mappingDb = TvMovieMapping.ListAll();
         foreach (TvMovieMapping mapping in mappingDb)
         {
           try
@@ -887,7 +879,7 @@ namespace TvEngine
             string newChannel = Channel.Retrieve(mapping.IdChannel).Name;
             int newIdChannel = mapping.IdChannel;
 
-            mappingList.Add(new TvMovieDatabase.Mapping(newChannel, newIdChannel, newStation, newStart, newEnd));
+            mappingList.Add(new Mapping(newChannel, newIdChannel, newStation, newStart, newEnd));
           }
           catch (Exception)
           {
@@ -1139,7 +1131,7 @@ namespace TvEngine
       try
       {
         Channel progChannel = null;
-        IList allChannels = Channel.ListAll();
+        IList<Channel> allChannels = Channel.ListAll();
         foreach (Channel ch in allChannels)
         {
           if (ch.Name == channel)

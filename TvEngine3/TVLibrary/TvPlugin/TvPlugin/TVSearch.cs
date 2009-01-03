@@ -93,7 +93,7 @@ namespace TvPlugin
     }
     SortMethod currentSortMethod = SortMethod.Name;
     bool sortAscending = true;
-    IList listRecordings;
+    IList<Schedule> listRecordings;
     //		int        currentSearchKind=-1;
 
     SearchMode currentSearchMode = SearchMode.Genre;
@@ -440,7 +440,7 @@ namespace TvPlugin
         case SearchMode.Genre:
           if (currentLevel == 0)
           {
-            IList genres ;
+            IList<string> genres ;
             TvBusinessLayer layer = new TvBusinessLayer();
             genres = layer.GetGenres();
             foreach (string genre in genres)
@@ -470,7 +470,7 @@ namespace TvPlugin
             listView.Add(item);
             titleView.Add(item);
 
-            IList titles;
+            IList<Program> titles;
             TvBusinessLayer layer = new TvBusinessLayer();
             titles = layer.SearchProgramsPerGenre(currentGenre, filterShow);
             foreach (Program program in titles)
@@ -550,7 +550,7 @@ namespace TvPlugin
               listView.Add(item);
               titleView.Add(item);
             }
-            IList titles = new ArrayList();
+            IList<Program> titles = new List<Program>();
             TvBusinessLayer layer = new TvBusinessLayer();
             if (filterLetter == "#")
             {
@@ -652,7 +652,7 @@ namespace TvPlugin
 
         case SearchMode.Description:
           {
-            IList titles = new ArrayList();
+            IList<Program> titles = new List<Program>();
             long start = Utils.datetolong(DateTime.Now);
             long end = Utils.datetolong(DateTime.Now.AddMonths(1));
             TvBusinessLayer layer = new TvBusinessLayer();

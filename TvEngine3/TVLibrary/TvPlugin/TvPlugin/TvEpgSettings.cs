@@ -82,7 +82,7 @@ namespace TvPlugin
     void Update()
     {
       listChannels.Clear();
-      IList channels = Channel.ListAll();
+      IList<Channel> channels = Channel.ListAll();
       foreach (Channel chan in channels)
       {
         if (chan.IsTv) continue;
@@ -121,7 +121,7 @@ namespace TvPlugin
       }
       if (control == btnSelectAll)
       {
-        IList channels = Channel.ListAll();
+        IList<Channel> channels = Channel.ListAll();
         foreach (Channel chan in channels)
         {
           if (chan.IsTv) continue;
@@ -135,7 +135,7 @@ namespace TvPlugin
       }
       if (control == btnSelectNone)
       {
-        IList channels = Channel.ListAll();
+        IList<Channel> channels = Channel.ListAll();
         foreach (Channel chan in channels)
         {
           if (chan.IsTv) continue;

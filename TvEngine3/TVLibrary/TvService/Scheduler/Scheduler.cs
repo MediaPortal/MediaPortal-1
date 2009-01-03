@@ -19,7 +19,6 @@
  *
  */
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
@@ -101,7 +100,7 @@ namespace TvService
       Log.Write("Scheduler: started");
       _controller = RemoteControl.Instance;
       _recordingsInProgressList = new List<RecordingDetail>();
-      IList schedules = Schedule.ListAll();
+      IList<Schedule> schedules = Schedule.ListAll();
       Log.Write("Scheduler: loaded {0} schedules", schedules.Count);
       _scheduleCheckTimer = DateTime.MinValue;
       _timer.Interval = 1000;
@@ -196,7 +195,7 @@ namespace TvService
     /// </summary>
     void DoSchedule()
     {
-      IList schedules = Schedule.ListAll();
+      IList<Schedule> schedules = Schedule.ListAll();
       foreach (Schedule schedule in schedules)
       {
         //if schedule has been canceled then do nothing
@@ -278,7 +277,7 @@ namespace TvService
     /// </summary>
     public bool IsTimeToRecord(DateTime currentTime)
     {
-      IList schedules = Schedule.ListAll();
+      IList<Schedule> schedules = Schedule.ListAll();
       foreach (Schedule schedule in schedules)
       {
         //if schedule has been canceled then do nothing
@@ -458,7 +457,7 @@ namespace TvService
 
       if (type == ScheduleRecordingType.EveryTimeOnEveryChannel)
       {
-        IList programs = TvDatabase.Program.RetrieveCurrentRunningByTitle(schedule.ProgramName, schedule.PreRecordInterval, schedule.PostRecordInterval);
+        IList<TvDatabase.Program> programs = TvDatabase.Program.RetrieveCurrentRunningByTitle(schedule.ProgramName, schedule.PreRecordInterval, schedule.PostRecordInterval);
         foreach (TvDatabase.Program program in programs)
         {
           if (!schedule.IsSerieIsCanceled(program.StartTime))

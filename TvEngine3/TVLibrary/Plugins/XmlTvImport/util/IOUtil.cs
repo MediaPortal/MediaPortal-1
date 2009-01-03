@@ -18,21 +18,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Text;
-using System.Threading;
-using System.Xml;
-
-using TvDatabase;
-using TvLibrary.Log;
-using TvLibrary.Implementations;
-
-using Gentle.Common;
-using Gentle.Framework;
 
 namespace TvEngine
 {

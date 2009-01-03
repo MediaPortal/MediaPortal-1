@@ -3,7 +3,7 @@
 // with the Gentle.NET Business Entity template, $Rev: 965 $
 //========================================================================
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using Gentle.Framework;
 using TvLibrary.Log;
 
@@ -169,9 +169,9 @@ namespace TvDatabase
     /// <summary>
     /// Static method to retrieve all instances that are stored in the database in one call
     /// </summary>
-    public static IList ListAll()
+    public static IList<History> ListAll()
     {
-      return Broker.RetrieveList(typeof(History));
+      return Broker.RetrieveList<History>();
     }
 
     /// <summary>
@@ -185,7 +185,7 @@ namespace TvDatabase
         return null;
       }
       Key key = new Key(typeof(History), true, "idHistory", id);
-      return Broker.RetrieveInstance(typeof(History), key) as History;
+      return Broker.RetrieveInstance<History>(key);
     }
 
     /// <summary>
@@ -194,7 +194,7 @@ namespace TvDatabase
     /// </summary>
     public static History Retrieve(Key key)
     {
-      return Broker.RetrieveInstance(typeof(History), key) as History;
+      return Broker.RetrieveInstance<History>(key);
     }
 
     /// <summary>
@@ -207,8 +207,7 @@ namespace TvDatabase
         try
         {
           base.Persist();
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
           Log.Error("Exception in History.Persist() with Message {0}", ex.Message);
           return;
@@ -223,7 +222,7 @@ namespace TvDatabase
     /// <summary>
     /// Get a list of Channel referring to the current entity.
     /// </summary>
-    public IList ReferringChannel()
+    public IList<Channel> ReferringChannel()
     {
       //select * from 'foreigntable'
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
@@ -236,7 +235,7 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
 
       // execute the statement/query and create a collection of User instances from the result set
-      return ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
+      return ObjectFactory.GetCollection<Channel>(stmt.Execute());
 
       // TODO In the end, a GentleList should be returned instead of an arraylist
       //return new GentleList( typeof(Channel), this );

@@ -377,7 +377,7 @@ namespace TvService
     #region public members
 
 
-    public void SetChannelStates(Dictionary<int, ITvCardHandler> cards, List<Channel> channels, bool checkTransponders, TVController tvController)
+    public void SetChannelStates(Dictionary<int, ITvCardHandler> cards, IList<Channel> channels, bool checkTransponders, TVController tvController)
     {
       if (channels == null)
       {
@@ -400,7 +400,7 @@ namespace TvService
     /// Gets a list of all channel states    
     /// </summary>    
     /// <returns>dictionary containing all channel states of the channels supplied</returns>
-    public Dictionary<int, ChannelState> GetChannelStates(Dictionary<int, ITvCardHandler> cards, List<Channel> channels, ref User user, bool checkTransponders, TVController tvController)
+    public Dictionary<int, ChannelState> GetChannelStates(Dictionary<int, ITvCardHandler> cards, IList<Channel> channels, ref User user, bool checkTransponders, TVController tvController)
     {
       if (channels == null)
       {

@@ -142,7 +142,7 @@ namespace SetupTv.Sections
         comboBoxGroup.Items.Add(new CBChannelGroup("", -1));
         comboBoxGroup.Tag = "";
 
-        IList channelGroups = ChannelGroup.ListAll();
+        IList<ChannelGroup> channelGroups = ChannelGroup.ListAll();
         foreach (ChannelGroup cg in channelGroups)
         {
           comboBoxGroup.Items.Add(new CBChannelGroup(cg.GroupName, cg.IdGroup));
@@ -215,7 +215,7 @@ namespace SetupTv.Sections
 
         CBChannelGroup chGroup = (CBChannelGroup)comboBoxGroup.SelectedItem;
 
-        IList channels;
+        IList<Channel> channels;
 
         bool loadRadio = checkBoxLoadRadio.Checked;
 
@@ -224,7 +224,7 @@ namespace SetupTv.Sections
           SqlBuilder sb1 = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Channel));
           SqlStatement stmt1 = sb1.GetStatement(true);
           SqlStatement ManualJoinSQL = new SqlStatement(stmt1.StatementType, stmt1.Command, String.Format("select c.* from Channel c join GroupMap g on c.idChannel=g.idChannel where " + (loadRadio ? "" : " c.isTv = 1 and ") + " g.idGroup = '{0}' order by g.sortOrder", chGroup.idGroup), typeof(Channel));
-          channels = ObjectFactory.GetCollection(typeof(Channel), ManualJoinSQL.Execute());
+          channels = ObjectFactory.GetCollection<Channel>(ManualJoinSQL.Execute());
         }
         else
         {
@@ -233,7 +233,7 @@ namespace SetupTv.Sections
           if (!loadRadio)
             sb.AddConstraint(" isTv = 1");
           SqlStatement stmt = sb.GetStatement(true);
-          channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
+          channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
         }
 
         progressBar1.Minimum = 0;
@@ -653,7 +653,7 @@ namespace SetupTv.Sections
       {
         // loading all Channels is much faster then loading them one by one
         // for each mapping
-        IList allChanels = Channel.ListAll();
+        IList<Channel> allChanels = Channel.ListAll();
 
         Dictionary<int, Channel> dAllChannels = new Dictionary<int, Channel>();
 

@@ -26,7 +26,6 @@
 
 using System;
 using System.IO;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data.SqlTypes;
 using System.Drawing;
@@ -329,7 +328,7 @@ namespace SetupTv.Sections
 
       _needRestart = false;
       comboBoxCards.Items.Clear();
-      IList cards = Card.ListAll();
+      IList<Card> cards = Card.ListAll();
       foreach (Card card in cards)
       {
         comboBoxCards.Items.Add(new CardInfo(card));
@@ -509,7 +508,7 @@ namespace SetupTv.Sections
     private void LoadComboBoxDrive()
     {
       comboBoxDrive.Items.Clear();
-      IList cards = Card.ListAll();
+      IList<Card> cards = Card.ListAll();
       foreach (Card card in cards)
       {
         if (card.RecordingFolder.Length > 0)
@@ -535,20 +534,16 @@ namespace SetupTv.Sections
     #region RecordSorter
 
     // Create a sorter that implements the IComparer interface.
-    public class RecordSorter : IComparer
+    public class RecordSorter : IComparer<TreeNode>
     {
       // Compare the length of the strings, or the strings
       // themselves, if they are the same length.
-      public int Compare(object x, object y)
+      public int Compare(TreeNode tx, TreeNode ty)
       {
         int result = 0;
         try
         {
-          TreeNode tx = x as TreeNode;
-          TreeNode ty = y as TreeNode;
-
-          if (ty != null && tx.Text != null)
-            result = string.Compare(tx.Text, ty.Text, StringComparison.CurrentCulture);
+          result = string.Compare(tx.Text, ty.Text, StringComparison.CurrentCulture);
         } catch (Exception)
         {
         }
@@ -589,7 +584,7 @@ namespace SetupTv.Sections
       GetRecordingsFromDb();
       try
       {
-        IList allCards = Card.ListAll();
+        IList<Card> allCards = Card.ListAll();
         foreach (Card tvCard in allCards)
         {
           if (!string.IsNullOrEmpty(tvCard.RecordingFolder) && !cbRecPaths.Items.Contains(tvCard.RecordingFolder))
@@ -648,7 +643,7 @@ namespace SetupTv.Sections
       try
       {
         tvDbRecs.Clear();
-        IList recordings = Recording.ListAll();
+        IList<Recording> recordings = Recording.ListAll();
         foreach (Recording rec in recordings)
         {
           TreeNode RecNode = BuildNodeFromRecording(rec);
@@ -890,7 +885,7 @@ namespace SetupTv.Sections
       try
       {
         string localHost = System.Net.Dns.GetHostName();
-        IList dbsServers = Server.ListAll();
+        IList<Server> dbsServers = Server.ListAll();
         foreach (Server computer in dbsServers)
         {
           if (computer.HostName.ToLower() == localHost.ToLower())
@@ -914,9 +909,9 @@ namespace SetupTv.Sections
         sb.AddConstraint(Operator.Like, "displayName", aChannelName);
         sb.SetRowLimit(1);
         SqlStatement stmt = sb.GetStatement(true);
-        IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
+        IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
         if (channels.Count > 0)
-          channelId = ((Channel)channels[0]).IdChannel;
+          channelId = (channels[0]).IdChannel;
       } catch (Exception ex)
       {
         MessageBox.Show(string.Format("Could not get ChannelID for DisplayName: {0}\n{1}", aChannelName, ex.Message));

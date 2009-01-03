@@ -3,7 +3,7 @@
 // with the Gentle.NET Business Entity template, $Rev: 965 $
 //========================================================================
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using Gentle.Framework;
 using TvLibrary.Log;
 using TvLibrary.Interfaces;
@@ -344,10 +344,9 @@ namespace TvDatabase
     /// <summary>
     /// Static method to retrieve all instances that are stored in the database in one call
     /// </summary>
-    public static IList ListAll()
-    {      
-      IList res = Broker.RetrieveList(typeof(Schedule));      
-      return res;
+    public static IList<Schedule> ListAll()
+    {
+      return Broker.RetrieveList<Schedule>();
     }
 
     /// <summary>
@@ -361,7 +360,7 @@ namespace TvDatabase
         return null;
       }
       Key key = new Key(typeof(Schedule), true, "id_Schedule", id);
-      return Broker.TryRetrieveInstance(typeof(Schedule), key) as Schedule;
+      return Broker.TryRetrieveInstance<Schedule>(key);
     }
 
     /// <summary>
@@ -370,7 +369,7 @@ namespace TvDatabase
     /// </summary>
     public static Schedule Retrieve(Key key)
     {
-      return Broker.TryRetrieveInstance(typeof(Schedule), key) as Schedule;
+      return Broker.TryRetrieveInstance<Schedule>(key);
     }
 
     /// <summary>
@@ -413,9 +412,9 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
 
       // execute the statement/query and create a collection of User instances from the result set
-      IList getList = ObjectFactory.GetCollection(typeof(Schedule), stmt.Execute());
-      if (getList.Count != 0) return (Schedule)getList[0];
-      else return null;
+      IList<Schedule> getList = ObjectFactory.GetCollection<Schedule>(stmt.Execute());
+      if (getList.Count != 0) return getList[0];
+      return null;
 
       // TODO In the end, a GentleList should be returned instead of an arraylist
       //return new GentleList( typeof(ChannelMap), this );
@@ -445,9 +444,9 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
 
       // execute the statement/query and create a collection of User instances from the result set
-      IList getList = ObjectFactory.GetCollection(typeof(Schedule), stmt.Execute());
-      if (getList.Count != 0) return (Schedule)getList[0];
-      else return null;
+      IList<Schedule> getList = ObjectFactory.GetCollection<Schedule>(stmt.Execute());
+      if (getList.Count != 0) return getList[0];
+      return null;
 
       // TODO In the end, a GentleList should be returned instead of an arraylist
       //return new GentleList( typeof(ChannelMap), this );
@@ -475,9 +474,9 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
 
       // execute the statement/query and create a collection of User instances from the result set
-      IList getList = ObjectFactory.GetCollection(typeof(Schedule), stmt.Execute());
-      if (getList.Count != 0) return (Schedule)getList[0];
-      else return null;
+      IList<Schedule> getList = ObjectFactory.GetCollection<Schedule>(stmt.Execute());
+      if (getList.Count != 0) return getList[0];
+      return null;
 
       // TODO In the end, a GentleList should be returned instead of an arraylist
       //return new GentleList( typeof(ChannelMap), this );
@@ -507,9 +506,9 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
 
       // execute the statement/query and create a collection of User instances from the result set
-      IList getList = ObjectFactory.GetCollection(typeof(Schedule), stmt.Execute());
-      if (getList.Count != 0) return (Schedule)getList[0];
-      else return null;
+      IList<Schedule> getList = ObjectFactory.GetCollection<Schedule>(stmt.Execute());
+      if (getList.Count != 0) return getList[0];
+      return null;
 
       // TODO In the end, a GentleList should be returned instead of an arraylist
       //return new GentleList( typeof(ChannelMap), this );
@@ -522,7 +521,7 @@ namespace TvDatabase
     /// <summary>
     /// Get a list of CanceledSchedule referring to the current entity.
     /// </summary>
-    public IList ReferringCanceledSchedule()
+    public IList<CanceledSchedule> ReferringCanceledSchedule()
     {
       //select * from 'foreigntable'
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(CanceledSchedule));
@@ -535,7 +534,7 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
 
       // execute the statement/query and create a collection of User instances from the result set
-      return ObjectFactory.GetCollection(typeof(CanceledSchedule), stmt.Execute());
+      return ObjectFactory.GetCollection<CanceledSchedule>(stmt.Execute());
 
       // TODO In the end, a GentleList should be returned instead of an arraylist
       //return new GentleList( typeof(CanceledSchedule), this );
@@ -543,7 +542,7 @@ namespace TvDatabase
     /// <summary>
     /// Get a list of Conflicts referring to the current entity.
     /// </summary>
-    public IList ReferringConflicts()
+    public IList<Conflict> ReferringConflicts()
     {
       //select * from 'foreigntable'
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Conflict));
@@ -556,7 +555,7 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
 
       // execute the statement/query and create a collection of User instances from the result set
-      return ObjectFactory.GetCollection(typeof(Conflict), stmt.Execute());
+      return ObjectFactory.GetCollection<Conflict>(stmt.Execute());
 
       // TODO In the end, a GentleList should be returned instead of an arraylist
       //return new GentleList( typeof(CanceledSchedule), this );
@@ -565,7 +564,7 @@ namespace TvDatabase
     /// <summary>
     /// Get a list of Conflicts referring to the current entity.
     /// </summary>
-    public IList ConflictingSchedules()
+    public IList<Conflict> ConflictingSchedules()
     {
       //select * from 'foreigntable'
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Conflict));
@@ -578,7 +577,7 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
 
       // execute the statement/query and create a collection of User instances from the result set
-      return ObjectFactory.GetCollection(typeof(Conflict), stmt.Execute());
+      return ObjectFactory.GetCollection<Conflict>(stmt.Execute());
 
       // TODO In the end, a GentleList should be returned instead of an arraylist
       //return new GentleList( typeof(CanceledSchedule), this );
@@ -774,7 +773,7 @@ namespace TvDatabase
 
     public void Delete()
     {
-      IList list = ReferringConflicts();
+      IList<Conflict> list = ReferringConflicts();
       foreach (Conflict conflict in list)
         conflict.Remove();
 
@@ -785,8 +784,8 @@ namespace TvDatabase
       //Schedule parentSeriesSched = RetrieveSeries(this.ReferencedChannel().IdChannel, this.programName, this.startTime, this.endTime);
       //if (parentSeriesSched == null)
       //{
-      list = ReferringCanceledSchedule();
-      foreach (CanceledSchedule schedule in list)
+      IList<CanceledSchedule> listCanceledSchedule = ReferringCanceledSchedule();
+      foreach (CanceledSchedule schedule in listCanceledSchedule)
       {
         schedule.Remove();
       }
@@ -847,8 +846,8 @@ namespace TvDatabase
     /// <returns>True if a common transponder exists</returns>
     public bool isSameTransponder(Schedule schedule)
     {
-      IList tuningList1 = ReferencedChannel().ReferringTuningDetail();
-      IList tuningList2 = schedule.ReferencedChannel().ReferringTuningDetail();
+      IList<TuningDetail> tuningList1 = ReferencedChannel().ReferringTuningDetail();
+      IList<TuningDetail> tuningList2 = schedule.ReferencedChannel().ReferringTuningDetail();
       foreach (TuningDetail tun1 in tuningList1)
       {
         foreach (TuningDetail tun2 in tuningList2)

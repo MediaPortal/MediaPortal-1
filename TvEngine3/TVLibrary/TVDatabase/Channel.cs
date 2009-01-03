@@ -3,7 +3,7 @@
 // with the Gentle.NET Business Entity template, $Rev: 965 $
 //========================================================================
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using Gentle.Framework;
 using TvLibrary.Log;
 
@@ -244,9 +244,9 @@ namespace TvDatabase
     /// <summary>
     /// Static method to retrieve all instances that are stored in the database in one call
     /// </summary>
-    public static IList ListAll()
+    public static IList<Channel> ListAll()
     {
-      return Broker.RetrieveList(typeof(Channel));
+      return Broker.RetrieveList<Channel>();
     }
 
     /// <summary>
@@ -260,7 +260,7 @@ namespace TvDatabase
         return null;
       }
       Key key = new Key(typeof(Channel), true, "idChannel", id);
-      return Broker.RetrieveInstance(typeof(Channel), key) as Channel;
+      return Broker.RetrieveInstance<Channel>(key);
     }
 
     /// <summary>
@@ -269,7 +269,7 @@ namespace TvDatabase
     /// </summary>
     public static Channel Retrieve(Key key)
     {
-      return Broker.RetrieveInstance(typeof(Channel), key) as Channel;
+      return Broker.RetrieveInstance<Channel>(key);
     }
 
     /// <summary>
@@ -298,7 +298,7 @@ namespace TvDatabase
     /// <summary>
     /// Get a list of ChannelMap referring to the current entity.
     /// </summary>
-    public IList ReferringChannelMap()
+    public IList<ChannelMap> ReferringChannelMap()
     {
       //select * from 'foreigntable'
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(ChannelMap));
@@ -311,7 +311,7 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
 
       // execute the statement/query and create a collection of User instances from the result set
-      return ObjectFactory.GetCollection(typeof(ChannelMap), stmt.Execute());
+      return ObjectFactory.GetCollection<ChannelMap>(stmt.Execute());
 
       // TODO In the end, a GentleList should be returned instead of an arraylist
       //return new GentleList( typeof(ChannelMap), this );
@@ -320,7 +320,7 @@ namespace TvDatabase
     /// <summary>
     /// Get a list of GroupMap referring to the current entity.
     /// </summary>
-    public IList ReferringGroupMap()
+    public IList<GroupMap> ReferringGroupMap()
     {
       //select * from 'foreigntable'
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(GroupMap));
@@ -333,7 +333,7 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
 
       // execute the statement/query and create a collection of User instances from the result set
-      return ObjectFactory.GetCollection(typeof(GroupMap), stmt.Execute());
+      return ObjectFactory.GetCollection<GroupMap>(stmt.Execute());
 
       // TODO In the end, a GentleList should be returned instead of an arraylist
       //return new GentleList( typeof(GroupMap), this );
@@ -341,7 +341,7 @@ namespace TvDatabase
     /// <summary>
     /// Get a list of RadioGroupMap referring to the current entity.
     /// </summary>
-    public IList ReferringRadioGroupMap()
+    public IList<RadioGroupMap> ReferringRadioGroupMap()
     {
       //select * from 'foreigntable'
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(RadioGroupMap));
@@ -354,7 +354,7 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
 
       // execute the statement/query and create a collection of User instances from the result set
-      return ObjectFactory.GetCollection(typeof(RadioGroupMap), stmt.Execute());
+      return ObjectFactory.GetCollection<RadioGroupMap>(stmt.Execute());
 
       // TODO In the end, a GentleList should be returned instead of an arraylist
       //return new GentleList( typeof(GroupMap), this );
@@ -362,7 +362,7 @@ namespace TvDatabase
     /// <summary>
     /// Get a list of Conflicts referring to the current entity.
     /// </summary>
-    public IList ReferringConflicts()
+    public IList<Conflict> ReferringConflicts()
     {
       //select * from 'foreigntable'
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Conflict));
@@ -375,7 +375,7 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
 
       // execute the statement/query and create a collection of User instances from the result set
-      return ObjectFactory.GetCollection(typeof(Conflict), stmt.Execute());
+      return ObjectFactory.GetCollection<Conflict>(stmt.Execute());
 
       // TODO In the end, a GentleList should be returned instead of an arraylist
       //return new GentleList( typeof(GroupMap), this );
@@ -384,7 +384,7 @@ namespace TvDatabase
     /// <summary>
     /// Get a list of Program referring to the current entity.
     /// </summary>
-    public IList ReferringProgram()
+    public IList<Program> ReferringProgram()
     {
       //select * from 'foreigntable'
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
@@ -397,7 +397,7 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
 
       // execute the statement/query and create a collection of User instances from the result set
-      return ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
+      return ObjectFactory.GetCollection<Program>(stmt.Execute());
 
       // TODO In the end, a GentleList should be returned instead of an arraylist
       //return new GentleList( typeof(Program), this );
@@ -406,7 +406,7 @@ namespace TvDatabase
     /// <summary>
     /// Get a list of Recording referring to the current entity.
     /// </summary>
-    public IList ReferringRecording()
+    public IList<Recording> ReferringRecording()
     {
       //select * from 'foreigntable'
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Recording));
@@ -419,7 +419,7 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
 
       // execute the statement/query and create a collection of User instances from the result set
-      return ObjectFactory.GetCollection(typeof(Recording), stmt.Execute());
+      return ObjectFactory.GetCollection<Recording>(stmt.Execute());
 
       // TODO In the end, a GentleList should be returned instead of an arraylist
       //return new GentleList( typeof(Recording), this );
@@ -428,7 +428,7 @@ namespace TvDatabase
     /// <summary>
     /// Get a list of Schedule referring to the current entity.
     /// </summary>
-    public IList ReferringSchedule()
+    public IList<Schedule> ReferringSchedule()
     {
       //select * from 'foreigntable'
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Schedule));
@@ -441,7 +441,7 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
 
       // execute the statement/query and create a collection of User instances from the result set
-      return ObjectFactory.GetCollection(typeof(Schedule), stmt.Execute());
+      return ObjectFactory.GetCollection<Schedule>(stmt.Execute());
 
       // TODO In the end, a GentleList should be returned instead of an arraylist
       //return new GentleList( typeof(Schedule), this );
@@ -450,7 +450,7 @@ namespace TvDatabase
     /// <summary>
     /// Get a list of TuningDetail referring to the current entity.
     /// </summary>
-    public IList ReferringTuningDetail()
+    public IList<TuningDetail> ReferringTuningDetail()
     {
       //select * from 'foreigntable'
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(TuningDetail));
@@ -463,14 +463,14 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
 
       // execute the statement/query and create a collection of User instances from the result set
-      return ObjectFactory.GetCollection(typeof(TuningDetail), stmt.Execute());
+      return ObjectFactory.GetCollection<TuningDetail>(stmt.Execute());
 
       // TODO In the end, a GentleList should be returned instead of an arraylist
       //return new GentleList( typeof(TuningDetail), this );
     } /// <summary>
     /// Get a list of TuningDetail referring to the current entity.
     /// </summary>
-    public IList ReferringHistory()
+    public IList<History> ReferringHistory()
     {
       //select * from 'foreigntable'
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(History));
@@ -483,7 +483,7 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
 
       // execute the statement/query and create a collection of User instances from the result set
-      return ObjectFactory.GetCollection(typeof(History), stmt.Execute());
+      return ObjectFactory.GetCollection<History>(stmt.Execute());
 
       // TODO In the end, a GentleList should be returned instead of an arraylist
       //return new GentleList( typeof(TuningDetail), this );
@@ -491,7 +491,7 @@ namespace TvDatabase
     /// <summary>
     /// Get a list of linked channels referring to the current entity.
     /// </summary>
-    public IList ReferringLinkedChannels()
+    public IList<ChannelLinkageMap> ReferringLinkedChannels()
     {
       //select * from 'foreigntable'
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(ChannelLinkageMap));
@@ -504,7 +504,7 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
 
       // execute the statement/query and create a collection of User instances from the result set
-      return ObjectFactory.GetCollection(typeof(ChannelLinkageMap), stmt.Execute());
+      return ObjectFactory.GetCollection<ChannelLinkageMap>(stmt.Execute());
 
       // TODO In the end, a GentleList should be returned instead of an arraylist
       //return new GentleList( typeof(ChannelLinkageMap), this );
@@ -540,12 +540,12 @@ namespace TvDatabase
       sb.AddOrderByField(true, "startTime");
       sb.SetRowLimit(1);
       SqlStatement stmt = sb.GetStatement(true);
-      IList programs = ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
+      IList<Program> programs = ObjectFactory.GetCollection<Program>(stmt.Execute());
       if (programs.Count == 0)
       {
         return null;
       }
-      return (Program)programs[0];
+      return programs[0];
     }
 
     void UpdateNowAndNext()
@@ -568,12 +568,12 @@ namespace TvDatabase
       sb.AddOrderByField(true, "startTime");
       sb.SetRowLimit(2);
       SqlStatement stmt = sb.GetStatement(true);
-      IList programs = ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
+      IList<Program> programs = ObjectFactory.GetCollection<Program>(stmt.Execute());
       if (programs.Count == 0)
       {
         return;
       }
-      _currentProgram = (Program)programs[0];
+      _currentProgram = programs[0];
       if (_currentProgram.StartTime >= date)
       {
         _nextProgram = _currentProgram;
@@ -583,7 +583,7 @@ namespace TvDatabase
       {
         if (programs.Count == 2)
         {
-          _nextProgram = (Program)programs[1];
+          _nextProgram = programs[1];
         }
       }
     }
@@ -636,7 +636,7 @@ namespace TvDatabase
 
     public bool IsWebstream()
     {
-      IList details = ReferringTuningDetail();
+      IList<TuningDetail> details = ReferringTuningDetail();
       if (details == null)
         return false;
       foreach (TuningDetail detail in details)
@@ -648,7 +648,7 @@ namespace TvDatabase
     }
     public bool IsFMRadio()
     {
-      IList details = ReferringTuningDetail();
+      IList<TuningDetail> details = ReferringTuningDetail();
       if (details == null)
         return false;
       foreach (TuningDetail detail in details)

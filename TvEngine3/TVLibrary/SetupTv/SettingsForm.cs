@@ -24,7 +24,7 @@
 #endregion
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml;
@@ -107,7 +107,7 @@ namespace SetupTv
       layer = new TvBusinessLayer();
       Servers servers = new Servers();
       AddSection(servers);
-      IList dbsServers = Server.ListAll();
+      IList<Server> dbsServers = Server.ListAll();
 
       if (dbsServers != null)
       {

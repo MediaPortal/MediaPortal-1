@@ -19,7 +19,6 @@
  *
  */
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using TvControl;
@@ -98,7 +97,7 @@ namespace SetupTv.Sections
         User user = new User();
         user.Name = System.Net.Dns.GetHostEntry(client.IpAdress).HostName;
 
-        IList dbsCards = Card.ListAll();
+        IList<Card> dbsCards = Card.ListAll();
 
         foreach (Card card in dbsCards)
         {

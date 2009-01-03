@@ -57,7 +57,7 @@ namespace TvPlugin
       comboBoxGroups.Items.Clear();
       comboBoxGroups.Items.Add("(none)");
       int selectedIdx=0;
-      IList groups = RadioChannelGroup.ListAll();
+      IList<RadioChannelGroup> groups = RadioChannelGroup.ListAll();
       foreach (RadioChannelGroup group in groups)
       {
         int idx = comboBoxGroups.Items.Add(group.GroupName);

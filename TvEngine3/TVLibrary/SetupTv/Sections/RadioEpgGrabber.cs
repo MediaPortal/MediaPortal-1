@@ -19,7 +19,6 @@
  *
  */
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using TvControl;
@@ -102,7 +101,7 @@ namespace SetupTv.Sections
 
       mpListView1.BeginUpdate();
       Dictionary<string, CardType> cards = new Dictionary<string, CardType>();
-      IList dbsCards = Card.ListAll();
+      IList<Card> dbsCards = Card.ListAll();
       foreach (Card card in dbsCards)
       {
         cards[card.DevicePath] = RemoteControl.Instance.Type(card.IdCard);
@@ -113,7 +112,7 @@ namespace SetupTv.Sections
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
       sb.AddOrderByField(true, "sortOrder");
       SqlStatement stmt = sb.GetStatement(true);
-      IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
+      IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
 
       foreach (Channel ch in channels)
       {

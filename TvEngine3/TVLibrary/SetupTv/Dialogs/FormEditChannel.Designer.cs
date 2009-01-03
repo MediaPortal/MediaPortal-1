@@ -1627,11 +1627,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.TextBox textBoxQamProvider;
     private System.Windows.Forms.ComboBox comboBoxAudioSource;
     private System.Windows.Forms.Label label52;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel11;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel12;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel8;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel7;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel6;
     private System.Windows.Forms.GroupBox groupBox1;
     private System.Windows.Forms.GroupBox groupBox2;
 

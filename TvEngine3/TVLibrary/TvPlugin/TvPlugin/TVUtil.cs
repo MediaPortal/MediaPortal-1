@@ -119,7 +119,7 @@ namespace TvPlugin
 
       if (rec.ScheduleType == (int)ScheduleRecordingType.Weekends)
       {
-        IList progList;
+        IList<Program> progList;
         progList = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(_days), rec.ProgramName, rec.ReferencedChannel());
 
         foreach (Program prog in progList)
@@ -169,7 +169,7 @@ namespace TvPlugin
       }
 
 
-      IList programs;
+      IList<Program> programs;
       if (rec.ScheduleType == (int)ScheduleRecordingType.EveryTimeOnThisChannel)
       {
         Log.Debug("get {0} {1} EveryTimeOnThisChannel", rec.ProgramName, rec.ReferencedChannel().DisplayName);

@@ -170,7 +170,7 @@ namespace TvPlugin
       set
       {
         CurrentProgram = null;
-        IList programs = new ArrayList();
+        IList<Program> programs = new List<Program>();
         TvBusinessLayer layer = new TvBusinessLayer();
         programs = layer.GetPrograms(DateTime.Now, DateTime.Now.AddDays(10));
         foreach (Program prog in programs)
@@ -222,7 +222,7 @@ namespace TvPlugin
       lblProgramChannel.Label = Channel.Retrieve(currentProgram.IdChannel).DisplayName;
 
       //check if we are recording this program
-      IList schedules = Schedule.ListAll();
+      IList<Schedule> schedules = Schedule.ListAll();
       bool isRecording = false;
       bool isSeries = false;
       foreach (Schedule schedule in schedules)
@@ -246,7 +246,7 @@ namespace TvPlugin
         btnAdvancedRecord.Disabled = true;
         btnKeep.Disabled = false;
         btnQuality.Disabled = true;
-        IList details = Channel.Retrieve(currentProgram.IdChannel).ReferringTuningDetail();
+        IList<TuningDetail> details = Channel.Retrieve(currentProgram.IdChannel).ReferringTuningDetail();
         foreach (TuningDetail detail in details)
         {
           if (detail.ChannelType == 0)
@@ -285,7 +285,7 @@ namespace TvPlugin
       lstUpcomingEpsiodes.Clear();
       TvBusinessLayer layer = new TvBusinessLayer();
       DateTime dtDay = DateTime.Now;
-      IList episodes = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(14), currentProgram.Title, null);
+      IList<Program> episodes = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(14), currentProgram.Title, null);
 
       foreach (Program episode in episodes)
       {
@@ -356,7 +356,7 @@ namespace TvPlugin
     bool IsRecordingProgram(Program program, out Schedule recordingSchedule, bool filterCanceledRecordings)
     {
       recordingSchedule = null;
-      IList schedules = Schedule.ListAll();
+      IList<Schedule> schedules = Schedule.ListAll();
       foreach (Schedule schedule in schedules)
       {
         if (schedule.Canceled != Schedule.MinSchedule)
@@ -990,7 +990,7 @@ namespace TvPlugin
         {
           //check if this program is interrupted (for example by a news bulletin)
           //ifso ask the user if he wants to record the 2nd part also
-          IList programs = new ArrayList();
+          IList<Program> programs = new List<Program>();
           DateTime dtStart = currentProgram.EndTime.AddMinutes(1);
           DateTime dtEnd = dtStart.AddHours(3);
           TvBusinessLayer layer = new TvBusinessLayer();

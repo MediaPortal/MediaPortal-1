@@ -210,7 +210,7 @@ namespace TvPlugin
       Log.Info("newsearch Search:{0} {1}", _searchKeyword, SearchFor);
       GUIControl.ClearControl(GetID, listResults.GetID);
       TvBusinessLayer layer = new TvBusinessLayer();
-      IList listPrograms = null;
+      IList<Program> listPrograms = null;
       switch (SearchFor)
       {
         case SearchType.Genres:

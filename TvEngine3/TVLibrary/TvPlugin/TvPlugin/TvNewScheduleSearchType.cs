@@ -131,7 +131,7 @@ namespace TvPlugin
       if (dlg == null) return;
       dlg.Reset();
       dlg.SetHeading(GUILocalizeStrings.Get(891));  //Select TV Channel
-      IList channels = TVHome.Navigator.CurrentGroup.ReferringGroupMap();
+      IList<GroupMap> channels = TVHome.Navigator.CurrentGroup.ReferringGroupMap();
       foreach (GroupMap chan in channels)
       {
         GUIListItem item = new GUIListItem(chan.ReferencedChannel().DisplayName);
@@ -233,7 +233,7 @@ namespace TvPlugin
 
       dlg.Reset();
       dlg.SetHeading(GUILocalizeStrings.Get(891));  //Select TV Channel
-      IList channels = TVHome.Navigator.CurrentGroup.ReferringGroupMap();
+      IList<GroupMap> channels = TVHome.Navigator.CurrentGroup.ReferringGroupMap();
       foreach (GroupMap chan in channels)
       {
         GUIListItem item = new GUIListItem(chan.ReferencedChannel().DisplayName);
@@ -359,7 +359,7 @@ namespace TvPlugin
       if (dlg.SelectedLabel == -1) return;
       int duration = (dlg.SelectedLabel + 1) * 30;
 
-      IList details = Channel.Retrieve(rec.IdChannel).ReferringTuningDetail();
+      IList<TuningDetail> details = Channel.Retrieve(rec.IdChannel).ReferringTuningDetail();
       foreach (TuningDetail detail in details)
       {
         if (detail.ChannelType == 0)

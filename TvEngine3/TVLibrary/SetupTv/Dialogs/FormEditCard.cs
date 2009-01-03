@@ -19,18 +19,8 @@
  *
  */
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using TvControl;
-
-
-using Gentle.Common;
-using Gentle.Framework;
 using TvDatabase;
 
 namespace SetupTv.Sections
@@ -84,7 +74,7 @@ namespace SetupTv.Sections
         checkBoxAllowEpgGrab.Enabled = true;
       }
 
-      IList GrpList = _card.ReferringCardGroupMap();
+      IList<CardGroupMap> GrpList = _card.ReferringCardGroupMap();
       if (GrpList.Count != 0)
       {
         checkBoxPreloadCard.Enabled = false;
@@ -95,7 +85,7 @@ namespace SetupTv.Sections
       checkBoxCAMenabled.Checked = _card.CAM;
 
       setCAMLimitVisibility();
-      this.Text += " " + _card.Name;
+      Text += " " + _card.Name;
     }
 
     private void mpButtonSave_Click(object sender, EventArgs e)
@@ -109,12 +99,12 @@ namespace SetupTv.Sections
       _card.PreloadCard = checkBoxPreloadCard.Checked;
 
       _card.CAM = checkBoxCAMenabled.Checked;
-      this.Close();
+      Close();
     }
 
     private void mpButtonCancel_Click(object sender, EventArgs e)
     {
-      this.Close();
+      Close();
     }
 
     private void setCAMLimitVisibility()

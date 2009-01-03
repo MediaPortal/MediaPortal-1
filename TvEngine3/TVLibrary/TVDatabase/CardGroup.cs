@@ -1,5 +1,5 @@
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using Gentle.Framework;
 using TvLibrary.Log;
 
@@ -72,9 +72,9 @@ namespace TvDatabase
     /// <summary>
     /// Static method to retrieve all instances that are stored in the database in one call
     /// </summary>
-    public static IList ListAll()
+    public static IList<CardGroup> ListAll()
     {
-      return Broker.RetrieveList(typeof(CardGroup));
+      return Broker.RetrieveList<CardGroup>();
     }
 
     /// <summary>
@@ -88,7 +88,7 @@ namespace TvDatabase
         return null;
       }
       Key key = new Key(typeof(CardGroup), true, "idCardGroup", id);
-      return Broker.RetrieveInstance(typeof(CardGroup), key) as CardGroup;
+      return Broker.RetrieveInstance<CardGroup>(key);
     }
 
     /// <summary>
@@ -97,7 +97,7 @@ namespace TvDatabase
     /// </summary>
     public static CardGroup Retrieve(Key key)
     {
-      return Broker.RetrieveInstance(typeof(CardGroup), key) as CardGroup;
+      return Broker.RetrieveInstance<CardGroup>(key);
     }
 
     /// <summary>
@@ -126,7 +126,7 @@ namespace TvDatabase
     /// <summary>
     /// Get a list of Card referring to the current entity.
     /// </summary>
-    public IList CardGroupMaps()
+    public IList<CardGroupMap> CardGroupMaps()
     {
       //select * from 'foreigntable'
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(CardGroupMap));
@@ -139,7 +139,7 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
 
       // execute the statement/query and create a collection of User instances from the result set
-      return ObjectFactory.GetCollection(typeof(CardGroupMap), stmt.Execute());
+      return ObjectFactory.GetCollection<CardGroupMap>(stmt.Execute());
 
       // TODO In the end, a GentleList should be returned instead of an arraylist
       //return new GentleList( typeof(Card), this );

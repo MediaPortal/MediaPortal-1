@@ -20,7 +20,6 @@
  */
 using System;
 using System.IO;
-using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
@@ -410,7 +409,7 @@ namespace SetupTv.Sections
       }*/
 
       //satellites.Sort();
-      IList dbSats = Satellite.ListAll();
+      IList<Satellite> dbSats = Satellite.ListAll();
       foreach (SatteliteContext ts in satellites)
       {
         foreach (Satellite dbSat in dbSats)
@@ -1082,7 +1081,7 @@ namespace SetupTv.Sections
       SatteliteContext sat = (SatteliteContext)comboBoxSat.Items[comboBoxSat.SelectedIndex];
 
       Card card = Card.Retrieve(_cardNumber);
-      IList motorSettings = card.ReferringDiSEqCMotor();
+      IList<DiSEqCMotor> motorSettings = card.ReferringDiSEqCMotor();
       foreach (DiSEqCMotor motor in motorSettings)
       {
         if (motor.IdSatellite == sat.Satelite.IdSatellite)
@@ -1106,7 +1105,7 @@ namespace SetupTv.Sections
       int index = -1;
       SatteliteContext sat = (SatteliteContext)comboBoxSat.SelectedItem;
       Card card = Card.Retrieve(_cardNumber);
-      IList motorSettings = card.ReferringDiSEqCMotor();
+      IList<DiSEqCMotor> motorSettings = card.ReferringDiSEqCMotor();
       foreach (DiSEqCMotor motor in motorSettings)
       {
         if (motor.IdSatellite == sat.Satelite.IdSatellite)

@@ -20,7 +20,7 @@
  */
 //#define FORM
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using DirectShowLib;
 using DirectShowLib.BDA;
@@ -550,7 +550,7 @@ namespace TvLibrary.Implementations.DVB
       }
       _interfaceB2C2TunerCtrl.CheckLock();
       _lastSignalUpdate = DateTime.MinValue;
-      SendHwPids(new ArrayList());
+      SendHwPids(new List<ushort>());
       _mapSubChannels[subChannelId].OnAfterTune();
       RunGraph(subChannelId);
       Log.Log.WriteFile("ss2:tune done:{0:X}", pmtPid);
@@ -763,7 +763,7 @@ namespace TvLibrary.Implementations.DVB
       ConnectInfTeeToSS2();
       ConnectMpeg2DemuxToInfTee();
       AddTsWriterFilterToGraph();
-      SendHwPids(new ArrayList());
+      SendHwPids(new List<ushort>());
       _graphState = GraphState.Created;
     }
 
@@ -798,7 +798,7 @@ namespace TvLibrary.Implementations.DVB
     /// Sends the HW pids.
     /// </summary>
     /// <param name="pids">The pids.</param>
-    public override void SendHwPids(ArrayList pids)
+    public override void SendHwPids(List<ushort> pids)
     {
       const int PID_CAPTURE_ALL_INCLUDING_NULLS = 0x2000;//Enables reception of all PIDs in the transport stream including the NULL PID
       //const int PID_CAPTURE_ALL_EXCLUDING_NULLS = 0x2001;//Enables reception of all PIDs in the transport stream excluding the NULL PID.

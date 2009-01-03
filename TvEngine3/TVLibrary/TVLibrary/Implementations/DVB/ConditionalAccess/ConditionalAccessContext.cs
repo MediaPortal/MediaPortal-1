@@ -18,7 +18,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-using System.Collections;
+using System.Collections.Generic;
 using TvLibrary.Channels;
 using TvLibrary.Interfaces;
 
@@ -36,7 +36,7 @@ namespace TvLibrary.Implementations.DVB
     int _pmtLength;
     int _audioPid;
     int _serviceId;
-    ArrayList _HwPids;
+    List<ushort> _HwPids;
 
     /// <summary>
     /// Gets or sets the type of the cam.
@@ -132,7 +132,7 @@ namespace TvLibrary.Implementations.DVB
     /// Gets or sets the Pid list for hardware filtering.
     /// </summary>
     /// <value>The Pid list.</value>
-    public ArrayList HwPids
+    public List<ushort> HwPids
     {
       get
       {

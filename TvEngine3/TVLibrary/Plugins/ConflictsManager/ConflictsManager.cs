@@ -19,7 +19,6 @@
  *
  */
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using TvControl;
@@ -38,8 +37,8 @@ namespace TvEngine
   {
     #region variables
     TvBusinessLayer cmLayer = new TvBusinessLayer();
-    IList _schedules = Schedule.ListAll();
-    IList _cards = Card.ListAll();
+    IList<Schedule> _schedules = Schedule.ListAll();
+    IList<Card> _cards = Card.ListAll();
     #endregion
 
     #region properties
@@ -152,8 +151,8 @@ namespace TvEngine
       // hmm... 
       ClearConflictTable();
       // Gets schedules from db
-      IList scheduleList = Schedule.ListAll();
-      IList scheduleListToParse = new List<Schedule>();
+      IList<Schedule> scheduleList = Schedule.ListAll();
+      IList<Schedule> scheduleListToParse = new List<Schedule>();
       // parses all schedules and add the calculated incoming schedules 
       getRecordOnceSchedules(scheduleList, scheduleListToParse);
       getDailySchedules(scheduleList, scheduleListToParse);
@@ -209,7 +208,7 @@ namespace TvEngine
     private static void ClearConflictTable()
     {
       // clears all conflicts in db
-      IList conflictList = Conflict.ListAll();
+      IList<Conflict> conflictList = Conflict.ListAll();
       foreach (Conflict aconflict in conflictList) aconflict.Remove();
     }
 
@@ -240,9 +239,9 @@ namespace TvEngine
     /// <summary>Assign all shedules to cards</summary>
     /// <param name="Schedules">An IList containing all scheduled recordings</param>
     /// <returns>Array of List<Schedule> : one per card, index [0] contains unassigned schedules</returns>
-    private List<Schedule>[] AssignSchedulesToCards(IList Schedules)
+    private List<Schedule>[] AssignSchedulesToCards(IList<Schedule> Schedules)
     {
-    	IList cardsList = cmLayer.Cards;
+    	IList<Card> cardsList = cmLayer.Cards;
     	// creates an array of Schedule Lists
     	// element [0] will be filled with conflicting schedules
     	// element [x] will be filled with the schedules assigned to card with idcard=x
@@ -337,7 +336,7 @@ namespace TvEngine
     /// </summary>
     /// <param name="Schedules">a shedules IList</param>
     /// <returns>a list array of schedules. Element [0] contains schedules that cannot be viewed by any card</returns>
-    private List<Schedule>[] sortSchedules(IList Schedules)
+    private List<Schedule>[] sortSchedules(IList<Schedule> Schedules)
     {
       List<Schedule>[] _sortedSchedules = new List<Schedule>[_cards.Count];
       for (int i = 0; i < _cards.Count + 1; i++) _sortedSchedules[i] = new List<Schedule>();
@@ -374,7 +373,7 @@ namespace TvEngine
     /// </summary>
     /// <param name="schedulesList">a IList contaning the schedules to parse</param>
     /// <returns>a collection containing the "record once" schedules</returns>
-    private void getRecordOnceSchedules(IList schedulesList, IList refFillList)
+    private void getRecordOnceSchedules(IList<Schedule> schedulesList, IList<Schedule> refFillList)
     {
       foreach (Schedule schedule in schedulesList)
       {
@@ -392,7 +391,7 @@ namespace TvEngine
     /// </summary>
     /// <param name="schedulesList">a IList contaning the schedules to parse</param>
     /// <returns>a collection containing the Daily schedules</returns>
-    private void getDailySchedules(IList schedulesList, IList refFillList)
+    private void getDailySchedules(IList<Schedule> schedulesList, IList<Schedule> refFillList)
     {
       foreach (Schedule schedule in schedulesList)
       {
@@ -438,7 +437,7 @@ namespace TvEngine
     /// </summary>
     /// <param name="schedulesList">a IList contaning the schedules to parse</param>
     /// <returns>a collection containing the Weekly schedules</returns>
-    private void getWeeklySchedules(IList schedulesList, IList refFillList)
+    private void getWeeklySchedules(IList<Schedule> schedulesList, IList<Schedule> refFillList)
     {
       foreach (Schedule schedule in schedulesList)
       {
@@ -480,7 +479,7 @@ namespace TvEngine
     /// </summary>
     /// <param name="schedulesList">a IList contaning the schedules to parse</param>
     /// <returns>a collection containing the Weekends schedules</returns>
-    private void getWeekendsSchedules(IList schedulesList, IList refFillList)
+    private void getWeekendsSchedules(IList<Schedule> schedulesList, IList<Schedule> refFillList)
     {
       foreach (Schedule schedule in schedulesList)
       {
@@ -522,7 +521,7 @@ namespace TvEngine
     /// </summary>
     /// <param name="schedulesList">a IList contaning the schedules to parse</param>
     /// <returns>a collection containing the WorkingDays schedules</returns>
-    private void getWorkingDaysSchedules(IList schedulesList, IList refFillList)
+    private void getWorkingDaysSchedules(IList<Schedule> schedulesList, IList<Schedule> refFillList)
     {
       foreach (Schedule schedule in schedulesList)
       {
@@ -564,7 +563,7 @@ namespace TvEngine
     /// </summary>
     /// <param name="schedulesList">a IList contaning the schedules to parse</param>
     /// <returns>a collection containing the schedules</returns>
-    private void getEveryTimeOnEveryChannelSchedules(IList schedulesList, IList refFillList)
+    private void getEveryTimeOnEveryChannelSchedules(IList<Schedule> schedulesList, IList<Schedule> refFillList)
     {
       //IList programsList = Program.ListAll();
       foreach (Schedule schedule in schedulesList)
@@ -572,7 +571,7 @@ namespace TvEngine
         ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.ScheduleType;
         if (schedule.Canceled != Schedule.MinSchedule) continue;
         if (scheduleType != ScheduleRecordingType.EveryTimeOnEveryChannel) continue;
-      	IList programsList = Program.RetrieveByTitleAndTimesInterval(schedule.ProgramName, schedule.StartTime,
+      	IList<Program> programsList = Program.RetrieveByTitleAndTimesInterval(schedule.ProgramName, schedule.StartTime,
       		                                        schedule.StartTime.AddMonths(1));
 				foreach (Program program in programsList)
         {
@@ -597,7 +596,7 @@ namespace TvEngine
     /// </summary>
     /// <param name="schedulesList">The schedules list.</param>
     /// <returns></returns>
-    private void getEveryTimeOnThisChannelSchedules(IList schedulesList, IList refFillList)
+    private void getEveryTimeOnThisChannelSchedules(IList<Schedule> schedulesList, IList<Schedule> refFillList)
     {
       TvBusinessLayer layer = new TvBusinessLayer();
       foreach (Schedule schedule in schedulesList)
@@ -606,7 +605,7 @@ namespace TvEngine
         if (schedule.Canceled != Schedule.MinSchedule) continue;
         if (scheduleType != ScheduleRecordingType.EveryTimeOnThisChannel) continue;
         Channel channel = Channel.Retrieve(schedule.IdChannel);
-        IList programsList = layer.SearchMinimalPrograms(DateTime.Now, DateTime.Now.AddMonths(1), schedule.ProgramName, channel);
+        IList<Program> programsList = layer.SearchMinimalPrograms(DateTime.Now, DateTime.Now.AddMonths(1), schedule.ProgramName, channel);
         if (programsList != null)
         {
           foreach (Program program in programsList)
@@ -632,9 +631,9 @@ namespace TvEngine
 		/// </summary>
 		/// <param name="refFillList">The schedules list.</param>
 		/// <returns></returns>
-		private void removeCanceledSchedules(IList refFillList)
+		private void removeCanceledSchedules(IList<Schedule> refFillList)
 		{
-			IList canceledList = CanceledSchedule.ListAll();
+			IList<CanceledSchedule> canceledList = CanceledSchedule.ListAll();
 			foreach (CanceledSchedule canceled in canceledList)
 			{
 				foreach (Schedule sched in refFillList)

@@ -26,7 +26,6 @@
 #region Usings
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -75,7 +74,7 @@ namespace TvDatabase
       return newCard;
     }
 
-    public IList Cards
+    public IList<Card> Cards
     {
       get
       {
@@ -90,7 +89,7 @@ namespace TvDatabase
 
     public Card GetCardByName(string name)
     {
-      IList cards = Cards;
+      IList<Card> cards = Cards;
       foreach (Card card in cards)
       {
         if (card.Name == name)
@@ -101,7 +100,7 @@ namespace TvDatabase
 
     public Card GetCardByDevicePath(string path)
     {
-      IList cards = Cards;
+      IList<Card> cards = Cards;
       foreach (Card card in cards)
       {
         if (card.DevicePath == path)
@@ -110,14 +109,13 @@ namespace TvDatabase
       return null;
     }
 
-    public IList ListAllEnabledCardsOrderedByPriority()
+    public IList<Card> ListAllEnabledCardsOrderedByPriority()
     {
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Card));
       sb.AddConstraint("enabled=1");
       sb.AddOrderByField(false, "priority");
       SqlStatement stmt = sb.GetStatement(true);
-      IList cards = ObjectFactory.GetCollection(typeof(Card), stmt.Execute());
-      return cards;
+      return ObjectFactory.GetCollection<Card>(stmt.Execute());
     }
     #endregion
 
@@ -146,7 +144,7 @@ namespace TvDatabase
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(ChannelGroup));
       sb.AddConstraint(Operator.Like, "groupName", groupName);
       SqlStatement stmt = sb.GetStatement(true);
-      IList groups = ObjectFactory.GetCollection(typeof(ChannelGroup), stmt.Execute());
+      IList<ChannelGroup> groups = ObjectFactory.GetCollection<ChannelGroup>(stmt.Execute());
       ChannelGroup group;
       if (groups.Count == 0)
       {
@@ -155,10 +153,10 @@ namespace TvDatabase
       }
       else
       {
-        group = (ChannelGroup)groups[0];
+        group = groups[0];
       }
       bool found = false;
-      IList groupMaps = group.ReferringGroupMap();
+      IList<GroupMap> groupMaps = group.ReferringGroupMap();
       foreach (GroupMap map in groupMaps)
       {
         if (map.IdChannel == channel.IdChannel)
@@ -177,7 +175,7 @@ namespace TvDatabase
     public void AddChannelToRadioGroup(Channel channel, RadioChannelGroup group)
     {
       bool found = false;
-      IList groupMaps = group.ReferringRadioGroupMap();
+      IList<RadioGroupMap> groupMaps = group.ReferringRadioGroupMap();
       foreach (RadioGroupMap map in groupMaps)
       {
         if (map.IdChannel == channel.IdChannel)
@@ -193,7 +191,7 @@ namespace TvDatabase
       }
     }
 
-    public IList Channels
+    public IList<Channel> Channels
     {
       get
       {
@@ -236,12 +234,12 @@ namespace TvDatabase
       sb.AddConstraint(Operator.Equals, "channelType", channelType);
 
       SqlStatement stmt = sb.GetStatement(true);
-      IList channels = ObjectFactory.GetCollection(typeof(TuningDetail), stmt.Execute());
+      IList<TuningDetail> channels = ObjectFactory.GetCollection<TuningDetail>(stmt.Execute());
       if (channels == null)
         return null;
       if (channels.Count == 0)
         return null;
-      return (TuningDetail)channels[0];
+      return channels[0];
     }
 
     public TuningDetail GetChannel(string provider, string name, int serviceId)
@@ -251,12 +249,12 @@ namespace TvDatabase
       sb.AddConstraint(Operator.Equals, "provider", provider);
       sb.AddConstraint(Operator.Equals, "serviceId", serviceId);
       SqlStatement stmt = sb.GetStatement(true);
-      IList details = ObjectFactory.GetCollection(typeof(TuningDetail), stmt.Execute());
+      IList<TuningDetail> details = ObjectFactory.GetCollection<TuningDetail>(stmt.Execute());
       if (details == null)
         return null;
       if (details.Count == 0)
         return null;
-      TuningDetail detail = (TuningDetail)details[0];
+      TuningDetail detail = details[0];
       return detail;
     }
 
@@ -267,12 +265,12 @@ namespace TvDatabase
       sb.AddConstraint(Operator.Equals, "idChannel", idChannel);
 
       SqlStatement stmt = sb.GetStatement(true);
-      IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
+      IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
       if (channels == null)
         return null;
       if (channels.Count == 0)
         return null;
-      return (Channel)channels[0];
+      return channels[0];
     }
 
     public Channel GetChannelByTuningDetail(int networkId, int transportId, int serviceId)
@@ -283,13 +281,13 @@ namespace TvDatabase
       sb.AddConstraint(Operator.Equals, "serviceId", serviceId);
 
       SqlStatement stmt = sb.GetStatement(true);
-      IList details = ObjectFactory.GetCollection(typeof(TuningDetail), stmt.Execute());
+      IList<TuningDetail> details = ObjectFactory.GetCollection<TuningDetail>(stmt.Execute());
 
       if (details == null)
         return null;
       if (details.Count == 0)
         return null;
-      TuningDetail detail = (TuningDetail)details[0];
+      TuningDetail detail = details[0];
       return detail.ReferencedChannel();
     }
 
@@ -303,20 +301,20 @@ namespace TvDatabase
       sb.AddConstraint(Operator.Equals, "serviceId", channel.ServiceId);
 
       SqlStatement stmt = sb.GetStatement(true);
-      IList channels = ObjectFactory.GetCollection(typeof(TuningDetail), stmt.Execute());
+      IList<TuningDetail> channels = ObjectFactory.GetCollection<TuningDetail>(stmt.Execute());
       if (channels == null)
         return null;
       if (channels.Count == 0)
         return null;
-      return (TuningDetail)channels[0];
+      return channels[0];
     }
 
-    public IList GetChannelsByName(string name)
+    public IList<Channel> GetChannelsByName(string name)
     {
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Channel));
       sb.AddConstraint(Operator.Equals, "name", name);
       SqlStatement stmt = sb.GetStatement(true);
-      IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
+      IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
       if (channels == null)
         return null;
       if (channels.Count == 0)
@@ -329,12 +327,12 @@ namespace TvDatabase
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Channel));
       sb.AddConstraint(Operator.Equals, "name", name);
       SqlStatement stmt = sb.GetStatement(true);
-      IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
+      IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
       if (channels == null)
         return null;
       if (channels.Count == 0)
         return null;
-      return (Channel)channels[0];
+      return channels[0];
     }
 
     public Channel GetChannelByName(string provider, string name)
@@ -343,12 +341,12 @@ namespace TvDatabase
       sb.AddConstraint(Operator.Equals, "name", name);
       sb.AddConstraint(Operator.Equals, "provider", provider);
       SqlStatement stmt = sb.GetStatement(true);
-      IList details = ObjectFactory.GetCollection(typeof(TuningDetail), stmt.Execute());
+      IList<TuningDetail> details = ObjectFactory.GetCollection<TuningDetail>(stmt.Execute());
       if (details == null)
         return null;
       if (details.Count == 0)
         return null;
-      TuningDetail detail = (TuningDetail)details[0];
+      TuningDetail detail = details[0];
       return detail.ReferencedChannel();
     }
 
@@ -406,14 +404,14 @@ namespace TvDatabase
 
       sb.AddConstraint(Operator.Equals, "tag", tagName);
       SqlStatement stmt = sb.GetStatement(true);
-      IList settingsFound = ObjectFactory.GetCollection(typeof(Setting), stmt.Execute());
+      IList<Setting> settingsFound = ObjectFactory.GetCollection<Setting>(stmt.Execute());
       if (settingsFound.Count == 0)
       {
         Setting set = new Setting(tagName, defaultValue);
         set.Persist();
         return set;
       }
-      return (Setting)settingsFound[0];
+      return settingsFound[0];
     }
 
     /// <summary>
@@ -434,23 +432,23 @@ namespace TvDatabase
 
       sb.AddConstraint(Operator.Equals, "tag", tagName);
       SqlStatement stmt = sb.GetStatement(true);
-      IList settingsFound = ObjectFactory.GetCollection(typeof(Setting), stmt.Execute());
+      IList<Setting> settingsFound = ObjectFactory.GetCollection<Setting>(stmt.Execute());
       if (settingsFound.Count == 0)
       {
         Setting set = new Setting(tagName, "");
         set.Persist();
         return set;
       }
-      return (Setting)settingsFound[0];
+      return settingsFound[0];
     }
 
     public IChannel GetTuningChannelByType(Channel channel, int channelType)
     {
       CountryCollection collection = new CountryCollection();
-      IList tuningDetails = channel.ReferringTuningDetail();
+      IList<TuningDetail> tuningDetails = channel.ReferringTuningDetail();
       for (int i = 0; i < tuningDetails.Count; ++i)
       {
-        TuningDetail detail = (TuningDetail)tuningDetails[i];
+        TuningDetail detail = tuningDetails[i];
         if (detail.ChannelType != channelType)
           continue;
         switch (detail.ChannelType)
@@ -558,10 +556,10 @@ namespace TvDatabase
     {
       List<IChannel> tvChannels = new List<IChannel>();
       CountryCollection collection = new CountryCollection();
-      IList tuningDetails = channel.ReferringTuningDetail();
+      IList<TuningDetail> tuningDetails = channel.ReferringTuningDetail();
       for (int i = 0; i < tuningDetails.Count; ++i)
       {
-        TuningDetail detail = (TuningDetail)tuningDetails[i];
+        TuningDetail detail = tuningDetails[i];
         switch (detail.ChannelType)
         {
           case 0: //AnalogChannel
@@ -670,10 +668,10 @@ namespace TvDatabase
 
     public ChannelMap MapChannelToCard(Card card, Channel channel, bool epgOnly)
     {
-      IList channelMaps = card.ReferringChannelMap();
+      IList<ChannelMap> channelMaps = card.ReferringChannelMap();
       for (int i = 0; i < channelMaps.Count; ++i)
       {
-        ChannelMap map = (ChannelMap)channelMaps[i];
+        ChannelMap map = channelMaps[i];
         if (map.IdChannel == channel.IdChannel && map.IdCard == card.IdCard)
           return map;
       }
@@ -688,27 +686,20 @@ namespace TvDatabase
     /// <returns>a list of TVDatabase Channels</returns>
     public List<Channel> GetTVGuideChannelsForGroup(int groupID)
     {
-      List<Channel> ResultingChannelList = new List<Channel>();
 
       SqlBuilder sb1 = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Channel));
       SqlStatement stmt1 = sb1.GetStatement(true);
       SqlStatement ManualJoinSQL = new SqlStatement(stmt1.StatementType, stmt1.Command, String.Format("select c.* from Channel c join GroupMap g on c.idChannel=g.idChannel where visibleInGuide = 1 and isTv = 1 and idGroup = '{0}' order by g.idGroup, g.sortOrder", groupID), typeof(Channel));
-      IList ChanList = ObjectFactory.GetCollection(typeof(Channel), ManualJoinSQL.Execute());
+      return ObjectFactory.GetCollection<Channel>(ManualJoinSQL.Execute()) as List<Channel>;
 
-      foreach (Channel SingleChannel in ChanList)
-      {
-        ResultingChannelList.Add(SingleChannel);
-      }
-
-      return ResultingChannelList;
     }
 
-    public IList GetAllRadioChannels()
+    public IList<Channel> GetAllRadioChannels()
     {
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Channel));
       sb.AddConstraint(Operator.Equals, "isRadio", 1);
       SqlStatement stmt = sb.GetStatement(true);
-      IList radioChannels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
+      IList<Channel> radioChannels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
       if (radioChannels == null)
         return null;
       if (radioChannels.Count == 0)
@@ -1080,18 +1071,18 @@ namespace TvDatabase
     #endregion
 
     #region linkage map
-    public IList GetLinkagesForChannel(Channel channel)
+    public IList<ChannelLinkageMap> GetLinkagesForChannel(Channel channel)
     {
       int idChannel = -1;
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(ChannelLinkageMap));
       sb.AddConstraint(Operator.Equals, "idLinkedChannel", channel.IdChannel);
       SqlStatement stmt = sb.GetStatement(true);
-      IList links = ObjectFactory.GetCollection(typeof(ChannelLinkageMap), stmt.Execute());
+      IList<ChannelLinkageMap> links = ObjectFactory.GetCollection<ChannelLinkageMap>(stmt.Execute());
       if (links != null)
       {
         if (links.Count > 0)
         {
-          ChannelLinkageMap map = (ChannelLinkageMap)links[0];
+          ChannelLinkageMap map = links[0];
           idChannel = map.ReferringPortalChannel().IdChannel;
         }
       }
@@ -1100,7 +1091,7 @@ namespace TvDatabase
       sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(ChannelLinkageMap));
       sb.AddConstraint(Operator.Equals, "idPortalChannel", idChannel);
       stmt = sb.GetStatement(true);
-      return ObjectFactory.GetCollection(typeof(ChannelLinkageMap), stmt.Execute());
+      return ObjectFactory.GetCollection<ChannelLinkageMap>(stmt.Execute());
     }
     #endregion
 
@@ -1121,7 +1112,7 @@ namespace TvDatabase
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
       sb.AddConstraint(String.Format("endTime < '{0}'", dtYesterday.ToString(GetDateTimeString(), mmddFormat)));
       SqlStatement stmt = sb.GetStatement(true);
-      ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
+      ObjectFactory.GetCollection<Program>(stmt.Execute());
     }
 
     public void RemoveOldPrograms(int idChannel)
@@ -1132,7 +1123,7 @@ namespace TvDatabase
       sb.AddConstraint(Operator.Equals, "idChannel", idChannel);
       sb.AddConstraint(String.Format("startTime < '{0}'", dtToKeep.ToString(GetDateTimeString(), mmddFormat)));
       SqlStatement stmt = sb.GetStatement(true);
-      ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
+      ObjectFactory.GetCollection<Program>(stmt.Execute());
     }
 
     public void RemoveAllPrograms(int idChannel)
@@ -1140,20 +1131,19 @@ namespace TvDatabase
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Delete, typeof(Program));
       sb.AddConstraint(Operator.Equals, "idChannel", idChannel);
       SqlStatement stmt = sb.GetStatement(true);
-      ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
+      ObjectFactory.GetCollection<Program>(stmt.Execute());
     }
 
-    public IList GetOnairNow()
+    public IList<Program> GetOnairNow()
     {
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Program));
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
       sb.AddConstraint(String.Format("startTime <= '{0}' and endTime >= '{1}'", DateTime.Now.ToString(GetDateTimeString(), mmddFormat), DateTime.Now.ToString(GetDateTimeString(), mmddFormat)));
       SqlStatement stmt = sb.GetStatement(true);
-      IList progs = ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
-      return progs;
+      return ObjectFactory.GetCollection<Program>(stmt.Execute());
     }
 
-    public IList GetPrograms(Channel channel, DateTime startTime)
+    public IList<Program> GetPrograms(Channel channel, DateTime startTime)
     {
       //The DateTime.MinValue is lower than the min datetime value of the database
       if (startTime == DateTime.MinValue)
@@ -1166,11 +1156,10 @@ namespace TvDatabase
       sb.AddOrderByField(true, "startTime");
 
       SqlStatement stmt = sb.GetStatement(true);
-      IList progs = ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
-      return progs;
+      return ObjectFactory.GetCollection<Program>(stmt.Execute());
     }
 
-    public IList GetPrograms(Channel channel, DateTime startTime, DateTime endTime)
+    public IList<Program> GetPrograms(Channel channel, DateTime startTime, DateTime endTime)
     {
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Program));
@@ -1184,11 +1173,10 @@ namespace TvDatabase
       sb.AddOrderByField(true, "starttime");
 
       SqlStatement stmt = sb.GetStatement(true);
-      IList progs = ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
-      return progs;
+      return ObjectFactory.GetCollection<Program>(stmt.Execute());
     }
 
-    public IList GetProgramExists(Channel channel, DateTime startTime, DateTime endTime)
+    public IList<Program> GetProgramExists(Channel channel, DateTime startTime, DateTime endTime)
     {
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Program));
@@ -1201,8 +1189,7 @@ namespace TvDatabase
       sb.AddOrderByField(true, "starttime");
 
       SqlStatement stmt = sb.GetStatement(true);
-      IList progs = ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
-      return progs;
+      return ObjectFactory.GetCollection<Program>(stmt.Execute());
     }
 
     #region TV-Guide
@@ -1383,7 +1370,7 @@ namespace TvDatabase
     }
     #endregion
 
-    public IList GetPrograms(DateTime startTime, DateTime endTime)
+    public IList<Program> GetPrograms(DateTime startTime, DateTime endTime)
     {
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Program));
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
@@ -1395,8 +1382,7 @@ namespace TvDatabase
       sb.AddConstraint(string.Format(" ({0} or {1} or {2}) ", sub1, sub2, sub3));
       sb.AddOrderByField(true, "starttime");
       SqlStatement stmt = sb.GetStatement(true);
-      IList progs = ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
-      return progs;
+      return ObjectFactory.GetCollection<Program>(stmt.Execute());
     }
 
     public DateTime GetNewestProgramForChannel(int idChannel)
@@ -1406,11 +1392,11 @@ namespace TvDatabase
       sb.AddOrderByField(false, "startTime");
       sb.SetRowLimit(1);
       SqlStatement stmt = sb.GetStatement(true);
-      IList progs = ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
-      return progs.Count > 0 ? ((Program)progs[0]).StartTime : DateTime.MinValue;
+      IList<Program> progs = ObjectFactory.GetCollection<Program>(stmt.Execute());
+      return progs.Count > 0 ? progs[0].StartTime : DateTime.MinValue;
     }
 
-    public IList GetProgramsByTitle(Channel channel, DateTime startTime, DateTime endTime, string title)
+    public IList<Program> GetProgramsByTitle(Channel channel, DateTime startTime, DateTime endTime, string title)
     {
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Program));
@@ -1425,11 +1411,10 @@ namespace TvDatabase
       sb.AddOrderByField(true, "starttime");
 
       SqlStatement stmt = sb.GetStatement(true);
-      IList progs = ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
-      return progs;
+      return ObjectFactory.GetCollection<Program>(stmt.Execute());
     }
 
-    public IList GetProgramsByTitle(DateTime startTime, DateTime endTime, string title)
+    public IList<Program> GetProgramsByTitle(DateTime startTime, DateTime endTime, string title)
     {
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Program));
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
@@ -1442,23 +1427,15 @@ namespace TvDatabase
       sb.AddConstraint(Operator.Like, "title", title);
       sb.AddOrderByField(true, "starttime");
       SqlStatement stmt = sb.GetStatement(true);
-      IList progs = ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
-      return progs;
+      return ObjectFactory.GetCollection<Program>(stmt.Execute());
     }
 
-    public IList SearchMinimalPrograms(DateTime startTime, DateTime endTime, string programName, Channel channel)
+    public IList<Program> SearchMinimalPrograms(DateTime startTime, DateTime endTime, string programName, Channel channel)
     {
-      IList progsReturn = new List<Program>();
-      IList programs = channel != null ? GetProgramsByTitle(channel, startTime, endTime, programName) : GetProgramsByTitle(startTime, endTime, programName);
-
-      foreach (Program prog in programs)
-      {
-        progsReturn.Add(prog);
-      }
-      return progsReturn;
+      return channel != null ? GetProgramsByTitle(channel, startTime, endTime, programName) : GetProgramsByTitle(startTime, endTime, programName);
     }
 
-    public IList GetGenres()
+    public IList<string> GetGenres()
     {
       List<string> genres = new List<string>();
       string connectString = ProviderFactory.GetDefaultProvider().ConnectionString;
@@ -1509,7 +1486,7 @@ namespace TvDatabase
       return genres;
     }
 
-    public IList SearchProgramsPerGenre(string currentGenre, string currentSearchCriteria)
+    public IList<Program> SearchProgramsPerGenre(string currentGenre, string currentSearchCriteria)
     {
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Program));
 
@@ -1528,10 +1505,10 @@ namespace TvDatabase
       }
 
       SqlStatement stmt = sb.GetStatement(true);
-      return ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
+      return ObjectFactory.GetCollection<Program>(stmt.Execute());
     }
 
-    public IList SearchPrograms(string searchCriteria)
+    public IList<Program> SearchPrograms(string searchCriteria)
     {
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Program));
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
@@ -1550,11 +1527,11 @@ namespace TvDatabase
       }
 
       SqlStatement stmt = sb.GetStatement(true);
-      return ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
+      return ObjectFactory.GetCollection<Program>(stmt.Execute());
 
     }
 
-    public IList SearchProgramsByDescription(string searchCriteria)
+    public IList<Program> SearchProgramsByDescription(string searchCriteria)
     {
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Program));
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
@@ -1573,7 +1550,7 @@ namespace TvDatabase
       }
 
       SqlStatement stmt = sb.GetStatement(true);
-      return ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
+      return ObjectFactory.GetCollection<Program>(stmt.Execute());
     }
 
     private static string BuildCommandTextMiniGuide(string aProvider, ICollection<Channel> aEpgChannelList)
@@ -2134,8 +2111,8 @@ namespace TvDatabase
     {
       Log.Info("GetConflictingSchedules: Schedule = " + rec);
       List<Schedule> conflicts = new List<Schedule>();
-      IList schedulesList = Schedule.ListAll();
-      IList cards = Card.ListAll();
+      IList<Schedule> schedulesList = Schedule.ListAll();
+      IList<Card> cards = Card.ListAll();
       if (cards.Count == 0)
         return conflicts;
       Log.Info("GetConflictingSchedules: Cards.Count = {0}", cards.Count);
@@ -2207,7 +2184,7 @@ namespace TvDatabase
     {
       overlappingSchedule = null;
       Log.Info("AssignSchedulesToCard: schedule = " + schedule);
-      IList cards = Card.ListAll();
+      IList<Card> cards = Card.ListAll();
       bool assigned = false;
       int count = 0;
       foreach (Card card in cards)
@@ -2317,7 +2294,7 @@ namespace TvDatabase
 
       if (rec.ScheduleType == (int)ScheduleRecordingType.Weekends)
       {
-        IList progList = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(days), rec.ProgramName, rec.ReferencedChannel());
+        IList<Program> progList = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(days), rec.ProgramName, rec.ReferencedChannel());
 
         foreach (Program prog in progList)
         {
@@ -2366,7 +2343,7 @@ namespace TvDatabase
       }
 
 
-      IList programs = rec.ScheduleType == (int)ScheduleRecordingType.EveryTimeOnThisChannel ? layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(days), rec.ProgramName, rec.ReferencedChannel()) : layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(days), rec.ProgramName, null);
+      IList<Program> programs = rec.ScheduleType == (int)ScheduleRecordingType.EveryTimeOnThisChannel ? layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(days), rec.ProgramName, rec.ReferencedChannel()) : layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(days), rec.ProgramName, null);
       foreach (Program prog in programs)
       {
         if (rec.IsRecordingProgram(prog, false))
@@ -2406,12 +2383,12 @@ namespace TvDatabase
       sb.AddConstraint(Operator.Equals, "scheduleType", scheduleType);
       SqlStatement stmt = sb.GetStatement(true);
       Log.Info(stmt.Sql);
-      IList schedules = ObjectFactory.GetCollection(typeof(Schedule), stmt.Execute());
+      IList<Schedule> schedules = ObjectFactory.GetCollection<Schedule>(stmt.Execute());
       if (schedules == null)
         return null;
       if (schedules.Count == 0)
         return null;
-      return (Schedule)schedules[0];
+      return schedules[0];
     }
 
     #endregion
@@ -2424,10 +2401,10 @@ namespace TvDatabase
       sb.AddConstraint(Operator.Like, "fileName", fileName);
       sb.SetRowLimit(1);
       SqlStatement stmt = sb.GetStatement(true);
-      IList recordings = ObjectFactory.GetCollection(typeof(Recording), stmt.Execute());
+      IList<Recording> recordings = ObjectFactory.GetCollection<Recording>(stmt.Execute());
       if (recordings.Count == 0)
         return null;
-      return (Recording)recordings[0];
+      return recordings[0];
     }
 
     #endregion
@@ -2439,12 +2416,12 @@ namespace TvDatabase
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(RadioChannelGroup));
       sb.AddConstraint(Operator.Equals, "groupName", name);
       SqlStatement stmt = sb.GetStatement(true);
-      IList groups = ObjectFactory.GetCollection(typeof(RadioChannelGroup), stmt.Execute());
+      IList<RadioChannelGroup> groups = ObjectFactory.GetCollection<RadioChannelGroup>(stmt.Execute());
       if (groups == null)
         return null;
       if (groups.Count == 0)
         return null;
-      return (RadioChannelGroup)groups[0];
+      return groups[0];
     }
 
     // Get group to import from xml
@@ -2461,12 +2438,12 @@ namespace TvDatabase
         sb.AddConstraint(Operator.Equals, "sortOrder", aSortOrder);
       SqlStatement stmt = sb.GetStatement(true);
       Log.Debug(stmt.Sql);
-      IList groups = ObjectFactory.GetCollection(typeof(ChannelGroup), stmt.Execute());
+      IList<ChannelGroup> groups = ObjectFactory.GetCollection<ChannelGroup>(stmt.Execute());
       if (groups == null)
         return null;
       if (groups.Count == 0)
         return null;
-      return (ChannelGroup)groups[0];
+      return groups[0];
     }
 
     #endregion

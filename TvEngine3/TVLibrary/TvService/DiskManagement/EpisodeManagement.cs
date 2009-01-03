@@ -24,7 +24,6 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using TvDatabase;
 using TvLibrary.Log;
@@ -33,7 +32,7 @@ namespace TvService
 {
   public class EpisodeManagement
   {
-    public List<Recording> GetEpisodes(string title, IList recordings)
+    public List<Recording> GetEpisodes(string title, IList<Recording> recordings)
     {
       List<Recording> episodes = new List<Recording>();
       foreach (Recording recording in recordings)
@@ -78,7 +77,7 @@ namespace TvService
       //check how many episodes we got
       while (true)
       {
-        IList recordings = Recording.ListAll();
+        IList<Recording> recordings = Recording.ListAll();
 
         List<Recording> episodes = GetEpisodes(program.Title, recordings);
         if (episodes.Count <= schedule.MaxAirings)

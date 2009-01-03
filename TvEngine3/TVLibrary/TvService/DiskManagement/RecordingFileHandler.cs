@@ -24,7 +24,6 @@ using System.IO;
 
 using TvDatabase;
 using TvLibrary.Log;
-using System.Collections;
 
 namespace TvService
 {
@@ -87,7 +86,7 @@ namespace TvService
         string recfolder = Path.GetDirectoryName(fileName);
         List<string> recordingPaths = new List<string>();
 
-        IList cards = Card.ListAll();
+        IList<Card> cards = Card.ListAll();
         foreach (Card card in cards)
         {
           string currentCardPath = card.RecordingFolder;

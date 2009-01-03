@@ -25,7 +25,6 @@
 
 using System;
 using System.IO;
-using System.Collections;
 using System.Collections.Generic;
 using TvDatabase;
 using TvLibrary.Log;
@@ -52,7 +51,7 @@ namespace TvService
     {
       List<string> drives = new List<string>();
 
-      IList cards = Card.ListAll();
+      IList<Card> cards = Card.ListAll();
       foreach (Card card in cards)
       {
         if (card.RecordingFolder.Length > 0)
@@ -145,7 +144,7 @@ namespace TvService
     static List<RecordingFileInfo> GetRecordingsOnDrive(string drive)
     {
       List<RecordingFileInfo> recordings = new List<RecordingFileInfo>();
-      IList recordedTvShows = Recording.ListAll();
+      IList<Recording> recordedTvShows = Recording.ListAll();
 
       foreach (Recording recorded in recordedTvShows)
       {

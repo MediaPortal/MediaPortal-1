@@ -20,7 +20,7 @@
  */
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace TvLibrary.Implementations.DVB.Structures
@@ -105,7 +105,7 @@ namespace TvLibrary.Implementations.DVB.Structures
     /// <summary>
     /// ArrayList of PidInfo containing all pids
     /// </summary>
-    public ArrayList pids;
+    public List<PidInfo> pids;
     /// <summary>
     /// Service Id
     /// </summary>
@@ -153,7 +153,7 @@ namespace TvLibrary.Implementations.DVB.Structures
     /// </summary>
     public ChannelInfo()
     {
-      pids = new ArrayList();
+      pids = new List<PidInfo>();
     }
     /// <summary>
     /// Adds a pid to the pidtable
@@ -188,7 +188,7 @@ namespace TvLibrary.Implementations.DVB.Structures
       lnbkhz = -1;
       pol = -1;
       pcr_pid = -1;
-      pids = new ArrayList();
+      pids = new List<PidInfo>();
       serviceID = -1;
       networkID = -1;
       pidCache = String.Empty;
@@ -204,7 +204,7 @@ namespace TvLibrary.Implementations.DVB.Structures
       network_pmt_PID = Marshal.ReadInt32(data, 8);
       pcr_pid = Marshal.ReadInt32(data, 12);
       serviceID = program_number;
-      pids = new ArrayList();
+      pids = new List<PidInfo>();
       PidInfo pmt = new PidInfo();
       // video
       pmt.pid = Marshal.ReadInt16(data, 16);

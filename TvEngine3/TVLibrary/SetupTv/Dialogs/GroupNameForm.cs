@@ -19,11 +19,6 @@
  *
  */
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace SetupTv.Sections
@@ -35,14 +30,25 @@ namespace SetupTv.Sections
     public GroupNameForm()
     {
       InitializeComponent();
-      this.Text = "Enter name for new group";
+      InitNew();
+    }
+
+    private void InitNew()
+    {
+      Text = "Enter name for new group";
       mpLabel1.Text = "Please enter the name for the new group";
     }
+
     public GroupNameForm(string groupName)
     {
       InitializeComponent();
+      InitChange(groupName);
+    }
+
+    private void InitChange(string groupName)
+    {
       _groupName = groupName;
-      this.Text = "Change name for group";
+      Text = "Change name for group";
       mpLabel1.Text = "Please enter the new name for the group";
     }
 

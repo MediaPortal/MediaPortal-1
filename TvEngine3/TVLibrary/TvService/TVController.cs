@@ -22,7 +22,6 @@
 using System;
 using System.Threading;
 using System.IO;
-using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
 using System.Net;
@@ -318,7 +317,7 @@ namespace TvService
         }
 
         //get all registered servers from the database
-        IList servers;
+        IList<Server> servers;
         try
         {
           servers = Server.ListAll();
@@ -368,7 +367,7 @@ namespace TvService
         {
           //for each card, check if its already mentioned in the database
           bool found = false;
-          IList cards = _ourServer.ReferringCard();
+          IList<Card> cards = _ourServer.ReferringCard();
           foreach (Card card in cards)
           {
             if (card.DevicePath == _localCardCollection.Cards[i].DevicePath)
@@ -385,7 +384,7 @@ namespace TvService
           }
         }
         //notify log about cards from the database which are removed from the pc
-        IList cardsInDbs = Card.ListAll();
+        IList<Card> cardsInDbs = Card.ListAll();
         int cardsInstalled = _localCardCollection.Cards.Count;
         foreach (Card dbsCard in cardsInDbs)
         {
@@ -467,10 +466,10 @@ namespace TvService
         }
 
         Log.Info("Controller: setup hybrid cards");
-        IList cardgroups = CardGroup.ListAll();
+        IList<CardGroup> cardgroups = CardGroup.ListAll();
         foreach (CardGroup group in cardgroups)
         {
-          IList cards = group.CardGroupMaps();
+          IList<CardGroupMap> cards = group.CardGroupMaps();
           HybridCardGroup hybridCardGroup = new HybridCardGroup();
           foreach (CardGroupMap card in cards)
           {
@@ -743,8 +742,8 @@ namespace TvService
     /// <value>id of card</value>
     public int CardId(int cardIndex)
     {
-      IList cards = Card.ListAll();
-      return cards != null && cards.Count > cardIndex ? ((Card)cards[cardIndex]).IdCard : -1;
+      IList<Card> cards = Card.ListAll();
+      return cards != null && cards.Count > cardIndex ? cards[cardIndex].IdCard : -1;
     }
 
     /// <summary>
@@ -2864,7 +2863,7 @@ namespace TvService
       }
 
       TvBusinessLayer layer = new TvBusinessLayer();
-      List<Channel> tvChannelList = layer.GetTVGuideChannelsForGroup(idGroup);
+      IList<Channel> tvChannelList = layer.GetTVGuideChannelsForGroup(idGroup);
 
       if (tvChannelList == null || tvChannelList.Count == 0)
         return null;
@@ -3091,7 +3090,7 @@ namespace TvService
       if (allocation != null)
       {
         TvBusinessLayer layer = new TvBusinessLayer();
-        IList groups = ChannelGroup.ListAll();
+        IList<ChannelGroup> groups = ChannelGroup.ListAll();
 
         if (_tvChannelListGroups == null)
         {
@@ -3108,7 +3107,7 @@ namespace TvService
             }
             else
             {
-              List<Channel> tvChannelList = layer.GetTVGuideChannelsForGroup(group.IdGroup);
+              IList<Channel> tvChannelList = layer.GetTVGuideChannelsForGroup(group.IdGroup);
 
               foreach (Channel ch in tvChannelList)
               {

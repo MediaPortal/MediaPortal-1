@@ -19,7 +19,6 @@
  *
  */
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Gentle.Framework;
@@ -77,7 +76,7 @@ namespace SetupTv.Sections
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(ChannelGroup));
       sb.AddOrderByField(true, "sortOrder");
       SqlStatement stmt = sb.GetStatement(true);
-      IList groups = ObjectFactory.GetCollection(typeof(ChannelGroup), stmt.Execute());
+      IList<ChannelGroup> groups = ObjectFactory.GetCollection<ChannelGroup>(stmt.Execute());
       foreach (ChannelGroup group in groups)
       {
         ListViewItem item = mpListViewGroups.Items.Add(group.GroupName);
@@ -130,7 +129,7 @@ namespace SetupTv.Sections
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(ChannelGroup));
       sb.AddOrderByField(true, "sortOrder");
       SqlStatement stmt = sb.GetStatement(true);
-      IList groups = ObjectFactory.GetCollection(typeof(ChannelGroup), stmt.Execute());
+      IList<ChannelGroup> groups = ObjectFactory.GetCollection<ChannelGroup>(stmt.Execute());
       foreach (ChannelGroup group in groups)
       {
         ComboGroup g = new ComboGroup();
@@ -163,7 +162,7 @@ namespace SetupTv.Sections
       sb.AddConstraint(Operator.Equals, "isTv", 1);
       sb.AddOrderByField(true, "sortOrder");
       SqlStatement stmt = sb.GetStatement(true);
-      IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
+      IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
 
 
       Dictionary<int, bool> channelsMapped = new Dictionary<int, bool>();
@@ -172,7 +171,7 @@ namespace SetupTv.Sections
       sb.AddConstraint(Operator.Equals, "idGroup", g.Group.IdGroup);
       sb.AddOrderByField(true, "sortOrder");
       stmt = sb.GetStatement(true);
-      IList maps = ObjectFactory.GetCollection(typeof(GroupMap), stmt.Execute());
+      IList<GroupMap> maps = ObjectFactory.GetCollection<GroupMap>(stmt.Execute());
 
       foreach (GroupMap map in maps)
       {

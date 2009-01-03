@@ -20,7 +20,6 @@
  */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using DirectShowLib;
 using TvLibrary.Interfaces;
@@ -53,7 +52,7 @@ namespace TvLibrary.Implementations
       if (_devicePath != null)
       {
         //fetch preload value from db and apply it.
-        IList cardsInDbs = Card.ListAll();
+        IList<Card> cardsInDbs = Card.ListAll();
         foreach (Card dbsCard in cardsInDbs)
         {
           if (dbsCard.DevicePath.Equals(_devicePath))

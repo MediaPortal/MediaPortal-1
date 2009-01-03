@@ -19,7 +19,7 @@
  *
  */
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using Gentle.Framework;
 using TvDatabase;
@@ -64,7 +64,7 @@ namespace SetupTv.Sections
         sb.AddConstraint(Operator.Equals, "idGroup", Group.IdGroup);
         sb.AddOrderByField(true, "sortOrder");
         SqlStatement stmt = sb.GetStatement(true);
-        IList maps = ObjectFactory.GetCollection(typeof(RadioGroupMap), stmt.Execute());
+        IList<RadioGroupMap> maps = ObjectFactory.GetCollection<RadioGroupMap>(stmt.Execute());
 
         foreach (RadioGroupMap map in maps)
         {

@@ -3,7 +3,7 @@
 // with the Gentle.NET Business Entity template, $Rev: 965 $
 //========================================================================
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using Gentle.Framework;
 using TvLibrary.Log;
 
@@ -88,12 +88,12 @@ namespace TvDatabase
     /// <summary>
     /// Static method to retrieve all instances that are stored in the database in one call
     /// </summary>
-    public static IList ListAll()
+    public static IList<ChannelGroup> ListAll()
     {
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(ChannelGroup));
       sb.AddOrderByField(true, "sortOrder");
       SqlStatement stmt = sb.GetStatement(true);
-      return ObjectFactory.GetCollection(typeof(ChannelGroup), stmt.Execute());
+      return ObjectFactory.GetCollection<ChannelGroup>(stmt.Execute());
     }
 
     /// <summary>
@@ -107,7 +107,7 @@ namespace TvDatabase
         return null;
       }
       Key key = new Key(typeof(ChannelGroup), true, "idGroup", id);
-      return Broker.RetrieveInstance(typeof(ChannelGroup), key) as ChannelGroup;
+      return Broker.RetrieveInstance<ChannelGroup>(key);
     }
 
     /// <summary>
@@ -116,7 +116,7 @@ namespace TvDatabase
     /// </summary>
     public static ChannelGroup Retrieve(Key key)
     {
-      return Broker.RetrieveInstance(typeof(ChannelGroup), key) as ChannelGroup;
+      return Broker.RetrieveInstance<ChannelGroup>(key);
     }
 
     /// <summary>
@@ -145,7 +145,7 @@ namespace TvDatabase
     /// <summary>
     /// Get a list of GroupMap referring to the current entity.
     /// </summary>
-    public IList ReferringGroupMap()
+    public IList<GroupMap> ReferringGroupMap()
     {
 
       //select * from 'foreigntable'
@@ -160,7 +160,7 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
 
       // execute the statement/query and create a collection of User instances from the result set
-      return ObjectFactory.GetCollection(typeof(GroupMap), stmt.Execute());
+      return ObjectFactory.GetCollection<GroupMap>(stmt.Execute());
 
       // TODO In the end, a GentleList should be returned instead of an arraylist
       //return new GentleList( typeof(GroupMap), this );
@@ -170,7 +170,7 @@ namespace TvDatabase
 
     public void Delete()
     {
-      IList list = ReferringGroupMap();
+      IList<GroupMap> list = ReferringGroupMap();
       foreach (GroupMap map in list)
       {
         map.Remove();

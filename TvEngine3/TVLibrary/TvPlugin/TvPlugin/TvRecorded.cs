@@ -643,7 +643,7 @@ namespace TvPlugin
       List<GUIListItem> itemlist = new List<GUIListItem>();
       try
       {
-        IList recordings = Recording.ListAll();
+        IList<Recording> recordings = Recording.ListAll();
         if (currentShow == string.Empty)
         {
           foreach (Recording rec in recordings)
@@ -988,7 +988,7 @@ namespace TvPlugin
       }
 
       Recording rec = (Recording)pItem.TVTag;
-      IList itemlist = Recording.ListAll();
+      IList<Recording> itemlist = Recording.ListAll();
 
       m_oActiveRecording = rec;
       m_bIsLiveRecording = false;
@@ -1182,7 +1182,7 @@ namespace TvPlugin
           return;
         }
 
-        IList schedulesList = Schedule.ListAll();
+        IList<Schedule> schedulesList = Schedule.ListAll();
         if (schedulesList != null)
         {
           if (rec != null)
@@ -1328,7 +1328,7 @@ namespace TvPlugin
 
     private void DeleteWatchedRecordings(string _currentTitle)
     {
-      IList itemlist = Recording.ListAll();
+      IList<Recording> itemlist = Recording.ListAll();
       TvServer server = new TvServer();
       foreach (Recording rec in itemlist)
       {
@@ -1340,7 +1340,7 @@ namespace TvPlugin
 
     private void DeleteInvalidRecordings()
     {
-      IList itemlist = Recording.ListAll();
+      IList<Recording> itemlist = Recording.ListAll();
       TvServer server = new TvServer();
       foreach (Recording rec in itemlist)
       {

@@ -19,7 +19,7 @@
  *
  */
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Analyzer;
 using TvLibrary.Channels;
@@ -67,7 +67,7 @@ namespace TvLibrary.Implementations.DVB
     /// Sets the hw pids.
     /// </summary>
     /// <param name="pids">The pids.</param>
-    protected override void SetHwPids(ArrayList pids)
+    protected override void SetHwPids(List<ushort> pids)
     {
       _card.SendHwPids(pids);
     }

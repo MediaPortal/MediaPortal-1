@@ -19,7 +19,7 @@
  *
  */
 using System;
-using System.Collections;
+using System.Collections.Generic;
 
 using System.Drawing;
 using System.Windows.Forms;
@@ -50,7 +50,7 @@ namespace SetupTv.Sections
     {
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
       listView1.Items.Clear();
-      IList schedules = Schedule.ListAll();
+      IList<Schedule> schedules = Schedule.ListAll();
       foreach (Schedule schedule in schedules)
       {
         ListViewItem item = new ListViewItem(schedule.Priority.ToString());

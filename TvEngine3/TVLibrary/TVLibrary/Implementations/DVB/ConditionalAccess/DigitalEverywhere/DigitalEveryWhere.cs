@@ -19,7 +19,6 @@
  *
  */
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using DirectShowLib;
@@ -464,7 +463,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="isAtsc">if set to <c>true</c> [is atsc].</param>
     /// <param name="pids">The pids to filter</param>
     /// <returns></returns>
-    public bool SetHardwarePidFiltering(bool isDvbc, bool isDvbT, bool isDvbS, bool isAtsc, ArrayList pids)
+    public bool SetHardwarePidFiltering(bool isDvbc, bool isDvbT, bool isDvbS, bool isAtsc, List<ushort> pids)
     {
       IKsPropertySet propertySet = _filterTuner as IKsPropertySet;
       Guid propertyGuid = KSPROPSETID_Firesat;
@@ -502,22 +501,22 @@ namespace TvLibrary.Implementations.DVB
           //get only specific pids
           dvbtStruct.uNumberOfValidPids = (byte)pidCount;
           dvbsStruct.uNumberOfValidPids = (byte)pidCount;
-          if (pids.Count >= 1) { dvbtStruct.uPid1 = (ushort)pids[0]; dvbsStruct.uPid1 = (ushort)pids[0]; }
-          if (pids.Count >= 2) { dvbtStruct.uPid2 = (ushort)pids[1]; dvbsStruct.uPid2 = (ushort)pids[1]; }
-          if (pids.Count >= 3) { dvbtStruct.uPid3 = (ushort)pids[2]; dvbsStruct.uPid3 = (ushort)pids[2]; }
-          if (pids.Count >= 4) { dvbtStruct.uPid4 = (ushort)pids[3]; dvbsStruct.uPid4 = (ushort)pids[3]; }
-          if (pids.Count >= 5) { dvbtStruct.uPid5 = (ushort)pids[4]; dvbsStruct.uPid5 = (ushort)pids[4]; }
-          if (pids.Count >= 6) { dvbtStruct.uPid6 = (ushort)pids[5]; dvbsStruct.uPid6 = (ushort)pids[5]; }
-          if (pids.Count >= 7) { dvbtStruct.uPid7 = (ushort)pids[6]; dvbsStruct.uPid7 = (ushort)pids[6]; }
-          if (pids.Count >= 8) { dvbtStruct.uPid8 = (ushort)pids[7]; dvbsStruct.uPid8 = (ushort)pids[7]; }
-          if (pids.Count >= 9) { dvbtStruct.uPid9 = (ushort)pids[8]; dvbsStruct.uPid9 = (ushort)pids[8]; }
-          if (pids.Count >= 10) { dvbtStruct.uPid10 = (ushort)pids[9]; dvbsStruct.uPid10 = (ushort)pids[9]; }
-          if (pids.Count >= 11) { dvbtStruct.uPid11 = (ushort)pids[10]; dvbsStruct.uPid11 = (ushort)pids[10]; }
-          if (pids.Count >= 12) { dvbtStruct.uPid12 = (ushort)pids[11]; dvbsStruct.uPid12 = (ushort)pids[11]; }
-          if (pids.Count >= 13) { dvbtStruct.uPid13 = (ushort)pids[12]; dvbsStruct.uPid13 = (ushort)pids[12]; }
-          if (pids.Count >= 14) { dvbtStruct.uPid14 = (ushort)pids[13]; dvbsStruct.uPid14 = (ushort)pids[13]; }
-          if (pids.Count >= 15) { dvbtStruct.uPid15 = (ushort)pids[14]; dvbsStruct.uPid15 = (ushort)pids[14]; }
-          if (pids.Count >= 16) { dvbtStruct.uPid16 = (ushort)pids[15]; dvbsStruct.uPid16 = (ushort)pids[15]; }
+          if (pids.Count >= 1) { dvbtStruct.uPid1 = pids[0]; dvbsStruct.uPid1 = pids[0]; }
+          if (pids.Count >= 2) { dvbtStruct.uPid2 = pids[1]; dvbsStruct.uPid2 = pids[1]; }
+          if (pids.Count >= 3) { dvbtStruct.uPid3 = pids[2]; dvbsStruct.uPid3 = pids[2]; }
+          if (pids.Count >= 4) { dvbtStruct.uPid4 = pids[3]; dvbsStruct.uPid4 = pids[3]; }
+          if (pids.Count >= 5) { dvbtStruct.uPid5 = pids[4]; dvbsStruct.uPid5 = pids[4]; }
+          if (pids.Count >= 6) { dvbtStruct.uPid6 = pids[5]; dvbsStruct.uPid6 = pids[5]; }
+          if (pids.Count >= 7) { dvbtStruct.uPid7 = pids[6]; dvbsStruct.uPid7 = pids[6]; }
+          if (pids.Count >= 8) { dvbtStruct.uPid8 = pids[7]; dvbsStruct.uPid8 = pids[7]; }
+          if (pids.Count >= 9) { dvbtStruct.uPid9 = pids[8]; dvbsStruct.uPid9 = pids[8]; }
+          if (pids.Count >= 10) { dvbtStruct.uPid10 = pids[9]; dvbsStruct.uPid10 = pids[9]; }
+          if (pids.Count >= 11) { dvbtStruct.uPid11 = pids[10]; dvbsStruct.uPid11 = pids[10]; }
+          if (pids.Count >= 12) { dvbtStruct.uPid12 = pids[11]; dvbsStruct.uPid12 = pids[11]; }
+          if (pids.Count >= 13) { dvbtStruct.uPid13 = pids[12]; dvbsStruct.uPid13 = pids[12]; }
+          if (pids.Count >= 14) { dvbtStruct.uPid14 = pids[13]; dvbsStruct.uPid14 = pids[13]; }
+          if (pids.Count >= 15) { dvbtStruct.uPid15 = pids[14]; dvbsStruct.uPid15 = pids[14]; }
+          if (pids.Count >= 16) { dvbtStruct.uPid16 = pids[15]; dvbsStruct.uPid16 = pids[15]; }
         }
         else
         {

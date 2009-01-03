@@ -19,7 +19,6 @@
  *
  */
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
@@ -105,7 +104,7 @@ namespace SetupTv.Sections
         tabControl1.TabPages.RemoveAt(1);
       }
       addToFavoritesToolStripMenuItem.DropDownItems.Clear();
-      IList groups = RadioChannelGroup.ListAll();
+      IList<RadioChannelGroup> groups = RadioChannelGroup.ListAll();
       foreach (RadioChannelGroup group in groups)
       {
         ToolStripMenuItem item = new ToolStripMenuItem(group.GroupName);
@@ -138,7 +137,7 @@ namespace SetupTv.Sections
     {
       UpdateMenu();
       _redrawTab1 = false;
-      IList dbsCards = Card.ListAll();
+      IList<Card> dbsCards = Card.ListAll();
 
       Dictionary<int, CardType> cards = new Dictionary<int, CardType>();
 
@@ -155,7 +154,7 @@ namespace SetupTv.Sections
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
       sb.AddOrderByField(true, "sortOrder");
       SqlStatement stmt = sb.GetStatement(true);
-      IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
+      IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
       ChannelMap.ListAll();
 
       List<ListViewItem> items = new List<ListViewItem>();
@@ -184,7 +183,7 @@ namespace SetupTv.Sections
         }
         if (notmapped)
         {
-          IList maps = ch.ReferringChannelMap();
+          IList<ChannelMap> maps = ch.ReferringChannelMap();
           foreach (ChannelMap map in maps)
           {
             if (cards.ContainsKey(map.IdCard))
@@ -378,12 +377,12 @@ namespace SetupTv.Sections
       NotifyForm dlg = new NotifyForm("Clearing all radio channels...", "This can take some time\n\nPlease be patient...");
       dlg.Show();
       dlg.WaitForDisplay();
-      IList channels = Channel.ListAll();
+      IList<Channel> channels = Channel.ListAll();
       foreach (Channel channel in channels)
       {
         if (channel.IsRadio)
         {
-          Broker.Execute("delete from TvMovieMapping WHERE idChannel=" + channel.IdChannel.ToString());
+          Broker.Execute("delete from TvMovieMapping WHERE idChannel=" + channel.IdChannel);
           channel.Delete();
         }
       }
@@ -449,13 +448,13 @@ namespace SetupTv.Sections
       foreach (ListViewItem item in mpListView1.SelectedItems)
       {
         Channel channel = (Channel)item.Tag;
-        IList maps = channel.ReferringRadioGroupMap();
+        IList<RadioGroupMap> mapsRadio = channel.ReferringRadioGroupMap();
         // Bav: fixing Mantis bug 1178: Can't delete Radio channels in SetupTV
-        foreach (RadioGroupMap map in maps)
+        foreach (RadioGroupMap map in mapsRadio)
         {
           map.Remove();
         }
-        maps = channel.ReferringGroupMap();
+        IList<GroupMap> maps = channel.ReferringGroupMap();
         foreach (GroupMap map in maps)
         {
           map.Remove();
@@ -731,10 +730,10 @@ namespace SetupTv.Sections
       foreach (ListViewItem item in mpListView1.SelectedItems)
       {
         Channel channel = (Channel)item.Tag;
-        IList details = channel.ReferringTuningDetail();
+        IList<TuningDetail> details = channel.ReferringTuningDetail();
         if (details.Count > 0)
         {
-          channel.DisplayName = ((TuningDetail)details[0]).ServiceId.ToString();
+          channel.DisplayName = (details[0]).ServiceId.ToString();
           channel.Persist();
           item.Tag = channel;
         }
@@ -751,10 +750,10 @@ namespace SetupTv.Sections
       foreach (ListViewItem item in mpListView1.SelectedItems)
       {
         Channel channel = (Channel)item.Tag;
-        IList details = channel.ReferringTuningDetail();
+        IList<TuningDetail> details = channel.ReferringTuningDetail();
         if (details.Count > 0)
         {
-          channel.DisplayName = ((TuningDetail)details[0]).ServiceId + " " + channel.DisplayName;
+          channel.DisplayName = (details[0]).ServiceId + " " + channel.DisplayName;
           channel.Persist();
           item.Tag = channel;
         }
@@ -772,7 +771,7 @@ namespace SetupTv.Sections
       foreach (ListViewItem item in mpListView1.SelectedItems)
       {
         Channel channel = (Channel)item.Tag;
-        IList details = channel.ReferringTuningDetail();
+        IList<TuningDetail> details = channel.ReferringTuningDetail();
         foreach (TuningDetail detail in details)
         {
           detail.ChannelNumber = detail.ServiceId;

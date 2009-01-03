@@ -175,7 +175,7 @@ namespace TvPlugin
 
       if (selectedItem == null)
       {
-        IList conflictsList = Conflict.ListAll();
+        IList<Conflict> conflictsList = Conflict.ListAll();
         foreach (Conflict conflict in conflictsList)
         {
           Schedule schedule = Schedule.Retrieve(conflict.IdSchedule);

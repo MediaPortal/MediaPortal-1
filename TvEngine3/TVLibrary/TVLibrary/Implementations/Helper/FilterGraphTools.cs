@@ -6,7 +6,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 *****************************************************************************/
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
 
@@ -581,7 +581,7 @@ namespace TvLibrary.Implementations.DVB
     public static void RemoveAllFilters(IGraphBuilder graphBuilder)
     {
       IEnumFilters enumFilters;
-      ArrayList filtersArray = new ArrayList();
+      List<IBaseFilter> filtersArray = new List<IBaseFilter>();
 
       if (graphBuilder == null)
         throw new ArgumentNullException("graphBuilder");

@@ -19,7 +19,6 @@
  *
  */
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using TvDatabase;
 using TvLibrary.Log;
@@ -275,7 +274,7 @@ namespace TvService
       Gentle.Common.CacheManager.Clear();
       Reset();
       //get all channels
-      IList channels = Channel.ListAll();
+      IList<Channel> channels = Channel.ListAll();
       foreach (Channel channel in channels)
       {
         //if epg grabbing is enabled and channel is a radio or tv channel

@@ -1,5 +1,5 @@
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using Gentle.Framework;
 using TvLibrary.Log;
 
@@ -84,9 +84,9 @@ namespace TvDatabase
     /// <summary>
     /// Static method to retrieve all instances that are stored in the database in one call
     /// </summary>
-    public static IList ListAll()
+    public static IList<ChannelLinkageMap> ListAll()
     {
-      return Broker.RetrieveList(typeof(ChannelLinkageMap));
+      return Broker.RetrieveList<ChannelLinkageMap>();
     }
 
     /// <summary>
@@ -100,7 +100,7 @@ namespace TvDatabase
         return null;
       }
       Key key = new Key(typeof(ChannelLinkageMap), true, "idMapping", id);
-      return Broker.RetrieveInstance(typeof(ChannelLinkageMap), key) as ChannelLinkageMap;
+      return Broker.RetrieveInstance<ChannelLinkageMap>(key);
     }
 
     /// <summary>
@@ -109,7 +109,7 @@ namespace TvDatabase
     /// </summary>
     public static ChannelLinkageMap Retrieve(Key key)
     {
-      return Broker.RetrieveInstance(typeof(ChannelLinkageMap), key) as ChannelLinkageMap;
+      return Broker.RetrieveInstance<ChannelLinkageMap>(key);
     }
 
     /// <summary>

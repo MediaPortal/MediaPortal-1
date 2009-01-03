@@ -3,7 +3,6 @@
 // with the Gentle.NET Business Entity template, $Rev: 965 $
 //========================================================================
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using Gentle.Framework;
 using TvLibrary.Log;
@@ -91,9 +90,9 @@ namespace TvDatabase
 		/// <summary>
 		/// Static method to retrieve all instances that are stored in the database in one call
 		/// </summary>
-		public static IList ListAll()
+		public static IList<KeywordMap> ListAll()
 		{
-			return Broker.RetrieveList(typeof(KeywordMap));
+      return Broker.RetrieveList<KeywordMap>();
 		}
 
 		/// <summary>
@@ -107,7 +106,7 @@ namespace TvDatabase
 				return null;
 			}
 			Key key = new Key(typeof(KeywordMap), true, "idKeywordMap", id);
-			return Broker.RetrieveInstance(typeof(KeywordMap), key) as KeywordMap;
+      return Broker.RetrieveInstance<KeywordMap>(key);
 		}
 
 		/// <summary>
@@ -116,7 +115,7 @@ namespace TvDatabase
 		/// </summary>
 		public static KeywordMap Retrieve(Key key)
 		{
-			return Broker.RetrieveInstance(typeof(KeywordMap), key) as KeywordMap;
+      return Broker.RetrieveInstance<KeywordMap>(key);
 		}
 
     /// <summary>
@@ -129,7 +128,7 @@ namespace TvDatabase
         return null;
       }
       Key key = new Key(typeof(KeywordMap), true, "idKeyword", KeywordID);
-      IList list = Broker.RetrieveList(typeof(KeywordMap), key);
+      IList<KeywordMap> list = Broker.RetrieveList<KeywordMap>(key);
       List<ChannelGroup> channelGroupList = new List<ChannelGroup>();
       foreach (KeywordMap map in list)
       {

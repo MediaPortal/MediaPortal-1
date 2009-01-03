@@ -22,7 +22,6 @@
 
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 //using System.Runtime.CompilerServices;
@@ -179,10 +178,10 @@ namespace TvLibrary.Implementations.DVB
     public override void OnAfterTune()
     {
       Log.Log.WriteFile("subch:{0} OnAfterTune", _subChannelId);
-      ArrayList pids = new ArrayList();
-      pids.Add((ushort)0x0);//pat
-      pids.Add((ushort)0x11);//sdt
-      pids.Add((ushort)0x1fff);//padding stream
+      List<ushort> pids = new List<ushort>();
+      pids.Add(0x0);//pat
+      pids.Add(0x11);//sdt
+      pids.Add(0x1fff);//padding stream
       if (_currentChannel != null)
       {
         DVBBaseChannel ch = (DVBBaseChannel)_currentChannel;
@@ -737,11 +736,11 @@ namespace TvLibrary.Implementations.DVB
       {
         Log.Log.WriteFile("subch:{0} SetMpegPidMapping", _subChannelId);
 
-        ArrayList hwPids = new ArrayList();
-        hwPids.Add((ushort)0x0);//PAT
-        hwPids.Add((ushort)0x1);//CAT
-        hwPids.Add((ushort)0x10);//NIT
-        hwPids.Add((ushort)0x11);//SDT
+        List<ushort> hwPids = new List<ushort>();
+        hwPids.Add(0x0);//PAT
+        hwPids.Add(0x1);//CAT
+        hwPids.Add(0x10);//NIT
+        hwPids.Add(0x11);//SDT
 
         Log.Log.WriteFile("subch:{0}  pid:{1:X} pcr", _subChannelId, info.pcr_pid);
         Log.Log.WriteFile("subch:{0}  pid:{1:X} pmt", _subChannelId, info.network_pmt_PID);

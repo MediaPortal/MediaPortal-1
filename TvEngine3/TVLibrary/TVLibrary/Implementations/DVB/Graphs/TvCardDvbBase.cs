@@ -20,7 +20,6 @@
  */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Xml;
@@ -1278,7 +1277,7 @@ namespace TvLibrary.Implementations.DVB
     /// Sends the hw pids.
     /// </summary>
     /// <param name="pids">The pids.</param>
-    public virtual void SendHwPids(ArrayList pids)
+    public virtual void SendHwPids(List<ushort> pids)
     {
       //if (System.IO.File.Exists("usehwpids.txt"))
       {

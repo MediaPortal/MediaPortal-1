@@ -19,7 +19,7 @@
  *
  */
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using TvControl;
 using TvDatabase;
@@ -40,7 +40,7 @@ namespace SetupTv.Sections
 
     public override void OnSectionActivated()
     {
-      IList servers = Server.ListAll();
+      IList<Server> servers = Server.ListAll();
       mpListView1.Items.Clear();
       foreach (Server server in servers)
       {

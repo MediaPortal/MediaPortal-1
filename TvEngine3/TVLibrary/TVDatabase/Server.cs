@@ -3,7 +3,7 @@
 // with the Gentle.NET Business Entity template, $Rev: 965 $
 //========================================================================
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using Gentle.Framework;
 using TvLibrary.Log;
 
@@ -89,9 +89,9 @@ namespace TvDatabase
     /// <summary>
     /// Static method to retrieve all instances that are stored in the database in one call
     /// </summary>
-    public static IList ListAll()
+    public static IList<Server> ListAll()
     {
-      return Broker.RetrieveList(typeof(Server));
+      return Broker.RetrieveList<Server>();
     }
 
     /// <summary>
@@ -105,7 +105,7 @@ namespace TvDatabase
         return null;
       }
       Key key = new Key(typeof(Server), true, "idServer", id);
-      return Broker.RetrieveInstance(typeof(Server), key) as Server;
+      return Broker.RetrieveInstance<Server>(key);
     }
 
     /// <summary>
@@ -114,7 +114,7 @@ namespace TvDatabase
     /// </summary>
     public static Server Retrieve(Key key)
     {
-      return Broker.RetrieveInstance(typeof(Server), key) as Server;
+      return Broker.RetrieveInstance<Server>(key);
     }
 
     /// <summary>
@@ -144,7 +144,7 @@ namespace TvDatabase
     /// <summary>
     /// Get a list of Card referring to the current entity.
     /// </summary>
-    public IList ReferringCard()
+    public IList<Card> ReferringCard()
     {
       //select * from 'foreigntable'
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Card));
@@ -157,7 +157,7 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
 
       // execute the statement/query and create a collection of User instances from the result set
-      return ObjectFactory.GetCollection(typeof(Card), stmt.Execute());
+      return ObjectFactory.GetCollection<Card>(stmt.Execute());
 
       // TODO In the end, a GentleList should be returned instead of an arraylist
       //return new GentleList( typeof(Card), this );
@@ -166,7 +166,7 @@ namespace TvDatabase
     /// <summary>
     /// Get a list of Recording referring to the current entity.
     /// </summary>
-    public IList ReferringRecording()
+    public IList<Recording> ReferringRecording()
     {
       //select * from 'foreigntable'
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Recording));
@@ -179,7 +179,7 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
 
       // execute the statement/query and create a collection of User instances from the result set
-      return ObjectFactory.GetCollection(typeof(Recording), stmt.Execute());
+      return ObjectFactory.GetCollection<Recording>(stmt.Execute());
 
       // TODO In the end, a GentleList should be returned instead of an arraylist
       //return new GentleList( typeof(Recording), this );
@@ -187,11 +187,11 @@ namespace TvDatabase
     #endregion
     public void Delete()
     {
-      IList list = ReferringCard();
+      IList<Card> list = ReferringCard();
       foreach (Card card in list)
         card.Delete();
-      list = ReferringRecording();
-      foreach (Recording recording in list)
+      IList<Recording> listRecordings = ReferringRecording();
+      foreach (Recording recording in listRecordings)
         recording.Delete();
 
       Remove();

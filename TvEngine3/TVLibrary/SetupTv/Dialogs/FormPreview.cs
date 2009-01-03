@@ -1,16 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using TvLibrary;
 using TvDatabase;
 using TvLibrary.Log;
-using TvLibrary.Interfaces;
-using TvLibrary.Implementations;
-using TvLibrary.Channels;
 using TvControl;
 
 namespace SetupTv.Sections
@@ -18,8 +10,8 @@ namespace SetupTv.Sections
   public partial class FormPreview : Form
   {
     Channel _channel;
-    VirtualCard _card = null;
-    Player _player = null;
+    VirtualCard _card;
+    Player _player;
     public FormPreview()
     {
       InitializeComponent();
@@ -39,16 +31,15 @@ namespace SetupTv.Sections
 
       public new DialogResult ShowDialog(IWin32Window owner)
       {
-          this.Text = "Preview " + _channel.Name;
+          Text = "Preview " + _channel.Name;
 
           TvServer server = new TvServer();
-          TvResult result;
-          User user = new User();
-          result = server.StartTimeShifting(ref user, _channel.IdChannel, out _card);
+        User user = new User();
+          TvResult result = server.StartTimeShifting(ref user, _channel.IdChannel, out _card);
           if (result != TvResult.Succeeded)
           {
-              MessageBox.Show("Preview failed:" + result.ToString());
-              this.Close();
+              MessageBox.Show("Preview failed:" + result);
+              Close();
               return DialogResult.None;
           }
 

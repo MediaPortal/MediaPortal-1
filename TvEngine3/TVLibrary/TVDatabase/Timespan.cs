@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using Gentle.Framework;
 using TvLibrary.Log;
@@ -107,9 +106,9 @@ namespace TvDatabase
     /// <summary>
     /// Static method to retrieve all instances that are stored in the database in one call
     /// </summary>
-    public static IList ListAll()
+    public static IList<TimeSpan> ListAll()
     {
-      return Broker.RetrieveList(typeof(Timespan));
+      return Broker.RetrieveList<TimeSpan>();
     }
 
     /// <summary>
@@ -125,7 +124,7 @@ namespace TvDatabase
       try
       {
         Key key = new Key(typeof(Timespan), true, "idTimespan", id);
-        return Broker.RetrieveInstance(typeof(Timespan), key) as Timespan;
+        return Broker.RetrieveInstance<Timespan>(key);
       } catch
       {
         return null;
@@ -138,13 +137,13 @@ namespace TvDatabase
     /// </summary>
     public static Timespan Retrieve(Key key)
     {
-      return Broker.RetrieveInstance(typeof(Timespan), key) as Timespan;
+      return Broker.RetrieveInstance<Timespan>(key);
     }
 
     /// <summary>
     /// Retrieves a list of Timespan's with the same KeywordID.
     /// </summary>
-    public static List<Timespan> RetrieveTimeSpanList(int KeywordID)
+    public static IList<Timespan> RetrieveTimeSpanList(int KeywordID)
     {
       if (KeywordID < 1)
       {
@@ -153,8 +152,7 @@ namespace TvDatabase
       try
       {
         Key key = new Key(typeof(Timespan), true, "idKeyword", KeywordID);
-        IList list = Broker.RetrieveList(typeof(Timespan), key);
-        return list as List<Timespan>;
+        return Broker.RetrieveList<Timespan>(key);
       } catch
       {
         return null;

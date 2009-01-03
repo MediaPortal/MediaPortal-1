@@ -1423,7 +1423,7 @@ namespace TvPlugin
       dlg.AddLocalizedString(4); // TV Guide
 
       TvBusinessLayer layer = new TvBusinessLayer();
-      IList linkages = layer.GetLinkagesForChannel(TVHome.Navigator.Channel);
+      IList<ChannelLinkageMap> linkages = layer.GetLinkagesForChannel(TVHome.Navigator.Channel);
       if (linkages != null)
         if (linkages.Count > 0)
           dlg.AddLocalizedString(200042); // Linked Channels
@@ -1875,7 +1875,7 @@ namespace TvPlugin
       g_Player.SetAudioDualMonoMode((eAudioDualMonoMode)dlg.SelectedLabel);
     }
 
-    void ShowLinkedChannelsMenu(IList linkages)
+    void ShowLinkedChannelsMenu(IList<ChannelLinkageMap> linkages)
     {
       if (dlg == null) return;
       dlg.Reset();

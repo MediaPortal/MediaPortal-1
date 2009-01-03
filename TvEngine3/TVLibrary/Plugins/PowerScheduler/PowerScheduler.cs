@@ -28,23 +28,19 @@ using System;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Collections.Generic;
-using System.Text;
 using System.Diagnostics;
-using System.Windows.Forms;
 using System.Runtime.CompilerServices;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Http;
 using TvControl;
 using TvDatabase;
-using TvEngine;
 using TvEngine.Interfaces;
 using TvEngine.PowerScheduler.Handlers;
 using TvEngine.PowerScheduler.Interfaces;
 using TvLibrary.Log;
 using TvLibrary.Interfaces;
 using System.Runtime.InteropServices;
-using System.Collections;
 using System.Threading;
 #endregion
 

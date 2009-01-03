@@ -22,19 +22,13 @@
 #endregion
 
 #region Usings
-using System;
-using System.Collections;
+
 using System.Collections.Generic;
-using System.Text;
-using System.Management;
 using TvControl;
-using TvDatabase;
-using TvService;
-using TvLibrary.Log;
 using TvLibrary.Interfaces;
 using TvEngine.PowerScheduler.Handlers;
 using TvEngine.PowerScheduler.Interfaces;
-using TvEngine;
+
 #endregion
 
 namespace TvEngine.PowerScheduler

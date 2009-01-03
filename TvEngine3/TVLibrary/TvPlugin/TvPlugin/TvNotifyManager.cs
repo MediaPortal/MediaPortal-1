@@ -108,7 +108,7 @@ namespace TvPlugin
     private static Recording CheckForStoppedRecordings()
     {
       Recording stoppedRec = null;
-      IList recordings = TvDatabase.Recording.ListAllActive();
+      IList<Recording> recordings = TvDatabase.Recording.ListAllActive();
       bool found = false;
       foreach (KeyValuePair<int, Recording> pair in _actualRecordings)
       {
@@ -142,7 +142,7 @@ namespace TvPlugin
     private static Recording AddActiveRecordings()
     {
       Recording newRecAdded = null;
-      IList recordings = TvDatabase.Recording.ListAllActive();
+      IList<Recording> recordings = TvDatabase.Recording.ListAllActive();
       if (_actualRecordings == null)
       {
         _actualRecordings = new Dictionary<int, Recording>();
@@ -165,7 +165,7 @@ namespace TvPlugin
     {
       _actualRecordings = new Dictionary<int, Recording>();
 
-      IList recordings = TvDatabase.Recording.ListAllActive();
+      IList<Recording> recordings = TvDatabase.Recording.ListAllActive();
       foreach (Recording rec in recordings)
       {
         if (TvRecorded.IsRecordingActual(rec))
@@ -289,7 +289,7 @@ namespace TvPlugin
         }
         //Log.Debug("TVPlugIn: Notifier checking for recording to start at {0}", preNotifySecs);
         //if (g_Player.IsTV && TVHome.Card.IsTimeShifting && g_Player.Playing)
-        IList schedulesList = null;
+        IList<Schedule> schedulesList = null;
         if (_enableRecNotification && g_Player.Playing)
         {
           if (TVHome.TvServer.IsTimeToRecord(preNotifySecs))
@@ -338,12 +338,12 @@ namespace TvPlugin
 
           if (newRecording != null)
           {                        
-            IList prgs = TvDatabase.Program.RetrieveByTitleAndTimesInterval(newRecording.Title, newRecording.StartTime.AddHours(-4), newRecording.EndTime);
+            IList<Program> prgs = TvDatabase.Program.RetrieveByTitleAndTimesInterval(newRecording.Title, newRecording.StartTime.AddHours(-4), newRecording.EndTime);
 
             Program prg = null;
             if (prgs != null && prgs.Count > 0)
             {
-              prg = (Program)prgs[0];
+              prg = prgs[0];
             }
             string text = "";
             if (prg != null)
@@ -376,12 +376,12 @@ namespace TvPlugin
           if (!TvRecorded.IsRecordingActual(stoppedRec))
           {
             string text = "";
-            IList prgs = TvDatabase.Program.RetrieveByTitleAndTimesInterval(stoppedRec.Title, stoppedRec.StartTime, stoppedRec.EndTime);
+            IList<Program> prgs = TvDatabase.Program.RetrieveByTitleAndTimesInterval(stoppedRec.Title, stoppedRec.StartTime, stoppedRec.EndTime);
 
             Program prg = null;
             if (prgs != null && prgs.Count > 0)
             {
-              prg = (Program)prgs[0];
+              prg = prgs[0];
             }
             if (prg != null)
             {

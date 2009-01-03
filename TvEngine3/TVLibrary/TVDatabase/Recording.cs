@@ -3,7 +3,7 @@
 // with the Gentle.NET Business Entity template, $Rev: 965 $
 //========================================================================
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using Gentle.Framework;
 using TvLibrary.Log;
 
@@ -231,15 +231,15 @@ namespace TvDatabase
     /// <summary>
     /// Static method to retrieve all instances that are stored in the database in one call
     /// </summary>
-    public static IList ListAll()
+    public static IList<Recording> ListAll()
     {
-      return Broker.RetrieveList(typeof(Recording));
+      return Broker.RetrieveList<Recording>();
     }
 
     /// <summary>
     /// Static method to retrieve all instances that are stored in the database in one call
     /// </summary>
-    public static IList ListAllActive()
+    public static IList<Recording> ListAllActive()
     {
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Recording));
       sb.AddConstraint("starttime=endtime");
@@ -247,8 +247,7 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
 
       // execute the statement/query and create a collection of User instances from the result set
-      IList getList = ObjectFactory.GetCollection(typeof(Recording), stmt.Execute());
-      return getList;
+      return ObjectFactory.GetCollection<Recording>(stmt.Execute());
     }
 
     /// <summary>
@@ -262,7 +261,7 @@ namespace TvDatabase
         return null;
       }
       Key key = new Key(typeof(Recording), true, "idRecording", id);
-      return Broker.RetrieveInstance(typeof(Recording), key) as Recording;
+      return Broker.RetrieveInstance<Recording>(key);
     }
 
 
@@ -283,9 +282,9 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
 
       // execute the statement/query and create a collection of User instances from the result set
-      IList getList = ObjectFactory.GetCollection(typeof(Recording), stmt.Execute());
+      IList<Recording> getList = ObjectFactory.GetCollection<Recording>(stmt.Execute());
       if (getList.Count != 0)
-        return (Recording)getList[0];
+        return getList[0];
       return null;
     }
 
@@ -295,7 +294,7 @@ namespace TvDatabase
     /// </summary>
     public static Recording Retrieve(Key key)
     {
-      return Broker.RetrieveInstance(typeof(Recording), key) as Recording;
+      return Broker.RetrieveInstance<Recording>(key);
     }
 
     /// <summary>

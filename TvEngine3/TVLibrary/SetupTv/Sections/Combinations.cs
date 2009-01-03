@@ -19,13 +19,11 @@
  *
  */
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using TvControl;
 using Gentle.Framework;
 using TvDatabase;
-using TvLibrary;
 using TvLibrary.Interfaces;
 using similaritymetrics;
 using MediaPortal.UserInterface.Controls;
@@ -92,7 +90,7 @@ namespace SetupTv.Sections
     {
       _redrawTab1 = false;
       mpComboBoxCard.Items.Clear();
-      IList dbsCards = Card.ListAll();
+      IList<Card> dbsCards = Card.ListAll();
       foreach (Card card in dbsCards)
       {
         mpComboBoxCard.Items.Add(new CardInfo(card));
@@ -126,7 +124,7 @@ namespace SetupTv.Sections
       sb.AddOrderByField(true, "sortOrder");
 
       Card card = ((CardInfo)mpComboBoxCard.SelectedItem).Card;
-      IList maps = card.ReferringChannelMap();
+      IList<ChannelMap> maps = card.ReferringChannelMap();
 
 
       List<ListViewItem> items = new List<ListViewItem>();
@@ -165,7 +163,7 @@ namespace SetupTv.Sections
       Card card = ((CardInfo)mpComboBoxCard.SelectedItem).Card;
       ListViewItem selectedItem = mpListViewChannels.Items[mpListViewChannels.SelectedIndices[0]];
       Channel selectedChannel = (Channel)selectedItem.Tag;
-      IList allChannels = Channel.ListAll();
+      IList<Channel> allChannels = Channel.ListAll();
       List<ListViewItem> items = new List<ListViewItem>();
       NotifyForm dlg = new NotifyForm("Searching for Similar Channels...", "This can take some time\n\nPlease be patient...");
       dlg.Show();
@@ -174,18 +172,18 @@ namespace SetupTv.Sections
       {
         if (channel.IsTv == false)
           continue;
-        IList details = channel.ReferringTuningDetail();
+        IList<TuningDetail> details = channel.ReferringTuningDetail();
         if (details != null)
         {
           if (details.Count > 0)
           {
-            TuningDetail detail = (TuningDetail)details[0];
+            TuningDetail detail = details[0];
             if (detail.ChannelType == 5)
               continue;
           }
         }
         bool isMapped = false;
-        IList list = channel.ReferringChannelMap();
+        IList<ChannelMap> list = channel.ReferringChannelMap();
         foreach (ChannelMap map in list)
         {
           if (map.IdCard == card.IdCard)

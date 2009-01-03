@@ -19,7 +19,6 @@
  *
  */
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using DirectShowLib;
 using TvLibrary.Channels;
@@ -641,11 +640,11 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="channel">The current tv/radio channel.</param>
     /// <param name="pids">The pids.</param>
     /// <remarks>when the pids array is empty, pid filtering is disabled and all pids are received</remarks>
-    public void SendPids(int subChannel, DVBBaseChannel channel, ArrayList pids)
+    public void SendPids(int subChannel, DVBBaseChannel channel, List<ushort >pids)
     {
       try
       {
-        ArrayList HwPids = new ArrayList();
+        List<ushort> HwPids = new List<ushort>();
 
         _mapSubChannels[subChannel].HwPids = pids;
 
@@ -653,7 +652,7 @@ namespace TvLibrary.Implementations.DVB
         while (enSubch.MoveNext())
         {
 
-          ArrayList enPid = enSubch.Current.Value.HwPids;
+          List<ushort> enPid = enSubch.Current.Value.HwPids;
           if (enPid != null)
           {
             for (int i = 0; i < enPid.Count; ++i)
@@ -677,7 +676,7 @@ namespace TvLibrary.Implementations.DVB
           {
             for (int i = 0; i < HwPids.Count; ++i)
             {
-              Log.Log.Info("FireDTV: HW Filtered Pid : 0x{0:X}", (ushort)HwPids[i]);
+              Log.Log.Info("FireDTV: HW Filtered Pid : 0x{0:X}", HwPids[i]);
             }
             _digitalEveryWhere.SetHardwarePidFiltering(isDvbc, isDvbt, true, isAtsc, HwPids);
           }

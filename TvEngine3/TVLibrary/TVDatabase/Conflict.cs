@@ -3,7 +3,7 @@
 // with the Gentle.NET Business Entity template, $Rev: 942 $
 //========================================================================
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using Gentle.Common;
 using Gentle.Framework;
 using TvLibrary.Log;
@@ -140,15 +140,15 @@ namespace TvDatabase
     /// <summary>
     /// Static method to retrieve all instances that are stored in the database in one call
     /// </summary>
-    public static IList ListAll()
+    public static IList<Conflict> ListAll()
     {
-      return Broker.RetrieveList(typeof(Conflict));
+      return Broker.RetrieveList<Conflict>();
     }
 
     public static Conflict Retrieve(int id)
     {
       Key key = new Key(typeof(Conflict), true, "idConflict", id);
-      return Broker.RetrieveInstance(typeof(Conflict), key) as Conflict;
+      return Broker.RetrieveInstance<Conflict>(key);
     }
 
     public static Conflict ComplexRetrieve(int id)
@@ -182,7 +182,7 @@ namespace TvDatabase
     public Schedule ReferringSchedule()
     {
       Key key = new Key(typeof(Schedule), true, "idSchedule", idSchedule);
-      return Broker.RetrieveInstance(typeof(Schedule), key) as Schedule;
+      return Broker.RetrieveInstance<Schedule>(key);
     }
 
     /// <summary>
@@ -191,7 +191,7 @@ namespace TvDatabase
     public Schedule ReferringConflictingSchedule()
     {
       Key key = new Key(typeof(Schedule), true, "idSchedule", IdConflictingSchedule);
-      return Broker.RetrieveInstance(typeof(Schedule), key) as Schedule;
+      return Broker.RetrieveInstance<Schedule>(key);
     }
 
     #endregion

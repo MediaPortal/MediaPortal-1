@@ -146,7 +146,7 @@ namespace TvPlugin
       {
         try
         {
-          IList cards = Card.ListAll();
+          IList<Card> cards = Card.ListAll();
         }
         catch (Exception)
         {

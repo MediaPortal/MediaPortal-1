@@ -3,7 +3,7 @@
 // with the Gentle.NET Business Entity template, $Rev: 965 $
 //========================================================================
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using Gentle.Framework;
 using TvLibrary.Log;
 
@@ -76,9 +76,9 @@ namespace TvDatabase
     /// <summary>
     /// Static method to retrieve all instances that are stored in the database in one call
     /// </summary>
-    public static IList ListAll()
+    public static IList<Version> ListAll()
     {
-      return Broker.RetrieveList(typeof(Version));
+      return Broker.RetrieveList<Version>();
     }
 
     /// <summary>
@@ -92,7 +92,7 @@ namespace TvDatabase
         return null;
       }
       Key key = new Key(typeof(Version), true, "idVersion", id);
-      return Broker.RetrieveInstance(typeof(Version), key) as Version;
+      return Broker.RetrieveInstance<Version>(key);
     }
 
     /// <summary>
@@ -101,7 +101,7 @@ namespace TvDatabase
     /// </summary>
     public static Version Retrieve(Key key)
     {
-      return Broker.RetrieveInstance(typeof(Version), key) as Version;
+      return Broker.RetrieveInstance<Version>(key);
     }
 
     /// <summary>

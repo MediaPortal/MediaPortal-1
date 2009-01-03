@@ -19,7 +19,6 @@
  *
  */
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Xml;
@@ -68,7 +67,7 @@ namespace SetupTv.Sections
     void UpdateMenu()
     {
       placeInHybridCardToolStripMenuItem.DropDownItems.Clear();
-      IList groups = CardGroup.ListAll();
+      IList<CardGroup> groups = CardGroup.ListAll();
       foreach (CardGroup group in groups)
       {
         ToolStripMenuItem item = new ToolStripMenuItem(group.Name);
@@ -190,7 +189,7 @@ namespace SetupTv.Sections
       mpListView1.Items.Clear();
       try
       {
-        IList dbsCards = Card.ListAll();
+        IList<Card> dbsCards = Card.ListAll();
         foreach (Card card in dbsCards)
         {
           cardTypes[card.DevicePath] = RemoteControl.Instance.Type(card.IdCard);
@@ -206,10 +205,10 @@ namespace SetupTv.Sections
         SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Card));
         sb.AddOrderByField(false, "priority");
         SqlStatement stmt = sb.GetStatement(true);
-        IList cards = ObjectFactory.GetCollection(typeof(Card), stmt.Execute());
+        IList<Card> cards = ObjectFactory.GetCollection<Card>(stmt.Execute());
         for (int i = 0; i < cards.Count; ++i)
         {
-          Card card = (Card)cards[i];
+          Card card = cards[i];
           string cardType = "";
           if (cardTypes.ContainsKey(card.DevicePath))
           {
@@ -404,12 +403,12 @@ namespace SetupTv.Sections
     void UpdateHybrids()
     {
       treeView1.Nodes.Clear();
-      IList cardGroups = CardGroup.ListAll();
+      IList<CardGroup> cardGroups = CardGroup.ListAll();
       foreach (CardGroup group in cardGroups)
       {
         TreeNode node = treeView1.Nodes.Add(group.Name);
         node.Tag = group;
-        IList cards = group.CardGroupMaps();
+        IList<CardGroupMap> cards = group.CardGroupMaps();
         foreach (CardGroupMap map in cards)
         {
           Card card = map.ReferringCard();
@@ -430,7 +429,7 @@ namespace SetupTv.Sections
       CardGroup group = node.Parent.Tag as CardGroup;
       if (group != null)
       {
-        IList cards = group.CardGroupMaps();
+        IList<CardGroupMap> cards = group.CardGroupMaps();
         foreach (CardGroupMap map in cards)
         {
           if (map.IdCard == card.IdCard)
@@ -486,7 +485,7 @@ namespace SetupTv.Sections
         {
           for (int i = card.ReferringCardGroupMap().Count - 1; i > -1; i--)
           {
-            CardGroupMap map = (CardGroupMap)card.ReferringCardGroupMap()[i];
+            CardGroupMap map = card.ReferringCardGroupMap()[i];
             map.Remove();
           }
         }
@@ -495,7 +494,7 @@ namespace SetupTv.Sections
         {
           for (int i = card.ReferringChannelMap().Count - 1; i > -1; i--)
           {
-            ChannelMap map = (ChannelMap)card.ReferringChannelMap()[i];
+            ChannelMap map = card.ReferringChannelMap()[i];
             map.Remove();
           }
         }

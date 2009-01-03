@@ -401,7 +401,7 @@ namespace TvPlugin
       }
       else
       {
-        IList details = Channel.Retrieve(rec.IdChannel).ReferringTuningDetail();
+        IList<TuningDetail> details = Channel.Retrieve(rec.IdChannel).ReferringTuningDetail();
         foreach (TuningDetail detail in details)
         {
           if (detail.ChannelType == 0)

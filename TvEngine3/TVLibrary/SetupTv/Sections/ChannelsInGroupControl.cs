@@ -19,7 +19,7 @@
  *
  */
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using Gentle.Framework;
 using TvDatabase;
@@ -65,7 +65,7 @@ namespace SetupTv.Sections
         sb.AddConstraint(Operator.Equals, "idGroup", Group.IdGroup);
         sb.AddOrderByField(true, "sortOrder");
         SqlStatement stmt = sb.GetStatement(true);
-        IList maps = ObjectFactory.GetCollection(typeof(GroupMap), stmt.Execute());
+        IList<GroupMap> maps = ObjectFactory.GetCollection<GroupMap>(stmt.Execute());
 
         foreach (GroupMap map in maps)
         {
@@ -213,7 +213,7 @@ namespace SetupTv.Sections
     private void UpdateMenu()
     {
       addToFavoritesToolStripMenuItem.DropDownItems.Clear();
-      IList groups = ChannelGroup.ListAll();
+      IList<ChannelGroup> groups = ChannelGroup.ListAll();
       foreach (ChannelGroup group in groups)
       {
         if (_channelGroup.GroupName == group.GroupName)

@@ -19,7 +19,7 @@
  *
  */
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Threading;
 using Gentle.Framework;
 using SetupTv;
@@ -100,7 +100,7 @@ namespace TvEngine
 
       if (_debugMode) Log.Info("PersonalTVGuide: UpdateThread - Start: " + DateTime.Now.ToLongTimeString());
       ClearPersonalTVGuideMap();
-      IList list = Keyword.ListAll();
+      IList<Keyword> list = Keyword.ListAll();
       foreach (Keyword key in list)
       {
         if (_stopService)
@@ -124,7 +124,7 @@ namespace TvEngine
     private static void ClearPersonalTVGuideMap()
     {
       // clears all PersonalTVGuideMap in db
-      IList list = PersonalTVGuideMap.ListAll();
+      IList<PersonalTVGuideMap> list = PersonalTVGuideMap.ListAll();
       foreach (PersonalTVGuideMap map in list) map.Remove();
     }
 
@@ -149,7 +149,7 @@ namespace TvEngine
       }
     }
 
-    private void SaveList(int IdKeyword, IList list)
+    private void SaveList(int IdKeyword, IList<Program> list)
     {
       if ((list == null) || (list.Count < 1)) return;
       foreach (Program prog in list)
@@ -162,34 +162,34 @@ namespace TvEngine
     /// <summary>
     /// Get a list which contains token in the title string
     /// </summary>
-    private IList ContainsInTitle(string Token)
+    private IList<Program> ContainsInTitle(string Token)
     {
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
       sb.AddConstraint(Operator.Like, "title", Token);
       SqlStatement stmt = sb.GetStatement(true);
-      return ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
+      return ObjectFactory.GetCollection<Program>(stmt.Execute());
     }
 
     /// <summary>
     /// Get a list which contains token in the description
     /// </summary>
-    private IList ContainsInDescription(string Token)
+    private IList<Program> ContainsInDescription(string Token)
     {
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
       sb.AddConstraint(Operator.Like, "description", Token);
       SqlStatement stmt = sb.GetStatement(true);
-      return ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
+      return ObjectFactory.GetCollection<Program>(stmt.Execute());
     }
 
     /// <summary>
     /// Get a list which contains token in the description
     /// </summary>
-    private IList ContainsInGenre(string Token)
+    private IList<Program> ContainsInGenre(string Token)
     {
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
       sb.AddConstraint(Operator.Like, "genre", Token);
       SqlStatement stmt = sb.GetStatement(true);
-      return ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
+      return ObjectFactory.GetCollection<Program>(stmt.Execute());
     }
 
     private void LoadSettings()

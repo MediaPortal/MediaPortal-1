@@ -24,20 +24,14 @@
 #endregion
 
 using System;
-using System.Drawing;
 using System.IO;
-using System.Net;
 using System.Text.RegularExpressions;
-using System.Collections;
 using System.Management;
 using System.Diagnostics;
 using System.Text;
-using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Xml;
 using System.ServiceProcess;
 using System.Windows.Forms;
-using Microsoft.Win32;
 using TvLibrary.Log;
 using System.Threading;
 

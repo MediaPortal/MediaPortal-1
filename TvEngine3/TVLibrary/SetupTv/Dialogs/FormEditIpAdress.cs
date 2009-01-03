@@ -1,9 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using TvControl;
 
@@ -38,8 +34,8 @@ namespace SetupTv.Sections
 
     private void button2_Click(object sender, EventArgs e)
     {
-      this.DialogResult = DialogResult.Cancel;
-      this.Close();
+      DialogResult = DialogResult.Cancel;
+      Close();
     }
 
     private void button1_Click(object sender, EventArgs e)
@@ -48,8 +44,8 @@ namespace SetupTv.Sections
       {
         HostName = mpComboBox1.SelectedItem.ToString();
       }
-      this.DialogResult = DialogResult.OK;
-      this.Close();
+      DialogResult = DialogResult.OK;
+      Close();
     }
 
     public string HostName

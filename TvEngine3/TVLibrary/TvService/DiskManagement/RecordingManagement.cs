@@ -23,7 +23,7 @@
 
 #endregion
 
-using System.Collections;
+using System.Collections.Generic;
 using TvDatabase;
 using TvLibrary.Log;
 
@@ -55,7 +55,7 @@ namespace TvService
     /// </remarks>
     static void DeleteOldRecordings()
     {
-      IList recordings = Recording.ListAll();
+      IList<Recording> recordings = Recording.ListAll();
       foreach (Recording rec in recordings)
       {
         if (!rec.ShouldBeDeleted)

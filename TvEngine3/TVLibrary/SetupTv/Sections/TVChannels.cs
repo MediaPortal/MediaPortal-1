@@ -19,7 +19,6 @@
  *
  */
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
@@ -108,7 +107,7 @@ namespace SetupTv.Sections
         tabControl1.TabPages.RemoveAt(1);
       }
       addToFavoritesToolStripMenuItem.DropDownItems.Clear();
-      IList groups = ChannelGroup.ListAll();
+      IList<ChannelGroup> groups = ChannelGroup.ListAll();
       foreach (ChannelGroup group in groups)
       {
         ToolStripMenuItem item = new ToolStripMenuItem(group.GroupName);
@@ -149,7 +148,7 @@ namespace SetupTv.Sections
 
     private void RefreshAllChannels()
     {
-      IList dbsCards = Card.ListAll();
+      IList<Card> dbsCards = Card.ListAll();
       Dictionary<int, CardType> cards = new Dictionary<int, CardType>();
       foreach (Card card in dbsCards)
       {
@@ -163,7 +162,7 @@ namespace SetupTv.Sections
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
       sb.AddOrderByField(true, "sortOrder");
       SqlStatement stmt = sb.GetStatement(true);
-      IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
+      IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
       ChannelMap.ListAll();
       List<ListViewItem> items = new List<ListViewItem>();
       foreach (Channel ch in channels)
@@ -185,7 +184,7 @@ namespace SetupTv.Sections
         }
         if (notmapped)
         {
-          IList maps = ch.ReferringChannelMap();
+          IList<ChannelMap> maps = ch.ReferringChannelMap();
           foreach (ChannelMap map in maps)
           {
             if (cards.ContainsKey(map.IdCard))
@@ -370,7 +369,7 @@ namespace SetupTv.Sections
       NotifyForm dlg = new NotifyForm("Clearing all tv channels...", "This can take some time\n\nPlease be patient...");
       dlg.Show();
       dlg.WaitForDisplay();
-      IList channels = Channel.ListAll();
+      IList<Channel> channels = Channel.ListAll();
       foreach (Channel channel in channels)
       {
         if (channel.IsTv)
@@ -428,7 +427,7 @@ namespace SetupTv.Sections
     private void mpButtonDel_Click(object sender, EventArgs e)
     {
       mpListView1.BeginUpdate();
-      IList schedules = Schedule.ListAll();
+      IList<Schedule> schedules = Schedule.ListAll();
       TvServer server = new TvServer();
 
       //Since it takes a very long time to add channels, make sure the user really wants to delete them
@@ -455,7 +454,7 @@ namespace SetupTv.Sections
         {
           for (int i = schedules.Count - 1; i > -1; i--)
           {
-            Schedule schedule = (Schedule)schedules[i];
+            Schedule schedule = schedules[i];
             if (schedule.IdChannel == channel.IdChannel)
             {
               server.StopRecordingSchedule(schedule.IdSchedule);
@@ -633,7 +632,7 @@ namespace SetupTv.Sections
       AddAttribute(rootElement, "version", "1.0");
 
       XmlNode nodeServers = xmlDoc.CreateElement("servers");
-      IList servers = Server.ListAll();
+      IList<Server> servers = Server.ListAll();
       foreach (Server server in servers)
       {
         XmlNode nodeServer = xmlDoc.CreateElement("server");
@@ -642,7 +641,7 @@ namespace SetupTv.Sections
         AddAttribute(nodeServer, "IsMaster", server.IsMaster);
 
         XmlNode nodeCards = xmlDoc.CreateElement("cards");
-        IList cards = Card.ListAll();
+        IList<Card> cards = Card.ListAll();
         foreach (Card card in cards)
         {
           XmlNode nodeCard = xmlDoc.CreateElement("card");
@@ -663,7 +662,7 @@ namespace SetupTv.Sections
       rootElement.AppendChild(nodeServers);
 
       XmlNode nodechannels = xmlDoc.CreateElement("channels");
-      IList channels = Channel.ListAll();
+      IList<Channel> channels = Channel.ListAll();
       foreach (Channel channel in channels)
       {
         XmlNode nodechannel = xmlDoc.CreateElement("channel");
@@ -721,7 +720,7 @@ namespace SetupTv.Sections
           AddAttribute(nodeTune, "TuningSource", detail.TuningSource);
           AddAttribute(nodeTune, "VideoPid", detail.VideoPid);
           AddAttribute(nodeTune, "VideoSource", detail.VideoSource);
-          AddAttribute(nodeTune, "AudioSource", (int)detail.AudioSource);
+          AddAttribute(nodeTune, "AudioSource", detail.AudioSource);
           AddAttribute(nodeTune, "SatIndex", detail.SatIndex);
           AddAttribute(nodeTune, "InnerFecRate", detail.InnerFecRate);
           AddAttribute(nodeTune, "Band", detail.Band);
@@ -738,7 +737,7 @@ namespace SetupTv.Sections
       rootElement.AppendChild(nodechannels);
       // exporting the schedules
       XmlNode nodeSchedules = xmlDoc.CreateElement("schedules");
-      IList schedules = Schedule.ListAll();
+      IList<Schedule> schedules = Schedule.ListAll();
       foreach (Schedule schedule in schedules)
       {
         XmlNode nodeSchedule = xmlDoc.CreateElement("schedule");
@@ -762,14 +761,14 @@ namespace SetupTv.Sections
       rootElement.AppendChild(nodeSchedules);
       //exporting channel groups
       XmlNode nodeChannelGroups = xmlDoc.CreateElement("channelgroups");
-      IList channelgroups = ChannelGroup.ListAll();
+      IList<ChannelGroup> channelgroups = ChannelGroup.ListAll();
       foreach (ChannelGroup group in channelgroups)
       {
         XmlNode nodeChannelGroup = xmlDoc.CreateElement("channelgroup");
         AddAttribute(nodeChannelGroup, "GroupName", group.GroupName);
         AddAttribute(nodeChannelGroup, "SortOrder", group.SortOrder.ToString());
         XmlNode nodeGroupMap = xmlDoc.CreateElement("mappings");
-        IList maps = group.ReferringGroupMap();
+        IList<GroupMap> maps = group.ReferringGroupMap();
         foreach (GroupMap map in maps)
         {
           XmlNode nodeMap = xmlDoc.CreateElement("map");
@@ -880,9 +879,7 @@ namespace SetupTv.Sections
               Log.Info("TvChannels: Adding {0}. channel: {1} ({2})", channelCount, name, displayName);
               if (mergeChannels)
               {
-                dbChannel = layer.GetChannelByName(name);
-                if (dbChannel == null)
-                  dbChannel = layer.AddChannel("", name);
+                dbChannel = layer.GetChannelByName(name) ?? layer.AddChannel("", name);
               }
               else
                 dbChannel = layer.AddNewChannel(name);
@@ -1244,10 +1241,10 @@ namespace SetupTv.Sections
       foreach (ListViewItem item in mpListView1.SelectedItems)
       {
         Channel channel = (Channel)item.Tag;
-        IList details = channel.ReferringTuningDetail();
+        IList<TuningDetail> details = channel.ReferringTuningDetail();
         if (details.Count > 0)
         {
-          channel.DisplayName = ((TuningDetail)details[0]).ServiceId.ToString();
+          channel.DisplayName = (details[0]).ServiceId.ToString();
           channel.Persist();
           item.Tag = channel;
         }
@@ -1265,10 +1262,10 @@ namespace SetupTv.Sections
       foreach (ListViewItem item in mpListView1.SelectedItems)
       {
         Channel channel = (Channel)item.Tag;
-        IList details = channel.ReferringTuningDetail();
+        IList<TuningDetail> details = channel.ReferringTuningDetail();
         if (details.Count > 0)
         {
-          channel.DisplayName = ((TuningDetail)details[0]).ServiceId + " " + channel.DisplayName;
+          channel.DisplayName = (details[0]).ServiceId + " " + channel.DisplayName;
           channel.Persist();
           item.Tag = channel;
         }
@@ -1286,7 +1283,7 @@ namespace SetupTv.Sections
       foreach (ListViewItem item in mpListView1.SelectedItems)
       {
         Channel channel = (Channel)item.Tag;
-        IList details = channel.ReferringTuningDetail();
+        IList<TuningDetail> details = channel.ReferringTuningDetail();
         foreach (TuningDetail detail in details)
         {
           detail.ChannelNumber = detail.ServiceId;

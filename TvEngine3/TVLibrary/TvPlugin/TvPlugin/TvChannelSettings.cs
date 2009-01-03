@@ -124,7 +124,7 @@ namespace TvPlugin
       else
       {
         int count = 0;
-        IList maps = _currentGroup.ReferringGroupMap();
+        IList<GroupMap> maps = _currentGroup.ReferringGroupMap();
         foreach (GroupMap map in maps)
         {
           Channel chan = map.ReferencedChannel();
@@ -195,7 +195,7 @@ namespace TvPlugin
       else
       {
         List<Channel> channelsInGroup = new List<Channel>();
-        IList maps = _currentGroup.ReferringGroupMap();
+        IList<GroupMap> maps = _currentGroup.ReferringGroupMap();
         foreach (GroupMap map in maps)
         {
           Channel chan = map.ReferencedChannel();
@@ -228,7 +228,7 @@ namespace TvPlugin
       else
       {
         List<Channel> channelsInGroup = new List<Channel>();
-        IList maps = _currentGroup.ReferringGroupMap();
+        IList<GroupMap> maps = _currentGroup.ReferringGroupMap();
         foreach (GroupMap map in maps)
         {
           Channel chan = map.ReferencedChannel();
@@ -243,7 +243,7 @@ namespace TvPlugin
 
     void OnTvGroup()
     {
-      IList tvGroups = ChannelGroup.ListAll();
+      IList<ChannelGroup> tvGroups = ChannelGroup.ListAll();
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       if (dlg != null)
       {
