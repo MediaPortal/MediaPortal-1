@@ -418,15 +418,15 @@ namespace MediaPortal.GUI.Weather
             int iControl = message.SenderControlId;
             if (iControl == (int)Controls.CONTROL_BTNREFRESH)
             {
-              OnRefresh();
+              if (CityAvailable()) OnRefresh();
             }
             if (iControl == (int)Controls.CONTROL_BTNVIEW)
             {
-              OnChangeView();
+              if (CityAvailable()) OnChangeView();
             }
             if (iControl == (int)Controls.CONTROL_LOCATIONSELECT)
             {
-              OnSelectLocation();
+              if (CityAvailable()) OnSelectLocation();
             }
             if (iControl == (int)Controls.CONTROL_BTNSWITCH)
               OnSwitchMode();
@@ -434,6 +434,23 @@ namespace MediaPortal.GUI.Weather
           break;
       }
       return base.OnMessage(message);
+    }
+
+    private bool CityAvailable()
+    {
+      if (_listLocations.Count > 0) return true;
+
+      GUIDialogOK dialogOK = (GUIDialogOK) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_OK);
+      if (dialogOK != null)
+      {
+        dialogOK.Reset();
+        dialogOK.SetHeading(8); // myWeather
+        dialogOK.SetLine(1, 412); // Unable to get weather data
+        dialogOK.SetLine(2, 1028); // City
+        dialogOK.SetLine(3, 416); // not available
+        dialogOK.DoModal(GetID);
+      }
+      return false;
     }
 
     #endregion
