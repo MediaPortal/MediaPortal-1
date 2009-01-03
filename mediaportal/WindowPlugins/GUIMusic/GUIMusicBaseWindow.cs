@@ -244,13 +244,13 @@ namespace MediaPortal.GUI.Music
         case "rating": return MusicSort.SortMethod.Rating;
         case "year": return MusicSort.SortMethod.Year; 
       }
-      Log.Error("GUIMusicBaseWindow::GetSortMethod: Unknown String - " + s);
+      if (!string.IsNullOrEmpty(s)) Log.Error("GUIMusicBaseWindow::GetSortMethod: Unknown String - " + s);
       return MusicSort.SortMethod.Name;
     }
 
     protected View GetViewNumber(string s)
     {
-      switch (s.ToLower())
+      switch (s.Trim().ToLower())
       {
         case "list": return View.List;
         case "icons": return View.Icons;
@@ -260,7 +260,7 @@ namespace MediaPortal.GUI.Music
         case "filmstrip": return View.FilmStrip;
         case "playlist": return View.PlayList;
       }
-      Log.Error("GUIMusicBaseWindow::GetViewNumber: Unknown String - " + s);
+      if (!string.IsNullOrEmpty(s)) Log.Error("GUIMusicBaseWindow::GetViewNumber: Unknown String - " + s);
       return View.List;
     }
 

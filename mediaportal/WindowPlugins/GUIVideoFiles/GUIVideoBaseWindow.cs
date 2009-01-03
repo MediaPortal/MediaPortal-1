@@ -146,13 +146,13 @@ namespace MediaPortal.GUI.Video
         case "size": return VideoSort.SortMethod.Size;
         case "year": return VideoSort.SortMethod.Year;
       }
-      Log.Error("GUIVideoBaseWindow::GetSortMethod: Unknown String - " + s);
+      if (!string.IsNullOrEmpty(s)) Log.Error("GUIVideoBaseWindow::GetSortMethod: Unknown String - " + s);
       return VideoSort.SortMethod.Name;
     }
 
     protected View GetViewNumber(string s)
     {
-      switch (s.ToLower())
+      switch (s.Trim().ToLower())
       {
         case "list": return View.List;
         case "icons": return View.Icons;
@@ -161,7 +161,7 @@ namespace MediaPortal.GUI.Video
         case "filmstrip": return View.FilmStrip;
         case "playlist": return View.PlayList;
       }
-      Log.Error("GUIVideoBaseWindow::GetViewNumber: Unknown String - " + s);
+      if (!string.IsNullOrEmpty(s)) Log.Error("GUIVideoBaseWindow::GetViewNumber: Unknown String - " + s);
       return View.List;
     }
 
