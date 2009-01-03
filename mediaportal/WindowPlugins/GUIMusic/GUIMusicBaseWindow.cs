@@ -193,13 +193,24 @@ namespace MediaPortal.GUI.Music
         _useFolderThumbs = xmlreader.GetValueAsBool("musicfiles", "useFolderThumbs", true);
         _showSortButton = xmlreader.GetValueAsBool("musicfiles", "showSortButton", true);
 
-        currentView = (View)xmlreader.GetValueAsInt(SerializeName, "view", (int)View.List);
-        currentViewRoot = (View)xmlreader.GetValueAsInt(SerializeName, "viewroot", (int)View.List);
 
-        currentSortMethod = (MusicSort.SortMethod)xmlreader.GetValueAsInt(SerializeName, "sortmethod", (int)MusicSort.SortMethod.Name);
-        currentSortMethodRoot = (MusicSort.SortMethod)xmlreader.GetValueAsInt(SerializeName, "sortmethodroot", (int)MusicSort.SortMethod.Name);
-        m_bSortAscending = xmlreader.GetValueAsBool(SerializeName, "sortasc", true);
-        m_bSortAscendingRoot = xmlreader.GetValueAsBool(SerializeName, "sortascroot", true);
+        int defaultView = (int)View.List;
+        int defaultSort = (int)MusicSort.SortMethod.Name;
+        bool defaultAscending = true;
+        if ((handler != null) && (handler.View != null) && (handler.View.Filters != null) && (handler.View.Filters.Count > 0))
+        {
+          FilterDefinition def = (FilterDefinition)handler.View.Filters[0];
+          defaultView = (int)GetViewNumber(def.DefaultView);
+          defaultSort = (int)GetSortMethod(def.DefaultSort);
+          defaultAscending = def.SortAscending;
+        }
+        currentView = (View)xmlreader.GetValueAsInt(SerializeName, "view", defaultView);
+        currentViewRoot = (View)xmlreader.GetValueAsInt(SerializeName, "viewroot", defaultView);
+
+        currentSortMethod = (MusicSort.SortMethod)xmlreader.GetValueAsInt(SerializeName, "sortmethod", defaultSort);
+        currentSortMethodRoot = (MusicSort.SortMethod)xmlreader.GetValueAsInt(SerializeName, "sortmethodroot", defaultSort);
+        m_bSortAscending = xmlreader.GetValueAsBool(SerializeName, "sortasc", defaultAscending);
+        m_bSortAscendingRoot = xmlreader.GetValueAsBool(SerializeName, "sortascroot", defaultAscending);
         m_bUseID3 = xmlreader.GetValueAsBool("musicfiles", "showid3", true);
 
         for (int i = 0; i < _sortModes.Length; ++i)
@@ -215,6 +226,41 @@ namespace MediaPortal.GUI.Music
         m_strPlayListPath = MediaPortal.Util.Utils.RemoveTrailingSlash(m_strPlayListPath);
       }
       SwitchView();
+    }
+    protected MusicSort.SortMethod GetSortMethod(string s)
+    {
+      switch (s.Trim().ToLower())
+      {
+        case "name": return MusicSort.SortMethod.Name;
+        case "date": return MusicSort.SortMethod.Date;
+        case "size": return MusicSort.SortMethod.Size;
+        case "track": return MusicSort.SortMethod.Track;
+        case "duration": return MusicSort.SortMethod.Duration;
+        case "title": return MusicSort.SortMethod.Title;
+        case "artist": return MusicSort.SortMethod.Artist;
+        case "album": return MusicSort.SortMethod.Album;
+        case "filename": return MusicSort.SortMethod.Filename;
+        case "albumartist": return MusicSort.SortMethod.AlbumArtist;
+        case "rating": return MusicSort.SortMethod.Rating;
+        case "year": return MusicSort.SortMethod.Year; 
+      }
+      Log.Error("GUIMusicBaseWindow::GetSortMethod: Unknown String - " + s);
+      return MusicSort.SortMethod.Name;
+    }
+
+    protected View GetViewNumber(string s)
+    {
+      switch (s.ToLower())
+      {
+        case "list": return View.List;
+        case "icons": return View.Icons;
+        case "largeicons": return View.LargeIcons;
+        case "albums": return View.Albums;
+        case "filmstrip": return View.FilmStrip;
+        case "playlist": return View.PlayList;
+      }
+      Log.Error("GUIMusicBaseWindow::GetViewNumber: Unknown String - " + s);
+      return View.List;
     }
 
     protected virtual void SaveSettings()

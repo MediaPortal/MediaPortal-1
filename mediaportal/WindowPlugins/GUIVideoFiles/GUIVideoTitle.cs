@@ -95,12 +95,7 @@ namespace MediaPortal.GUI.Video
               for (int j = 0; j < handler.Views[i].Filters.Count; ++j)
               {
                 FilterDefinition def = (FilterDefinition)handler.Views[i].Filters[j];
-                int defaultView = viewStrings.IndexOf(def.DefaultView);
-
-                if (defaultView != -1)
-                  views[i, j] = (View)defaultView;
-                else
-                  views[i, j] = View.List;
+                views[i, j] = GetViewNumber(def.DefaultView);
               }
             }
           }

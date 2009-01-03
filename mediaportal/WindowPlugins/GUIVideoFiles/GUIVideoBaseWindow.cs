@@ -77,13 +77,13 @@ namespace MediaPortal.GUI.Video
 
     #region SkinControls
 
-    [SkinControlAttribute(50)]   protected GUIFacadeControl facadeView = null;
-    [SkinControlAttribute(2)]    protected GUIButtonControl btnViewAs = null;
-    [SkinControlAttribute(3)]    protected GUISortButtonControl btnSortBy = null;
-    [SkinControlAttribute(5)]    protected GUIButtonControl btnViews = null;
-    [SkinControlAttribute(6)]    protected GUIButtonControl btnPlayDVD = null;
-    [SkinControlAttribute(8)]    protected GUIButtonControl btnTrailers = null;
-    [SkinControlAttribute(9)]    protected GUIButtonControl btnSavedPlaylists = null;
+    [SkinControlAttribute(50)] protected GUIFacadeControl facadeView = null;
+    [SkinControlAttribute(2)]  protected GUIButtonControl btnViewAs = null;
+    [SkinControlAttribute(3)]  protected GUISortButtonControl btnSortBy = null;
+    [SkinControlAttribute(5)]  protected GUIButtonControl btnViews = null;
+    [SkinControlAttribute(6)]  protected GUIButtonControl btnPlayDVD = null;
+    [SkinControlAttribute(8)]  protected GUIButtonControl btnTrailers = null;
+    [SkinControlAttribute(9)]  protected GUIButtonControl btnSavedPlaylists = null;
 
     #endregion
 
@@ -99,7 +99,7 @@ namespace MediaPortal.GUI.Video
       GUIWindowManager.OnNewAction += new OnActionHandler(OnNewAction);
     }
 
-    #endregion 
+    #endregion
 
     #region Serialisation
 
@@ -107,13 +107,23 @@ namespace MediaPortal.GUI.Video
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        currentView = (View)xmlreader.GetValueAsInt(SerializeName, "view", (int)View.List);
-        currentViewRoot = (View)xmlreader.GetValueAsInt(SerializeName, "viewroot", (int)View.List);
+        int defaultView = (int) View.List;
+        int defaultSort = (int) VideoSort.SortMethod.Name;
+        bool defaultAscending = true;
+        if ((handler != null) && (handler.View != null) && (handler.View.Filters != null) && (handler.View.Filters.Count > 0))
+        {
+          FilterDefinition def = (FilterDefinition)handler.View.Filters[0];
+          defaultView = (int) GetViewNumber(def.DefaultView);
+          defaultSort = (int) GetSortMethod(def.DefaultSort);
+          defaultAscending = def.SortAscending;
+        }
+        currentView = (View)xmlreader.GetValueAsInt(SerializeName, "view", defaultView);
+        currentViewRoot = (View)xmlreader.GetValueAsInt(SerializeName, "viewroot", defaultView);
 
-        currentSortMethod = (VideoSort.SortMethod)xmlreader.GetValueAsInt(SerializeName, "sortmethod", (int)VideoSort.SortMethod.Name);
-        currentSortMethodRoot = (VideoSort.SortMethod)xmlreader.GetValueAsInt(SerializeName, "sortmethodroot", (int)VideoSort.SortMethod.Name);
-        m_bSortAscending = xmlreader.GetValueAsBool(SerializeName, "sortasc", true);
-        m_bSortAscendingRoot = xmlreader.GetValueAsBool(SerializeName, "sortascroot", true);
+        currentSortMethod = (VideoSort.SortMethod)xmlreader.GetValueAsInt(SerializeName, "sortmethod", defaultSort);
+        currentSortMethodRoot = (VideoSort.SortMethod)xmlreader.GetValueAsInt(SerializeName, "sortmethodroot", defaultSort);
+        m_bSortAscending = xmlreader.GetValueAsBool(SerializeName, "sortasc", defaultAscending);
+        m_bSortAscendingRoot = xmlreader.GetValueAsBool(SerializeName, "sortascroot", defaultAscending);
 
         string playListFolder = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
         playListFolder += @"\My Playlists";
@@ -123,6 +133,35 @@ namespace MediaPortal.GUI.Video
       }
 
       SwitchView();
+    }
+
+    protected VideoSort.SortMethod GetSortMethod(string s)
+    {
+      switch (s.Trim().ToLower())
+      {
+        case "date": return VideoSort.SortMethod.Date;
+        case "label": return VideoSort.SortMethod.Label;
+        case "name": return VideoSort.SortMethod.Name;
+        case "rating": return VideoSort.SortMethod.Rating;
+        case "size": return VideoSort.SortMethod.Size;
+        case "year": return VideoSort.SortMethod.Year;
+      }
+      Log.Error("GUIVideoBaseWindow::GetSortMethod: Unknown String - " + s);
+      return VideoSort.SortMethod.Name;
+    }
+
+    protected View GetViewNumber(string s)
+    {
+      switch (s.ToLower())
+      {
+        case "list": return View.List;
+        case "icons": return View.Icons;
+        case "largeicons": return View.LargeIcons;
+        case "filmstrip": return View.FilmStrip;
+        case "playlist": return View.PlayList;
+      }
+      Log.Error("GUIVideoBaseWindow::GetViewNumber: Unknown String - " + s);
+      return View.List;
     }
 
     protected virtual void SaveSettings()
@@ -475,7 +514,7 @@ namespace MediaPortal.GUI.Video
 
       if (btnSortBy != null)
         btnSortBy.SortChanged += new SortEventHandler(SortChanged);
-      
+
       base.OnPageLoad();
     }
 
