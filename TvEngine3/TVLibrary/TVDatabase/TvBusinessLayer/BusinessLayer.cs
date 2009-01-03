@@ -142,7 +142,7 @@ namespace TvDatabase
     public void AddChannelToGroup(Channel channel, string groupName)
     {
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(ChannelGroup));
-      sb.AddConstraint(Operator.Like, "groupName", groupName);
+      sb.AddConstraint(Operator.Like, "groupName", "%"+groupName+"%");
       SqlStatement stmt = sb.GetStatement(true);
       IList<ChannelGroup> groups = ObjectFactory.GetCollection<ChannelGroup>(stmt.Execute());
       ChannelGroup group;
@@ -1407,7 +1407,7 @@ namespace TvDatabase
 
       sb.AddConstraint(Operator.Equals, "idChannel", channel.IdChannel);
       sb.AddConstraint(string.Format("({0} or {1} or {2}) ", sub1, sub2, sub3));
-      sb.AddConstraint(Operator.Like, "title", title);
+      sb.AddConstraint(Operator.Like, "title", "%"+title+"%");
       sb.AddOrderByField(true, "starttime");
 
       SqlStatement stmt = sb.GetStatement(true);
@@ -1424,7 +1424,7 @@ namespace TvDatabase
       string sub3 = String.Format("(StartTime <= '{0}' and EndTime >= '{1}')", startTime.ToString(GetDateTimeString(), mmddFormat), endTime.ToString(GetDateTimeString(), mmddFormat));
 
       sb.AddConstraint(string.Format(" ({0} or {1} or {2}) ", sub1, sub2, sub3));
-      sb.AddConstraint(Operator.Like, "title", title);
+      sb.AddConstraint(Operator.Like, "title", "%"+title+"%");
       sb.AddOrderByField(true, "starttime");
       SqlStatement stmt = sb.GetStatement(true);
       return ObjectFactory.GetCollection<Program>(stmt.Execute());
@@ -1492,13 +1492,13 @@ namespace TvDatabase
 
       if (currentSearchCriteria.Length == 0)
       {
-        sb.AddConstraint(Operator.Like, "genre", currentGenre);
+        sb.AddConstraint(Operator.Like, "genre", "%"+currentGenre+"%");
         sb.AddOrderByField("title");
         sb.AddOrderByField("starttime");
       }
       else
       {
-        sb.AddConstraint(Operator.Like, "genre", currentGenre);
+        sb.AddConstraint(Operator.Like, "genre", "%"+currentGenre+"%");
         sb.AddConstraint(Operator.Like, "title", String.Format("{0}%", currentSearchCriteria));
         sb.AddOrderByField("title");
         sb.AddOrderByField("starttime");
@@ -2398,7 +2398,7 @@ namespace TvDatabase
     public Recording GetRecordingByFileName(string fileName)
     {
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Recording));
-      sb.AddConstraint(Operator.Like, "fileName", fileName);
+      sb.AddConstraint(Operator.Like, "fileName", "%"+fileName+"%");
       sb.SetRowLimit(1);
       SqlStatement stmt = sb.GetStatement(true);
       IList<Recording> recordings = ObjectFactory.GetCollection<Recording>(stmt.Execute());
@@ -2433,7 +2433,7 @@ namespace TvDatabase
     public ChannelGroup GetGroupByName(string aGroupName, int aSortOrder)
     {
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(ChannelGroup));
-      sb.AddConstraint(Operator.Like, "groupName", aGroupName); // use like here since the user might have changed the casing
+      sb.AddConstraint(Operator.Like, "groupName", "%"+aGroupName+"%"); // use like here since the user might have changed the casing
       if (aSortOrder > -1)
         sb.AddConstraint(Operator.Equals, "sortOrder", aSortOrder);
       SqlStatement stmt = sb.GetStatement(true);

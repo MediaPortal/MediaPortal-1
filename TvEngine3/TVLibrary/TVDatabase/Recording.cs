@@ -277,7 +277,7 @@ namespace TvDatabase
       }
 
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Recording));
-      sb.AddConstraint(Operator.Like, "filename", fileName);
+      sb.AddConstraint(Operator.Like, "filename", "%"+fileName+"%");
 
       SqlStatement stmt = sb.GetStatement(true);
 

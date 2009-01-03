@@ -165,7 +165,7 @@ namespace TvEngine
     private IList<Program> ContainsInTitle(string Token)
     {
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
-      sb.AddConstraint(Operator.Like, "title", Token);
+      sb.AddConstraint(Operator.Like, "title", "%"+Token+"%");
       SqlStatement stmt = sb.GetStatement(true);
       return ObjectFactory.GetCollection<Program>(stmt.Execute());
     }
@@ -176,7 +176,7 @@ namespace TvEngine
     private IList<Program> ContainsInDescription(string Token)
     {
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
-      sb.AddConstraint(Operator.Like, "description", Token);
+      sb.AddConstraint(Operator.Like, "description", "%"+Token+"%");
       SqlStatement stmt = sb.GetStatement(true);
       return ObjectFactory.GetCollection<Program>(stmt.Execute());
     }
@@ -187,7 +187,7 @@ namespace TvEngine
     private IList<Program> ContainsInGenre(string Token)
     {
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
-      sb.AddConstraint(Operator.Like, "genre", Token);
+      sb.AddConstraint(Operator.Like, "genre", "%"+Token+"%");
       SqlStatement stmt = sb.GetStatement(true);
       return ObjectFactory.GetCollection<Program>(stmt.Execute());
     }
