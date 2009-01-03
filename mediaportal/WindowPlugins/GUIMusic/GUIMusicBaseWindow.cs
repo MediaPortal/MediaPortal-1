@@ -254,6 +254,7 @@ namespace MediaPortal.GUI.Music
       {
         case "list": return View.List;
         case "icons": return View.Icons;
+        case "big icons": return View.LargeIcons;
         case "largeicons": return View.LargeIcons;
         case "albums": return View.Albums;
         case "filmstrip": return View.FilmStrip;
