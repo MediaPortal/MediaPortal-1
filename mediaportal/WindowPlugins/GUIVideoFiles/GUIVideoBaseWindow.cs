@@ -156,6 +156,7 @@ namespace MediaPortal.GUI.Video
       {
         case "list": return View.List;
         case "icons": return View.Icons;
+        case "big icons": return View.LargeIcons;
         case "largeicons": return View.LargeIcons;
         case "filmstrip": return View.FilmStrip;
         case "playlist": return View.PlayList;
