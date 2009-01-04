@@ -31,7 +31,6 @@ using System.Text;
 using System.Globalization;
 using System.Threading;
 using MediaPortal.Configuration;
-using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 
 #endregion
@@ -91,6 +90,7 @@ namespace MediaPortal.Player
     {
       if (GUIGraphicsContext.IsFullScreenVideo == waitForFullscreen)
       {
+        /*
         Dialogs.GUIDialogNotify pDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
         if (pDlgNotify != null)
         {
@@ -102,7 +102,7 @@ namespace MediaPortal.Player
           pDlgNotify.DoModal(GUIWindowManager.ActiveWindow);
         }
 
-        pDlgNotify = null;
+        pDlgNotify = null;*/
       }
     }
 

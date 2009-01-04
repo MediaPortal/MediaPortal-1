@@ -208,10 +208,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MediaPortal.Base\BassRegistration.dll</HintPath>
     </Reference>
-    <Reference Include="Dialogs, Version=0.9.3.36436, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Dialogs\bin\Release\Dialogs.dll</HintPath>
-    </Reference>
     <Reference Include="edtftpnet-1.2.2, Version=1.2.2.0, Culture=neutral, PublicKeyToken=4b0c991f43097782">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MediaPortal.Base\edtftpnet-1.2.2.dll</HintPath>
