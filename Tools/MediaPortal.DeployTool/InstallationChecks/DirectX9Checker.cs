@@ -23,6 +23,7 @@
 
 #endregion
 
+using System;
 using Microsoft.Win32;
 using System.IO;
 using System.Windows.Forms;
@@ -72,11 +73,11 @@ namespace MediaPortal.DeployTool.InstallationChecks
       CheckResult result;
       result.needsDownload = true;
       string fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString("DirectX9c", "FILE");
-      FileInfo dxFile = new FileInfo (fileName);
+      FileInfo dxFile = new FileInfo(fileName);
 
       if (dxFile.Exists && dxFile.Length != 0)
         result.needsDownload = false;
-        
+
       if (InstallationProperties.Instance["InstallType"] == "download_only")
       {
         result.state = result.needsDownload == false ? CheckState.DOWNLOADED : CheckState.NOT_DOWNLOADED;
@@ -84,15 +85,30 @@ namespace MediaPortal.DeployTool.InstallationChecks
       }
       RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\DirectX");
       if (key == null)
+      {
         result.state = CheckState.NOT_INSTALLED;
+      }
       else
       {
-        string version = (string)key.GetValue("Version");
         key.Close();
-        if (version == "4.09.0000.0904" || version == "4.09.00.0904")
-          result.state = CheckState.INSTALLED;
-        else
-          result.state = CheckState.VERSION_MISMATCH;
+        string[] DllList = {
+                             @"\System32\D3DX9_30.dll",
+                             @"\microsoft.net\DirectX for Managed Code\1.0.2902.0\Microsoft.DirectX.Direct3D.dll",
+                             @"\microsoft.net\DirectX for Managed Code\1.0.2902.0\Microsoft.DirectX.DirectDraw.dll",
+                             @"\microsoft.net\DirectX for Managed Code\1.0.2902.0\Microsoft.DirectX.DirectInput.dll",
+                             @"\microsoft.net\DirectX for Managed Code\1.0.2902.0\Microsoft.DirectX.dll",
+                             @"\microsoft.net\DirectX for Managed Code\1.0.2911.0\Microsoft.DirectX.Direct3DX.dll"
+                           };
+        string WinDir = Environment.GetEnvironmentVariable("WINDIR");
+        foreach (string DllFile in DllList)
+        {
+          if (!File.Exists(WinDir + "\\" + DllFile))
+          {
+            result.state = CheckState.VERSION_MISMATCH;
+            return result;
+          }
+        }
+        result.state = CheckState.INSTALLED;
       }
       return result;
     }
