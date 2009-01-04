@@ -116,6 +116,7 @@
     <Compile Include="Configuration\Config.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Configuration\DirectXCheck.cs" />
     <Compile Include="Configuration\ISettingsPrefetchable.cs" />
     <Compile Include="Configuration\ISettingsProvider.cs" />
     <Compile Include="Configuration\OSVersion.cs" />

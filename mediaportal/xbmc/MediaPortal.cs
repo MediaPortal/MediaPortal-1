@@ -374,63 +374,25 @@ public class MediaPortalApp : D3DApp, IRender
             Thread.Sleep(1000);
           }
         }
-        Log.Debug("Main: Verifying DirectX 9");
+        Log.Debug("Main: Checking prerequisites")
         try
         {
           // CHECK if DirectX 9.0c if installed
-          using (RegistryKey subkey = Registry.LocalMachine.OpenSubKey(@"Software\Microsoft\DirectX"))
+          Log.Debug("Main: Verifying DirectX 9");
+          if (!DirectXCheck.IsInstalled())
           {
-            if (subkey != null)
-            {
-              string strVersion = (string)subkey.GetValue("Version");
-              if (strVersion != null)
-              {
-                if (strVersion.Length > 0)
-                {
-                  string strTmp = "";
-                  for (int i = 0; i < strVersion.Length; ++i)
-                  {
-                    if (Char.IsDigit(strVersion[i]))
-                    {
-                      strTmp += strVersion[i];
-                    }
-                  }
-                  long lVersion = Convert.ToInt64(strTmp);
-                  if (lVersion < 409000904)
-                  {
-                    string strLine = "Please install DirectX 9.0c!\r\n";
-                    strLine = strLine + "Current version installed:" + strVersion + "\r\n\r\n";
-                    strLine = strLine + "MediaPortal cannot run without DirectX 9.0c\r\n";
-                    strLine = strLine + "http://www.microsoft.com/directx";
+            string strLine = "Please install a newer DirectX 9.0c redist!\r\n";
+            strLine = strLine + "MediaPortal cannot run without DirectX 9.0c redist (August 2008)\r\n";
+            strLine = strLine + "http://install.team-mediaportal.com/DirectX";
 #if !DEBUG
-                    if (splashScreen != null)
-                    {
-                      splashScreen.Stop();
-                      splashScreen = null;
-                    }
-#endif
-                    MessageBox.Show(strLine, "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                  }
-                }
-              }
-              Application.DoEvents();
-              string strVersionMng = (string)subkey.GetValue("ManagedDirectXVersion");
-              if (strVersionMng != null)
-              {
-                if (strVersionMng.Length > 0)
-                {
-                  string strTmp = "";
-                  for (int i = 0; i < strVersionMng.Length; ++i)
-                  {
-                    if (Char.IsDigit(strVersionMng[i]))
-                    {
-                      strTmp += strVersionMng[i];
-                    }
-                  }
-                }
-              }
+            if (splashScreen != null)
+            {
+              splashScreen.Stop();
+              splashScreen = null;
             }
+#endif
+            MessageBox.Show(strLine, "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return;
           }
           Application.DoEvents();
 
