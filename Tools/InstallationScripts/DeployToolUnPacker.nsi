@@ -68,7 +68,7 @@
 !endif
 
 !ifdef BUILD_DeployTool
-!system '"$%ProgramFiles%\Microsoft Visual Studio 8\Common7\IDE\devenv.com" /rebuild "Release" "${svn_DeployTool}\MediaPortal.DeployTool.sln"' = 0
+!system '"$%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /target:Rebuild /property:Configuration=Release;Platform=x86 "${svn_DeployTool}\MediaPortal.DeployTool.sln"' = 0
 !endif
 
 !ifdef BUILD_Installer
