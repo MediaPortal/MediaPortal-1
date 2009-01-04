@@ -374,7 +374,7 @@ public class MediaPortalApp : D3DApp, IRender
             Thread.Sleep(1000);
           }
         }
-        Log.Debug("Main: Checking prerequisites")
+        Log.Debug("Main: Checking prerequisites");
         try
         {
           // CHECK if DirectX 9.0c if installed
