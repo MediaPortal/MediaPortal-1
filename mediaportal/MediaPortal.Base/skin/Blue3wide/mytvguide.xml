@@ -256,10 +256,10 @@
       <description>TV background</description>
       <type>image</type>
       <id>98</id>
-      <posX>40</posX>
-      <posY>534</posY>
-      <width>290</width>
-      <height>170</height>
+      <posX>78</posX>
+      <posY>523</posY>
+      <width>155</width>
+      <height>155</height>
       <texture>Picture_cover.png</texture>
       <visible>Player.HasVideo</visible>
     </control>
@@ -267,10 +267,12 @@
       <description>TV preview window</description>
       <type>videowindow</type>
       <id>99</id>
-      <posX>48</posX>
-      <posY>540</posY>
-      <width>270</width>
-      <height>155</height>
+       <posX>86</posX>
+      <posY>528</posY>
+      <width>140</width>
+      <height>138</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
       <action>18</action>
       <textureFocus>tv_green_border.png</textureFocus>
       <visible>Player.HasVideo</visible>
