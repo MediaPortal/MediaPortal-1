@@ -1602,7 +1602,7 @@ namespace MediaPortal.GUI.Library
         }
 
         // If cursor offset from edge or if left space smaller than scrollStartOffset
-        if (_cursorX + 1 == _columns - _scrollStartOffset && _listItems.Count - (_offset + _cursorX + 1) > _scrollStartOffset)
+        if (_cursorX + 1 >= _columns - _scrollStartOffset && _listItems.Count - (_offset + _cursorX + 1) > _scrollStartOffset)
         {
           _offset++;
           if (!ValidItem(_cursorX))
