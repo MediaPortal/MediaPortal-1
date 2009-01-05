@@ -1,13 +1,26 @@
 @ECHO OFF
 
-REM Select program path based on current machine environment
 
+REM detect if BUILD_TYPE should be release or debug
+if not %1!==Debug! goto RELEASE
+:DEBUG
+set BUILD_TYPE=Debug
+goto START
+:RELEASE
+set BUILD_TYPE=Release
+goto START
+
+
+:START
+REM Select program path based on current machine environment
 set progpath=%ProgramFiles%
 if not "%ProgramFiles(x86)%".=="". set progpath=%ProgramFiles(x86)%
 
 
 echo.
-echo -= MediaPortal : Build Deploy Release.bat =-
+echo -= MediaPortal =-
+echo -= build mode: %BUILD_TYPE% =-
+echo.
 
 echo.
 echo Building DeployVersionSVN...
@@ -19,7 +32,7 @@ echo Writing SVN revision assemblies...
 
 echo.
 echo Building MediaPortal...
-"%progpath%\Microsoft Visual Studio 8\Common7\IDE\devenv.com" /rebuild "Release|x86" MediaPortal.sln >> build.log
+"%progpath%\Microsoft Visual Studio 8\Common7\IDE\devenv.com" /rebuild "%BUILD_TYPE%|x86" MediaPortal.sln >> build.log
 
 echo.
 echo Reverting assemblies...
@@ -35,4 +48,4 @@ DEL version.txt >> build.log
 
 echo.
 echo Building Installer...
-"%progpath%\NSIS\makensis.exe" /DVER_BUILD=%version% Setup\setup.nsi >> build.log
+"%progpath%\NSIS\makensis.exe" /DBUILD_TYPE=%BUILD_TYPE% /DVER_BUILD=%version% Setup\setup.nsi >> build.log

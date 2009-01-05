@@ -46,11 +46,11 @@
 !define svn_MP "${svn_ROOT}\mediaportal"
 !define svn_TVServer "${svn_ROOT}\TvEngine3\TVLibrary"
 !define svn_DeployTool "${svn_ROOT}\Tools\MediaPortal.DeployTool"
+!define svn_DirectShowFilters "${svn_ROOT}\DirectShowFilters"
 !define svn_InstallScripts "${svn_ROOT}\Tools\InstallationScripts"
 
 # additional path definitions
 !define TVSERVER.BASE "${svn_TVServer}\TVServer.Base"
-!define MEDIAPORTAL.FILTERBIN "${svn_ROOT}\DirectShowFilters\bin\${BUILD_TYPE}"
 !define MEDIAPORTAL.BASE "${svn_MP}\MediaPortal.Base"
 
 #**********************************************************************************************************#
@@ -337,7 +337,8 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${TVSERVER.BASE}\ttBdaDrvApi_Dll.dll"
   File "${TVSERVER.BASE}\ttdvbacc.dll"
 
-  File "${MEDIAPORTAL.FILTERBIN}\StreamingServer.dll"
+  ;File "${svn_DirectShowFilters}\StreamingServer\StreamingServer\bin\${BUILD_TYPE}\StreamingServer.dll"
+  File "${svn_DirectShowFilters}\StreamingServer\StreamingServer\bin\Release\StreamingServer.dll"
 
   ; Common App Data Files
   SetOutPath "${COMMON_APPDATA}"
@@ -352,12 +353,11 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   ; filters for digital tv
   ${IfNot} ${MP023IsInstalled}
   ${AndIfNot} ${MPIsInstalled}
-    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${MEDIAPORTAL.FILTERBIN}\TsReader.ax" "$INSTDIR\TsReader.ax" "$INSTDIR"
+    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${svn_DirectShowFilters}\TsReader\bin\${BUILD_TYPE}\TsReader.ax" "$INSTDIR\TsReader.ax" "$INSTDIR"
   ${EndIf}
-  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${MEDIAPORTAL.FILTERBIN}\TsWriter.ax" "$INSTDIR\TsWriter.ax" "$INSTDIR"
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${svn_DirectShowFilters}\TsWriter\bin\${BUILD_TYPE}\TsWriter.ax" "$INSTDIR\TsWriter.ax" "$INSTDIR"
   ; filters for analog tv
-  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${MEDIAPORTAL.FILTERBIN}\mpFileWriter.ax" "$INSTDIR\mpFileWriter.ax" "$INSTDIR"
-  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${MEDIAPORTAL.FILTERBIN}\PDMpgMux.ax" "$INSTDIR\PDMpgMux.ax" "$INSTDIR"
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${svn_DirectShowFilters}\MPWriter\bin\${BUILD_TYPE}\mpFileWriter.ax" "$INSTDIR\mpFileWriter.ax" "$INSTDIR"
 
   #---------------------------------------------------------------------------
   # SERVICE INSTALLATION
@@ -523,8 +523,9 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
   # FILTER REGISTRATION       for TVClient
   #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
   #---------------------------------------------------------------------------
-  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${MEDIAPORTAL.FILTERBIN}\DVBSub2.ax" "$MPdir.Base\DVBSub2.ax" "$MPdir.Base"
-  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${MEDIAPORTAL.FILTERBIN}\mmaacd.ax" "$MPdir.Base\mmaacd.ax" "$MPdir.Base"
+  ;!insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${svn_DirectShowFilters}\DVBSubtitle2\bin\${BUILD_TYPE}\DVBSub2.ax" "$MPdir.Base\DVBSub2.ax" "$MPdir.Base"
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${svn_DirectShowFilters}\DVBSubtitle2\bin\Release\DVBSub2.ax" "$MPdir.Base\DVBSub2.ax" "$MPdir.Base"
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${svn_DirectShowFilters}\bin\Release\mmaacd.ax" "$MPdir.Base\mmaacd.ax" "$MPdir.Base"
 ${MementoSectionEnd}
 !macro Remove_${SecClient}
   ${LOG_TEXT} "DEBUG" "MACRO Remove_${SecClient}"
