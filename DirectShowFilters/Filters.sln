@@ -13,7 +13,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TsReader", "TsReader\TsRead
 		{3C398BD4-5714-4802-AB86-D43ADD15B3C0} = {3C398BD4-5714-4802-AB86-D43ADD15B3C0}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StreamingServer", "StreamingServer\StreamingServer\StreamingServer.vcproj", "{EACCF7EE-35F6-4A62-8C4A-64E1B0FF5A56}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StreamingServer", "StreamingServer\StreamingServer.vcproj", "{EACCF7EE-35F6-4A62-8C4A-64E1B0FF5A56}"
 	ProjectSection(ProjectDependencies) = postProject
 		{3C398BD4-5714-4802-AB86-D43ADD15B3C0} = {3C398BD4-5714-4802-AB86-D43ADD15B3C0}
 	EndProjectSection

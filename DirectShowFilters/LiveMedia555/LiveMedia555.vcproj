@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(DSHOW_BASE)&quot;;  &quot;$(WINDOWS_SDK)Include\&quot;; &quot;$(DXSDK_DIR)Include&quot;;./usageenvironment; ./basicusageenvironment; ./groupsock; ./livemedia; ../streamingserver/streamingserver"
+				AdditionalIncludeDirectories="&quot;$(DSHOW_BASE)&quot;;  &quot;$(WINDOWS_SDK)Include\&quot;; &quot;$(DXSDK_DIR)Include&quot;;./usageenvironment; ./basicusageenvironment; ./groupsock; ./livemedia; ../streamingserver/Source"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -107,7 +107,7 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="&quot;$(DSHOW_BASE)&quot;;  &quot;$(WINDOWS_SDK)Include\&quot;; &quot;$(DXSDK_DIR)Include&quot;; ./usageenvironment; ./basicusageenvironment; ./groupsock; ./livemedia; ../streamingserver/streamingserver"
+				AdditionalIncludeDirectories="&quot;$(DSHOW_BASE)&quot;;  &quot;$(WINDOWS_SDK)Include\&quot;; &quot;$(DXSDK_DIR)Include&quot;; ./usageenvironment; ./basicusageenvironment; ./groupsock; ./livemedia; ../streamingserver/Source"
 				PreprocessorDefinitions="NDEBUG;_WIN32;_LIB;_CRT_SECURE_NO_WARNINGS"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
