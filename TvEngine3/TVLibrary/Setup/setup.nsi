@@ -337,8 +337,8 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${TVSERVER.BASE}\ttBdaDrvApi_Dll.dll"
   File "${TVSERVER.BASE}\ttdvbacc.dll"
 
-  ;File "${svn_DirectShowFilters}\StreamingServer\StreamingServer\bin\${BUILD_TYPE}\StreamingServer.dll"
-  File "${svn_DirectShowFilters}\StreamingServer\StreamingServer\bin\Release\StreamingServer.dll"
+  ;File "${svn_DirectShowFilters}\StreamingServer\bin\${BUILD_TYPE}\StreamingServer.dll"
+  File "${svn_DirectShowFilters}\StreamingServer\bin\Release\StreamingServer.dll"
 
   ; Common App Data Files
   SetOutPath "${COMMON_APPDATA}"
