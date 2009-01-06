@@ -41,7 +41,7 @@
       <control>
         <description>AAC Audio Codecs</description>
         <type>button</type>
-        <id>29</id>
+        <id>30</id>
         <label>6039</label>
       </control>
       <control>
@@ -55,6 +55,24 @@
         <type>button</type>
         <id>28</id>
         <label>6004</label>
+      </control>
+      <control>
+        <description>Subtitles On/Off</description>
+        <type>togglebutton</type>
+        <id>31</id>
+        <label>1196</label>
+      </control>
+      <control>
+        <description>Subtitle Language</description>
+        <type>button</type>
+        <id>32</id>
+        <label>1029</label>
+      </control>
+      <control>
+        <description>Audio Language</description>
+        <type>button</type>
+        <id>33</id>
+        <label>492</label>
         <ondown>99</ondown>
       </control>
     </control>

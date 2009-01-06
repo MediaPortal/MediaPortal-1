@@ -50,21 +50,19 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
     private System.Windows.Forms.FontDialog fontDialog;
     private System.ComponentModel.IContainer components = null;
-
     string fontName;
     string fontColor;
     bool fontIsBold;
-      private MediaPortal.UserInterface.Controls.MPTextBox dropShadowTextBox;
+    private MediaPortal.UserInterface.Controls.MPTextBox dropShadowTextBox;
     int fontSize;
     private MediaPortal.UserInterface.Controls.MPComboBox defaultZoomModeComboBox;
-      private MediaPortal.UserInterface.Controls.MPLabel label1;
+    private MediaPortal.UserInterface.Controls.MPLabel label1;
     private MediaPortal.UserInterface.Controls.MPTabControl tabControl1;
-      private MediaPortal.UserInterface.Controls.MPTabPage tabPage1;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPage1;
     private MediaPortal.UserInterface.Controls.MPTabPage tabPage3;
     private MediaPortal.UserInterface.Controls.MPLabel label7;
     private MediaPortal.UserInterface.Controls.MPComboBox defaultSubtitleLanguageComboBox;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxShowWatched;
-
     private MediaPortal.UserInterface.Controls.MPGroupBox gAllowedModes;
     private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowNormal;
     private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowZoom149;
@@ -73,13 +71,14 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowLetterbox;
     private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowStretch;
     private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowPanScan;
-
     string m_strDefaultRegionLanguage = "English";
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxEachFolderIsMovie;
     private MediaPortal.UserInterface.Controls.MPLabel labelsubsinfo;
-
-    //string[] aspectRatio = { "normal", "original", "stretch", "zoom", "letterbox", "panscan" };
+    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox2;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
+    private MediaPortal.UserInterface.Controls.MPComboBox defaultAudioLanguageComboBox;
     string[] aspectRatio = { "normal", "original", "stretch", "zoom", "zoom149", "letterbox", "panscan" };
+    string m_strDefaultAudioLanguage = "English";
 
     public Movies()
       : this("Videos")
@@ -91,11 +90,13 @@ namespace MediaPortal.Configuration.Sections
     {
       // This call is required by the Windows Form Designer.
       InitializeComponent();
-
-      // Populate combo box with languages
+      // Populate combo boxes with languages
       m_strDefaultRegionLanguage = MediaPortal.Util.Utils.GetCultureRegionLanguage();
+      m_strDefaultAudioLanguage = MediaPortal.Util.Utils.GetCultureRegionLanguage();
       defaultSubtitleLanguageComboBox.Text = m_strDefaultRegionLanguage;
+      defaultAudioLanguageComboBox.Text = m_strDefaultAudioLanguage;
       MediaPortal.Util.Utils.PopulateLanguagesToComboBox(defaultSubtitleLanguageComboBox, m_strDefaultRegionLanguage);
+      MediaPortal.Util.Utils.PopulateLanguagesToComboBox(defaultAudioLanguageComboBox, m_strDefaultAudioLanguage);
     }
 
     public override void LoadSettings()
@@ -174,6 +175,7 @@ namespace MediaPortal.Configuration.Sections
             break;
           }
         }
+        defaultAudioLanguageComboBox.SelectedItem = xmlreader.GetValueAsString("movieplayer", "audiolanguage", m_strDefaultAudioLanguage);
       }
     }
 
@@ -205,6 +207,8 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("movies", "allowarzoom149", cbAllowZoom149.Checked);
         xmlwriter.SetValueAsBool("movies", "allowarletterbox", cbAllowLetterbox.Checked);
         xmlwriter.SetValueAsBool("movies", "allowarpanscan", cbAllowPanScan.Checked);
+
+        xmlwriter.SetValue("movieplayer", "audiolanguage", defaultAudioLanguageComboBox.Text);
       }
     }
 
@@ -262,6 +266,9 @@ namespace MediaPortal.Configuration.Sections
       this.cbAllowStretch = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.cbAllowPanScan = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tabPage3 = new MediaPortal.UserInterface.Controls.MPTabPage();
+      this.mpGroupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.defaultAudioLanguageComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.labelsubsinfo = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBox1.SuspendLayout();
       this.mpGroupBox1.SuspendLayout();
@@ -269,6 +276,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabPage1.SuspendLayout();
       this.gAllowedModes.SuspendLayout();
       this.tabPage3.SuspendLayout();
+      this.mpGroupBox2.SuspendLayout();
       this.SuspendLayout();
       // 
       // groupBox1
@@ -397,7 +405,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox1.Location = new System.Drawing.Point(16, 16);
       this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(432, 136);
+      this.mpGroupBox1.Size = new System.Drawing.Size(432, 191);
       this.mpGroupBox1.TabIndex = 0;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Subtitles";
@@ -601,27 +609,62 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabPage3
       // 
+      this.tabPage3.Controls.Add(this.mpGroupBox2);
       this.tabPage3.Controls.Add(this.labelsubsinfo);
       this.tabPage3.Controls.Add(this.mpGroupBox1);
       this.tabPage3.Location = new System.Drawing.Point(4, 22);
       this.tabPage3.Name = "tabPage3";
       this.tabPage3.Size = new System.Drawing.Size(464, 382);
       this.tabPage3.TabIndex = 2;
-      this.tabPage3.Text = "Subtitles";
+      this.tabPage3.Text = "Subtitle / Audio";
       this.tabPage3.UseVisualStyleBackColor = true;
+      // 
+      // mpGroupBox2
+      // 
+      this.mpGroupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox2.Controls.Add(this.mpLabel1);
+      this.mpGroupBox2.Controls.Add(this.defaultAudioLanguageComboBox);
+      this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpGroupBox2.Location = new System.Drawing.Point(16, 230);
+      this.mpGroupBox2.Name = "mpGroupBox2";
+      this.mpGroupBox2.Size = new System.Drawing.Size(432, 73);
+      this.mpGroupBox2.TabIndex = 8;
+      this.mpGroupBox2.TabStop = false;
+      this.mpGroupBox2.Text = "Audio Language";
+      // 
+      // mpLabel1
+      // 
+      this.mpLabel1.Location = new System.Drawing.Point(16, 32);
+      this.mpLabel1.Name = "mpLabel1";
+      this.mpLabel1.Size = new System.Drawing.Size(96, 16);
+      this.mpLabel1.TabIndex = 6;
+      this.mpLabel1.Text = "Default language:";
+      // 
+      // defaultAudioLanguageComboBox
+      // 
+      this.defaultAudioLanguageComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.defaultAudioLanguageComboBox.BorderColor = System.Drawing.Color.Empty;
+      this.defaultAudioLanguageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.defaultAudioLanguageComboBox.Location = new System.Drawing.Point(136, 28);
+      this.defaultAudioLanguageComboBox.Name = "defaultAudioLanguageComboBox";
+      this.defaultAudioLanguageComboBox.Size = new System.Drawing.Size(280, 21);
+      this.defaultAudioLanguageComboBox.Sorted = true;
+      this.defaultAudioLanguageComboBox.TabIndex = 7;
       // 
       // labelsubsinfo
       // 
-      this.labelsubsinfo.Location = new System.Drawing.Point(13, 175);
+      this.labelsubsinfo.Location = new System.Drawing.Point(32, 155);
       this.labelsubsinfo.Name = "labelsubsinfo";
-      this.labelsubsinfo.Size = new System.Drawing.Size(435, 52);
+      this.labelsubsinfo.Size = new System.Drawing.Size(400, 49);
       this.labelsubsinfo.TabIndex = 10;
       this.labelsubsinfo.Text = resources.GetString("labelsubsinfo.Text");
       // 
       // Movies
       // 
       this.Controls.Add(this.tabControl1);
-      this.Name = "Videos";
+      this.Name = "Movies";
       this.Size = new System.Drawing.Size(472, 408);
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
@@ -632,6 +675,7 @@ namespace MediaPortal.Configuration.Sections
       this.gAllowedModes.ResumeLayout(false);
       this.gAllowedModes.PerformLayout();
       this.tabPage3.ResumeLayout(false);
+      this.mpGroupBox2.ResumeLayout(false);
       this.ResumeLayout(false);
 
     }
@@ -701,10 +745,8 @@ namespace MediaPortal.Configuration.Sections
             }
             catch { }
           }
-
         }
       }
     }
   }
 }
-

@@ -32,6 +32,7 @@ using MediaPortal.Dialogs;
 using DShowNET;
 using DShowNET.Helper;
 using DirectShowLib;
+using System.Globalization;
 
 namespace WindowPlugins.GUISettings.TV
 {
@@ -53,7 +54,28 @@ namespace WindowPlugins.GUISettings.TV
     protected GUIButtonControl btnH264VideoCodec = null;
     [SkinControlAttribute(30)]
     protected GUIButtonControl btnAACAudioCodec = null;
-    
+    [SkinControlAttribute(31)]
+    protected GUIToggleButtonControl btnEnableSubtitles = null;
+    [SkinControlAttribute(32)]
+    protected GUIButtonControl btnSubtitle = null;
+    [SkinControlAttribute(33)]
+    protected GUIButtonControl btnAudioLanguage = null;
+
+    bool subtitleSettings;
+    bool settingsLoaded = false;
+
+    class CultureComparer : IComparer
+    {
+      #region IComparer Members
+      public int Compare(object x, object y)
+      {
+        CultureInfo info1 = (CultureInfo)x;
+        CultureInfo info2 = (CultureInfo)y;
+        return String.Compare(info1.EnglishName, info2.EnglishName, true);
+      }
+      #endregion
+    }
+
     public GUISettingsMovies()
     {
       GetID = (int)GUIWindow.Window.WINDOW_SETTINGS_MOVIES;
@@ -64,6 +86,12 @@ namespace WindowPlugins.GUISettings.TV
       return Load(GUIGraphicsContext.Skin + @"\settings_movies.xml");
     }
 
+    protected override void OnPageLoad()
+    {
+      base.OnPageLoad();
+      LoadSettings();
+    }
+
     protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
     {
       if (control == btnVideoCodec) OnVideoCodec();
@@ -72,6 +100,9 @@ namespace WindowPlugins.GUISettings.TV
       if (control == btnAudioRenderer) OnAudioRenderer();
       if (control == btnH264VideoCodec) OnH264VideoCodec();
       if (control == btnAACAudioCodec) OnAACAudioCodec();
+      if (control == btnEnableSubtitles) OnSubtitleOnOff();
+      if (control == btnSubtitle) OnSubtitle();
+      if (control == btnAudioLanguage) OnAudioLanguage();
       base.OnClicked(controlId, control, actionType);
     }
 
@@ -281,6 +312,108 @@ namespace WindowPlugins.GUISettings.TV
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("movieplayer", "aacaudiocodec", (string)availableAACAudioFilters[dlg.SelectedLabel]);
+      }
+    }
+
+    void OnSubtitleOnOff()
+    {
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        xmlwriter.SetValueAsBool("subtitles", "enabled", btnEnableSubtitles.Selected);
+      }
+    }
+
+    void OnSubtitle()
+    {
+      string defaultSubtitleLanguage = "";
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        defaultSubtitleLanguage = xmlreader.GetValueAsString("subtitles", "language", "English");
+      }
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      if (dlg != null)
+      {
+        dlg.Reset();
+        dlg.SetHeading(GUILocalizeStrings.Get(496));//Menu
+        dlg.ShowQuickNumbers = false;
+        int selected = 0;
+        ArrayList cultures = new ArrayList();
+        CultureInfo[] culturesInfos = CultureInfo.GetCultures(CultureTypes.NeutralCultures);
+        for (int i = 0; i < culturesInfos.Length; ++i)
+        {
+          cultures.Add(culturesInfos[i]);
+        }
+        cultures.Sort(new CultureComparer());
+        for (int i = 0; i < cultures.Count; ++i)
+        {
+          CultureInfo info = (CultureInfo)cultures[i];
+          if (info.EnglishName.Equals(defaultSubtitleLanguage))
+          {
+            selected = i;
+          }
+          dlg.Add(info.EnglishName);
+        }
+        dlg.SelectedLabel = selected;
+        dlg.DoModal(GetID);
+        if (dlg.SelectedLabel < 0) return;
+        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        {
+          CultureInfo info = (CultureInfo)cultures[dlg.SelectedLabel];
+          xmlwriter.SetValue("subtitles", "language", info.EnglishName);
+        }
+      }
+    }
+
+    void OnAudioLanguage()
+    {
+      string defaultAudioLanguage = "";
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        defaultAudioLanguage = xmlreader.GetValueAsString("movieplayer", "audiolanguage", "English");
+      }
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      if (dlg != null)
+      {
+        dlg.Reset();
+        dlg.SetHeading(GUILocalizeStrings.Get(496));//Menu
+        dlg.ShowQuickNumbers = false;
+        int selected = 0;
+        ArrayList cultures = new ArrayList();
+        CultureInfo[] culturesInfos = CultureInfo.GetCultures(CultureTypes.NeutralCultures);
+        for (int i = 0; i < culturesInfos.Length; ++i)
+        {
+          cultures.Add(culturesInfos[i]);
+        }
+        cultures.Sort(new CultureComparer());
+        for (int i = 0; i < cultures.Count; ++i)
+        {
+          CultureInfo info = (CultureInfo)cultures[i];
+          if (info.EnglishName.Equals(defaultAudioLanguage))
+          {
+            selected = i;
+          }
+          dlg.Add(info.EnglishName);
+        }
+        dlg.SelectedLabel = selected;
+        dlg.DoModal(GetID);
+        if (dlg.SelectedLabel < 0) return;
+        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        {
+          CultureInfo info = (CultureInfo)cultures[dlg.SelectedLabel];
+          xmlwriter.SetValue("movieplayer", "audiolanguage", info.EnglishName);
+        }
+      }
+    }
+
+    void LoadSettings()
+    {
+      if (settingsLoaded)
+        return;
+      settingsLoaded = true;
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        subtitleSettings = xmlreader.GetValueAsBool("subtitles", "enabled", false);
+        btnEnableSubtitles.Selected = subtitleSettings;
       }
     }
   }

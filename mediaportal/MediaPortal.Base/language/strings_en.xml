@@ -421,7 +421,7 @@
     <String id="489">Use playlist in songs</String>
     <String id="490">Automatically switch list and icons in songs</String>
     <String id="491">Use big icons</String>
-    <String id="492">Audio language</String>
+    <String id="492">Audio Language</String>
     <String id="493">Actor:</String>
     <String id="495">Sort options</String>
     <String id="496">Options</String>
@@ -1299,7 +1299,7 @@
     <String id="6001">Audio Codec</String>
     <String id="6002">Audio Renderer</String>
     <String id="6003">De-interlacing</String>
-    <String id="6004">Aspect ratio</String>
+    <String id="6004">Aspect Ratio</String>
     <String id="6005">Timeshift buffer</String>
     <String id="6006">Automatically turn on TV</String>
     <String id="6007">Recording options</String>
@@ -1331,10 +1331,10 @@
     <String id="6033">Search by keyword</String>
     <String id="6034">Search by genre</String>
     <String id="6035">Add schedule</String>
-    <String id="6036">H.264 video codec</String>
+    <String id="6036">H.264 Video Codec</String>
     <String id="6037">Stacked movie</String>
     <String id="6038">Please select disk to play.</String>
-    <String id="6039">AAC Audio codec</String>
+    <String id="6039">AAC Audio Codec</String>
     <String id="8000" prefix="My ">Mail</String>
     <String id="8001">Check Mailbox</String>
     <String id="8002">Auto-check off</String>

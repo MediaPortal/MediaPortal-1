@@ -284,6 +284,7 @@ namespace MediaPortal.Player
         Log.Info("VideoPlayer:Duration:{0}", m_dDuration);
         AnalyseStreams();
         SelectSubtitles();
+        SelectAudioLanguage();
         OnInitialized();
       }
       return true;
@@ -307,6 +308,23 @@ namespace MediaPortal.Player
         }
       }
       EnableSubtitle = showSubtitles;
+    }
+
+    private void SelectAudioLanguage()
+    {
+      string defaultAudioLanguage = null;
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        defaultAudioLanguage = xmlreader.GetValueAsString("movieplayer", "audiolanguage", "English");
+      }
+      for (int i = 0; i < AudioStreams; i++)
+      {
+        if (defaultAudioLanguage.Equals(AudioLanguage(i), StringComparison.OrdinalIgnoreCase))
+        {
+          CurrentAudioStream = i;
+          break;
+        }
+      }
     }
 
     public override bool PlayStream(string strFile, string streamName)
@@ -1211,7 +1229,7 @@ namespace MediaPortal.Player
         //Get the trackname part by removing the language part from the string.
         streamName = regex.Replace(streamName, "").Trim();
         //Put things back together
-        streamName = language + (streamName == string.Empty ? "" : " [" + streamName + "]");
+        //streamName = language + (streamName == string.Empty ? "" : " [" + streamName + "]");
       }
       return streamName;
     }
