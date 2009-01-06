@@ -1230,6 +1230,10 @@ namespace MediaPortal.Player
         streamName = regex.Replace(streamName, "").Trim();
         //Put things back together
         //streamName = language + (streamName == string.Empty ? "" : " [" + streamName + "]");
+        if (language.Length > 0 & streamName.Length <= 0)
+        {
+            streamName = language;
+        }
       }
       return streamName;
     }
@@ -1324,6 +1328,10 @@ namespace MediaPortal.Player
           //Put things back together
           //streamName = language +(streamName == string.Empty ? "" : " [" + streamName + "]");
           //if you do the above the subtitle preference for mkv embedded subtitles are not matched to the configuration settings.
+          if (language.Length > 0 & streamName.Length <= 0)
+          {
+            streamName = language;
+          }
         }
         return streamName;
       }
