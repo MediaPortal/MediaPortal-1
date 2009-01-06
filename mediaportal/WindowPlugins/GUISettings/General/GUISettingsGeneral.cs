@@ -26,6 +26,7 @@
 using System;
 using System.IO;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Windows.Forms;
 using MediaPortal.Util;
@@ -41,16 +42,11 @@ namespace WindowPlugins.GUISettings
   /// </summary>
   public class GUISettingsGeneral : GUIWindow
   {
-    [SkinControlAttribute(10)]
-    protected GUISelectButtonControl btnSkin = null;
-    [SkinControlAttribute(11)]
-    protected GUISelectButtonControl btnLanguage = null;
-    [SkinControlAttribute(12)]
-    protected GUIToggleButtonControl btnFullscreen = null;
-    [SkinControlAttribute(13)]
-    protected GUIToggleButtonControl btnScreenSaver = null;
-    [SkinControlAttribute(20)]
-    protected GUIImage imgSkinPreview = null;
+    [SkinControlAttribute(10)]    protected GUISelectButtonControl btnSkin = null;
+    [SkinControlAttribute(11)]    protected GUISelectButtonControl btnLanguage = null;
+    [SkinControlAttribute(12)]    protected GUIToggleButtonControl btnFullscreen = null;
+    [SkinControlAttribute(13)]    protected GUIToggleButtonControl btnScreenSaver = null;
+    [SkinControlAttribute(20)]    protected GUIImage imgSkinPreview = null;
 
     int selectedLangIndex;
     int selectedSkinIndex;
@@ -87,7 +83,28 @@ namespace WindowPlugins.GUISettings
     {
       if (control == btnSkin)
       {
-        OnSkinChanged();
+        GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+        if (dlg == null)
+          return;
+        dlg.Reset();
+        dlg.SetHeading(166); // menu
+
+        List<string> installedSkins = new List<string>();
+        installedSkins = GetInstalledSkins();
+
+        foreach (string skin in installedSkins)
+        {
+          dlg.Add(skin);
+        }
+        dlg.SelectedLabel = btnSkin.SelectedItem;
+        dlg.DoModal(GetID);
+        if (dlg.SelectedId == -1)
+          return;
+        if (String.Compare(dlg.SelectedLabelText, btnSkin.SelectedLabel, true) != 0)
+        {
+          btnSkin.SelectedItem = dlg.SelectedLabel;
+          OnSkinChanged();
+        }
         return;
       }
       if (control == btnLanguage)
@@ -174,38 +191,52 @@ namespace WindowPlugins.GUISettings
 
     void SetSkins()
     {
+      List<string> installedSkins = new List<string>();
       string currentSkin = "";
+      int skinNo = 0;
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         currentSkin = xmlreader.GetValueAsString("skin", "name", "Blue3");
       }
 
       GUIControl.ClearControl(GetID, btnSkin.GetID);
-      int skinNo = 0;
+      installedSkins = GetInstalledSkins();
 
-      DirectoryInfo skinFolder = new DirectoryInfo(Config.GetFolder(Config.Dir.Skin));
-      if (skinFolder.Exists)
+      foreach (string skin in installedSkins)
       {
-        DirectoryInfo[] skinDirList = skinFolder.GetDirectories();
-        foreach (DirectoryInfo skinDir in skinDirList)
+        GUIControl.AddItemLabelControl(GetID, btnSkin.GetID, skin);
+        if (String.Compare(skin, currentSkin, true) == 0)
         {
-          //
-          // Check if we have a home.xml located in the directory, if so we consider it as a
-          // valid skin directory
-          //
-          FileInfo refFile = new FileInfo(Config.GetFile(Config.Dir.Skin, skinDir.Name, "references.xml"));
-          if (refFile.Exists)
+          GUIControl.SelectItemControl(GetID, btnSkin.GetID, skinNo);
+          imgSkinPreview.SetFileName(Config.GetFile(Config.Dir.Skin, skin, @"media\preview.png"));
+        }
+        skinNo++;
+      }
+    }
+
+    private List<string> GetInstalledSkins()
+    {
+      List<string> installedSkins = new List<string>();
+
+      try
+      {
+        DirectoryInfo skinFolder = new DirectoryInfo(Config.GetFolder(Config.Dir.Skin));
+        if (skinFolder.Exists)
+        {
+          DirectoryInfo[] skinDirList = skinFolder.GetDirectories();
+          foreach (DirectoryInfo skinDir in skinDirList)
           {
-            GUIControl.AddItemLabelControl(GetID, btnSkin.GetID, skinDir.Name);
-            if (String.Compare(skinDir.Name, currentSkin, true) == 0)
-            {
-              GUIControl.SelectItemControl(GetID, btnSkin.GetID, skinNo);
-              imgSkinPreview.SetFileName(Config.GetFile(Config.Dir.Skin, skinDir.Name, @"media\preview.png"));
-            }
-            skinNo++;
+            FileInfo refFile = new FileInfo(Config.GetFile(Config.Dir.Skin, skinDir.Name, "references.xml"));
+            if (refFile.Exists)
+              installedSkins.Add(skinDir.Name);
           }
         }
       }
+      catch (Exception ex)
+      {
+        Log.Error("GUISettingsGeneral: Error getting installed skins - {0}", ex.Message);
+      }
+      return installedSkins;
     }
 
     void BackupButtons()
@@ -261,7 +292,8 @@ namespace WindowPlugins.GUISettings
           try
           {
             Form.ActiveForm.ClientSize = new System.Drawing.Size(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
-          } catch (Exception ex)
+          }
+          catch (Exception ex)
           {
             Log.Error("OnSkinChanged exception:{0}", ex.ToString());
             Log.Error(ex);
