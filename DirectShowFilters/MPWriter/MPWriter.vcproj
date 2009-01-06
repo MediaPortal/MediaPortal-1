@@ -52,7 +52,7 @@
 				InlineFunctionExpansion="0"
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="&quot;$(DSHOW_BASE)&quot;;  &quot;$(WINDOWS_SDK)Include\&quot;; &quot;$(DXSDK_DIR)Include&quot;;../LiveMedia555/BasicUsageEnvironment;../LiveMedia555/groupsock;../LiveMedia555/liveMedia;../LiveMedia555/UsageEnvironment; ../streamingserver/streamingserver"
+				AdditionalIncludeDirectories="&quot;$(DSHOW_BASE)&quot;;  &quot;$(WINDOWS_SDK)Include\&quot;; &quot;$(DXSDK_DIR)Include&quot;;../LiveMedia555/BasicUsageEnvironment;../LiveMedia555/groupsock;../LiveMedia555/liveMedia;../LiveMedia555/UsageEnvironment; ../streamingserver/Source"
 				PreprocessorDefinitions="NDEBUGT;WIN32;_WIN32;_CRT_SECURE_NO_WARNINGS"
 				StringPooling="false"
 				RuntimeLibrary="2"
@@ -154,7 +154,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(DSHOW_BASE)&quot;;  &quot;$(WINDOWS_SDK)Include\&quot;; &quot;$(DXSDK_DIR)Include&quot;;../LiveMedia555/BasicUsageEnvironment;../LiveMedia555/groupsock;../LiveMedia555/liveMedia;../LiveMedia555/UsageEnvironment; ../streamingserver/streamingserver"
+				AdditionalIncludeDirectories="&quot;$(DSHOW_BASE)&quot;;  &quot;$(WINDOWS_SDK)Include\&quot;; &quot;$(DXSDK_DIR)Include&quot;;../LiveMedia555/BasicUsageEnvironment;../LiveMedia555/groupsock;../LiveMedia555/liveMedia;../LiveMedia555/UsageEnvironment; ../streamingserver/Source"
 				PreprocessorDefinitions="DBG=1;DEBUG;_DEBUG;INC_OLE2;STRICT;_WIN32_WINNT=0x0400;WIN32;_WIN32;_MT;_DLL;_X86_=1;WINVER=0x0400"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
