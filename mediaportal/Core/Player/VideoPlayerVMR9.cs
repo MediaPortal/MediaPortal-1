@@ -485,12 +485,12 @@ namespace MediaPortal.Player
               IPin pinInputIn = DsFindPin.ByDirection(vob, PinDirection.Input, 1);
               //find directvobsub's video input pin source output pin
               IPin pinVideoFrom = null;
-              hr = pinVideoIn.ConnectedTo(out pinVideoFrom);
+              pinVideoIn.ConnectedTo(out pinVideoFrom);
               //find DirectVobSub's subtitle input source output pin
               IPin pinSubtitleFrom = null;
-              hr = pinInputIn.ConnectedTo(out pinSubtitleFrom);
+              pinInputIn.ConnectedTo(out pinSubtitleFrom);
               PinInfo pininfo;
-              if (hr != 0 || pinVideoFrom == null)
+              if (pinVideoFrom == null)
               {
                 //video input pin is not connected
                 Log.Info("VideoPlayerVMR9: DirectVobSub not connected, removing...");
