@@ -344,7 +344,14 @@ public class MediaPortalApp : D3DApp, IRender
               if (ctrl.Status == ServiceControllerStatus.Stopped)
               {
                 Log.Info("Main: TV service is stopped, so we try start it...");
-                ctrl.Start();
+                try
+                {
+                  ctrl.Start();
+                }
+                catch (Exception)
+                {
+                  Log.Info("TvService seems to be already starting up.");
+                }
               }
               if (splashScreen != null)
                 splashScreen.SetInformation("Waiting for startup of TV service...");
