@@ -321,7 +321,8 @@ namespace MediaPortal.InputDevices
       {
         GUIGraphicsContext.ResetLastActivity();
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GETFOCUS, 0, 0, 0, 0, 0, null);
-        GUIWindowManager.SendThreadMessage(msg);
+        //GUIWindowManager.SendThreadMessage(msg);
+        GUIGraphicsContext.SendMessage(msg);
         return true;
       }
       switch (map.Command)
