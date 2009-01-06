@@ -592,7 +592,7 @@ namespace TvLibrary.Implementations.DVB
         if (capDevices[capIndex].Name != null)
         {
           //Log.Log.WriteFile("AddWinTvCIModule: {0}", capDevices[capIndex].Name.ToLower());
-          if (capDevices[capIndex].Name.ToLower() == "wintvciusbbda source")
+          if (capDevices[capIndex].Name.ToUpperInvariant() == "WINTVCIUSBBDA SOURCE")
           {
             if (false == DevicesInUse.Instance.IsUsed(capDevices[capIndex]))
             {
@@ -921,9 +921,9 @@ namespace TvLibrary.Implementations.DVB
       const string guidBdaSlipDeframerFilter = @"\{03884cb6-e89a-4deb-b69e-8dc621686e6a}";
       for (int i = 0; i < devices.Length; i++)
       {
-        if (devices[i].DevicePath.ToLower().IndexOf(guidBdaMPEFilter) >= 0)
+        if (devices[i].DevicePath.ToUpperInvariant().IndexOf(guidBdaMPEFilter.ToUpperInvariant()) >= 0)
           continue;
-        if (devices[i].DevicePath.ToLower().IndexOf(guidBdaSlipDeframerFilter) >= 0)
+        if (devices[i].DevicePath.ToUpperInvariant().IndexOf(guidBdaSlipDeframerFilter.ToUpperInvariant()) >= 0)
           continue;
         IBaseFilter tmp;
         const string deviceIdDelimter = @"#{";
@@ -1987,7 +1987,7 @@ namespace TvLibrary.Implementations.DVB
                     language += (char)((languageId >> 8) & 0xff);
                     language += (char)((languageId) & 0xff);
                     //allows czech epg
-                    if (language.ToLower() == "cze" || language.ToLower() == "ces")
+                    if (language.ToUpperInvariant() == "CZE" || language.ToUpperInvariant() == "CES")
                     {
                       title = Iso6937ToUnicode.Convert(ptrTitle);
                       description = Iso6937ToUnicode.Convert(ptrDesc);

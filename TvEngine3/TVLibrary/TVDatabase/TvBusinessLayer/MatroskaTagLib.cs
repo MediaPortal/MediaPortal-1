@@ -94,7 +94,7 @@ namespace TvDatabase
           try
           {
             // we do not have insufficient access rights for this
-            if (subDir.ToLower().Contains(@"system volume information") || subDir.ToLower().Contains(@"recycled") || subDir.ToLower().Contains(@"recycler"))
+            if (subDir.ToLowerInvariant().Contains(@"system volume information") || subDir.ToLowerInvariant().Contains(@"recycled") || subDir.ToLowerInvariant().Contains(@"recycler"))
               continue;
             string[] importFiles = Directory.GetFiles(subDir, "*.xml", SearchOption.AllDirectories);
             foreach (string recordingXml in importFiles)

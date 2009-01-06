@@ -270,8 +270,8 @@ namespace TvEngine
       WebClient Client = new WebClient();
 
 
-      bool isHTTP = (URL.ToLower().IndexOf("http://") == 0);
-      bool isFTP = (URL.ToLower().IndexOf("ftp://") == 0);
+      bool isHTTP = (URL.ToLowerInvariant().IndexOf("http://") == 0);
+      bool isFTP = (URL.ToLowerInvariant().IndexOf("ftp://") == 0);
 
       if (isFTP)
       {

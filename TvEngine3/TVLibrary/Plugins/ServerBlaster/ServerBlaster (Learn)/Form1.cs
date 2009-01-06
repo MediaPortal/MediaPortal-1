@@ -177,7 +177,7 @@ namespace BlasterTest
 
 			foreach(string arg in args)
 			{
-				switch(arg.ToLower())
+				switch(arg.ToLowerInvariant())
 				{
 					case "/dump":
 					case "-dump":

@@ -109,7 +109,7 @@ namespace SetupTv
         XmlNode serverName = nodeKey.Attributes.GetNamedItem("name");
         XmlNode attributeConnectionString = nodeKey.Attributes.GetNamedItem("connectionString");
         string connectionString = attributeConnectionString.InnerText;
-        string serverType = serverName.InnerText.ToLower();
+        string serverType = serverName.InnerText.ToLowerInvariant();
         switch (serverType)
         {
           case "mysql":
@@ -129,19 +129,19 @@ namespace SetupTv
         {
           string part = parts[i];
           string[] keyValue = part.Split('=');
-          if (keyValue[0].ToLower() == "password")
+          if (keyValue[0].ToLowerInvariant() == "password")
             tbPassword.Text = keyValue[1];
 
-          if (keyValue[0].ToLower() == "user id" || keyValue[0].ToLower() == "user")
+          if (keyValue[0].ToLowerInvariant() == "user id" || keyValue[0].ToLowerInvariant() == "user")
             tbUserID.Text = keyValue[1];
 
-          if (keyValue[0].ToLower() == "initial catalog" || keyValue[0].ToLower() == "database")
+          if (keyValue[0].ToLowerInvariant() == "initial catalog" || keyValue[0].ToLowerInvariant() == "database")
           {
             tbDatabaseName.Text = keyValue[1];
             _schemaName = tbDatabaseName.Text;
           }
 
-          if (keyValue[0].ToLower() == "data source" || keyValue[0].ToLower() == "server")
+          if (keyValue[0].ToLowerInvariant() == "data source" || keyValue[0].ToLowerInvariant() == "server")
           {
             if (keyValue[1].Length == 0 || keyValue[1] == "-")
             {
@@ -404,14 +404,14 @@ namespace SetupTv
           MessageBox.Show("Please specify a valid password for the database user!", "Specify password", MessageBoxButtons.OK, MessageBoxIcon.Error);
           return;
         }
-        if (string.IsNullOrEmpty(tbDatabaseName.Text) || tbDatabaseName.Text.ToLower() == "mysql" || tbDatabaseName.Text.ToLower() == "master")
+        if (string.IsNullOrEmpty(tbDatabaseName.Text) || tbDatabaseName.Text.ToLowerInvariant() == "mysql" || tbDatabaseName.Text.ToLowerInvariant() == "master")
         {
           tbDatabaseName.BackColor = Color.Red;
           MessageBox.Show("Please specify a valid schema name!", "Specify schema name", MessageBoxButtons.OK, MessageBoxIcon.Error);
           return;
         }
 
-        if (tbServerHostName.Text.ToLower().IndexOf("localhost") >= 0 || tbServerHostName.Text.ToLower().IndexOf("127.0.0.1") >= 0)
+        if (tbServerHostName.Text.ToLowerInvariant().IndexOf("localhost") >= 0 || tbServerHostName.Text.ToLowerInvariant().IndexOf("127.0.0.1") >= 0)
         {
           tbServerHostName.BackColor = Color.Red;
           MessageBox.Show("Please specify a valid hostname or IP address for the server!", "Specify server name", MessageBoxButtons.OK, MessageBoxIcon.Error);

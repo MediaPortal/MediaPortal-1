@@ -48,7 +48,7 @@ namespace TvLibrary.Interfaces
       {
         if (string.IsNullOrEmpty(lang))
           lang = CultureInfo.CurrentCulture.ThreeLetterISOLanguageName;
-        lang = lang.ToLower();
+        lang = lang.ToLowerInvariant();
         if (lang == "cze" || lang == "ces")
           encoding = 20269; //ISO-6937
         else if (lang == "ukr" || lang == "bel" || lang == "rus")

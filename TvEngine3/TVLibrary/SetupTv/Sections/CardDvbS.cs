@@ -151,7 +151,7 @@ namespace SetupTv.Sections
         return;
       if (context.Url.Length == 0)
         return;
-      if (!context.Url.ToLower().StartsWith("http://"))
+      if (!context.Url.ToLowerInvariant().StartsWith("http://"))
         return;
       string itemLine = String.Format("Downloading transponders for:{0}", context.SatteliteName);
       ListViewItem item = listViewStatus.Items.Add(new ListViewItem(itemLine));
@@ -210,7 +210,7 @@ namespace SetupTv.Sections
       if (dvbs2)
       {
         Log.Info("DVBS: Also using DVB-S2 transponder scanning information");
-        string transpondername = Path.GetFileNameWithoutExtension(tsfilename).ToLower();
+        string transpondername = Path.GetFileNameWithoutExtension(tsfilename).ToLowerInvariant();
         //@"\Tuningparameters\"
         tsfilename = @"Tuningparameters\" + transpondername + "-S2.ini";
         if (!File.Exists(tsfilename))
@@ -243,7 +243,7 @@ namespace SetupTv.Sections
               {
                 Transponder transponder = new Transponder();
                 transponder.CarrierFrequency = Int32.Parse(tpdata[0]) * 1000;
-                switch (tpdata[1].ToLower())
+                switch (tpdata[1].ToLowerInvariant())
                 {
                   case "v":
                     transponder.Polarisation = Polarisation.LinearV;
@@ -264,7 +264,7 @@ namespace SetupTv.Sections
                 transponder.SymbolRate = Int32.Parse(tpdata[2]);
                 for (int idx = 3; idx < tpdata.Length; ++idx)
                 {
-                  string fieldValue = tpdata[idx].ToLower();
+                  string fieldValue = tpdata[idx].ToLowerInvariant();
                   if (fieldValue == "8psk")
                     transponder.Modulation = ModulationType.Mod8Psk;
                   if (fieldValue == "qpsk")

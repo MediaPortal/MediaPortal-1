@@ -36,7 +36,7 @@ namespace MediaPortal.Playlists
     public bool Load(PlayList playlist, string fileName)
     {
       string extension = Path.GetExtension(fileName);
-      extension.ToLower();
+      extension.ToLowerInvariant();
 
       playlist.Clear();
       playlist.Name = Path.GetFileName(fileName);
@@ -87,7 +87,7 @@ namespace MediaPortal.Playlists
           string leftPart = strLine.Substring(0, equalPos);
           equalPos++;
           string valuePart = strLine.Substring(equalPos);
-          leftPart = leftPart.ToLower();
+          leftPart = leftPart.ToLowerInvariant();
           if (leftPart.StartsWith("file"))
           {
             if (valuePart.Length > 0 && valuePart[0] == '#')
@@ -128,7 +128,7 @@ namespace MediaPortal.Playlists
             int duration = System.Int32.Parse(durationLine);
             duration *= 1000;
 
-            string tmp = fileName.ToLower();
+            string tmp = fileName.ToLowerInvariant();
             PlayListItem newItem = new PlayListItem(infoLine, fileName, duration);
             if (tmp.IndexOf("http:") < 0 && tmp.IndexOf("mms:") < 0 && tmp.IndexOf("rtp:") < 0)
             {

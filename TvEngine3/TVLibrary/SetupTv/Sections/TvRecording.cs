@@ -888,7 +888,7 @@ namespace SetupTv.Sections
         IList<Server> dbsServers = Server.ListAll();
         foreach (Server computer in dbsServers)
         {
-          if (computer.HostName.ToLower() == localHost.ToLower())
+          if (computer.HostName.ToLowerInvariant() == localHost.ToLowerInvariant())
             serverId = computer.IdServer;
         }
       } catch (Exception ex)

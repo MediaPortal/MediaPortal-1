@@ -148,7 +148,7 @@ namespace TvService
 
       foreach (Recording recorded in recordedTvShows)
       {
-        if (recorded.FileName.ToLower()[0] != drive.ToLower()[0])
+        if (recorded.FileName.ToUpperInvariant()[0] != drive.ToUpperInvariant()[0])
           continue;
 
         bool add = true;

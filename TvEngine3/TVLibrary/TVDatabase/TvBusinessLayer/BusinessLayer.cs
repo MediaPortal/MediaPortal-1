@@ -1099,7 +1099,7 @@ namespace TvDatabase
 
     public string GetDateTimeString()
     {
-      string provider = ProviderFactory.GetDefaultProvider().Name.ToLower();
+      string provider = ProviderFactory.GetDefaultProvider().Name.ToLowerInvariant();
       if (provider == "mysql")
         return "yyyy-MM-dd HH:mm:ss";
       return "yyyyMMdd HH:mm:ss";
@@ -1208,7 +1208,7 @@ namespace TvDatabase
         string connectString;
         try
         {
-          provider = ProviderFactory.GetDefaultProvider().Name.ToLower();
+          provider = ProviderFactory.GetDefaultProvider().Name.ToLowerInvariant();
           connectString = ProviderFactory.GetDefaultProvider().ConnectionString;
         } catch (Exception cex)
         {
@@ -1440,7 +1440,7 @@ namespace TvDatabase
       List<string> genres = new List<string>();
       string connectString = ProviderFactory.GetDefaultProvider().ConnectionString;
 
-      string provider = ProviderFactory.GetDefaultProvider().Name.ToLower();
+      string provider = ProviderFactory.GetDefaultProvider().Name.ToLowerInvariant();
       if (provider == "mysql")
       {
         using (MySqlConnection connect = new MySqlConnection(connectString))
@@ -1605,7 +1605,7 @@ namespace TvDatabase
     public Dictionary<int, NowAndNext> GetNowAndNext(List<Channel> aEpgChannelList)
     {
       Dictionary<int, NowAndNext> nowNextList = new Dictionary<int, NowAndNext>();
-      string provider = ProviderFactory.GetDefaultProvider().Name.ToLower();
+      string provider = ProviderFactory.GetDefaultProvider().Name.ToLowerInvariant();
       string connectString = ProviderFactory.GetDefaultProvider().ConnectionString;
       MySqlConnection MySQLConnect = null;
       MySqlDataAdapter MySQLAdapter = null;
@@ -1768,7 +1768,7 @@ namespace TvDatabase
       try
       {
         IGentleProvider prov = ProviderFactory.GetDefaultProvider();
-        string provider = prov.Name.ToLower();
+        string provider = prov.Name.ToLowerInvariant();
         string defaultConnectString = prov.ConnectionString; // Gentle.Framework.ProviderFactory.GetDefaultProvider().ConnectionString;
         int sleepTime = 10;
 

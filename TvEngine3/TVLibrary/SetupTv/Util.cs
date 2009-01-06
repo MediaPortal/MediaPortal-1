@@ -346,8 +346,8 @@ namespace SetupTv
 														 "[-_ ](CD|cd|DISC|disc)[-_ ]{0,1}[0-9]{1,2}"};
 
         // Strip the extensions and make everything lowercase
-        string strFileName1 = Path.GetFileNameWithoutExtension(strFile1).ToLower();
-        string strFileName2 = Path.GetFileNameWithoutExtension(strFile2).ToLower();
+        string strFileName1 = Path.GetFileNameWithoutExtension(strFile1).ToLowerInvariant();
+        string strFileName2 = Path.GetFileNameWithoutExtension(strFile2).ToLowerInvariant();
 
         // Check all the patterns
         for (int i = 0; i < pattern.Length; i++)
@@ -941,7 +941,7 @@ namespace SetupTv
                       if (defaultkey != null)
                       {
                         string friendlyName = (string)defaultkey.GetValue(null); // Gets the (Default) value from this key            
-                        if (!string.IsNullOrEmpty(friendlyName) && friendlyName.ToLower().IndexOf(aFilename.ToLower()) >= 0)
+                        if (!string.IsNullOrEmpty(friendlyName) && friendlyName.ToLowerInvariant().IndexOf(aFilename.ToLowerInvariant()) >= 0)
                         {
                           if (!resultPaths.Contains(friendlyName))
                             resultPaths.Add(friendlyName);

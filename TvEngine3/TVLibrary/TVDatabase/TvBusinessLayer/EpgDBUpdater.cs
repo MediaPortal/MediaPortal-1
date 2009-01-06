@@ -291,12 +291,12 @@ namespace TvDatabase
         int offset = -1;
         for (int i = 0; i < texts.Count; ++i)
         {
-          if (texts[0].Language.ToLower() == "all")
+          if (texts[0].Language.ToLowerInvariant() == "all")
           {
             offset = i;
             break;
           }
-          if (_epgLanguages.Length == 0 || _epgLanguages.ToLower().IndexOf(texts[i].Language.ToLower()) >= 0)
+          if (_epgLanguages.Length == 0 || _epgLanguages.ToLowerInvariant().IndexOf(texts[i].Language.ToLowerInvariant()) >= 0)
           {
             offset = i;
             break;

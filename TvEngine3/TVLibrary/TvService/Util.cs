@@ -321,8 +321,8 @@ namespace TvService
 														 "[-_ ](CD|cd|DISC|disc)[-_ ]{0,1}[0-9]{1,2}"};
 
         // Strip the extensions and make everything lowercase
-        string strFileName1 = System.IO.Path.GetFileNameWithoutExtension(strFile1).ToLower();
-        string strFileName2 = System.IO.Path.GetFileNameWithoutExtension(strFile2).ToLower();
+        string strFileName1 = System.IO.Path.GetFileNameWithoutExtension(strFile1).ToLowerInvariant();
+        string strFileName2 = System.IO.Path.GetFileNameWithoutExtension(strFile2).ToLowerInvariant();
 
         // Check all the patterns
         for (int i = 0; i < pattern.Length; i++)

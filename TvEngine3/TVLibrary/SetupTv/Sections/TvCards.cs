@@ -238,7 +238,7 @@ namespace SetupTv.Sections
           {
             item.SubItems.Add("No");
           }
-          if (cardType.ToLower().Contains("dvb") || cardType.ToLower().Contains("atsc"))//CAM limit doesn't apply to non-digital cards
+          if (cardType.ToUpperInvariant().Contains("DVB") || cardType.ToUpperInvariant().Contains("ATSC"))//CAM limit doesn't apply to non-digital cards
             item.SubItems.Add(card.DecryptLimit.ToString());
           else
             item.SubItems.Add("");
@@ -253,7 +253,7 @@ namespace SetupTv.Sections
           {
             item.SubItems.Add("Yes");
           }
-          if (cardType.ToLower().Contains("dvb") || cardType.ToLower().Contains("atsc"))//CAM limit doesn't apply to non-digital cards
+          if (cardType.ToUpperInvariant().Contains("DVB") || cardType.ToUpperInvariant().Contains("ATSC"))//CAM limit doesn't apply to non-digital cards
           {
             if (!card.GrabEPG)
             {
@@ -290,7 +290,7 @@ namespace SetupTv.Sections
       {
         if (capDevices[capIndex].Name != null)
         {
-          if (capDevices[capIndex].Name.ToLower() == "wintvciusbbda source")
+          if (capDevices[capIndex].Name.ToUpperInvariant() == "WINTVCIUSBBDA SOURCE")
           {
             usbWinTvDevice = capDevices[capIndex];
             break;
@@ -387,7 +387,7 @@ namespace SetupTv.Sections
       }
       if (mpListView1.SelectedItems.Count == 1)
       {
-        string cardType = mpListView1.SelectedItems[0].SubItems[2].Text.ToLower();
+        string cardType = mpListView1.SelectedItems[0].SubItems[2].Text.ToLowerInvariant();
         if (mpListView1.SelectedItems[0].Checked && (cardType.Contains("dvb") || cardType.Contains("atsc") || cardType.Contains("analog"))) // Only some cards can be edited
           buttonEdit.Enabled = true;
         else

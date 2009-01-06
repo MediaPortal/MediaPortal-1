@@ -45,7 +45,7 @@ namespace TvService
         opt = args[0];
       }
 
-      if (opt != null && opt.ToLower() == "/install")
+      if (opt != null && opt.ToUpperInvariant() == "/INSTALL")
       {
         TransactedInstaller ti = new TransactedInstaller();
         ProjectInstaller mi = new ProjectInstaller();
@@ -58,7 +58,7 @@ namespace TvService
         ti.Install(new Hashtable());
         return;
       }
-      if (opt != null && opt.ToLower() == "/uninstall")
+      if (opt != null && opt.ToUpperInvariant() == "/UNINSTALL")
       {
         TransactedInstaller ti = new TransactedInstaller();
         ProjectInstaller mi = new ProjectInstaller();
@@ -71,7 +71,7 @@ namespace TvService
         ti.Uninstall(null);
         return;
       }
-      if (opt != null && opt.ToLower() == "/debug")
+      if (opt != null && opt.ToUpperInvariant() == "/DEBUG")
       {
         Service1 s = new Service1();
         s.DoStart(null);

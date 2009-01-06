@@ -196,7 +196,7 @@ namespace SetupTv.Sections
         // convert to Dictionary
         foreach (Channel ch in lstTvGuideChannels)
         {
-          string tName = ch.DisplayName.Replace(" ", "").ToLower();
+          string tName = ch.DisplayName.Replace(" ", "").ToLowerInvariant();
           if (!guideChannels.ContainsKey(tName))
             guideChannels.Add(tName, ch);
 
@@ -289,7 +289,7 @@ namespace SetupTv.Sections
           // no externalid mapping available, try using the name
           if (matchingGuideChannel == null)
           {
-            string tName = ch.DisplayName.Replace(" ", "").ToLower();
+            string tName = ch.DisplayName.Replace(" ", "").ToLowerInvariant();
             if (guideChannels.ContainsKey(tName))
               matchingGuideChannel = (Channel)guideChannels[tName];
           }
@@ -328,7 +328,7 @@ namespace SetupTv.Sections
                 {
                   // Note: the partial match code doesn't work as described by the author
                   // so we'll use PrefixMatch method (created by a codeproject user)
-                  ICollection partialMatches = guideChannels.PrefixMatch(name.Replace(" ", "").ToLower());
+                  ICollection partialMatches = guideChannels.PrefixMatch(name.Replace(" ", "").ToLowerInvariant());
 
                   if (partialMatches != null && partialMatches.Count > 0)
                   {
@@ -367,7 +367,7 @@ namespace SetupTv.Sections
 
             if (!gotMatch && matchingGuideChannel != null)
             {
-              if (guideChannel.DisplayName.ToLower().Equals(matchingGuideChannel.DisplayName.ToLower()))
+              if (guideChannel.DisplayName.ToLowerInvariant().Equals(matchingGuideChannel.DisplayName.ToLowerInvariant()))
               {
                 // set the matchtype row color according to the type of match(already mapped,exact, partial, none)
                 if (alreadyMapped)

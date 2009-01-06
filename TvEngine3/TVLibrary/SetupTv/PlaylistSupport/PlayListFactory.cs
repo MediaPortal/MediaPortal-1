@@ -57,7 +57,7 @@ namespace MediaPortal.Playlists
     private static string GetLowerCaseExtension(string fileName)
     {
       string extension = Path.GetExtension(fileName);
-      return extension.ToLower();
+      return extension.ToLowerInvariant();
     }
 
     static public bool IsPlayList(string fileName)

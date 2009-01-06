@@ -109,7 +109,7 @@ namespace SetupTv.Sections
         string[] files = System.IO.Directory.GetFiles("TuningParameters");
         for (int i = 0; i < files.Length; ++i)
         {
-          string ext = System.IO.Path.GetExtension(files[i]).ToLower();
+          string ext = System.IO.Path.GetExtension(files[i]).ToLowerInvariant();
           if (ext != ".qam")
             continue;
           string fileName = System.IO.Path.GetFileNameWithoutExtension(files[i]);

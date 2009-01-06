@@ -126,8 +126,8 @@ namespace MediaPortal.Playlists
         return false;
 
       PlayListItem newItem = new PlayListItem(songName, fileName, duration);
-      if (fileName.ToLower().StartsWith("http:") || fileName.ToLower().StartsWith("https:") ||
-          fileName.ToLower().StartsWith("mms:") || fileName.ToLower().StartsWith("rtp:"))
+      if (fileName.ToLowerInvariant().StartsWith("http:") || fileName.ToLowerInvariant().StartsWith("https:") ||
+          fileName.ToLowerInvariant().StartsWith("mms:") || fileName.ToLowerInvariant().StartsWith("rtp:"))
       {
         newItem.Type = PlayListItem.PlayListItemType.AudioStream;
       }

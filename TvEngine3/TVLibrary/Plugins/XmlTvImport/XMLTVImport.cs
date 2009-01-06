@@ -888,7 +888,7 @@ namespace TvEngine
       // GMT +0100 or GMT -0500
       // or just +0300
       if (timeZone.Length == 0) return 0;
-      timeZone = timeZone.ToLower();
+      timeZone = timeZone.ToLowerInvariant();
 
       // just ignore GMT offsets, since we're calculating everything from GMT anyway
       if (timeZone.IndexOf("gmt") >= 0)

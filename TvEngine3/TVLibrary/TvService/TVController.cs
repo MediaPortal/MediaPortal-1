@@ -517,11 +517,11 @@ namespace TvService
                 try
                 {
                   FileInfo fInfo = new FileInfo(file);
-                  bool delFile = (fInfo.Extension.ToLower().IndexOf(".tsbuffer") == 0);
+                  bool delFile = (fInfo.Extension.ToUpperInvariant().IndexOf(".TSBUFFER") == 0);
 
                   if (!delFile)
                   {
-                    delFile = (fInfo.Extension.ToLower().IndexOf(".ts") == 0) && (fInfo.Name.ToLower().IndexOf("tsbuffer") > 0);
+                    delFile = (fInfo.Extension.ToUpperInvariant().IndexOf(".TS") == 0) && (fInfo.Name.ToUpperInvariant().IndexOf("TSBUFFER") > 0);
                   }
                   if (delFile)
                     File.Delete(fInfo.FullName);

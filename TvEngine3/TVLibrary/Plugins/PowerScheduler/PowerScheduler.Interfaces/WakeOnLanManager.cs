@@ -400,7 +400,7 @@ namespace TvEngine.PowerScheduler
     {
       for (int i = 0; i < args.Length; i++)
       {
-        switch (args[i].ToLower())
+        switch (args[i].ToLowerInvariant())
         {
           case "-gethwaddr":
             if (args.Length != 2)

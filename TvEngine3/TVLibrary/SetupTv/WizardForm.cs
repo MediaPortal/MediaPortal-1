@@ -317,9 +317,9 @@ namespace SetupTv
         //
         foreach (SectionHolder holder in wizardPages)
         {
-          string sectionName = holder.Section.Text.ToLower();
+          string sectionName = holder.Section.Text.ToLowerInvariant();
 
-          if (sectionName.Equals(section.ToLower()))
+          if (sectionName.Equals(section.ToLowerInvariant()))
           {
             //
             // Return property

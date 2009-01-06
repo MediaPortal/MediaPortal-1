@@ -197,7 +197,7 @@ namespace TvLibrary.Implementations
         {
 
 					string name = devices[i].Name ?? "unknown";
-          name = name.ToLower();
+          name = name.ToLowerInvariant();
           //Log.Log.WriteFile("Found card:{0}", name);
           //Console.ReadLine();
           IBaseFilter tmp;
@@ -242,7 +242,7 @@ namespace TvLibrary.Implementations
       for (int i = 0; i < devices.Length; i++)
       {
 				string name = devices[i].Name ?? "unknown";
-        name = name.ToLower();
+        name = name.ToLowerInvariant();
         Log.Log.WriteFile("Detected analog card:{0}", name);
         TvCardAnalog analogCard = new TvCardAnalog(devices[i]);
         _cards.Add(analogCard);
