@@ -77,5 +77,6 @@ private:
   HMODULE     m_dll;
 	int					m_waitTimeout;
 	int					m_ciSlotAvailable;
+  bool        m_verboseLogging;
   TS_CiCbFcnPointer m_technoTrendStructure;
 };
