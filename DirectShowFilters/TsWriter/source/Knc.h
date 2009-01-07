@@ -1,23 +1,23 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
+*	Copyright (C) 2006-2008 Team MediaPortal
+*	http://www.team-mediaportal.com
+*
+*  This Program is free software; you can redistribute it and/or modify
+*  it under the terms of the GNU General Public License as published by
+*  the Free Software Foundation; either version 2, or (at your option)
+*  any later version.
+*   
+*  This Program is distributed in the hope that it will be useful,
+*  but WITHOUT ANY WARRANTY; without even the implied warranty of
+*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+*  GNU General Public License for more details.
+*   
+*  You should have received a copy of the GNU General Public License
+*  along with GNU Make; see the file COPYING.  If not, write to
+*  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+*  http://www.gnu.org/copyleft/gpl.html
+*
+*/
 #pragma once
 #include "knc/KNCBDACI.h"
 
@@ -27,42 +27,49 @@ DEFINE_GUID(IID_IKNC, 0xc71e2efa, 0x2439, 0x4dbe, 0xa1, 0xf7, 0x93, 0x5a, 0xdc, 
 DECLARE_INTERFACE_(IKNC, IUnknown)
 {
   STDMETHOD(SetTunerFilter)(THIS_ IBaseFilter* tunerFilter)PURE;
-	STDMETHOD(IsKNC)(THIS_ BOOL* yesNo)PURE;
-	STDMETHOD(IsCamReady)(THIS_ BOOL* yesNo)PURE;
- 	STDMETHOD(IsCIAvailable)(THIS_ BOOL* yesNo)PURE;
-	STDMETHOD(SetDisEqc)(THIS_ int diseqcType, int hiband, int vertical)PURE;
-	STDMETHOD(DescrambleService)(THIS_ BYTE* PMT, int PMTLength,BOOL* succeeded)PURE;
-	STDMETHOD(DescrambleMultiple)(THIS_ WORD* pNrs, int NrOfOfPrograms,BOOL* succeeded)PURE;
+  STDMETHOD(IsKNC)(THIS_ BOOL* yesNo)PURE;
+  STDMETHOD(IsCamReady)(THIS_ BOOL* yesNo)PURE;
+  STDMETHOD(IsCIAvailable)(THIS_ BOOL* yesNo)PURE;
+  STDMETHOD(SetDisEqc)(THIS_ UCHAR* pBuffer, ULONG nLen, ULONG nRepeatCount)PURE;
+  STDMETHOD(DescrambleService)(THIS_ BYTE* PMT, int PMTLength,BOOL* succeeded)PURE;
+  STDMETHOD(DescrambleMultiple)(THIS_ WORD* pNrs, int NrOfOfPrograms,BOOL* succeeded)PURE;
 };
 
 class CKnc: public CUnknown, public IKNC
 {
 public:
   CKnc(LPUNKNOWN pUnk, HRESULT *phr);
-	~CKnc(void);
+  ~CKnc(void);
   DECLARE_IUNKNOWN
-  
+
   STDMETHODIMP SetTunerFilter(IBaseFilter* tunerFilter);
-	STDMETHODIMP IsKNC( BOOL* yesNo);
-	STDMETHODIMP IsCamReady( BOOL* yesNo);
+  STDMETHODIMP IsKNC( BOOL* yesNo);
+  STDMETHODIMP IsCamReady( BOOL* yesNo);
   STDMETHODIMP IsCIAvailable( BOOL* yesNo);
-	STDMETHODIMP SetDisEqc( int diseqcType, int hiband, int vertical);
-	STDMETHODIMP DescrambleService( BYTE* PMT, int PMTLength,BOOL* succeeded);
-	STDMETHODIMP DescrambleMultiple(WORD* pNrs, int NrOfOfPrograms,BOOL* succeeded);
+  STDMETHODIMP SetDisEqc( UCHAR* pBuffer, ULONG nLen, ULONG nRepeatCount);
+  STDMETHODIMP DescrambleService( BYTE* PMT, int PMTLength,BOOL* succeeded);
+  STDMETHODIMP DescrambleMultiple(WORD* pNrs, int NrOfOfPrograms,BOOL* succeeded);
+
+  void m_OnKncCiState(int State, LPCTSTR lpszMessage); /* callback Handler */
 
 private: 
-	TKNCBDA_CI_Enable			*KNCBDA_CI_Enable;
-	TKNCBDA_CI_Disable			*KNCBDA_CI_Disable;
-	TKNCBDA_CI_IsAvailable		*KNCBDA_CI_IsAvailable;
-	TKNCBDA_CI_IsReady			*KNCBDA_CI_IsReady;
-	TKNCBDA_CI_HW_Enable		*KNCBDA_CI_HW_Enable;
-	TKNCBDA_CI_GetName			*KNCBDA_CI_GetName;
-	TKNCBDA_CI_SendPMTCommand	*KNCBDA_CI_SendPMTCommand;
-	TKNCBDA_CI_EnterMenu		*KNCBDA_CI_EnterMenu;
-	TKNCBDA_CI_SelectMenu		*KNCBDA_CI_SelectMenu;
-	TKNCBDA_CI_CloseMenu		*KNCBDA_CI_CloseMenu;
-	TKNCBDA_CI_SendMenuAnswer	*KNCBDA_CI_SendMenuAnswer;
-  TKNCBDACICallback m_callback;
-  bool m_bIsKNC;
-  HINSTANCE m_hMod;
+  TKNCBDA_CI_Enable			    *KNCBDA_CI_Enable;
+  TKNCBDA_CI_Disable			  *KNCBDA_CI_Disable;
+  TKNCBDA_CI_IsAvailable	  *KNCBDA_CI_IsAvailable;
+  TKNCBDA_CI_IsReady			  *KNCBDA_CI_IsReady;
+  TKNCBDA_CI_HW_Enable		  *KNCBDA_CI_HW_Enable;
+  TKNCBDA_CI_GetName			  *KNCBDA_CI_GetName;
+  TKNCBDA_CI_SendPMTCommand	*KNCBDA_CI_SendPMTCommand;
+  TKNCBDA_CI_EnterMenu		  *KNCBDA_CI_EnterMenu;
+  TKNCBDA_CI_SelectMenu		  *KNCBDA_CI_SelectMenu;
+  TKNCBDA_CI_CloseMenu		  *KNCBDA_CI_CloseMenu;
+  TKNCBDA_CI_SendMenuAnswer	*KNCBDA_CI_SendMenuAnswer;
+  TKNCBDA_HW_Enable         *KNCBDA_HW_Enable;
+	TKNCBDA_HW_DiSEqCWrite    *KNCBDA_HW_DiSEqCWrite;
+  TKNCBDACICallback         m_callback;
+  STDMETHODIMP              FreeKNCLibrary();
+  bool                      m_bIsKNC;
+  HINSTANCE                 m_hMod;
+  bool                      m_verboseLogging;
+  int                       m_slot; /* default 0, slot nr. */
 };
