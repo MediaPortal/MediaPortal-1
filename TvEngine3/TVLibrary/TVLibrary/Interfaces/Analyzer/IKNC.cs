@@ -25,7 +25,7 @@ using DirectShowLib;
 namespace TvLibrary.Interfaces.Analyzer
 {
   /// <summary>
-  /// The TsWriter knc ci interface
+  /// The TsWriter KNC CI interface
   /// </summary>
   [ComVisible(true), ComImport,
 Guid("C71E2EFA-2439-4dbe-A1F7-935ADC37A4EC"),
@@ -63,12 +63,12 @@ Guid("C71E2EFA-2439-4dbe-A1F7-935ADC37A4EC"),
     /// <summary>
     /// Sets the diseqc data
     /// </summary>
-    /// <param name="diseqcType">DiseqC type</param>
-    /// <param name="hiband">hiband</param>
-    /// <param name="vertical">vertical</param>
+    /// <param name="pBuffer">The diseqc data</param>
+    /// <param name="nLen">The length of the data</param>
+    /// <param name="nRepeatCount">The repeat count of the command</param>
     /// <returns></returns>
     [PreserveSig]
-    int SetDisEqc(short diseqcType, short hiband, short vertical);
+    int SetDisEqc(IntPtr pBuffer, short nLen, short nRepeatCount);
     /// <summary>
     /// Descramble a service
     /// </summary>

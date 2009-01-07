@@ -35,6 +35,8 @@ namespace TvLibrary.Implementations.DVB
   {
     IKNC _KNCInterface;
     readonly IntPtr ptrPmt;
+    readonly IntPtr _ptrDataInstance;
+    DVBSChannel _previousChannel;
     /// <summary>
     /// Initializes a new instance of the <see cref="KNC"/> class.
     /// </summary>
@@ -44,7 +46,9 @@ namespace TvLibrary.Implementations.DVB
     {
       _KNCInterface = analyzerFilter as IKNC;
       if (_KNCInterface != null)
+      {
         _KNCInterface.SetTunerFilter(tunerFilter);
+      }
       ptrPmt = Marshal.AllocCoTaskMem(1024);
     }
 
@@ -74,7 +78,7 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Gets a value indicating whether this instance is techno trend.
+    /// Gets a value indicating whether this instance is a KNC card.
     /// </summary>
     /// <value>
     /// 	<c>true</c> if this instance is a KNC card; otherwise, <c>false</c>.
@@ -157,15 +161,30 @@ namespace TvLibrary.Implementations.DVB
     {
       if (_KNCInterface == null)
         return;
-
-      short isHiBand = (short)(BandTypeConverter.IsHiBand(channel, parameters) ? 1 : 0);
-
-      short isVertical = 0;
-      if (channel.Polarisation == Polarisation.LinearV)
-        isVertical = 1;
-      if (channel.Polarisation == Polarisation.CircularR)
-        isVertical = 1;
-      _KNCInterface.SetDisEqc((short)channel.DisEqc, isHiBand, isVertical);
+      if (_previousChannel != null)
+      {
+        if (_previousChannel.Frequency == channel.Frequency &&
+            _previousChannel.DisEqc == channel.DisEqc &&
+            _previousChannel.Polarisation == channel.Polarisation)
+        {
+          Log.Log.WriteFile("KNC: already tuned to diseqc:{0}, frequency:{1}, polarisation:{2}", channel.DisEqc, channel.Frequency, channel.Polarisation);
+          return;
+        }
+      }
+      _previousChannel = channel;
+      int antennaNr = BandTypeConverter.GetAntennaNr(channel);
+      Marshal.WriteByte(_ptrDataInstance, 0, 0xE0);//diseqc command 1. uFraming=0xe0
+      Marshal.WriteByte(_ptrDataInstance, 1, 0x10);//diseqc command 1. uAddress=0x10
+      Marshal.WriteByte(_ptrDataInstance, 2, 0x38);//diseqc command 1. uCommand=0x38
+      bool hiBand = BandTypeConverter.IsHiBand(channel, parameters);
+      Log.Log.WriteFile("KNC SendDiseqcCommand() diseqc:{0}, antenna:{1} frequency:{2}, polarisation:{3} hiband:{4}", channel.DisEqc, antennaNr, channel.Frequency, channel.Polarisation, hiBand);
+      bool isHorizontal = ((channel.Polarisation == Polarisation.LinearH) || (channel.Polarisation == Polarisation.CircularL));
+      byte cmd = 0xf0;
+      cmd |= (byte)(hiBand ? 1 : 0);
+      cmd |= (byte)((isHorizontal) ? 2 : 0);
+      cmd |= (byte)((antennaNr - 1) << 2);
+      Marshal.WriteByte(_ptrDataInstance, 3, cmd);
+      _KNCInterface.SetDisEqc(_ptrDataInstance, 4, 1);
     }
 
     /// <summary>
