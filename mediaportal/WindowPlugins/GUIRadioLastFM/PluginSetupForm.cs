@@ -47,10 +47,11 @@ namespace MediaPortal.GUI.RADIOLASTFM
         checkBoxUseTrayIcon.Checked = xmlreader.GetValueAsBool("audioscrobbler", "showtrayicon", true);
         checkBoxShowBallonTips.Checked = xmlreader.GetValueAsBool("audioscrobbler", "showballontips", true);
         checkBoxSubmitToProfile.Checked = xmlreader.GetValueAsBool("audioscrobbler", "submitradiotracks", true);
-        checkBoxDirectSkip.Checked = xmlreader.GetValueAsBool("audioscrobbler", "directskip", true);
-        numericUpDownListEntries.Value = xmlreader.GetValueAsInt("audioscrobbler", "listentrycount", 16);
+        checkBoxDirectSkip.Checked = xmlreader.GetValueAsBool("audioscrobbler", "directskip", false);
+        numericUpDownListEntries.Value = xmlreader.GetValueAsInt("audioscrobbler", "listentrycount", 24);
         comboBoxStreamPlayerType.SelectedIndex = xmlreader.GetValueAsInt("audioscrobbler", "streamplayertype", 0);
         checkBoxOneClickMode.Checked = xmlreader.GetValueAsBool("audioscrobbler", "oneclickstart", false);
+        checkBoxUseSMSStyle.Checked = xmlreader.GetValueAsBool("audioscrobbler", "usesmskeyboard", true);
       }
     }
 
@@ -65,6 +66,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         xmlwriter.SetValue("audioscrobbler", "listentrycount", numericUpDownListEntries.Value);
         xmlwriter.SetValue("audioscrobbler", "streamplayertype", 0);// comboBoxStreamPlayerType.SelectedIndex);
         xmlwriter.SetValueAsBool("audioscrobbler", "oneclickstart", checkBoxOneClickMode.Checked);
+        xmlwriter.SetValueAsBool("audioscrobbler", "usesmskeyboard", checkBoxUseSMSStyle.Checked);
       }
     }
 

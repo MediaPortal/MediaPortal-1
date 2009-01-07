@@ -182,6 +182,7 @@
     <Compile Include="Dialogs\GUIDialogYesNo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Dialogs\SMSStyledKeyboard.cs" />
     <Compile Include="Dialogs\VirtualKeyboard.cs">
       <SubType>Code</SubType>
     </Compile>
