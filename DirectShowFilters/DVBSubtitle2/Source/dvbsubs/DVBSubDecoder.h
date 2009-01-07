@@ -66,65 +66,49 @@ class CDVBSubDecoder
 {
 public:
 
-	CDVBSubDecoder();
-	~CDVBSubDecoder();
+  CDVBSubDecoder();
+  ~CDVBSubDecoder();
 
-	int ProcessPES( const unsigned char* data, int length, int pid );
-	
-	BITMAP* GetSubtitle();
+  int ProcessPES( const unsigned char* data, int length, int pid );
+  BITMAP* GetSubtitle();
+  long GetSubtitleId();
 
-	long GetSubtitleId();
-
-	CSubtitle* GetSubtitle( unsigned int place );
-	CSubtitle* GetLatestSubtitle();
+  CSubtitle* GetSubtitle( unsigned int place );
+  CSubtitle* GetLatestSubtitle();
   int GetSubtitleCount();
-	void ReleaseOldestSubtitle();
+  void ReleaseOldestSubtitle();
 
-	void Reset();
-
-	void SetObserver( MSubdecoderObserver* pObserver );
-
-	void RemoveObserver( MSubdecoderObserver* pObserver );
+  void Reset();
+  void SetObserver( MSubdecoderObserver* pObserver );
+  void RemoveObserver( MSubdecoderObserver* pObserver );
 
 private:
 
-	void Init_data(); 
+  void Init_data(); 
+  void Create_region( int region_id, int region_width, int region_height, int region_depth );
+  void Do_plot( int r,int x, int y, unsigned char pixel );
+  void Plot( int r, int run_length, unsigned char pixel );
+  unsigned char Next_nibble();
+  void Set_clut( int CLUT_id,int CLUT_entry_id,int Y, int Cr, int Cb, int T_value );
+  void Decode_4bit_pixel_code_string( int r, int object_id, int ofs, int n );
+  void Process_pixel_data_sub_block( int r, int o, int ofs, int n );
+  void Process_page_composition_segment();
+  void Process_region_composition_segment();
+  void Process_CLUT_definition_segment();
+  void Process_object_data_segment();
+  void Process_display_definition_segment();
+  void Compose_subtitle();
+  char* Pts2hmsu( uint64_t pts, char sep );
+  uint64_t Get_pes_pts ( unsigned char* buf );
 
-	void Create_region( int region_id, int region_width, int region_height, int region_depth );
-	
-	void Do_plot( int r,int x, int y, unsigned char pixel );
-	
-	void Plot( int r, int run_length, unsigned char pixel );
-	
-	unsigned char Next_nibble();
-	
-	void Set_clut( int CLUT_id,int CLUT_entry_id,int Y, int Cr, int Cb, int T_value );
-	
-	void Decode_4bit_pixel_code_string( int r, int object_id, int ofs, int n );
-	
-	void Process_pixel_data_sub_block( int r, int o, int ofs, int n );
-	
-	void Process_page_composition_segment();
-	
-	void Process_region_composition_segment();
-	
-	void Process_CLUT_definition_segment();
-	
-	void Process_object_data_segment();
-	
-	void Compose_subtitle();
-	
-	char* Pts2hmsu( uint64_t pts, char sep );
-	
-	uint64_t Get_pes_pts ( unsigned char* buf );
+  // Member data
+  unsigned char m_Buffer[1920*1080]; // should be dynamically allocated
 
-	// Member data
-	unsigned char m_Buffer[720*576];
+  int m_ScreenWidth;
+  int m_ScreenHeight;
 
-	CSubtitle*	m_CurrentSubtitle;
-
-	MSubdecoderObserver* m_pObserver;
-
-	std::vector<CSubtitle*> m_RenderedSubtitles;
+  CSubtitle*	m_CurrentSubtitle;
+  MSubdecoderObserver* m_pObserver;
+  std::vector<CSubtitle*> m_RenderedSubtitles;
 };
 

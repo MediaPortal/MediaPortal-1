@@ -34,18 +34,20 @@ static int count = 0;
 //
 // Constructor
 //
-CSubtitle::CSubtitle( int width, int height )
+CSubtitle::CSubtitle( int screenWidth, int screenHeight )
 {
-	m_Bitmap.bmType			  = 0;
-	m_Bitmap.bmBitsPixel	= 32;
-	m_Bitmap.bmWidth		  = width;
-	m_Bitmap.bmHeight		  = height;
-	m_Bitmap.bmPlanes		  = 1;
-	m_Bitmap.bmWidthBytes	= width * 4;
+  m_Bitmap.bmType			  = 0;
+  m_Bitmap.bmBitsPixel	= 32;
+  m_Bitmap.bmWidth		  = screenWidth;
+  m_Bitmap.bmHeight		  = screenHeight;
+  m_Bitmap.bmPlanes		  = 1;
+  m_Bitmap.bmWidthBytes	= screenWidth * 4; // 32 bits per pixel
+
+  m_ScreenWidth = screenWidth;
+  m_ScreenHeight = screenHeight;
 
   count++;
-
-  //LogDebug("CSubtitle:: CREATE count %d", count);
+  //LogDebug("CSubtitle:: CREATE count %d width %d height %d", count, width, height);
 
   m_Data = new unsigned char[ m_Bitmap.bmHeight * m_Bitmap.bmWidth *4 ];
   ZeroMemory( m_Data, m_Bitmap.bmHeight * m_Bitmap.bmWidth * 4 );
@@ -228,4 +230,22 @@ void CSubtitle::SetTimeout( uint64_t timeout )
 int CSubtitle::FirstScanline()
 {
   return m_FirstScanline;
+}
+
+
+//
+// ScreenHeight
+//
+int CSubtitle::ScreenHeight()
+{
+  return m_ScreenHeight;
+}
+
+
+//
+// ScreenWidth
+//
+int CSubtitle::ScreenWidth()
+{
+  return m_ScreenWidth;
 }

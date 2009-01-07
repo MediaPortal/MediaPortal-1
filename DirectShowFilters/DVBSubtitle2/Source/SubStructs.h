@@ -12,6 +12,9 @@ struct SUBTITLE
   WORD        bmBitsPixel;
   LPVOID      bmBits;
 
+  LONG        screenWidth;
+  LONG        screenHeight;
+
   unsigned    __int64 timestamp;
   unsigned    __int64 timeOut;
   int         firstScanLine;

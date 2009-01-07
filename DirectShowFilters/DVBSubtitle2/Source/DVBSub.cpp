@@ -50,7 +50,7 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
   GetLogFile(filename);
   ::DeleteFile(filename);
 
-  LogDebug("-------------- MediaPortal DVBSub2.ax version 1.2.3 ----------------");
+  LogDebug("-------------- MediaPortal DVBSub2.ax version 1.3.0 ----------------");
   
   // Create subtitle decoder
 	m_pSubDecoder = new CDVBSubDecoder();
@@ -441,20 +441,22 @@ STDMETHODIMP CDVBSub::GetSubtitle( int place, SUBTITLE* subtitle )
 
   if( pCSubtitle )
   {
-	  BITMAP* bitmap = pCSubtitle->GetBitmap();
-	  LogDebug("Bitmap: bpp=%i, planes=%i, dim=%i x %i",bitmap->bmBitsPixel,bitmap->bmPlanes, bitmap->bmWidth, bitmap->bmHeight);
-	  subtitle->bmBits = bitmap->bmBits;
-	  subtitle->bmBitsPixel = bitmap->bmBitsPixel;
+    BITMAP* bitmap = pCSubtitle->GetBitmap();
+    LogDebug("Bitmap: bpp=%i, planes=%i, dim=%i x %i",bitmap->bmBitsPixel,bitmap->bmPlanes, bitmap->bmWidth, bitmap->bmHeight);
+    subtitle->bmBits = bitmap->bmBits;
+    subtitle->bmBitsPixel = bitmap->bmBitsPixel;
     subtitle->bmHeight = bitmap->bmHeight;
-	  subtitle->bmPlanes = bitmap->bmPlanes;
-	  subtitle->bmType = bitmap->bmType;
-	  subtitle->bmWidth = bitmap->bmWidth;
-	  subtitle->bmWidthBytes = bitmap->bmWidthBytes;
+    subtitle->bmPlanes = bitmap->bmPlanes;
+    subtitle->bmType = bitmap->bmType;
+    subtitle->bmWidth = bitmap->bmWidth;
+    subtitle->bmWidthBytes = bitmap->bmWidthBytes;
+    subtitle->screenHeight = pCSubtitle->ScreenHeight();
+    subtitle->screenWidth = pCSubtitle->ScreenWidth();
     subtitle->timestamp = pCSubtitle->Timestamp();
     subtitle->firstScanLine = pCSubtitle->FirstScanline();
     subtitle->timeOut = pCSubtitle->Timeout();
-	  LogDebug("TIMEOUT  : %i", subtitle->timeOut);
-	  LogDebug("TIMESTAMP: %i", subtitle->timestamp);
+    LogDebug("TIMEOUT  : %i", subtitle->timeOut);
+    LogDebug("TIMESTAMP: %i", subtitle->timestamp);
     return S_OK;
   }
   else

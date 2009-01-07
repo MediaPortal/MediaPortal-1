@@ -32,7 +32,7 @@ class CSubtitle
 {
 public:
 
-  CSubtitle( int width, int height );
+  CSubtitle( int screenWidth, int screenHeight );
 	
   ~CSubtitle();
   BITMAP m_Bitmap;
@@ -42,6 +42,8 @@ public:
 	
   int Width();
   int Height();
+  int ScreenWidth();
+  int ScreenHeight();
   uint64_t PTS();
   void SetPTS( uint64_t PTS );
   uint64_t Timestamp();
@@ -57,5 +59,7 @@ private:
   uint64_t m_PTS;
   uint64_t m_timestamp;
   uint64_t m_timeout;
+  int m_ScreenWidth;
+  int m_ScreenHeight;
 };
 #endif

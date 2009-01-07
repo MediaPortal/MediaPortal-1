@@ -28,7 +28,10 @@ namespace MediaPortal.Player.Subtitles
     public UInt16 bmPlanes;
     public UInt16 bmBitsPixel;
     public IntPtr bmBits;
-    //end of bitmap fields
+
+    // start of screen size definition
+    public Int32 screenWidth;
+    public Int32 screenHeight;
 
     // subtitle timestmap
     public UInt64 timeStamp;
@@ -99,6 +102,9 @@ namespace MediaPortal.Player.Subtitles
       public Bitmap subBitmap;
       public uint width;
       public uint height;
+      public uint screenWidth;
+      public uint screenHeight;
+
       public double presentTime;  // NOTE: in seconds
       public double timeOut;      // NOTE: in seconds
       public int firstScanLine;
@@ -334,7 +340,7 @@ namespace MediaPortal.Player.Subtitles
 
     /// <summary>
     /// Callback from subtitle filter, alerting us that a new subtitle is available
-    /// It receives the neew subtitle as the argument sub, which data is only valid 
+    /// It receives the new subtitle as the argument sub, which data is only valid 
     /// for the duration of OnSubtitle.
     /// </summary>
     /// <returns></returns>
@@ -355,6 +361,8 @@ namespace MediaPortal.Player.Subtitles
           subtitle.presentTime = ((double)sub.timeStamp / 1000.0f) + startPos; // compute present time in SECONDS
           subtitle.height = (uint)sub.bmHeight;
           subtitle.width = (uint)sub.bmWidth;
+          subtitle.screenHeight = (uint)sub.screenHeight;
+          subtitle.screenWidth = (uint)sub.screenWidth;
           subtitle.firstScanLine = sub.firstScanLine;
           subtitle.id = subCounter++;
           //Log.Debug("Received Subtitle : " + subtitle.ToString());
@@ -695,7 +703,7 @@ namespace MediaPortal.Player.Subtitles
 
         if (GUIGraphicsContext.IsFullScreenVideo)
         {
-          rationH = GUIGraphicsContext.Height / 576.0f;
+          rationH = GUIGraphicsContext.Height / (float)currentSubtitle.screenHeight;
           rationW = rationH;
           
           // Get the location to render the subtitle to
@@ -705,7 +713,7 @@ namespace MediaPortal.Player.Subtitles
         }
         else // Video overlay
         {
-          rationH = GUIGraphicsContext.VideoWindow.Height / 576.0f;
+          rationH = GUIGraphicsContext.VideoWindow.Height / (float)currentSubtitle.screenHeight;
           rationW = rationH;
 
           wx = GUIGraphicsContext.VideoWindow.Right - ( GUIGraphicsContext.VideoWindow.Width / 2 ) - 

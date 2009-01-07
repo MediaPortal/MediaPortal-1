@@ -52,7 +52,7 @@ uint64_t PTS;
 uint64_t first_PTS;
 unsigned int curr_obj;
 unsigned int curr_reg[64];
-uint8_t buf[720*576];  
+uint8_t buf[1920*1080];  
 int i=0;
 int nibble_flag=0;
 int in_scanline=0;
@@ -79,8 +79,10 @@ CDVBSubDecoder::~CDVBSubDecoder()
 }
 
 CDVBSubDecoder::CDVBSubDecoder() :
-	m_CurrentSubtitle( NULL ),	
-	m_pObserver( NULL )	
+  m_CurrentSubtitle( NULL ),	
+  m_pObserver( NULL ),
+  m_ScreenWidth( 720 ), // use PAL resolution as default as PAL streams don't
+  m_ScreenHeight( 576 ) // provide the screen specification information
 {
 }
 
@@ -581,6 +583,26 @@ void CDVBSubDecoder::Process_object_data_segment()
 	}
 }
 
+void CDVBSubDecoder::Process_display_definition_segment()
+{
+  int stuffing = (buf[i]<<8)|buf[i+1]; i+=2; // ???
+  int segment_length = (buf[i]<<8)|buf[i+1]; i+=2;
+
+  bool windowed = buf[i]&0x10; i+=1; // to be tested with some real .ts file
+
+  m_ScreenWidth = ((buf[i]<<8)|buf[i+1])+1; i+=2;
+  m_ScreenHeight = ((buf[i]<<8)|buf[i+1])+1; i+=2;
+
+  //if(windowed)
+  {
+    /*  TODO add parsing code (need some test .ts first)
+    x     = 2 bytes
+    max_x = 2 bytes
+    y     = 2 bytes
+    max_y = 2 bytes*/
+  }
+}
+
 void CDVBSubDecoder::Compose_subtitle() 
 {
 	int r;
@@ -598,7 +620,7 @@ void CDVBSubDecoder::Compose_subtitle()
 			if (page.regions[r].is_visible) 
 			{
 				count++;
-				out_y=page.regions[r].y*720;
+				out_y=page.regions[r].y*m_ScreenWidth;
 				for ( y = 0 ; y < regions[r].height ; y++ ) 
 				{
 					for ( x = 0 ; x < regions[r].width ; x++ ) 
@@ -607,7 +629,7 @@ void CDVBSubDecoder::Compose_subtitle()
 						m_Buffer[out_y+x+page.regions[r].x]=v+16*regions[r].CLUT_id;
 					}
 				
-				out_y+=720;
+				out_y+=m_ScreenWidth;
 				}
 			}
 		}
@@ -626,7 +648,8 @@ int CDVBSubDecoder::ProcessPES( const unsigned char* data, int length, int pid )
   if( m_CurrentSubtitle )
 		delete m_CurrentSubtitle;
 
-	m_CurrentSubtitle = new CSubtitle( 720, 576 );
+	m_CurrentSubtitle = new CSubtitle( m_ScreenWidth, m_ScreenHeight );
+  
 	memset( m_Buffer, 0x00, sizeof( m_Buffer ) );
 	
 	int n;
@@ -724,8 +747,7 @@ int CDVBSubDecoder::ProcessPES( const unsigned char* data, int length, int pid )
 					Process_object_data_segment();
 					break;
 				case 0x14: 
-					// New Zealand DVB stream contains these. 
-          // Ignore and continue processing the rest of the PES packet.
+					Process_display_definition_segment();
 					break;
 				case 0x80: 
 					// IMPLEMENTATION IS OPTIONAL - dvbsubs ignores it.
@@ -908,7 +930,10 @@ void CDVBSubDecoder::Reset()
 	curr_obj = 0;
 	
 	ZeroMemory( curr_reg, 64 );
-	ZeroMemory( buf, 720*576 );  
+	ZeroMemory( buf, 1920*1080 );
+
+	m_ScreenWidth = 720;
+	m_ScreenHeight = 576;
 	
 	i = 0;
 	
