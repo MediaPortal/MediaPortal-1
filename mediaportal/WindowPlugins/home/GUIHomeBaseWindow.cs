@@ -40,11 +40,12 @@ using MediaPortal.Configuration;
 namespace MediaPortal.GUI.Home
 {
   /// <summary>
-  /// The implementation of the GUIHome Window base class.  (This window is coupled to the home.xml skin file).
+  /// The implementation of the GUIHome Window base class.  (This window is coupled to the myHome.xml skin file).
   /// </summary>
   public abstract class GUIHomeBaseWindow : GUIWindow
   {
     #region Properties (Skin)
+
     [SkinControlAttribute(200)]
     protected GUILabelControl lblDate = null;
     [SkinControlAttribute(201)]
@@ -57,6 +58,7 @@ namespace MediaPortal.GUI.Home
     #endregion
 
     #region Variables
+
     protected bool _useMyPlugins = true;
     protected bool _fixedScroll = true;  // fix scrollbar in the middle of menu
     protected bool _enableAnimation = true;
@@ -66,9 +68,11 @@ namespace MediaPortal.GUI.Home
     protected int _preNotifyConfig = 60;
     protected GUIOverlayWindow _overlayWin = null;
     static bool _addedGlobalMessageHandler = false;
+
     #endregion
 
     #region Constructor
+
     public GUIHomeBaseWindow()
     {
       LoadSettings();
@@ -79,9 +83,11 @@ namespace MediaPortal.GUI.Home
         GUIWindowManager.Receivers += new SendMessageHandler(OnGlobalMessage);
       }
     }
+
     #endregion
 
     #region Serialisation
+
     protected virtual void LoadSettings()
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
@@ -169,6 +175,7 @@ namespace MediaPortal.GUI.Home
     #endregion
 
     #region Methods
+
     public string GetFocusTextureFileName(string FileName)
     {
       if (!FileName.ToLower().Contains("button_")) FileName = "button_" + FileName;
@@ -183,8 +190,8 @@ namespace MediaPortal.GUI.Home
 
     public string GetHoverFileName(string FileName)
     {
-      string name = System.IO.Path.GetFileName(FileName);
-      string dir = System.IO.Path.GetDirectoryName(FileName);
+      string name = Path.GetFileName(FileName);
+      string dir = Path.GetDirectoryName(FileName);
       if (dir.Length > 0) dir = dir + "\\";
       if (!name.ToLower().Contains("hover_")) FileName = dir + "hover_" + name;
       return GetMediaFileName(FileName);
@@ -192,8 +199,8 @@ namespace MediaPortal.GUI.Home
 
     public string GetNonFocusHoverFileName(string FileName)
     {
-      string name = System.IO.Path.GetFileName(FileName);
-      string dir = System.IO.Path.GetDirectoryName(FileName);
+      string name = Path.GetFileName(FileName);
+      string dir = Path.GetDirectoryName(FileName);
       if (dir.Length > 0) dir = dir + "\\";
       if (!name.ToLower().Contains("nonfocushover_")) FileName = dir + "nonfocushover_" + name;
       return GetMediaFileName(FileName);
@@ -201,55 +208,54 @@ namespace MediaPortal.GUI.Home
 
     protected string GetMediaFileName(string name)
     {
-      if (System.IO.Path.GetPathRoot(name) == "")
+      if (Path.GetPathRoot(name) == "")
       {
         name = String.Format(@"{0}\media\{1}", GUIGraphicsContext.Skin, name);
       }
-      if ((System.IO.Path.HasExtension(name)) && (System.IO.File.Exists(name))) return System.IO.Path.GetFileName(name);
+      if ((Path.HasExtension(name)) && (File.Exists(name))) return Path.GetFileName(name);
 
+      string filename = Path.ChangeExtension(name, ".png");
+      if (File.Exists(filename)) return Path.GetFileName(filename);
 
+      filename = Path.ChangeExtension(name, ".gif");
+      if (File.Exists(filename)) return Path.GetFileName(filename);
 
-      string filename = System.IO.Path.ChangeExtension(name, ".png");
-      if (System.IO.File.Exists(filename)) return System.IO.Path.GetFileName(filename);
+      filename = Path.ChangeExtension(name, ".bmp");
+      if (File.Exists(filename)) return Path.GetFileName(filename);
 
-      filename = System.IO.Path.ChangeExtension(name, ".gif");
-      if (System.IO.File.Exists(filename)) return System.IO.Path.GetFileName(filename);
-
-      filename = System.IO.Path.ChangeExtension(name, ".bmp");
-      if (System.IO.File.Exists(filename)) return System.IO.Path.GetFileName(filename);
-
-      filename = System.IO.Path.ChangeExtension(name, ".xml");
-      if (System.IO.File.Exists(filename)) return "media\\" + System.IO.Path.GetFileName(filename);
+      filename = Path.ChangeExtension(name, ".xml");
+      if (File.Exists(filename)) return "media\\" + Path.GetFileName(filename);
 
       return string.Empty;
     }
+
     #endregion
 
     #region OnGlobalMessage routines
 
     private void OnGlobalMessage(GUIMessage message)
     {
-      if (message.Message == GUIMessage.MessageType.GUI_MSG_NOTIFY_TV_PROGRAM)
-      {
-        //if (GUIGraphicsContext.IsFullScreenVideo) return;
-        GUIDialogNotify dialogNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-        TVProgram notify = message.Object as TVProgram;
-        if (notify == null) return;
-        int minUntilStart = _preNotifyConfig / 60;
-        if (minUntilStart > 1)
-          dialogNotify.SetHeading(String.Format(GUILocalizeStrings.Get(1018), minUntilStart));
-        else
-          dialogNotify.SetHeading(1019); // Program is about to begin
-        dialogNotify.SetText(String.Format("{0}\n{1}", notify.Title, notify.Description));
-        string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, notify.Channel);
-        dialogNotify.SetImage(strLogo);
-        dialogNotify.TimeOut = _notifyTVTimeout;
-        if (_playNotifyBeep)
-          MediaPortal.Util.Utils.PlaySound("notify.wav", false, true);
-        dialogNotify.DoModal(GUIWindowManager.ActiveWindow);
-      }
       switch (message.Message)
       {
+        case GUIMessage.MessageType.GUI_MSG_NOTIFY_TV_PROGRAM:
+          //if (GUIGraphicsContext.IsFullScreenVideo) return;
+          GUIDialogNotify dialogNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+          TVProgram notify = message.Object as TVProgram;
+          if (notify == null) return;
+          int minUntilStart = _preNotifyConfig / 60;
+          if (minUntilStart > 1)
+            dialogNotify.SetHeading(String.Format(GUILocalizeStrings.Get(1018), minUntilStart));
+          else
+            dialogNotify.SetHeading(1019); // Program is about to begin
+          dialogNotify.SetText(String.Format("{0}\n{1}", notify.Title, notify.Description));
+          string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, notify.Channel);
+          dialogNotify.SetImage(strLogo);
+          dialogNotify.TimeOut = _notifyTVTimeout;
+          if (_playNotifyBeep)
+            MediaPortal.Util.Utils.PlaySound("notify.wav", false, true);
+          dialogNotify.DoModal(GUIWindowManager.ActiveWindow);
+          break;
+
         case GUIMessage.MessageType.GUI_MSG_NOTIFY:
           ShowNotify(message.Label, message.Label2, message.Label3);
           break;
@@ -362,6 +368,5 @@ namespace MediaPortal.GUI.Home
     }
 
     #endregion
-
   }
 }

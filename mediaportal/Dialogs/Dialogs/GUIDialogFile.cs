@@ -79,7 +79,6 @@ namespace MediaPortal.Dialogs
     bool m_bBusy = false;
     bool m_bDialogActive = false;
     bool m_bReload = false;
-    PictureDatabase dbPicture = null;
     MusicDatabase dbMusic = null;
 
     public GUIDialogFile()
@@ -816,11 +815,7 @@ namespace MediaPortal.Dialogs
       if (MediaPortal.Util.Utils.IsPicture(item.Path))
       {
         //Remove from picture database
-        if (dbPicture == null) dbPicture = new PictureDatabase();
-        if (dbPicture != null)
-        {
-          dbPicture.DeletePicture(item.Path);
-        }
+          PictureDatabase.DeletePicture(item.Path);
       }
       else if (MediaPortal.Util.Utils.IsVideo(item.Path))
       {

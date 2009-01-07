@@ -131,8 +131,7 @@ namespace MediaPortal.Dialogs
     {
       if (m_pTexture != null) m_pTexture.Dispose();
 
-      PictureDatabase dbs = new PictureDatabase();
-      int iRotate = dbs.GetRotation(FileName);
+      int iRotate = PictureDatabase.GetRotation(FileName);
 
       m_pTexture = Util.Picture.Load(FileName, iRotate, 512, 512, true, false, out m_iTextureWidth, out m_iTextureHeight);
 

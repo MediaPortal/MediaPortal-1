@@ -71,7 +71,7 @@ class SlideCache
     set { _slides[(int)RelativeIndex.Next] = value; }
   }
 
-  public SlidePicture GetCurrentSlide(IPictureDatabase aPictureDb, string slideFilePath)
+  public SlidePicture GetCurrentSlide(string slideFilePath)
   {
     // wait for any (needed) prefetching to complete
     lock (_prefetchingThreadLock)
@@ -107,13 +107,13 @@ class SlideCache
       else
       {
         // slide is not in cache, so get it now
-        CurrentSlide = new SlidePicture(aPictureDb, slideFilePath, false);
+        CurrentSlide = new SlidePicture(slideFilePath, false);
         return CurrentSlide;
       }
     }
   }
 
-  public void PrefetchNextSlide(IPictureDatabase aPictureDb, string prevPath, string currPath, string nextPath)
+  public void PrefetchNextSlide(string prevPath, string currPath, string nextPath)
   {
     lock (_prefetchingThreadLock)
     {
@@ -152,7 +152,7 @@ class SlideCache
 
     lock (_prefetchingThreadLock)
     {
-      _prefetchingThread = new Thread(new ParameterizedThreadStart(LoadNextSlideThread));
+      _prefetchingThread = new Thread(LoadNextSlideThread);
       _prefetchingThread.IsBackground = true;
       _prefetchingThread.Name = "PicPrefetch";
       //string cacheString = String.Format("cache:{0}|{1}|{2} ",
@@ -160,7 +160,7 @@ class SlideCache
       //  _slides[1] != null ? "1" : "0",
       //  _slides[2] != null ? "1" : "0");
       //Trace.WriteLine(cacheString + String.Format("prefetching {0} slide {1}", _neededSlideRelativeIndex.ToString("G"), System.IO.Path.GetFileNameWithoutExtension(_neededSlideFilePath)));
-      _prefetchingThread.Start(aPictureDb);
+      _prefetchingThread.Start();
     }
   }
 
@@ -168,16 +168,15 @@ class SlideCache
   /// Method to do the work of actually loading the image from file. This method
   /// should only be used by the prefetching thread.
   /// </summary>
-  public void LoadNextSlideThread(object aPictureDbObject)
+  public void LoadNextSlideThread()
   {
     try
     {
-      IPictureDatabase aPictureDb = (IPictureDatabase)aPictureDbObject;
       Debug.Assert(Thread.CurrentThread == _prefetchingThread);
 
       lock (_slidesLock)
       {
-        NeededSlide = new SlidePicture(aPictureDb, _neededSlideFilePath, false);
+        NeededSlide = new SlidePicture(_neededSlideFilePath, false);
       }
 
       lock (_prefetchingThreadLock)

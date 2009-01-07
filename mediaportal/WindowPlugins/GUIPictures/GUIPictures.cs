@@ -72,7 +72,7 @@ namespace MediaPortal.GUI.Pictures
 
         work = new Work(new DoWorkHandler(this.PerformRequest));
         work.ThreadPriority = ThreadPriority.BelowNormal;
-        GlobalServiceProvider.Get<IThreadPool>().Add(work, QueuePriority.Normal);
+        GlobalServiceProvider.Get<IThreadPool>().Add(work, QueuePriority.Low);
       }
 
       /// <summary>
@@ -90,67 +90,75 @@ namespace MediaPortal.GUI.Pictures
 
         if (!vDir.IsRemote(path))
         {
-          using (PictureDatabase dbs = new PictureDatabase())
-          {
-            List<GUIListItem> itemlist = vDir.GetDirectoryUnProtectedExt(path, true);
+          List<GUIListItem> itemlist = vDir.GetDirectoryUnProtectedExt(path, true);
 
-            foreach (GUIListItem item in itemlist)
+          foreach (GUIListItem item in itemlist)
+          {
+            if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
+              return;
+            if (String.IsNullOrEmpty(item.Path))
+              return;
+            if (path.Length >= item.Path.Length)
             {
-              if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
-                return;
-              if (CheckPathForHistory(item.Path, false))
+              Log.Warn("GUIPictures: Omitting outside path {0} from check share {1}", item.Path, path);
+              continue;
+            }
+            Thread.Sleep(100);
+
+            if (CheckPathForHistory(item.Path, false))
+            {
+              if (!item.IsFolder)
               {
-                if (!item.IsFolder)
+                int iRotate = PictureDatabase.GetRotation(item.Path);
+                Thread.Sleep(30);
+
+                if (!item.IsRemote && Util.Utils.IsPicture(item.Path))
                 {
-                  int iRotate = dbs.GetRotation(item.Path);
-                  if (!item.IsRemote && Util.Utils.IsPicture(item.Path))
+                  string thumbnailImage = String.Format(@"{0}\{1}.jpg", Thumbs.Pictures, Util.Utils.EncryptLine(item.Path));
+                  if (recreateThumbs || !File.Exists(thumbnailImage))
                   {
-                    string thumbnailImage = String.Format(@"{0}\{1}.jpg", Thumbs.Pictures, Util.Utils.EncryptLine(item.Path));
+                    Thread.Sleep(10);
+                    if (Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, iRotate, Thumbs.SpeedThumbsSmall))
+                    {
+                      Thread.Sleep(30);
+                      Log.Debug("GUIPictures: Creation of missing thumb successful for {0}", item.Path);
+                    }
+                  }
+
+                  if (autocreateLargeThumbs)
+                  {
+                    thumbnailImage = String.Format(@"{0}\{1}L.jpg", Thumbs.Pictures, Util.Utils.EncryptLine(item.Path));
                     if (recreateThumbs || !File.Exists(thumbnailImage))
                     {
-                      Thread.Sleep(0);
-                      if (Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, iRotate, Thumbs.SpeedThumbsSmall))
+                      Thread.Sleep(10);
+                      if (Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, iRotate, Thumbs.SpeedThumbsLarge))
                       {
-                        Thread.Sleep(10);
-                        Log.Debug("GUIPictures: Creation of missing thumb successful for {0}", item.Path);
+                        Thread.Sleep(30);
+                        //Log.Debug("GUIPictures: Creation of missing large thumb successful for {0}", item.Path);
                       }
                     }
-
-                    if (autocreateLargeThumbs)
-                    {
-                      thumbnailImage = String.Format(@"{0}\{1}L.jpg", Thumbs.Pictures, Util.Utils.EncryptLine(item.Path));
-                      if (recreateThumbs || !File.Exists(thumbnailImage))
-                      {
-                        Thread.Sleep(0);
-                        if (Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, iRotate, Thumbs.SpeedThumbsLarge))
-                        {
-                          Thread.Sleep(10);
-                          Log.Debug("GUIPictures: Creation of missing large thumb successful for {0}", item.Path);
-                        }
-                      }
-                    }
-
                   }
+
                 }
-                else
+              }
+              else
+              {
+                int pin;
+                if ((item.Label != "..") && (!vDir.IsProtectedShare(item.Path, out pin)))
                 {
-                  int pin;
-                  if ((item.Label != "..") && (!vDir.IsProtectedShare(item.Path, out pin)))
+                  string thumbnailImage = item.Path + @"\folder.jpg";
+                  if (recreateThumbs || (!item.IsRemote && !File.Exists(thumbnailImage)))
                   {
-                    string thumbnailImage = item.Path + @"\folder.jpg";
-                    if (recreateThumbs || (!item.IsRemote && !File.Exists(thumbnailImage)))
+                    Thread.Sleep(10);
+                    if (CreateFolderThumb(item.Path, recreateThumbs))
                     {
-                      Thread.Sleep(0);
-                      if (CreateFolderThumb(item.Path, recreateThumbs))
-                      {
-                        Thread.Sleep(10);
-                        Log.Debug("GUIPictures: Creation of missing folder preview thumb for {0}", item.Path);
-                      }
+                      Thread.Sleep(30);
+                      Log.Debug("GUIPictures: Creation of missing folder preview thumb for {0}", item.Path);
                     }
                   }
                 }
-              } //foreach (GUIListItem item in itemlist)
-            }
+              }
+            } //foreach (GUIListItem item in itemlist)
           }
         }
         benchclock.Stop();
@@ -249,12 +257,18 @@ namespace MediaPortal.GUI.Pictures
       Date = 1
     }
 
-    [SkinControlAttribute(2)]    protected GUIButtonControl btnViewAs = null;
-    [SkinControlAttribute(3)]    protected GUISortButtonControl btnSortBy = null;
-    [SkinControlAttribute(4)]    protected GUIButtonControl btnSwitchView = null;
-    [SkinControlAttribute(6)]    protected GUIButtonControl btnSlideShow = null;
-    [SkinControlAttribute(7)]    protected GUIButtonControl btnSlideShowRecursive = null;
-    [SkinControlAttribute(50)]   protected GUIFacadeControl facadeView = null;
+    [SkinControlAttribute(2)]
+    protected GUIButtonControl btnViewAs = null;
+    [SkinControlAttribute(3)]
+    protected GUISortButtonControl btnSortBy = null;
+    [SkinControlAttribute(4)]
+    protected GUIButtonControl btnSwitchView = null;
+    [SkinControlAttribute(6)]
+    protected GUIButtonControl btnSlideShow = null;
+    [SkinControlAttribute(7)]
+    protected GUIButtonControl btnSlideShowRecursive = null;
+    [SkinControlAttribute(50)]
+    protected GUIFacadeControl facadeView = null;
 
     const int MAX_PICS_PER_DATE = 1000;
 
@@ -299,6 +313,7 @@ namespace MediaPortal.GUI.Pictures
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
+        _autocreateLargeThumbs = !xmlreader.GetValueAsBool("thumbnails", "picturenolargethumbondemand", false);
         isFileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
         fileMenuPinCode = MediaPortal.Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
         string strDefault = xmlreader.GetValueAsString("pictures", "default", string.Empty);
@@ -365,7 +380,7 @@ namespace MediaPortal.GUI.Pictures
           if (lastFolder != "root")
             currentFolder = lastFolder;
         }
-        _autocreateLargeThumbs = !xmlreader.GetValueAsBool("thumbnails", "picturenolargethumbondemand", false);
+
         //_hideExtensions = xmlreader.GetValueAsBool("general", "hideextensions", true);
       }
     }
@@ -383,12 +398,10 @@ namespace MediaPortal.GUI.Pictures
       currentFolder = string.Empty;
       destinationFolder = string.Empty;
       thumbCreationPaths.Clear();
-
-      bool result = Load(GUIGraphicsContext.Skin + @"\mypics.xml");
       LoadSettings();
-      return result;
+      return Load(GUIGraphicsContext.Skin + @"\mypics.xml");
     }
-    
+
     public override void OnAction(Action action)
     {
       if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
@@ -445,7 +458,7 @@ namespace MediaPortal.GUI.Pictures
       }
       base.OnPageLoad();
       GUITextureManager.CleanupThumbs();
-      LoadSettings();
+      // LoadSettings();
       LoadFolderSettings(currentFolder);
       ShowThumbPanel();
       LoadDirectory(currentFolder);
@@ -639,42 +652,33 @@ namespace MediaPortal.GUI.Pictures
           break;
 
         case 500: // File menu
+          // get pincode
+          if (fileMenuPinCode != string.Empty)
           {
-            // get pincode
-            if (fileMenuPinCode != string.Empty)
+            string strUserCode = string.Empty;
+            if (GetUserInputString(ref strUserCode) && strUserCode == fileMenuPinCode)
             {
-              string strUserCode = string.Empty;
-              if (GetUserInputString(ref strUserCode) && strUserCode == fileMenuPinCode)
-              {
-                OnShowFileMenu();
-              }
-            }
-            else
               OnShowFileMenu();
+            }
           }
+          else
+            OnShowFileMenu();
           break;
         case 200046: // Generate Thumbnails
-          {
-            if (item.IsFolder)
-              OnCreateAllThumbs(item.Path, false, false);
-          }
+          if (item.IsFolder)
+            OnCreateAllThumbs(item.Path, false, false);
           break;
         case 200047: // Revursive Generate Thumbnails
-          {
-            if (item.IsFolder)
-              OnCreateAllThumbs(item.Path, false, true);
-          }
+          if (item.IsFolder)
+            OnCreateAllThumbs(item.Path, false, true);
           break;
         case 200048: // Regenerate Thumbnails
-          {
-            if (item.IsFolder)
-              OnCreateAllThumbs(item.Path, true, true);
-          }
+          if (item.IsFolder)
+            OnCreateAllThumbs(item.Path, true, true);
           break;
         case 457: // Test change view
           OnSwitchView();
           break;
-
       }
     }
 
@@ -1006,7 +1010,7 @@ namespace MediaPortal.GUI.Pictures
       GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
       if (null == dlgYesNo)
         return;
-      string strFileName = System.IO.Path.GetFileName(item.Path);
+      string strFileName = Path.GetFileName(item.Path);
       if (!item.IsFolder)
         dlgYesNo.SetHeading(664);
       else
@@ -1075,16 +1079,14 @@ namespace MediaPortal.GUI.Pictures
       if (item.IsRemote)
         return;
       int rotate = 0;
-      using (PictureDatabase dbs = new PictureDatabase())
+
+      rotate = PictureDatabase.GetRotation(item.Path);
+      rotate++;
+      if (rotate >= 4)
       {
-        rotate = dbs.GetRotation(item.Path);
-        rotate++;
-        if (rotate >= 4)
-        {
-          rotate = 0;
-        }
-        dbs.SetRotation(item.Path, rotate);
+        rotate = 0;
       }
+      PictureDatabase.SetRotation(item.Path, rotate);
 
       try
       {
@@ -1199,13 +1201,10 @@ namespace MediaPortal.GUI.Pictures
       }
       else
       {
-        using (PictureDatabase dbs = new PictureDatabase())
-        {
-          List<string> pics = new List<string>();
-          int totalCount = dbs.ListPicsByDate(currentFolder.Replace("\\", "-"), ref pics);
-          foreach (string pic in pics)
-            SlideShow.Add(pic);
-        }
+        List<string> pics = new List<string>();
+        int totalCount = PictureDatabase.ListPicsByDate(currentFolder.Replace("\\", "-"), ref pics);
+        foreach (string pic in pics)
+          SlideShow.Add(pic);
       }
       if (SlideShow.Count > 0)
       {
@@ -1253,7 +1252,7 @@ namespace MediaPortal.GUI.Pictures
       }
     }
 
-    void CreateAllThumbs(string strDir, PictureDatabase dbs, bool Regenerate, bool Recursive)
+    void CreateAllThumbs(string strDir, bool Regenerate, bool Recursive)
     {
       // int Count = 0;
       if (disp == Display.Files)
@@ -1268,10 +1267,7 @@ namespace MediaPortal.GUI.Pictures
 
     void OnCreateAllThumbs(string strDir, bool Regenerate, bool Recursive)
     {
-      using (PictureDatabase dbs = new PictureDatabase())
-      {
-        CreateAllThumbs(strDir, dbs, Regenerate, Recursive);
-      }
+      CreateAllThumbs(strDir, Regenerate, Recursive);
 
       GUITextureManager.CleanupThumbs();
       GUIWaitCursor.Hide();
@@ -1455,12 +1451,9 @@ namespace MediaPortal.GUI.Pictures
 
       if (disp == Display.Files)
       {
-        //CreateMissingThumbnails();
-        MissingThumbCacher ThumbWorker = new MissingThumbCacher(currentFolder, _autocreateLargeThumbs, false);
-
         itemlist = virtualDirectory.GetDirectoryExt(currentFolder);
         Filter(ref itemlist);
-
+        MissingThumbCacher ThumbWorker = new MissingThumbCacher(currentFolder, _autocreateLargeThumbs, false);
         // int itemIndex = 0;
         CountOfNonImageItems = 0;
         foreach (GUIListItem item in itemlist)
@@ -1510,23 +1503,20 @@ namespace MediaPortal.GUI.Pictures
       if (strNewDirectory == "")
       {
         // Years
-        using (PictureDatabase dbs = new PictureDatabase())
+        List<string> Years = new List<string>();
+        int Count = PictureDatabase.ListYears(ref Years);
+        foreach (string year in Years)
         {
-          List<string> Years = new List<string>();
-          int Count = dbs.ListYears(ref Years);
-          foreach (string year in Years)
-          {
-            GUIListItem item = new GUIListItem(year);
-            item.Label = year;
-            Log.Info("Load Year: " + year);
-            item.Path = year;
-            item.IsFolder = true;
-            Util.Utils.SetDefaultIcons(item);
-            item.OnRetrieveArt += new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
-            item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
-            facadeView.Add(item);
-            CountOfNonImageItems++; // necessary to select the right item later from the slideshow
-          }
+          GUIListItem item = new GUIListItem(year);
+          item.Label = year;
+          Log.Info("Load Year: " + year);
+          item.Path = year;
+          item.IsFolder = true;
+          Util.Utils.SetDefaultIcons(item);
+          item.OnRetrieveArt += new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
+          item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
+          facadeView.Add(item);
+          CountOfNonImageItems++; // necessary to select the right item later from the slideshow
         }
       }
       else if (strNewDirectory.Length == 4)
@@ -1541,37 +1531,35 @@ namespace MediaPortal.GUI.Pictures
         item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
         facadeView.Add(item);
         CountOfNonImageItems++; // necessary to select the right item later from the slideshow
-        using (PictureDatabase dbs = new PictureDatabase())
+
+        List<string> Months = new List<string>();
+        int Count = PictureDatabase.ListMonths(year, ref Months);
+        foreach (string month in Months)
         {
-          List<string> Months = new List<string>();
-          int Count = dbs.ListMonths(year, ref Months);
-          foreach (string month in Months)
+          item = new GUIListItem(month);
+          item.Path = year + "\\" + month;
+          item.IsFolder = true;
+          Util.Utils.SetDefaultIcons(item);
+          item.OnRetrieveArt += new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
+          item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
+          facadeView.Add(item);
+          CountOfNonImageItems++; // necessary to select the right item later from the slideshow
+        }
+        List<string> pics = new List<string>();
+        int PicCount = PictureDatabase.CountPicsByDate(year);
+        if (PicCount <= MAX_PICS_PER_DATE)
+        {
+          Count += PictureDatabase.ListPicsByDate(year, ref pics);
+          foreach (string pic in pics)
           {
-            item = new GUIListItem(month);
-            item.Path = year + "\\" + month;
-            item.IsFolder = true;
+            item = new GUIListItem(Path.GetFileNameWithoutExtension(pic));
+            item.Path = pic;
+            item.IsFolder = false;
             Util.Utils.SetDefaultIcons(item);
             item.OnRetrieveArt += new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
             item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
+            item.FileInfo = new FileInformation(pic, false);
             facadeView.Add(item);
-            CountOfNonImageItems++; // necessary to select the right item later from the slideshow
-          }
-          List<string> pics = new List<string>();
-          int PicCount = dbs.CountPicsByDate(year);
-          if (PicCount <= MAX_PICS_PER_DATE)
-          {
-            Count += dbs.ListPicsByDate(year, ref pics);
-            foreach (string pic in pics)
-            {
-              item = new GUIListItem(Path.GetFileNameWithoutExtension(pic));
-              item.Path = pic;
-              item.IsFolder = false;
-              Util.Utils.SetDefaultIcons(item);
-              item.OnRetrieveArt += new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
-              item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
-              item.FileInfo = new FileInformation(pic, false);
-              facadeView.Add(item);
-            }
           }
         }
       }
@@ -1588,37 +1576,35 @@ namespace MediaPortal.GUI.Pictures
         item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
         facadeView.Add(item);
         CountOfNonImageItems++; // necessary to select the right item later from the slideshow
-        using (PictureDatabase dbs = new PictureDatabase())
+
+        List<string> Days = new List<string>();
+        int Count = PictureDatabase.ListDays(month, year, ref Days);
+        foreach (string day in Days)
         {
-          List<string> Days = new List<string>();
-          int Count = dbs.ListDays(month, year, ref Days);
-          foreach (string day in Days)
+          item = new GUIListItem(day);
+          item.Path = year + "\\" + month + "\\" + day;
+          item.IsFolder = true;
+          Util.Utils.SetDefaultIcons(item);
+          item.OnRetrieveArt += new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
+          item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
+          facadeView.Add(item);
+          CountOfNonImageItems++; // necessary to select the right item later from the slideshow
+        }
+        List<string> pics = new List<string>();
+        int PicCount = PictureDatabase.CountPicsByDate(year + "-" + month);
+        if (PicCount <= MAX_PICS_PER_DATE)
+        {
+          Count += PictureDatabase.ListPicsByDate(year + "-" + month, ref pics);
+          foreach (string pic in pics)
           {
-            item = new GUIListItem(day);
-            item.Path = year + "\\" + month + "\\" + day;
-            item.IsFolder = true;
+            item = new GUIListItem(Path.GetFileNameWithoutExtension(pic));
+            item.Path = pic;
+            item.IsFolder = false;
             Util.Utils.SetDefaultIcons(item);
             item.OnRetrieveArt += new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
             item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
+            item.FileInfo = new FileInformation(pic, false);
             facadeView.Add(item);
-            CountOfNonImageItems++; // necessary to select the right item later from the slideshow
-          }
-          List<string> pics = new List<string>();
-          int PicCount = dbs.CountPicsByDate(year + "-" + month);
-          if (PicCount <= MAX_PICS_PER_DATE)
-          {
-            Count += dbs.ListPicsByDate(year + "-" + month, ref pics);
-            foreach (string pic in pics)
-            {
-              item = new GUIListItem(Path.GetFileNameWithoutExtension(pic));
-              item.Path = pic;
-              item.IsFolder = false;
-              Util.Utils.SetDefaultIcons(item);
-              item.OnRetrieveArt += new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
-              item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
-              item.FileInfo = new FileInformation(pic, false);
-              facadeView.Add(item);
-            }
           }
         }
       }
@@ -1636,21 +1622,19 @@ namespace MediaPortal.GUI.Pictures
         item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
         facadeView.Add(item);
         CountOfNonImageItems++; // necessary to select the right item later from the slideshow
-        using (PictureDatabase dbs = new PictureDatabase())
+
+        List<string> pics = new List<string>();
+        int Count = PictureDatabase.ListPicsByDate(year + "-" + month + "-" + day, ref pics);
+        foreach (string pic in pics)
         {
-          List<string> pics = new List<string>();
-          int Count = dbs.ListPicsByDate(year + "-" + month + "-" + day, ref pics);
-          foreach (string pic in pics)
-          {
-            item = new GUIListItem(Path.GetFileNameWithoutExtension(pic));
-            item.Path = pic;
-            item.IsFolder = false;
-            Util.Utils.SetDefaultIcons(item);
-            item.OnRetrieveArt += new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
-            item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
-            item.FileInfo = new FileInformation(pic, false);
-            facadeView.Add(item);
-          }
+          item = new GUIListItem(Path.GetFileNameWithoutExtension(pic));
+          item.Path = pic;
+          item.IsFolder = false;
+          Util.Utils.SetDefaultIcons(item);
+          item.OnRetrieveArt += new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
+          item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
+          item.FileInfo = new FileInformation(pic, false);
+          facadeView.Add(item);
         }
       }
       if (facadeView.Count == 0 && strNewDirectory != "")
@@ -1692,6 +1676,7 @@ namespace MediaPortal.GUI.Pictures
     #endregion
 
     #region callback events
+
     public bool ThumbnailCallback()
     {
       return false;
@@ -1703,7 +1688,7 @@ namespace MediaPortal.GUI.Pictures
       if (filmstrip == null)
         return;
       string thumbnailImage = GetLargeThumbnail(item.Path);
-      if (System.IO.File.Exists(thumbnailImage))
+      if (File.Exists(thumbnailImage))
         filmstrip.InfoImageFileName = thumbnailImage;
       //UpdateButtonStates();  -> fixing mantis bug 902
     }

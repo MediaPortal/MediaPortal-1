@@ -346,11 +346,11 @@ namespace MediaPortal.Util
         && strPath.ToLower().EndsWith(".ymvp")) return true;
       try
       {
-        if (!System.IO.Path.HasExtension(strPath))
+        if (!Path.HasExtension(strPath))
           return false;
         if (IsPlayList(strPath))
           return false;
-        string extensionFile = System.IO.Path.GetExtension(strPath).ToLower();
+        string extensionFile = Path.GetExtension(strPath).ToLower();
         if (extensionFile.ToLower().Equals(".tv"))
           return true;
         if (extensionFile.ToLower().Equals(".ts"))
@@ -408,9 +408,9 @@ namespace MediaPortal.Util
       if (IsLastFMStream(strPath)) return true;
       try
       {
-        if (!System.IO.Path.HasExtension(strPath)) return false;
+        if (!Path.HasExtension(strPath)) return false;
         if (IsPlayList(strPath)) return false;
-        string extensionFile = System.IO.Path.GetExtension(strPath).ToLower();
+        string extensionFile = Path.GetExtension(strPath).ToLower();
         foreach (string extension in m_AudioExtensions)
         {
           if (extension == extensionFile) return true;
@@ -427,9 +427,9 @@ namespace MediaPortal.Util
       if (strPath == null) return false;
       try
       {
-        if (!System.IO.Path.HasExtension(strPath)) return false;
+        if (!Path.HasExtension(strPath)) return false;
         if (IsPlayList(strPath)) return false;
-        string extensionFile = System.IO.Path.GetExtension(strPath).ToLower();
+        string extensionFile = Path.GetExtension(strPath).ToLower();
         foreach (string extension in m_PictureExtensions)
         {
           if (extension == extensionFile) return true;
@@ -446,8 +446,8 @@ namespace MediaPortal.Util
       if (strPath == null) return false;
       try
       {
-        if (!System.IO.Path.HasExtension(strPath)) return false;
-        string extensionFile = System.IO.Path.GetExtension(strPath).ToLower();
+        if (!Path.HasExtension(strPath)) return false;
+        string extensionFile = Path.GetExtension(strPath).ToLower();
         if (extensionFile == ".m3u") return true;
         if (extensionFile == ".pls") return true;
         if (extensionFile == ".b4s") return true;
@@ -463,8 +463,8 @@ namespace MediaPortal.Util
       if (strPath == null) return false;
       try
       {
-        if (!System.IO.Path.HasExtension(strPath)) return false;
-        string extensionFile = System.IO.Path.GetExtension(strPath).ToLower();
+        if (!Path.HasExtension(strPath)) return false;
+        string extensionFile = Path.GetExtension(strPath).ToLower();
         if (extensionFile == ".exe") return true;
       }
       catch (Exception)
@@ -477,8 +477,8 @@ namespace MediaPortal.Util
       if (strPath == null) return false;
       try
       {
-        if (!System.IO.Path.HasExtension(strPath)) return false;
-        string extensionFile = System.IO.Path.GetExtension(strPath).ToLower();
+        if (!Path.HasExtension(strPath)) return false;
+        string extensionFile = Path.GetExtension(strPath).ToLower();
         if (extensionFile == ".lnk") return true;
       }
       catch (Exception)
@@ -579,22 +579,22 @@ namespace MediaPortal.Util
       if (item == null) return;
       string strThumb = string.Empty;
 
-      if (!item.IsFolder || (item.IsFolder && VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(item.Path).ToLower())))
+      if (!item.IsFolder || (item.IsFolder && VirtualDirectory.IsImageFile(Path.GetExtension(item.Path).ToLower())))
       {
         if (IsPicture(item.Path)) return;
 
-        strThumb = System.IO.Path.ChangeExtension(item.Path, ".jpg");
+        strThumb = Path.ChangeExtension(item.Path, ".jpg");
 
-        if (!System.IO.File.Exists(strThumb))
+        if (!File.Exists(strThumb))
         {
-          strThumb = System.IO.Path.ChangeExtension(item.Path, ".tbn");
-          if (!System.IO.File.Exists(strThumb))
+          strThumb = Path.ChangeExtension(item.Path, ".tbn");
+          if (!File.Exists(strThumb))
           {
-            strThumb = System.IO.Path.ChangeExtension(item.Path, ".png");
-            if (!System.IO.File.Exists(strThumb))
+            strThumb = Path.ChangeExtension(item.Path, ".png");
+            if (!File.Exists(strThumb))
             {
               strThumb = GetThumb(item.Path);
-              if (!System.IO.File.Exists(strThumb))
+              if (!File.Exists(strThumb))
                 return;
             }
           }
@@ -610,7 +610,7 @@ namespace MediaPortal.Util
         if (item.Label != "..")
         {
           strThumb = item.Path + @"\folder.jpg";
-          if (System.IO.File.Exists(strThumb))
+          if (File.Exists(strThumb))
           {
             item.ThumbnailImage = strThumb;
             item.IconImage = strThumb;
@@ -621,7 +621,7 @@ namespace MediaPortal.Util
       if (!string.IsNullOrEmpty(strThumb))
       {
         strThumb = Util.Utils.ConvertToLargeCoverArt(strThumb);
-        if (System.IO.File.Exists(strThumb))
+        if (File.Exists(strThumb))
           item.ThumbnailImage = strThumb;
       }
     }
@@ -730,7 +730,7 @@ namespace MediaPortal.Util
       }
       if (strBasePath.Length == 2 && strBasePath[1] == ':')
         strBasePath += @"\";
-      strFileName = System.IO.Path.Combine(strBasePath, strFileName);
+      strFileName = Path.Combine(strBasePath, strFileName);
     }
 
     public static string stripHTMLtags(string strHTML)
@@ -817,7 +817,7 @@ namespace MediaPortal.Util
 
       try
       {
-        dirs = System.IO.Directory.GetDirectories(path);
+        dirs = Directory.GetDirectories(path);
       }
       catch (DirectoryNotFoundException)
       {
@@ -827,7 +827,7 @@ namespace MediaPortal.Util
           {
             try
             {
-              dirs = System.IO.Directory.GetDirectories(path);
+              dirs = Directory.GetDirectories(path);
             }
             catch (Exception exp)
             {
@@ -850,7 +850,7 @@ namespace MediaPortal.Util
 
       try
       {
-        files = System.IO.Directory.GetFiles(path);
+        files = Directory.GetFiles(path);
       }
       catch (DirectoryNotFoundException)
       {
@@ -860,7 +860,7 @@ namespace MediaPortal.Util
           {
             try
             {
-              files = System.IO.Directory.GetFiles(path);
+              files = Directory.GetFiles(path);
             }
             catch (Exception exp)
             {
@@ -962,8 +962,8 @@ namespace MediaPortal.Util
 														 "[-_ ]\\({0,1}(CD|cd|DISC|disc|part|Part|DVD)[-_ ]{0,1}[0-9]{1,2}\\){0,1}"};
 
         // Strip the extensions and make everything lowercase
-        string strFileName1 = System.IO.Path.GetFileNameWithoutExtension(strFile1).ToLower();
-        string strFileName2 = System.IO.Path.GetFileNameWithoutExtension(strFile2).ToLower();
+        string strFileName1 = Path.GetFileNameWithoutExtension(strFile1).ToLower();
+        string strFileName2 = Path.GetFileNameWithoutExtension(strFile2).ToLower();
 
         // Check all the patterns
         for (int i = 0; i < pattern.Length; i++)
@@ -1016,7 +1016,7 @@ namespace MediaPortal.Util
         CRCTool crc = new CRCTool();
         crc.Init(CRCTool.CRCCode.CRC32);
         ulong dwcrc = crc.calc(strLine);
-        string strRet = System.IO.Path.GetFullPath(String.Format("{0}{1}.jpg", Config.GetFolder(Config.Dir.Thumbs), dwcrc));
+        string strRet = Path.GetFullPath(String.Format("{0}{1}.jpg", Config.GetFolder(Config.Dir.Thumbs), dwcrc));
         return strRet;
       }
       catch (Exception)
@@ -1075,7 +1075,7 @@ namespace MediaPortal.Util
 
       try
       {
-        IntPtr fHandle = CreateFile(strDrive, System.IO.FileAccess.Read, System.IO.FileShare.ReadWrite, 0, System.IO.FileMode.Open, 0x80, IntPtr.Zero);
+        IntPtr fHandle = CreateFile(strDrive, FileAccess.Read, FileShare.ReadWrite, 0, FileMode.Open, 0x80, IntPtr.Zero);
         if (fHandle.ToInt64() != -1) //INVALID_HANDLE_VALUE)
         {
           uint Result;
@@ -1140,8 +1140,8 @@ namespace MediaPortal.Util
       if (strProgram == null) return null;
       if (strProgram.Length == 0) return null;
 
-      string strWorkingDir = System.IO.Path.GetFullPath(strProgram);
-      string strFileName = System.IO.Path.GetFileName(strProgram);
+      string strWorkingDir = Path.GetFullPath(strProgram);
+      string strFileName = Path.GetFileName(strProgram);
       strWorkingDir = strWorkingDir.Substring(0, strWorkingDir.Length - (strFileName.Length + 1));
 
       ProcessStartInfo procInfo = new ProcessStartInfo();
@@ -1167,12 +1167,12 @@ namespace MediaPortal.Util
 
         if (strPath != "")
         {
-          if (System.IO.File.Exists(strPath))
+          if (File.Exists(strPath))
           {
             Process dvdplayer = new Process();
 
-            string strWorkingDir = System.IO.Path.GetFullPath(strPath);
-            string strFileName = System.IO.Path.GetFileName(strPath);
+            string strWorkingDir = Path.GetFullPath(strPath);
+            string strFileName = Path.GetFileName(strPath);
             strWorkingDir = strWorkingDir.Substring(0, strWorkingDir.Length - (strFileName.Length + 1));
             dvdplayer.StartInfo.FileName = strFileName;
             dvdplayer.StartInfo.WorkingDirectory = strWorkingDir;
@@ -1211,7 +1211,7 @@ namespace MediaPortal.Util
 
       try
       {
-        string extension = System.IO.Path.GetExtension(strFile).ToLower();
+        string extension = Path.GetExtension(strFile).ToLower();
         if (strFile.ToLower().IndexOf("live.ts") >= 0) return false;
         if (strFile.ToLower().IndexOf("live.tv") >= 0) return false;
         if (extension.Equals(".sbe")) return false;
@@ -1234,14 +1234,14 @@ namespace MediaPortal.Util
           }
           if (strPath != "")
           {
-            if (System.IO.File.Exists(strPath))
+            if (File.Exists(strPath))
             {
               if (strParams.IndexOf("%filename%") >= 0)
                 strParams = strParams.Replace("%filename%", "\"" + strFile + "\"");
 
               Process movieplayer = new Process();
-              string strWorkingDir = System.IO.Path.GetFullPath(strPath);
-              string strFileName = System.IO.Path.GetFileName(strPath);
+              string strWorkingDir = Path.GetFullPath(strPath);
+              string strFileName = Path.GetFileName(strPath);
               strWorkingDir = strWorkingDir.Substring(0, strWorkingDir.Length - (strFileName.Length + 1));
               movieplayer.StartInfo.FileName = strFileName;
               movieplayer.StartInfo.WorkingDirectory = strWorkingDir;
@@ -1345,7 +1345,7 @@ namespace MediaPortal.Util
       strFName = strFName.Replace('|', '_');
 
       bool unclean = true;
-      char[] invalids = System.IO.Path.GetInvalidFileNameChars();
+      char[] invalids = Path.GetInvalidFileNameChars();
       while (unclean)
       {
         unclean = false;
@@ -1423,13 +1423,13 @@ namespace MediaPortal.Util
       {
         try
         {
-          string extensionURL = System.IO.Path.GetExtension(strURL);
-          string extensionFile = System.IO.Path.GetExtension(strFile);
+          string extensionURL = Path.GetExtension(strURL);
+          string extensionFile = Path.GetExtension(strFile);
           if (extensionURL.Length > 0 && extensionFile.Length > 0)
           {
             extensionURL = extensionURL.ToLower();
             extensionFile = extensionFile.ToLower();
-            string strLogo = System.IO.Path.ChangeExtension(strFile, extensionURL);
+            string strLogo = Path.ChangeExtension(strFile, extensionURL);
             client.DownloadFile(strURL, strLogo);
             if (extensionURL != extensionFile)
             {
@@ -1457,12 +1457,12 @@ namespace MediaPortal.Util
       if (strFile.Length == 0) return;
       string url = String.Format("mpcache-{0}", EncryptLine(strURL));
 
-      string file = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.InternetCache), url);
-      if (file != string.Empty && System.IO.File.Exists(file))
+      string file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.InternetCache), url);
+      if (file != string.Empty && File.Exists(file))
       {
         try
         {
-          System.IO.File.Copy(file, strFile, true);
+          File.Copy(file, strFile, true);
         }
         catch (Exception)
         {
@@ -1470,15 +1470,15 @@ namespace MediaPortal.Util
         return;
       }
       DownLoadImage(strURL, file);
-      if (System.IO.File.Exists(file))
+      if (File.Exists(file))
       {
         try
         {
-          //file = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.InternetCache), url);
+          //file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.InternetCache), url);
           //Util.Picture.CreateThumbnail(file, strFile, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
           //string strFileL = ConvertToLargeCoverArt(strFile);
           //Util.Picture.CreateThumbnail(file, strFileL, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
-          System.IO.File.Copy(file, strFile, true);
+          File.Copy(file, strFile, true);
         }
         catch (Exception ex)
         {
@@ -1585,9 +1585,9 @@ namespace MediaPortal.Util
       try
       {
         if (m_bHideExtensions || withoutExtension)
-          return System.IO.Path.GetFileNameWithoutExtension(strPath);
+          return Path.GetFileNameWithoutExtension(strPath);
         else
-          return System.IO.Path.GetFileName(strPath);
+          return Path.GetFileName(strPath);
       }
       catch (Exception)
       {
@@ -1669,14 +1669,14 @@ namespace MediaPortal.Util
 
       if (sSoundFile == null) return 0;
       if (sSoundFile.Length == 0) return 0;
-      if (!System.IO.File.Exists(sSoundFile))
+      if (!File.Exists(sSoundFile))
       {
         string strSkin = GUIGraphicsContext.Skin;
-        if (System.IO.File.Exists(strSkin + "\\sounds\\" + sSoundFile))
+        if (File.Exists(strSkin + "\\sounds\\" + sSoundFile))
         {
           sSoundFile = strSkin + "\\sounds\\" + sSoundFile;
         }
-        else if (System.IO.File.Exists(strSkin + "\\" + sSoundFile + ".wav"))
+        else if (File.Exists(strSkin + "\\" + sSoundFile + ".wav"))
         {
           sSoundFile = strSkin + "\\" + sSoundFile + ".wav";
         }
@@ -1957,13 +1957,13 @@ namespace MediaPortal.Util
 
       string strThumb = String.Format(@"{0}\{1}", strFolder, Utils.MakeFileName(strFileName));
 
-      if (System.IO.File.Exists(strThumb + ".png"))
+      if (File.Exists(strThumb + ".png"))
         return strThumb + ".png";
-      else if (System.IO.File.Exists(strThumb + ".jpg"))
+      else if (File.Exists(strThumb + ".jpg"))
         return strThumb + ".jpg";
-      else if (System.IO.File.Exists(strThumb + ".gif"))
+      else if (File.Exists(strThumb + ".gif"))
         return strThumb + ".gif";
-      else if (System.IO.File.Exists(strThumb + ".tbn"))
+      else if (File.Exists(strThumb + ".tbn"))
         return strThumb + ".tbn";
       return string.Empty;
     }
@@ -2253,14 +2253,14 @@ namespace MediaPortal.Util
       string[] strFiles;
       try
       {
-        if (!System.IO.Directory.Exists(strDir))
+        if (!Directory.Exists(strDir))
           return;
-        strFiles = System.IO.Directory.GetFiles(strDir, strPattern);
+        strFiles = Directory.GetFiles(strDir, strPattern);
         foreach (string strFile in strFiles)
         {
           try
           {
-            System.IO.File.Delete(strFile);
+            File.Delete(strFile);
           }
           catch (Exception) { }
         }
@@ -2537,14 +2537,14 @@ namespace MediaPortal.Util
       try
       {
         directory = String.Format(@"{0}\TempDVR", path);
-        if (System.IO.Directory.Exists(directory))
+        if (Directory.Exists(directory))
         {
-          files = System.IO.Directory.GetFiles(directory, "*.tmp");
+          files = Directory.GetFiles(directory, "*.tmp");
           foreach (string fileName in files)
           {
             try
             {
-              System.IO.File.Delete(fileName);
+              File.Delete(fileName);
             }
             catch (Exception) { }
           }
@@ -2556,14 +2556,14 @@ namespace MediaPortal.Util
       try
       {
         directory = String.Format(@"{0}\TempSBE", path);
-        if (System.IO.Directory.Exists(directory))
+        if (Directory.Exists(directory))
         {
-          files = System.IO.Directory.GetFiles(directory, "*.tmp");
+          files = Directory.GetFiles(directory, "*.tmp");
           foreach (string fileName in files)
           {
             try
             {
-              System.IO.File.Delete(fileName);
+              File.Delete(fileName);
             }
             catch (Exception) { }
           }
@@ -2575,14 +2575,14 @@ namespace MediaPortal.Util
       try
       {
         directory = String.Format(@"{0}", path);
-        if (System.IO.Directory.Exists(directory))
+        if (Directory.Exists(directory))
         {
-          files = System.IO.Directory.GetFiles(directory, "*.tv");
+          files = Directory.GetFiles(directory, "*.tv");
           foreach (string fileName in files)
           {
             try
             {
-              System.IO.File.Delete(fileName);
+              File.Delete(fileName);
             }
             catch (Exception) { }
           }
@@ -2598,14 +2598,14 @@ namespace MediaPortal.Util
       int pos = recordingFilename.LastIndexOf(@"\");
       if (pos < 0)
         return;
-      string path = System.IO.Path.GetDirectoryName(recordingFilename);
-      string filename = System.IO.Path.GetFileNameWithoutExtension(recordingFilename);
+      string path = Path.GetDirectoryName(recordingFilename);
+      string filename = Path.GetFileNameWithoutExtension(recordingFilename);
 
       filename = filename.ToLower();
       string[] files;
       try
       {
-        files = System.IO.Directory.GetFiles(path);
+        files = Directory.GetFiles(path);
         foreach (string fileName in files)
         {
           try
@@ -2615,22 +2615,22 @@ namespace MediaPortal.Util
               //delete all Timeshift buffer files
               if (fileName.ToLower().IndexOf(".sbe") >= 0)
               {
-                System.IO.File.Delete(fileName);
+                File.Delete(fileName);
               }
               //delete Thumbnails
               if (fileName.ToLower().IndexOf(".jpg") >= 0)
               {
-                System.IO.File.Delete(fileName);
+                File.Delete(fileName);
               }
               //delete comskip txt file
               if (fileName.ToLower().IndexOf(".txt") >= 0)
               {
-                System.IO.File.Delete(fileName);
+                File.Delete(fileName);
               }
               //delete Matroska tag file
               if (fileName.ToLower().IndexOf(".xml") >= 0)
               {
-                System.IO.File.Delete(fileName);
+                File.Delete(fileName);
               }
             }
           }

@@ -54,7 +54,7 @@ namespace MediaPortal.GUI.Pictures
       if (_slideList.Count == 0) return null;
       string slideFilePath = _slideList[_currentSlideIndex];
 
-      _currentSlide = _slideCache.GetCurrentSlide(pDB, slideFilePath);
+      _currentSlide = _slideCache.GetCurrentSlide(slideFilePath);
 
       GUIPropertyManager.SetProperty("#selecteditem", Util.Utils.GetFilename(slideFilePath));
 
@@ -73,7 +73,7 @@ namespace MediaPortal.GUI.Pictures
         string curr = _slideList[_currentSlideIndex];
         string next = _slideList[NextSlideIndex(false, _currentSlideIndex)];
 
-        _slideCache.PrefetchNextSlide(pDB, prev, curr, next);
+        _slideCache.PrefetchNextSlide(prev, curr, next);
       }
     }
 
@@ -214,7 +214,6 @@ namespace MediaPortal.GUI.Pictures
     public static readonly string SegmentIndicator = "#segment";
     PlayListPlayer playlistPlayer;
     MusicDatabase mDB = null;
-    IPictureDatabase pDB = null;
     bool _autoShuffleMusic = false;
 
     #endregion
@@ -225,7 +224,6 @@ namespace MediaPortal.GUI.Pictures
     {
       GetID = (int)GUIWindow.Window.WINDOW_SLIDESHOW;
       playlistPlayer = PlayListPlayer.SingletonPlayer;
-      pDB = Database.DatabaseFactory.GetPictureDatabase();
     }
 
     public override bool Init()
@@ -1816,8 +1814,7 @@ namespace MediaPortal.GUI.Pictures
         rotation = 0;
       }
 
-      if (pDB != null)
-        pDB.SetRotation(_backgroundSlide.FilePath, rotation);
+      PictureDatabase.SetRotation(_backgroundSlide.FilePath, rotation);
 
       InvalidateSlide(_backgroundSlide.FilePath);
 
@@ -1969,7 +1966,7 @@ namespace MediaPortal.GUI.Pictures
     {
       // load picture
       string slideFilePath = _slideList[_currentSlideIndex];
-      _backgroundSlide = new SlidePicture(pDB, slideFilePath, true);
+      _backgroundSlide = new SlidePicture(slideFilePath, true);
       ResetCurrentZoom(_backgroundSlide);
       _isLoadingRawPicture = false;
     }

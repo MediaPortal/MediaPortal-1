@@ -73,12 +73,11 @@ class SlidePicture
     get { return _rotation; }
   }
 
-  public SlidePicture(IPictureDatabase aPictureDB, string strFilePath, bool useActualSizeTexture)
+  public SlidePicture(string strFilePath, bool useActualSizeTexture)
   {
     _filePath = strFilePath;
 
-    if (aPictureDB != null)
-      _rotation = aPictureDB.GetRotation(_filePath);
+      _rotation = PictureDatabase.GetRotation(_filePath);
 
     int iMaxWidth = GUIGraphicsContext.OverScanWidth;
     int iMaxHeight = GUIGraphicsContext.OverScanHeight;

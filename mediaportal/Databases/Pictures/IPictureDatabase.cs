@@ -43,10 +43,10 @@ namespace MediaPortal.Picture.Database
     //DateTime GetDateTaken(string strPicture);
     int EXIFOrientationToRotation(int orientation);
     void Dispose();
-		int ListYears(ref List<string> Years);
-		int ListMonths(string Year, ref List<string> Months);
-		int ListDays(string Month, string Year, ref List<string> Days);
-		int ListPicsByDate(string Date, ref List<string> Pics);
-		int CountPicsByDate(string Date);
+    int ListYears(ref List<string> Years);
+    int ListMonths(string Year, ref List<string> Months);
+    int ListDays(string Month, string Year, ref List<string> Days);
+    int ListPicsByDate(string Date, ref List<string> Pics);
+    int CountPicsByDate(string Date);
   }
 }

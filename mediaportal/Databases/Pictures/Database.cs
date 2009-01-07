@@ -35,71 +35,77 @@ using MediaPortal.Database;
 
 namespace MediaPortal.Picture.Database
 {
-  /// <summary>
-  /// Summary description for Class1.
-  /// </summary>
-  public class PictureDatabase : IPictureDatabase, IDisposable
+  public class PictureDatabase
   {
-    IPictureDatabase _database = DatabaseFactory.GetPictureDatabase();
+    public static readonly IPictureDatabase _database = DatabaseFactory.GetPictureDatabase();
 
-    public void Dispose()
+    private PictureDatabase()
+    {
+    }
+
+    static PictureDatabase()
+    {
+    }
+
+    public static void Dispose()
     {
       _database.Dispose();
-      _database = null;
+      //_database = null;
     }
-    public int AddPicture(string strPicture, int iRotation)
+
+    public static int AddPicture(string strPicture, int iRotation)
     {
       return _database.AddPicture(strPicture, iRotation);
     }
 
-    public void DeletePicture(string strPicture)
+    public static void DeletePicture(string strPicture)
     {
       _database.DeletePicture(strPicture);
     }
 
-    public int GetRotation(string strPicture)
+    public static int GetRotation(string strPicture)
     {
       return _database.GetRotation(strPicture);
     }
 
-    public void SetRotation(string strPicture, int iRotation)
+    public static void SetRotation(string strPicture, int iRotation)
     {
       _database.SetRotation(strPicture, iRotation);
     }
 
-    //public DateTime GetDateTaken(string strPicture)
+    //public static DateTime GetDateTaken(string strPicture)
     //{
     //  return _database.GetDateTaken(strPicture);
     //}
 
-    public int EXIFOrientationToRotation(int orientation)
+    public static int EXIFOrientationToRotation(int orientation)
     {
       return _database.EXIFOrientationToRotation(orientation);
     }
 
-		public int ListYears(ref List<string> Years)
-		{
-			return _database.ListYears(ref Years);
-		}
+    public static int ListYears(ref List<string> Years)
+    {
+      return _database.ListYears(ref Years);
+    }
 
-		public int ListMonths(string Year, ref List<string> Months)
-		{
-			return _database.ListMonths(Year, ref Months);
-		}
+    public static int ListMonths(string Year, ref List<string> Months)
+    {
+      return _database.ListMonths(Year, ref Months);
+    }
 
-		public int ListDays(string Month, string Year, ref List<string> Days)
-		{
-			return _database.ListDays(Month, Year, ref Days);
-		}
+    public static int ListDays(string Month, string Year, ref List<string> Days)
+    {
+      return _database.ListDays(Month, Year, ref Days);
+    }
 
-		public int ListPicsByDate(string Date, ref List<string> Pics)
-		{
-			return _database.ListPicsByDate(Date, ref Pics);
-		}
+    public static int ListPicsByDate(string Date, ref List<string> Pics)
+    {
+      return _database.ListPicsByDate(Date, ref Pics);
+    }
 
-		public int CountPicsByDate(string Date)
-		{
-			return _database.CountPicsByDate(Date);
-		}
+    public static int CountPicsByDate(string Date)
+    {
+      return _database.CountPicsByDate(Date);
+    }
   }
 }

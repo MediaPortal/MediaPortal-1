@@ -301,12 +301,12 @@ namespace MediaPortal.Util
           string coverArt = Utils.GetCoverArtName(item.Path, "folder");
           string largeCoverArt = Utils.GetLargeCoverArtName(item.Path, "folder");
           bool coverArtExists = false;
-          if (System.IO.File.Exists(coverArt))
+          if (File.Exists(coverArt))
           {
             item.IconImage = coverArt;
             coverArtExists = true;
           }
-          if (System.IO.File.Exists(largeCoverArt))
+          if (File.Exists(largeCoverArt))
           {
             item.IconImageBig = largeCoverArt;
           }
@@ -467,7 +467,7 @@ namespace MediaPortal.Util
         if (strDir != "cdda:")
           try
           {
-            strRoot = System.IO.Path.GetFullPath(strDir);
+            strRoot = Path.GetFullPath(strDir);
           }
           catch (Exception)
           {
@@ -584,9 +584,7 @@ namespace MediaPortal.Util
     /// </returns>
     public ArrayList GetDirectory(string strDir)
     {
-      // bool res = WaitForPath(strDir);
-
-      if ((strDir == null) || (strDir == ""))// || !res)
+      if (String.IsNullOrEmpty(strDir))
       {
         m_strPreviousDir = "";
         CurrentShare = "";
@@ -674,7 +672,7 @@ namespace MediaPortal.Util
       {
         if (DaemonTools.IsEnabled)
         {
-          string extension = System.IO.Path.GetExtension(strDir);
+          string extension = Path.GetExtension(strDir);
           if (IsImageFile(extension))
           {
             if (!DaemonTools.IsMounted(strDir))
@@ -700,7 +698,7 @@ namespace MediaPortal.Util
             {
               // If it looks like a DVD directory structure then return so
               // that the playing of the DVD is handled by the caller.
-              if (System.IO.File.Exists(strDir + @"\VIDEO_TS\VIDEO_TS.IFO"))
+              if (File.Exists(strDir + @"\VIDEO_TS\VIDEO_TS.IFO"))
               {
                 return items;
               }
@@ -870,7 +868,7 @@ namespace MediaPortal.Util
         {
           for (int i = 0; i < strFiles.Length; ++i)
           {
-            string extension = System.IO.Path.GetExtension(strFiles[i]);
+            string extension = Path.GetExtension(strFiles[i]);
             if (IsImageFile(extension))
             {
               if (DaemonTools.IsEnabled)
@@ -878,7 +876,7 @@ namespace MediaPortal.Util
 
                 item = new GUIListItem();
                 item.IsFolder = true;
-              	item.Label = System.IO.Path.GetFileName(strFiles[i]);  //Utils.GetFilename(strFiles[i]);
+              	item.Label = Path.GetFileName(strFiles[i]);  //Utils.GetFilename(strFiles[i]);
                 item.Label2 = "";
                 item.Path = strFiles[i];
                 item.FileInfo = null;
@@ -926,11 +924,7 @@ namespace MediaPortal.Util
     /// </returns>
     public ArrayList GetDirectoryUnProtected(string strDir, bool useExtensions)
     {
-      // bool res = WaitForPath(strDir);
-
-      if (strDir == null) return GetRoot();
-      if (strDir == "") return GetRoot();
-      //if (!res) return GetRoot();
+      if (String.IsNullOrEmpty(strDir)) return GetRoot();
 
       //if we have a folder like D:\
       //then remove the \
@@ -947,11 +941,10 @@ namespace MediaPortal.Util
         strParent = strDir.Substring(0, ipos);
       }
 
-
       bool VirtualShare = false;
       if (DaemonTools.IsEnabled)
       {
-        string extension = System.IO.Path.GetExtension(strDir);
+        string extension = Path.GetExtension(strDir);
         if (IsImageFile(extension))
         {
           AutoPlay.StopListening();
@@ -1040,7 +1033,7 @@ namespace MediaPortal.Util
       {
         for (int i = 0; i < strFiles.Length; ++i)
         {
-          string extension = System.IO.Path.GetExtension(strFiles[i]);
+          string extension = Path.GetExtension(strFiles[i]);
           if (IsImageFile(extension))
           {
             if (DaemonTools.IsEnabled)
@@ -1105,10 +1098,10 @@ namespace MediaPortal.Util
       if (strPath == string.Empty) return false;
       try
       {
-        //				if (!System.IO.Path.HasExtension(strPath)) return false;
+        //				if (!Path.HasExtension(strPath)) return false;
         // waeberd: allow searching for files without an extension
-        if (!System.IO.Path.HasExtension(strPath)) return showFilesWithoutExtension;
-        string extensionFile = System.IO.Path.GetExtension(strPath).ToLower();
+        if (!Path.HasExtension(strPath)) return showFilesWithoutExtension;
+        string extensionFile = Path.GetExtension(strPath).ToLower();
         if ((m_extensions[0] as string) == "*") return true;   // added for explorer modul by gucky
         for (int i = 0; i < m_extensions.Count; ++i)
         {
@@ -1134,10 +1127,10 @@ namespace MediaPortal.Util
       if (strPath == string.Empty) return false;
       try
       {
-        //				if (!System.IO.Path.HasExtension(strPath)) return false;
+        //				if (!Path.HasExtension(strPath)) return false;
         // waeberd: allow searching for files without an extension
-        if (!System.IO.Path.HasExtension(strPath)) return filesWithoutExtension;
-        string extensionFile = System.IO.Path.GetExtension(strPath).ToLower();
+        if (!Path.HasExtension(strPath)) return filesWithoutExtension;
+        string extensionFile = Path.GetExtension(strPath).ToLower();
         if ((extensions[0] as string) == "*") return true;   // added for explorer modul by gucky
         for (int i = 0; i < extensions.Count; ++i)
         {
@@ -1253,7 +1246,7 @@ namespace MediaPortal.Util
       //nop then check if local file exists
       string localFile = GetLocalFilename(file);
       if (localFile == string.Empty) return false;
-      if (System.IO.File.Exists(localFile))
+      if (File.Exists(localFile))
       {
         FileInfo info = new FileInfo(localFile);
         if (info.Length == size)
@@ -1400,8 +1393,7 @@ namespace MediaPortal.Util
     /// </returns>
     public List<GUIListItem> GetDirectoryExt(string strDir)
     {
-      // bool res = WaitForPath(strDir);
-      if ((strDir == null) || (strDir == ""))// || !res)
+      if (String.IsNullOrEmpty(strDir))
       {
         m_strPreviousDir = "";
         CurrentShare = "";
@@ -1495,7 +1487,7 @@ namespace MediaPortal.Util
       {
         if (DaemonTools.IsEnabled)
         {
-          string extension = System.IO.Path.GetExtension(strDir);
+          string extension = Path.GetExtension(strDir);
           if (IsImageFile(extension))
           {
             if (!DaemonTools.IsMounted(strDir))
@@ -1520,7 +1512,7 @@ namespace MediaPortal.Util
             {
               // If it looks like a DVD directory structure then return so
               // that the playing of the DVD is handled by the caller.
-              if (System.IO.File.Exists(strDir + @"\VIDEO_TS\VIDEO_TS.IFO"))
+              if (File.Exists(strDir + @"\VIDEO_TS\VIDEO_TS.IFO"))
               {
                 return items;
               }
@@ -1749,7 +1741,7 @@ namespace MediaPortal.Util
             //<OKAY_AWRIGHT-310506>
             string extension;
             if (!doesContainRedBookData)
-              extension = System.IO.Path.GetExtension(strFiles[i]);
+              extension = Path.GetExtension(strFiles[i]);
             else
               extension = ".cda";
             //</OKAY_AWRIGHT-310506>
@@ -1818,26 +1810,26 @@ namespace MediaPortal.Util
     }
 
 
-    private bool WaitForPath(string pathName)
-    {
-      // while waking up from hibernation it can take a while before a network drive is accessible.
-      // lets wait 10 sec
-      int count = 0;      
+    //private bool WaitForPath(string pathName)
+    //{
+    //  // while waking up from hibernation it can take a while before a network drive is accessible.
+    //  // lets wait 10 sec
+    //  int count = 0;      
 
-      if (pathName.Length == 0 || pathName == "root" || IsRemote(pathName))
-      {
-        return true;
-      }
+    //  if (pathName.Length == 0 || pathName == "root" || IsRemote(pathName))
+    //  {
+    //    return true;
+    //  }
       
-      //we cant be sure if pathName is a file or a folder, so we look for both.      
-      while ((!Directory.Exists(pathName) && !File.Exists(pathName)) && count < 10)
-      {
-        System.Threading.Thread.Sleep(250);
-        count++;
-      }
+    //  //we cant be sure if pathName is a file or a folder, so we look for both.      
+    //  while ((!Directory.Exists(pathName) && !File.Exists(pathName)) && count < 10)
+    //  {
+    //    System.Threading.Thread.Sleep(250);
+    //    count++;
+    //  }
                   
-      return (count < 10);
-    }
+    //  return (count < 10);
+    //}
 
     /// <summary>
     /// This method returns an arraylist of GUIListItems for the specified folder
@@ -1850,11 +1842,7 @@ namespace MediaPortal.Util
     /// </returns>
     public List<GUIListItem> GetDirectoryUnProtectedExt(string strDir, bool useExtensions)
     {
-      bool res = WaitForPath(strDir);
-
-      if (strDir == null) return GetRootExt();
-      if (strDir == "") return GetRootExt();
-      if (!res) return GetRootExt();
+      if (String.IsNullOrEmpty(strDir)) return GetRootExt();
 
       if (strDir.Substring(1) == @"\") strDir = strDir.Substring(0, strDir.Length - 1);
       List<GUIListItem> items = new List<GUIListItem>();
@@ -1966,7 +1954,7 @@ namespace MediaPortal.Util
       bool VirtualShare = false;
       if (DaemonTools.IsEnabled)
       {
-        string extension = System.IO.Path.GetExtension(strDir);
+        string extension = Path.GetExtension(strDir);
         if (IsImageFile(extension))
         {
           if (!DaemonTools.IsMounted(strDir))
@@ -2053,7 +2041,7 @@ namespace MediaPortal.Util
       {
         for (int i = 0; i < strFiles.Length; ++i)
         {
-          string extension = System.IO.Path.GetExtension(strFiles[i]);
+          string extension = Path.GetExtension(strFiles[i]);
           if (IsImageFile(extension))
           {
             if (DaemonTools.IsEnabled)
@@ -2144,12 +2132,12 @@ namespace MediaPortal.Util
           string coverArt = Utils.GetCoverArtName(item.Path, "folder");
           string largeCoverArt = Utils.GetLargeCoverArtName(item.Path, "folder");
           bool coverArtExists = false;
-          if (System.IO.File.Exists(coverArt))
+          if (File.Exists(coverArt))
           {
             item.IconImage = coverArt;
             coverArtExists = true;
           }
-          if (System.IO.File.Exists(largeCoverArt))
+          if (File.Exists(largeCoverArt))
           {
             item.IconImageBig = largeCoverArt;
           }
