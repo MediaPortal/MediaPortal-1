@@ -117,7 +117,7 @@
     <Channel id="krimi@premiere.de" siteId="KRIMI" />
   </Channels>
   <Listing type="Html">
-    <Site url="http://www.tvtoday.de/program2007?format=list&amp;offset=[PAGE_OFFSET]&amp;date=[DD].[MM].[YYYY]&amp;slotIndex=all&amp;genre=&amp;channel=[ID]" post="" external="false" encoding="" />
+    <Site url="http://www.tvtoday.de/programm?format=list&amp;offset=[PAGE_OFFSET]&amp;date=[DD].[MM].[YYYY]&amp;slotIndex=all&amp;channel=[ID]&amp;tips=&amp;oder=time" post="" external="false" encoding="" />
     <Search maxlistings="30" />
     <Html>
       <Template name="default">
@@ -165,7 +165,7 @@
       </DataPreference>
       <Sublinks>
         <Sublink search="detailPopup" template="Details">
-          <Link url="http://www.tvtoday.de/program2007?format=detail&amp;sid=[1]" post="" external="false" encoding="" />
+          <Link url="http://www.tvtoday.de/programm?format=detail&amp;sid=[1]" post="" external="false" encoding="" />
         </Sublink>
       </Sublinks>
     </Html>
