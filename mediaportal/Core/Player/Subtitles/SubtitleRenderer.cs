@@ -465,6 +465,8 @@ namespace MediaPortal.Player.Subtitles
 
         subtitle.height = 576;
         subtitle.width = 720;
+        subtitle.screenHeight = 576;
+        subtitle.screenWidth = 720;
         subtitle.firstScanLine = 0;
 
         AddSubtitle(subtitle);
