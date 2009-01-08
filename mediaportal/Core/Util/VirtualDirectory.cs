@@ -576,15 +576,15 @@ namespace MediaPortal.Util
                 MediaPortal.Util.Utils.RemoveTrailingSlash(shareName.FtpFolder));
     }
 
-    /// <summary>
-    /// This method returns an arraylist of GUIListItems for the specified folder
-    /// If the folder is protected by a pincode then the user is asked to enter the pincode
-    /// and the folder contents is only returned when the pincode is correct
-    /// </summary>
-    /// <param name="strDir">folder</param>
-    /// <returns>
-    /// returns an arraylist of GUIListItems for the specified folder
-    /// </returns>
+    ///// <summary>
+    ///// This method returns an arraylist of GUIListItems for the specified folder
+    ///// If the folder is protected by a pincode then the user is asked to enter the pincode
+    ///// and the folder contents is only returned when the pincode is correct
+    ///// </summary>
+    ///// <param name="strDir">folder</param>
+    ///// <returns>
+    ///// returns an arraylist of GUIListItems for the specified folder
+    ///// </returns>
     //public ArrayList GetDirectory(string strDir)
     //{
     //  if (String.IsNullOrEmpty(strDir))
@@ -844,6 +844,632 @@ namespace MediaPortal.Util
     //  return items.ToArray();
     //}
 
+    /// <summary>
+    /// This method returns an arraylist of GUIListItems for the specified folder
+    /// If the folder is protected by a pincode then the user is asked to enter the pincode
+    /// and the folder contents are only returned when the pincode is correct
+    /// </summary>
+    /// <param name="strDir">The path to load items from</param>
+    /// <returns>A list of GUIListItems for the specified folder</returns>
+    public List<GUIListItem> GetDirectoryExt(string strDir)
+    {
+      if (String.IsNullOrEmpty(strDir))
+      {
+        m_strPreviousDir = "";
+        CurrentShare = "";
+        return GetRootExt();
+      }
+
+      //if we have a folder like D:\ then remove the \
+      if (strDir.EndsWith(@"\"))
+      {
+        strDir = strDir.Substring(0, strDir.Length - 1);
+      }
+
+      List<GUIListItem> items = new List<GUIListItem>();
+
+      if (strDir.Length > 254)
+      {
+        Log.Warn("VirtualDirectory: GetDirectoryExt received a path which contains too many chars");
+        return items;
+      }
+
+      //get the parent folder
+      string strParent = "";
+      if (IsRemote(strDir))
+      {
+        int ipos = strDir.LastIndexOf(@"/");
+        if (ipos > 0)
+        {
+          strParent = strDir.Substring(0, ipos);
+        }
+      }
+      else
+      {
+        int ipos = strDir.LastIndexOf(@"\");
+        if (ipos > 0)
+        {
+          strParent = strDir.Substring(0, ipos);
+        }
+      }
+
+      //is this directory protected
+      int iPincodeCorrect;
+      if (IsProtectedShare(strDir, out iPincodeCorrect))
+      {
+        #region Pin protected
+        bool retry = true;
+        {
+          while (retry)
+          {
+            //no, then ask user to enter the pincode
+            GUIMessage msgGetPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
+            GUIWindowManager.SendMessage(msgGetPassword);
+            int iPincode = -1;
+            try
+            {
+              iPincode = Int32.Parse(msgGetPassword.Label);
+            }
+            catch (Exception)
+            {
+            }
+            if (iPincode != iPincodeCorrect)
+            {
+              GUIMessage msgWrongPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WRONG_PASSWORD, 0, 0, 0, 0, 0, 0);
+              GUIWindowManager.SendMessage(msgWrongPassword);
+
+              if (!(bool)msgWrongPassword.Object)
+              {
+                GUIListItem itemTmp = new GUIListItem();
+                itemTmp.IsFolder = true;
+                itemTmp.Label = "..";
+                itemTmp.Label2 = "";
+                itemTmp.Path = m_strPreviousDir;
+                Utils.SetDefaultIcons(itemTmp);
+                items.Add(itemTmp);
+                return items;
+              }
+            }
+            else
+              retry = false;
+          }
+        }
+        #endregion
+      }
+      //Setting current share;
+      SetCurrentShare(strDir);
+
+      //check if this is an image file like .iso, .nrg,...
+      //ifso then ask daemontools to automount it
+
+      bool VirtualShare = false;
+      if (!IsRemote(strDir))
+      {
+        if (DaemonTools.IsEnabled)
+        {
+          #region DaemonTools
+          string extension = Path.GetExtension(strDir);
+          if (IsImageFile(extension))
+          {
+            if (!DaemonTools.IsMounted(strDir))
+            {
+              AutoPlay.StopListening();
+              string virtualPath;
+              if (DaemonTools.Mount(strDir, out virtualPath))
+              {
+                strDir = virtualPath;
+                VirtualShare = true;
+              }
+              //Start listening to Volume Events (Hack to start listening after 10 seconds)
+              StartVolumeListener();
+            }
+            else
+            {
+              strDir = DaemonTools.GetVirtualDrive();
+              VirtualShare = true;
+            }
+
+            if (VirtualShare /*&& !g_Player.Playing*/) // dont interrupt if we're already playing
+            {
+              // If it looks like a DVD directory structure then return so
+              // that the playing of the DVD is handled by the caller.
+              if (File.Exists(strDir + @"\VIDEO_TS\VIDEO_TS.IFO"))
+              {
+                return items;
+              }
+            }
+          }
+          #endregion
+        }
+      }
+
+      GUIListItem item = null;
+      if (!IsRootShare(strDir) || VirtualShare)
+      {
+        item = new GUIListItem();
+        item.IsFolder = true;
+        item.Label = "..";
+        item.Label2 = "";
+        Utils.SetDefaultIcons(item);
+
+        if (strParent == strDir)
+        {
+          item.Path = "";
+        }
+        else
+          item.Path = strParent;
+        items.Add(item);
+      }
+      else
+      {
+        item = new GUIListItem();
+        item.IsFolder = true;
+        item.Label = "..";
+        item.Label2 = "";
+        item.Path = "";
+        Utils.SetDefaultIcons(item);
+        items.Add(item);
+      }
+
+      if (IsRemote(strDir))
+      {
+        #region Remote files
+        FTPClient ftp = GetFtpClient(strDir);
+        if (ftp == null) return items;
+
+        string folder = strDir.Substring("remote:".Length);
+        string[] subitems = folder.Split(new char[] { '?' });
+        if (subitems[4] == string.Empty) subitems[4] = "/";
+
+        FTPFile[] files;
+        try
+        {
+          ftp.ChDir(subitems[4]);
+          files = ftp.DirDetails(); //subitems[4]);
+        }
+        catch (Exception)
+        {
+          //maybe this socket has timed out, remove it and get a new one
+          FtpConnectionCache.Remove(ftp);
+          ftp = GetFtpClient(strDir);
+          if (ftp == null) return items;
+          try
+          {
+            ftp.ChDir(subitems[4]);
+          }
+          catch (Exception ex)
+          {
+            Log.Info("VirtualDirectory:unable to chdir to remote folder:{0} reason:{1} {2}", subitems[4], ex.Message, ex.StackTrace);
+            return items;
+          }
+          try
+          {
+            files = ftp.DirDetails(); //subitems[4]);
+          }
+          catch (Exception ex)
+          {
+            Log.Info("VirtualDirectory:unable to get remote folder:{0} reason:{1}  {2}", subitems[4], ex.Message, ex.StackTrace);
+            return items;
+          }
+        }
+        for (int i = 0; i < files.Length; ++i)
+        {
+          FTPFile file = files[i];
+          //Log.Info("VirtualDirectory: {0} {1}",file.Name,file.Dir);
+          if (file.Dir)
+          {
+            if (file.Name != "." && file.Name != "..")
+            {
+              item = new GUIListItem();
+              item.IsFolder = true;
+              item.Label = file.Name;
+              item.Label2 = "";
+              item.Path = String.Format("{0}/{1}", strDir, file.Name);
+              item.IsRemote = true;
+              item.FileInfo = null;
+              Utils.SetDefaultIcons(item);
+              int pin;
+              if (!IsProtectedShare(item.Path, out pin))
+              {
+                Utils.SetThumbnails(ref item);
+              }
+              items.Add(item);
+            }
+          }
+          else
+          {
+            if (IsValidExtension(file.Name))
+            {
+              item = new GUIListItem();
+              item.IsFolder = false;
+              item.Label = Utils.GetFilename(file.Name);
+              item.Label2 = "";
+              item.Path = String.Format("{0}/{1}", strDir, file.Name);
+              item.IsRemote = true;
+              if (IsRemoteFileDownloaded(item.Path, file.Size))
+              {
+                item.Path = GetLocalFilename(item.Path);
+                item.IsRemote = false;
+              }
+              else if (FtpConnectionCache.IsDownloading(item.Path))
+              {
+                item.IsDownloading = true;
+              }
+              item.FileInfo = new FileInformation();
+              DateTime modified = file.LastModified;
+              item.FileInfo.CreationTime = modified;
+              item.FileInfo.Length = file.Size;
+              Utils.SetDefaultIcons(item);
+              Utils.SetThumbnails(ref item);
+              items.Add(item);
+            }
+          }
+        }
+        #endregion
+      }
+      else
+      {
+        #region CDDA comment
+        /* Here is the trick to play Enhanced CD and not only CD-DA: 
+         * we force the creation of GUIListItem of Red Book tracks.
+         * Track names are made up on-the-fly, using naming conventions
+         * (Track%%.cda) and are not really retrieved from the drive
+         * directory, as opposed to the old method.
+         * If the data session happens to be the first to be recorded
+         * then the old method can't read the Red Book structure.
+         * Current audio tracks number is found using Windows API 
+         * (dependances on the Ripper package).
+         * These are not really limitations (because it was already
+         * the way CD-DA playing was handled before) but worth noting:
+         * -The drive structure is browsed twice, once in Autoplay and
+         *    the other one here.
+         * -CD-DA and Enhanced CD share the same methods.
+         * -A CD Audio must be a Windows drive letter followed by a
+         *    semi-colon (mounted images should work, Windows shared
+         *    drives seem not to).
+         * Works with Windows Media Player
+         * Seems to work with Winamp (didn't make more than one experiment)
+         * Wasn't tested with other players
+         */
+        #endregion
+
+        bool doesContainRedBookData = false;
+
+        if (item.IsFolder && strDir.Length == 2 && strDir[1] == ':')
+        {
+          try
+          {
+            CDDrive m_Drive = new CDDrive();
+
+            if (m_Drive.IsOpened)
+              m_Drive.Close();
+
+            if (m_Drive.Open(strDir[0]) && m_Drive.IsCDReady() && m_Drive.Refresh())
+            {
+              int totalNumberOfTracks = m_Drive.GetNumTracks();
+              //int totalNumberOfRedBookTracks = 0;
+              for (int i = 1; i <= totalNumberOfTracks; i++)
+                if (m_Drive.IsAudioTrack(i))
+                {
+                  doesContainRedBookData = true;
+                  //totalNumberOfRedBookTracks++;
+                }
+            }
+            m_Drive.Close();
+          }
+          catch (Exception) { }
+        }
+
+        HandleLocalFilesInDir(strDir, ref items, doesContainRedBookData);
+      }
+      m_strPreviousDir = strDir;
+      return items;
+    }
+
+    /// <summary>
+    /// This method returns an arraylist of GUIListItems for the specified folder
+    /// This method does not check if the folder is protected by an pincode. it will
+    /// always return all files/subfolders present
+    /// </summary>
+    /// <param name="strDir">folder</param>
+    /// <returns>
+    /// returns an arraylist of GUIListItems for the specified folder
+    /// </returns>
+    public List<GUIListItem> GetDirectoryUnProtectedExt(string strDir, bool useExtensions)
+    {
+      if (String.IsNullOrEmpty(strDir)) return GetRootExt();
+
+      if (strDir.Substring(1) == @"\")
+        strDir = strDir.Substring(0, strDir.Length - 1);
+
+      List<GUIListItem> items = new List<GUIListItem>();
+
+      if (strDir.Length > 254)
+      {
+        Log.Warn("VirtualDirectory: GetDirectoryUnProtectedExt received a path which contains too many chars");
+        return items;
+      }
+
+      string strParent = "";
+      int ipos = strDir.LastIndexOf(@"\");
+      if (ipos > 0)
+      {
+        strParent = strDir.Substring(0, ipos);
+      }
+
+      GUIListItem item = null;
+      if (IsRemote(strDir))
+      {
+        #region Remote files
+        FTPClient ftp = GetFtpClient(strDir);
+        if (ftp == null) return items;
+
+        string folder = strDir.Substring("remote:".Length);
+        string[] subitems = folder.Split(new char[] { '?' });
+        if (subitems[4] == string.Empty) subitems[4] = "/";
+
+        FTPFile[] files;
+        try
+        {
+          ftp.ChDir(subitems[4]);
+          files = ftp.DirDetails(); //subitems[4]);
+        }
+        catch (Exception)
+        {
+          //maybe this socket has timed out, remove it and get a new one
+          FtpConnectionCache.Remove(ftp);
+          ftp = GetFtpClient(strDir);
+          if (ftp == null) return items;
+          try
+          {
+            ftp.ChDir(subitems[4]);
+          }
+          catch (Exception ex)
+          {
+            Log.Info("VirtualDirectory:unable to chdir to remote folder:{0} reason:{1} {2}", subitems[4], ex.Message, ex.StackTrace);
+            return items;
+          }
+          try
+          {
+            files = ftp.DirDetails(); //subitems[4]);
+          }
+          catch (Exception ex)
+          {
+            Log.Info("VirtualDirectory:unable to get remote folder:{0} reason:{1}  {2}", subitems[4], ex.Message, ex.StackTrace);
+            return items;
+          }
+        }
+
+        for (int i = 0; i < files.Length; ++i)
+        {
+          FTPFile file = files[i];
+          //Log.Info("VirtualDirectory: {0} {1}",file.Name,file.Dir);
+          if (file.Dir)
+          {
+            if (file.Name != "." && file.Name != "..")
+            {
+              item = new GUIListItem();
+              item.IsFolder = true;
+              item.Label = file.Name;
+              item.Label2 = "";
+              item.Path = String.Format("{0}/{1}", strDir, file.Name);
+              item.IsRemote = true;
+              item.FileInfo = null;
+              Utils.SetDefaultIcons(item);
+              int pin;
+              if (!IsProtectedShare(item.Path, out pin))
+              {
+                Utils.SetThumbnails(ref item);
+              }
+              items.Add(item);
+            }
+          }
+          else
+          {
+            if (IsValidExtension(file.Name) || (useExtensions == false))
+            {
+              item = new GUIListItem();
+              item.IsFolder = false;
+              item.Label = Utils.GetFilename(file.Name);
+              item.Label2 = "";
+              item.Path = String.Format("{0}/{1}", strDir, file.Name);
+              item.IsRemote = true;
+              if (IsRemoteFileDownloaded(item.Path, file.Size))
+              {
+                item.Path = GetLocalFilename(item.Path);
+                item.IsRemote = false;
+              }
+              else if (FtpConnectionCache.IsDownloading(item.Path))
+              {
+                item.IsDownloading = true;
+              }
+              item.FileInfo = new FileInformation();
+              DateTime modified = file.LastModified;
+              item.FileInfo.CreationTime = modified;
+              item.FileInfo.Length = file.Size;
+              Utils.SetDefaultIcons(item);
+              Utils.SetThumbnails(ref item);
+              items.Add(item);
+            }
+          }
+        }
+        #endregion
+      }
+
+      bool VirtualShare = false;
+      if (DaemonTools.IsEnabled)
+      {
+        #region DaemonTools
+        string extension = Path.GetExtension(strDir);
+        if (IsImageFile(extension))
+        {
+          if (!DaemonTools.IsMounted(strDir))
+          {
+            AutoPlay.StopListening();
+            string virtualPath;
+            if (DaemonTools.Mount(strDir, out virtualPath))
+            {
+              strDir = virtualPath;
+              VirtualShare = true;
+            }
+            //Start listening to Volume Events.Wait 10 seconds in another thread and start listeneing again
+            StartVolumeListener();
+          }
+          else
+          {
+            strDir = DaemonTools.GetVirtualDrive();
+            VirtualShare = true;
+          }
+        }
+        #endregion
+      }
+
+      if (!IsRootShare(strDir) || VirtualShare)
+      {
+        item = new GUIListItem();
+        item.IsFolder = true;
+        item.Label = "..";
+        item.Label2 = "";
+        Utils.SetDefaultIcons(item);
+
+        if (strParent == strDir)
+        {
+          item.Path = "";
+        }
+        else
+          item.Path = strParent;
+        items.Add(item);
+      }
+      else
+      {
+        item = new GUIListItem();
+        item.IsFolder = true;
+        item.Label = "..";
+        item.Label2 = "";
+        item.Path = "";
+        Utils.SetDefaultIcons(item);
+        items.Add(item);
+      }
+
+      HandleLocalFilesInDir(strDir, ref items, false);
+
+      return items;
+    }
+
+    /// <summary>
+    /// This method will return the root folder
+    /// which contains a list of all shares
+    /// </summary>
+    /// <returns>
+    /// ArrayList containing a GUIListItem for each share
+    /// </returns>
+    public List<GUIListItem> GetRootExt()
+    {
+      previousShare = string.Empty;
+
+      List<GUIListItem> items = new List<GUIListItem>();
+      foreach (Share share in m_shares)
+      {
+        GUIListItem item = new GUIListItem();
+        item.Label = share.Name;
+        item.Path = share.Path;
+        if (Utils.IsRemovable(item.Path) && Directory.Exists(item.Path))
+        {
+          string driveName = Utils.GetDriveName(item.Path);
+          if (driveName == "") driveName = GUILocalizeStrings.Get(1061);
+          item.Label = String.Format("({0}) {1}", item.Path, driveName);
+        }
+        if (Utils.IsDVD(item.Path))
+        {
+          item.DVDLabel = Utils.GetDriveName(item.Path);
+          item.DVDLabel = item.DVDLabel.Replace('_', ' ');
+        }
+
+        if (item.DVDLabel != "")
+        {
+          item.Label = String.Format("({0}) {1}", item.Path, item.DVDLabel);
+        }
+        else
+          item.Label = share.Name;
+        item.IsFolder = true;
+
+        if (share.IsFtpShare)
+        {
+          //item.Path = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
+          //      share.FtpServer, share.FtpPort, share.FtpLoginName, share.FtpPassword, Utils.RemoveTrailingSlash(share.FtpFolder));
+          item.Path = GetShareRemoteURL(share);
+          item.IsRemote = true;
+        }
+        Utils.SetDefaultIcons(item);
+
+        if (share.Pincode < 0 && !Util.Utils.IsNetwork(share.Path))
+        {
+          string coverArt = Utils.GetCoverArtName(item.Path, "folder");
+          string largeCoverArt = Utils.GetLargeCoverArtName(item.Path, "folder");
+          bool coverArtExists = false;
+          if (File.Exists(coverArt))
+          {
+            item.IconImage = coverArt;
+            coverArtExists = true;
+          }
+          if (File.Exists(largeCoverArt))
+          {
+            item.IconImageBig = largeCoverArt;
+          }
+          // Fix for Mantis issue 0001465: folder.jpg in main shares view only displayed when list view is used
+          else if (coverArtExists)
+          {
+            item.IconImageBig = coverArt;
+          }
+        }
+        items.Add(item);
+      }
+
+      // add removable drives with media
+      string[] drives = Environment.GetLogicalDrives();
+      foreach (string drive in drives)
+      {
+        if (drive[0] > 'B' && Util.Utils.getDriveType(drive) == Removable)
+        {
+          bool driveFound = false;
+          string driveName = Util.Utils.GetDriveName(drive);
+          string driveLetter = drive.Substring(0, 1).ToUpper() + ":";
+          if (driveName == "") driveName = GUILocalizeStrings.Get(1061);
+
+          //
+          // Check if the share already exists
+          //
+          foreach (Share share in m_shares)
+          {
+            if (share.Path == driveLetter)
+            {
+              driveFound = true;
+              break;
+            }
+          }
+
+          if (driveFound == false)
+          {
+            GUIListItem item = new GUIListItem();
+            item.Path = driveLetter;
+            item.Label = String.Format("({0}) {1}", item.Path, driveName);
+            item.IsFolder = true;
+
+            Utils.SetDefaultIcons(item);
+
+            // dont add removable shares without media
+            // virtual cd/dvd drive (daemontools) without mounted image
+            if (!Directory.Exists(item.Path))
+              break;
+
+            items.Add(item);
+          }
+        }
+      }
+
+      return items;
+    }
+
     private void HandleLocalFilesInDir(string aDirectory, ref List<GUIListItem> aItemsList, bool aHasRedbookDetails)
     {
       try
@@ -897,13 +1523,6 @@ namespace MediaPortal.Util
             }
             if (IsValidExtension(FileName))
             {
-              // Skip too long path
-              if (FileName.Length > 254)
-              {
-                Log.Warn("VirtualDirectory: HandleLocalFiles - a path contains too many chars: {0}", fsysi[i].FullName);
-                continue;
-              }
-
               // Skip hidden files
               if (!aHasRedbookDetails && (File.GetAttributes(FileName) & FileAttributes.Hidden) == FileAttributes.Hidden)
                 continue;
@@ -933,16 +1552,15 @@ namespace MediaPortal.Util
       }
     }
 
-
-    /// <summary>
-    /// This method returns an arraylist of GUIListItems for the specified folder
-    /// This method does not check if the folder is protected by an pincode. it will
-    /// always return all files/subfolders present
-    /// </summary>
-    /// <param name="strDir">folder</param>
-    /// <returns>
-    /// returns an arraylist of GUIListItems for the specified folder
-    /// </returns>
+    ///// <summary>
+    ///// This method returns an arraylist of GUIListItems for the specified folder
+    ///// This method does not check if the folder is protected by an pincode. it will
+    ///// always return all files/subfolders present
+    ///// </summary>
+    ///// <param name="strDir">folder</param>
+    ///// <returns>
+    ///// returns an arraylist of GUIListItems for the specified folder
+    ///// </returns>
     //public ArrayList GetDirectoryUnProtected(string strDir, bool useExtensions)
     //{
     //  if (String.IsNullOrEmpty(strDir)) return GetRoot();
@@ -990,7 +1608,7 @@ namespace MediaPortal.Util
 
     //  //string[] strDirs = null;
     //  //string[] strFiles = null;
-      
+
     //  GUIListItem item = null;
     //  if (!IsRootShare(strDir) || VirtualShare)
     //  {
@@ -1222,7 +1840,6 @@ namespace MediaPortal.Util
     /// false: do not download file</returns>
     public bool ShouldWeDownloadFile(string file)
     {
-
       GUIMessage msg;
       if (FtpConnectionCache.IsDownloading(file))
       {
@@ -1305,7 +1922,7 @@ namespace MediaPortal.Util
     /// </summary>
     /// <param name="file">remote file/folder</param>
     /// <returns>FTP client or null</returns>
-    FTPClient GetFtpClient(string file)
+    private FTPClient GetFtpClient(string file)
     {
       bool ActiveConnection = true;
       string folder = file.Substring("remote:".Length);
@@ -1330,626 +1947,6 @@ namespace MediaPortal.Util
       return ftp;
     }
     #region generics
-
-    /// <summary>
-    /// This method returns an arraylist of GUIListItems for the specified folder
-    /// If the folder is protected by a pincode then the user is asked to enter the pincode
-    /// and the folder contents is only returned when the pincode is correct
-    /// </summary>
-    /// <param name="strDir">folder</param>
-    /// <returns>
-    /// returns an arraylist of GUIListItems for the specified folder
-    /// </returns>
-    public List<GUIListItem> GetDirectoryExt(string strDir)
-    {
-      if (String.IsNullOrEmpty(strDir))
-      {
-        m_strPreviousDir = "";
-        CurrentShare = "";
-        return GetRootExt();
-      }
-
-      //if we have a folder like D:\
-      //then remove the \
-      if (strDir.EndsWith(@"\"))
-      {
-        strDir = strDir.Substring(0, strDir.Length - 1);
-      }
-
-      List<GUIListItem> items = new List<GUIListItem>();
-
-      if (strDir.Length > 254)
-      {
-        Log.Warn("VirtualDirectory: GetDirectoryExt received a path which contains too many chars");
-        return items;
-      }
-
-      //get the parent folder
-      string strParent = "";
-      if (IsRemote(strDir))
-      {
-        int ipos = strDir.LastIndexOf(@"/");
-        if (ipos > 0)
-        {
-          strParent = strDir.Substring(0, ipos);
-        }
-      }
-      else
-      {
-        int ipos = strDir.LastIndexOf(@"\");
-        if (ipos > 0)
-        {
-          strParent = strDir.Substring(0, ipos);
-        }
-      }
-
-
-      //is this directory protected
-      int iPincodeCorrect;
-      if (IsProtectedShare(strDir, out iPincodeCorrect))
-      {
-        #region Pin protected
-        bool retry = true;
-        {
-          while (retry)
-          {
-            //no, then ask user to enter the pincode
-            GUIMessage msgGetPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
-            GUIWindowManager.SendMessage(msgGetPassword);
-            int iPincode = -1;
-            try
-            {
-              iPincode = Int32.Parse(msgGetPassword.Label);
-            }
-            catch (Exception)
-            {
-            }
-            if (iPincode != iPincodeCorrect)
-            {
-              GUIMessage msgWrongPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WRONG_PASSWORD, 0, 0, 0, 0, 0, 0);
-              GUIWindowManager.SendMessage(msgWrongPassword);
-
-              if (!(bool)msgWrongPassword.Object)
-              {
-                GUIListItem itemTmp = new GUIListItem();
-                itemTmp.IsFolder = true;
-                itemTmp.Label = "..";
-                itemTmp.Label2 = "";
-                itemTmp.Path = m_strPreviousDir;
-                Utils.SetDefaultIcons(itemTmp);
-                items.Add(itemTmp);
-                return items;
-              }
-            }
-            else
-              retry = false;
-          }
-        }
-        #endregion
-      }
-      //Setting current share;
-      SetCurrentShare(strDir);
-
-      //check if this is an image file like .iso, .nrg,...
-      //ifso then ask daemontools to automount it
-
-      bool VirtualShare = false;
-      if (!IsRemote(strDir))
-      {
-        if (DaemonTools.IsEnabled)
-        {
-          #region DaemonTools
-          string extension = Path.GetExtension(strDir);
-          if (IsImageFile(extension))
-          {
-            if (!DaemonTools.IsMounted(strDir))
-            {
-              AutoPlay.StopListening();
-              string virtualPath;
-              if (DaemonTools.Mount(strDir, out virtualPath))
-              {
-                strDir = virtualPath;
-                VirtualShare = true;
-              }
-              //Start listening to Volume Events (Hack to start listening after 10 seconds)
-              StartVolumeListener();
-            }
-            else
-            {
-              strDir = DaemonTools.GetVirtualDrive();
-              VirtualShare = true;
-            }
-
-            if (VirtualShare /*&& !g_Player.Playing*/) // dont interrupt if we're already playing
-            {
-              // If it looks like a DVD directory structure then return so
-              // that the playing of the DVD is handled by the caller.
-              if (File.Exists(strDir + @"\VIDEO_TS\VIDEO_TS.IFO"))
-              {
-                return items;
-              }
-            }
-          }
-          #endregion
-        }
-      }
-
-      //string[] strDirs = null;
-      //string[] strFiles = null;
-
-      GUIListItem item = null;
-      if (!IsRootShare(strDir) || VirtualShare)
-      {
-        item = new GUIListItem();
-        item.IsFolder = true;
-        item.Label = "..";
-        item.Label2 = "";
-        Utils.SetDefaultIcons(item);
-
-        if (strParent == strDir)
-        {
-          item.Path = "";
-        }
-        else
-          item.Path = strParent;
-        items.Add(item);
-      }
-      else
-      {
-        item = new GUIListItem();
-        item.IsFolder = true;
-        item.Label = "..";
-        item.Label2 = "";
-        item.Path = "";
-        Utils.SetDefaultIcons(item);
-        items.Add(item);
-      }
-
-      if (IsRemote(strDir))
-      {
-        #region Remote files
-        FTPClient ftp = GetFtpClient(strDir);
-        if (ftp == null) return items;
-
-        string folder = strDir.Substring("remote:".Length);
-        string[] subitems = folder.Split(new char[] { '?' });
-        if (subitems[4] == string.Empty) subitems[4] = "/";
-
-        FTPFile[] files;
-        try
-        {
-          ftp.ChDir(subitems[4]);
-          files = ftp.DirDetails(); //subitems[4]);
-        }
-        catch (Exception)
-        {
-          //maybe this socket has timed out, remove it and get a new one
-          FtpConnectionCache.Remove(ftp);
-          ftp = GetFtpClient(strDir);
-          if (ftp == null) return items;
-          try
-          {
-            ftp.ChDir(subitems[4]);
-          }
-          catch (Exception ex)
-          {
-            Log.Info("VirtualDirectory:unable to chdir to remote folder:{0} reason:{1} {2}", subitems[4], ex.Message, ex.StackTrace);
-            return items;
-          }
-          try
-          {
-            files = ftp.DirDetails(); //subitems[4]);
-          }
-          catch (Exception ex)
-          {
-            Log.Info("VirtualDirectory:unable to get remote folder:{0} reason:{1}  {2}", subitems[4], ex.Message, ex.StackTrace);
-            return items;
-          }
-        }
-        for (int i = 0; i < files.Length; ++i)
-        {
-          FTPFile file = files[i];
-          //Log.Info("VirtualDirectory: {0} {1}",file.Name,file.Dir);
-          if (file.Dir)
-          {
-            if (file.Name != "." && file.Name != "..")
-            {
-              item = new GUIListItem();
-              item.IsFolder = true;
-              item.Label = file.Name;
-              item.Label2 = "";
-              item.Path = String.Format("{0}/{1}", strDir, file.Name);
-              item.IsRemote = true;
-              item.FileInfo = null;
-              Utils.SetDefaultIcons(item);
-              int pin;
-              if (!IsProtectedShare(item.Path, out pin))
-              {
-                Utils.SetThumbnails(ref item);
-              }
-              items.Add(item);
-            }
-          }
-          else
-          {
-            if (IsValidExtension(file.Name))
-            {
-              item = new GUIListItem();
-              item.IsFolder = false;
-              item.Label = Utils.GetFilename(file.Name);
-              item.Label2 = "";
-              item.Path = String.Format("{0}/{1}", strDir, file.Name);
-              item.IsRemote = true;
-              if (IsRemoteFileDownloaded(item.Path, file.Size))
-              {
-                item.Path = GetLocalFilename(item.Path);
-                item.IsRemote = false;
-              }
-              else if (FtpConnectionCache.IsDownloading(item.Path))
-              {
-                item.IsDownloading = true;
-              }
-              item.FileInfo = new FileInformation();
-              DateTime modified = file.LastModified;
-              item.FileInfo.CreationTime = modified;
-              item.FileInfo.Length = file.Size;
-              Utils.SetDefaultIcons(item);
-              Utils.SetThumbnails(ref item);
-              items.Add(item);
-            }
-          }
-        }
-        #endregion
-      }
-      else
-      {
-        /* Here is the trick to play Enhanced CD and not only CD-DA: 
-         * we force the creation of GUIListItem of Red Book tracks.
-         * Track names are made up on-the-fly, using naming conventions
-         * (Track%%.cda) and are not really retrieved from the drive
-         * directory, as opposed to the old method.
-         * If the data session happens to be the first to be recorded
-         * then the old method can't read the Red Book structure.
-         * Current audio tracks number is found using Windows API 
-         * (dependances on the Ripper package).
-         * These are not really limitations (because it was already
-         * the way CD-DA playing was handled before) but worth noting:
-         * -The drive structure is browsed twice, once in Autoplay and
-         *    the other one here.
-         * -CD-DA and Enhanced CD share the same methods.
-         * -A CD Audio must be a Windows drive letter followed by a
-         *    semi-colon (mounted images should work, Windows shared
-         *    drives seem not to).
-         * Works with Windows Media Player
-         * Seems to work with Winamp (didn't make more than one experiment)
-         * Wasn't tested with other players
-         */
-
-        bool doesContainRedBookData = false;
-
-        if (item.IsFolder && strDir.Length == 2 && strDir[1] == ':')
-        {
-          try
-          {
-            CDDrive m_Drive = new CDDrive();
-
-            if (m_Drive.IsOpened)
-              m_Drive.Close();
-
-            if (m_Drive.Open(strDir[0]) && m_Drive.IsCDReady() && m_Drive.Refresh())
-            {
-              int totalNumberOfTracks = m_Drive.GetNumTracks();
-              int totalNumberOfRedBookTracks = 0;
-              for (int i = 1; i <= totalNumberOfTracks; i++)
-                if (m_Drive.IsAudioTrack(i))
-                {
-                  doesContainRedBookData = true;
-                  totalNumberOfRedBookTracks++;
-                }
-            }
-            m_Drive.Close();
-          }
-          catch (Exception)
-          { }
-        }
-
-        HandleLocalFilesInDir(strDir, ref items, doesContainRedBookData);
-      }
-      m_strPreviousDir = strDir;
-      return items;
-    }
-
-    /// <summary>
-    /// This method returns an arraylist of GUIListItems for the specified folder
-    /// This method does not check if the folder is protected by an pincode. it will
-    /// always return all files/subfolders present
-    /// </summary>
-    /// <param name="strDir">folder</param>
-    /// <returns>
-    /// returns an arraylist of GUIListItems for the specified folder
-    /// </returns>
-    public List<GUIListItem> GetDirectoryUnProtectedExt(string strDir, bool useExtensions)
-    {
-      if (String.IsNullOrEmpty(strDir)) return GetRootExt();
-
-      if (strDir.Substring(1) == @"\") strDir = strDir.Substring(0, strDir.Length - 1);
-      List<GUIListItem> items = new List<GUIListItem>();
-
-      string strParent = "";
-      int ipos = strDir.LastIndexOf(@"\");
-      if (ipos > 0)
-      {
-        strParent = strDir.Substring(0, ipos);
-      }
-
-      GUIListItem item = null;
-      if (IsRemote(strDir))
-      {
-        #region Remote files
-        FTPClient ftp = GetFtpClient(strDir);
-        if (ftp == null) return items;
-
-        string folder = strDir.Substring("remote:".Length);
-        string[] subitems = folder.Split(new char[] { '?' });
-        if (subitems[4] == string.Empty) subitems[4] = "/";
-
-        FTPFile[] files;
-        try
-        {
-          ftp.ChDir(subitems[4]);
-          files = ftp.DirDetails(); //subitems[4]);
-        }
-        catch (Exception)
-        {
-          //maybe this socket has timed out, remove it and get a new one
-          FtpConnectionCache.Remove(ftp);
-          ftp = GetFtpClient(strDir);
-          if (ftp == null) return items;
-          try
-          {
-            ftp.ChDir(subitems[4]);
-          }
-          catch (Exception ex)
-          {
-            Log.Info("VirtualDirectory:unable to chdir to remote folder:{0} reason:{1} {2}", subitems[4], ex.Message, ex.StackTrace);
-            return items;
-          }
-          try
-          {
-            files = ftp.DirDetails(); //subitems[4]);
-          }
-          catch (Exception ex)
-          {
-            Log.Info("VirtualDirectory:unable to get remote folder:{0} reason:{1}  {2}", subitems[4], ex.Message, ex.StackTrace);
-            return items;
-          }
-        }
-        for (int i = 0; i < files.Length; ++i)
-        {
-          FTPFile file = files[i];
-          //Log.Info("VirtualDirectory: {0} {1}",file.Name,file.Dir);
-          if (file.Dir)
-          {
-            if (file.Name != "." && file.Name != "..")
-            {
-              item = new GUIListItem();
-              item.IsFolder = true;
-              item.Label = file.Name;
-              item.Label2 = "";
-              item.Path = String.Format("{0}/{1}", strDir, file.Name);
-              item.IsRemote = true;
-              item.FileInfo = null;
-              Utils.SetDefaultIcons(item);
-              int pin;
-              if (!IsProtectedShare(item.Path, out pin))
-              {
-                Utils.SetThumbnails(ref item);
-              }
-              items.Add(item);
-            }
-          }
-          else
-          {
-            if (IsValidExtension(file.Name) || (useExtensions == false))
-            {
-              item = new GUIListItem();
-              item.IsFolder = false;
-              item.Label = Utils.GetFilename(file.Name);
-              item.Label2 = "";
-              item.Path = String.Format("{0}/{1}", strDir, file.Name);
-              item.IsRemote = true;
-              if (IsRemoteFileDownloaded(item.Path, file.Size))
-              {
-                item.Path = GetLocalFilename(item.Path);
-                item.IsRemote = false;
-              }
-              else if (FtpConnectionCache.IsDownloading(item.Path))
-              {
-                item.IsDownloading = true;
-              }
-              item.FileInfo = new FileInformation();
-              DateTime modified = file.LastModified;
-              item.FileInfo.CreationTime = modified;
-              item.FileInfo.Length = file.Size;
-              Utils.SetDefaultIcons(item);
-              Utils.SetThumbnails(ref item);
-              items.Add(item);
-            }
-          }
-        }
-        #endregion
-      }
-
-      bool VirtualShare = false;
-      if (DaemonTools.IsEnabled)
-      {
-        string extension = Path.GetExtension(strDir);
-        if (IsImageFile(extension))
-        {
-          if (!DaemonTools.IsMounted(strDir))
-          {
-            AutoPlay.StopListening();
-            string virtualPath;
-            if (DaemonTools.Mount(strDir, out virtualPath))
-            {
-              strDir = virtualPath;
-              VirtualShare = true;
-            }
-            //Start listening to Volume Events.Wait 10 seconds in another thread and start listeneing again
-            StartVolumeListener();
-          }
-          else
-          {
-            strDir = DaemonTools.GetVirtualDrive();
-            VirtualShare = true;
-          }
-        }
-      }
-
-      if (!IsRootShare(strDir) || VirtualShare)
-      {
-        item = new GUIListItem();
-        item.IsFolder = true;
-        item.Label = "..";
-        item.Label2 = "";
-        Utils.SetDefaultIcons(item);
-
-        if (strParent == strDir)
-        {
-          item.Path = "";
-        }
-        else
-          item.Path = strParent;
-        items.Add(item);
-      }
-      else
-      {
-        item = new GUIListItem();
-        item.IsFolder = true;
-        item.Label = "..";
-        item.Label2 = "";
-        item.Path = "";
-        Utils.SetDefaultIcons(item);
-        items.Add(item);
-      }
-
-      HandleLocalFilesInDir(strDir, ref items, false);
-
-      return items;
-    }
-    /// <summary>
-    /// This method will return the root folder
-    /// which contains a list of all shares
-    /// </summary>
-    /// <returns>
-    /// ArrayList containing a GUIListItem for each share
-    /// </returns>
-    public List<GUIListItem> GetRootExt()
-    {
-      previousShare = string.Empty;
-
-      List<GUIListItem> items = new List<GUIListItem>();
-      foreach (Share share in m_shares)
-      {
-        GUIListItem item = new GUIListItem();
-        item.Label = share.Name;
-        item.Path = share.Path;
-        if (Utils.IsRemovable(item.Path) && Directory.Exists(item.Path))
-        {
-          string driveName = Utils.GetDriveName(item.Path);
-          if (driveName == "") driveName = GUILocalizeStrings.Get(1061);
-          item.Label = String.Format("({0}) {1}", item.Path, driveName);
-        }
-        if (Utils.IsDVD(item.Path))
-        {
-          item.DVDLabel = Utils.GetDriveName(item.Path);
-          item.DVDLabel = item.DVDLabel.Replace('_', ' ');
-        }
-
-        if (item.DVDLabel != "")
-        {
-          item.Label = String.Format("({0}) {1}", item.Path, item.DVDLabel);
-        }
-        else
-          item.Label = share.Name;
-        item.IsFolder = true;
-
-        if (share.IsFtpShare)
-        {
-          //item.Path = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
-          //      share.FtpServer, share.FtpPort, share.FtpLoginName, share.FtpPassword, Utils.RemoveTrailingSlash(share.FtpFolder));
-          item.Path = GetShareRemoteURL(share);
-          item.IsRemote = true;
-        }
-        Utils.SetDefaultIcons(item);
-
-        if (share.Pincode < 0 && !Util.Utils.IsNetwork(share.Path))
-        {
-          string coverArt = Utils.GetCoverArtName(item.Path, "folder");
-          string largeCoverArt = Utils.GetLargeCoverArtName(item.Path, "folder");
-          bool coverArtExists = false;
-          if (File.Exists(coverArt))
-          {
-            item.IconImage = coverArt;
-            coverArtExists = true;
-          }
-          if (File.Exists(largeCoverArt))
-          {
-            item.IconImageBig = largeCoverArt;
-          }
-          // Fix for Mantis issue 0001465: folder.jpg in main shares view only displayed when list view is used
-          else if (coverArtExists)
-          {
-            item.IconImageBig = coverArt;
-          }
-        }
-        items.Add(item);
-      }
-
-      // add removable drives with media
-      string[] drives = Environment.GetLogicalDrives();
-      foreach (string drive in drives)
-      {
-        if (drive[0] > 'B' && Util.Utils.getDriveType(drive) == Removable)
-        {
-          bool driveFound = false;
-          string driveName = Util.Utils.GetDriveName(drive);
-          string driveLetter = drive.Substring(0, 1).ToUpper() + ":";
-          if (driveName == "") driveName = GUILocalizeStrings.Get(1061);
-
-          //
-          // Check if the share already exists
-          //
-          foreach (Share share in m_shares)
-          {
-            if (share.Path == driveLetter)
-            {
-              driveFound = true;
-              break;
-            }
-          }
-
-          if (driveFound == false)
-          {
-            GUIListItem item = new GUIListItem();
-            item.Path = driveLetter;
-            item.Label = String.Format("({0}) {1}", item.Path, driveName);
-            item.IsFolder = true;
-
-            Utils.SetDefaultIcons(item);
-
-            // dont add removable shares without media
-            // virtual cd/dvd drive (daemontools) without mounted image
-            if (!Directory.Exists(item.Path))
-              break;
-
-            items.Add(item);
-          }
-        }
-      }
-
-      return items;
-    }
 
     private void _startListening()
     {
