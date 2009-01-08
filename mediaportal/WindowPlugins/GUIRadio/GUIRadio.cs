@@ -630,8 +630,7 @@ namespace MediaPortal.GUI.Radio
         {
           string folerName = currentFolder;
           if (folerName.Length == 0) folerName = currentRadioFolder;
-          ArrayList items = new ArrayList();
-          items = virtualDirectory.GetDirectory(folerName);
+          List<GUIListItem> items = virtualDirectory.GetDirectoryExt(folerName);
           foreach (GUIListItem item in items)
           {
             if (!item.IsFolder)

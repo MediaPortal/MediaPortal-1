@@ -996,7 +996,7 @@ namespace MediaPortal.Configuration.Sections
         id = VideoDatabase.AddMovieFile(file);
         VirtualDirectory dir = new VirtualDirectory();
         dir.SetExtensions(MediaPortal.Util.Utils.VideoExtensions);
-        ArrayList items = dir.GetDirectoryUnProtected(path, true);
+        List<GUIListItem> items = dir.GetDirectoryUnProtectedExt(path, true);
         foreach (GUIListItem item in items)
         {
           if (item.IsFolder) continue;

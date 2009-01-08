@@ -42,6 +42,7 @@ namespace MediaPortal.Util
   /// </summary>
   public class Picture
   {
+    private static ThumbnailExtractor Extractor = new ThumbnailExtractor();
 
     // singleton. Dont allow any instance of this class
     static Picture()
@@ -770,6 +771,17 @@ namespace MediaPortal.Util
 
       try
       {
+        //if (aFastMode)
+        //{
+        //  try
+        //  {
+        //    Extractor.DesiredSize = new Size(iMaxWidth, iMaxHeight);
+        //    myImage = Extractor.GetThumbnail(aInputFilename);
+        //    return SaveThumbnail(aThumbTargetPath, myImage);
+        //  }
+        //  catch (Exception) { }
+        //}
+
         myImage = ImageFast.FromFile(aInputFilename);
 
         return CreateThumbnail(myImage, aThumbTargetPath, iMaxWidth, iMaxHeight, iRotate, aFastMode);
@@ -806,7 +818,7 @@ namespace MediaPortal.Util
     {
       return false;
     }
-    
+
     /// <summary>
     /// Creates a thumbnail of the specified image
     /// </summary>
@@ -901,7 +913,7 @@ namespace MediaPortal.Util
       try
       {
         using (FileStream fs = new FileStream(aThumbTargetPath, FileMode.Create, FileAccess.ReadWrite, FileShare.None))
-        { 
+        {
           Bitmap bmp = new Bitmap(myImage);
           bmp.Save(fs, Thumbs.ThumbCodecInfo, Thumbs.ThumbEncoderParams);
           fs.Flush();

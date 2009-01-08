@@ -26,6 +26,7 @@
 using System;
 using System.Threading;
 using System.Collections;
+using System.Collections.Generic;
 
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
@@ -816,7 +817,7 @@ namespace MediaPortal.Video.Database
       {
         VirtualDirectory dir = new VirtualDirectory();
         dir.SetExtensions(MediaPortal.Util.Utils.VideoExtensions);
-        ArrayList items = dir.GetDirectoryUnProtected(path, true);
+        List<GUIListItem> items = dir.GetDirectoryUnProtectedExt(path, true);
         foreach (GUIListItem item in items)
         {
           if (item.IsFolder)
@@ -877,7 +878,7 @@ namespace MediaPortal.Video.Database
         id = VideoDatabase.AddMovieFile(file);
         VirtualDirectory dir = new VirtualDirectory();
         dir.SetExtensions(MediaPortal.Util.Utils.VideoExtensions);
-        ArrayList items = dir.GetDirectoryUnProtected(path, true);
+        List<GUIListItem> items = dir.GetDirectoryUnProtectedExt(path, true);
         foreach (GUIListItem item in items)
         {
           if (item.IsFolder) continue;

@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -769,10 +770,10 @@ namespace MediaPortal.GUI.GUIBurner
       file f = new file();
       GUIControl.ClearControl(GetID, (int)Controls.CONTROL_LIST_DIR);
       VirtualDirectory Directory;
-      ArrayList itemlist;
+      List<GUIListItem> itemlist;
       Directory = new VirtualDirectory();
       Directory.SetExtensions(Exts);
-      itemlist = Directory.GetDirectory(folder);
+      itemlist = Directory.GetDirectoryExt(folder);
 
       foreach (GUIListItem item in itemlist)
       {

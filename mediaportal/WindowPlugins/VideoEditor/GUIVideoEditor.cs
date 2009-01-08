@@ -587,11 +587,9 @@ namespace WindowPlugins.VideoEditor
         if (folder != null && folder != "")
           folder = MediaPortal.Util.Utils.RemoveTrailingSlash(folder);
 
-        //directory;
-        ArrayList itemlist;
         //directory = new VirtualDirectory();
         directory.SetExtensions(exts);
-        itemlist = directory.GetDirectory(folder);
+        List<GUIListItem> itemlist = directory.GetDirectoryExt(folder);
         videoListLct.Clear();
         foreach (GUIListItem item in itemlist)
         {
@@ -714,8 +712,7 @@ namespace WindowPlugins.VideoEditor
         //m_askBeforePlayingDVDImage = xmlreader.GetValueAsBool("daemon", "askbeforeplaying", false);
       }
 
-      ArrayList itemlist = new ArrayList();
-      itemlist = directory.GetRoot();
+      List<GUIListItem> itemlist = directory.GetRootExt();
       foreach (GUIListItem item in itemlist)
       {
         // GUIListItem pItem = new GUIListItem(item.FileInfo.Name);

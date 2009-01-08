@@ -27,12 +27,14 @@ using System;
 using System.IO;
 using System.Drawing;
 using System.Collections;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using MediaPortal.Util;
 using MediaPortal.Picture.Database;
 using MediaPortal.Music.Database;
 using MediaPortal.Video.Database;
 using MediaPortal.GUI.Library;
+
 namespace MediaPortal.Dialogs
 {
   /// <summary>
@@ -391,8 +393,7 @@ namespace MediaPortal.Dialogs
             return;
           }
 
-          ArrayList items = new ArrayList();
-          items = m_directory.GetDirectoryUnProtected(item.Path, false);
+          List<GUIListItem> items = m_directory.GetDirectoryUnProtectedExt(item.Path, false);
           foreach (GUIListItem subItem in items)
           {
             FileItemMC(subItem);
@@ -493,8 +494,7 @@ namespace MediaPortal.Dialogs
       {
         if (item.Label != "..")
         {
-          ArrayList items = new ArrayList();
-          items = m_directory.GetDirectoryUnProtected(item.Path, false);
+          List<GUIListItem> items = m_directory.GetDirectoryUnProtectedExt(item.Path, false);
           foreach (GUIListItem subItem in items) FileItemGetNrOfFiles(subItem);
         }
       }
@@ -789,8 +789,7 @@ namespace MediaPortal.Dialogs
       {
         if (item.Label != "..")
         {
-          ArrayList items = new ArrayList();
-          items = m_directory.GetDirectoryUnProtected(item.Path, false);
+          List<GUIListItem> items = m_directory.GetDirectoryUnProtectedExt(item.Path, false);
           foreach (GUIListItem subItem in items)
           {
             DoDeleteItem(subItem);

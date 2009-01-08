@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 using MediaPortal.Util;
 using MediaPortal.GUI.Library;
@@ -45,7 +46,7 @@ namespace MediaPortal.GUI.Video
       Log.Info("SelectDVDHandler: ShowSelectDVDDialog()");
 
       //check if dvd is inserted
-      ArrayList rootDrives = VirtualDirectories.Instance.Movies.GetRoot();
+      List<GUIListItem> rootDrives = VirtualDirectories.Instance.Movies.GetRootExt();
 
       for (int i = rootDrives.Count - 1; i >= 0; i--)
       {
@@ -198,7 +199,7 @@ namespace MediaPortal.GUI.Video
       return false;
     }
 
-    public void SetIMDBThumbs(ArrayList items, bool markWatchedFiles, bool eachMovieHasDedicatedFolder)
+    public void SetIMDBThumbs(IList items, bool markWatchedFiles, bool eachMovieHasDedicatedFolder)
     {
       GUIListItem pItem;
       IMDBMovie movieDetails = new IMDBMovie();

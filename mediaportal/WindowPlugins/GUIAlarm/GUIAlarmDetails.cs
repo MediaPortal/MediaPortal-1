@@ -24,6 +24,8 @@
 #endregion
 
 using System;
+using System.Globalization;
+using System.Collections.Generic;
 using System.Collections;
 using System.Threading;
 using System.Timers;
@@ -34,7 +36,6 @@ using MediaPortal.Dialogs;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.Radio.Database;
-using System.Globalization;
 
 namespace MediaPortal.GUI.Alarm
 {
@@ -244,7 +245,7 @@ namespace MediaPortal.GUI.Alarm
 			GUIControl.ClearControl(GetID,(int)Controls.SoundList);
 
 			VirtualDirectory Directory;
-			ArrayList itemlist;
+			List<GUIListItem> itemlist;
 
 			switch(mediaType)
 			{
@@ -281,7 +282,7 @@ namespace MediaPortal.GUI.Alarm
 					//load alarm sounds directory				
 					Directory = new VirtualDirectory();
 					Directory.SetExtensions(Util.Utils.AudioExtensions);
-					itemlist = Directory.GetDirectory(_AlarmSoundsFolder);
+					itemlist = Directory.GetDirectoryExt(_AlarmSoundsFolder);
 						
 					foreach (GUIListItem item in itemlist)
 					{
@@ -312,7 +313,7 @@ namespace MediaPortal.GUI.Alarm
 					//load playlist directory	
 					Directory = new VirtualDirectory();
 					Directory.AddExtension(".m3u");
-					itemlist = Directory.GetDirectory(_PlayListFolder);
+					itemlist = Directory.GetDirectoryExt(_PlayListFolder);
 					
 					GUIControl.ShowControl(GetID,(int)Controls.NoMediaFoundLabel);
 

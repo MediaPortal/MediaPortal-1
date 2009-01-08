@@ -247,6 +247,24 @@ namespace MediaPortal.Util
       return 0;
     }
 
+    public static string GetUNCPath(string sFilePath)
+    {
+      if (sFilePath.StartsWith("\\\\"))
+        return sFilePath;
+
+      try
+      {
+        ManagementObject mo = new ManagementObject();
+        mo.Path = new ManagementPath(string.Format("Win32_LogicalDisk='{0}'", sFilePath));
+
+        //DriveType 4 = Network Drive
+        if (Convert.ToUInt32(mo["DriveType"]) == 4)
+          return Convert.ToString(mo["ProviderName"]);
+      }
+      catch (Exception) { }
+      return sFilePath;
+    }
+
     public static long GetDiskSize(string drive)
     {
       long diskSize = 0;
@@ -537,39 +555,40 @@ namespace MediaPortal.Util
         }
         else
         {
-          if (item.Path.Length <= 3)
+          if (IsNetwork(item.Path))
           {
-            if (IsDVD(item.Path))
+            item.IconImage = "defaultNetwork.png";
+            item.IconImageBig = "defaultNetworkBig.png";
+          }
+          else
+            if (item.Path.Length <= 3)
             {
-              item.IconImage = "defaultDVDRom.png";
-              item.IconImageBig = "defaultDVDRomBig.png";
-            }
-            else if (IsHD(item.Path))
-            {
-              item.IconImage = "defaultHardDisk.png";
-              item.IconImageBig = "defaultHardDiskBig.png";
-            }
-            else if (IsNetwork(item.Path))
-            {
-              item.IconImage = "defaultNetwork.png";
-              item.IconImageBig = "defaultNetworkBig.png";
-            }
-            else if (IsRemovable(item.Path))
-            {
-              item.IconImage = "defaultRemovable.png";
-              item.IconImageBig = "defaultRemovableBig.png";
+              if (IsDVD(item.Path))
+              {
+                item.IconImage = "defaultDVDRom.png";
+                item.IconImageBig = "defaultDVDRomBig.png";
+              }
+              else if (IsHD(item.Path))
+              {
+                item.IconImage = "defaultHardDisk.png";
+                item.IconImageBig = "defaultHardDiskBig.png";
+              }
+              else if (IsRemovable(item.Path))
+              {
+                item.IconImage = "defaultRemovable.png";
+                item.IconImageBig = "defaultRemovableBig.png";
+              }
+              else
+              {
+                item.IconImage = "defaultFolder.png";
+                item.IconImageBig = "defaultFolderBig.png";
+              }
             }
             else
             {
               item.IconImage = "defaultFolder.png";
               item.IconImageBig = "defaultFolderBig.png";
             }
-          }
-          else
-          {
-            item.IconImage = "defaultFolder.png";
-            item.IconImageBig = "defaultFolderBig.png";
-          }
         }
       }
     }
@@ -740,10 +759,12 @@ namespace MediaPortal.Util
       string stripped = Regex.Replace(strHTML, @"<(.|\n)*?>", string.Empty);
       return stripped.Trim();
     }
+
     public static bool IsNetwork(string strPath)
     {
       if (strPath == null) return false;
       if (strPath.Length < 2) return false;
+      if (strPath.StartsWith(@"\\")) return true;
       string strDrive = strPath.Substring(0, 2);
       if (getDriveType(strDrive) == 4) return true;
       return false;
@@ -752,9 +773,15 @@ namespace MediaPortal.Util
     public static bool IsPersistentNetwork(string strPath)
     {
       //IsNetwork doesn't work correctly, when the drive is disconnected (for whatever reason)
-      RegistryKey regKey = Registry.CurrentUser.OpenSubKey(string.Format(@"Network\{0}", strPath.Substring(0, 1)));
-
-      return (regKey != null);
+      try
+      {
+        RegistryKey regKey = Registry.CurrentUser.OpenSubKey(string.Format(@"Network\{0}", strPath.Substring(0, 1)));
+        return (regKey != null);
+      }
+      catch (Exception)
+      {
+      }
+      return false;
     }
 
     public static bool TryReconnectNetwork(string strPath)
@@ -1985,12 +2012,7 @@ namespace MediaPortal.Util
       if (string.IsNullOrEmpty(strFolder) || string.IsNullOrEmpty(strFileName))
         return string.Empty;
 
-      string strThumb = Utils.GetCoverArt(strFolder, strFileName);
-
-      if (strThumb == string.Empty)
-        strThumb = string.Format(@"{0}\{1}{2}", strFolder, Utils.MakeFileName(strFileName), GetThumbExtension());
-
-      return strThumb;
+      return string.Format(@"{0}\{1}{2}", strFolder, Utils.MakeFileName(strFileName), GetThumbExtension());
     }
 
     public static string GetLargeCoverArtName(string strFolder, string strFileName)

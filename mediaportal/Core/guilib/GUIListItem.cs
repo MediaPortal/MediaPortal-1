@@ -109,6 +109,18 @@ namespace MediaPortal.GUI.Library
       _tagAlbumInfo = item._tagAlbumInfo;
     }
 
+    public GUIListItem(string aLabel, string aLabel2, string aPath, bool aIsFolder, FileInformation aFileInformation)
+    {
+      if (String.IsNullOrEmpty(aLabel))
+        return;
+
+      _label = aLabel;
+      _label2 = aLabel2;
+      _folder = aPath;
+      _isFolder = aIsFolder;
+      _fileInfo = aFileInformation;
+    }
+
     /// <summary>
     /// Creates a GUIListItem.
     /// </summary>
