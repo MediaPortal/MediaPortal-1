@@ -29,6 +29,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Threading;
+using System.Diagnostics;
+using System.Text;
+using System.Runtime.CompilerServices;
 //using System.Windows;
 //using System.Windows.Media;
 //using System.Windows.Media.Imaging;
@@ -55,77 +58,160 @@ using TvLibrary.Implementations.DVB;
 
 namespace TvPlugin
 {
-  #region ThumbCacher
-  public class RecordingThumbCacher
-  {
-    Work work;
-
-    public RecordingThumbCacher()
-    {
-      work = new Work(new DoWorkHandler(this.PerformRequest));
-      work.ThreadPriority = System.Threading.ThreadPriority.Lowest;
-      MediaPortal.Services.GlobalServiceProvider.Get<IThreadPool>().Add(work, QueuePriority.Low);
-    }
-
-    void PerformRequest()
-    {
-      //if (_creatingThumbNails)
-      //  return;
-      //try
-      //{
-      //  _creatingThumbNails = true;
-
-      //  IList recordings = Recording.ListAll();
-      //  foreach (Recording rec in recordings)
-      //  {
-      //    string thumbNail = Utils.GetCoverArtName(Thumbs.TVRecorded, Utils.SplitFilename(Path.ChangeExtension(rec.FileName, @".png")));
-      //    if (!File.Exists(thumbNail))
-      //    {
-      //      Log.Info("RecordedTV: No thumbnail found at {0} for recording {1} - grabbing from file now", thumbNail, rec.FileName);
-      //      if (!DvrMsImageGrabber.GrabFrame(rec.FileName, thumbNail))
-      //        Log.Info("GUIRecordedTV: No thumbnail created for {0}", Utils.SplitFilename(rec.FileName));
-      //      try
-      //      {
-      //        MediaPlayer player = new MediaPlayer();
-      //        player.Open(new Uri(rec.FileName, UriKind.Absolute));
-      //        player.ScrubbingEnabled = true;
-      //        player.Play();
-      //        player.Pause();
-      //        // Grab the frame 10 minutes after start to respect pre-recording times.
-      //        player.Position = new TimeSpan(0, 10, 0);
-      //        System.Threading.Thread.Sleep(5000);
-      //        RenderTargetBitmap rtb = new RenderTargetBitmap(720, 576, 1 / 200, 1 / 200, PixelFormats.Pbgra32);
-      //        DrawingVisual dv = new DrawingVisual();
-      //        DrawingContext dc = dv.RenderOpen();
-      //        dc.DrawVideo(player, new Rect(0, 0, 720, 576));
-      //        dc.Close();
-      //        rtb.Render(dv);
-      //        PngBitmapEncoder encoder = new PngBitmapEncoder();
-      //        encoder.Frames.Add(BitmapFrame.Create(rtb));
-      //        using (FileStream stream = new FileStream(thumbNail, FileMode.OpenOrCreate))
-      //        {
-      //          encoder.Save(stream);
-      //        }
-      //        player.Stop();
-      //        player.Close();
-      //      }
-      //      catch (Exception ex)
-      //      {
-      //        Log.Info("RecordedTV: No thumbnail created for {0}", Utils.SplitFilename(rec.FileName));
-      //      }
-      //    }
-      //  }
-      //}
-      //finally
-      //{
-      //  _creatingThumbNails = false;
-      //}
-    }
-  }
-  #endregion
-
   public class TvRecorded : GUIWindow, IComparer<GUIListItem>
   {
+    #region ThumbCacher
+
+    public class RecordingThumbCacher
+    {
+      Work work;
+
+      public RecordingThumbCacher()
+      {
+        work = new Work(new DoWorkHandler(this.PerformRequest));
+        work.ThreadPriority = System.Threading.ThreadPriority.BelowNormal;
+        MediaPortal.Services.GlobalServiceProvider.Get<IThreadPool>().Add(work, QueuePriority.Low);
+      }
+
+      void PerformRequest()
+      {
+        if (_creatingThumbNails)
+          return;
+        try
+        {
+          _creatingThumbNails = true;
+          string ExtractorPath = Config.GetFile(Config.Dir.Base, "ffmpeg.exe");
+
+          if (!File.Exists(ExtractorPath))
+          {
+            Log.Warn("RecordedTV: No ffmpeg.exe found to generate thumbnails of your recordings!");
+            return;
+          }
+
+          IList<Recording> recordings = Recording.ListAll();
+          foreach (Recording rec in recordings)
+          {
+            string thumbNail = string.Format("{0}\\{1}{2}", Thumbs.TVRecorded, Utils.MakeFileName(rec.Title), Utils.GetThumbExtension());
+            string ExtractorArgs = string.Format(" -i \"{0}\" -vframes 1 -ss {1} -s {2}x{3} \"{4}\"", rec.FileName, @"00:08:21", (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, thumbNail);
+            if (!File.Exists(thumbNail))
+            {
+              //Log.Info("RecordedTV: No thumbnail found at {0} for recording {1} - grabbing from file now", thumbNail, rec.FileName);
+
+              //if (!DvrMsImageGrabber.GrabFrame(rec.FileName, thumbNail))
+              //  Log.Info("GUIRecordedTV: No thumbnail created for {0}", Utils.SplitFilename(rec.FileName));
+              try
+              {
+                if (ExecuteProc(ExtractorPath, ExtractorArgs, 90000))
+                  Log.Info("RecordedTV: Thumbnail successfully created for {0}", Utils.SplitFilename(rec.FileName));
+                else
+                  Log.Info("RecordedTV: No thumbnail created for {0} - (args={1})", Utils.SplitFilename(rec.FileName), ExtractorArgs);
+                Thread.Sleep(100);
+
+                try
+                {
+                  Process[] leftovers = System.Diagnostics.Process.GetProcessesByName("ffmpeg");
+                  foreach (Process termProc in leftovers)
+                  {
+                    Log.Warn("RecordedTV: Killing process: {0}", termProc.ProcessName);
+                    termProc.Kill();
+                  }
+                }
+                catch (Exception exk)
+                {
+                  Log.Error("RecordedTV: Error stopping leftover processes - {0})", exk.ToString());
+                }
+
+                // The .NET3 way....
+                //
+                //MediaPlayer player = new MediaPlayer();
+                //player.Open(new Uri(rec.FileName, UriKind.Absolute));
+                //player.ScrubbingEnabled = true;
+                //player.Play();
+                //player.Pause();
+                //// Grab the frame 10 minutes after start to respect pre-recording times.
+                //player.Position = new TimeSpan(0, 10, 0);
+                //System.Threading.Thread.Sleep(5000);
+                //RenderTargetBitmap rtb = new RenderTargetBitmap(720, 576, 1 / 200, 1 / 200, PixelFormats.Pbgra32);
+                //DrawingVisual dv = new DrawingVisual();
+                //DrawingContext dc = dv.RenderOpen();
+                //dc.DrawVideo(player, new Rect(0, 0, 720, 576));
+                //dc.Close();
+                //rtb.Render(dv);
+                //PngBitmapEncoder encoder = new PngBitmapEncoder();
+                //encoder.Frames.Add(BitmapFrame.Create(rtb));
+                //using (FileStream stream = new FileStream(thumbNail, FileMode.OpenOrCreate))
+                //{
+                //  encoder.Save(stream);
+                //}
+                //player.Stop();
+                //player.Close();
+              }
+              catch (Exception ex)
+              {
+                Log.Error("RecordedTV: No thumbnail created for {0} - {1}", Utils.SplitFilename(rec.FileName), ex.Message);
+              }
+            }
+          }
+        }
+        finally
+        {
+          _creatingThumbNails = false;
+        }
+      }
+
+      [MethodImpl(MethodImplOptions.Synchronized)]
+      public static bool ExecuteProc(string aAppName, string aArguments, int aExpectedTimeoutMs)
+      {
+        bool success = false;
+        Process ExternalProc = new Process();
+        ProcessStartInfo ProcOptions = new ProcessStartInfo(aAppName, aArguments);
+
+        ProcOptions.UseShellExecute = false;                                       // Important for WorkingDirectory behaviour
+        ProcOptions.RedirectStandardError = false;                                  // .NET bug? Some stdout reader abort to early without that!
+        ProcOptions.RedirectStandardOutput = false;                                 // The precious data we're after
+        //ProcOptions.StandardOutputEncoding = Encoding.GetEncoding("ISO-8859-1");   // the output contains "Umlaute", etc.
+        //ProcOptions.StandardErrorEncoding = Encoding.GetEncoding("ISO-8859-1");
+        ProcOptions.WorkingDirectory = Path.GetDirectoryName(aAppName);            // set the dir because the binary might depend on cygwin.dll
+        ProcOptions.CreateNoWindow = true;                                         // Do not spawn a "Dos-Box"      
+        ProcOptions.ErrorDialog = false;                                           // Do not open an error box on failure        
+
+        //ExternalProc.OutputDataReceived += new DataReceivedEventHandler(StdOutDataReceived);
+        //ExternalProc.ErrorDataReceived += new DataReceivedEventHandler(StdErrDataReceived);
+        ExternalProc.EnableRaisingEvents = true;                                        // We want to know when and why the process died        
+        ExternalProc.StartInfo = ProcOptions;
+        if (File.Exists(ProcOptions.FileName))
+        {
+          try
+          {
+            ExternalProc.Start();
+            //ExternalProc.BeginErrorReadLine();
+            //ExternalProc.BeginOutputReadLine();
+            try
+            {
+              ExternalProc.PriorityClass = ProcessPriorityClass.BelowNormal;            // Execute all processes in the background so movies, etc stay fluent
+            }
+            catch (Exception ex2)
+            {
+              Log.Error("TvRecorded: Error setting process priority for {0}: {1}", aAppName, ex2.Message);
+            }
+            // wait this many seconds until the process has to be finished
+            ExternalProc.WaitForExit(aExpectedTimeoutMs);
+            success = (ExternalProc.HasExited && ExternalProc.ExitCode == 0);
+          }
+          catch (Exception ex)
+          {
+            Log.Error("TvRecorded: Error executing {0}: {1}", aAppName, ex.Message);
+          }
+        }
+        else
+          Log.Warn("TvRecorded: Could not start {0} because it doesn't exist!", ProcOptions.FileName);
+
+        return success;
+      }
+    }
+
+    #endregion
+
     #region variables
 
     enum Controls
@@ -161,7 +247,7 @@ namespace TvPlugin
     bool _createRecordedThumbs = true;
     int m_iSelectedItem = 0;
     string currentShow = string.Empty;
-    //bool _creatingThumbNails = false;
+    private static bool _creatingThumbNails = false;
     RecordingThumbCacher thumbworker = null;
 
     [SkinControlAttribute(2)]
@@ -192,7 +278,6 @@ namespace TvPlugin
       g_Player.ShowFullScreenWindowTV = ShowFullScreenWindowTVHandler;
       g_Player.ShowFullScreenWindowVideo = ShowFullScreenWindowVideoHandler; // singleseaters uses this
 
-      Log.Info("TvRecorded:OnAdded");
       GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_RECORDEDTV, this);
       Restore();
       PreInit();
@@ -556,7 +641,7 @@ namespace TvPlugin
 
       dlg.AddLocalizedString(655);     //Play recorded tv
       dlg.AddLocalizedString(656);     //Delete recorded tv
-      if (rec.TimesWatched>0)
+      if (rec.TimesWatched > 0)
         dlg.AddLocalizedString(830); //Reset watched status
       dlg.AddLocalizedString(1048);//Settings
 
@@ -665,7 +750,7 @@ namespace TvPlugin
                     {
                       item.IsFolder = true;
                       Utils.SetDefaultIcons(item);
-                      string strLogo = Utils.GetCoverArt(Thumbs.TVShows, rec.Title);
+                      string strLogo = string.Format("{0}\\{1}{2}", Thumbs.TVRecorded, Utils.MakeFileName(rec.Title), Utils.GetThumbExtension());
                       if (File.Exists(strLogo))
                       {
                         item.ThumbnailImage = strLogo;
@@ -709,7 +794,8 @@ namespace TvPlugin
                   }
                 }
               }
-            } catch (Exception recex)
+            }
+            catch (Exception recex)
             {
               Log.Error("TVRecorded: error processing recordings - {0}", recex.Message);
             }
@@ -736,7 +822,8 @@ namespace TvPlugin
             }
           }
         }
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Error("TvRecorded: Error fetching recordings from database {0}", ex.Message);
       }
@@ -756,7 +843,6 @@ namespace TvPlugin
 
     public static bool IsRecordingActual(Recording aRecording)
     {
-
       TimeSpan tsRecording = (aRecording.EndTime - aRecording.StartTime);
       DateTime now = DateTime.Now;
 
@@ -825,7 +911,7 @@ namespace TvPlugin
         {
           item = new GUIListItem(aRecording.Title);
           item.TVTag = aRecording;
-          string strLogo = Thumbs.TVRecorded + @"\" + Path.ChangeExtension(Utils.SplitFilename(aRecording.FileName), ".png");
+          string strLogo = string.Format("{0}\\{1}{2}", Thumbs.TVRecorded, Utils.MakeFileName(aRecording.Title), Utils.GetThumbExtension());
 
           if (!File.Exists(strLogo))
           {
@@ -858,7 +944,8 @@ namespace TvPlugin
         }
         else
           Log.Warn("TVRecorded: invalid recording title for {0}", aRecording.FileName);
-      } catch (NullReferenceException singleex)
+      }
+      catch (NullReferenceException singleex)
       {
         item = null;
         Log.Warn("TVRecorded: error building item from recording {0} - {1}", aRecording.FileName, singleex.Message + " stack: " + singleex.StackTrace);
@@ -965,7 +1052,8 @@ namespace TvPlugin
             if (!item2.IsFolder)
               item2.IsPlayed = true;
           }
-        } catch (Exception ex)
+        }
+        catch (Exception ex)
         {
           Log.Warn("TVRecorded: error in SetLabels - {0}", ex.Message);
         }
