@@ -92,7 +92,11 @@ namespace TvPlugin
           foreach (Recording rec in recordings)
           {
             string thumbNail = string.Format("{0}\\{1}{2}", Thumbs.TVRecorded, Utils.MakeFileName(rec.Title), Utils.GetThumbExtension());
+            // Params for ffmpeg
             string ExtractorArgs = string.Format(" -i \"{0}\" -vframes 1 -ss {1} -s {2}x{3} \"{4}\"", rec.FileName, @"00:08:21", (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, thumbNail);
+            // Params for mplayer mplayer (outputs 00000001.jpg into current dir)
+            // string ExtractorArgs = string.Format(" -noconsolecontrols -nosound -vo jpeg:quality=90:nobaseline -frames 1 -ss {0} -vf scale={1}:{2} \"{3}\"", @"501", (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, rec.FileName);
+
             if (!File.Exists(thumbNail))
             {
               //Log.Info("RecordedTV: No thumbnail found at {0} for recording {1} - grabbing from file now", thumbNail, rec.FileName);
