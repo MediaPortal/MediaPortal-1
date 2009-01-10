@@ -863,9 +863,10 @@ Section Uninstall
     RMDir /r /REBOOTOK "$MPdir.Skin"
     RMDir /r /REBOOTOK "$MPdir.Base"
 
-    SetShellVarContext all
-    RMDir /r /REBOOTOK "$APPDATA\VirtualStore\ProgramData\Team MediaPortal\MediaPortal"
-    RMDir /r /REBOOTOK "$APPDATA\VirtualStore\Program Files\Team MediaPortal\MediaPortal"
+    RMDir /r /REBOOTOK "$LOCALAPPDATA\VirtualStore\ProgramData\Team MediaPortal\MediaPortal"
+    RMDir /r /REBOOTOK "$LOCALAPPDATA\VirtualStore\Program Files\Team MediaPortal\MediaPortal"
+    RMDir /REBOOTOK "$LOCALAPPDATA\VirtualStore\ProgramData\Team MediaPortal"
+    RMDir /REBOOTOK "$LOCALAPPDATA\VirtualStore\Program Files\Team MediaPortal"
   ${EndIf}
 
   ${unregisterExtension} ".mpi" "MediaPortal extension package"

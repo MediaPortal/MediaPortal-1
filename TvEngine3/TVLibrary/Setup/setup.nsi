@@ -654,6 +654,11 @@ Section Uninstall
     ${LOG_TEXT} "INFO" "Removing User Settings"
     RMDir /r /REBOOTOK "${COMMON_APPDATA}"
     RMDir /r /REBOOTOK $INSTDIR
+
+    RMDir /r /REBOOTOK "$LOCALAPPDATA\VirtualStore\ProgramData\Team MediaPortal\MediaPortal TV Server"
+    RMDir /r /REBOOTOK "$LOCALAPPDATA\VirtualStore\Program Files\Team MediaPortal\MediaPortal TV Server"
+    RMDir /REBOOTOK "$LOCALAPPDATA\VirtualStore\ProgramData\Team MediaPortal"
+    RMDir /REBOOTOK "$LOCALAPPDATA\VirtualStore\Program Files\Team MediaPortal"
   ${EndIf}
 SectionEnd
 
