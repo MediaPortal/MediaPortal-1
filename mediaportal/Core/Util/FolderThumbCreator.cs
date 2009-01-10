@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Threading;
 
@@ -32,7 +33,6 @@ using MediaPortal.Services;
 using MediaPortal.ServiceImplementations;
 using MediaPortal.TagReader;
 using MediaPortal.Threading;
-using System.IO;
 
 
 namespace MediaPortal.Util

@@ -1952,6 +1952,7 @@
     <Compile Include="Util\Util.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Util\VideoThumbCreator.cs" />
     <Compile Include="Util\VirtualDirectory.cs">
       <SubType>Code</SubType>
     </Compile>

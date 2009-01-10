@@ -37,6 +37,7 @@ using System.Management;
 using System.Diagnostics;
 using System.Text;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Xml;
 using System.ServiceProcess;
@@ -1181,6 +1182,83 @@ namespace MediaPortal.Util
         procInfo.CreateNoWindow = true;
       }
       return StartProcess(procInfo, bWaitForExit);
+    }
+
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    public static bool StartProcess(string aAppName, string aArguments, string aWorkingDir, int aExpectedTimeoutMs, bool aLowerPriority)
+    {
+      bool success = false;
+      Process ExternalProc = new Process();
+      ProcessStartInfo ProcOptions = new ProcessStartInfo(aAppName, aArguments);
+
+      ProcOptions.UseShellExecute = false;                                       // Important for WorkingDirectory behaviour
+      ProcOptions.RedirectStandardError = false;                                 // .NET bug? Some stdout reader abort to early without that!
+      ProcOptions.RedirectStandardOutput = false;                                // The precious data we're after
+      //ProcOptions.StandardOutputEncoding = Encoding.GetEncoding("ISO-8859-1"); // the output contains "Umlaute", etc.
+      //ProcOptions.StandardErrorEncoding = Encoding.GetEncoding("ISO-8859-1");
+      ProcOptions.WorkingDirectory = aWorkingDir;                                // set the dir because the binary might depend on cygwin.dll
+      ProcOptions.CreateNoWindow = true;                                         // Do not spawn a "Dos-Box"      
+      ProcOptions.ErrorDialog = false;                                           // Do not open an error box on failure        
+
+      //ExternalProc.OutputDataReceived += new DataReceivedEventHandler(StdOutDataReceived);
+      //ExternalProc.ErrorDataReceived += new DataReceivedEventHandler(StdErrDataReceived);
+      ExternalProc.EnableRaisingEvents = true;                                   // We want to know when and why the process died        
+      ExternalProc.StartInfo = ProcOptions;
+      if (File.Exists(ProcOptions.FileName))
+      {
+        try
+        {
+          ExternalProc.Start();
+          //ExternalProc.BeginErrorReadLine();
+          //ExternalProc.BeginOutputReadLine();
+          if (aLowerPriority)
+          {
+            try
+            {
+              ExternalProc.PriorityClass = ProcessPriorityClass.BelowNormal;            // Execute all processes in the background so movies, etc stay fluent
+            }
+            catch (Exception ex2)
+            {
+              Log.Error("Util: Error setting process priority for {0}: {1}", aAppName, ex2.Message);
+            }
+          }
+          // wait this many seconds until the process has to be finished
+          ExternalProc.WaitForExit(aExpectedTimeoutMs);
+          success = (ExternalProc.HasExited && ExternalProc.ExitCode == 0);
+        }
+        catch (Exception ex)
+        {
+          Log.Error("Util: Error executing {0}: {1}", aAppName, ex.Message);
+        }
+      }
+      else
+        Log.Warn("Util: Could not start {0} because it doesn't exist!", ProcOptions.FileName);
+
+      return success;
+    }
+
+    public static void KillProcess(string aProcessName)
+    {
+      try
+      {
+        Process[] leftovers = System.Diagnostics.Process.GetProcessesByName(aProcessName);
+        foreach (Process termProc in leftovers)
+        {
+          try
+          {
+            Log.Warn("Util: Killing process: {0}", termProc.ProcessName);
+            termProc.Kill();
+          }
+          catch (Exception exk)
+          {
+            Log.Error("Util: Error stopping processes - {0})", exk.ToString());
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Util: Error getting processes by name for {0} - {1})", aProcessName, ex.ToString());
+      }
     }
 
     public static bool PlayDVD()
