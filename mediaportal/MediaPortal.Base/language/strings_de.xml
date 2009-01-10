@@ -1722,7 +1722,9 @@
         <String id="100762" prefix="Mein ">Radio-Programm</String>
         <String id="100770" prefix="Mein ">Datei-Manager</String>
         <String id="101000">Tastatur</String>
-        <String id="101002">Bildschirm-Tastatur</String>
+		<String id="101002">Standard Bildschirm-Tastatur</String>
+		<String id="101003">Web Bildschirm-Tastatur</String>
+		<String id="101004">SMS Bildschirm-Tastatur</String>
         <String id="102000">Auswahldialog</String>
         <String id="102001" prefix="Meine ">Musik/Info</String>
         <String id="102002">Dialog Ok</String>
