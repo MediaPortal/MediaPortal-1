@@ -1206,10 +1206,18 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         if (ctrl.ServiceName.ToLower() == irss_srv.ToLower())
         {
           MediaPortal.GUI.Library.Log.Debug("iMONLCDg.Dispose(): Restarting \"" + irss_srv + "\" from IRSS", new object[0]);
-          ctrl.Stop();
-          ctrl.WaitForStatus(ServiceControllerStatus.Stopped);
-          ctrl.Start();
-          ctrl.WaitForStatus(ServiceControllerStatus.Running);
+          try
+          {
+            ctrl.Stop();
+            ctrl.WaitForStatus(ServiceControllerStatus.Stopped);
+            ctrl.Start();
+            ctrl.WaitForStatus(ServiceControllerStatus.Running);
+          }
+          catch (Exception ex)
+          {
+            Log.Error("iMONLCDg.Dispose(): Unable to restart \"" + irss_srv + "\" from IRSS: " + ex.Message,
+                      new object[0]);
+          }
         }
       }
       MediaPortal.GUI.Library.Log.Debug("iMONLCDg.Dispose(): completed", new object[0]);
