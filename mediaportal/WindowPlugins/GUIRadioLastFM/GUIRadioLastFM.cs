@@ -367,50 +367,23 @@ namespace MediaPortal.GUI.RADIOLASTFM
       string searchterm = aDefaultText;
       try
       {
+        VirtualKeyboard keyboard;
         if (_configUseSMSInput)
         {
-          SMSStyledKeyboard keyboard = new SMSStyledKeyboard();
-          keyboard.Init();
-          GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD, (GUIWindow)keyboard);
-          if (keyboard == null)
-            return searchterm;
-
-          keyboard.Reset();
-          keyboard.IsSearchKeyboard = false;
-          keyboard.Location = new MediaPortal.Drawing.Point(50, 50);
-          keyboard.Text = searchterm;
-          keyboard.DoModal(GetID); // show it...
-          if (keyboard.IsConfirmed)
-            searchterm = keyboard.Text;
-
-          //Restore original Keyboard
-          VirtualKeyboard originalKeyboard = new VirtualKeyboard();
-          originalKeyboard.Init();
-
-          GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD, (GUIWindow)originalKeyboard);
+          keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_SMS_KEYBOARD);
         }
         else
         {
-          VirtualKeyboard keyboard = new VirtualKeyboard();
-          keyboard.Init();
-          GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD, (GUIWindow)keyboard);
-          if (keyboard == null)
-            return searchterm;
-
-          keyboard.Reset();
-          keyboard.IsSearchKeyboard = false;
-          keyboard.Location = new MediaPortal.Drawing.Point(50, 50);
-          keyboard.Text = searchterm;
-          keyboard.DoModal(GetID); // show it...
-          if (keyboard.IsConfirmed)
-            searchterm = keyboard.Text;
-
-          //Restore original Keyboard
-          VirtualKeyboard originalKeyboard = new VirtualKeyboard();
-          originalKeyboard.Init();
-
-          GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD, (GUIWindow)originalKeyboard);
+          keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
         }
+        keyboard.Reset();
+        keyboard.IsSearchKeyboard = false;
+        keyboard.Location = new MediaPortal.Drawing.Point(50, 50);
+        keyboard.Text = searchterm;
+        keyboard.DoModal(GetID); // show it...
+        if (keyboard.IsConfirmed)
+          searchterm = keyboard.Text;
+
 
 
       }

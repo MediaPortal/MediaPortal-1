@@ -24,74 +24,58 @@
 #endregion
 
 using System;
-using System.Drawing;
-using System.Windows.Forms;
 using System.Collections;
 using MediaPortal.GUI.Library;
-using Microsoft.DirectX;
-using Microsoft.DirectX.Direct3D;
-using Direct3D = Microsoft.DirectX.Direct3D;
 
 namespace MediaPortal.Dialogs
 {
-  public class SMSStyledKeyboard : GUIWindow, IRenderLayer
+  public abstract class VirtualKeyboard : GUIWindow, IRenderLayer
   {
     #region constants
-    const int GAP_WIDTH = 0;
-    const int GAP2_WIDTH = 4;
-    int MODEKEY_WIDTH = 110;
-    const int KEY_INSET = 1;
-
-    const int MAX_KEYS_PER_ROW = 14;
-
-    // Must be this far from center on 0.0 - 1.0 scale
-    const float JOY_THRESHOLD = 0.25f;
+    public const int GAP_WIDTH = 0;
+    public const int GAP2_WIDTH = 4;
+    public int MODEKEY_WIDTH = 110;
+    public const int KEY_INSET = 1;
 
     // How often (per second) the caret blinks
     const float fCARET_BLINK_RATE = 1.0f;
 
     // During the blink period, the amount the caret is visible. 0.5 equals
     // half the time, 0.75 equals 3/4ths of the time, etc.
-    const float fCARET_ON_RATIO = 0.75f;
+    public const float fCARET_ON_RATIO = 0.75f;
 
     // Text colors for keys
-    const long COLOR_SEARCHTEXT = 0xff000000;   // black (0xff10e010)
-    const long COLOR_HIGHLIGHT = 0xff00ff00;   // green
-    const long COLOR_PRESSED = 0xff808080;   // gray
-    const long COLOR_NORMAL = 0xff000000;   // black
-    const long COLOR_DISABLED = 0xffffffff;   // white
-    const long COLOR_HELPTEXT = 0xffffffff;   // white
-    const long COLOR_FONT_DISABLED = 0xff808080;   // gray
-    const long COLOR_INVISIBLE = 0xff0000ff;   // blue
-    const long COLOR_RED = 0xffff0000;   // red
+    public const long COLOR_SEARCHTEXT = 0xff000000;   // black (0xff10e010)
+    public const long COLOR_HIGHLIGHT = 0xff00ff00;   // green
+    public const long COLOR_PRESSED = 0xff808080;   // gray
+    public const long COLOR_NORMAL = 0xff000000;   // black
+    public const long COLOR_DISABLED = 0xffffffff;   // white
+    public const long COLOR_HELPTEXT = 0xffffffff;   // white
+    public const long COLOR_FONT_DISABLED = 0xff808080;   // gray
+    public const long COLOR_INVISIBLE = 0xff0000ff;   // blue
+    public const long COLOR_RED = 0xffff0000;   // red
     // Font sizes
-    const int FONTSIZE_BUTTONCHARS = 24;
-    const int FONTSIZE_BUTTONSTRINGS = 18;
-    const int FONTSIZE_SEARCHTEXT = 20;
+    public const int FONTSIZE_BUTTONCHARS = 24;
+    public const int FONTSIZE_BUTTONSTRINGS = 18;
+    public const int FONTSIZE_SEARCHTEXT = 20;
 
     // Controller repeat values
-    const float fINITIAL_REPEAT = 0.333f; // 333 mS recommended for first repeat
-    const float fSTD_REPEAT = 0.085f; // 85 mS recommended for repeat rate
+    public const float fINITIAL_REPEAT = 0.333f; // 333 mS recommended for first repeat
+    public const float fSTD_REPEAT = 0.085f; // 85 mS recommended for repeat rate
 
     // Maximum number of characters in string
-    const int MAX_CHARS = 64;
+    public const int MAX_CHARS = 64;
 
     // Width of text box
-    float fTEXTBOX_WIDTH = 576.0f - 64.0f - 4.0f - 4.0f - 10.0f;
-    float BUTTON_Y_POS = 411.0f;      // button text line
-    float BUTTON_X_OFFSET = 40.0f;      // space between button and text
+    public float fTEXTBOX_WIDTH = 576.0f - 64.0f - 4.0f - 4.0f - 10.0f;
+    public const int KEY_WIDTH = 34;   // width of std key in pixels
 
-    const long BUTTONTEXT_COLOR = 0xffffffff;
-    const float FIXED_JSL_SIZE = 3.0f;
+    public bool _usingKeyboard;
+    public char _currentKeyb = (char)0;
+    public char _previousKey = (char)0;
+    public DateTime _timerKey = DateTime.Now;
 
-    const int KEY_WIDTH = 34;   // width of std key in pixels
 
-    bool _usingKeyboard = false;
-    char _currentKeyb = (char)0;
-    char _previousKey = (char)0;
-    DateTime _timerKey = DateTime.Now;
-
- 
     #endregion
 
     #region enums
@@ -103,7 +87,7 @@ namespace MediaPortal.Dialogs
       SEARCH_IS
     }
 
-    enum KeyboardTypes
+    public enum KeyboardTypes
     {
       TYPE_ALPHABET = 0,
       TYPE_SYMBOLS,
@@ -116,16 +100,14 @@ namespace MediaPortal.Dialogs
       TYPE_MAX
     };
 
-    enum State
+    public enum State
     {
       STATE_BACK,         // Main menu
       STATE_KEYBOARD,     // Keyboard display
       STATE_MAX
     };
 
-
-
-    enum Event
+    public enum Event
     {
       EV_NULL,            // No events
       EV_A_BUTTON,        // A button
@@ -146,7 +128,7 @@ namespace MediaPortal.Dialogs
       EVENT_MAX
     };
 
-    enum Xkey
+    public enum Xkey
     {
       XK_NULL = 0,
 
@@ -329,7 +311,7 @@ namespace MediaPortal.Dialogs
       XK_SEARCH_GENERE // search for genere
     };
 
-    enum StringID
+    public enum StringID
     {
       STR_MENU_KEYBOARD_NAME,
       STR_MENU_CHOOSE_KEYBOARD,
@@ -357,8 +339,47 @@ namespace MediaPortal.Dialogs
     };
     #endregion
 
+    #region variables
+    public string _textEntered = "";
+    public bool _capsLockTurnedOn = true;
+    public bool _shiftTurnedOn;
+    public State _state;
+    public int _position;
+    public KeyboardTypes _currentKeyboard;
+    public int _currentRow;
+    public int _currentKey;
+    public int _lastColumn;
+    public CachedTexture.Frame _keyTexture;
+    public float _keyHeight;
+    public int _maxRows;
+    public bool _pressedEnter;
+    public GUIFont _font18;
+    public GUIFont _font12;
+    public GUIFont _fontButtons;
+    public GUIFont _fontSearchText;
+    public DateTime _caretTimer = DateTime.Now;
+    public bool _previousOverlayVisible = true;
+    public bool _password;
+    public GUIImage image;
+    public bool _useSearchLayout;
 
-    class Key
+    // added by Agree
+    public int _searchKind; // 0=Starts with, 1=Contains, 2=Ends with
+    //
+
+    public ArrayList _keyboardList = new ArrayList();         // list of rows = keyboard
+
+    public float SkinRatio;
+
+    #endregion
+
+    #region Base Dialog Variables
+    bool _isVisible;
+    int _parentWindowId;
+    GUIWindow _parentWindow;
+    #endregion
+
+    public class Key
     {
       public Xkey xKey;       // virtual key code
       public int dwWidth = KEY_WIDTH;    // width of the key
@@ -415,74 +436,13 @@ namespace MediaPortal.Dialogs
       }
     };
 
-    #region variables
-    string _textEntered = "";
-    bool _capsLockTurnedOn = true;
-    bool _shiftTurnedOn = false;
-    State _state;
-    int _position;
-    KeyboardTypes _currentKeyboard;
-    int _currentRow;
-    int _currentKey;
-    int _lastColumn;
-    //float         m_fRepeatDelay;
-    CachedTexture.Frame _keyTexture = null;
-    float _keyHeight;
-    int _maxRows;
-    bool _pressedEnter;
-    GUIFont _font18 = null;
-    GUIFont _font12 = null;
-    GUIFont _fontButtons = null;
-    GUIFont _fontSearchText = null;
-    DateTime _caretTimer = DateTime.Now;
-    bool _previousOverlayVisible = true;
-    bool _password = false;
-    GUIImage image;
-    bool _useSearchLayout = false;
-
-    // added by Agree
-    int _searchKind; // 0=Starts with, 1=Contains, 2=Ends with
-    //
-
-    ArrayList _keyboardList = new ArrayList();         // list of rows = keyboard
-
-    #endregion
-
-
-    #region Base Dialog Variables
-    bool _isVisible = false;
-    int _parentWindowId = 0;
-    GUIWindow _parentWindow = null;
-    #endregion
-
     // lets do some event stuff
     public delegate void TextChangedEventHandler(int kindOfSearch, string evtData);
     public event TextChangedEventHandler TextChanged;
     //
-
-    public SMSStyledKeyboard()
+    protected VirtualKeyboard()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD;
-      _capsLockTurnedOn = true;
-      _shiftTurnedOn = false;
-      _state = State.STATE_KEYBOARD;
-      _position = 0;
-      _currentKeyboard = KeyboardTypes.TYPE_ALPHABET;
-      _currentRow = 0;
-      _currentKey = 0;
-      _lastColumn = 0;
-      //m_fRepeatDelay   = fINITIAL_REPEAT;
-      _keyTexture = null;
-
-      _keyHeight = 42.0f;
-      _maxRows = 5;
-      _pressedEnter = false;
-      _caretTimer = DateTime.Now;
-      // construct search def.
-      _searchKind = (int)SearchKinds.SEARCH_CONTAINS; // default search Contains
-
-      if (GUIGraphicsContext.DX9Device != null)
-        InitBoard();
+      InitializeInstance();
     }
 
     public override bool Init()
@@ -500,26 +460,27 @@ namespace MediaPortal.Dialogs
       set { _useSearchLayout = value; }
     }
 
-    void Initialize()
+    protected void Initialize()
     {
       _font12 = GUIFontManager.GetFont("font12");
       _font18 = GUIFontManager.GetFont("font18");
       _fontButtons = GUIFontManager.GetFont("dingbats");
-      _fontSearchText = GUIFontManager.GetFont("font18");
+      _fontSearchText = GUIFontManager.GetFont("font14");
 
-      int iTextureWidth, iTextureHeight;
       int iImages = GUITextureManager.Load("keyNF.bmp", 0, 0, 0);
       if (iImages == 1)
       {
+        int iTextureWidth, iTextureHeight;
         _keyTexture = GUITextureManager.GetTexture("keyNF.bmp", 0, out iTextureWidth, out iTextureHeight);
       }
-      image = new GUIImage(this.GetID, 1, 0, 0, 10, 10, "white.bmp", 1);
+      image = new GUIImage(GetID, 1, 0, 0, 10, 10, "white.bmp", 1);
       image.AllocResources();
     }
 
-    void DeInitialize()
+    protected void DeInitialize()
     {
-      if (image != null) image.FreeResources();
+      if (image != null)
+        image.FreeResources();
       image = null;
     }
 
@@ -527,7 +488,7 @@ namespace MediaPortal.Dialogs
     {
       _password = false;
       _pressedEnter = false;
-      _capsLockTurnedOn = true;
+      _capsLockTurnedOn = false;
       _shiftTurnedOn = false;
       _state = State.STATE_KEYBOARD;
       _position = 0;
@@ -536,7 +497,7 @@ namespace MediaPortal.Dialogs
       _currentKey = 0;
       _lastColumn = 0;
       //m_fRepeatDelay   = fINITIAL_REPEAT;
-      _keyHeight = 42.0f;
+      _keyHeight = 42.0f * SkinRatio;
       _maxRows = 5;
       _position = 0;
       _textEntered = "";
@@ -547,14 +508,12 @@ namespace MediaPortal.Dialogs
       int y = 411;
       int x = 40;
       GUIGraphicsContext.ScalePosToScreenResolution(ref x, ref y);
-      BUTTON_Y_POS = x;      // button text line
-      BUTTON_X_OFFSET = y;      // space between button and text
 
-      int width = 42;
-      GUIGraphicsContext.ScaleHorizontal(ref width);
+      int width = (int)(42 * SkinRatio);
+      GUIGraphicsContext.ScaleVertical(ref width);
       _keyHeight = width;
 
-      width = (int)(576.0f - 64.0f - 4.0f - 4.0f - 10.0f);
+      width = (int)(576.0f - 64.0f - 4.0f - 4.0f - 10.0f - 80.0f);
       GUIGraphicsContext.ScaleHorizontal(ref width);
       fTEXTBOX_WIDTH = width;
 
@@ -572,8 +531,8 @@ namespace MediaPortal.Dialogs
       _previousOverlayVisible = GUIGraphicsContext.Overlay;
       _pressedEnter = false;
       GUIGraphicsContext.Overlay = false;
-      GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + (int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD));
-      Log.Debug("Window: {0} init", this.ToString());
+      GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + GetID));
+      Log.Debug("Window: {0} init", ToString());
       Initialize();
     }
 
@@ -582,7 +541,7 @@ namespace MediaPortal.Dialogs
       GUIGraphicsContext.Overlay = _previousOverlayVisible;
       DeInitialize();
 
-      Log.Debug("Window: {0} deinit", this.ToString());
+      Log.Debug("Window: {0} deinit", ToString());
       FreeResources();
     }
 
@@ -605,7 +564,8 @@ namespace MediaPortal.Dialogs
     public void SelectActiveButton(float x, float y)
     {
       // Draw each row
-      int y1 = 250, x1 = 64;
+      int y1 = 250;
+      int x1 = (int)(64 * SkinRatio);
       GUIGraphicsContext.ScalePosToScreenResolution(ref x1, ref y1);
       float fY = y1;
       ArrayList keyBoard = (ArrayList)_keyboardList[(int)_currentKeyboard];
@@ -618,9 +578,9 @@ namespace MediaPortal.Dialogs
         for (int i = 0; i < keyRow.Count; i++)
         {
           Key key = (Key)keyRow[i];
-          int width = key.dwWidth;
+          int width = (int)(key.dwWidth * SkinRatio);
           GUIGraphicsContext.ScaleHorizontal(ref width);
-          if (x >= fX + fWidthSum && x <= fX + fWidthSum + key.dwWidth)
+          if (x >= fX + fWidthSum && x <= fX + fWidthSum + width)
           {
             if (y >= fY && y < fY + _keyHeight)
             {
@@ -634,7 +594,7 @@ namespace MediaPortal.Dialogs
           // keys) and the main keyboard
           if (dwIndex == 0)
           {
-            width = GAP2_WIDTH;
+            width = (int)(GAP2_WIDTH * SkinRatio);
             GUIGraphicsContext.ScaleHorizontal(ref width);
             fWidthSum += width;
           }
@@ -650,7 +610,8 @@ namespace MediaPortal.Dialogs
       }
 
       // Default no key found no key highlighted
-      if (_currentKey != -1) _lastColumn = _currentKey;
+      if (_currentKey != -1)
+        _lastColumn = _currentKey;
       _currentKey = -1;
     }
 
@@ -711,8 +672,7 @@ namespace MediaPortal.Dialogs
         case Action.ActionType.ACTION_KEY_PRESSED:
           if (action.m_key != null)
           {
-              Console.WriteLine("keycode: " + action.m_key.KeyCode);
-              if (action.m_key.KeyChar >= 32)
+            if (action.m_key.KeyChar >= 32)
               Press((char)action.m_key.KeyChar);
             if (action.m_key.KeyChar == 8)
             {
@@ -722,7 +682,8 @@ namespace MediaPortal.Dialogs
           break;
       }
     }
-    void Close()
+
+    protected void Close()
     {
       _isVisible = false;
     }
@@ -778,7 +739,7 @@ namespace MediaPortal.Dialogs
       }
     }
 
-    void InitBoard()
+    protected virtual void InitBoard()
     {
       if (_useSearchLayout)
         MODEKEY_WIDTH = 130;  // Searchkeyboard
@@ -788,11 +749,11 @@ namespace MediaPortal.Dialogs
       _currentKey = 0;
       _lastColumn = 1;
       _currentKeyboard = KeyboardTypes.TYPE_ALPHABET;
-      _capsLockTurnedOn = true;
+      _capsLockTurnedOn = false;
       _shiftTurnedOn = false;
       _textEntered = "";
       _position = 0;
-      int height = 42;
+      int height = (int)(42 * SkinRatio);
       GUIGraphicsContext.ScaleVertical(ref height);
       _keyHeight = height;
       _maxRows = 5;
@@ -887,7 +848,6 @@ namespace MediaPortal.Dialogs
         keyRow.Add(new Key(Xkey.XK_ACCENTS, MODEKEY_WIDTH));   // Searchkeyboard
       else
         keyRow.Add(new Key(Xkey.XK_NULL, MODEKEY_WIDTH));
-        
 
       keyRow.Add(new Key(Xkey.XK_SPACE, (KEY_WIDTH * 6) + (GAP_WIDTH * 5)));
       keyRow.Add(new Key(Xkey.XK_ARROWLEFT, (KEY_WIDTH * 2) + (GAP_WIDTH * 1)));
@@ -1090,7 +1050,7 @@ namespace MediaPortal.Dialogs
 
     }
 
-    void UpdateState(Event ev)
+    protected void UpdateState(Event ev)
     {
       switch (_state)
       {
@@ -1125,10 +1085,18 @@ namespace MediaPortal.Dialogs
               break;
 
             // Navigation
-            case Event.EV_UP: MoveUp(); break;
-            case Event.EV_DOWN: MoveDown(); break;
-            case Event.EV_LEFT: MoveLeft(); break;
-            case Event.EV_RIGHT: MoveRight(); break;
+            case Event.EV_UP:
+              MoveUp();
+              break;
+            case Event.EV_DOWN:
+              MoveDown();
+              break;
+            case Event.EV_LEFT:
+              MoveLeft();
+              break;
+            case Event.EV_RIGHT:
+              MoveRight();
+              break;
           }
           break;
         default:
@@ -1137,14 +1105,14 @@ namespace MediaPortal.Dialogs
       }
     }
 
-    void ChangeKey(int iBoard, int iRow, int iKey, Key newkey)
+    protected void ChangeKey(int iBoard, int iRow, int iKey, Key newkey)
     {
       ArrayList board = (ArrayList)_keyboardList[iBoard];
       ArrayList row = (ArrayList)board[iRow];
       row[iKey] = newkey;
     }
 
-    void PressCurrent()
+    protected void PressCurrent()
     {
       if (_currentKey == -1) return;
 
@@ -1156,194 +1124,7 @@ namespace MediaPortal.Dialogs
       Press(key.xKey);
     }
 
-      void CheckTimer()
-      {
-          TimeSpan ts = DateTime.Now - _timerKey;
-          if (ts.TotalMilliseconds >= 800)
-          {
-              if (_currentKeyb != (char)0)
-              {
-                  if (_capsLockTurnedOn == true) _currentKeyb = char.ToUpper(_currentKeyb);
-                  if (_position == _textEntered.Length)
-                      _textEntered += _currentKeyb;
-                  else
-                      _textEntered = _textEntered.Insert(_position, _currentKeyb.ToString());
-                  _position++;
-              }
-              _previousKey = (char)0;
-              _currentKeyb = (char)0;
-              _timerKey = DateTime.Now;
-          }
-      }
-
-    void Press(char k)
-    {
-        if (k < '0' || k > '9')
-        {
-            _usingKeyboard = true;
-        }
-        if ((k == (char)126))
-        {
-          if (_capsLockTurnedOn == false) _capsLockTurnedOn = true;
-          else _capsLockTurnedOn = false;
-        }
-
-        if (!_usingKeyboard)
-        {
-
-            // Check different key presse
-            if (k != _previousKey && _currentKeyb != (char)0)
-            {
-                if (_position == _textEntered.Length)
-                    _textEntered += _currentKeyb;
-                else
-                    _textEntered = _textEntered.Insert(_position, _currentKeyb.ToString());
-
-                _previousKey = (char)0;
-                _currentKeyb = (char)0;
-                _timerKey = DateTime.Now;
-                _position++;
-            }
-
-            CheckTimer();
-            if (k >= '0' && k <= '9')
-            {
-                _previousKey = k;
-            }
-            if (k == '0')
-            {
-                if (_currentKeyb == 0) _currentKeyb = ' ';
-                else if (_currentKeyb == ' ') _currentKeyb = '0';
-                else if (_currentKeyb == '0') _currentKeyb = ' '; 
-                _timerKey = DateTime.Now;
-            }
-            /*
-            {
-                _timerKey = DateTime.Now;
-                if (_position > 0)
-                {
-                    _textEntered = _textEntered.Remove(_position - 1, 1);
-                    _position--;
-                }
-                _timerKey = DateTime.Now;
-                _previousKey = (char)0;
-                _currentKeyb = (char)0;
-            }
-             */
-            if (k == '1')
-            {
-                if (_currentKeyb == 0) _currentKeyb = '1';
-                _timerKey = DateTime.Now;
-            }
-
-            if (k == '2')
-            {
-                if (_currentKeyb == 0) _currentKeyb = 'a';
-                else if (_currentKeyb == 'a') _currentKeyb = 'b';
-                else if (_currentKeyb == 'b') _currentKeyb = 'c';
-                else if (_currentKeyb == 'c') _currentKeyb = '2';
-                else if (_currentKeyb == '2') _currentKeyb = 'a';
-                _timerKey = DateTime.Now;
-            }
-            if (k == '3')
-            {
-                if (_currentKeyb == 0) _currentKeyb = 'd';
-                else if (_currentKeyb == 'd') _currentKeyb = 'e';
-                else if (_currentKeyb == 'e') _currentKeyb = 'f';
-                else if (_currentKeyb == 'f') _currentKeyb = '3';
-                else if (_currentKeyb == '3') _currentKeyb = 'd';
-                _timerKey = DateTime.Now;
-            }
-            if (k == '4')
-            {
-                if (_currentKeyb == 0) _currentKeyb = 'g';
-                else if (_currentKeyb == 'g') _currentKeyb = 'h';
-                else if (_currentKeyb == 'h') _currentKeyb = 'i';
-                else if (_currentKeyb == 'i') _currentKeyb = '4';
-                else if (_currentKeyb == '4') _currentKeyb = 'g';
-                _timerKey = DateTime.Now;
-            }
-            if (k == '5')
-            {
-                if (_currentKeyb == 0) _currentKeyb = 'j';
-                else if (_currentKeyb == 'j') _currentKeyb = 'k';
-                else if (_currentKeyb == 'k') _currentKeyb = 'l';
-                else if (_currentKeyb == 'l') _currentKeyb = '5';
-                else if (_currentKeyb == '5') _currentKeyb = 'j';
-                _timerKey = DateTime.Now;
-            }
-            if (k == '6')
-            {
-                if (_currentKeyb == 0) _currentKeyb = 'm';
-                else if (_currentKeyb == 'm') _currentKeyb = 'n';
-                else if (_currentKeyb == 'n') _currentKeyb = 'o';
-                else if (_currentKeyb == 'o') _currentKeyb = '6';
-                else if (_currentKeyb == '6') _currentKeyb = 'm';
-                _timerKey = DateTime.Now;
-            }
-            if (k == '7')
-            {
-                if (_currentKeyb == 0) _currentKeyb = 'p';
-                else if (_currentKeyb == 'p') _currentKeyb = 'q';
-                else if (_currentKeyb == 'q') _currentKeyb = 'r';
-                else if (_currentKeyb == 'r') _currentKeyb = 's';
-                else if (_currentKeyb == 's') _currentKeyb = '7';
-                else if (_currentKeyb == '7') _currentKeyb = 'p';
-                _timerKey = DateTime.Now;
-            }
-            if (k == '8')
-            {
-                if (_currentKeyb == 0) _currentKeyb = 't';
-                else if (_currentKeyb == 't') _currentKeyb = 'u';
-                else if (_currentKeyb == 'u') _currentKeyb = 'v';
-                else if (_currentKeyb == 'v') _currentKeyb = '8';
-                else if (_currentKeyb == '8') _currentKeyb = 't';
-                _timerKey = DateTime.Now;
-            }
-            if (k == '9')
-            {
-                if (_currentKeyb == 0) _currentKeyb = 'w';
-                else if (_currentKeyb == 'w') _currentKeyb = 'x';
-                else if (_currentKeyb == 'x') _currentKeyb = 'y';
-                else if (_currentKeyb == 'y') _currentKeyb = 'z';
-                else if (_currentKeyb == 'z') _currentKeyb = '9';
-                else if (_currentKeyb == '9') _currentKeyb = 'w';
-                _timerKey = DateTime.Now;
-            }
-        }
-        else 
-        {
-            if ((k != (char)126))
-            {
-                if (k == (char)8) // Backspace
-                {
-                    if (_position > 0)
-                    {
-                        _textEntered = _textEntered.Remove(_position - 1, 1);
-                        _position--;
-                    }
-                }
-                else
-                {
-                    if (_position >= _textEntered.Length)
-                        _textEntered += k;
-                    else
-                        _textEntered = _textEntered.Insert(_position, k.ToString());
-                    _position++;
-                }
-            }
-            _previousKey = (char)0;
-            _currentKeyb = (char)0;
-            _timerKey = DateTime.Now;
-        }
-
-        _usingKeyboard = false;
-
-      // Unstick the shift key
-      _shiftTurnedOn = false;
-    }
-
-    void Press(Xkey xk)
+    protected void Press(Xkey xk)
     {
 
       if (xk == Xkey.XK_NULL) // happens in Japanese keyboard (keyboard type)
@@ -1452,7 +1233,7 @@ namespace MediaPortal.Dialogs
         }
     }
 
-    void SetSearchKind()
+    protected void SetSearchKind()
     {
       switch (_searchKind)
       {
@@ -1472,12 +1253,14 @@ namespace MediaPortal.Dialogs
           ChangeKey((int)_currentKeyboard, 1, 0, new Key(Xkey.XK_SEARCH_CONTAINS, MODEKEY_WIDTH));
           break;
       }
-      if (TextChanged != null) TextChanged(_searchKind, _textEntered);
+      if (TextChanged != null)
+        TextChanged(_searchKind, _textEntered);
     }
 
-    void MoveUp()
+    protected void MoveUp()
     {
-      if (_currentKey == -1) _currentKey = _lastColumn;
+      if (_currentKey == -1)
+        _currentKey = _lastColumn;
 
       do
       {
@@ -1519,9 +1302,10 @@ namespace MediaPortal.Dialogs
       } while (IsKeyDisabled());
     }
 
-    void MoveDown()
+    protected void MoveDown()
     {
-      if (_currentKey == -1) _currentKey = _lastColumn;
+      if (_currentKey == -1)
+        _currentKey = _lastColumn;
 
       do
       {
@@ -1543,10 +1327,7 @@ namespace MediaPortal.Dialogs
             }
             else if (_currentKey > 6)               // backspace
             {
-              if (_lastColumn > 8)
-                _currentKey = 3;                 // move to right arrow
-              else
-                _currentKey = 2;                 // move to left arrow
+              _currentKey = _lastColumn > 8 ? 3 : 2;
             }
             break;
           case 4:
@@ -1571,51 +1352,7 @@ namespace MediaPortal.Dialogs
       } while (IsKeyDisabled());
     }
 
-    void MoveLeft()
-    {
-      if (_position > 0) _position -= 1;
-        
-      /*if (_currentKey == -1) _currentKey = _lastColumn;
-
-      do
-      {
-        if (_currentKey <= 0)
-        {
-          ArrayList board = (ArrayList)_keyboardList[(int)_currentKeyboard];
-          ArrayList row = (ArrayList)board[_currentRow];
-          _currentKey = row.Count - 1;
-
-        }
-        else
-          --_currentKey;
-
-      } while (IsKeyDisabled());
-
-      SetLastColumn();*/
-    }
-
-    void MoveRight()
-    {
-      if (_position < _textEntered.Length) _position += 1;
-
-      /*if (_currentKey == -1) _currentKey = _lastColumn;
-
-      do
-      {
-        ArrayList board = (ArrayList)_keyboardList[(int)_currentKeyboard];
-        ArrayList row = (ArrayList)board[_currentRow];
-
-        if (_currentKey == row.Count - 1)
-          _currentKey = 0;
-        else
-          ++_currentKey;
-
-      } while (IsKeyDisabled());
-
-      SetLastColumn();*/
-    }
-
-    void SetLastColumn()
+    public void SetLastColumn()
     {
       if (_currentKey == -1) return;
 
@@ -1641,7 +1378,7 @@ namespace MediaPortal.Dialogs
       }
     }
 
-    bool IsKeyDisabled()
+    public bool IsKeyDisabled()
     {
       if (_currentKey == -1) return true;
 
@@ -1658,7 +1395,7 @@ namespace MediaPortal.Dialogs
       return false;
     }
 
-    char GetChar(Xkey xk)
+    protected char GetChar(Xkey xk)
     {
       // Handle case conversion
       char wc = (char)(((uint)xk) & 0xffff);
@@ -1671,30 +1408,31 @@ namespace MediaPortal.Dialogs
       return wc;
     }
 
-    void RenderKey(float fX, float fY, Key key, long keyColor, long textColor)
+    protected void RenderKey(float fX, float fY, Key key, long keyColor, long textColor)
     {
-      if (keyColor == COLOR_INVISIBLE || key.xKey == Xkey.XK_NULL) return;
+      if (keyColor == COLOR_INVISIBLE || key.xKey == Xkey.XK_NULL)
+        return;
 
 
       string strKey = GetChar(key.xKey).ToString();
       string name = (key.name.Length == 0) ? strKey : key.name;
 
-      int width = key.dwWidth - KEY_INSET + 2;
-      int height = (int)(KEY_INSET + 2);
+      int width = (int)((key.dwWidth - KEY_INSET) * SkinRatio) + 2;
+      int height = (int)(KEY_INSET * SkinRatio) + 2;
       GUIGraphicsContext.ScaleHorizontal(ref width);
       GUIGraphicsContext.ScaleVertical(ref height);
 
-      float x = fX + KEY_INSET;
-      float y = fY + KEY_INSET;
+      float x = fX + (int)(KEY_INSET * SkinRatio);
+      float y = fY + (int)(KEY_INSET * SkinRatio);
       float z = fX + width;//z
       float w = fY + _keyHeight - height;//w
 
       float nw = width;
       float nh = _keyHeight - height;
 
-      float uoffs = 0;
-      float v = 1.0f;
-      float u = 1.0f;
+      const float uoffs = 0;
+      const float v = 1.0f;
+      const float u = 1.0f;
 
       _keyTexture.Draw(x, y, nw, nh, uoffs, 0.0f, u, v, (int)keyColor);
 
@@ -1721,7 +1459,7 @@ namespace MediaPortal.Dialogs
       }
     }
 
-    void DrawTextBox(float timePassed, int x1, int y1, int x2, int y2)
+    protected void DrawTextBox(float timePassed, int x1, int y1, int x2, int y2)
     {
       //long lColor=0xaaffffff;
 
@@ -1749,7 +1487,7 @@ namespace MediaPortal.Dialogs
 
     }
 
-    void DrawText(int x, int y)
+    protected void DrawText(int x, int y)
     {
       GUIGraphicsContext.ScalePosToScreenResolution(ref x, ref y);
       x += GUIGraphicsContext.OffsetX;
@@ -1758,10 +1496,11 @@ namespace MediaPortal.Dialogs
       if (_password)
       {
         textLine = "";
-        for (int i = 0; i < _textEntered.Length; ++i) textLine += "*";
+        for (int i = 0; i < _textEntered.Length; ++i)
+          textLine += "*";
       }
 
-      _fontSearchText.DrawText((float)x, (float)y, COLOR_SEARCHTEXT, textLine, GUIControl.Alignment.ALIGN_LEFT, -1);
+      _fontSearchText.DrawText(x, y, COLOR_SEARCHTEXT, textLine, GUIControl.Alignment.ALIGN_LEFT, -1);
 
 
       // Draw blinking caret using line primitives.
@@ -1773,26 +1512,159 @@ namespace MediaPortal.Dialogs
         float caretWidth = 0.0f;
         float caretHeight = 0.0f;
         _fontSearchText.GetTextExtent(line, ref caretWidth, ref caretHeight);
-        x = x + (int)(caretWidth) - 3;
-        _fontSearchText.DrawText((float)x, (float)y, 0xff202020, "|", GUIControl.Alignment.ALIGN_LEFT, -1);
+        x += (int)caretWidth;
+        _fontSearchText.DrawText(x, y, 0xff202020, "|", GUIControl.Alignment.ALIGN_LEFT, -1);
 
       }
     }
 
-    void RenderKeyboardLatin(float timePassed)
+    protected virtual void OnTextChanged()
+    {
+      if (TextChanged != null)
+      {
+        TextChanged(_searchKind, _textEntered);
+      }
+    }
+
+    #region IRenderLayer
+    public bool ShouldRenderLayer()
+    {
+      return true;
+    }
+
+    public void RenderLayer(float timePassed)
+    {
+
+      Render(timePassed);
+    }
+    #endregion
+
+    #region abstract methods
+
+    protected abstract void MoveLeft();
+    protected abstract void MoveRight();
+    protected abstract void Press(char k);
+    protected abstract void RenderKeyboardLatin(float timePassed);
+    protected abstract void InitializeInstance();
+    #endregion
+  }
+
+  public class StandardKeyboard : VirtualKeyboard
+  {
+    protected override void InitializeInstance()
+    {
+      GetID = (int)Window.WINDOW_VIRTUAL_KEYBOARD;
+      _capsLockTurnedOn = false;
+      _shiftTurnedOn = false;
+      _state = State.STATE_KEYBOARD;
+      _position = 0;
+      _currentKeyboard = KeyboardTypes.TYPE_ALPHABET;
+      _currentRow = 0;
+      _currentKey = 0;
+      _lastColumn = 0;
+      //m_fRepeatDelay   = fINITIAL_REPEAT;
+      _keyTexture = null;
+
+      int tempwidth = (int)(576.0f - 64.0f - 4.0f - 4.0f - 10.0f - 80.0f);
+      GUIGraphicsContext.ScaleHorizontal(ref tempwidth);
+      fTEXTBOX_WIDTH = tempwidth;
+
+      SkinRatio = GUIGraphicsContext.SkinSize.Width / 720.0f;
+      _keyHeight = 42.0f * SkinRatio;
+      _maxRows = 5;
+      _pressedEnter = false;
+      _caretTimer = DateTime.Now;
+      // construct search def.
+      _searchKind = (int)SearchKinds.SEARCH_CONTAINS; // default search Contains
+
+      if (GUIGraphicsContext.DX9Device != null)
+        InitBoard();
+    }
+
+    protected override void MoveLeft()
+    {
+      if (_currentKey == -1)
+        _currentKey = _lastColumn;
+
+      do
+      {
+        if (_currentKey <= 0)
+        {
+          ArrayList board = (ArrayList)_keyboardList[(int)_currentKeyboard];
+          ArrayList row = (ArrayList)board[_currentRow];
+          _currentKey = row.Count - 1;
+
+        }
+        else
+          --_currentKey;
+
+      } while (IsKeyDisabled());
+
+      SetLastColumn();
+    }
+
+    protected override void MoveRight()
+    {
+      if (_currentKey == -1)
+        _currentKey = _lastColumn;
+
+      do
+      {
+        ArrayList board = (ArrayList)_keyboardList[(int)_currentKeyboard];
+        ArrayList row = (ArrayList)board[_currentRow];
+
+        if (_currentKey == row.Count - 1)
+          _currentKey = 0;
+        else
+          ++_currentKey;
+
+      } while (IsKeyDisabled());
+
+      SetLastColumn();
+    }
+
+    protected override void Press(char k)
+    {
+      // Don't add more than the maximum characters, and don't allow 
+      // text to exceed the width of the text entry field
+      if (_textEntered.Length < MAX_CHARS)
+      {
+        float fWidth = 0, fHeight = 0;
+        _fontSearchText.GetTextExtent(_textEntered, ref fWidth, ref fHeight);
+
+        if (fWidth < (fTEXTBOX_WIDTH * SkinRatio))
+        {
+          if (_position >= _textEntered.Length)
+          {
+            _textEntered += k.ToString();
+            OnTextChanged();
+          }
+          else
+          {
+            _textEntered = _textEntered.Insert(_position, k.ToString());
+            OnTextChanged();
+          }
+          ++_position; // move the caret
+        }
+      }
+
+      // Unstick the shift key
+      _shiftTurnedOn = false;
+    }
+
+    protected override void RenderKeyboardLatin(float timePassed)
     {
       // Show text and caret
-      DrawTextBox(timePassed, 200, 155, 1150, 230);
-      DrawText(250, 173);
-      CheckTimer();  
+      DrawTextBox(timePassed, (int)(64 * SkinRatio), 208, (int)((MODEKEY_WIDTH + GAP_WIDTH * 9 + GAP2_WIDTH + KEY_WIDTH * 10 + 67.0f) * SkinRatio), 248);  //- 64.0f - 4.0f - 4.0f - 10.0f
+      DrawText((int)(82 * SkinRatio), 208);
 
 
-      int x1 = 64;
+      int x1 = (int)(64 * SkinRatio);
       int y1 = 250;
       GUIGraphicsContext.ScalePosToScreenResolution(ref x1, ref y1);
       x1 += GUIGraphicsContext.OffsetX;
       y1 += GUIGraphicsContext.OffsetY;
-     /* // Draw each row
+      // Draw each row
       float fY = y1;
       ArrayList keyBoard = (ArrayList)_keyboardList[(int)_currentKeyboard];
       for (int row = 0; row < _maxRows; ++row, fY += _keyHeight)
@@ -1839,49 +1711,308 @@ namespace MediaPortal.Dialogs
                   break;
               }
               break;
-           /* case Xkey.XK_ACCENTS:
-              selKeyColor = COLOR_INVISIBLE;
-              selTextColor = COLOR_INVISIBLE;
-              break;*/
-      /* }
+            /* case Xkey.XK_ACCENTS:
+               selKeyColor = COLOR_INVISIBLE;
+               selTextColor = COLOR_INVISIBLE;
+               break;*/
+          }
 
-      // Highlight the current key
-      if (row == _currentRow && dwIndex == _currentKey)
-        selKeyColor = COLOR_HIGHLIGHT;
+          // Highlight the current key
+          if (row == _currentRow && dwIndex == _currentKey)
+            selKeyColor = COLOR_HIGHLIGHT;
 
-      RenderKey(fX + fWidthSum, fY, key, selKeyColor, selTextColor);
+          RenderKey(fX + fWidthSum, fY, key, selKeyColor, selTextColor);
 
-      int width = key.dwWidth;
-      GUIGraphicsContext.ScaleHorizontal(ref width);
-      fWidthSum += width;
+          int width = (int)(key.dwWidth * SkinRatio);
+          GUIGraphicsContext.ScaleHorizontal(ref width);
+          fWidthSum += width;
 
-      // There's a slightly larger gap between the leftmost keys (mode
-      // keys) and the main keyboard
-      if (dwIndex == 0)
-        width = GAP2_WIDTH;
+          // There's a slightly larger gap between the leftmost keys (mode
+          // keys) and the main keyboard
+          if (dwIndex == 0)
+            width = (int)(GAP2_WIDTH * SkinRatio);
+          else
+            width = GAP_WIDTH;
+          GUIGraphicsContext.ScaleHorizontal(ref width);
+          fWidthSum += width;
+
+          ++dwIndex;
+        }
+      }
+    }
+  }
+
+  public class SmsStyledKeyboard : VirtualKeyboard
+  {
+    protected override void InitializeInstance()
+    {
+      GetID = (int)Window.WINDOW_VIRTUAL_SMS_KEYBOARD;
+      _capsLockTurnedOn = true;
+      _shiftTurnedOn = false;
+      _state = State.STATE_KEYBOARD;
+      _position = 0;
+      _currentKeyboard = KeyboardTypes.TYPE_ALPHABET;
+      _currentRow = 0;
+      _currentKey = 0;
+      _lastColumn = 0;
+      //m_fRepeatDelay   = fINITIAL_REPEAT;
+      _keyTexture = null;
+
+      _keyHeight = 42.0f;
+      _maxRows = 5;
+      _pressedEnter = false;
+      _caretTimer = DateTime.Now;
+      // construct search def.
+      _searchKind = (int)SearchKinds.SEARCH_CONTAINS; // default search Contains
+
+      if (GUIGraphicsContext.DX9Device != null)
+        InitBoard();
+    }
+
+    protected override void MoveLeft()
+    {
+      if (_position > 0)
+        _position -= 1;
+    }
+
+    protected override void MoveRight()
+    {
+      if (_position < _textEntered.Length)
+        _position += 1;
+    }
+
+    protected override void Press(char k)
+    {
+      if (k < '0' || k > '9')
+      {
+        _usingKeyboard = true;
+      }
+      if ((k == (char)126))
+      {
+        _capsLockTurnedOn = _capsLockTurnedOn == false;
+      }
+
+      if (!_usingKeyboard)
+      {
+
+        // Check different key presse
+        if (k != _previousKey && _currentKeyb != (char)0)
+        {
+          if (_position == _textEntered.Length)
+            _textEntered += _currentKeyb;
+          else
+            _textEntered = _textEntered.Insert(_position, _currentKeyb.ToString());
+
+          _previousKey = (char)0;
+          _currentKeyb = (char)0;
+          _timerKey = DateTime.Now;
+          _position++;
+        }
+
+        CheckTimer();
+        if (k >= '0' && k <= '9')
+        {
+          _previousKey = k;
+        }
+        if (k == '0')
+        {
+          if (_currentKeyb == 0)
+            _currentKeyb = ' ';
+          else if (_currentKeyb == ' ')
+            _currentKeyb = '0';
+          else if (_currentKeyb == '0')
+            _currentKeyb = ' ';
+          _timerKey = DateTime.Now;
+        }
+        if (k == '1')
+        {
+          if (_currentKeyb == 0)
+            _currentKeyb = '1';
+          _timerKey = DateTime.Now;
+        }
+
+        if (k == '2')
+        {
+          if (_currentKeyb == 0)
+            _currentKeyb = 'a';
+          else if (_currentKeyb == 'a')
+            _currentKeyb = 'b';
+          else if (_currentKeyb == 'b')
+            _currentKeyb = 'c';
+          else if (_currentKeyb == 'c')
+            _currentKeyb = '2';
+          else if (_currentKeyb == '2')
+            _currentKeyb = 'a';
+          _timerKey = DateTime.Now;
+        }
+        if (k == '3')
+        {
+          if (_currentKeyb == 0)
+            _currentKeyb = 'd';
+          else if (_currentKeyb == 'd')
+            _currentKeyb = 'e';
+          else if (_currentKeyb == 'e')
+            _currentKeyb = 'f';
+          else if (_currentKeyb == 'f')
+            _currentKeyb = '3';
+          else if (_currentKeyb == '3')
+            _currentKeyb = 'd';
+          _timerKey = DateTime.Now;
+        }
+        if (k == '4')
+        {
+          if (_currentKeyb == 0)
+            _currentKeyb = 'g';
+          else if (_currentKeyb == 'g')
+            _currentKeyb = 'h';
+          else if (_currentKeyb == 'h')
+            _currentKeyb = 'i';
+          else if (_currentKeyb == 'i')
+            _currentKeyb = '4';
+          else if (_currentKeyb == '4')
+            _currentKeyb = 'g';
+          _timerKey = DateTime.Now;
+        }
+        if (k == '5')
+        {
+          if (_currentKeyb == 0)
+            _currentKeyb = 'j';
+          else if (_currentKeyb == 'j')
+            _currentKeyb = 'k';
+          else if (_currentKeyb == 'k')
+            _currentKeyb = 'l';
+          else if (_currentKeyb == 'l')
+            _currentKeyb = '5';
+          else if (_currentKeyb == '5')
+            _currentKeyb = 'j';
+          _timerKey = DateTime.Now;
+        }
+        if (k == '6')
+        {
+          if (_currentKeyb == 0)
+            _currentKeyb = 'm';
+          else if (_currentKeyb == 'm')
+            _currentKeyb = 'n';
+          else if (_currentKeyb == 'n')
+            _currentKeyb = 'o';
+          else if (_currentKeyb == 'o')
+            _currentKeyb = '6';
+          else if (_currentKeyb == '6')
+            _currentKeyb = 'm';
+          _timerKey = DateTime.Now;
+        }
+        if (k == '7')
+        {
+          if (_currentKeyb == 0)
+            _currentKeyb = 'p';
+          else if (_currentKeyb == 'p')
+            _currentKeyb = 'q';
+          else if (_currentKeyb == 'q')
+            _currentKeyb = 'r';
+          else if (_currentKeyb == 'r')
+            _currentKeyb = 's';
+          else if (_currentKeyb == 's')
+            _currentKeyb = '7';
+          else if (_currentKeyb == '7')
+            _currentKeyb = 'p';
+          _timerKey = DateTime.Now;
+        }
+        if (k == '8')
+        {
+          if (_currentKeyb == 0)
+            _currentKeyb = 't';
+          else if (_currentKeyb == 't')
+            _currentKeyb = 'u';
+          else if (_currentKeyb == 'u')
+            _currentKeyb = 'v';
+          else if (_currentKeyb == 'v')
+            _currentKeyb = '8';
+          else if (_currentKeyb == '8')
+            _currentKeyb = 't';
+          _timerKey = DateTime.Now;
+        }
+        if (k == '9')
+        {
+          if (_currentKeyb == 0)
+            _currentKeyb = 'w';
+          else if (_currentKeyb == 'w')
+            _currentKeyb = 'x';
+          else if (_currentKeyb == 'x')
+            _currentKeyb = 'y';
+          else if (_currentKeyb == 'y')
+            _currentKeyb = 'z';
+          else if (_currentKeyb == 'z')
+            _currentKeyb = '9';
+          else if (_currentKeyb == '9')
+            _currentKeyb = 'w';
+          _timerKey = DateTime.Now;
+        }
+      }
       else
-        width = GAP_WIDTH;
-      GUIGraphicsContext.ScaleHorizontal(ref width);
-      fWidthSum += width;
+      {
+        if ((k != (char)126))
+        {
+          if (k == (char)8) // Backspace
+          {
+            if (_position > 0)
+            {
+              _textEntered = _textEntered.Remove(_position - 1, 1);
+              _position--;
+            }
+          }
+          else
+          {
+            if (_position >= _textEntered.Length)
+              _textEntered += k;
+            else
+              _textEntered = _textEntered.Insert(_position, k.ToString());
+            _position++;
+          }
+        }
+        _previousKey = (char)0;
+        _currentKeyb = (char)0;
+        _timerKey = DateTime.Now;
+      }
 
-      ++dwIndex;
+      _usingKeyboard = false;
+
+      // Unstick the shift key
+      _shiftTurnedOn = false;
     }
-  }*/
-    }
 
-
-    #region IRenderLayer
-    public bool ShouldRenderLayer()
+    protected override void RenderKeyboardLatin(float timePassed)
     {
-      return true;
+      // Show text and caret
+      DrawTextBox(timePassed, 200, 155, 1150, 230);
+      DrawText(250, 173);
+      CheckTimer();
     }
 
-    public void RenderLayer(float timePassed)
+    private void CheckTimer()
     {
-
-      Render(timePassed);
+      TimeSpan ts = DateTime.Now - _timerKey;
+      if (ts.TotalMilliseconds >= 800)
+      {
+        if (_currentKeyb != (char)0)
+        {
+          if (_capsLockTurnedOn)
+            _currentKeyb = char.ToUpper(_currentKeyb);
+          if (_position == _textEntered.Length)
+            _textEntered += _currentKeyb;
+          else
+            _textEntered = _textEntered.Insert(_position, _currentKeyb.ToString());
+          _position++;
+        }
+        _previousKey = (char)0;
+        _currentKeyb = (char)0;
+        _timerKey = DateTime.Now;
+      }
     }
-    #endregion
 
+    protected override void InitBoard()
+    {
+      base.InitBoard();
+      _capsLockTurnedOn = true;
+    }
   }
 }

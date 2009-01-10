@@ -182,10 +182,7 @@
     <Compile Include="Dialogs\GUIDialogYesNo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Dialogs\SMSStyledKeyboard.cs" />
-    <Compile Include="Dialogs\VirtualKeyboard.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Dialogs\GUIDialogVirtualKeyboard.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
