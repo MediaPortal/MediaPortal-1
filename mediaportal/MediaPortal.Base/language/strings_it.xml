@@ -1721,7 +1721,9 @@
     <String id="100762">Guida Radio</String>
     <String id="100770">Explorer</String>
     <String id="101000">Tastiera</String>
-    <String id="101002">Tastiera virtuale</String>
+    <String id="101002">Tastiera virtuale normale</String>
+    <String id="101003">Tastiera virtuale WEB</String>
+    <String id="101004">Tastiera virtuale SMS</String>
     <String id="102000">Dialogo di selezione</String>
     <String id="102001" prefix="La Mia ">Musica/Info</String>
     <String id="102002">Dialogo OK</String>

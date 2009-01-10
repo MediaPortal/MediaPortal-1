@@ -1721,7 +1721,9 @@
     <String id="100762">Radio guide</String>
     <String id="100770">Explorer</String>
     <String id="101000">keyboard</String>
-    <String id="101002">Virtual Keyboard</String>
+    <String id="101002">Virtual Standard Keyboard</String>
+    <String id="101003">Virtual Web Keyboard</String>
+    <String id="101004">Virtual SMS Keyboard</String>
     <String id="102000">Select dialogue</String>
     <String id="102001" prefix="My ">Music/info</String>
     <String id="102002">Dialogue OK</String>
