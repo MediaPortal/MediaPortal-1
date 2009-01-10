@@ -335,6 +335,8 @@ Section "MediaPortal core files (required)" SecCore
   # exluding only the folders does not work because /x plugins won't extract the \plugins AND musicplayer\plugins directory
   SetOutPath "$MPdir.Base"
   File /nonfatal /x .svn ${EXCLUDED_CONFIG_FILES}  "${MEDIAPORTAL.BASE}\*"
+  SetOutPath "$MPdir.Base\MovieThumbnailer"
+  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\MovieThumbnailer\*"
   SetOutPath "$MPdir.Base\MusicPlayer"
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\MusicPlayer\*"
   SetOutPath "$MPdir.Base\Profiles"
@@ -345,6 +347,7 @@ Section "MediaPortal core files (required)" SecCore
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\WebEPG\*"
   SetOutPath "$MPdir.Base\Wizards"
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\Wizards\*"
+  
   ; Doc
   SetOutPath "$MPdir.Base\Docs"
   File "..\Docs\BASS License.txt"
@@ -536,6 +539,7 @@ SectionEnd
   Delete /REBOOTOK "$MPdir.Config\yac-area-codes.xml"
 
   ; Remove the Folders
+  RMDir /r /REBOOTOK "$MPdir.Base\MovieThumbnailer"
   RMDir /r /REBOOTOK "$MPdir.Base\MusicPlayer"
   RMDir /r /REBOOTOK "$MPdir.Base\Profiles"
   RMDir /r /REBOOTOK "$MPdir.Base\Tuningparameters"
