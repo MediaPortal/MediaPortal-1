@@ -117,6 +117,16 @@ namespace MediaPortal.Player
 
     FrameGrabber grabber = FrameGrabber.GetInstance();
 
+    //Additions for Non-Linear Stretch
+    bool _useNonLinearStretch = false;//Should we do NLS for this AR?
+    
+    //These are the partitioning values for the non-linear stretch.
+    //TODO: Maybe get these from Geometry class.
+    //The horizontal percentage of the source each partition represents (Should be symmetrical and sum up to 100.0)
+    float [] nlsSourcePartitioning = {6.25f, 9.375f, 12.50f, 6.25f, 12.50f, 6.25f, 12.50f, 6.25f ,12.50f, 9.375f, 6.25f};
+    //The horizontal percentage of the destination to fit each partition into (Should be symmetrical and sum up to 100.0)
+    float [] nlsDestPartitioning   = {7.06f, 10.15f, 12.65f, 5.88f, 11.47f, 5.59f, 11.47f, 5.88f ,12.65f, 10.15f, 7.06f};
+
     #endregion
 
     #region ctor
@@ -402,7 +412,7 @@ namespace MediaPortal.Player
         _geometry.ARType = GUIGraphicsContext.ARType;
         _geometry.PixelRatio = GUIGraphicsContext.PixelRatio;
 
-        _geometry.GetWindow(_arVideoWidth, _arVideoHeight, out _sourceRect, out _destinationRect, _cropSettings);
+        _geometry.GetWindow(_arVideoWidth, _arVideoHeight, out _sourceRect, out _destinationRect, out _useNonLinearStretch, _cropSettings);
         _destinationRect.X += (int)x;
         _destinationRect.Y += (int)y;
 
@@ -924,9 +934,36 @@ namespace MediaPortal.Player
       unsafe
       {
         IntPtr ptr = new IntPtr(texAddr);
-        FontEngineDrawSurface(_sourceRect.Left, _sourceRect.Top, _sourceRect.Width, _sourceRect.Height,
-                              _destinationRect.Left, _destinationRect.Top, _destinationRect.Width, _destinationRect.Height,
+        //draw surface with or without non-linear stretch
+        if (!_useNonLinearStretch)
+        {
+          FontEngineDrawSurface(_sourceRect.Left, _sourceRect.Top, _sourceRect.Width, _sourceRect.Height,
+                                _destinationRect.Left, _destinationRect.Top, _destinationRect.Width, _destinationRect.Height,
                                 ptr.ToPointer());
+        }
+        else
+        {
+          //draw/stretch each partition separately according to NLS table
+          
+          //top and bottom remain untouched.
+          //left and right start from the left of the rect.
+          int srcLeft  = _sourceRect.Left;
+          int srcRight = srcLeft;
+          int dstLeft  = _destinationRect.Left;
+          int dstRight = dstLeft;            
+          for (int i = 0; i < nlsSourcePartitioning.Length; i++)
+          {
+            //this left is the previous right
+            srcLeft = srcRight;
+            dstLeft = dstRight;
+            //calculate new right
+            srcRight = srcLeft + (int)(nlsSourcePartitioning[i] * (float)_sourceRect.Width / 100.0f);
+            dstRight = dstLeft + (int)(nlsDestPartitioning[i] * (float)_destinationRect.Width / 100.0f);
+            FontEngineDrawSurface(srcLeft, _sourceRect.Top, srcRight - srcLeft, _sourceRect.Height,
+                                          dstLeft, _destinationRect.Top, dstRight - dstLeft, _destinationRect.Height,
+                                          ptr.ToPointer());
+          }
+        }
       }
     }
 

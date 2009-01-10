@@ -152,6 +152,7 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.audioCodecComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.labelAACDecoder = new MediaPortal.UserInterface.Controls.MPLabel();
       this.aacAudioCodecComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.h264videoCodecComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
@@ -163,7 +164,6 @@ namespace MediaPortal.Configuration.Sections
       this.videoCodecComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.labelMPEG2Decoder = new MediaPortal.UserInterface.Controls.MPLabel();
       this.labelAudioDecoder = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.audioCodecComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.labelAudioRenderer = new MediaPortal.UserInterface.Controls.MPLabel();
       this.audioRendererComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.radioButton1 = new MediaPortal.UserInterface.Controls.MPRadioButton();
@@ -220,6 +220,17 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Settings";
+      // 
+      // audioCodecComboBox
+      // 
+      this.audioCodecComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.audioCodecComboBox.BorderColor = System.Drawing.Color.Empty;
+      this.audioCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.audioCodecComboBox.Location = new System.Drawing.Point(168, 63);
+      this.audioCodecComboBox.Name = "audioCodecComboBox";
+      this.audioCodecComboBox.Size = new System.Drawing.Size(288, 21);
+      this.audioCodecComboBox.TabIndex = 5;
       // 
       // labelAACDecoder
       // 
@@ -336,17 +347,6 @@ namespace MediaPortal.Configuration.Sections
       this.labelAudioDecoder.Size = new System.Drawing.Size(157, 18);
       this.labelAudioDecoder.TabIndex = 4;
       this.labelAudioDecoder.Text = "MPEG / AC3 audio decoder:";
-      // 
-      // audioCodecComboBox
-      // 
-      this.audioCodecComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.audioCodecComboBox.BorderColor = System.Drawing.Color.Empty;
-      this.audioCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.audioCodecComboBox.Location = new System.Drawing.Point(168, 63);
-      this.audioCodecComboBox.Name = "audioCodecComboBox";
-      this.audioCodecComboBox.Size = new System.Drawing.Size(288, 21);
-      this.audioCodecComboBox.TabIndex = 5;
       // 
       // labelAudioRenderer
       // 
@@ -620,9 +620,9 @@ namespace MediaPortal.Configuration.Sections
       this.cbAllowPanScan.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.cbAllowPanScan.Location = new System.Drawing.Point(17, 139);
       this.cbAllowPanScan.Name = "cbAllowPanScan";
-      this.cbAllowPanScan.Size = new System.Drawing.Size(110, 17);
+      this.cbAllowPanScan.Size = new System.Drawing.Size(132, 17);
       this.cbAllowPanScan.TabIndex = 5;
-      this.cbAllowPanScan.Text = "4:3 Pan and Scan";
+      this.cbAllowPanScan.Text = "Non-linear Smart Zoom";
       this.cbAllowPanScan.UseVisualStyleBackColor = true;
       // 
       // Television

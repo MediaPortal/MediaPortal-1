@@ -51,6 +51,9 @@ namespace MediaPortal.GUI.Library
         int m_ScreenHeight = 100;				// height of the screen
         Type m_eType = Type.Normal;			// type of transformation used
         float m_fPixelRatio = 1.0f;				// pixelratio correction 
+        bool m_bUseNonLinearStretch = false; //AR uses non-linear stretch or not
+
+
 
 
         /// <summary>
@@ -142,7 +145,11 @@ namespace MediaPortal.GUI.Library
             float fSourceFrameRatio = (float)arVideoWidth / (float)arVideoHeight;
             GetWindow(fSourceFrameRatio, out rSource, out rDest, cropSettings);
         }
-
+        public void GetWindow(int arVideoWidth, int arVideoHeight, out System.Drawing.Rectangle rSource, out System.Drawing.Rectangle rDest, out bool bUseNonLinearStretch, CropSettings cropSettings)
+        {
+            GetWindow(arVideoWidth, arVideoHeight, out rSource, out rDest, cropSettings);
+            bUseNonLinearStretch = m_bUseNonLinearStretch;
+        }
         public void GetWindow(float fSourceFrameRatio, out System.Drawing.Rectangle rSource, out System.Drawing.Rectangle rDest, CropSettings cropSettings)
         {
             float fOutputFrameRatio = fSourceFrameRatio / PixelRatio;
@@ -166,7 +173,9 @@ namespace MediaPortal.GUI.Library
             //Log.Debug("fOutputFrameRatio : {0}", fOutputFrameRatio);
             //Log.Debug("fCroppedOutputFrameRatio : {0}", fCroppedOutputFrameRatio);
             //Log.Debug("fSourceFrameRatio: {0}", fSourceFrameRatio);
-          
+            
+            //don't use non linear stretch by default
+            m_bUseNonLinearStretch = false;          
 
             switch (ARType)
             {
@@ -300,8 +309,14 @@ namespace MediaPortal.GUI.Library
                     }
                     break;
 
-                case Type.PanScan43:
+                  case Type.PanScan43:
                     {
+                      // If screen is 16:9 do non-linear stretch, otherwise panscan
+                      float fScreenRatio = (float)ScreenWidth / ScreenHeight;
+                      fScreenRatio *= PixelRatio;
+                      if (fScreenRatio < 1.6)
+                      {
+                        // pan and scan
                         // assume that the movie is widescreen first, so use full height
                         float fVertBorder = 0;
                         float fNewHeight = (float)(ScreenHeight);
@@ -313,13 +328,13 @@ namespace MediaPortal.GUI.Library
 
                         if ((int)fNewWidth < ScreenWidth)
                         {
-                            fHorzBorder = 0;
-                            fNewWidth = (float)(ScreenWidth);
-                            fNewHeight = fNewWidth / fOutputFrameRatio;
-                            fVertBorder = (fNewHeight - (float)ScreenHeight) / 2.0f;
-                            fFactor = fNewWidth / ((float)ImageWidth);
-                            fFactor *= PixelRatio;
-                            fVertBorder = fVertBorder / fFactor;
+                          fHorzBorder = 0;
+                          fNewWidth = (float)(ScreenWidth);
+                          fNewHeight = fNewWidth / fOutputFrameRatio;
+                          fVertBorder = (fNewHeight - (float)ScreenHeight) / 2.0f;
+                          fFactor = fNewWidth / ((float)ImageWidth);
+                          fFactor *= PixelRatio;
+                          fVertBorder = fVertBorder / fFactor;
                         }
 
                         rSource = new System.Drawing.Rectangle((int)fHorzBorder,
@@ -328,6 +343,18 @@ namespace MediaPortal.GUI.Library
                                                               (int)((float)ImageHeight - 2.0f * fVertBorder));
                         rDest = new System.Drawing.Rectangle(0, 0, ScreenWidth, ScreenHeight);
                         AdjustSourceForCropping(ref rSource, cropSettings);
+                      }
+                      else
+                      {
+                        m_bUseNonLinearStretch = true;
+                        //here we just need to remove 8.3% from top/bottom of the image (=Zoom in 9.1%)
+                        //The non-linear stretching part will be handled by the VMR9 presenter
+                        int newTop = cropSettings.Top + (int)(0.083f * ((float)croppedImageHeight) / 2.0f);
+                        int newHeight = (int)(((float)croppedImageHeight) * (1.0f - 0.083f));
+
+                        rSource = new System.Drawing.Rectangle(cropSettings.Left, newTop, croppedImageWidth, newHeight);
+                        rDest = new System.Drawing.Rectangle(0, 0, ScreenWidth, ScreenHeight);
+                      }
                     }
                     break;
 
