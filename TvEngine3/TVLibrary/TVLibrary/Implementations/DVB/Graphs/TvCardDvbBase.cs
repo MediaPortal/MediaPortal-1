@@ -857,15 +857,17 @@ namespace TvLibrary.Implementations.DVB
               {
                 skipCaptureFilter = true;
               }
-              //Hauppauge Nova USB2 DVB-T & HDHomeRun workaround.
-              if (devices[i].Name != null && (devices[i].Name.Contains("Hauppauge Nova USB2 DVB-T TV Receiver") || devices[i].Name.Contains("Silicondust HDHomeRun Tuner")))
-              {
-                skipCaptureFilter = true;
-              }
             }
           }
         }
       }
+
+      //Hauppauge Nova USB2 DVB-T & HDHomeRun workaround.
+      if (device.Name != null && (device.Name.Contains("Hauppauge Nova USB2 DVB-T TV Receiver") || device.Name.Contains("Silicondust HDHomeRun Tuner")))
+      {
+          skipCaptureFilter = true;
+      }
+
       if (false == skipCaptureFilter)
       {
         Log.Log.WriteFile("dvb:  Find BDA receiver");
@@ -932,7 +934,15 @@ namespace TvLibrary.Implementations.DVB
         //This is done by checking the DeviceId and DeviceInstance part of the DevicePath.
         if (matchDevicePath)
         {
-          if (device.DevicePath.Remove(device.DevicePath.IndexOf(deviceIdDelimter)) != devices[i].DevicePath.Remove(devices[i].DevicePath.IndexOf(deviceIdDelimter)))
+          int indx1, indx2;
+          indx1 = device.DevicePath.IndexOf(deviceIdDelimter);
+          indx2 = devices[i].DevicePath.IndexOf(deviceIdDelimter);
+          if (indx1 < 0 || indx2 < 0)
+          {
+              continue;
+          }
+
+          if (device.DevicePath.Remove(indx1) != devices[i].DevicePath.Remove(indx2))
           {
             continue;
           }
@@ -2073,3 +2083,5 @@ namespace TvLibrary.Implementations.DVB
     #endregion
   }
 }
+
+ 	  	 
