@@ -80,23 +80,11 @@ namespace TvPlugin
         try
         {
           _creatingThumbNails = true;
-          string ExtractorPath = Config.GetFile(Config.Dir.Base, "ffmpeg.exe");
-
-          if (!File.Exists(ExtractorPath))
-          {
-            Log.Warn("RecordedTV: No ffmpeg.exe found to generate thumbnails of your recordings!");
-            return;
-          }
 
           IList<Recording> recordings = Recording.ListAll();
           foreach (Recording rec in recordings)
           {
             string thumbNail = string.Format("{0}\\{1}{2}", Thumbs.TVRecorded, Utils.MakeFileName(rec.Title), Utils.GetThumbExtension());
-            // Params for ffmpeg
-            string ExtractorArgs = string.Format(" -i \"{0}\" -vframes 1 -ss {1} -s {2}x{3} \"{4}\"", rec.FileName, @"00:08:21", (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, thumbNail);
-            // Params for mplayer mplayer (outputs 00000001.jpg into current dir)
-            // string ExtractorArgs = string.Format(" -noconsolecontrols -nosound -vo jpeg:quality=90:nobaseline -frames 1 -ss {0} -vf scale={1}:{2} \"{3}\"", @"501", (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, rec.FileName);
-
             if (!File.Exists(thumbNail))
             {
               //Log.Info("RecordedTV: No thumbnail found at {0} for recording {1} - grabbing from file now", thumbNail, rec.FileName);
@@ -105,25 +93,12 @@ namespace TvPlugin
               //  Log.Info("GUIRecordedTV: No thumbnail created for {0}", Utils.SplitFilename(rec.FileName));
               try
               {
-                if (ExecuteProc(ExtractorPath, ExtractorArgs, 90000))
+                Thread.Sleep(250);
+                if (VideoThumbCreator.CreateVideoThumb(rec.FileName, thumbNail, true))
                   Log.Info("RecordedTV: Thumbnail successfully created for {0}", Utils.SplitFilename(rec.FileName));
                 else
-                  Log.Info("RecordedTV: No thumbnail created for {0} - (args={1})", Utils.SplitFilename(rec.FileName), ExtractorArgs);
-                Thread.Sleep(100);
-
-                try
-                {
-                  Process[] leftovers = System.Diagnostics.Process.GetProcessesByName("ffmpeg");
-                  foreach (Process termProc in leftovers)
-                  {
-                    Log.Warn("RecordedTV: Killing process: {0}", termProc.ProcessName);
-                    termProc.Kill();
-                  }
-                }
-                catch (Exception exk)
-                {
-                  Log.Error("RecordedTV: Error stopping leftover processes - {0})", exk.ToString());
-                }
+                  Log.Info("RecordedTV: No thumbnail created for {0}", Utils.SplitFilename(rec.FileName));
+                Thread.Sleep(250);
 
                 // The .NET3 way....
                 //
@@ -161,56 +136,6 @@ namespace TvPlugin
         {
           _creatingThumbNails = false;
         }
-      }
-
-      [MethodImpl(MethodImplOptions.Synchronized)]
-      public static bool ExecuteProc(string aAppName, string aArguments, int aExpectedTimeoutMs)
-      {
-        bool success = false;
-        Process ExternalProc = new Process();
-        ProcessStartInfo ProcOptions = new ProcessStartInfo(aAppName, aArguments);
-
-        ProcOptions.UseShellExecute = false;                                       // Important for WorkingDirectory behaviour
-        ProcOptions.RedirectStandardError = false;                                  // .NET bug? Some stdout reader abort to early without that!
-        ProcOptions.RedirectStandardOutput = false;                                 // The precious data we're after
-        //ProcOptions.StandardOutputEncoding = Encoding.GetEncoding("ISO-8859-1");   // the output contains "Umlaute", etc.
-        //ProcOptions.StandardErrorEncoding = Encoding.GetEncoding("ISO-8859-1");
-        ProcOptions.WorkingDirectory = Path.GetDirectoryName(aAppName);            // set the dir because the binary might depend on cygwin.dll
-        ProcOptions.CreateNoWindow = true;                                         // Do not spawn a "Dos-Box"      
-        ProcOptions.ErrorDialog = false;                                           // Do not open an error box on failure        
-
-        //ExternalProc.OutputDataReceived += new DataReceivedEventHandler(StdOutDataReceived);
-        //ExternalProc.ErrorDataReceived += new DataReceivedEventHandler(StdErrDataReceived);
-        ExternalProc.EnableRaisingEvents = true;                                        // We want to know when and why the process died        
-        ExternalProc.StartInfo = ProcOptions;
-        if (File.Exists(ProcOptions.FileName))
-        {
-          try
-          {
-            ExternalProc.Start();
-            //ExternalProc.BeginErrorReadLine();
-            //ExternalProc.BeginOutputReadLine();
-            try
-            {
-              ExternalProc.PriorityClass = ProcessPriorityClass.BelowNormal;            // Execute all processes in the background so movies, etc stay fluent
-            }
-            catch (Exception ex2)
-            {
-              Log.Error("TvRecorded: Error setting process priority for {0}: {1}", aAppName, ex2.Message);
-            }
-            // wait this many seconds until the process has to be finished
-            ExternalProc.WaitForExit(aExpectedTimeoutMs);
-            success = (ExternalProc.HasExited && ExternalProc.ExitCode == 0);
-          }
-          catch (Exception ex)
-          {
-            Log.Error("TvRecorded: Error executing {0}: {1}", aAppName, ex.Message);
-          }
-        }
-        else
-          Log.Warn("TvRecorded: Could not start {0} because it doesn't exist!", ProcOptions.FileName);
-
-        return success;
       }
     }
 
@@ -754,13 +679,16 @@ namespace TvPlugin
                     {
                       item.IsFolder = true;
                       Utils.SetDefaultIcons(item);
-                      string strLogo = string.Format("{0}\\{1}{2}", Thumbs.TVRecorded, Utils.MakeFileName(rec.Title), Utils.GetThumbExtension());
-                      if (File.Exists(strLogo))
-                      {
-                        item.ThumbnailImage = strLogo;
-                        item.IconImageBig = strLogo;
-                        item.IconImage = strLogo;
-                      }
+
+                      // NO thumbnails for folders please so we can distinguish between single files and folders
+
+                      //string strLogo = string.Format("{0}\\{1}{2}", Thumbs.TVRecorded, Utils.MakeFileName(rec.Title), Utils.GetThumbExtension());
+                      //if (File.Exists(strLogo))
+                      //{
+                      //  item.ThumbnailImage = strLogo;
+                      //  item.IconImageBig = strLogo;
+                      //  item.IconImage = strLogo;
+                      //}
                       add = false;
                       break;
                     }
