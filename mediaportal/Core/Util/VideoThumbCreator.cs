@@ -83,36 +83,46 @@ namespace MediaPortal.Util
         string OutputThumb = string.Format("{0}_s{1}", Path.ChangeExtension(aVideoPath, null), ".jpg");
         string ShareThumb = OutputThumb.Replace("_s.jpg", ".jpg");
 
-        Utils.StartProcess(ExtractorPath, ExtractorArgs, TempPath, 60000, true);
-        // give the system a few IO cycles
-        Thread.Sleep(100);
-        // make sure there's no process hanging
-        Utils.KillProcess(Path.ChangeExtension(ExtractApp, null));
-        Thread.Sleep(0);
-        try
+        if (!File.Exists(ShareThumb))
         {
-          // remove the _s which mdn appends to its files            
-          File.Move(OutputThumb, ShareThumb);
-          // If no file was created the move will throw an exception and no cache attempt will happen
-          if (aCacheThumb)
+          Log.Debug("VideoThumbCreator: No thumb in share {0} - trying to create one with arguments: {1}", ShareThumb, ExtractorArgs);
+          if (!Utils.StartProcess(ExtractorPath, ExtractorArgs, TempPath, 60000, true))
+            Log.Warn("VideoThumbCreator: {0} has not been executed successfully with arguments: {1}", ExtractApp, ExtractorArgs);
+          // give the system a few IO cycles
+          Thread.Sleep(100);
+          // make sure there's no process hanging
+          Utils.KillProcess(Path.ChangeExtension(ExtractApp, null));
+          try
           {
-            if (Picture.CreateThumbnail(ShareThumb, aThumbPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, false))
-              Picture.CreateThumbnail(ShareThumb, Utils.ConvertToLargeCoverArt(aThumbPath), (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, false);
+            // remove the _s which mdn appends to its files
+            File.Move(OutputThumb, ShareThumb);
+          }
+          catch (FileNotFoundException)
+          {
+            Log.Debug("VideoThumbCreator: {0} did not extract a thumbnail to: {1}", ExtractApp, OutputThumb);
+          }
+          catch (Exception)
+          {
+            try
+            {
+              // Clean up
+              File.Delete(OutputThumb);
+              Thread.Sleep(100);
+            }
+            catch (Exception) { }
           }
         }
-        catch (Exception) { }
-        try
-        {
-          // Clean up
-          File.Delete(OutputThumb);
-          Thread.Sleep(100);
-        }
-        catch (Exception) { }
+        Thread.Sleep(0);
 
+        if (aCacheThumb)
+        {
+          if (Picture.CreateThumbnail(ShareThumb, aThumbPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, false))
+            Picture.CreateThumbnail(ShareThumb, Utils.ConvertToLargeCoverArt(aThumbPath), (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, false);
+        }
       }
       catch (Exception ex)
       {
-        Log.Error("VideoThumbCreator: Thumbnail generation failed - {0}!", ex.Message);
+        Log.Error("VideoThumbCreator: Thumbnail generation failed - {0}!", ex.ToString());
       }
       return File.Exists(aThumbPath);
     }
