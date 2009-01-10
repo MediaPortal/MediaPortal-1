@@ -23,6 +23,13 @@
 
 #endregion
 
+#**********************************************************************************************************#
+#
+#   For building the installer on your own you need:
+#       1. Latest NSIS version from http://nsis.sourceforge.net/Download
+#
+#**********************************************************************************************************#
+
 #---------------------------------------------------------------------------
 # SPECIAL BUILDS
 #---------------------------------------------------------------------------
@@ -57,15 +64,6 @@
 !endif
 !define MEDIAPORTAL.XBMCBIN "${svn_MP}\xbmc\bin\${BUILD_TYPE}"
 
-#**********************************************************************************************************#
-#
-#   For building the installer on your own you need:
-#       1. Latest NSIS version from http://nsis.sourceforge.net/Download
-#
-#**********************************************************************************************************#
-Name "MediaPortal"
-SetCompressor /SOLID lzma
-
 #---------------------------------------------------------------------------
 # VARIABLES
 #---------------------------------------------------------------------------
@@ -83,6 +81,7 @@ Var RemoveAll       ; Set, when the user decided to uninstall everything
 #---------------------------------------------------------------------------
 # DEFINES
 #---------------------------------------------------------------------------
+!define NAME    "MediaPortal"
 !define COMPANY "Team MediaPortal"
 !define URL     "www.team-mediaportal.com"
 
@@ -111,7 +110,9 @@ Var RemoveAll       ; Set, when the user decided to uninstall everything
     !define VERSION "1.0 SVN build ${VER_BUILD} for TESTING ONLY"
   !endif
 !endif
-BrandingText "$(^Name) ${VERSION} by ${COMPANY}"
+Name          "${NAME}"
+SetCompressor /SOLID lzma
+BrandingText  "${NAME} ${VERSION} by ${COMPANY}"
 
 
 !define INSTALL_LOG
@@ -233,8 +234,8 @@ VIAddVersionKey /LANG=${LANG_ENGLISH} ProductVersion    "${VERSION}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyName       "${COMPANY}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyWebsite    "${URL}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} FileVersion       "${VERSION}"
-VIAddVersionKey /LANG=${LANG_ENGLISH} FileDescription   ""
-VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright    ""
+VIAddVersionKey /LANG=${LANG_ENGLISH} FileDescription   "${NAME} installation ${VERSION}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright    "Copyright © 2005-2009 ${COMPANY}"
 ShowUninstDetails show
 
 #---------------------------------------------------------------------------
@@ -798,7 +799,7 @@ Section -Post
 
   ; Write Uninstall Information
   WriteRegStr HKLM "${REG_UNINSTALL}" InstallPath        "$MPdir.Base"
-  WriteRegStr HKLM "${REG_UNINSTALL}" DisplayName        "$(^Name)"
+  WriteRegStr HKLM "${REG_UNINSTALL}" DisplayName        "${NAME}"
   WriteRegStr HKLM "${REG_UNINSTALL}" DisplayVersion     "${VERSION}"
   WriteRegStr HKLM "${REG_UNINSTALL}" Publisher          "${COMPANY}"
   WriteRegStr HKLM "${REG_UNINSTALL}" URLInfoAbout       "${URL}"

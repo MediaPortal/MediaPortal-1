@@ -1,7 +1,7 @@
-#region Copyright (C) 2005-2008 Team MediaPortal
+#region Copyright (C) 2005-2009 Team MediaPortal
 
 /* 
- *	Copyright (C) 2005-2008 Team MediaPortal
+ *	Copyright (C) 2005-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -23,8 +23,19 @@
 
 #endregion
 
+#**********************************************************************************************************#
+#
+#   For building the installer on your own you need:
+#       1. Latest NSIS version from http://nsis.sourceforge.net/Download
+#
+#**********************************************************************************************************#
+Name "MediaPortal Unpacker"
+;SetCompressor /SOLID lzma
 
-# DEFINES
+#---------------------------------------------------------------------------
+# DEVELOPMENT ENVIRONMENT
+#---------------------------------------------------------------------------
+# path definitions
 !define svn_ROOT "..\.."
 !define svn_MP "${svn_ROOT}\mediaportal"
 !define svn_TVServer "${svn_ROOT}\TvEngine3\TVLibrary"
@@ -37,11 +48,12 @@
 !define MIN_FRA_MINOR "0"
 !define MIN_FRA_BUILD "*"
 
-
 # INCLUDE
 !include "include-DotNetFramework.nsh"
 
+#---------------------------------------------------------------------------
 # BUILD sources
+#---------------------------------------------------------------------------
 ; comment one of the following lines to disable the preBuild
 !define BUILD_MediaPortal
 !define BUILD_TVServer
@@ -76,12 +88,22 @@
 !system '"${NSISDIR}\makensis.exe" "${svn_TVServer}\Setup\setup.nsi"' = 0
 !endif
 
-
+#---------------------------------------------------------------------------
 # UNPACKER script
-Name "MediaPortal Unpacker"
-;SetCompressor /SOLID lzma
-Icon "${svn_DeployTool}\Install.ico"
+#---------------------------------------------------------------------------
+!define NAME    "MediaPortal"
+!define COMPANY "Team MediaPortal"
+!define URL     "www.team-mediaportal.com"
+!define VER_MAJOR       1
+!define VER_MINOR       0
+!define VER_REVISION    0
+!define VER_BUILD       0
+!define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}"
 
+#---------------------------------------------------------------------------
+# INSTALLER ATTRIBUTES
+#---------------------------------------------------------------------------
+Icon "${svn_DeployTool}\Install.ico"
 OutFile "MediaPortalSetup_1.0_SVN${SVN_REVISION}.exe"
 InstallDir "$TEMP\MediaPortal Installation"
 
@@ -93,6 +115,14 @@ XPStyle on
 RequestExecutionLevel admin
 ShowInstDetails show
 AutoCloseWindow true
+VIProductVersion "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}"
+VIAddVersionKey ProductName       "${NAME}"
+VIAddVersionKey ProductVersion    "${VERSION}"
+VIAddVersionKey CompanyName       "${COMPANY}"
+VIAddVersionKey CompanyWebsite    "${URL}"
+VIAddVersionKey FileVersion       "${VERSION}"
+VIAddVersionKey FileDescription   "${NAME} installation ${VERSION}"
+VIAddVersionKey LegalCopyright    "Copyright © 2005-2009 ${COMPANY}"
 
 ;if we want to make it fully silent we can uncomment this
 ;SilentInstall silent
