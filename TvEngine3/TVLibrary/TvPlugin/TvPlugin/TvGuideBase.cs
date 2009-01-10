@@ -32,10 +32,12 @@ using System.IO;
 using System.Globalization;
 
 using MediaPortal.GUI.Library;
+using MediaPortal.GUI.Video;
 using MediaPortal.Util;
 using MediaPortal.Dialogs;
 using MediaPortal.Player;
 using MediaPortal.Configuration;
+using MediaPortal.Video.Database;
 
 using TvDatabase;
 using TvControl;
@@ -48,7 +50,7 @@ namespace TvPlugin
   /// <summary>
   /// 
   /// </summary>
-  public class TvGuideBase : GUIDialogWindow
+  public class TvGuideBase : GUIDialogWindow, IMDB.IProgress
   {
     #region constants
     const int MaxDaysInGuide = 30;
@@ -2634,11 +2636,16 @@ namespace TvPlugin
         if (TVHome.Navigator.Groups.Count > 1)
           dlg.AddLocalizedString(971);// Group
 
+        dlg.AddLocalizedString(368); // IMDB
+
         dlg.DoModal(GetID);
         if (dlg.SelectedLabel == -1)
           return;
         switch (dlg.SelectedId)
         {
+          case 368: // IMDB
+            OnGetIMDBInfo();
+            break;
           case 971: //group
             TVHome.OnSelectGroup();
             //dlg.Reset();
@@ -2714,6 +2721,33 @@ namespace TvPlugin
 
       TVProgramInfo.CurrentProgram = _currentProgram;
       GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO);
+    }
+
+    void OnGetIMDBInfo()
+    {
+      IMDBMovie movieDetails = new IMDBMovie();
+      movieDetails.SearchString = _currentProgram.Title;
+      if (IMDBFetcher.GetInfoFromIMDB(this, ref movieDetails, true, false))
+      {
+        TvBusinessLayer dbLayer = new TvBusinessLayer();
+ 
+        IList<TvDatabase.Program> progs = dbLayer.GetProgramExists(Channel.Retrieve(_currentProgram.IdChannel), _currentProgram.StartTime, _currentProgram.EndTime);
+        if (progs != null && progs.Count > 0)
+        {
+          Program prog = (Program)progs[0];
+          prog.Description = movieDetails.Plot;
+          prog.Genre = movieDetails.Genre;
+          prog.StarRating = (int)movieDetails.Rating;
+          prog.Persist();
+        }
+        GUIVideoInfo videoInfo = (GUIVideoInfo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIDEO_INFO);
+        videoInfo.Movie = movieDetails;
+        GUIButtonControl btnPlay = (GUIButtonControl)videoInfo.GetControl(2);
+        btnPlay.Visible = false;
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_VIDEO_INFO);
+      }
+      else
+        Log.Info("IMDB Fetcher: Nothing found");
     }
 
     void OnSelectItem(bool isItemSelected)
@@ -3498,5 +3532,180 @@ namespace TvPlugin
 
     }
 
+    #region IMDB.IProgress
+    public bool OnDisableCancel(IMDBFetcher fetcher)
+    {
+      GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+      if (pDlgProgress.IsInstance(fetcher))
+      {
+        pDlgProgress.DisableCancel(true);
+      }
+      return true;
+    }
+    public void OnProgress(string line1, string line2, string line3, int percent)
+    {
+      if (!GUIWindowManager.IsRouted) return;
+      GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+      pDlgProgress.ShowProgressBar(true);
+      pDlgProgress.SetLine(1, line1);
+      pDlgProgress.SetLine(2, line2);
+      if (percent > 0)
+        pDlgProgress.SetPercentage(percent);
+      pDlgProgress.Progress();
+    }
+    public bool OnSearchStarting(IMDBFetcher fetcher)
+    {
+      GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+      // show dialog that we're busy querying www.imdb.com
+      pDlgProgress.Reset();
+      pDlgProgress.SetHeading(GUILocalizeStrings.Get(197));
+      pDlgProgress.SetLine(1, fetcher.MovieName);
+      pDlgProgress.SetLine(2, string.Empty);
+      pDlgProgress.SetObject(fetcher);
+      pDlgProgress.StartModal(GUIWindowManager.ActiveWindow);
+      return true;
+    }
+    public bool OnSearchStarted(IMDBFetcher fetcher)
+    {
+      GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+      pDlgProgress.SetObject(fetcher);
+      pDlgProgress.DoModal(GUIWindowManager.ActiveWindow);
+      if (pDlgProgress.IsCanceled)
+      {
+        return false;
+      }
+      return true;
+    }
+    public bool OnSearchEnd(IMDBFetcher fetcher)
+    {
+      GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+      if ((pDlgProgress != null) && (pDlgProgress.IsInstance(fetcher)))
+      {
+        pDlgProgress.Close();
+      }
+      return true;
+    }
+    public bool OnMovieNotFound(IMDBFetcher fetcher)
+    {
+      Log.Info("IMDB Fetcher: OnMovieNotFound");
+      // show dialog...
+      GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+      pDlgOK.SetHeading(195);
+      pDlgOK.SetLine(1, fetcher.MovieName);
+      pDlgOK.SetLine(2, string.Empty);
+      pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
+      return true;
+    }
+    public bool OnDetailsStarting(IMDBFetcher fetcher)
+    {
+      GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+      // show dialog that we're downloading the movie info
+      pDlgProgress.Reset();
+      pDlgProgress.SetHeading(GUILocalizeStrings.Get(198));
+      //pDlgProgress.SetLine(0, strMovieName);
+      pDlgProgress.SetLine(1, fetcher.MovieName);
+      pDlgProgress.SetLine(2, string.Empty);
+      pDlgProgress.SetObject(fetcher);
+      pDlgProgress.StartModal(GUIWindowManager.ActiveWindow);
+      return true;
+    }
+    public bool OnDetailsStarted(IMDBFetcher fetcher)
+    {
+      GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+      pDlgProgress.SetObject(fetcher);
+      pDlgProgress.DoModal(GUIWindowManager.ActiveWindow);
+      if (pDlgProgress.IsCanceled)
+      {
+        return false;
+      }
+     return true;
+   }
+   public bool OnDetailsEnd(IMDBFetcher fetcher)
+   {
+      GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+      if ((pDlgProgress != null) && (pDlgProgress.IsInstance(fetcher)))
+      {
+        pDlgProgress.Close();
+      }
+      return true;
+    }
+    public bool OnActorsStarting(IMDBFetcher fetcher)
+    {
+      // won't occure
+      return true;
+    }
+    public bool OnActorsStarted(IMDBFetcher fetcher)
+    {
+      // won't occure
+      return true;
+    }
+    public bool OnActorsEnd(IMDBFetcher fetcher)
+    {
+      // won't occure
+      return true;
+    }
+    public bool OnDetailsNotFound(IMDBFetcher fetcher)
+    {
+      Log.Info("IMDB Fetcher: OnDetailsNotFound");
+      // show dialog...
+      GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+      // show dialog...
+      pDlgOK.SetHeading(195);
+      pDlgOK.SetLine(1, fetcher.MovieName);
+      pDlgOK.SetLine(2, string.Empty);
+      pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
+      return false;
+    }
+
+    public bool OnRequestMovieTitle(IMDBFetcher fetcher, out string movieName)
+    {
+      // won't occure
+      movieName = "";
+      return true;
+    }
+    public bool OnSelectMovie(IMDBFetcher fetcher, out int selectedMovie)
+    {
+      // won't occure
+      selectedMovie = 0;
+      return true;
+    }
+    public bool OnScanStart(int total)
+    {
+      // won't occure
+      return true;
+    }
+    public bool OnScanEnd()
+    {
+      // won't occure
+      return true;
+    }
+    public bool OnScanIterating(int count)
+    {
+      // won't occure
+      return true;
+    }
+    public bool OnScanIterated(int count)
+    {
+      // won't occure
+      return true;
+    }
+
+    #endregion
+
+    protected bool GetKeyboard(ref string strLine)
+    {
+      VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
+      if (null == keyboard)
+        return false;
+      keyboard.Reset();
+      keyboard.Text = strLine;
+      keyboard.DoModal(GetID);
+      if (keyboard.IsConfirmed)
+      {
+        strLine = keyboard.Text;
+        return true;
+      }
+      return false;
+    }
   }
 }

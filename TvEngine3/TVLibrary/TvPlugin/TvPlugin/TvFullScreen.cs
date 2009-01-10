@@ -33,10 +33,12 @@ using System.Windows.Forms;
 using System.Globalization;
 using System.IO;
 using MediaPortal.GUI.Library;
+using MediaPortal.GUI.Video;
 using MediaPortal.Util;
 using MediaPortal.Dialogs;
 using MediaPortal.Player;
 using MediaPortal.Configuration;
+using MediaPortal.Video.Database;
 
 using TvDatabase;
 using TvControl;
@@ -51,7 +53,7 @@ namespace TvPlugin
   /// <summary>
   /// 
   /// </summary>
-  public class TvFullScreen : GUIWindow, IRenderLayer
+  public class TvFullScreen : GUIWindow, IRenderLayer, IMDB.IProgress
   {
     #region FullScreenState class
     class FullScreenState
@@ -100,7 +102,7 @@ namespace TvPlugin
     long _timeOsdOnscreen;
     long _zapTimeOutValue;
     DateTime _updateTimer = DateTime.Now;
-    DateTime _updateTimerProgressbar = DateTime.Now;		
+    DateTime _updateTimerProgressbar = DateTime.Now;
     bool _lastPause = false;
     int _lastSpeed = 1;
     DateTime _keyPressedTimer = DateTime.Now;
@@ -236,20 +238,20 @@ namespace TvPlugin
         _zapTimeOutValue = 1000 * xmlreader.GetValueAsInt("movieplayer", "zaptimeout", 5);
         _byIndex = xmlreader.GetValueAsBool("mytv", "byindex", true);
         if (xmlreader.GetValueAsBool("mytv", "allowarzoom", true))
-            _allowedArModes.Add(MediaPortal.GUI.Library.Geometry.Type.Zoom);
+          _allowedArModes.Add(MediaPortal.GUI.Library.Geometry.Type.Zoom);
         if (xmlreader.GetValueAsBool("mytv", "allowarstretch", true))
-            _allowedArModes.Add(MediaPortal.GUI.Library.Geometry.Type.Stretch);
+          _allowedArModes.Add(MediaPortal.GUI.Library.Geometry.Type.Stretch);
         if (xmlreader.GetValueAsBool("mytv", "allowarnormal", true))
-            _allowedArModes.Add(MediaPortal.GUI.Library.Geometry.Type.Normal);
+          _allowedArModes.Add(MediaPortal.GUI.Library.Geometry.Type.Normal);
         if (xmlreader.GetValueAsBool("mytv", "allowaroriginal", true))
-            _allowedArModes.Add(MediaPortal.GUI.Library.Geometry.Type.Original);
+          _allowedArModes.Add(MediaPortal.GUI.Library.Geometry.Type.Original);
         if (xmlreader.GetValueAsBool("mytv", "allowarletterbox", true))
-            _allowedArModes.Add(MediaPortal.GUI.Library.Geometry.Type.LetterBox43);
+          _allowedArModes.Add(MediaPortal.GUI.Library.Geometry.Type.LetterBox43);
         if (xmlreader.GetValueAsBool("mytv", "allowarpanscan", true))
-            _allowedArModes.Add(MediaPortal.GUI.Library.Geometry.Type.PanScan43);
+          _allowedArModes.Add(MediaPortal.GUI.Library.Geometry.Type.PanScan43);
         if (xmlreader.GetValueAsBool("mytv", "allowarzoom149", true))
-            _allowedArModes.Add(MediaPortal.GUI.Library.Geometry.Type.Zoom14to9);
-          if (!TVHome.settingsLoaded)
+          _allowedArModes.Add(MediaPortal.GUI.Library.Geometry.Type.Zoom14to9);
+        if (!TVHome.settingsLoaded)
         {
           string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "normal");
           if (strValue.Equals("zoom")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom;
@@ -810,7 +812,7 @@ namespace TvPlugin
 
         case Action.ActionType.ACTION_AUDIO_NEXT_LANGUAGE:
         case Action.ActionType.ACTION_NEXT_AUDIO:
-          {            
+          {
             //IAudioStream[] streams = TVHome.Card.AvailableAudioStreams;
 
             if (g_Player.AudioStreams > 1)
@@ -820,14 +822,14 @@ namespace TvPlugin
               string audioLang = g_Player.AudioLanguage(oldIndex);
               oldIndex = g_Player.CurrentAudioStream;
               g_Player.SwitchToNextAudio();
-             
+
               newIndex = g_Player.CurrentAudioStream;
 
               if (newIndex + 1 > g_Player.AudioStreams)
               {
                 newIndex = 0;
               }
-                
+
               Log.Debug("Switching from audio stream {0} to {1}", oldIndex, newIndex);
 
               // Show OSD Label
@@ -835,8 +837,8 @@ namespace TvPlugin
               _statusTimeOutTimer = DateTime.Now;
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
               //msg.Label = string.Format("{0}:{1} ({2}/{3})", streams[newIndex].StreamType, streams[newIndex].Language, newIndex + 1, streams.Length);
-              msg.Label = string.Format("{0}:{1} ({2}/{3})", g_Player.AudioType(newIndex), g_Player.AudioLanguage(newIndex), newIndex + 1, g_Player.AudioStreams);              
-           
+              msg.Label = string.Format("{0}:{1} ({2}/{3})", g_Player.AudioType(newIndex), g_Player.AudioLanguage(newIndex), newIndex + 1, g_Player.AudioStreams);
+
               Log.Debug(msg.Label);
               OnMessage(msg);
             }
@@ -897,7 +899,7 @@ namespace TvPlugin
         if (channel == null)
         {
           return true;
-        }                
+        }
 
         TvBusinessLayer layer = new TvBusinessLayer();
 
@@ -918,7 +920,7 @@ namespace TvPlugin
           if (!_dlgYesNo.IsConfirmed) return true;
 
           server.StopRecordingSchedule(card.RecordingScheduleId);
-          
+
           GUIDialogNotify dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
           if (dlgNotify == null) return true;
           string logo = Utils.GetCoverArt(Thumbs.TVChannel, channel.DisplayName);
@@ -951,7 +953,7 @@ namespace TvPlugin
           {
             _dialogBottomMenu = (GUIDialogMenuBottomRight)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT);
             if (_dialogBottomMenu != null)
-            {              
+            {
               _dialogBottomMenu.Reset();
               _dialogBottomMenu.SetHeading(605);//my tv
               //_dialogBottomMenu.SetHeadingRow2(prog.Title);              
@@ -962,21 +964,21 @@ namespace TvPlugin
 
               _dialogBottomMenu.DoModal(GetID);
 
-              _bottomDialogMenuVisible = false;              
+              _bottomDialogMenuVisible = false;
               switch (_dialogBottomMenu.SelectedId)
               {
                 case 875:
                   //record current program
-                  _isStartingTSForRecording = !g_Player.IsTimeShifting;                  
+                  _isStartingTSForRecording = !g_Player.IsTimeShifting;
 
-                  TVHome.StartRecordingSchedule(channel, false);                             
+                  TVHome.StartRecordingSchedule(channel, false);
                   break;
 
                 case 876:
                   //manual record
                   _isStartingTSForRecording = !g_Player.IsTimeShifting;
 
-                  TVHome.StartRecordingSchedule(channel, true);                             
+                  TVHome.StartRecordingSchedule(channel, true);
                   break;
                 default:
                   return true;
@@ -985,9 +987,9 @@ namespace TvPlugin
             }
           }
           else
-          {            
+          {
             _isStartingTSForRecording = !g_Player.IsTimeShifting;
-            TVHome.StartRecordingSchedule(channel, true);           
+            TVHome.StartRecordingSchedule(channel, true);
           }
 
           // check if recorder has to start timeshifting for this recording
@@ -997,7 +999,7 @@ namespace TvPlugin
             TVHome.ViewChannel(ch);
             _isStartingTSForRecording = false;
           }
-          
+
           GUIDialogNotify dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
           if (dlgNotify == null) return true;
           string logo = Utils.GetCoverArt(Thumbs.TVChannel, channel.DisplayName);
@@ -1021,7 +1023,7 @@ namespace TvPlugin
           dlgNotify.DoModal(GUIWindowManager.ActiveWindow);
 
           TvNotifyManager.ForceUpdate();
-          
+
 
           _notifyDialogVisible = false;
         }
@@ -1396,7 +1398,7 @@ namespace TvPlugin
           //if (_msnWindowVisible) return true;     // msn related can be removed
           if (message.SenderControlId != (int)GUIWindow.Window.WINDOW_TVFULLSCREEN) return true;
           break;
-        #endregion       
+        #endregion
       }
 
       // msn related can be removed
@@ -1458,10 +1460,10 @@ namespace TvPlugin
         dlg.AddLocalizedString(100748); // Program Information
       if (File.Exists(GUIGraphicsContext.Skin + @"\mytvtuningdetails.xml") && !g_Player.IsTVRecording)
         dlg.AddLocalizedString(200041); // tuning details
-      
+
       VirtualCard vc;
       TvServer server = new TvServer();
-      if (server.IsRecording(TVHome.Navigator.Channel.Name, out vc))      
+      if (server.IsRecording(TVHome.Navigator.Channel.Name, out vc))
       {
         dlg.AddLocalizedString(265);    //stop rec.
       }
@@ -1476,6 +1478,9 @@ namespace TvPlugin
       {
         dlg.AddLocalizedString(882);
       }
+
+      dlg.AddLocalizedString(368); // IMDB
+
       _isDialogVisible = true;
 
       dlg.DoModal(GetID);
@@ -1621,7 +1626,7 @@ namespace TvPlugin
 
         case 601: // RecordNow          
         case 265: // StopRec.          
-          TVHome.ManualRecord(TVHome.Navigator.Channel);                    
+          TVHome.ManualRecord(TVHome.Navigator.Channel);
           break;
 
         case 200042: // Linked channels
@@ -1637,7 +1642,27 @@ namespace TvPlugin
         case 882: // Quality settings
           ShowQualitySettingsMenu();
           break;
+
+        case 368: //IMDB
+          OnGetIMDBInfo();
+          break;
       }
+    }
+
+    void OnGetIMDBInfo()
+    {
+      IMDBMovie movieDetails = new IMDBMovie();
+      movieDetails.SearchString = GUIPropertyManager.GetProperty("#TV.View.title");
+      if (IMDBFetcher.GetInfoFromIMDB(this, ref movieDetails, true, false))
+      {
+        GUIVideoInfo videoInfo = (GUIVideoInfo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIDEO_INFO);
+        videoInfo.Movie = movieDetails;
+        GUIButtonControl btnPlay = (GUIButtonControl)videoInfo.GetControl(2);
+        btnPlay.Visible = false;
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_VIDEO_INFO);
+      }
+      else
+        Log.Info("IMDB Fetcher: Nothing found");
     }
 
     void ShowQualitySettingsMenu()
@@ -1758,7 +1783,7 @@ namespace TvPlugin
         }
         TVHome.Card.QualityType = _newQuality;
       }
-    }    
+    }
 
     void ShowProgramInfo()
     {
@@ -1784,14 +1809,14 @@ namespace TvPlugin
       dlg.SetHeading(941); // Change aspect ratio
 
       // Add the allowed zoom  modes
-      if(_allowedArModes.Contains(Geometry.Type.Stretch)) dlg.AddLocalizedString(942); // Stretch
-      if(_allowedArModes.Contains(Geometry.Type.Normal)) dlg.AddLocalizedString(943); // Normal
-      if(_allowedArModes.Contains(Geometry.Type.Original)) dlg.AddLocalizedString(944); // Original
-      if(_allowedArModes.Contains(Geometry.Type.LetterBox43)) dlg.AddLocalizedString(945); // Letterbox
-      if(_allowedArModes.Contains(Geometry.Type.PanScan43)) dlg.AddLocalizedString(946); // Pan and scan
-      if(_allowedArModes.Contains(Geometry.Type.Zoom)) dlg.AddLocalizedString(947); // Zoom
-      if(_allowedArModes.Contains(Geometry.Type.Zoom14to9)) dlg.AddLocalizedString(1190); //14:9
-      
+      if (_allowedArModes.Contains(Geometry.Type.Stretch)) dlg.AddLocalizedString(942); // Stretch
+      if (_allowedArModes.Contains(Geometry.Type.Normal)) dlg.AddLocalizedString(943); // Normal
+      if (_allowedArModes.Contains(Geometry.Type.Original)) dlg.AddLocalizedString(944); // Original
+      if (_allowedArModes.Contains(Geometry.Type.LetterBox43)) dlg.AddLocalizedString(945); // Letterbox
+      if (_allowedArModes.Contains(Geometry.Type.PanScan43)) dlg.AddLocalizedString(946); // Pan and scan
+      if (_allowedArModes.Contains(Geometry.Type.Zoom)) dlg.AddLocalizedString(947); // Zoom
+      if (_allowedArModes.Contains(Geometry.Type.Zoom14to9)) dlg.AddLocalizedString(1190); //14:9
+
       // set the focus to currently used mode
       dlg.SelectedLabel = dlg.IndexOfItem(Utils.GetAspectRatioLocalizedString(GUIGraphicsContext.ARType));
       // show dialog and wait for result       
@@ -1801,7 +1826,7 @@ namespace TvPlugin
 
       if (dlg.SelectedId == -1) return;
       _statusTimeOutTimer = DateTime.Now;
-      
+
       string strStatus = "";
 
       GUIGraphicsContext.ARType = Utils.GetAspectRatioByLangID(dlg.SelectedId);
@@ -1822,7 +1847,7 @@ namespace TvPlugin
       dlg.ShowQuickNumbers = true;
       int selected = 0;
       int nrOfstreams = 0;
-     
+
       int streamCurrent = g_Player.CurrentAudioStream;
       nrOfstreams = g_Player.AudioStreams;
 
@@ -1836,10 +1861,10 @@ namespace TvPlugin
       for (int i = 0; i < g_Player.AudioStreams; i++)
       {
         GUIListItem item = new GUIListItem();
-        item.Label = String.Format("{0}:{1}", g_Player.AudioType(i),  g_Player.AudioLanguage(i));
+        item.Label = String.Format("{0}:{1}", g_Player.AudioType(i), g_Player.AudioLanguage(i));
         dlg.Add(item);
-      }      
-      
+      }
+
       dlg.SelectedLabel = selected;
 
       _isDialogVisible = true;
@@ -1851,8 +1876,8 @@ namespace TvPlugin
 
       // Set new language			
       if ((dlg.SelectedLabel >= 0) && (dlg.SelectedLabel < nrOfstreams))
-      {        
-        g_Player.CurrentAudioStream = dlg.SelectedLabel;               
+      {
+        g_Player.CurrentAudioStream = dlg.SelectedLabel;
       }
     }
 
@@ -1902,7 +1927,7 @@ namespace TvPlugin
 
     public override void Process()
     {
-      TimeSpan ts = DateTime.Now - _updateTimer;            
+      TimeSpan ts = DateTime.Now - _updateTimer;
 
       if (ts.TotalMilliseconds < 800)
       {
@@ -2371,7 +2396,7 @@ namespace TvPlugin
       GUIWindowManager.IsOsdVisible = false;
       Log.Debug("Tvfullscreen:not viewing anymore");
       GUIWindowManager.ShowPreviousWindow();
-    }    
+    }
 
     public void UpdateOSD()
     {
@@ -2522,9 +2547,9 @@ namespace TvPlugin
           //msg.Label = String.Format("{0} {1} ({2})", GUILocalizeStrings.Get(602), _channelName, displayedChannelName);  // Channel
           msg.Label = String.Format("{0} {1} ({2})", "", _channelName, displayedChannelName);  // Channel
         else
-         //not enough room for label "Channel"
-         //msg.Label = String.Format("{0} {1}", GUILocalizeStrings.Get(602), _channelName);  // Channel 
-         msg.Label = String.Format("{0} {1}", "", _channelName);  // Channel
+          //not enough room for label "Channel"
+          //msg.Label = String.Format("{0} {1}", GUILocalizeStrings.Get(602), _channelName);  // Channel 
+          msg.Label = String.Format("{0} {1}", "", _channelName);  // Channel
 
         GUIControl cntTarget = base.GetControl((int)Control.LABEL_ROW1);
         if (cntTarget != null)
@@ -2541,7 +2566,7 @@ namespace TvPlugin
           if (iChannel > -1)
           {
             ChangeChannelNr(iChannel);
-          }          
+          }
           _channelInputVisible = false;
           _channelName = "";
         }
@@ -2746,22 +2771,22 @@ namespace TvPlugin
         return;
       }
       else
-      {        
+      {
         if (VolumeHandler.Instance.IsMuted)
         {
           imgVolumeMuteIcon.Visible = true;
           imgVolumeBar.Image1 = 1;
           imgVolumeBar.Current = 0;
-        }         
+        }
         else
-        {          
+        {
           imgVolumeBar.Maximum = VolumeHandler.Instance.StepMax;
-          imgVolumeBar.Current = VolumeHandler.Instance.Step;          
+          imgVolumeBar.Current = VolumeHandler.Instance.Step;
           imgVolumeMuteIcon.Visible = false;
           imgVolumeBar.Image1 = 2;
           imgVolumeBar.Image2 = 1;
         }
-				imgVolumeBar.Visible = true;
+        imgVolumeBar.Visible = true;
       }
     }
 
@@ -2777,5 +2802,182 @@ namespace TvPlugin
       Render(timePassed);
     }
     #endregion
+
+
+    #region IMDB.IProgress
+    public bool OnDisableCancel(IMDBFetcher fetcher)
+    {
+      GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+      if (pDlgProgress.IsInstance(fetcher))
+      {
+        pDlgProgress.DisableCancel(true);
+      }
+      return true;
+    }
+    public void OnProgress(string line1, string line2, string line3, int percent)
+    {
+      if (!GUIWindowManager.IsRouted) return;
+      GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+      pDlgProgress.ShowProgressBar(true);
+      pDlgProgress.SetLine(1, line1);
+      pDlgProgress.SetLine(2, line2);
+      if (percent > 0)
+        pDlgProgress.SetPercentage(percent);
+      pDlgProgress.Progress();
+    }
+    public bool OnSearchStarting(IMDBFetcher fetcher)
+    {
+      GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+      // show dialog that we're busy querying www.imdb.com
+      pDlgProgress.Reset();
+      pDlgProgress.SetHeading(GUILocalizeStrings.Get(197));
+      pDlgProgress.SetLine(1, fetcher.MovieName);
+      pDlgProgress.SetLine(2, string.Empty);
+      pDlgProgress.SetObject(fetcher);
+      pDlgProgress.StartModal(GUIWindowManager.ActiveWindow);
+      return true;
+    }
+    public bool OnSearchStarted(IMDBFetcher fetcher)
+    {
+      GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+      pDlgProgress.SetObject(fetcher);
+      pDlgProgress.DoModal(GUIWindowManager.ActiveWindow);
+      if (pDlgProgress.IsCanceled)
+      {
+        return false;
+      }
+      return true;
+    }
+    public bool OnSearchEnd(IMDBFetcher fetcher)
+    {
+      GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+      if ((pDlgProgress != null) && (pDlgProgress.IsInstance(fetcher)))
+      {
+        pDlgProgress.Close();
+      }
+      return true;
+    }
+    public bool OnMovieNotFound(IMDBFetcher fetcher)
+    {
+      Log.Info("IMDB Fetcher: OnMovieNotFound");
+      // show dialog...
+      GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+      pDlgOK.SetHeading(195);
+      pDlgOK.SetLine(1, fetcher.MovieName);
+      pDlgOK.SetLine(2, string.Empty);
+      pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
+      return true;
+    }
+    public bool OnDetailsStarting(IMDBFetcher fetcher)
+    {
+      GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+      // show dialog that we're downloading the movie info
+      pDlgProgress.Reset();
+      pDlgProgress.SetHeading(GUILocalizeStrings.Get(198));
+      //pDlgProgress.SetLine(0, strMovieName);
+      pDlgProgress.SetLine(1, fetcher.MovieName);
+      pDlgProgress.SetLine(2, string.Empty);
+      pDlgProgress.SetObject(fetcher);
+      pDlgProgress.StartModal(GUIWindowManager.ActiveWindow);
+      return true;
+    }
+    public bool OnDetailsStarted(IMDBFetcher fetcher)
+    {
+      GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+      pDlgProgress.SetObject(fetcher);
+      pDlgProgress.DoModal(GUIWindowManager.ActiveWindow);
+      if (pDlgProgress.IsCanceled)
+      {
+        return false;
+      }
+      return true;
+    }
+    public bool OnDetailsEnd(IMDBFetcher fetcher)
+    {
+      GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+      if ((pDlgProgress != null) && (pDlgProgress.IsInstance(fetcher)))
+      {
+        pDlgProgress.Close();
+      }
+      return true;
+    }
+    public bool OnActorsStarting(IMDBFetcher fetcher)
+    {
+      // won't occure
+      return true;
+    }
+    public bool OnActorsStarted(IMDBFetcher fetcher)
+    {
+      // won't occure
+      return true;
+    }
+    public bool OnActorsEnd(IMDBFetcher fetcher)
+    {
+      // won't occure
+      return true;
+    }
+    public bool OnDetailsNotFound(IMDBFetcher fetcher)
+    {
+      Log.Info("IMDB Fetcher: OnDetailsNotFound");
+      // show dialog...
+      GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+      // show dialog...
+      pDlgOK.SetHeading(195);
+      pDlgOK.SetLine(1, fetcher.MovieName);
+      pDlgOK.SetLine(2, string.Empty);
+      pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
+      return false;
+    }
+
+    public bool OnRequestMovieTitle(IMDBFetcher fetcher, out string movieName)
+    {
+      // won't occure
+      movieName = "";
+      return true;
+    }
+    public bool OnSelectMovie(IMDBFetcher fetcher, out int selectedMovie)
+    {
+      // won't occure
+      selectedMovie = 0;
+      return true;
+    }
+    public bool OnScanStart(int total)
+    {
+      // won't occure
+      return true;
+    }
+    public bool OnScanEnd()
+    {
+      // won't occure
+      return true;
+    }
+    public bool OnScanIterating(int count)
+    {
+      // won't occure
+      return true;
+    }
+    public bool OnScanIterated(int count)
+    {
+      // won't occure
+      return true;
+    }
+
+    #endregion
+
+    protected bool GetKeyboard(ref string strLine)
+    {
+      VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
+      if (null == keyboard)
+        return false;
+      keyboard.Reset();
+      keyboard.Text = strLine;
+      keyboard.DoModal(GetID);
+      if (keyboard.IsConfirmed)
+      {
+        strLine = keyboard.Text;
+        return true;
+      }
+      return false;
+    }
   }
 }

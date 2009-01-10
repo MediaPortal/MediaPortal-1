@@ -102,6 +102,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\mediaportal\Utils\bin\Release\Utils.dll</HintPath>
     </Reference>
+    <Reference Include="WindowPlugins, Version=0.9.3.26436, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\..\..\..\mediaportal\WindowPlugins\bin\Release\WindowPlugins.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
