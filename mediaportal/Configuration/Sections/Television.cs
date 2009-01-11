@@ -303,11 +303,11 @@ namespace MediaPortal.Configuration.Sections
       this.defaultZoomModeComboBox.Items.AddRange(new object[] {
             "Normal",
             "Original Source Format",
-            "Stretch",
             "Zoom",
-            "Zoom 14:9",
-            "4:3 Letterbox",
-            "4:3 Pan and scan"});
+            "14:9 Zoom",
+            "Stretch",
+            "Non-linear Smart Zoom",
+            "4:3 Letterbox"});
       this.defaultZoomModeComboBox.Location = new System.Drawing.Point(168, 157);
       this.defaultZoomModeComboBox.Name = "defaultZoomModeComboBox";
       this.defaultZoomModeComboBox.Size = new System.Drawing.Size(288, 21);
