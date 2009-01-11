@@ -76,7 +76,6 @@ Var noDesktopSC
 Var noStartMenuSC
 Var DeployMode
 ; variables for commandline parameters for UnInstaller
-Var RemoveAll       ; Set, when the user decided to uninstall everything
 
 #---------------------------------------------------------------------------
 # DEFINES
@@ -131,6 +130,7 @@ BrandingText  "${NAME} ${VERSION} by ${COMPANY}"
 
 !include "${svn_InstallScripts}\include-AddRemovePage.nsh"
 !include "${svn_InstallScripts}\include-CommonMPMacros.nsh"
+!include "${svn_InstallScripts}\include-UninstallModePage.nsh"
 !include setup-languages.nsh
 
 ; FileFunc macros
@@ -196,16 +196,12 @@ Page custom PageReinstall PageLeaveReinstall
 !endif
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_STARTMENU Application $StartMenuGroup
-
-
-# OBSOLETE - old code to rename existing dirs
-#!define MUI_PAGE_CUSTOMFUNCTION_PRE InstFilePre
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_PAGE_FINISH
+
 ; UnInstaller Interface
-!define MUI_PAGE_CUSTOMFUNCTION_LEAVE un.WelcomeLeave
 !insertmacro MUI_UNPAGE_WELCOME
-!insertmacro MUI_UNPAGE_CONFIRM
+UninstPage custom un.UninstallModePage un.UninstallModePageLeave
 !insertmacro MUI_UNPAGE_INSTFILES
 !insertmacro MUI_UNPAGE_FINISH
 
@@ -852,8 +848,16 @@ Section Uninstall
   Delete /REBOOTOK "$MPdir.Base\uninstall-mp.exe"
   RMDir "$MPdir.Base"
 
-  ; do we need to deinstall everything? Then remove also the CommonAppData and InstDir
-  ${If} $RemoveAll == 1
+
+  ${unregisterExtension} ".mpi" "MediaPortal extension package"
+  ${unregisterExtension} ".xmp" "MediaPortal extension project"
+
+  ${un.RefreshShellIcons}
+
+
+
+  ${If} $UnInstallMode == 1
+
     ${LOG_TEXT} "INFO" "Removing User Settings"
     DeleteRegKey HKLM "${REG_UNINSTALL}"
     RMDir /r /REBOOTOK "$MPdir.Config"
@@ -867,12 +871,12 @@ Section Uninstall
     RMDir /r /REBOOTOK "$LOCALAPPDATA\VirtualStore\Program Files\Team MediaPortal\MediaPortal"
     RMDir /REBOOTOK "$LOCALAPPDATA\VirtualStore\ProgramData\Team MediaPortal"
     RMDir /REBOOTOK "$LOCALAPPDATA\VirtualStore\Program Files\Team MediaPortal"
+
+  ${ElseIf} $UnInstallMode == 2
+
+    !insertmacro CompleteMediaPortalCleanup
+
   ${EndIf}
-
-  ${unregisterExtension} ".mpi" "MediaPortal extension package"
-  ${unregisterExtension} ".xmp" "MediaPortal extension project"
-
-  ${un.RefreshShellIcons}
 SectionEnd
 
 #---------------------------------------------------------------------------
@@ -1063,7 +1067,7 @@ Function un.onInit
   ${LOG_TEXT} "DEBUG" "FUNCTION un.onInit"
   #### check and parse cmdline parameter
   ; set default values for parameters ........
-  StrCpy $RemoveAll 0
+  StrCpy $UnInstallMode 0
 
   ; gets comandline parameter
   ${un.GetParameters} $R0
@@ -1073,7 +1077,7 @@ Function un.onInit
   ClearErrors
   ${un.GetOptions} $R0 "/RemoveAll" $R1
   IfErrors +2
-  StrCpy $RemoveAll 1
+  StrCpy $UnInstallMode 1
   #### END of check and parse cmdline parameter
 
   ReadRegStr $INSTDIR HKLM "${REG_UNINSTALL}" "InstallPath"
@@ -1131,17 +1135,6 @@ Function InstFilePre
   ${ReadMediaPortalDirs} "$INSTDIR"
 FunctionEnd
 */
-
-Function un.WelcomeLeave
-    ; This function is called, before the uninstallation process is startet
-
-    ; It asks the user, if he wants to remove all files and settings
-    StrCpy $RemoveAll 0
-    MessageBox MB_YESNO|MB_ICONEXCLAMATION|MB_DEFBUTTON2 "$(TEXT_MSGBOX_REMOVE_ALL)" IDNO +3
-    MessageBox MB_YESNO|MB_ICONEXCLAMATION|MB_DEFBUTTON2 "$(TEXT_MSGBOX_REMOVE_ALL_STUPID)" IDNO +2
-    StrCpy $RemoveAll 1
-
-FunctionEnd
 
 #---------------------------------------------------------------------------
 # SECTION DECRIPTIONS     must be at the end

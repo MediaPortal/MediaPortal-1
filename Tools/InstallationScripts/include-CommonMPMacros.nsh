@@ -812,3 +812,79 @@ FunctionEnd
 !macroend
 
 !endif
+
+#---------------------------------------------------------------------------
+#   COMPLETE MEDIAPORTAL CLEANUP
+#---------------------------------------------------------------------------
+!macro CompleteMediaPortalCleanup
+
+# make and uninstallation of the other app, which may be still installed
+!if "${NAME}" == "MediaPortal"
+  !insertmacro NSISuninstall "${TV3_REG_UNINSTALL}"
+!else
+  !if "${NAME}" == "MediaPortal TV Server / Client"
+    !insertmacro NSISuninstall "${MP_REG_UNINSTALL}"
+  !endif
+!endif
+
+SetShellVarContext all
+# Delete new MediaPortal ( >= 0.2.3 RC3 ) and TVengine 3 directories
+RMDir /r /REBOOTOK "$PROGRAMFILES\Team MediaPortal"
+RMDir /r /REBOOTOK "$APPDATA\Team MediaPortal"
+RMDir /r /REBOOTOK "$LOCALAPPDATA\VirtualStore\Program Files\Team MediaPortal"
+RMDir /r /REBOOTOK "$LOCALAPPDATA\VirtualStore\ProgramData\Team MediaPortal"
+
+# Delete old MediaPortal ( <= 0.2.3 RC2 ) directories 
+RMDir /r /REBOOTOK "$PROGRAMFILES\MediaPortal"
+RMDir /r /REBOOTOK "$APPDATA\MediaPortal"
+RMDir /r /REBOOTOK "$LOCALAPPDATA\VirtualStore\Program Files\MediaPortal"
+RMDir /r /REBOOTOK "$LOCALAPPDATA\VirtualStore\ProgramData\MediaPortal"
+
+# Delete old TV3 engine directories
+RMDir /r /REBOOTOK "$PROGRAMFILES\MediaPortal TV Engine"
+RMDir /r /REBOOTOK "$APPDATA\MediaPortal TV Engine"
+RMDir /r /REBOOTOK "$LOCALAPPDATA\VirtualStore\Program Files\MediaPortal TV Engine"
+RMDir /r /REBOOTOK "$LOCALAPPDATA\VirtualStore\ProgramData\MediaPortal TV Engine"
+
+# Delete menu shortcut icons
+SetShellVarContext all
+RMDir /r /REBOOTOK "$APPDATA\Microsoft\Windows\Start Menu\Programs\Team MediaPortal"
+RMDir /r /REBOOTOK "$APPDATA\Microsoft\Windows\Start Menu\Programs\MediaPortal"
+SetShellVarContext current
+RMDir /r /REBOOTOK "$APPDATA\Microsoft\Windows\Start Menu\Programs\Team MediaPortal"
+RMDir /r /REBOOTOK "$APPDATA\Microsoft\Windows\Start Menu\Programs\MediaPortal"
+RMDir /r /REBOOTOK "$LOCALAPPDATA\Microsoft\Windows\Start Menu\Programs\Team MediaPortal"
+RMDir /r /REBOOTOK "$LOCALAPPDATA\Microsoft\Windows\Start Menu\Programs\MediaPortal"
+
+# Remove registry keys
+DeleteRegKey HKLM "Software\Team MediaPortal"
+DeleteRegKey HKCU "Software\Team MediaPortal"
+
+DeleteRegKey HKLM "Software\MediaPortal"
+DeleteRegKey HKCU "Software\MediaPortal"
+
+!macroend
+
+!macro NSISuninstall REG_KEY
+
+  ReadRegStr $R0 HKLM "${REG_KEY}" UninstallString
+  ${If} ${FileExists} "$R0"
+    ; get parent folder of uninstallation EXE (RO) and save it to R1
+    ${GetParent} $R0 $R1
+    ; start uninstallation of installed MP, from tmp folder, so it will delete itself
+    ;HideWindow
+    ClearErrors
+    CopyFiles $R0 "$TEMP\uninstall-temp.exe"
+    ExecWait '"$TEMP\uninstall-temp.exe" _?=$R1 /RemoveAll'
+    ;BringToFront
+
+    /*
+    ; if an error occured, ask to cancel installation
+    ${If} ${Errors}
+      MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_ON_UNINSTALL)" IDYES +2
+      Quit
+    ${EndIf}
+    */
+  ${EndIf}
+!macroend
+
