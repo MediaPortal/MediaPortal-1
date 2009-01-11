@@ -70,14 +70,22 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowZoom;
     private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowLetterbox;
     private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowStretch;
-    private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowPanScan;
+    private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowSmartStretch;
     string m_strDefaultRegionLanguage = "English";
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxEachFolderIsMovie;
     private MediaPortal.UserInterface.Controls.MPLabel labelsubsinfo;
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox2;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
     private MediaPortal.UserInterface.Controls.MPComboBox defaultAudioLanguageComboBox;
-    string[] aspectRatio = { "normal", "original", "stretch", "zoom", "zoom149", "letterbox", "panscan" };
+    string[] aspectRatio = {
+                            "normal", 
+                            "original",
+                            "zoom", 
+                            "zoom149",  
+                            "stretch",
+                            "smartstretch",
+                            "letterbox"
+                           };
     string m_strDefaultAudioLanguage = "English";
 
     public Movies()
@@ -105,11 +113,12 @@ namespace MediaPortal.Configuration.Sections
       {
         cbAllowNormal.Checked = xmlreader.GetValueAsBool("movies", "allowarnormal", true);
         cbAllowOriginal.Checked = xmlreader.GetValueAsBool("movies", "allowaroriginal", true);
-        cbAllowStretch.Checked = xmlreader.GetValueAsBool("movies", "allowarstretch", true);
         cbAllowZoom.Checked = xmlreader.GetValueAsBool("movies", "allowarzoom", true);
         cbAllowZoom149.Checked = xmlreader.GetValueAsBool("movies", "allowarzoom149", true);
+        cbAllowStretch.Checked = xmlreader.GetValueAsBool("movies", "allowarstretch", true);
+        cbAllowSmartStretch.Checked = xmlreader.GetValueAsBool("movies", "allowarpanscan", true);
         cbAllowLetterbox.Checked = xmlreader.GetValueAsBool("movies", "allowarletterbox", true);
-        cbAllowPanScan.Checked = xmlreader.GetValueAsBool("movies", "allowarpanscan", true);
+        
         checkBoxEachFolderIsMovie.Checked = xmlreader.GetValueAsBool("movies", "eachFolderIsMovie", false);
 
         string playListFolder = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
@@ -202,11 +211,11 @@ namespace MediaPortal.Configuration.Sections
 
         xmlwriter.SetValueAsBool("movies", "allowarnormal", cbAllowNormal.Checked);
         xmlwriter.SetValueAsBool("movies", "allowaroriginal", cbAllowOriginal.Checked);
-        xmlwriter.SetValueAsBool("movies", "allowarstretch", cbAllowStretch.Checked);
         xmlwriter.SetValueAsBool("movies", "allowarzoom", cbAllowZoom.Checked);
         xmlwriter.SetValueAsBool("movies", "allowarzoom149", cbAllowZoom149.Checked);
+        xmlwriter.SetValueAsBool("movies", "allowarstretch", cbAllowStretch.Checked);
+        xmlwriter.SetValueAsBool("movies", "allowarpanscan", cbAllowSmartStretch.Checked);
         xmlwriter.SetValueAsBool("movies", "allowarletterbox", cbAllowLetterbox.Checked);
-        xmlwriter.SetValueAsBool("movies", "allowarpanscan", cbAllowPanScan.Checked);
 
         xmlwriter.SetValue("movieplayer", "audiolanguage", defaultAudioLanguageComboBox.Text);
       }
@@ -264,7 +273,7 @@ namespace MediaPortal.Configuration.Sections
       this.cbAllowZoom = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.cbAllowLetterbox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.cbAllowStretch = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.cbAllowPanScan = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.cbAllowSmartStretch = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tabPage3 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.mpGroupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -332,11 +341,11 @@ namespace MediaPortal.Configuration.Sections
       this.defaultZoomModeComboBox.Items.AddRange(new object[] {
             "Normal",
             "Original Source Format",
-            "Stretch",
             "Zoom",
             "Zoom 14:9",
-            "4:3 Letterbox",
-            "4:3 Pan and scan"});
+            "Stretch",
+            "Non-linear Smart Zoom",
+            "4:3 Letterbox"});
       this.defaultZoomModeComboBox.Location = new System.Drawing.Point(136, 24);
       this.defaultZoomModeComboBox.Name = "defaultZoomModeComboBox";
       this.defaultZoomModeComboBox.Size = new System.Drawing.Size(280, 21);
@@ -521,7 +530,7 @@ namespace MediaPortal.Configuration.Sections
       this.gAllowedModes.Controls.Add(this.cbAllowZoom);
       this.gAllowedModes.Controls.Add(this.cbAllowLetterbox);
       this.gAllowedModes.Controls.Add(this.cbAllowStretch);
-      this.gAllowedModes.Controls.Add(this.cbAllowPanScan);
+      this.gAllowedModes.Controls.Add(this.cbAllowSmartStretch);
       this.gAllowedModes.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.gAllowedModes.Location = new System.Drawing.Point(16, 190);
       this.gAllowedModes.Name = "gAllowedModes";
@@ -596,16 +605,16 @@ namespace MediaPortal.Configuration.Sections
       this.cbAllowStretch.Text = "Stretch";
       this.cbAllowStretch.UseVisualStyleBackColor = true;
       // 
-      // cbAllowPanScan
+      // cbAllowSmartStretch
       // 
-      this.cbAllowPanScan.AutoSize = true;
-      this.cbAllowPanScan.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbAllowPanScan.Location = new System.Drawing.Point(15, 137);
-      this.cbAllowPanScan.Name = "cbAllowPanScan";
-      this.cbAllowPanScan.Size = new System.Drawing.Size(110, 17);
-      this.cbAllowPanScan.TabIndex = 5;
-      this.cbAllowPanScan.Text = "4:3 Pan and Scan";
-      this.cbAllowPanScan.UseVisualStyleBackColor = true;
+      this.cbAllowSmartStretch.AutoSize = true;
+      this.cbAllowSmartStretch.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbAllowSmartStretch.Location = new System.Drawing.Point(15, 137);
+      this.cbAllowSmartStretch.Name = "cbAllowSmartStretch";
+      this.cbAllowSmartStretch.Size = new System.Drawing.Size(132, 17);
+      this.cbAllowSmartStretch.TabIndex = 5;
+      this.cbAllowSmartStretch.Text = "Non-linear Smart Zoom";
+      this.cbAllowSmartStretch.UseVisualStyleBackColor = true;
       // 
       // tabPage3
       // 

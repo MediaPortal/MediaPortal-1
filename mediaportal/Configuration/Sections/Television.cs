@@ -70,10 +70,18 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowZoom;
     private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowLetterbox;
     private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowStretch;
-    private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowPanScan;
+    private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowSmartStretch;
     private MediaPortal.UserInterface.Controls.MPComboBox h264videoCodecComboBox;
     private MediaPortal.UserInterface.Controls.MPLabel labelH264Decoder;
-    string[] aspectRatio = { "normal", "original", "stretch", "zoom", "zoom149", "letterbox", "panscan" };
+    string[] aspectRatio = {
+                            "normal", 
+                            "original",
+                            "zoom", 
+                            "zoom149",  
+                            "stretch",
+                            "smartstretch",
+                            "letterbox"
+                           };
     private MediaPortal.UserInterface.Controls.MPCheckBox cbAutoFullscreen;
     private MediaPortal.UserInterface.Controls.MPLabel labelAACDecoder;
     private MediaPortal.UserInterface.Controls.MPComboBox aacAudioCodecComboBox;
@@ -186,7 +194,7 @@ namespace MediaPortal.Configuration.Sections
       this.cbAllowZoom = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.cbAllowLetterbox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.cbAllowStretch = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.cbAllowPanScan = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.cbAllowSmartStretch = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox1.SuspendLayout();
       this.groupBox4.SuspendLayout();
       this.groupBox3.SuspendLayout();
@@ -539,7 +547,7 @@ namespace MediaPortal.Configuration.Sections
       this.gAllowedModes.Controls.Add(this.cbAllowZoom);
       this.gAllowedModes.Controls.Add(this.cbAllowLetterbox);
       this.gAllowedModes.Controls.Add(this.cbAllowStretch);
-      this.gAllowedModes.Controls.Add(this.cbAllowPanScan);
+      this.gAllowedModes.Controls.Add(this.cbAllowSmartStretch);
       this.gAllowedModes.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.gAllowedModes.Location = new System.Drawing.Point(0, 189);
       this.gAllowedModes.Name = "gAllowedModes";
@@ -614,16 +622,16 @@ namespace MediaPortal.Configuration.Sections
       this.cbAllowStretch.Text = "Stretch";
       this.cbAllowStretch.UseVisualStyleBackColor = true;
       // 
-      // cbAllowPanScan
+      // cbAllowSmartStretch
       // 
-      this.cbAllowPanScan.AutoSize = true;
-      this.cbAllowPanScan.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbAllowPanScan.Location = new System.Drawing.Point(17, 139);
-      this.cbAllowPanScan.Name = "cbAllowPanScan";
-      this.cbAllowPanScan.Size = new System.Drawing.Size(132, 17);
-      this.cbAllowPanScan.TabIndex = 5;
-      this.cbAllowPanScan.Text = "Non-linear Smart Zoom";
-      this.cbAllowPanScan.UseVisualStyleBackColor = true;
+      this.cbAllowSmartStretch.AutoSize = true;
+      this.cbAllowSmartStretch.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbAllowSmartStretch.Location = new System.Drawing.Point(17, 139);
+      this.cbAllowSmartStretch.Name = "cbAllowSmartStretch";
+      this.cbAllowSmartStretch.Size = new System.Drawing.Size(132, 17);
+      this.cbAllowSmartStretch.TabIndex = 5;
+      this.cbAllowSmartStretch.Text = "Non-linear Smart Zoom";
+      this.cbAllowSmartStretch.UseVisualStyleBackColor = true;
       // 
       // Television
       // 
@@ -653,8 +661,8 @@ namespace MediaPortal.Configuration.Sections
     {
       if (_init == false) return;
       if (System.IO.File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll"))
-        pluginVersion = 3; 
-      else 
+        pluginVersion = 3;
+      else
         pluginVersion = 2;
 
       //Add call to enable/disable objects. 
@@ -672,7 +680,7 @@ namespace MediaPortal.Configuration.Sections
           break;
         case 2:
           // timeshifting section. 
-          groupBox4.Enabled  = true;
+          groupBox4.Enabled = true;
           //h.264 section 
           labelH264Decoder.Enabled = false;
           h264videoCodecComboBox.Enabled = false;
@@ -686,11 +694,11 @@ namespace MediaPortal.Configuration.Sections
       {
         cbAllowNormal.Checked = xmlreader.GetValueAsBool("mytv", "allowarnormal", true);
         cbAllowOriginal.Checked = xmlreader.GetValueAsBool("mytv", "allowaroriginal", true);
-        cbAllowStretch.Checked = xmlreader.GetValueAsBool("mytv", "allowarstretch", true);
         cbAllowZoom.Checked = xmlreader.GetValueAsBool("mytv", "allowarzoom", true);
         cbAllowZoom149.Checked = xmlreader.GetValueAsBool("mytv", "allowarzoom149", true);
+        cbAllowStretch.Checked = xmlreader.GetValueAsBool("mytv", "allowarstretch", true);
+        cbAllowSmartStretch.Checked = xmlreader.GetValueAsBool("mytv", "allowarpanscan", false);
         cbAllowLetterbox.Checked = xmlreader.GetValueAsBool("mytv", "allowarletterbox", false);
-        cbAllowPanScan.Checked = xmlreader.GetValueAsBool("mytv", "allowarpanscan", false);
 
         cbTurnOnTv.Checked = xmlreader.GetValueAsBool("mytv", "autoturnontv", false);
         cbAutoFullscreen.Checked = xmlreader.GetValueAsBool("mytv", "autofullscreen", false);
@@ -828,7 +836,7 @@ namespace MediaPortal.Configuration.Sections
       {
         if (cbDeinterlace.SelectedIndex >= 0)
           xmlwriter.SetValue("mytv", "deinterlace", cbDeinterlace.SelectedIndex.ToString());
-        
+
         xmlwriter.SetValueAsBool("mytv", "autoturnontv", cbTurnOnTv.Checked);
         xmlwriter.SetValueAsBool("mytv", "autofullscreen", cbAutoFullscreen.Checked);
         xmlwriter.SetValueAsBool("mytv", "autoturnontimeshifting", cbTurnOnTimeShift.Checked);
@@ -854,11 +862,11 @@ namespace MediaPortal.Configuration.Sections
 
         xmlwriter.SetValueAsBool("mytv", "allowarnormal", cbAllowNormal.Checked);
         xmlwriter.SetValueAsBool("mytv", "allowaroriginal", cbAllowOriginal.Checked);
-        xmlwriter.SetValueAsBool("mytv", "allowarstretch", cbAllowStretch.Checked);
         xmlwriter.SetValueAsBool("mytv", "allowarzoom", cbAllowZoom.Checked);
         xmlwriter.SetValueAsBool("mytv", "allowarzoom149", cbAllowZoom149.Checked);
+        xmlwriter.SetValueAsBool("mytv", "allowarstretch", cbAllowStretch.Checked);
+        xmlwriter.SetValueAsBool("mytv", "allowarpanscan", cbAllowSmartStretch.Checked);
         xmlwriter.SetValueAsBool("mytv", "allowarletterbox", cbAllowLetterbox.Checked);
-        xmlwriter.SetValueAsBool("mytv", "allowarpanscan", cbAllowPanScan.Checked);
       }
     }
 
