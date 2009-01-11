@@ -127,7 +127,7 @@ namespace WebEPG_conf
 
     private void getTvServerTvChannels()
     {
-      IList Channels = Channel.ListAll();
+      IList<Channel> Channels = Channel.ListAll();
 
       foreach (Channel chan in Channels)
       {
