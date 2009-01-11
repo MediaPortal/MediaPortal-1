@@ -30,6 +30,7 @@
 !include "${svn_InstallScripts}\XML-plugin\Include\XML.nsh"
 
 
+!insertmacro un.GetParent
 
 
 !insertmacro GetRoot
@@ -870,7 +871,7 @@ DeleteRegKey HKCU "Software\MediaPortal"
   ReadRegStr $R0 HKLM "${REG_KEY}" UninstallString
   ${If} ${FileExists} "$R0"
     ; get parent folder of uninstallation EXE (RO) and save it to R1
-    ${GetParent} $R0 $R1
+    ${un.GetParent} $R0 $R1
     ; start uninstallation of installed MP, from tmp folder, so it will delete itself
     ;HideWindow
     ClearErrors
