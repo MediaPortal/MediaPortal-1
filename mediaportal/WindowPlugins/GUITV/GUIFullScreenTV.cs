@@ -209,7 +209,7 @@ namespace MediaPortal.GUI.TV
         if (strValue.Equals("letterbox"))
           GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.LetterBox43;
         if (strValue.Equals("panscan"))
-          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.PanScan43;
+          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.SmartStretch;
         if (strValue.Equals("zoom149"))
           GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom14to9;
       }
@@ -253,7 +253,7 @@ namespace MediaPortal.GUI.TV
             xmlwriter.SetValue("mytv", "defaultar", "letterbox");
             break;
 
-          case MediaPortal.GUI.Library.Geometry.Type.PanScan43:
+          case MediaPortal.GUI.Library.Geometry.Type.SmartStretch:
             xmlwriter.SetValue("mytv", "defaultar", "panscan");
             break;
 
@@ -500,7 +500,7 @@ namespace MediaPortal.GUI.TV
               }
               if (xmlreader.GetValueAsBool("mytv", "allowarpanscan", true))
               {
-                allowedModes.Add(MediaPortal.GUI.Library.Geometry.Type.PanScan43);
+                allowedModes.Add(MediaPortal.GUI.Library.Geometry.Type.SmartStretch);
               }
               if (xmlreader.GetValueAsBool("mytv", "allowarzoom149", true))
               {
@@ -545,8 +545,8 @@ namespace MediaPortal.GUI.TV
                 status = GUILocalizeStrings.Get(945); //"Letterbox 4:3";
                 break;
 
-              case MediaPortal.GUI.Library.Geometry.Type.PanScan43:
-                status = GUILocalizeStrings.Get(946); //"Pan and Scan 4:3";
+              case MediaPortal.GUI.Library.Geometry.Type.SmartStretch:
+                status = GUILocalizeStrings.Get(946); //"Non-linear smart stretch";
                 break;
 
               case MediaPortal.GUI.Library.Geometry.Type.Zoom:
@@ -1482,8 +1482,8 @@ namespace MediaPortal.GUI.TV
           break;
 
         case 946: // Pan and scan
-          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.PanScan43;
-          strStatus = "PanScan 4:3";
+          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.SmartStretch;
+          strStatus = "Smart Stretch";
           SaveSettings();
           break;
 

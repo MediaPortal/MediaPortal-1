@@ -161,7 +161,7 @@ namespace MediaPortal.GUI.Video
         if (xmlreader.GetValueAsBool("movies", "allowarletterbox", true))
           _allowedArModes.Add(MediaPortal.GUI.Library.Geometry.Type.LetterBox43);
         if (xmlreader.GetValueAsBool("movies", "allowarpanscan", true))
-           _allowedArModes.Add(MediaPortal.GUI.Library.Geometry.Type.PanScan43);
+           _allowedArModes.Add(MediaPortal.GUI.Library.Geometry.Type.SmartStretch);
         if (xmlreader.GetValueAsBool("movies", "allowarzoom149", true))
             _allowedArModes.Add(MediaPortal.GUI.Library.Geometry.Type.Zoom14to9);
       }
@@ -1127,7 +1127,7 @@ namespace MediaPortal.GUI.Video
       if (_allowedArModes.Contains(Geometry.Type.Normal)) dlg.AddLocalizedString(943); // Normal
       if (_allowedArModes.Contains(Geometry.Type.Original)) dlg.AddLocalizedString(944); // Original
       if (_allowedArModes.Contains(Geometry.Type.LetterBox43)) dlg.AddLocalizedString(945); // Letterbox
-      if (_allowedArModes.Contains(Geometry.Type.PanScan43)) dlg.AddLocalizedString(946); // Pan and scan
+      if (_allowedArModes.Contains(Geometry.Type.SmartStretch)) dlg.AddLocalizedString(946); // Smart stretch
       if (_allowedArModes.Contains(Geometry.Type.Zoom)) dlg.AddLocalizedString(947); // Zoom
       if (_allowedArModes.Contains(Geometry.Type.Zoom14to9)) dlg.AddLocalizedString(1190); //14:9
 
