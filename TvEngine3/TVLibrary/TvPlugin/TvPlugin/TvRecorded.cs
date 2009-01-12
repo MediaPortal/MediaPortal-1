@@ -84,7 +84,7 @@ namespace TvPlugin
           IList<Recording> recordings = Recording.ListAll();
           foreach (Recording rec in recordings)
           {
-            string thumbNail = string.Format("{0}\\{1}{2}", Thumbs.TVRecorded, Utils.MakeFileName(rec.Title), Utils.GetThumbExtension());
+            string thumbNail = string.Format("{0}\\{1}{2}", Thumbs.TVRecorded, Path.ChangeExtension(Utils.SplitFilename(rec.FileName), null), Utils.GetThumbExtension());
             if (!File.Exists(thumbNail))
             {
               //Log.Info("RecordedTV: No thumbnail found at {0} for recording {1} - grabbing from file now", thumbNail, rec.FileName);
@@ -706,7 +706,7 @@ namespace TvPlugin
 
                       // NO thumbnails for folders please so we can distinguish between single files and folders
 
-                      //string strLogo = string.Format("{0}\\{1}{2}", Thumbs.TVRecorded, Utils.MakeFileName(rec.Title), Utils.GetThumbExtension());
+                      //string strLogo = string.Format("{0}\\{1}{2}", Thumbs.TVRecorded, Path.ChangeExtension(Utils.SplitFilename(rec.FileName), null), Utils.GetThumbExtension());
                       //if (File.Exists(strLogo))
                       //{
                       //  item.ThumbnailImage = strLogo;
@@ -873,7 +873,7 @@ namespace TvPlugin
         {
           item = new GUIListItem(aRecording.Title);
           item.TVTag = aRecording;
-          string strLogo = string.Format("{0}\\{1}{2}", Thumbs.TVRecorded, Utils.MakeFileName(aRecording.Title), Utils.GetThumbExtension());
+          string strLogo = string.Format("{0}\\{1}{2}", Thumbs.TVRecorded, Path.ChangeExtension(Utils.SplitFilename(aRecording.FileName), null), Utils.GetThumbExtension());
 
           if (!File.Exists(strLogo))
           {
@@ -890,15 +890,19 @@ namespace TvPlugin
           {
             string strLogoL = Utils.ConvertToLargeCoverArt(strLogo);
             if (File.Exists(strLogoL))
+            {
               item.IconImageBig = strLogoL;
+              item.ThumbnailImage = strLogoL;
+            }
             else
+            {
               item.IconImageBig = strLogo;
+              item.ThumbnailImage = strLogo;
+            }
           }
-          item.ThumbnailImage = strLogo;
           item.IconImage = strLogo;
 
           //Mark the recording with a "rec. symbol" if it is an active recording.
-
           if (IsRecordingActual(aRecording))
           {
             item.PinImage = Thumbs.TvRecordingIcon;
