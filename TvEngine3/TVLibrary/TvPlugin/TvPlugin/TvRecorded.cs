@@ -94,7 +94,7 @@ namespace TvPlugin
               try
               {
                 Thread.Sleep(250);
-                if (VideoThumbCreator.CreateVideoThumb(rec.FileName, thumbNail, true))
+                if (VideoThumbCreator.CreateVideoThumb(rec.FileName, thumbNail, true, true))
                   Log.Info("RecordedTV: Thumbnail successfully created for {0}", Utils.SplitFilename(rec.FileName));
                 else
                   Log.Info("RecordedTV: No thumbnail created for {0}", Utils.SplitFilename(rec.FileName));

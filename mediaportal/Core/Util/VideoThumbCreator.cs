@@ -25,9 +25,12 @@
 
 using System;
 using System.IO;
+using System.Threading;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using MediaPortal.Configuration;
 using MediaPortal.ServiceImplementations;
-using System.Threading;
+
 
 namespace MediaPortal.Util
 {
@@ -38,12 +41,18 @@ namespace MediaPortal.Util
 
     #region Public methods
 
-    public static bool CreateVideoThumb(string aVideoPath)
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    public static bool CreateVideoThumb(string aVideoPath, bool aOmitCredits)
     {
-      return CreateVideoThumb(aVideoPath, Path.ChangeExtension(aVideoPath, ".jpg"), false);
+      string sharethumb = Path.ChangeExtension(aVideoPath, ".jpg");
+      if (File.Exists(sharethumb))
+        return true;
+      else
+        return CreateVideoThumb(aVideoPath, sharethumb, false, aOmitCredits);
     }
 
-    public static bool CreateVideoThumb(string aVideoPath, string aThumbPath, bool aCacheThumb)
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    public static bool CreateVideoThumb(string aVideoPath, string aThumbPath, bool aCacheThumb, bool aOmitCredits)
     {
       if (String.IsNullOrEmpty(aVideoPath) || String.IsNullOrEmpty(aThumbPath))
       {
@@ -73,7 +82,19 @@ namespace MediaPortal.Util
       //   -n           : run at normal priority
       //   -W           : dont overwrite existing files, i.e. update mode
       //   -P           : dont pause before exiting; override -p
-      string ExtractorArgs = string.Format(" -D 6 -B 420 -E 600 -c 2 -r 2 -s {0} -t -i -w {1} -n -P \"{2}\"", "300", /*(int)Thumbs.ThumbLargeResolution*/ "720", aVideoPath);
+
+      int preGapSec = 0;
+      int postGapSec = 0;
+      if (aOmitCredits)
+      {
+        preGapSec = 420;
+        postGapSec = 600;
+      }
+
+      int columns = 2;
+      int rows = 2;
+
+      string ExtractorArgs = string.Format(" -D 6 -B {0} -E {1} -c {2} -r {3} -s {4} -t -i -w {5} -n -P \"{6}\"", preGapSec, postGapSec, columns, rows, "300", /*(int)Thumbs.ThumbLargeResolution*/ "720", aVideoPath);
       // Honour we are using a unix app
       ExtractorArgs = ExtractorArgs.Replace('\\', '/');
       try
@@ -85,8 +106,9 @@ namespace MediaPortal.Util
 
         if (!File.Exists(ShareThumb))
         {
-          Log.Debug("VideoThumbCreator: No thumb in share {0} - trying to create one with arguments: {1}", ShareThumb, ExtractorArgs);
-          if (!Utils.StartProcess(ExtractorPath, ExtractorArgs, TempPath, 60000, true))
+          //Log.Debug("VideoThumbCreator: No thumb in share {0} - trying to create one with arguments: {1}", ShareThumb, ExtractorArgs);
+
+          if (!Utils.StartProcess(ExtractorPath, ExtractorArgs, TempPath, 60000, true, GetMtnConditions()))
             Log.Warn("VideoThumbCreator: {0} has not been executed successfully with arguments: {1}", ExtractApp, ExtractorArgs);
           // give the system a few IO cycles
           Thread.Sleep(100);
@@ -128,5 +150,19 @@ namespace MediaPortal.Util
     }
 
     #endregion
+
+    private static Utils.ProcessFailedConditions GetMtnConditions()
+    {
+      Utils.ProcessFailedConditions mtnStat = new Utils.ProcessFailedConditions();
+      mtnStat.AddCriticalOutString("net duration after -B & -E is negative");
+      mtnStat.AddCriticalOutString("all rows're skipped?");
+      mtnStat.AddCriticalOutString("step is zero; movie is too short?");
+      mtnStat.AddCriticalOutString("failed: -");
+      mtnStat.AddCriticalOutString("couldn't find a decoder for codec_id");
+
+      mtnStat.SuccessExitCode = 0;
+
+      return mtnStat;
+    }
   }
 }

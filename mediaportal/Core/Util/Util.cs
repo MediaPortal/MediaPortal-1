@@ -124,6 +124,9 @@ namespace MediaPortal.Util
     static ArrayList m_VideoExtensions = new ArrayList();
     static ArrayList m_PictureExtensions = new ArrayList();
 
+    static List<string> ProcStdOut = new List<string>();
+    static List<string> ProcStdErr = new List<string>();
+
     static string[] _artistNamePrefixes;
 
     static bool m_bHideExtensions = false;
@@ -1185,29 +1188,31 @@ namespace MediaPortal.Util
     }
 
     [MethodImpl(MethodImplOptions.Synchronized)]
-    public static bool StartProcess(string aAppName, string aArguments, string aWorkingDir, int aExpectedTimeoutMs, bool aLowerPriority)
+    public static bool StartProcess(string aAppName, string aArguments, string aWorkingDir, int aExpectedTimeoutMs, bool aLowerPriority, ProcessFailedConditions aFailConditions)
     {
       bool success = false;
       Process ExternalProc = new Process();
       ProcessStartInfo ProcOptions = new ProcessStartInfo(aAppName, aArguments);
 
       ProcOptions.UseShellExecute = false;                                       // Important for WorkingDirectory behaviour
-      ProcOptions.RedirectStandardError = false;                                 // .NET bug? Some stdout reader abort to early without that!
-      ProcOptions.RedirectStandardOutput = false;                                // The precious data we're after
+      ProcOptions.RedirectStandardError = true;                                  // .NET bug? Some stdout reader abort to early without that!
+      ProcOptions.RedirectStandardOutput = true;                                 // The precious data we're after
       //ProcOptions.StandardOutputEncoding = Encoding.GetEncoding("ISO-8859-1"); // the output contains "Umlaute", etc.
       //ProcOptions.StandardErrorEncoding = Encoding.GetEncoding("ISO-8859-1");
       ProcOptions.WorkingDirectory = aWorkingDir;                                // set the dir because the binary might depend on cygwin.dll
       ProcOptions.CreateNoWindow = true;                                         // Do not spawn a "Dos-Box"      
       ProcOptions.ErrorDialog = false;                                           // Do not open an error box on failure        
 
-      //ExternalProc.OutputDataReceived += new DataReceivedEventHandler(StdOutDataReceived);
-      //ExternalProc.ErrorDataReceived += new DataReceivedEventHandler(StdErrDataReceived);
+      //ExternalProc.OutputDataReceived += new DataReceivedEventHandler(ExternalProc_OutputDataReceived);
+      //ExternalProc.ErrorDataReceived += new DataReceivedEventHandler(ExternalProc_ErrorDataReceived);
       ExternalProc.EnableRaisingEvents = true;                                   // We want to know when and why the process died        
       ExternalProc.StartInfo = ProcOptions;
       if (File.Exists(ProcOptions.FileName))
       {
         try
         {
+          ProcStdOut.Clear();
+          ProcStdErr.Clear();
           ExternalProc.Start();
           //ExternalProc.BeginErrorReadLine();
           //ExternalProc.BeginOutputReadLine();
@@ -1224,7 +1229,44 @@ namespace MediaPortal.Util
           }
           // wait this many seconds until the process has to be finished
           ExternalProc.WaitForExit(aExpectedTimeoutMs);
-          success = (ExternalProc.HasExited && ExternalProc.ExitCode == 0);
+
+          using (StreamReader outStream = ExternalProc.StandardOutput)
+          {
+            while (outStream.Peek() >= 0)
+            {
+              ProcStdOut.Add(outStream.ReadLine());
+            }
+          }
+          using (StreamReader errStream = ExternalProc.StandardError)
+          {
+            while (errStream.Peek() >= 0)
+            {
+              ProcStdErr.Add(errStream.ReadLine());
+            }
+          }
+
+          success = (ExternalProc.HasExited && ExternalProc.ExitCode == aFailConditions.SuccessExitCode);
+
+          //foreach (string line in ProcStdOut)
+          //{
+          //  if (String.IsNullOrEmpty(line))
+          //    continue;
+          //  Log.Debug("Util: StdOut - {0}", line);
+          //}
+          foreach (string line in ProcStdErr)
+          {
+            if (String.IsNullOrEmpty(line))
+              continue;
+            //Log.Debug("Util: StdErr - {0}", line);
+            foreach (string failure in aFailConditions.CriticalOutputLines)
+            {
+              if (line.ToLowerInvariant().Contains(failure.ToLowerInvariant()))
+              {
+                success = false;
+                Log.Warn("Util: {0} failed on condition: {1}", aAppName, line);
+              }
+            }
+          }
         }
         catch (Exception ex)
         {
@@ -1258,6 +1300,17 @@ namespace MediaPortal.Util
       catch (Exception ex)
       {
         Log.Error("Util: Error getting processes by name for {0} - {1})", aProcessName, ex.ToString());
+      }
+    }
+
+    public class ProcessFailedConditions
+    {
+      public List<string> CriticalOutputLines = new List<string>();
+      public int SuccessExitCode = 0;
+
+      public void AddCriticalOutString(string aFailureString)
+      {
+        CriticalOutputLines.Add(aFailureString);
       }
     }
 
