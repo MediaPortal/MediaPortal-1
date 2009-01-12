@@ -118,6 +118,7 @@ namespace MediaPortal
     internal static bool _fullscreenOverride = false;
     internal static bool _windowedOverride = false;
     internal static int _screenNumberOverride = -1;// 0 or higher means it is set
+    private static Stopwatch clockWatch = new Stopwatch();
     protected bool _toggleFullWindowed = false;
 
     protected Caps Caps
@@ -292,7 +293,8 @@ namespace MediaPortal
         {
           UseMillisecondTiming = false;
         }
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         UseMillisecondTiming = false;
         Log.Info("Exception");
@@ -444,11 +446,13 @@ namespace MediaPortal
         InitializeEnvironment();
         // Initialize the app's custom scene stuff
         OneTimeSceneInitialization();
-      } catch (SampleException d3de)
+      }
+      catch (SampleException d3de)
       {
         HandleSampleException(d3de, ApplicationMessage.ApplicationMustExit);
         return false;
-      } catch
+      }
+      catch
       {
         HandleSampleException(new SampleException(), ApplicationMessage.ApplicationMustExit);
         return false;
@@ -850,7 +854,8 @@ namespace MediaPortal
         {
           Log.Debug("D3D: Switched to exclusive mode successfully");
         }
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         if (windowed)
         {
@@ -881,7 +886,8 @@ namespace MediaPortal
             GUIFontManager.LoadFonts(Config.GetFile(Config.Dir.Skin, m_strSkin, "fonts.xml"));
             GUIFontManager.InitializeDeviceObjects();
           }
-        } catch (Exception e)
+        }
+        catch (Exception e)
         {
           Log.Warn("D3D: mode failed - {0}", e.ToString());
         }
@@ -909,7 +915,8 @@ namespace MediaPortal
       {
         Log.Info("d3dapp: Graphic adapter '{0}' is using driver version '{1}'", adapterInfo.AdapterDetails.Description.Trim(), adapterInfo.AdapterDetails.DriverVersion.ToString());
         Log.Info("d3dapp: Pixel shaders supported: {0} (Version: {1}), Vertex shaders supported: {2} (Version: {3})", deviceInfo.Caps.PixelShaderCaps.NumberInstructionSlots, deviceInfo.Caps.PixelShaderVersion.ToString(), deviceInfo.Caps.VertexShaderCaps.NumberTemps, deviceInfo.Caps.VertexShaderVersion.ToString());
-      } catch (Exception lex)
+      }
+      catch (Exception lex)
       {
         Log.Warn("d3dapp: Error logging graphic device details - {0}", lex.Message);
       }
@@ -1048,7 +1055,8 @@ namespace MediaPortal
           InitializeDeviceObjects();
           //OnDeviceReset(null, null);
           active = true;
-        } catch (Exception ex)
+        }
+        catch (Exception ex)
         {
           Log.Error("D3D: InitializeDeviceObjects - Exception: {0}", ex.ToString());
           // Cleanup before we try again
@@ -1059,7 +1067,8 @@ namespace MediaPortal
           if (this.Disposing)
             return;
         }
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Error(ex);
         // If that failed, fall back to the reference rasterizer
@@ -1152,7 +1161,8 @@ namespace MediaPortal
       {
         if (UseMillisecondTiming)
           timeEndPeriod(MILLI_SECONDS_TIMER);
-      } catch (Exception)
+      }
+      catch (Exception)
       { }
 
       UseMillisecondTiming = false;
@@ -1387,14 +1397,14 @@ namespace MediaPortal
         try
         {
 #endif
-          if ((GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST) || (ActiveForm != this))
-          {
-            // Yield some CPU time to other processes
+        if ((GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST) || (ActiveForm != this))
+        {
+          // Yield some CPU time to other processes
 #if !PROFILING
-            Thread.Sleep(100); // 100 milliseconds
+          Thread.Sleep(100); // 100 milliseconds
 #endif
-          }
-          Render3DEnvironment();
+        }
+        Render3DEnvironment();
 #if DEBUG
 #else
         } catch (Exception ee)
@@ -1449,7 +1459,8 @@ namespace MediaPortal
           Log.Debug("d3dapp: RecoverDevice called");
           // Test the cooperative level to see if it's okay to render
           GUIGraphicsContext.DX9Device.TestCooperativeLevel();
-        } catch (DeviceLostException)
+        }
+        catch (DeviceLostException)
         {
           // If the device was lost, do not render until we get it back
           isHandlingSizeChanges = false;
@@ -1457,7 +1468,8 @@ namespace MediaPortal
           Log.Debug("d3dapp: DeviceLostException");
 
           return;
-        } catch (DeviceNotResetException)
+        }
+        catch (DeviceNotResetException)
         {
           Log.Debug("d3dapp: DeviceNotResetException");
           m_bNeedReset = true;
@@ -1492,7 +1504,8 @@ namespace MediaPortal
 
             GUIGraphicsContext.DX9Device.Reset(GUIGraphicsContext.DX9Device.PresentationParameters);
             m_bNeedReset = false;
-          } catch (Exception ex)
+          }
+          catch (Exception ex)
           {
             Log.Error("d3dapp: Reset failed - {0}", ex.ToString());
             GUIGraphicsContext.DX9Device.DeviceLost -= new System.EventHandler(this.OnDeviceLost);
@@ -1543,7 +1556,8 @@ namespace MediaPortal
         //if (!GUIGraphicsContext.Vmr9Active)
         if (!GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
           Render(GUIGraphicsContext.TimePassed);
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Error("d3dapp: Exception: {0}", ex);
       }
@@ -1857,7 +1871,8 @@ namespace MediaPortal
 
         handle.Set();
         handle.Close();
-      } catch
+      }
+      catch
       { }
       if (GUIGraphicsContext.UseSeparateRenderThread)
       {
@@ -1966,7 +1981,8 @@ namespace MediaPortal
             }
 
             return true;
-          } catch (Exception e)
+          }
+          catch (Exception e)
           {
             Log.Error("Error recalling last active module '{0}' - {1}", lastActiveModule, e.Message);
             //otherwise ignore.
@@ -2367,7 +2383,8 @@ namespace MediaPortal
         }
         active = !(this.WindowState == FormWindowState.Minimized);
         base.OnResize(e);
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Error("d3dapp: An error occured in OnResize - {0}", ex.Message);
       }
@@ -2586,151 +2603,34 @@ namespace MediaPortal
 
     private void StartFrameClock()
     {
-      NativeMethods.QueryPerformanceCounter(ref startFrame);
-    }
-
-    private bool ShouldWaitForFrameClock()
-    {
-      long timeElapsed = 0;
-      NativeMethods.QueryPerformanceCounter(ref endFrame);
-      timeElapsed = endFrame - startFrame;
-      if (timeElapsed < GUIGraphicsContext.DesiredFrameTime)
-        return true;
-      return false;
+      clockWatch.Reset();
+      clockWatch.Start();
     }
 
     private void WaitForFrameClock()
     {
-      //if (GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9FPS>1f) return;
       long milliSecondsLeft;
       long timeElapsed = 0;
 
       // frame limiting code.
       // sleep as long as there are ticks left for this frame
-      NativeMethods.QueryPerformanceCounter(ref endFrame);
-      timeElapsed = endFrame - startFrame;
+      clockWatch.Stop();
+      timeElapsed = clockWatch.ElapsedTicks;
       if (timeElapsed < GUIGraphicsContext.DesiredFrameTime)
       {
-        milliSecondsLeft = (((GUIGraphicsContext.DesiredFrameTime - timeElapsed) * 1000) / DXUtil.TicksPerSecond);
+        milliSecondsLeft = (((GUIGraphicsContext.DesiredFrameTime - timeElapsed) * 1000) / Stopwatch.Frequency);
         if (milliSecondsLeft > 0)
+        {
           DoSleep((int)milliSecondsLeft);
+        }
+        else
+        {
+          // Allow to finish other thread context
+          Thread.Sleep(0);
+          //Log.Debug("GUIWindowManager: Cannot reach desired framerate - please check your system config!");
+        }
       }
     }
-
-    /*
-        /// <summary>
-        /// Run the simulation
-        /// </summary>
-        public void Run()
-        {
-          // Now we're ready to recieve and process Windows messages.
-          System.Windows.Forms.Control mainWindow = this;
-
-          // If the render target is a form and *not* this form, use that form instead,
-          // otherwise, use the main form.
-          if ((ourRenderTarget is System.Windows.Forms.Form) && (ourRenderTarget != this))
-            mainWindow = ourRenderTarget;
-
-          mainWindow.Show();
-
-          // Get the first message		
-          storedSize = this.ClientSize;
-          storedLocation = this.Location;
-
-          GC.Collect();
-          GC.Collect();
-          GC.Collect();
-          GC.WaitForPendingFinalizers();
-          bool useFrameClock=false;
-          int  counter=0;
-          while (true)
-          {
-            if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
-              break;
-            try
-            {
-              if (g_Player.Playing) 
-              {
-                System.Threading.Thread.Sleep(100);
-              //	HandleMessage();
-						
-              }
-              else
-              {
-                useFrameClock=false;
-							
-                if (ShouldUseSleepingTime())
-                {
-                  if (GUIGraphicsContext.IsFullScreenVideo&&  g_Player.Playing && g_Player.IsMusic && g_Player.HasVideo)
-                  {
-                    //dont sleep
-                  }
-                  else 
-                  {
-                    // Do some sleep....
-                    useFrameClock=true;
-                  }
-                }
-                else
-                {
-                  if (GUIGraphicsContext.IsFullScreenVideo && g_Player.Playing && g_Player.IsMusic && g_Player.HasVideo)
-                  {
-                    //dont sleep
-                  }
-                  else
-                  {
-                    GUIGraphicsContext.CurrentFPS = 0f;
-                    DoSleep(50);
-                  }
-                }
-                FrameMove();
-                if (GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9FPS<1f) 
-                {
-                  if (VMR9Util.g_vmr9!=null)
-                  {
-                    VMR9Util.g_vmr9.Process();
-                  }
-                }
-                if (GUIGraphicsContext.IsFullScreenVideo==false||g_Player.Speed!=1) counter=0;
-                if (counter==0)
-                {
-                  OnProcess();
-                  if (useFrameClock)
-                    StartFrameClock();
-                  FullRender();
-                  if (useFrameClock)
-                    WaitForFrameClock();
-                }
-                else if (counter==5 || counter==10 || counter==15||counter==20)
-                {
-                  if (VMR7Util.g_vmr7!=null)
-                    FullRender();
-                }
-                HandleMessage();
-                counter++;
-                if (counter>25) counter=0;
-              }
-            }
-            catch (Exception ex)
-            {
-              Log.Error("exception:{0}", ex.ToString());
-    #if DEBUG
-            throw ex;
-    #endif
-            }
-          }
-          OnExit();
-          try
-          {
-            if (UseMillisecondTiming) timeEndPeriod(MILLI_SECONDS_TIMER);
-          }
-          catch (Exception)
-          {
-          }
-          UseMillisecondTiming = false;
-        }
-
-    */
 
     private void contextMenu1_Popup(object sender, EventArgs e)
     {
@@ -2800,9 +2700,6 @@ namespace MediaPortal
       return !result;
     }
 
-    private static int loopCount = 1;
-    private static int sleepCount = 0;
-
     private void Application_Idle(object sender, EventArgs e)
     {
       do
@@ -2814,28 +2711,7 @@ namespace MediaPortal
         }
         StartFrameClock();
         FullRender();
-        // rtv: trying to unify the FPS-Handling for all modules despite VMR renderer
-        //if (g_Player.Playing /*&& !g_Player.IsExternalPlayer*/ && g_Player.IsMusic)         
-        //if (g_Player.Playing /*&& !g_Player.IsExternalPlayer*/ && g_Player.IsMusic && !g_Player.HasVideo)
-        //if (g_Player.Playing && !g_Player.IsExternalPlayer && !g_Player.IsMusic && !g_Player.IsVideo)
-        //{
-        //  if (GUIGraphicsContext.CurrentFPS < GUIGraphicsContext.MaxFPS)
-        //    loopCount++;
-        //  //else if (loopCount > 0)
-        //  else if (GUIGraphicsContext.CurrentFPS > GUIGraphicsContext.MaxFPS)
-        //    loopCount--;
-
-        //  sleepCount++;
-        //  if (sleepCount >= loopCount)
-        //  {
-        //    WaitForFrameClock();
-        //    sleepCount = 0;
-        //    UpdateStats();
-        //  }
-        //}
-        //else
         {
-          loopCount = 1;
           WaitForFrameClock();
         }
         if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)

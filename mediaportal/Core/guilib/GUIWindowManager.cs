@@ -47,12 +47,6 @@ namespace MediaPortal.GUI.Library
   {
     private static Stopwatch clockWatch = new Stopwatch();
 
-    //  private static long startFrame = 0;
-    //  private static long endFrame = 0;
-    //  [System.Security.SuppressUnmanagedCodeSecurity] // We won't use this maliciously
-    //  [DllImport("kernel32")]
-    //  private static extern bool QueryPerformanceCounter(ref long PerformanceCount);
-
     #region Frame limiting code
 
     private static void WaitForFrameClock()
@@ -62,11 +56,8 @@ namespace MediaPortal.GUI.Library
 
       // frame limiting code.
       // sleep as long as there are ticks left for this frame
-      //QueryPerformanceCounter(ref endFrame);
       clockWatch.Stop();
       timeElapsed = clockWatch.ElapsedTicks;
-      //timeElapsed = endFrame - startFrame;
-
       if (timeElapsed < GUIGraphicsContext.DesiredFrameTime)
       {
         milliSecondsLeft = (((GUIGraphicsContext.DesiredFrameTime - timeElapsed) * 1000) / Stopwatch.Frequency);
@@ -86,7 +77,6 @@ namespace MediaPortal.GUI.Library
 
     private static void StartFrameClock()
     {
-      //QueryPerformanceCounter(ref startFrame);
       clockWatch.Reset();
       clockWatch.Start();
     }
