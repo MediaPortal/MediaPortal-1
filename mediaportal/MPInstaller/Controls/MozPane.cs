@@ -151,7 +151,7 @@ namespace Pabo.MozBar
 		[Browsable(true)]
 		[Category("Property Changed")]
 		[Description("Indicates that the padding has has been changed.")]
-		public event EventHandler PaddingChanged;
+		public new event EventHandler PaddingChanged;
 		
 		[Category("Panel")]
 		[Description("Indicates that an item was added to the panel.")]
@@ -455,7 +455,7 @@ namespace Pabo.MozBar
 		[Category("Appearance")]
 		[Description("Padding (Horizontal, Vertical)")]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
-		public PaddingCollection Padding
+		public new PaddingCollection Padding
 		{
 			get
 			{
@@ -2128,14 +2128,7 @@ namespace Pabo.MozBar
 		{
 		}
 
-		public override void OnSetComponentDefaults()
-		{
-			base.OnSetComponentDefaults(); 
-			
-		}
-
-		
-		public override SelectionRules SelectionRules
+	  public override SelectionRules SelectionRules
 		{
 			get
 			{

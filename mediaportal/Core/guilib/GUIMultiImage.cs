@@ -150,7 +150,7 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    public int Info
+    new public int Info
     {
       get
       {

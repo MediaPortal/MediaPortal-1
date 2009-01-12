@@ -498,54 +498,32 @@ namespace MediaPortal.Core.Transcoding
         case Quality.Custom:
           //load custom profile
           string customBitrate = "";
-          int videoBitrate = 0;
-          int audioBitrate = 0;
-          int videoHeight = 0;
-          int videoWidth = 0;
-          double videoFps = 0;
           //Adjust the parameters to suit the custom settings the user has selected.
           switch (bitrate)
           {
             case 0:
               customBitrate = "100Kbs";
-              videoBitrate = 83000;
-              audioBitrate = 10000;
               break;
             case 1:
               customBitrate = "256Kbs";
-              videoBitrate = 184000;
-              audioBitrate = 64032;
               break;
             case 2: customBitrate = "384Kbs";
-              videoBitrate = 279000;
-              audioBitrate = 96000;
               break;
             case 3:
               customBitrate = "768Kbs";
-              videoBitrate = 631000;
-              audioBitrate = 128040; 
               break;
             case 4:
               customBitrate = "1536Kbs";
-              videoBitrate = 1335000;
-              audioBitrate = 192000;
               break;
             case 5:
               customBitrate = "3072Kbs";
-              videoBitrate = 2871000;
-              audioBitrate = 256032;
               break;
             case 6:
               customBitrate = "5376Kbs";
-              videoBitrate = 5047000;
-              audioBitrate = 320032;
               break;
           }
           Log.Info("DVRMS2WMV: custom bitrate = {0}", customBitrate);
           //TODO: get fps values & frame size
-          videoHeight = 576; //hard coded for now
-          videoWidth = 720; //hard coded for now
-          videoFps = 25; //hard coded for now
           //TODO: adjust settings required
           //Call the SetCutomPorfile method to load the custom profile, adjust it's params from user settings & then save it.
           //SetCutomProfile(videoBitrate, audioBitrate, videoHeight, videoWidth, videoFps); //based on user inputs

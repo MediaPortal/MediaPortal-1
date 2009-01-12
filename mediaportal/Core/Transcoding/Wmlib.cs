@@ -775,18 +775,18 @@ namespace MediaPortal.Core.Transcoding
   public interface IWMInputMediaProps : IWMMediaProps
   {
     [PreserveSig]
-    int GetType(
+    new int GetType(
         [Out] out Guid pguidType
       );
 
     [PreserveSig]
-    int GetMediaType(
+    new int GetMediaType(
         [Out] IntPtr pType,
         [In, Out] ref uint pcbType
       );
 
     [PreserveSig]
-    int SetMediaType(
+    new int SetMediaType(
         [In] WmMediaType pType
       );
 

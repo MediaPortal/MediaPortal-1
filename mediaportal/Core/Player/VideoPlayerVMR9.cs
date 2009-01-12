@@ -283,11 +283,6 @@ namespace MediaPortal.Player
         DirectShowUtil.EnableDeInterlace(graphBuilder);
         m_iVideoWidth = Vmr9.VideoWidth;
         m_iVideoHeight = Vmr9.VideoHeight;
-        ushort b;
-        unchecked
-        {
-          b = (ushort)0xfffff845;
-        }
 
         #region VobSub
         // If Vobsub filter is loaded into the graph (either automatically or by adding as

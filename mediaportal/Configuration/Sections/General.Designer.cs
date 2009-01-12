@@ -28,11 +28,6 @@ namespace MediaPortal.Configuration.Sections
   partial class General
   {
     /// <summary> 
-    /// Erforderliche Designervariable.
-    /// </summary>
-    private System.ComponentModel.IContainer components = null;
-
-    /// <summary> 
     /// Verwendete Ressourcen bereinigen.
     /// </summary>
     /// <param name="disposing">True, wenn verwaltete Ressourcen gelöscht werden sollen; andernfalls False.</param>

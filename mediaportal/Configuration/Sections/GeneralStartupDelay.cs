@@ -12,6 +12,11 @@ namespace MediaPortal.Configuration.Sections
 {
   public partial class GeneralStartupDelay : SectionSettings
   {
+    /// <summary> 
+    /// Required designer variable.
+    /// </summary>
+    private new const IContainer components = null;
+
     #region ctor
     public GeneralStartupDelay()
       : this("Startup Delay")

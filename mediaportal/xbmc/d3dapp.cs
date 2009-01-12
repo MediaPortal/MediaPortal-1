@@ -90,8 +90,6 @@ namespace MediaPortal
     private float lastTime = 0.0f; // The last time
     protected int frames = 0; // Number of frames since our last update
     protected int m_iVolume = -1;
-    private long startFrame = 0;  // fps-limiting stuff
-    private long endFrame = 0;
     protected D3DEnumeration enumerationSettings = new D3DEnumeration();  // We need to keep track of our enumeration settings
     protected D3DSettings graphicsSettings = new D3DSettings();
     protected bool isMaximized = false; // Are we maximized?

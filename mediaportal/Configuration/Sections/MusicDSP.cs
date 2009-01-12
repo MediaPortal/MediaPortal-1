@@ -62,7 +62,6 @@ namespace MediaPortal.Configuration.Sections
     private VSTPROC _vstProc;
     private Dictionary<string, int> _vstHandles = new Dictionary<string, int>();
     // Winamp related variables
-    private WINAMP_DSP[] _dsps;
     private int _waDspPlugin;
     private Dictionary<string, int> _waDspPlugins = new Dictionary<string, int>();
 

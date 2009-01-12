@@ -169,6 +169,11 @@ namespace MediaPortal.Configuration.Sections
     }
     string[] extensions = new string[] { ".avi" };
 
+    /// <summary> 
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.IContainer components = null;
+
     public override void OnSectionActivated()
     {
       //

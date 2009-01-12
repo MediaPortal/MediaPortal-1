@@ -1333,12 +1333,7 @@ namespace Pabo.MozBar
 		{
 		}
 
-		public override void OnSetComponentDefaults()
-		{
-			base.OnSetComponentDefaults(); 
-		}
-
-		protected override void OnPaintAdornments(PaintEventArgs pe)
+	  protected override void OnPaintAdornments(PaintEventArgs pe)
 		{
 			base.OnPaintAdornments (pe);
 			Control item = base.Control;

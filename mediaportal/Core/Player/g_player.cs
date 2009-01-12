@@ -2368,9 +2368,7 @@ namespace MediaPortal.Player
     /// </summary>
     /// <returns></returns>
     public static bool ShowFullScreenWindow()
-    {
-      bool result = false;
-            
+    {           
       Log.Debug("g_Player: ShowFullScreenWindow");
 
       if (RefreshRateChanger.RefreshRateChangePending)

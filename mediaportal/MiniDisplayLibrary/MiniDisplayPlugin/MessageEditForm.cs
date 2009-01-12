@@ -3751,8 +3751,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             default:
               goto Label_1044;
           }
-          this.UpdateCombo(ref this.comboBoxWindowProperty, this.windowsList, "ALL WINDOWS");
-          goto Label_0F32;
         Label_0EFB:
           this.UpdateCombo(ref this.comboBoxWindowProperty, this.windowsList, this.GetFriendlyName(Enum.GetName(typeof(GUIWindow.Window), Convert.ToInt32(tag.Value))));
         Label_0F32:

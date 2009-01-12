@@ -11,8 +11,6 @@ namespace MediaPortal.Configuration.Sections
 {
   public partial class FiltersVideoRenderer : MediaPortal.Configuration.SectionSettings
   {
-    bool _init = false;
-
     public FiltersVideoRenderer()
       : this("Video Renderer Settings")
     {

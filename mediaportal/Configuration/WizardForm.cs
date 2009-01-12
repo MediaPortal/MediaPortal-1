@@ -142,11 +142,6 @@ namespace MediaPortal.Configuration
         Sections.TVCaptureCards sect = new Sections.TVCaptureCards();
         sect.AddAllCards();
         sect.LoadCaptureCards();
-        bool analogCard = false;
-        bool DVBTCard = false;
-        bool DVBCCard = false;
-        bool DVBSCard = false;
-        bool ATSCCard = false;
         Log.Info("found {0} tv cards", sect.captureCards.Count);
         foreach (TVCaptureDevice dev in sect.captureCards)
         {
@@ -160,27 +155,22 @@ namespace MediaPortal.Configuration
           if (dev.Network == NetworkType.Analog)
           {
             Log.Info("Analog TV Card:{0}", dev.CommercialName);
-            analogCard = true;
           }
           if (dev.Network == NetworkType.DVBT)
           {
             Log.Info("Digital DVB-T Card:{0}", dev.CommercialName);
-            DVBTCard = true;
           }
           if (dev.Network == NetworkType.DVBC)
           {
             Log.Info("Digital DVB-C Card:{0}", dev.CommercialName);
-            DVBCCard = true;
           }
           if (dev.Network == NetworkType.DVBS)
           {
             Log.Info("Digital DVB-S Card:{0}", dev.CommercialName);
-            DVBSCard = true;
           }
           if (dev.Network == NetworkType.ATSC)
           {
             Log.Info("Digital ATSC Card:{0}", dev.CommercialName);
-            ATSCCard = true;
           }
           /*
                     if (dev.VideoDevice == "B2C2 MPEG-2 Source" || 

@@ -67,14 +67,14 @@ namespace Pabo.MozBar
 		[Browsable(true)]
 		[Description("Indicates that the control has been scrolled horizontally.")]
 		[Category("Panel")]
-		public event MozScrollEventHandler HorizontalScroll;
+		public new event MozScrollEventHandler HorizontalScroll;
 
 		
 
 		[Browsable(true)]
 		[Description("Indicates that the control has been scrolled vertically.")]
 		[Category("Panel")]
-		public event MozScrollEventHandler VerticalScroll;
+		public new event MozScrollEventHandler VerticalScroll;
 		
 		#endregion
 

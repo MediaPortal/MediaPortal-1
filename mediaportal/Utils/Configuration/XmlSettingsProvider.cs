@@ -192,7 +192,7 @@ namespace MediaPortal.Profile
             }
           }
         }
-        catch (Exception ex)
+        catch
         {
           return;
         }

@@ -47,35 +47,28 @@ namespace MediaPortal.MPInstaller
       Application.EnableVisualStyles();
       Application.SetCompatibleTextRenderingDefault(false);
       Thread.CurrentThread.Name = "MPInstaller";
-    
-      if (true || File.Exists(Path.GetFullPath(AppDomain.CurrentDomain.BaseDirectory)+ @"MediaPortal.exe"))
+
+      if (!String.IsNullOrEmpty(fil))
       {
-        if (!String.IsNullOrEmpty(fil))
+        if (Path.GetExtension(fil) == ".mpi")
         {
-          if (Path.GetExtension(fil) == ".mpi")
+          wizard_1 wiz = new wizard_1();
+          wiz.package.LoadFromFile(fil);
+          if (wiz.package.isValid)
           {
-            wizard_1 wiz = new wizard_1();
-            wiz.package.LoadFromFile(fil);
-            if (wiz.package.isValid)
-            {
-              wiz.starStep();
-            }
-            else
-              MessageBox.Show("Invalid package !");
+            wiz.starStep();
           }
-          if (Path.GetExtension(fil) == ".xmp")
-          {
-            EditForm create_dlg = new EditForm(Path.GetFullPath(fil));
-            create_dlg.ShowDialog();
-          }
+          else
+            MessageBox.Show("Invalid package !");
         }
-        else
-          Application.Run(new start_form());
+        if (Path.GetExtension(fil) == ".xmp")
+        {
+          EditForm create_dlg = new EditForm(Path.GetFullPath(fil));
+          create_dlg.ShowDialog();
+        }
       }
       else
-      {
-        MessageBox.Show(Path.GetFullPath(AppDomain.CurrentDomain.BaseDirectory) +  @"MediaPortal.exe not found. Program Exit.....");
-      }
+        Application.Run(new start_form());
     }
   }
 }

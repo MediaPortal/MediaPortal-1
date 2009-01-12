@@ -118,6 +118,11 @@ namespace MediaPortal.Configuration.Sections
       //new string[] { "general", "allowfocus", "false" }      
       };
 
+    /// <summary> 
+    /// Erforderliche Designervariable.
+    /// </summary>
+    private System.ComponentModel.IContainer components = null;
+
     // PLEASE NOTE: when adding items, adjust the box so it doesn't get scrollbars    
     //              AND be careful cause depending on where you add a setting, the indexes might have changed!!!
 
