@@ -477,7 +477,6 @@ namespace MediaPortal.Music.Database
     #region Member variables
 
     private bool _useDebugLog = false;
-    private bool _doCoverLookups = true;
     private bool _decodeUtf8 = false;
     private string _defaultUser = "";
     private Object LookupLock;
