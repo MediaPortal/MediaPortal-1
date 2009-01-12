@@ -30,7 +30,7 @@ using System.Drawing;
 using System.Windows.Forms; // used for Keys definition
 using System.Windows.Media.Animation;  // used for loopDelay
 using Microsoft.DirectX.Direct3D;
-using ThumbDBLib;
+
 namespace MediaPortal.GUI.Library
 {
   /// <summary>
@@ -60,14 +60,14 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("itemHeight")]       protected int _itemHeight;
     [XMLSkinElement("itemWidth")]        protected int _itemWidth;
 
-                                         protected int _lowItemHeight;
-                                         protected int _lowItemWidth;
+    protected int _lowItemHeight;
+    protected int _lowItemWidth;
 
     [XMLSkinElement("textureHeight")]    protected int _textureHeight;
     [XMLSkinElement("textureWidth")]     protected int _textureWidth;
 
-                                         protected int _lowTextureHeight;
-                                         protected int _lowTextureWidth;
+    protected int _lowTextureHeight;
+    protected int _lowTextureWidth;
 
     [XMLSkinElement("itemHeightBig")]    protected int _bigItemHeight = 150;
     [XMLSkinElement("itemWidthBig")]     protected int _bigItemWidth = 150;
@@ -94,8 +94,8 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("scrollbarbottom")]  protected string _scrollbarBottomTextureName = "";
 
     [XMLSkinElement("scrollOffset")]     protected int _scrollStartOffset = 0;  // this is the offset from the first or last element on screen when scrolling should start
-                                         protected int _loopDelay = 250;        // wait at the last item this amount of msec until loop to the first item
-                                         protected double _lastCommandTime = 0;
+    protected int _loopDelay = 250;        // wait at the last item this amount of msec until loop to the first item
+    protected double _lastCommandTime = 0;
 
     [XMLSkinElement("textureUp")]        protected string _upTextureName = "";
     [XMLSkinElement("textureDown")]      protected string _downTextureName = "";
@@ -399,15 +399,8 @@ namespace MediaPortal.GUI.Library
         pFocusImage = pImage;
         if (null == pImage /*&& _sleeper==0 */&& !IsAnimating)
         {
-          if (pItem.ThumbnailImage == "[mpthumbs.db]")
-          {
-            pImage = GetThumbnail(pItem);
-            Log.Info("GEMX: {0}", pImage.FileName);
-          }
-          else
-          {
-            pImage = new GUIImage(0, 0, _xPositionThumbNail - iOverSized + dwPosX, _yPositionThumbNail - iOverSized + dwPosY, _thumbNailWidth + 2 * iOverSized, _thumbNailHeight + 2 * iOverSized, pItem.ThumbnailImage, 0x0);
-          }
+          pImage = new GUIImage(0, 0, _xPositionThumbNail - iOverSized + dwPosX, _yPositionThumbNail - iOverSized + dwPosY, _thumbNailWidth + 2 * iOverSized, _thumbNailHeight + 2 * iOverSized, pItem.ThumbnailImage, 0x0);
+
           if (pImage != null)
           {
             pImage.ParentControl = this;
@@ -450,7 +443,7 @@ namespace MediaPortal.GUI.Library
           {
             pImage.Width = _textureWidth + _zoomXPixels - 4;
             pImage.Height = _textureHeight + _zoomYPixels - 4;
-            pImage.SetPosition(dwPosX - (_zoomXPixels/2), dwPosY-(_zoomYPixels/2));
+            pImage.SetPosition(dwPosX - (_zoomXPixels / 2), dwPosY - (_zoomYPixels / 2));
           }
           pImage.Render(timePassed);
         }
@@ -664,7 +657,7 @@ namespace MediaPortal.GUI.Library
             }
           }
         }
- 
+
         if (_scrollingDown)
         {
           // render item on bottom
@@ -796,49 +789,49 @@ namespace MediaPortal.GUI.Library
           {
             _searchString = "";
             SelectItem(_listItems.Count - 1);
-           /* int iChan = _listItems.Count - 1;
-            if (iChan >= 0)
-            {
-              // update spin controls
-              int iItemsPerPage = _rowCount * _columnCount;
-              int iPage = 1;
-              int iSel = iChan;
-              while (iSel >= iItemsPerPage)
-              {
-                iPage++;
-                iSel -= iItemsPerPage;
-              }
-              _controlUpDown.Value = iPage;
+            /* int iChan = _listItems.Count - 1;
+             if (iChan >= 0)
+             {
+               // update spin controls
+               int iItemsPerPage = _rowCount * _columnCount;
+               int iPage = 1;
+               int iSel = iChan;
+               while (iSel >= iItemsPerPage)
+               {
+                 iPage++;
+                 iSel -= iItemsPerPage;
+               }
+               _controlUpDown.Value = iPage;
 
-              // find item
-              _offset = 0;
-              _cursorY = 0;
-              while (iChan >= iItemsPerPage)
-              {
-                iChan -= iItemsPerPage;
-                _offset += iItemsPerPage;
-              }
-              while (iChan >= _columnCount)
-              {
-                iChan -= _columnCount;
-                _cursorY++;
-              }
-              _cursorX = iChan;
+               // find item
+               _offset = 0;
+               _cursorY = 0;
+               while (iChan >= iItemsPerPage)
+               {
+                 iChan -= iItemsPerPage;
+                 _offset += iItemsPerPage;
+               }
+               while (iChan >= _columnCount)
+               {
+                 iChan -= _columnCount;
+                 _cursorY++;
+               }
+               _cursorX = iChan;
 
-              // Special handling when more than one page
-              if (iPage > 1)
-              {
-                while ((iChan+_columnCount) < iItemsPerPage)
-                {
-                  _offset -= _columnCount;
-                  iChan += _columnCount;
-                  _cursorY++;
-                }
-              }
+               // Special handling when more than one page
+               if (iPage > 1)
+               {
+                 while ((iChan+_columnCount) < iItemsPerPage)
+                 {
+                   _offset -= _columnCount;
+                   iChan += _columnCount;
+                   _cursorY++;
+                 }
+               }
 
 
-              OnSelectionChanged();
-            }*/
+               OnSelectionChanged();
+             }*/
             _refresh = true;
           }
           break;
@@ -1126,22 +1119,22 @@ namespace MediaPortal.GUI.Library
           _refresh = true;
         }
       }
-			
-			if (message.Message == GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS)
-			{
-				foreach (GUIListItem item in _listItems)
-				{
-					item.Selected = false;
-				}
-				foreach (GUIListItem item in _listItems)
-				{
-					if (item.Path.Equals(message.Label, StringComparison.OrdinalIgnoreCase))
-					{
-						item.Selected = true;
-						break;
-					}
-				}
-			}
+
+      if (message.Message == GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS)
+      {
+        foreach (GUIListItem item in _listItems)
+        {
+          item.Selected = false;
+        }
+        foreach (GUIListItem item in _listItems)
+        {
+          if (item.Path.Equals(message.Label, StringComparison.OrdinalIgnoreCase))
+          {
+            item.Selected = true;
+            break;
+          }
+        }
+      }
 
       if (message.Message == GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADING)
       {
@@ -1189,24 +1182,24 @@ namespace MediaPortal.GUI.Library
 
         if (_listItems.Count - iItem + 1 <= _columnCount)  // special handling for the last rows
         {
-          int iItemsPerPage = (_rowCount*_columnCount);
-          iPage = (iItem + 1)/iItemsPerPage;
+          int iItemsPerPage = (_rowCount * _columnCount);
+          iPage = (iItem + 1) / iItemsPerPage;
           if ((iItem + 1) % iItemsPerPage > 0) iPage++;
-          _offset = (iPage - 1)*iItemsPerPage;
+          _offset = (iPage - 1) * iItemsPerPage;
           iItem -= _offset;
-          
-          while ((iItem <= _columnCount * (_rowCount-1)) && (_offset > 0))
+
+          while ((iItem <= _columnCount * (_rowCount - 1)) && (_offset > 0))
           {
             _offset -= (_columnCount);
             iItem += (_columnCount);
-          }          
+          }
           while (iItem > _columnCount)
           {
             _cursorY++;
             iItem -= _columnCount;
           }
           _cursorX = iItem;
-           
+
           //_cursorX = _cursorY = 1;
           _controlUpDown.Value = iPage;
           return;
@@ -1282,7 +1275,7 @@ namespace MediaPortal.GUI.Library
       } while (iItem != iCurrentItem);
 
       if (bItemFound) SelectItem(iItem);
-        
+
       _lastSearchItem = _offset + _cursorY * _columnCount + _cursorX;
       OnSelectionChanged();
       _refresh = true;
@@ -1647,7 +1640,7 @@ namespace MediaPortal.GUI.Library
         }
         int iMaxRows = _listItems.Count / _columnCount;
         if (_listItems.Count % _columnCount > 0) iMaxRows++;
-        int iNextRow = (_offset + _columnCount + (_cursorY+1) * _columnCount) / _columnCount;
+        int iNextRow = (_offset + _columnCount + (_cursorY + 1) * _columnCount) / _columnCount;
 
         if ((_cursorY + 1 == _rowCount - _scrollStartOffset) && (iNextRow <= iMaxRows - _scrollStartOffset))
         {
@@ -1663,7 +1656,7 @@ namespace MediaPortal.GUI.Library
                 //check if _downControlId is set -> then go to the window
                 if (_downControlId > 0)
                 {
-                  GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, WindowId, GetID, _downControlId, (int) action.wID, 0, null);
+                  GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, WindowId, GetID, _downControlId, (int)action.wID, 0, null);
                   GUIGraphicsContext.SendMessage(msg);
                 }
                 else
@@ -1703,7 +1696,7 @@ namespace MediaPortal.GUI.Library
               //check if _downControlId is set -> then go to the window
               if (_downControlId > 0)
               {
-                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, WindowId, GetID, _downControlId, (int) action.wID, 0, null);
+                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, WindowId, GetID, _downControlId, (int)action.wID, 0, null);
                 GUIGraphicsContext.SendMessage(msg);
               }
               else
@@ -1881,13 +1874,13 @@ namespace MediaPortal.GUI.Library
     void OnPageUp()
     {
       int iItemsPerPage = _rowCount * _columnCount;
-      
+
       // Sanity check, we shouldnt do anything if there arent more than one page of items
       if (iItemsPerPage > _listItems.Count)
       {
         return;
       }
-      
+
       if (_offset >= iItemsPerPage)
       {
         _offset -= iItemsPerPage;
@@ -1898,7 +1891,7 @@ namespace MediaPortal.GUI.Library
         if (_cursorY == 0)
         {
           _offset = (CalculateRows(_listItems.Count) - _rowCount) * _columnCount;
-          _cursorY = _rowCount - _scrollStartOffset -1;
+          _cursorY = _rowCount - _scrollStartOffset - 1;
         }
         else _cursorY = 0;
       }
@@ -1909,7 +1902,7 @@ namespace MediaPortal.GUI.Library
     void OnPageDown()
     {
       int iItemsPerPage = _rowCount * _columnCount;
-      int lastPageOffset = (CalculateRows(_listItems.Count) - _rowCount)*_columnCount;
+      int lastPageOffset = (CalculateRows(_listItems.Count) - _rowCount) * _columnCount;
 
       // Sanity check, shouldnt scroll when there isnt enough items.
       if (iItemsPerPage > _listItems.Count)
@@ -1924,14 +1917,14 @@ namespace MediaPortal.GUI.Library
       else
       {
         _offset = lastPageOffset;
-        if ((_offset + (_cursorY + 1)*_columnCount + _cursorX) >= _listItems.Count)
+        if ((_offset + (_cursorY + 1) * _columnCount + _cursorX) >= _listItems.Count)
         {
           _offset = 0;
           _cursorY = 0;
         }
         else
         {
-          while ((_offset + (_cursorY + 1)*_columnCount + _cursorX) < _listItems.Count)
+          while ((_offset + (_cursorY + 1) * _columnCount + _cursorX) < _listItems.Count)
           {
             _cursorY++;
           }
@@ -2415,11 +2408,11 @@ namespace MediaPortal.GUI.Library
       }
       set
       {
-          SelectItem(value);
-          OnSelectionChanged();
-          _refresh = true;
+        SelectItem(value);
+        OnSelectionChanged();
+        _refresh = true;
       }
-  }
+    }
 
     public void Clear()
     {
@@ -2515,39 +2508,40 @@ namespace MediaPortal.GUI.Library
       return selectedItemIndex;
     }
 
-    GUIImage GetThumbnail(GUIListItem item)
-    {
-      if (item.IsRemote) return null;
-      if (item.IsFolder)
-      {
-        if (item.Label == "..") return null;
-        string file = System.IO.Path.GetFileName(item.Path);
-        string path = item.Path.Substring(0, item.Path.Length - (file.Length + 1));
-        ThumbnailDatabase dbs = ThumbnailDatabaseCache.Get(path);
-        ThumbNail thumb = dbs.Get(item.Path);
-        if (thumb == null) return null;
-        using (Image img = thumb.Image)
-        {
-          GUITextureManager.LoadFromMemory(img, String.Format("[{0}]", file), 0, img.Width, img.Height);
-          GUIImage guiImage = new GUIImage(0, 0, 0, 0, 0, 0, String.Format("[{0}]", file), 0x0);
-          return guiImage;
-        }
-      }
-      else
-      {
-        string file = System.IO.Path.GetFileName(item.Path); ;
-        string path = item.Path.Substring(0, item.Path.Length - (file.Length + 1));
-        ThumbnailDatabase dbs = ThumbnailDatabaseCache.Get(path);
-        ThumbNail thumb = dbs.Get(file);
-        if (thumb == null) return null;
-        using (Image img = thumb.Image)
-        {
-          GUITextureManager.LoadFromMemory(img, String.Format("[{0}]", file), 0, img.Width, img.Height);
-          GUIImage guiImage = new GUIImage(0, 0, 0, 0, 0, 0, String.Format("[{0}]", file), 0x0);
-          return guiImage;
-        }
-      }
-    }
+    //GUIImage GetThumbnail(GUIListItem item)
+    //{
+    //  if (item.IsRemote) return null;
+    //  if (item.IsFolder)
+    //  {
+    //    if (item.Label == "..")
+    //      return null;
+    //    string file = System.IO.Path.GetFileName(item.Path);
+    //    string path = item.Path.Substring(0, item.Path.Length - (file.Length + 1));
+    //    ThumbnailDatabase dbs = ThumbnailDatabaseCache.Get(path);
+    //    ThumbNail thumb = dbs.Get(item.Path);
+    //    if (thumb == null) return null;
+    //    using (Image img = thumb.Image)
+    //    {
+    //      GUITextureManager.LoadFromMemory(img, String.Format("[{0}]", file), 0, img.Width, img.Height);
+    //      GUIImage guiImage = new GUIImage(0, 0, 0, 0, 0, 0, String.Format("[{0}]", file), 0x0);
+    //      return guiImage;
+    //    }
+    //  }
+    //  else
+    //  {
+    //    string file = System.IO.Path.GetFileName(item.Path); ;
+    //    string path = item.Path.Substring(0, item.Path.Length - (file.Length + 1));
+    //    ThumbnailDatabase dbs = ThumbnailDatabaseCache.Get(path);
+    //    ThumbNail thumb = dbs.Get(file);
+    //    if (thumb == null) return null;
+    //    using (Image img = thumb.Image)
+    //    {
+    //      GUITextureManager.LoadFromMemory(img, String.Format("[{0}]", file), 0, img.Width, img.Height);
+    //      GUIImage guiImage = new GUIImage(0, 0, 0, 0, 0, 0, String.Format("[{0}]", file), 0x0);
+    //      return guiImage;
+    //    }
+    //  }
+    //}
 
     public override int DimColor
     {
@@ -2578,7 +2572,7 @@ namespace MediaPortal.GUI.Library
 
     protected void ScrollItems(int itemInc)
     {
-      int currentRow = CalculateRows(_offset + _cursorY*_columnCount + _cursorX);
+      int currentRow = CalculateRows(_offset + _cursorY * _columnCount + _cursorX);
       int nextRow = CalculateRows(_offset + _cursorY * _columnCount + _cursorX + itemInc);
 
     }
