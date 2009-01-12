@@ -654,7 +654,7 @@ namespace SetupTv.Sections
       tuningDetail.VideoSource = AnalogChannel.VideoInputType.SvhsInput2;
       layer.AddTuningDetails(dbChannel, tuningDetail);
       layer.MapChannelToCard(card, dbChannel, false);
-      dbChannel = layer.AddChannel("", "S-VideoS#3 on " + card.IdCard);
+      dbChannel = layer.AddChannel("", "S-Video#3 on " + card.IdCard);
       dbChannel.IsTv = true;
       dbChannel.Persist();
       tuningDetail = new AnalogChannel();
