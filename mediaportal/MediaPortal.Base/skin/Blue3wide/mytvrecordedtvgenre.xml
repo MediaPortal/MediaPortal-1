@@ -2,7 +2,7 @@
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>605</id>
-  <defaultcontrol>3</defaultcontrol>
+  <defaultcontrol>50</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
   <controls>
     <import>common.time.xml</import>
@@ -38,7 +38,7 @@
       <description>My Recorded TV Text Label</description>
       <id>1</id>
       <posX>444</posX>
-      <posY>87</posY>
+      <posY>85</posY>
       <label>652</label>
       <font>font16</font>
       <align>right</align>
@@ -53,7 +53,7 @@
       <posX>462</posX>
       <posY>512</posY>
       <label>#itemcount</label>
-      <textcolor>ffffffff</textcolor>
+      <visible>false</visible>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
@@ -61,9 +61,11 @@
       <type>fadelabel</type>
       <description>Selected item Label</description>
       <id>1</id>
-      <posX>1173</posX>
-      <posY>87</posY>
+      <posX>1208</posX>
+      <posY>85</posY>
+      <width>622</width>
       <label>#selecteditem</label>
+      <font>font14</font>
       <align>right</align>
       <disabledcolor>ff808080</disabledcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
@@ -79,11 +81,21 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
       <control>
+        <type>button</type>
+        <description>View-As button</description>
+        <id>2</id>
+        <onleft>2</onleft>
+        <onright>50</onright>
+        <onup>17</onup>
+        <ondown>3</ondown>
+        <label>100</label>
+      </control>
+      <control>
         <type>sortbutton</type>
         <id>3</id>
-        <onleft>3</onleft>
-        <onright>10</onright>
-        <onup>5</onup>
+        <onleft>2</onleft>
+        <onright>50</onright>
+        <onup>2</onup>
         <ondown>5</ondown>
         <font>font13</font>
         <label>620</label>
@@ -93,8 +105,8 @@
         <description>All,Genre,Channel button</description>
         <id>5</id>
         <onleft>6</onleft>
-        <onright>10</onright>
-        <onup>3</onup>
+        <onright>50</onright>
+        <onup>2</onup>
         <ondown>6</ondown>
         <label>457</label>
       </control>
@@ -102,10 +114,10 @@
         <type>button</type>
         <description>cleanup button</description>
         <id>6</id>
-        <onleft>3</onleft>
-        <onright>10</onright>
+        <onleft>2</onleft>
+        <onright>50</onright>
         <onup>5</onup>
-        <ondown>99</ondown>
+        <ondown>7</ondown>
         <label>624</label>
       </control>
     </control>
@@ -130,54 +142,16 @@
           <left>0</left>
         </padding>
       </mpe>
-      <control>
-        <type>listcontrol</type>
-        <description>scheduler recordings listcontrol</description>
-        <id>10</id>
-        <height>462</height>
-        <onleft>3</onleft>
-        <onright>11</onright>
-        <!--         <onup>3</onup>
-        <ondown>3</ondown> -->
-        <font3>font10</font3>
-        <font2>font10</font2>
-        <textYOff3>36</textYOff3>
-        <textXOff2>746</textXOff2>
-        <textYOff>2</textYOff>
-        <textureFocus>recording_background_focus.png</textureFocus>
-        <font>font13</font>
-        <textXOff>88</textXOff>
-        <itemHeight>43</itemHeight>
-        <keepaspectratio>no</keepaspectratio>
-        <textXOff3>177</textXOff3>
-        <textureHeight>62</textureHeight>
-        <itemWidth>62</itemWidth>
-        <textureNoFocus>recording_background_nofocus.png</textureNoFocus>
-        <IconXOff>21</IconXOff>
-        <spaceBetweenItems>8</spaceBetweenItems>
-        <spinPosX>1077</spinPosX>
-        <spinPosY>522</spinPosY>
-        <textYOff2>36</textYOff2>
-      </control>
-      <control>
-        <type>listcontrol</type>
-        <description>listcontrol</description>
-        <id>11</id>
-        <onleft>3</onleft>
-        <onright>10</onright>
-        <onup>10</onup>
-        <ondown>3</ondown>
-        <textcolor>FFFFFFFF</textcolor>
-        <font>font13</font>
-      </control>
+      
       <control>
         <type>fadelabel</type>
         <description>Current program title</description>
         <id>13</id>
-        <posX>462</posX>
-        <posY>550</posY>
+        <posX>1422</posX>
+        <posY>750</posY>
         <label>#TV.RecordedTV.Title</label>
-        <disabledcolor>ff808080</disabledcolor>
+        <disabledcolor>808080</disabledcolor>
+        <textcolor>00b2d4f5</textcolor>
       </control>
       <control>
         <type>label</type>
@@ -187,19 +161,20 @@
         <posY>575</posY>
         <label>#TV.RecordedTV.Time</label>
         <textcolor>ffb2d4f5</textcolor>
+        <visible>false</visible>
       </control>
       <control>
         <type>textboxscrollup</type>
         <description>Description1</description>
         <id>15</id>
-        <posX>462</posX>
-        <posY>606</posY>
-        <width>764</width>
-        <height>81</height>
+        <posX>471</posX>
+        <posY>535</posY>
+        <width>741</width>
+        <height>125</height>
         <colordiffuse>ffffffff</colordiffuse>
-        <font>font13</font>
+        <font>font12</font>
         <label>#TV.RecordedTV.Description</label>
-        <textcolor>FFFFFFFF</textcolor>
+        <textcolor>ffb2d4f5</textcolor>
       </control>
       <!--          <control>
             <type>label</type>
@@ -212,5 +187,6 @@
             <textcolor>ffb2d4f5</textcolor>
          </control> -->
     </control>
+    <import>common.facade.recordings.xml</import>
   </controls>
 </window>

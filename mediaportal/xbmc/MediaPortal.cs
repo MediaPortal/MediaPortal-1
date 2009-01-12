@@ -424,7 +424,7 @@ public class MediaPortalApp : D3DApp, IRender
             string strLine = "Please install Windows Media Player " + WMP_Main_Ver + "\r\n";
             strLine = strLine + "MediaPortal cannot run without Windows Media Player " + WMP_Main_Ver;
             MessageBox.Show(strLine, "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            return;
+            //return;
           }
 
         }
