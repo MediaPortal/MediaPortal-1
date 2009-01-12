@@ -248,7 +248,7 @@ namespace TvPlugin
         if (xmlreader.GetValueAsBool("mytv", "allowarletterbox", true))
           _allowedArModes.Add(MediaPortal.GUI.Library.Geometry.Type.LetterBox43);
         if (xmlreader.GetValueAsBool("mytv", "allowarpanscan", true))
-          _allowedArModes.Add(MediaPortal.GUI.Library.Geometry.Type.PanScan43);
+          _allowedArModes.Add(MediaPortal.GUI.Library.Geometry.Type.SmartStretch);
         if (xmlreader.GetValueAsBool("mytv", "allowarzoom149", true))
           _allowedArModes.Add(MediaPortal.GUI.Library.Geometry.Type.Zoom14to9);
         if (!TVHome.settingsLoaded)
@@ -259,7 +259,7 @@ namespace TvPlugin
           if (strValue.Equals("normal")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Normal;
           if (strValue.Equals("original")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Original;
           if (strValue.Equals("letterbox")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.LetterBox43;
-          if (strValue.Equals("panscan")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.PanScan43;
+          if (strValue.Equals("panscan")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.SmartStretch;
           if (strValue.Equals("zoom149")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom14to9;
         }
       }
@@ -303,7 +303,7 @@ namespace TvPlugin
             xmlwriter.SetValue("mytv", "defaultar", "letterbox");
             break;
 
-          case MediaPortal.GUI.Library.Geometry.Type.PanScan43:
+          case MediaPortal.GUI.Library.Geometry.Type.SmartStretch:
             xmlwriter.SetValue("mytv", "defaultar", "panscan");
             break;
 
@@ -1813,7 +1813,7 @@ namespace TvPlugin
       if (_allowedArModes.Contains(Geometry.Type.Normal)) dlg.AddLocalizedString(943); // Normal
       if (_allowedArModes.Contains(Geometry.Type.Original)) dlg.AddLocalizedString(944); // Original
       if (_allowedArModes.Contains(Geometry.Type.LetterBox43)) dlg.AddLocalizedString(945); // Letterbox
-      if (_allowedArModes.Contains(Geometry.Type.PanScan43)) dlg.AddLocalizedString(946); // Pan and scan
+      if (_allowedArModes.Contains(Geometry.Type.SmartStretch)) dlg.AddLocalizedString(946); // Smart stretch
       if (_allowedArModes.Contains(Geometry.Type.Zoom)) dlg.AddLocalizedString(947); // Zoom
       if (_allowedArModes.Contains(Geometry.Type.Zoom14to9)) dlg.AddLocalizedString(1190); //14:9
 
