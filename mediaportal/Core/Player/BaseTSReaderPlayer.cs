@@ -1533,7 +1533,7 @@ namespace MediaPortal.Player
           if (strValue.Equals("letterbox"))
             GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.LetterBox43;
           if (strValue.Equals("panscan"))
-            GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.PanScan43;
+            GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.SmartStretch;
           if (strValue.Equals("zoom149"))
             GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom14to9;
         }

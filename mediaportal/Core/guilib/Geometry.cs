@@ -36,13 +36,13 @@ namespace MediaPortal.GUI.Library
     {
         public enum Type
         {
-          Stretch,     // letterbox
-          Normal,      // pan scan
-          Original,    // original source format
-          LetterBox43, // Letterbox 4:3
-          PanScan43,   // Pan&Scan 4:3
-          Zoom,        // widescreen
-          Zoom14to9,   // 4:3 on 16:9 screens
+          Normal,       // pan scan
+          Original,     // original source format
+          Zoom,         // widescreen
+          Zoom14to9,    // 4:3 on 16:9 screens
+          Stretch,      // letterbox
+          LetterBox43,  // letterbox 4:3
+          SmartStretch  // smart stretch zoom
         }
 
         int _imageWidth = 100;				// width of the video window or image
@@ -309,7 +309,7 @@ namespace MediaPortal.GUI.Library
                     }
                     break;
 
-                  case Type.PanScan43:
+                  case Type.SmartStretch:
                     {
                       // If screen is 16:9 do non-linear stretch, otherwise panscan
                       float fScreenRatio = (float)ScreenWidth / ScreenHeight;

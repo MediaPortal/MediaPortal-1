@@ -2860,7 +2860,7 @@ namespace MediaPortal.Util
         case MediaPortal.GUI.Library.Geometry.Type.LetterBox43:
           return GUILocalizeStrings.Get(945);
 
-        case MediaPortal.GUI.Library.Geometry.Type.PanScan43:
+        case MediaPortal.GUI.Library.Geometry.Type.SmartStretch:
           return GUILocalizeStrings.Get(946);
 
         case MediaPortal.GUI.Library.Geometry.Type.Zoom:
@@ -2890,7 +2890,7 @@ namespace MediaPortal.Util
         case MediaPortal.GUI.Library.Geometry.Type.LetterBox43:
           return "letterbox";
 
-        case MediaPortal.GUI.Library.Geometry.Type.PanScan43:
+        case MediaPortal.GUI.Library.Geometry.Type.SmartStretch:
           return "panscan";
 
         case MediaPortal.GUI.Library.Geometry.Type.Zoom:
@@ -2921,7 +2921,7 @@ namespace MediaPortal.Util
           return MediaPortal.GUI.Library.Geometry.Type.LetterBox43;
 
         case "panscan":
-          return MediaPortal.GUI.Library.Geometry.Type.PanScan43;
+          return MediaPortal.GUI.Library.Geometry.Type.SmartStretch;
 
         case "zoom":
           return MediaPortal.GUI.Library.Geometry.Type.Zoom;
@@ -2951,7 +2951,7 @@ namespace MediaPortal.Util
           return MediaPortal.GUI.Library.Geometry.Type.LetterBox43;
 
         case 946:
-          return MediaPortal.GUI.Library.Geometry.Type.PanScan43;
+          return MediaPortal.GUI.Library.Geometry.Type.SmartStretch;
 
         case 947:
           return MediaPortal.GUI.Library.Geometry.Type.Zoom;
