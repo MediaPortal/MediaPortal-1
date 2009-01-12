@@ -38,6 +38,8 @@ namespace MediaPortal.Util
   {
     static string ExtractApp = "mtn.exe";
     static string ExtractorPath = Config.GetFile(Config.Dir.Base, "MovieThumbnailer", ExtractApp);
+    static int PreviewColumns = 1;
+    static int PreviewRows = 2;
 
     #region Public methods
 
@@ -91,10 +93,7 @@ namespace MediaPortal.Util
         postGapSec = 600;
       }
 
-      int columns = 2;
-      int rows = 2;
-
-      string ExtractorArgs = string.Format(" -D 6 -B {0} -E {1} -c {2} -r {3} -s {4} -t -i -w {5} -n -P \"{6}\"", preGapSec, postGapSec, columns, rows, "300", /*(int)Thumbs.ThumbLargeResolution*/ "720", aVideoPath);
+      string ExtractorArgs = string.Format(" -D 8 -B {0} -E {1} -c {2} -r {3} -s {4} -t -i -w {5} -n -P \"{6}\"", preGapSec, postGapSec, PreviewColumns, PreviewRows, "300", /*(int)Thumbs.ThumbLargeResolution*/ "720", aVideoPath);
       // Honour we are using a unix app
       ExtractorArgs = ExtractorArgs.Replace('\\', '/');
       try
@@ -151,6 +150,8 @@ namespace MediaPortal.Util
 
     #endregion
 
+    #region Private methods
+
     private static Utils.ProcessFailedConditions GetMtnConditions()
     {
       Utils.ProcessFailedConditions mtnStat = new Utils.ProcessFailedConditions();
@@ -164,5 +165,7 @@ namespace MediaPortal.Util
 
       return mtnStat;
     }
+
+    #endregion
   }
 }
