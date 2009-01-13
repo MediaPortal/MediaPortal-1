@@ -51,31 +51,24 @@ namespace MediaPortal.Util
         _Path = xmlreader.GetValueAsString("daemon", "path", "");
         _Drive = xmlreader.GetValueAsString("daemon", "drive", "E:");
         _DriveNo = xmlreader.GetValueAsInt("daemon", "driveNo", 0);
+        /*
+         * DAEMON Tools supports the following image files:
+         * cue/bin
+         * iso
+         * ccd (CloneCD)
+         * bwt (Blindwrite)
+         * mds (Media Descriptor File)
+         * cdi (Discjuggler)
+         * nrg (Nero)
+         * pdi (Instant CD/DVD)
+         * b5t (BlindWrite 5)
+        */
+        string[] extensions = xmlreader.GetValueAsString("daemon", "extensions", ".cue, .bin, .iso, .ccd, .bwt, .mds,. cdi, .nrg, .pdi, .b5t, .img").Split(',');
+        _supportedExtensions = new List<string>();
+        // Can't use an AddRange, as we need to trim the blanks 
+        foreach(string ext in extensions)
+          _supportedExtensions.Add(ext.Trim());
       }
-      /*
-       * DAEMON Tools supports the following image files:
-       * cue/bin
-       * iso
-       * ccd (CloneCD)
-       * bwt (Blindwrite)
-       * mds (Media Descriptor File)
-       * cdi (Discjuggler)
-       * nrg (Nero)
-       * pdi (Instant CD/DVD)
-       * b5t (BlindWrite 5)
-       */
-      _supportedExtensions = new List<string>();
-      _supportedExtensions.Add(".cue");
-      _supportedExtensions.Add(".bin");
-      _supportedExtensions.Add(".iso");
-      _supportedExtensions.Add(".ccd");
-      _supportedExtensions.Add(".bwt");
-      _supportedExtensions.Add(".mds");
-      _supportedExtensions.Add(".cdi");
-      _supportedExtensions.Add(".nrg");
-      _supportedExtensions.Add(".pdi");
-      _supportedExtensions.Add(".b5t");
-      _supportedExtensions.Add(".img");
     }
 
     public static bool IsEnabled

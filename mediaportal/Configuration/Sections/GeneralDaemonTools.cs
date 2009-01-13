@@ -47,6 +47,8 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPLabel label4;
     private MediaPortal.UserInterface.Controls.MPComboBox comboDriveNo;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAskBeforePlaying;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxExtensions;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
     private System.ComponentModel.IContainer components = null;
 
     public GeneralDaemonTools()
@@ -86,6 +88,7 @@ namespace MediaPortal.Configuration.Sections
       {
         checkBoxDaemonTools.Checked = xmlreader.GetValueAsBool("daemon", "enabled", false);
         textBoxDaemonTools.Text = xmlreader.GetValueAsString("daemon", "path", "");
+        textBoxExtensions.Text = xmlreader.GetValueAsString("daemon", "extensions", ".cue, .bin, .iso, .ccd, .bwt, .mds,. cdi, .nrg, .pdi, .b5t, .img");
         comboBoxDrive.SelectedItem = xmlreader.GetValueAsString("daemon", "drive", "E:");
         comboDriveNo.SelectedItem = xmlreader.GetValueAsInt("daemon", "driveNo", 0).ToString();
         checkBoxAskBeforePlaying.Checked = xmlreader.GetValueAsBool("daemon", "askbeforeplaying", false);
@@ -111,6 +114,7 @@ namespace MediaPortal.Configuration.Sections
 
         xmlwriter.SetValueAsBool("daemon", "enabled", checkBoxDaemonTools.Checked);
         xmlwriter.SetValue("daemon", "path", textBoxDaemonTools.Text);
+        xmlwriter.SetValue("daemon", "extensions", textBoxExtensions.Text);
         xmlwriter.SetValue("daemon", "drive", (string)comboBoxDrive.SelectedItem);
         xmlwriter.SetValue("daemon", "driveNo", Int32.Parse((string)comboDriveNo.SelectedItem));
         xmlwriter.SetValueAsBool("daemon", "askbeforeplaying", checkBoxAskBeforePlaying.Checked);
@@ -125,6 +129,8 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.textBoxExtensions = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.buttonSelectFolder = new MediaPortal.UserInterface.Controls.MPButton();
       this.comboDriveNo = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.comboBoxDrive = new MediaPortal.UserInterface.Controls.MPComboBox();
@@ -141,6 +147,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Controls.Add(this.textBoxExtensions);
+      this.groupBox2.Controls.Add(this.mpLabel1);
       this.groupBox2.Controls.Add(this.buttonSelectFolder);
       this.groupBox2.Controls.Add(this.comboDriveNo);
       this.groupBox2.Controls.Add(this.comboBoxDrive);
@@ -150,12 +158,32 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.Controls.Add(this.label1);
       this.groupBox2.Controls.Add(this.checkBoxDaemonTools);
       this.groupBox2.Controls.Add(this.checkBoxAskBeforePlaying);
+      this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox2.Location = new System.Drawing.Point(0, 0);
       this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(472, 148);
+      this.groupBox2.Size = new System.Drawing.Size(472, 177);
       this.groupBox2.TabIndex = 0;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "Settings";
+      // 
+      // textBoxExtensions
+      // 
+      this.textBoxExtensions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxExtensions.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxExtensions.Location = new System.Drawing.Point(168, 118);
+      this.textBoxExtensions.Name = "textBoxExtensions";
+      this.textBoxExtensions.Size = new System.Drawing.Size(288, 20);
+      this.textBoxExtensions.TabIndex = 10;
+      // 
+      // mpLabel1
+      // 
+      this.mpLabel1.AutoSize = true;
+      this.mpLabel1.Location = new System.Drawing.Point(16, 122);
+      this.mpLabel1.Name = "mpLabel1";
+      this.mpLabel1.Size = new System.Drawing.Size(96, 13);
+      this.mpLabel1.TabIndex = 9;
+      this.mpLabel1.Text = "Supported Images:";
       // 
       // buttonSelectFolder
       // 
@@ -165,12 +193,14 @@ namespace MediaPortal.Configuration.Sections
       this.buttonSelectFolder.Size = new System.Drawing.Size(72, 22);
       this.buttonSelectFolder.TabIndex = 3;
       this.buttonSelectFolder.Text = "Browse";
+      this.buttonSelectFolder.UseVisualStyleBackColor = true;
       this.buttonSelectFolder.Click += new System.EventHandler(this.buttonSelectFolder_Click);
       // 
       // comboDriveNo
       // 
       this.comboDriveNo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboDriveNo.BorderColor = System.Drawing.Color.Empty;
       this.comboDriveNo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboDriveNo.Items.AddRange(new object[] {
             "0",
@@ -186,6 +216,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.comboBoxDrive.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxDrive.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxDrive.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxDrive.Items.AddRange(new object[] {
             "D:",
@@ -220,6 +251,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.textBoxDaemonTools.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxDaemonTools.BorderColor = System.Drawing.Color.Empty;
       this.textBoxDaemonTools.Location = new System.Drawing.Point(168, 44);
       this.textBoxDaemonTools.Name = "textBoxDaemonTools";
       this.textBoxDaemonTools.Size = new System.Drawing.Size(208, 20);
@@ -256,27 +288,31 @@ namespace MediaPortal.Configuration.Sections
       // checkBoxDaemonTools
       // 
       this.checkBoxDaemonTools.AutoSize = true;
+      this.checkBoxDaemonTools.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxDaemonTools.Location = new System.Drawing.Point(168, 20);
       this.checkBoxDaemonTools.Name = "checkBoxDaemonTools";
-      this.checkBoxDaemonTools.Size = new System.Drawing.Size(235, 17);
+      this.checkBoxDaemonTools.Size = new System.Drawing.Size(233, 17);
       this.checkBoxDaemonTools.TabIndex = 0;
       this.checkBoxDaemonTools.Text = "Automount .iso/.bin files using Daemon tools";
+      this.checkBoxDaemonTools.UseVisualStyleBackColor = true;
       this.checkBoxDaemonTools.CheckedChanged += new System.EventHandler(this.checkBoxDaemonTools_CheckedChanged);
       // 
       // checkBoxAskBeforePlaying
       // 
       this.checkBoxAskBeforePlaying.AutoSize = true;
-      this.checkBoxAskBeforePlaying.Location = new System.Drawing.Point(168, 120);
+      this.checkBoxAskBeforePlaying.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxAskBeforePlaying.Location = new System.Drawing.Point(168, 147);
       this.checkBoxAskBeforePlaying.Name = "checkBoxAskBeforePlaying";
-      this.checkBoxAskBeforePlaying.Size = new System.Drawing.Size(175, 17);
+      this.checkBoxAskBeforePlaying.Size = new System.Drawing.Size(173, 17);
       this.checkBoxAskBeforePlaying.TabIndex = 8;
       this.checkBoxAskBeforePlaying.Text = "Ask before playing .iso/.bin files";
+      this.checkBoxAskBeforePlaying.UseVisualStyleBackColor = true;
       // 
-      // DeamonTools
+      // GeneralDaemonTools
       // 
       this.BackColor = System.Drawing.SystemColors.Control;
       this.Controls.Add(this.groupBox2);
-      this.Name = "DeamonTools";
+      this.Name = "GeneralDaemonTools";
       this.Size = new System.Drawing.Size(472, 408);
       this.groupBox2.ResumeLayout(false);
       this.groupBox2.PerformLayout();
@@ -323,7 +359,6 @@ namespace MediaPortal.Configuration.Sections
         comboDriveNo.Enabled = false;
         checkBoxAskBeforePlaying.Enabled = false;
       }
-
     }
   }
 }
