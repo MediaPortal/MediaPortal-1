@@ -1176,9 +1176,11 @@ namespace TvEngine
           }
 
           ProcessStartInfo startInfo = new ProcessStartInfo("tvuptodate.exe");
-          //startInfo.Arguments = "";
+          if (aHideUpdater)
+            startInfo.Arguments = "/hidden";
           startInfo.FileName = UpdaterPath;
-          startInfo.WindowStyle = aHideUpdater ? ProcessWindowStyle.Hidden : ProcessWindowStyle.Normal;
+          // replaced with startInfo.Arguments = "/hidden" | flokel | 11.01.09
+          // startInfo.WindowStyle = aHideUpdater ? ProcessWindowStyle.Hidden : ProcessWindowStyle.Normal;
           startInfo.WorkingDirectory = Path.GetDirectoryName(UpdaterPath);
           Process UpdateProcess = Process.Start(startInfo);
           UpdateProcess.PriorityClass = ProcessPriorityClass.BelowNormal;
