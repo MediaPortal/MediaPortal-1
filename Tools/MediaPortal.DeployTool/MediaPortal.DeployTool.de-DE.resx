@@ -511,4 +511,7 @@ Kopieren Sie dieses Verzeichnis auf Ihren HTPC. Starten Sie "MediaPortal.DeployT
   <data name="MainWindow_browseButton" xml:space="preserve">
     <value>Durchsuchen</value>
   </data>
+  <data name="DownloadOnly_NoConnectionWarning" xml:space="preserve">
+    <value>Keine Internetverbindung gefunden! Zum Fortführen der Installation wird eine Internetverbindung benötigt.</value>
+  </data>
 </root>
